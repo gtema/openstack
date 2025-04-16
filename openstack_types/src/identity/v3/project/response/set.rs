@@ -23,63 +23,62 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The description of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the domain for the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The ID for the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub is_domain: Option<bool>,
 
     /// The link to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The name of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub options: Option<Options>,
 
     /// The ID of the parent for the project.
     ///
     /// **New in version 3.4**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -88,7 +87,6 @@ pub struct Links {
 
 /// The resource options for the project. Available resource options are
 /// `immutable`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

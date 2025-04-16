@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DscpMarkingRuleResponse {
     /// The DSCP mark value.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub dscp_mark: Option<i32>,
 
     /// The ID of the QoS DSCP marking rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 }

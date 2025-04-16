@@ -35,7 +35,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// healthmonitor_id parameter for
     /// /v2/lbaas/healthmonitors/{healthmonitor_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

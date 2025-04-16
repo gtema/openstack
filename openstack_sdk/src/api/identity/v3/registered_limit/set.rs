@@ -30,18 +30,15 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `registered_limit` objects
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RegisteredLimit<'a> {
     /// The default limit for the registered limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) default_limit: Option<i32>,
 
     /// The registered limit description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -49,14 +46,12 @@ pub struct RegisteredLimit<'a> {
     /// The ID of the region that contains the service endpoint. Either
     /// service_id, resource_name, or region_id must be different than existing
     /// value otherwise it will raise 409.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region_id: Option<Option<Cow<'a, str>>>,
 
     /// The resource name. Either service_id, resource_name or region_id must
     /// be different than existing value otherwise it will raise 409.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) resource_name: Option<Cow<'a, str>>,
@@ -64,7 +59,6 @@ pub struct RegisteredLimit<'a> {
     /// The UUID of the service to update to which the registered limit
     /// belongs. Either service_id, resource_name, or region_id must be
     /// different than existing value otherwise it will raise 409.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service_id: Option<Cow<'a, str>>,
@@ -74,13 +68,11 @@ pub struct RegisteredLimit<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `registered_limit` objects
-    ///
     #[builder(setter(into))]
     pub(crate) registered_limit: RegisteredLimit<'a>,
 
     /// registered_limit_id parameter for
     /// /v3/registered_limits/{registered_limit_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

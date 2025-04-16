@@ -20,23 +20,18 @@
 //! Wraps invoking of the `v2.0/security-groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::security_group::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
 /// Lists OpenStack Networking security groups to which the project has access.
 ///
@@ -59,7 +54,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List security groups")]
 pub struct SecurityGroupsCommand {
@@ -80,12 +74,10 @@ pub struct SecurityGroupsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/security-groups API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/security-groups API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -93,71 +85,58 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/security-groups API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// not-tags query parameter for /v2.0/security-groups API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/security-groups API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// revision_number query parameter for /v2.0/security-groups API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// shared query parameter for /v2.0/security-groups API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// tags query parameter for /v2.0/security-groups API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/security-groups API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/security-groups API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -165,69 +144,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// SecurityGroups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the security group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    /// A list of `security_group_rule` objects. Refer to
-    /// [Security group rules](#security-group-rules) for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    security_group_rules: Option<Value>,
-
-    /// Indicates whether this security group is shared to the requester’s
-    /// project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    shared: Option<BoolString>,
-
-    /// Indicates if the security group is stateful or stateless.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    stateful: Option<BoolString>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl SecurityGroupsCommand {
     /// Perform command action
@@ -299,8 +215,7 @@ impl SecurityGroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<SecurityGroupResponse>(data)?;
         Ok(())
     }
 }

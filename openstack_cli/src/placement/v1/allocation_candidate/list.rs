@@ -20,22 +20,17 @@
 //! Wraps invoking of the `allocation_candidates` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::allocation_candidate::list;
-use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::allocation_candidate::response::list::AllocationCandidateResponse;
 
 /// Returns a dictionary representing a collection of allocation requests and
 /// resource provider summaries. Each allocation request has information to
@@ -55,7 +50,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: badRequest(400)
-///
 #[derive(Args)]
 #[command(about = "List allocation candidates")]
 pub struct AllocationCandidateCommand {
@@ -78,20 +72,17 @@ struct QueryParameters {
     /// group_policy=isolate, suffixed groups are guaranteed to be satisfied by
     /// different providers - though there may still be overlap with the
     /// suffixless group.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     group_policy: Option<String>,
 
     /// A string representing a resource provider uuid. When supplied, it will
     /// filter the returned allocation candidates to only those resource
     /// providers that are in the same tree with the given resource provider.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     in_tree: Option<String>,
 
     /// A positive integer used to limit the maximum number of allocation
     /// candidates returned in the response.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
@@ -126,7 +117,6 @@ struct QueryParameters {
     /// return empty allocation_requests and provider_summaries, while:
     /// `member_of=in:AGGA_UUID,AGGB_UUID&member_of=!AGGA_UUID` would return
     /// resource providers that are NOT in AGGA but in AGGB.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     member_of: Option<Vec<String>>,
 
@@ -150,7 +140,6 @@ struct QueryParameters {
     /// params within the same request is supported. So:
     /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
     /// not T2 and (T3 or T4).
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     required: Option<Vec<String>>,
 
@@ -160,7 +149,6 @@ struct QueryParameters {
     /// `resources=VCPU:4,DISK_GB:64,MEMORY_MB:2048` These resources may be
     /// satisfied by any provider in the same non-sharing tree or associated
     /// via aggregate.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     resources: Option<String>,
 
@@ -171,7 +159,6 @@ struct QueryParameters {
     /// (non-sharing) tree’s root provider satisfies the specified trait
     /// requirements. Traits which are forbidden (must not be present on the
     /// root provider) are expressed by prefixing the trait with a !.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     root_required: Option<String>,
 
@@ -182,7 +169,6 @@ struct QueryParameters {
     /// providers satisfying a specified request group must be an ancestor of
     /// the rest. The same_subtree query parameter can be repeated and each
     /// repeat group is treated independently.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     same_subtree: Option<String>,
 }
@@ -190,93 +176,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AllocationCandidate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of objects that contain a serialized HTTP body that a client may
-    /// subsequently use in a call to PUT /allocations/{consumer_uuid} to claim
-    /// resources against a related set of resource providers.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    allocation_requests: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    provider_summaries: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllocationsItem {
-    resources: Option<Value>,
-}
-
-impl fmt::Display for ResponseAllocationsItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "resources={}",
-            self.resources
-                .clone()
-                .map_or(String::new(), |v| v.to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseResourcesItem {
-    capacity: Option<i32>,
-    used: Option<i32>,
-}
-
-impl fmt::Display for ResponseResourcesItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "capacity={}",
-                self.capacity.map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "used={}",
-                self.used.map_or(String::new(), |v| v.to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseProviderSummariesItem {
-    parent_provider_uuid: Option<String>,
-    resources: Value,
-    root_provider_uuid: Option<String>,
-    traits: Option<Value>,
-}
-
-impl fmt::Display for ResponseProviderSummariesItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "parent_provider_uuid={}",
-                self.parent_provider_uuid
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
-            ),
-            format!("resources={}", self.resources),
-            format!(
-                "root_provider_uuid={}",
-                self.root_provider_uuid
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "traits={}",
-                self.traits.clone().map_or(String::new(), |v| v.to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
 
 impl AllocationCandidateCommand {
     /// Perform command action
@@ -325,7 +224,7 @@ impl AllocationCandidateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AllocationCandidateResponse>(data)?;
         Ok(())
     }
 }

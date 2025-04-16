@@ -35,7 +35,6 @@ use std::borrow::Cow;
 pub struct RbacPolicy<'a> {
     /// Action for the RBAC policy which is `access_as_external` or
     /// `access_as_shared`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) action: Option<Cow<'a, str>>,
@@ -46,7 +45,6 @@ pub struct RbacPolicy<'a> {
     /// group ID, an `object_type` of `address-scope` returns a address scope
     /// ID, an `object_type` of `subnetpool` returns a subnetpool ID and an
     /// `object_type` of `address-group` returns an address group ID.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) object_id: Option<Cow<'a, str>>,
@@ -54,7 +52,6 @@ pub struct RbacPolicy<'a> {
     /// The type of the object that the RBAC policy affects. Types include
     /// `qos-policy`, `network`, `security-group`, `address-scope`,
     /// `subnetpool` or `address-group`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) object_type: Option<Cow<'a, str>>,
@@ -65,7 +62,6 @@ pub struct RbacPolicy<'a> {
     /// example, the name of the project is provided here, it will be accepted
     /// by the Neutron API, but the RBAC rule created will not work as
     /// expected.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) target_tenant: Option<Cow<'a, str>>,

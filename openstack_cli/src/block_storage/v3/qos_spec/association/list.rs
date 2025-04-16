@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/qos-specs/{id}/associations` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::association::list;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::qos_spec::association::response::list::AssociationResponse;
 
 /// List all associations of given qos specs.
-///
 #[derive(Args)]
 pub struct AssociationsCommand {
     /// Request Query parameters
@@ -56,34 +52,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/qos-specs/{id}/associations API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Associations response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The QoS association type.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    association_type: String,
-
-    /// The Qos association ID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The QoS association name.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
 }
 
 impl AssociationsCommand {
@@ -110,8 +84,7 @@ impl AssociationsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AssociationResponse>(data)?;
         Ok(())
     }
 }

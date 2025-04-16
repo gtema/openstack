@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/backups/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::backup::response::get::BackupResponse;
 
 /// Return data about the given backup.
-///
 #[derive(Args)]
 pub struct BackupCommand {
     /// Request Query parameters
@@ -58,135 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/backups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Backup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The container name or null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    container: Option<String>,
-
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is ISO 8601
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The time when the data on the volume was first saved. If it is a backup
-    /// from volume, it will be the same as created_at for a backup. If it is a
-    /// backup from a snapshot, it will be the same as created_at for the
-    /// snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    data_timestamp: Option<String>,
-
-    /// The backup description or null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// If the backup failed, the reason for the failure. Otherwise, null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fail_reason: Option<String>,
-
-    /// If this value is true, there are other backups depending on this
-    /// backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    has_dependent_backups: Option<bool>,
-
-    /// The UUID of the backup.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Indicates whether the backup mode is incremental. If this value is
-    /// true, the backup mode is incremental. If this value is false, the
-    /// backup mode is full.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_incremental: Option<bool>,
-
-    /// Links for the backup.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The backup metadata key value pairs.
-    ///
-    /// **New in version 3.43**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The backup name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The number of objects in the backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    object_count: Option<i32>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable()]
-    size: i64,
-
-    /// The UUID of the source volume snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    snapshot_id: Option<String>,
-
-    /// The backup status. Refer to Backup statuses table for the possible
-    /// status value.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is ISO 8601
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable()]
-    volume_id: String,
 }
 
 impl BackupCommand {
@@ -209,7 +81,7 @@ impl BackupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<BackupResponse>(find_data)?;
         Ok(())
     }
 }

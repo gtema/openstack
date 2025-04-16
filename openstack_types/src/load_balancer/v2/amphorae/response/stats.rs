@@ -25,13 +25,11 @@ pub struct AmphoraeResponse {
     /// A list of amphora statistics objects, one per listener.
     ///
     /// **New in version 2.3**
-    ///
     #[structable(serialize)]
     pub amphora_stats: Vec<AmphoraStats>,
 }
 
 /// Defines which attributes are to show on stats response.
-///
 /// `AmphoraStats` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AmphoraStats {

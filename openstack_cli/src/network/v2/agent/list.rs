@@ -20,23 +20,18 @@
 //! Wraps invoking of the `v2.0/agents` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::agent::response::list::AgentResponse;
 
 /// Lists all agents.
 ///
@@ -56,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List all agents")]
 pub struct AgentsCommand {
@@ -77,42 +71,34 @@ pub struct AgentsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// admin_state_up query parameter for /v2.0/agents API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// agent_type query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     agent_type: Option<String>,
 
     /// alive query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     alive: Option<String>,
 
     /// availability_zone query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     availability_zone: Option<String>,
 
     /// binary query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     binary: Option<String>,
 
     /// description query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// host query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     host: Option<String>,
 
     /// id query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -120,36 +106,30 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// topic query parameter for /v2.0/agents API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     topic: Option<String>,
 }
@@ -157,105 +137,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Agents response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<BoolString>,
-
-    /// The type of agent such as `Open vSwitch agent` or `DHCP agent`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    agent_type: Option<String>,
-
-    /// Indicates the agent is alive and running.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    alive: Option<bool>,
-
-    /// The availability zone of the agent.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone: Option<String>,
-
-    /// The executable command used to start the agent such as
-    /// `neutron-openvswitch-agent` or `neutron-dhcp-agent`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    binary: Option<String>,
-
-    /// An object containing configuration specific key/value pairs; the
-    /// semantics of which are determined by the binary name and type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    configurations: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// Time at which the last heartbeat was received.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    heartbeat_timestamp: Option<String>,
-
-    /// The hostname of the system the agent is running on.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    host: Option<String>,
-
-    /// The ID of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The value `null` means no resource view synchronization to Placement
-    /// was attempted. `true` / `false` values signify the success of the last
-    /// synchronization attempt. Therefore the relevant resources in Placement
-    /// can only be considered up to date if this attribute is `true`. This
-    /// attribute is read-only, it is only supposed to be updated internally,
-    /// but it is readable for debugging purposes. Not all agent types track
-    /// resources via Placement, therefore the value `null` does not
-    /// necessarily means there is an error in the system.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resources_synced: Option<String>,
-
-    /// Time at which the agent was started.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    started_at: Option<String>,
-
-    /// The name of AMQP topic the agent is listening on such as `dhcp_agent`.
-    /// A special value of `N/A` is used when the agent doesn’t use an AMQP
-    /// topic.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    topic: Option<String>,
-}
 
 impl AgentsCommand {
     /// Perform command action
@@ -324,8 +205,7 @@ impl AgentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AgentResponse>(data)?;
         Ok(())
     }
 }

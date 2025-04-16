@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/vpn/ipsecpolicies` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ipsecpolicy::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::ipsecpolicy::response::list::IpsecpolicyResponse;
 
 /// Lists all IPsec policies.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403
-///
 #[derive(Args)]
 #[command(about = "List IPsec policies")]
 pub struct IpsecpoliciesCommand {
@@ -78,31 +74,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -110,81 +101,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Ipsecpolicies response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
-    /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    auth_algorithm: Option<String>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The encapsulation mode. A valid value is `tunnel` or `transport`.
-    /// Default is `tunnel`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    encapsulation_mode: Option<String>,
-
-    /// The encryption algorithm. A valid value is `3des`, `aes-128`,
-    /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
-    /// Additional values for AES CCM and GCM modes are defined (e.g.
-    /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
-    /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
-    /// `aes-128`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    encryption_algorithm: Option<String>,
-
-    /// The ID of the IPsec policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The lifetime of the security association. The lifetime consists of a
-    /// unit and integer value. You can omit either the unit or value portion
-    /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    lifetime: Option<String>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
-    /// `Group14` to `Group31`. Default is `Group5`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    pfs: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The transform protocol. A valid value is `ESP`, `AH`, or `AH- ESP`.
-    /// Default is `ESP`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    transform_protocol: Option<String>,
-}
 
 impl IpsecpoliciesCommand {
     /// Perform command action
@@ -226,8 +142,7 @@ impl IpsecpoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<IpsecpolicyResponse>(data)?;
         Ok(())
     }
 }

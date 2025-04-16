@@ -25,12 +25,10 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to change an administrative password of the server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ChangePassword<'a> {
     /// The administrative password for the server.
-    ///
     #[serde(rename = "adminPass")]
     #[builder(setter(into))]
     pub(crate) admin_pass: Cow<'a, str>,
@@ -40,12 +38,10 @@ pub struct ChangePassword<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to change an administrative password of the server.
-    ///
     #[builder(setter(into))]
     pub(crate) change_password: ChangePassword<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/network-ip-availabilities` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_ip_availability::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::network_ip_availability::response::list::NetworkIpAvailabilityResponse;
 
 /// Lists network IP availability of all networks.
 ///
@@ -57,7 +54,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List Network IP Availability")]
 pub struct NetworkIpAvailabilitiesCommand {
@@ -78,7 +74,6 @@ pub struct NetworkIpAvailabilitiesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// ip_version query parameter for /v2.0/network-ip-availabilities API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     ip_version: Option<String>,
 
@@ -86,46 +81,38 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// network_id query parameter for /v2.0/network-ip-availabilities API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// network_name query parameter for /v2.0/network-ip-availabilities API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_name: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/network-ip-availabilities API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -133,46 +120,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// NetworkIpAvailabilities response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the network whose IP availability detail is reported.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// Human-readable name of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_name: Option<String>,
-
-    /// A list of dictionaries showing subnet IP availability. It contains
-    /// information for every subnet associated to the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet_ip_availability: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The total number of IP addresses in a network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    total_ips: Option<String>,
-
-    /// The number of used IP addresses of all subnets in a network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    used_ips: Option<String>,
-}
 
 impl NetworkIpAvailabilitiesCommand {
     /// Perform command action
@@ -226,8 +173,7 @@ impl NetworkIpAvailabilitiesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<NetworkIpAvailabilityResponse>(data)?;
         Ok(())
     }
 }

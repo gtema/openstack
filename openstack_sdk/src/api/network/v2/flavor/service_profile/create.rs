@@ -35,12 +35,10 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `service_profile` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ServiceProfile<'a> {
     /// The UUID of the service profile.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -50,13 +48,11 @@ pub struct ServiceProfile<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `service_profile` object.
-    ///
     #[builder(setter(into))]
     pub(crate) service_profile: ServiceProfile<'a>,
 
     /// flavor_id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     flavor_id: Cow<'a, str>,
 

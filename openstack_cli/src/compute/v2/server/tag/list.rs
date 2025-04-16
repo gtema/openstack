@@ -20,26 +20,23 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/tags` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::tag::list;
+use openstack_types::compute::v2::server::tag::response::list::TagResponse;
 
 /// Lists all tags for a server.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List Tags")]
 pub struct TagsCommand {
@@ -60,36 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// Tags response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl TagsCommand {
@@ -116,8 +89,7 @@ impl TagsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TagResponse>(data)?;
         Ok(())
     }
 }

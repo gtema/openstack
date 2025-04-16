@@ -40,67 +40,59 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Individual quota definitions.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Quota {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) health_monitor: Option<i32>,
 
     /// The configured health monitor quota limit. A setting of `null` means it
     /// is using the deployment default quota. A setting of `-1` means
     /// unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<i32>,
 
     /// The configured l7policy quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) l7policy: Option<i32>,
 
     /// The configured l7rule quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) l7rule: Option<i32>,
 
     /// The configured listener quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) listener: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) load_balancer: Option<i32>,
 
     /// The configured load balancer quota limit. A setting of `null` means it
     /// is using the deployment default quota. A setting of `-1` means
     /// unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) loadbalancer: Option<i32>,
 
     /// The configured member quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) member: Option<i32>,
 
     /// The configured pool quota limit. A setting of `null` means it is using
     /// the deployment default quota. A setting of `-1` means unlimited.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) pool: Option<i32>,
 }
 
@@ -108,12 +100,10 @@ pub struct Quota {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Individual quota definitions.
-    ///
     #[builder(setter(into))]
     pub(crate) quota: Quota,
 
     /// project_id parameter for /v2/lbaas/quotas/{project_id} API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 

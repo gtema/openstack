@@ -23,40 +23,41 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A valid DNS domain.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dns_domain: Option<String>,
 
     /// A valid DNS name.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dns_name: Option<String>,
 
     /// The fixed IP address that is associated with the floating IP address.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub fixed_ip_address: Option<String>,
 
     /// The floating IP address.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub floating_ip_address: Option<String>,
 
     /// The ID of the network associated with the floating IP.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub floating_network_id: Option<String>,
 
     /// The ID of the floating IP address.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -66,7 +67,7 @@ pub struct FloatingipResponse {
     /// `network_id`, `mac_address`, `admin_state_up`, `status`, `device_id`
     /// and `device_owner`. If the floating IP is not associated with a port,
     /// this field is `null`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub port_details: Option<Vec<PortDetails>>,
 
@@ -78,47 +79,47 @@ pub struct FloatingipResponse {
     /// internal neutron port (`internal_port`) or (`internal_port_range`) and
     /// the TCP or UDP port or port range used by floating IP (`external_port`)
     /// or (`external_port_range`).
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub port_forwardings: Option<Vec<PortForwardings>>,
 
     /// The ID of a port associated with the floating IP.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub port_id: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// The ID of the router for the floating IP.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub router_id: Option<String>,
 
     /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of tags on the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

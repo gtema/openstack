@@ -27,7 +27,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavorprofile<'a> {
@@ -48,7 +47,6 @@ pub struct Flavorprofile<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) flavorprofile: Flavorprofile<'a>,
 

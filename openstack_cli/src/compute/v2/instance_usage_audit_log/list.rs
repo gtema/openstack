@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/os-instance_usage_audit_log` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::instance_usage_audit_log::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::instance_usage_audit_log::response::list::InstanceUsageAuditLogResponse;
 
 /// Lists usage audits for all servers on all compute hosts where usage
 /// auditing is configured.
@@ -42,7 +38,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "List Server Usage Audits")]
 pub struct InstanceUsageAuditLogsCommand {
@@ -62,117 +57,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// InstanceUsageAuditLogs response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of errors.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    errors: Option<i32>,
-
-    /// A list of the hosts whose instance audit tasks have not run.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    hosts_not_run: Option<Value>,
-
-    /// The number of instances.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    instances: Option<i32>,
-
-    /// The object of instance usage audit logs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    log: Option<Value>,
-
-    /// The log message of the instance usage audit task.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    message: Option<String>,
-
-    /// The number of the hosts.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_hosts: Option<i32>,
-
-    /// The number of the hosts whose instance audit tasks have been done.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_hosts_done: Option<i32>,
-
-    /// The number of the hosts whose instance audit tasks have not run.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_hosts_not_run: Option<i32>,
-
-    /// The number of the hosts whose instance audit tasks are running.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_hosts_running: Option<i32>,
-
-    /// The overall status of instance audit tasks.
-    ///
-    /// ```text
-    /// M of N hosts done. K errors.
-    ///
-    /// ```
-    ///
-    /// The `M` value is the number of hosts whose instance audit tasks have
-    /// been done in the period. The `N` value is the number of all hosts. The
-    /// `K` value is the number of hosts whose instance audit tasks cause
-    /// errors. If instance audit tasks have been done at all hosts in the
-    /// period, the overall status is as follows:
-    ///
-    /// ```text
-    /// ALL hosts done. K errors.
-    ///
-    /// ```
-    ///
-    #[serde()]
-    #[structable(optional)]
-    overall_status: Option<String>,
-
-    /// The beginning time of the instance usage audit period. For example,
-    /// `2016-05-01 00:00:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    period_beginning: Option<String>,
-
-    /// The ending time of the instance usage audit period. For example,
-    /// `2016-06-01 00:00:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    period_ending: Option<String>,
-
-    /// The state of the instance usage audit task. `DONE` or `RUNNING`.
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    state: Option<String>,
-
-    /// The total number of instance audit task errors.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    total_errors: Option<i32>,
-
-    /// The total number of VM instances in the period.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    total_instances: Option<i32>,
-}
 
 impl InstanceUsageAuditLogsCommand {
     /// Perform command action
@@ -197,8 +81,7 @@ impl InstanceUsageAuditLogsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<InstanceUsageAuditLogResponse>(data)?;
         Ok(())
     }
 }

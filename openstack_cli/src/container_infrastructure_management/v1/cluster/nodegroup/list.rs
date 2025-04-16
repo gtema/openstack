@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v1/clusters/nodegroups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response::list::NodegroupResponse;
 
 /// Retrieve a list of nodegroups.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 /// column to sort results by. Default: id. | | param sort_dir: | direction to
 /// sort. "asc" or "desc". Default: asc. | | param role: | list all nodegroups
 /// with the specified role. |
-///
 #[derive(Args)]
 pub struct NodegroupsCommand {
     /// Request Query parameters
@@ -63,109 +58,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Nodegroups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    cluster_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    docker_volume_size: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    flavor_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    image_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    is_default: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    labels: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    labels_added: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    labels_overridden: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    labels_skipped: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    max_node_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    merge_labels: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    min_node_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    node_addresses: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    node_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    role: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    stack_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    status_reason: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    version: Option<String>,
-}
 
 impl NodegroupsCommand {
     /// Perform command action
@@ -190,8 +82,7 @@ impl NodegroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<NodegroupResponse>(data)?;
         Ok(())
     }
 }

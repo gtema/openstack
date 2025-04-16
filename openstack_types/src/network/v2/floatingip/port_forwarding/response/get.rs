@@ -24,53 +24,53 @@ use structable::{StructTable, StructTableOptions};
 pub struct PortForwardingResponse {
     /// A text describing the rule, which helps users to manage/find easily
     /// theirs rules.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub external_port: Option<f32>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP address.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub external_port_range: Option<f32>,
 
     /// The ID of the floating IP port forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub internal_ip_address: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub internal_port: Option<f32>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub internal_port_id: Option<String>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub internal_port_range: Option<f32>,
 
     /// The IP protocol used in the floating IP port forwarding.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub protocol: Option<Protocol>,
 }
@@ -100,4 +100,19 @@ pub enum Protocol {
     // Udp
     #[serde(rename = "udp")]
     Udp,
+}
+
+impl std::str::FromStr for Protocol {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "dccp" => Ok(Self::Dccp),
+            "icmp" => Ok(Self::Icmp),
+            "ipv6-icmp" => Ok(Self::Ipv6Icmp),
+            "sctp" => Ok(Self::Sctp),
+            "tcp" => Ok(Self::Tcp),
+            "udp" => Ok(Self::Udp),
+            _ => Err(()),
+        }
+    }
 }

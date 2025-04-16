@@ -43,7 +43,6 @@ pub enum Type {
 }
 
 /// The action to reboot a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Reboot {
@@ -51,7 +50,6 @@ pub struct Reboot {
     /// A `SOFT` reboot attempts a graceful shutdown and restart of the server.
     /// A `HARD` reboot attempts a forced shutdown and restart of the server.
     /// The `HARD` reboot corresponds to the power cycles of the server.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -61,12 +59,10 @@ pub struct Reboot {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to reboot a server.
-    ///
     #[builder(setter(into))]
     pub(crate) reboot: Reboot,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

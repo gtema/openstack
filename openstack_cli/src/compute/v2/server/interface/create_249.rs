@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-interface` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::interface::create_249;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::interface::response::create::InterfaceResponse;
 
 /// Creates a port interface and uses it to attach a port to a server.
 ///
@@ -42,7 +38,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), computeFault(500), NotImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Create Interface (microversion = 2.49)")]
 pub struct InterfaceCommand {
@@ -55,7 +50,6 @@ pub struct InterfaceCommand {
     path: PathParameters,
 
     /// Specify the `interfaceAttachment` action in the request body.
-    ///
     #[command(flatten)]
     interface_attachment: InterfaceAttachment,
 }
@@ -68,7 +62,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
@@ -83,7 +76,6 @@ struct InterfaceAttachment {
     /// a `net_id`, the request returns a `Bad Request (400)` response code.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     fixed_ips: Option<Vec<String>>,
 
@@ -92,7 +84,6 @@ struct InterfaceAttachment {
     /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
     /// uses the network information cache that is associated with the
     /// instance.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     net_id: Option<String>,
 
@@ -100,7 +91,6 @@ struct InterfaceAttachment {
     /// `net_id` and `port_id` parameters are mutually exclusive. If you do not
     /// specify the `port_id` parameter, the OpenStack Networking API v2.0
     /// allocates a port and creates an interface for it on the network.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
@@ -110,50 +100,7 @@ struct InterfaceAttachment {
     /// devices from the metadata API and on the config drive, if enabled.
     ///
     /// **New in version 2.49**
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    tag: Option<String>,
-}
-
-/// Interface response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Fixed IP addresses with subnet IDs.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    fixed_ips: Value,
-
-    /// The MAC address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    mac_addr: Option<String>,
-
-    /// The network ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    net_id: Option<String>,
-
-    /// The port ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_id: Option<String>,
-
-    /// The port state.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_state: Option<String>,
-
-    /// The device tag applied to the virtual network interface or `null`.
-    ///
-    /// **New in version 2.70**
-    ///
-    #[serde()]
-    #[structable(optional)]
     tag: Option<String>,
 }
 
@@ -206,7 +153,7 @@ impl InterfaceCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<InterfaceResponse>(data)?;
         Ok(())
     }
 }

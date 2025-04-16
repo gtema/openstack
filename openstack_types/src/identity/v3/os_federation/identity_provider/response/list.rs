@@ -24,32 +24,32 @@ use structable::{StructTable, StructTableOptions};
 pub struct IdentityProviderResponse {
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// Whether the Identity Provider is enabled or not
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The Identity Provider unique ID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub remote_ids: Option<Vec<String>>,
 }

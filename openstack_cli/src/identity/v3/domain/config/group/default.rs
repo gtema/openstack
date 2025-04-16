@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v3/domains/config/{group}/default` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::domain::config::group::default;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::identity::v3::domain::config::group::response::default::GroupResponse;
 
 /// Reads the default configuration settings for a specific group.
 ///
@@ -42,7 +38,6 @@ use std::collections::HashMap;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
-///
 #[derive(Args)]
 #[command(about = "Show default configuration for a group")]
 pub struct GroupCommand {
@@ -63,30 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// group parameter for /v3/domains/config/{group}/{option}/default API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group",
         value_name = "GROUP"
     )]
     group: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl GroupCommand {
@@ -113,7 +90,7 @@ impl GroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<GroupResponse>(data)?;
         Ok(())
     }
 }

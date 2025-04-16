@@ -20,29 +20,22 @@
 //! Wraps invoking of the `v2.0/local_ips/{local_ip_id}/port_associations/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::port_association::delete;
-use structable_derive::StructTable;
 
 /// Deletes a Local IP association.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Delete Local IP Association")]
 pub struct PortAssociationCommand {
@@ -64,7 +57,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_local_ip_id",
@@ -74,7 +66,6 @@ struct PathParameters {
 
     /// id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,9 +73,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// PortAssociation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl PortAssociationCommand {
     /// Perform command action
@@ -109,8 +97,7 @@ impl PortAssociationCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

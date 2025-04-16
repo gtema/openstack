@@ -82,7 +82,7 @@ pub struct Items<'a> {
 #[builder(setter(strip_option))]
 pub struct Properties<'a> {
     #[serde(rename = "additionalItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) additional_items: Option<bool>,
 
     #[serde(rename = "default", skip_serializing_if = "Option::is_none")]
@@ -102,27 +102,27 @@ pub struct Properties<'a> {
     pub(crate) items: Option<Items<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) maximum: Option<f32>,
 
     #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_items: Option<i32>,
 
     #[serde(rename = "maxLength", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_length: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) minimum: Option<f32>,
 
     #[serde(rename = "minItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_items: Option<i32>,
 
     #[serde(rename = "minLength", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_length: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -138,7 +138,7 @@ pub struct Properties<'a> {
     pub(crate) pattern: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) readonly: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -154,7 +154,7 @@ pub struct Properties<'a> {
     pub(crate) _type: Type,
 
     #[serde(rename = "uniqueItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) unique_items: Option<bool>,
 }
 
@@ -170,7 +170,7 @@ pub struct Objects<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_properties"))]
+    #[builder(default, private, setter(into, name = "_properties"))]
     pub(crate) properties: Option<BTreeMap<Cow<'a, str>, Properties<'a>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -205,17 +205,14 @@ pub struct Tags<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Provides a user friendly description of the namespace.
-    ///
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The user friendly name for the namespace. Used by UI if available.
-    ///
     #[builder(default, setter(into))]
     pub(crate) display_name: Option<Cow<'a, str>>,
 
     /// The unique namespace text.
-    ///
     #[builder(setter(into))]
     pub(crate) namespace: Cow<'a, str>,
 
@@ -223,16 +220,14 @@ pub struct Request<'a> {
     pub(crate) objects: Option<Vec<Objects<'a>>>,
 
     /// Owner of the namespace.
-    ///
     #[builder(default, setter(into))]
     pub(crate) owner: Option<Cow<'a, str>>,
 
-    #[builder(default, private, setter(name = "_properties"))]
+    #[builder(default, private, setter(into, name = "_properties"))]
     pub(crate) properties: Option<BTreeMap<Cow<'a, str>, Properties<'a>>>,
 
     /// If true, namespace will not be deletable.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) protected: Option<bool>,
 
     #[builder(default, setter(into))]
@@ -242,7 +237,6 @@ pub struct Request<'a> {
     pub(crate) tags: Option<Vec<Tags<'a>>>,
 
     /// Scope of namespace accessibility.
-    ///
     #[builder(default)]
     pub(crate) visibility: Option<Visibility>,
 

@@ -16,10 +16,9 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `flavors/detail` operation
 
-use crate::common::deser_num_str;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Flavor response representation
@@ -28,7 +27,6 @@ pub struct FlavorResponse {
     /// The description of the flavor.
     ///
     /// **New in version 2.55**
-    ///
     #[structable(optional, wide)]
     pub description: Option<String>,
 
@@ -39,7 +37,6 @@ pub struct FlavorResponse {
     /// for volume booted instances or for testing purposes. Volume-backed
     /// instances can be enforced for flavors with zero root disk via the
     /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
-    ///
     #[structable(wide)]
     pub disk: i32,
 
@@ -48,18 +45,16 @@ pub struct FlavorResponse {
     /// extra_specs.
     ///
     /// **New in version 2.61**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub extra_specs: Option<HashMap<String, String>>,
+    pub extra_specs: Option<BTreeMap<String, String>>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
-    ///
     #[structable()]
     pub id: String,
 
     /// The display name of a flavor.
-    ///
     #[structable()]
     pub name: String,
 
@@ -70,7 +65,6 @@ pub struct FlavorResponse {
     /// Whether or not the flavor has been administratively disabled. This is
     /// an artifact of the legacy v2 API and will always be set to `false`.
     /// There is currently no way to disable a flavor and set this to `true`.
-    ///
     #[serde(rename = "OS-FLV-DISABLED:disabled")]
     #[structable(title = "OS-FLV-DISABLED:disabled", wide)]
     pub os_flv_disabled_disabled: bool,
@@ -79,13 +73,11 @@ pub struct FlavorResponse {
     /// disks may be written over on server state changes. So should only be
     /// used as a scratch space for applications that are aware of its
     /// limitations. Defaults to 0.
-    ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(title = "OS-FLV-EXT-DATA:ephemeral", wide)]
     pub os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
-    ///
     #[structable(wide)]
     pub ram: i32,
 
@@ -96,13 +88,11 @@ pub struct FlavorResponse {
     /// (the default), no dedicated swap disk will be created. Currently, the
     /// empty string (‘’) is used to represent 0. As of microversion 2.75
     /// default return value of swap is 0 instead of empty string.
-    ///
-    #[serde(deserialize_with = "deser_num_str")]
+    #[serde(deserialize_with = "crate::common::deser_num_str")]
     #[structable(wide)]
     pub swap: i64,
 
     /// The number of virtual CPUs that will be allocated to the server.
-    ///
     #[structable(wide)]
     pub vcpus: i32,
 }

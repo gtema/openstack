@@ -28,7 +28,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// project_id parameter for /v2/quotas/{project_id} API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 

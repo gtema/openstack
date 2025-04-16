@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/service-providers/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::service_provider::set;
+use openstack_types::network::v2::service_provider::response::set::ServiceProviderResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
@@ -62,28 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/service-providers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// ServiceProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde(rename = "default")]
-    #[structable(optional, title = "default")]
-    _default: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    service_type: Option<String>,
 }
 
 impl ServiceProviderCommand {
@@ -113,7 +92,7 @@ impl ServiceProviderCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceProviderResponse>(data)?;
         Ok(())
     }
 }

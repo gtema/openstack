@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/quotas/{project_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,7 +34,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::quota::get;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::quota::response::get::QuotaResponse;
 use tracing::warn;
 
 /// Show the quota for the project.
@@ -51,7 +48,6 @@ use tracing::warn;
 /// own to show quota for other projects.
 ///
 /// A quota of `-1` means the quota is unlimited.
-///
 #[derive(Args)]
 #[command(about = "Show Project Quota")]
 pub struct QuotaCommand {
@@ -89,68 +85,6 @@ struct ProjectInput {
     /// Current project.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
-}
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    health_monitor: Option<i32>,
-
-    /// The configured health monitor quota limit. A setting of `null` means it
-    /// is using the deployment default quota. A setting of `-1` means
-    /// unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    healthmonitor: Option<i32>,
-
-    /// The configured l7policy quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    l7policy: Option<i32>,
-
-    /// The configured l7rule quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    l7rule: Option<i32>,
-
-    /// The configured listener quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    listener: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    load_balancer: Option<i32>,
-
-    /// The configured load balancer quota limit. A setting of `null` means it
-    /// is using the deployment default quota. A setting of `-1` means
-    /// unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    loadbalancer: Option<i32>,
-
-    /// The configured member quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    member: Option<i32>,
-
-    /// The configured pool quota limit. A setting of `null` means it is using
-    /// the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    pool: Option<i32>,
 }
 
 impl QuotaCommand {
@@ -226,7 +160,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

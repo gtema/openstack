@@ -20,22 +20,16 @@
 //! Wraps invoking of the `traits/{name}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::r#trait::set;
-use structable_derive::StructTable;
 
 /// Insert a new custom trait. If traits already exists 204 will be returned.
 ///
@@ -50,7 +44,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 201, 204
 ///
 /// Error response codes: badRequest(400)
-///
 #[derive(Args)]
 #[command(about = "Update traits")]
 pub struct TraitCommand {
@@ -71,7 +64,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// name parameter for /traits/{name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_name",
@@ -79,9 +71,6 @@ struct PathParameters {
     )]
     name: String,
 }
-/// Trait response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl TraitCommand {
     /// Perform command action
@@ -105,11 +94,7 @@ impl TraitCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

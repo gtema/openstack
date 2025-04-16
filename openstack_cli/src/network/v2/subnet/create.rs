@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/subnets` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnet::create;
-use openstack_sdk::types::BoolString;
+use openstack_types::network::v2::subnet::response::create::SubnetResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates a subnet on a network.
 ///
@@ -76,7 +71,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Create subnet")]
 pub struct SubnetCommand {
@@ -89,7 +83,6 @@ pub struct SubnetCommand {
     path: PathParameters,
 
     /// A `subnet` object.
-    ///
     #[command(flatten)]
     subnet: Subnet,
 }
@@ -125,18 +118,15 @@ struct Subnet {
     /// CIDR, excluding the address reserved for the subnet gateway by default.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     allocation_pools: Option<Vec<Value>>,
 
     /// The CIDR of the subnet.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     cidr: Option<String>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -144,19 +134,16 @@ struct Subnet {
     /// empty list.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     dns_nameservers: Option<Vec<String>>,
 
     /// Whether to publish DNS records for IPs from this subnet. Default is
     /// `false`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     dns_publish_fixed_ip: Option<bool>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet. Default
     /// is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enable_dhcp: Option<bool>,
 
@@ -164,7 +151,6 @@ struct Subnet {
     /// gateway is associated with the subnet. If the gateway_ip is not
     /// specified, OpenStack Networking allocates an address from the CIDR for
     /// the gateway for the subnet by default.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
 
@@ -172,220 +158,62 @@ struct Subnet {
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     host_routes: Option<Vec<Value>>,
 
     /// The IP protocol version. Value is `4` or `6`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ip_version: i32,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ipv6_ra_mode: Option<Ipv6RaMode>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of the network to which the subnet belongs.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     network_id: String,
 
     /// The prefix length to use for subnet allocation from a subnet pool. If
     /// not specified, the `default_prefixlen` value of the subnet pool will be
     /// used.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     prefixlen: Option<i32>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     segment_id: Option<String>,
 
     /// The service types associated with the subnet.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_types: Option<Vec<String>>,
 
     /// The ID of the subnet pool associated with the subnet.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     subnetpool_id: Option<String>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 
     /// Whether to allocate this subnet from the default subnet pool.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     use_default_subnetpool: Option<bool>,
-}
-
-/// Subnet response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Allocation pools with `start` and `end` IP addresses for this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    allocation_pools: Option<Value>,
-
-    /// The CIDR of the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cidr: Option<String>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// List of dns name servers associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    dns_nameservers: Option<Value>,
-
-    /// Whether to publish DNS records for IPs from this subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_publish_fixed_ip: Option<BoolString>,
-
-    /// Indicates whether dhcp is enabled or disabled for the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enable_dhcp: Option<BoolString>,
-
-    /// Gateway IP of this subnet. If the value is `null` that implies no
-    /// gateway is associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    gateway_ip: Option<String>,
-
-    /// Additional routes for the subnet. A list of dictionaries with
-    /// `destination` and `nexthop` parameters.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    host_routes: Option<Value>,
-
-    /// The ID of the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IP protocol version. Value is `4` or `6`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ip_version: Option<i32>,
-
-    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipv6_address_mode: Option<String>,
-
-    /// The IPv6 router advertisement specifies whether the networking service
-    /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
-    /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipv6_ra_mode: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the network to which the subnet belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    #[serde(rename = "router:external")]
-    #[structable(optional, title = "router:external")]
-    router_external: Option<BoolString>,
-
-    /// The ID of a network segment the subnet is associated with. It is
-    /// available when `segment` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    segment_id: Option<String>,
-
-    /// The service types associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    service_types: Option<Value>,
-
-    /// The ID of the subnet pool associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnetpool_id: Option<String>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl SubnetCommand {
@@ -505,7 +333,7 @@ impl SubnetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<SubnetResponse>(data)?;
         Ok(())
     }
 }

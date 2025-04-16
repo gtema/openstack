@@ -17,107 +17,106 @@
 //! Response type for the GET `zones` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Zone response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ZoneResponse {
     /// current action in progress on the resource
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub action: Option<Action>,
 
     /// Key:Value pairs of information about this zone, and the pool the user
     /// would like to place the zone in. This information can be used by the
     /// scheduler to place zones on the correct pool.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub attributes: Option<HashMap<String, String>>,
+    pub attributes: Option<BTreeMap<String, String>>,
 
     /// Date / Time when resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Description for this zone
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// e-mail for the zone. Used in SOA records for the zone
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub email: Option<String>,
 
     /// ID for the resource
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub masters: Option<Vec<String>>,
 
     /// DNS Name for the zone
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// ID for the pool hosting this zone
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub pool_id: Option<String>,
 
     /// ID for the project that owns the resource
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// current serial number for the zone
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub serial: Option<i32>,
 
     /// True if the zone is shared with another project.
     ///
     /// **New in version 2.1**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub shared: Option<bool>,
 
     /// The status of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// For secondary zones. The last time an update was retrieved from the
     /// master servers
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub transferred_at: Option<String>,
 
     /// TTL (Time to Live) for the zone.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ttl: Option<i32>,
 
     /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
     /// slaved from another DNS Server. Defaults to PRIMARY
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Version of the resource
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub version: Option<i32>,
 }
@@ -149,6 +148,21 @@ pub enum Status {
     Zone,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ACTIVE" => Ok(Self::Active),
+            "DELETED" => Ok(Self::Deleted),
+            "ERROR" => Ok(Self::Error),
+            "PENDING" => Ok(Self::Pending),
+            "SUCCESS" => Ok(Self::Success),
+            "ZONE" => Ok(Self::Zone),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Action {
     // Create
@@ -168,6 +182,19 @@ pub enum Action {
     Update,
 }
 
+impl std::str::FromStr for Action {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CREATE" => Ok(Self::Create),
+            "DELETE" => Ok(Self::Delete),
+            "NONE" => Ok(Self::None),
+            "UPDATE" => Ok(Self::Update),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     // Catalog
@@ -183,10 +210,21 @@ pub enum Type {
     Secondary,
 }
 
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CATALOG" => Ok(Self::Catalog),
+            "PRIMARY" => Ok(Self::Primary),
+            "SECONDARY" => Ok(Self::Secondary),
+            _ => Err(()),
+        }
+    }
+}
+
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

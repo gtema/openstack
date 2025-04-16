@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v2.0/flavors/{flavor_id}/next_providers/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::next_provider::delete;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct NextProviderCommand {
     /// Request Query parameters
@@ -59,7 +52,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_flavor_id",
@@ -68,7 +60,6 @@ struct PathParameters {
     flavor_id: String,
 
     /// id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -76,9 +67,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// NextProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl NextProviderCommand {
     /// Perform command action
@@ -103,8 +91,7 @@ impl NextProviderCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -23,13 +23,15 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProtocolResponse {
     /// The federation protocol ID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub mapping_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub remote_id_attribute: Option<String>,
 }

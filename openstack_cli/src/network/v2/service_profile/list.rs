@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/service_profiles` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::service_profile::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::service_profile::response::list::ServiceProfileResponse;
 
 /// Lists all service profiles visible for the tenant account.
 ///
@@ -57,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List service profiles")]
 pub struct ServiceProfilesCommand {
@@ -78,22 +73,18 @@ pub struct ServiceProfilesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/service_profiles API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// driver query parameter for /v2.0/service_profiles API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     driver: Option<String>,
 
     /// enabled query parameter for /v2.0/service_profiles API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// id query parameter for /v2.0/service_profiles API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -101,31 +92,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -133,40 +119,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ServiceProfiles response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The human-readable description for the service profile.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// Provider driver to use for this profile.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    driver: Option<String>,
-
-    /// Indicates whether this service profile is enabled or not. Default is
-    /// `true`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<BoolString>,
-
-    /// The UUID of the service profile.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// JSON-formatted meta information of the service profile.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    metainfo: Option<String>,
-}
 
 impl ServiceProfilesCommand {
     /// Perform command action
@@ -220,8 +172,7 @@ impl ServiceProfilesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ServiceProfileResponse>(data)?;
         Ok(())
     }
 }

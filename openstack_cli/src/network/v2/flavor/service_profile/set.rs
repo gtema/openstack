@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/flavors/{flavor_id}/service_profiles/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::service_profile::set;
+use openstack_types::network::v2::flavor::service_profile::response::set::ServiceProfileResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ServiceProfileCommand {
     /// Request Query parameters
@@ -63,7 +58,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_flavor_id",
@@ -72,19 +66,11 @@ struct PathParameters {
     flavor_id: String,
 
     /// id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
-    id: String,
-}
-/// ServiceProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable()]
     id: String,
 }
 
@@ -116,7 +102,7 @@ impl ServiceProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceProfileResponse>(data)?;
         Ok(())
     }
 }

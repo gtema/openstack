@@ -27,7 +27,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines the attributes of a PUT request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavorprofile<'a> {
@@ -48,13 +47,11 @@ pub struct Flavorprofile<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines the attributes of a PUT request.
-    ///
     #[builder(setter(into))]
     pub(crate) flavorprofile: Flavorprofile<'a>,
 
     /// flavorprofile_id parameter for
     /// /v2/lbaas/flavorprofiles/{flavorprofile_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) remove_host: RemoveHost<'a>,
 
     /// id parameter for /v2.1/os-aggregates/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

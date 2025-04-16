@@ -20,25 +20,21 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}/protocols` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::response::list::ProtocolResponse;
 
 /// List protocols for an IDP.
 ///
 /// HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
-///
 #[derive(Args)]
 pub struct ProtocolsCommand {
     /// Request Query parameters
@@ -59,30 +55,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_idp_id",
         value_name = "IDP_ID"
     )]
     idp_id: String,
-}
-/// Protocols response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The federation protocol ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    mapping_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    remote_id_attribute: Option<String>,
 }
 
 impl ProtocolsCommand {
@@ -109,8 +87,7 @@ impl ProtocolsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ProtocolResponse>(data)?;
         Ok(())
     }
 }

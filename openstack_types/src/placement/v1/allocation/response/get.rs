@@ -17,22 +17,21 @@
 //! Response type for the GET `allocations/{consumer_uuid}` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Allocation response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AllocationResponse {
     /// A dictionary of allocations keyed by resource provider uuid.
-    ///
     #[structable(serialize)]
-    pub allocations: HashMap<String, AllocationsItem>,
+    pub allocations: BTreeMap<String, AllocationsItem>,
 
     /// The generation of the consumer. Will be absent when listing allocations
     /// for a consumer uuid that has no allocations.
     ///
     /// **New in version 1.28**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub consumer_generation: Option<i32>,
 
@@ -44,18 +43,19 @@ pub struct AllocationResponse {
     /// choose to type some consumers ‘INSTANCE’ and others ‘MIGRATION’.
     ///
     /// **New in version 1.38**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub consumer_type: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub mappings: Option<HashMap<String, Vec<String>>>,
+    pub mappings: Option<BTreeMap<String, Vec<String>>>,
 
     /// The uuid of a project. Will be absent when listing allocations for a
     /// consumer uuid that has no allocations.
     ///
     /// **New in version 1.12**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
@@ -63,7 +63,7 @@ pub struct AllocationResponse {
     /// consumer uuid that has no allocations.
     ///
     /// **New in version 1.12**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 }
@@ -72,5 +72,5 @@ pub struct AllocationResponse {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
     pub generation: Option<i32>,
-    pub resources: HashMap<String, i32>,
+    pub resources: BTreeMap<String, i32>,
 }

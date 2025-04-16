@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceClassResponse {
     /// The name of one resource class.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

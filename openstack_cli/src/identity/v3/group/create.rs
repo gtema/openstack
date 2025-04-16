@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v3/groups` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::group::create;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::group::response::create::GroupResponse;
 
 /// Creates a group.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/groups`
-///
 #[derive(Args)]
 #[command(about = "Create group")]
 pub struct GroupCommand {
@@ -52,7 +48,6 @@ pub struct GroupCommand {
     path: PathParameters,
 
     /// A `group` object
-    ///
     #[command(flatten)]
     group: Group,
 }
@@ -68,7 +63,6 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Group {
     /// The description of the group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -76,42 +70,12 @@ struct Group {
     /// the request, the Identity service will attempt to pull the domain ID
     /// from the token used in the request. Note that this requires the use of
     /// a domain-scoped token.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// The name of the group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
-}
-
-/// Group response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl GroupCommand {
@@ -151,7 +115,7 @@ impl GroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<GroupResponse>(data)?;
         Ok(())
     }
 }

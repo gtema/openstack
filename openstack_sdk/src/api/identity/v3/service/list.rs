@@ -31,7 +31,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filters the response by a domain ID.
-    ///
     #[builder(default, setter(into))]
     service: Option<Cow<'a, str>>,
 

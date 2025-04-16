@@ -31,7 +31,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filters the response by a parent region, by ID.
-    ///
     #[builder(default, setter(into))]
     parent_region_id: Option<Cow<'a, str>>,
 

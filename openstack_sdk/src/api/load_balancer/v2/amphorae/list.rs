@@ -72,7 +72,6 @@ pub struct Request<'a> {
     lb_network_ip: Option<Cow<'a, str>>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
@@ -80,12 +79,10 @@ pub struct Request<'a> {
     loadbalancer_id: Option<Cow<'a, str>>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 

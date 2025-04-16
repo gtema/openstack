@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/agents/{agent_id}/l3-routers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::l3_router::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::agent::l3_router::response::list::L3RouterResponse;
 
 /// Lists routers that an l3 agent hosts.
 ///
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "List routers hosted by an L3 agent")]
 pub struct L3RoutersCommand {
@@ -79,31 +74,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -112,22 +102,12 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// agent_id parameter for /v2.0/agents/{agent_id}/l3-routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_agent_id",
         value_name = "AGENT_ID"
     )]
     agent_id: String,
-}
-/// L3Routers response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of `router` objects.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    routers: Value,
 }
 
 impl L3RoutersCommand {
@@ -171,8 +151,7 @@ impl L3RoutersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<L3RouterResponse>(data)?;
         Ok(())
     }
 }

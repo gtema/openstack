@@ -26,10 +26,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
-use structable_derive::StructTable;
+use structable::StructTable;
+use structable::StructTableOptions;
 
 /// Catalog commands args
 #[derive(Parser)]

@@ -36,22 +36,22 @@ pub struct OsVolumeTransferResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The UUID of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The UUID of the volume.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
@@ -59,7 +59,6 @@ pub struct OsVolumeTransferResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

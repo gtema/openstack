@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/quotas/{project_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,13 +34,12 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::quota::get;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::quota::response::get::QuotaResponse;
 use tracing::warn;
 
 /// View a projects quotas
 ///
 /// This returns a key:value set of quotas on the system.
-///
 #[derive(Args)]
 #[command(about = "View Quotas")]
 pub struct QuotaCommand {
@@ -81,29 +77,6 @@ struct ProjectInput {
     /// Current project.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
-}
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    api_export_size: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    recordset_records: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    zone_records: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    zone_recorsets: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    zones: Option<i32>,
 }
 
 impl QuotaCommand {
@@ -179,7 +152,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

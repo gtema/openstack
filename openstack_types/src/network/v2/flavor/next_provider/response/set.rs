@@ -22,12 +22,15 @@ use structable::{StructTable, StructTableOptions};
 /// NextProvider response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NextProviderResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub driver: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub metainfo: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub provider: Option<String>,
 }

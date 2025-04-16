@@ -35,128 +35,112 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `quota_class_set` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct QuotaClassSet {
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) cores: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) fixed_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) floating_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) injected_file_content_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) injected_file_path_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) injected_files: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) instances: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) key_pairs: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) metadata_items: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) networks: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ram: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) security_group_rules: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) security_groups: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) server_group_members: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) server_groups: Option<i32>,
 }
 
@@ -164,12 +148,10 @@ pub struct QuotaClassSet {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `quota_class_set` object.
-    ///
     #[builder(setter(into))]
     pub(crate) quota_class_set: QuotaClassSet,
 
     /// id parameter for /v2.1/os-quota-class-sets/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

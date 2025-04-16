@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2/images/{image_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::delete;
-use structable_derive::StructTable;
 
 /// (Since Image API v2.0) Deletes an image.
 ///
@@ -49,7 +43,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Delete image")]
 pub struct ImageCommand {
@@ -70,7 +63,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -78,9 +70,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Image response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ImageCommand {
     /// Perform command action
@@ -104,8 +93,7 @@ impl ImageCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

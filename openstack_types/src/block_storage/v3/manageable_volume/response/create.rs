@@ -17,7 +17,7 @@
 //! Response type for the POST `manageable_volumes` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// ManageableVolume response representation
@@ -43,35 +43,33 @@ pub struct ManageableVolumeResponse {
     /// ]
     ///
     /// ```
-    ///
     #[structable(serialize)]
     pub attachments: Vec<Attachments>,
 
     /// The name of the availability zone.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume.
-    ///
     #[structable()]
     pub bootable: String,
 
     /// The cluster name of volume backend.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub cluster_name: Option<String>,
 
     /// The UUID of the consistency group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub consistencygroup_id: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub consumes_quota: Option<bool>,
 
@@ -89,71 +87,66 @@ pub struct ManageableVolumeResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The volume description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// If true, this volume is encrypted.
-    ///
     #[structable()]
     pub encrypted: bool,
 
     /// The ID of the group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_id: Option<String>,
 
     /// The UUID of the volume.
-    ///
     #[structable()]
     pub id: String,
 
     /// The volume links.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// A `metadata` object. Contains one or more metadata key and value pairs
     /// that are associated with the volume.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<BTreeMap<String, String>>,
 
     /// The volume migration status. Admin only.
-    ///
     #[structable()]
     pub migration_status: String,
 
     /// If true, this volume can attach to more than one instance.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub multiattach: Option<bool>,
 
     /// The volume name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provider_id: Option<String>,
 
     /// The volume replication status.
-    ///
     #[structable()]
     pub replication_status: String,
 
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub service_uuid: Option<String>,
 
@@ -162,30 +155,28 @@ pub struct ManageableVolumeResponse {
     /// running on host doesn’t support manual scans, false means never use
     /// locks, and null means to always use locks. Look at os-brick’s
     /// guard_connection context manager. Default=True.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub shared_targets: Option<bool>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[structable()]
     pub size: i64,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
     /// with same size as the snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same size as the source volume unless a larger size is requested.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub source_volid: Option<String>,
 
     /// The volume status.
-    ///
     #[structable()]
     pub status: String,
 
@@ -206,22 +197,21 @@ pub struct ManageableVolumeResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the user.
-    ///
     #[structable()]
     pub user_id: String,
 
     /// A `volume_type` object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub volume_type_id: Option<String>,
 }
@@ -241,7 +231,6 @@ pub struct Attachments {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

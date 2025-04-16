@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v3/volumes/{volume_id}/metadata/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::metadata::delete;
-use structable_derive::StructTable;
 
 /// Deletes an existing metadata.
-///
 #[derive(Args)]
 pub struct MetadataCommand {
     /// Request Query parameters
@@ -58,7 +51,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/metadata API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_volume_id",
@@ -67,7 +59,6 @@ struct PathParameters {
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -75,9 +66,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Metadata response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl MetadataCommand {
     /// Perform command action
@@ -102,8 +90,7 @@ impl MetadataCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

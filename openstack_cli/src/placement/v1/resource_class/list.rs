@@ -20,25 +20,21 @@
 //! Wraps invoking of the `resource_classes` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::list;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_class::response::list::ResourceClassResponse;
 
 /// Return a list of all resource classes.
 ///
 /// Normal Response Codes: 200
-///
 #[derive(Args)]
 #[command(about = "List resource classes")]
 pub struct ResourceClassesCommand {
@@ -58,15 +54,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceClasses response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of one resource class.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl ResourceClassesCommand {
     /// Perform command action
@@ -91,8 +78,7 @@ impl ResourceClassesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ResourceClassResponse>(data)?;
         Ok(())
     }
 }

@@ -18,83 +18,83 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Task response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TaskResponse {
     /// Datetime when this resource was created
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Datetime when this resource would be subject to removal
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub expires_at: Option<String>,
 
     /// An identifier for the task
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Image associated with the task
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub image_id: Option<String>,
 
     /// The parameters required by task, JSON blob
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub input: Option<HashMap<String, Value>>,
+    pub input: Option<BTreeMap<String, Value>>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub message: Option<String>,
 
     /// An identifier for the owner of this task
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub owner: Option<String>,
 
     /// Human-readable informative request-id
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub request_id: Option<String>,
 
     /// The result of current task, JSON blob
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub result: Option<HashMap<String, Value>>,
+    pub result: Option<BTreeMap<String, Value>>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub schema: Option<String>,
 
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self", wide)]
     pub _self: Option<String>,
 
     /// The current status of this task
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The type of task represented by this content
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 
     /// Datetime when this resource was updated
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// User associated with the task
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub user_id: Option<String>,
 }
@@ -114,6 +114,18 @@ pub enum Type {
     LocationImport,
 }
 
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "api_image_import" => Ok(Self::ApiImageImport),
+            "import" => Ok(Self::Import),
+            "location_import" => Ok(Self::LocationImport),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Failure
@@ -131,4 +143,17 @@ pub enum Status {
     // Success
     #[serde(rename = "success")]
     Success,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "failure" => Ok(Self::Failure),
+            "pending" => Ok(Self::Pending),
+            "processing" => Ok(Self::Processing),
+            "success" => Ok(Self::Success),
+            _ => Err(()),
+        }
+    }
 }

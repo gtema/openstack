@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::pool::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::pool::response::get::PoolResponse;
 
 /// Shows the details of a pool.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 /// response code.
 ///
 /// This operation does not require a request body.
-///
 #[derive(Args)]
 #[command(about = "Show Pool details")]
 pub struct PoolCommand {
@@ -65,198 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// pool_id parameter for /v2/lbaas/pools/{pool_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Pool response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
-    ///
-    /// **New in version 2.24**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    alpn_protocols: Option<Value>,
-
-    /// The reference of the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PEM format CA certificate bundle for `tls_enabled`
-    /// pools.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ca_tls_container_ref: Option<String>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The reference of the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PEM format CA revocation list file for
-    /// `tls_enabled` pools.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    crl_container_ref: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The associated health monitor ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    healthmonitor_id: Option<String>,
-
-    /// The ID of the pool.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`,
-    /// `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    lb_algorithm: Option<String>,
-
-    /// A list of listener IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    listeners: Option<Value>,
-
-    /// A list of load balancer IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    loadbalancers: Option<Value>,
-
-    /// A list of member IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    members: Option<Value>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`,
-    /// `PROXYV2`, `SCTP`, `TCP`, or `UDP`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    /// A JSON object specifying the session persistence for the pool or `null`
-    /// for no session persistence. See
-    /// [Pool Session Persistence](#session-persistence). Default is `null`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    session_persistence: Option<Value>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// List of ciphers in OpenSSL format (colon-separated). See
-    /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
-    ///
-    /// **New in version 2.15**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tls_ciphers: Option<String>,
-
-    /// The reference to the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PKCS12 format certificate/key bundle for
-    /// `tls_enabled` pools for TLS client authentication to the member
-    /// servers.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tls_container_ref: Option<String>,
-
-    /// When `true` connections to backend member servers will use TLS
-    /// encryption. Default is `false`.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tls_enabled: Option<bool>,
-
-    /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
-    /// TLSv1.1, TLSv1.2, TLSv1.3
-    ///
-    /// **New in version 2.17**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tls_versions: Option<Value>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl PoolCommand {
@@ -279,7 +88,7 @@ impl PoolCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<PoolResponse>(find_data)?;
         Ok(())
     }
 }

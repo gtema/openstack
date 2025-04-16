@@ -35,20 +35,17 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct FixedIps<'a> {
     /// The IP address. It is required when `fixed_ips` is specified.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) ip_address: Cow<'a, str>,
 }
 
 /// Specify the `interfaceAttachment` action in the request body.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct InterfaceAttachment<'a> {
     /// Fixed IP addresses. If you request a specific fixed IP address without
     /// a `net_id`, the request returns a `Bad Request (400)` response code.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
@@ -58,7 +55,6 @@ pub struct InterfaceAttachment<'a> {
     /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
     /// uses the network information cache that is associated with the
     /// instance.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) net_id: Option<Cow<'a, str>>,
@@ -67,7 +63,6 @@ pub struct InterfaceAttachment<'a> {
     /// `net_id` and `port_id` parameters are mutually exclusive. If you do not
     /// specify the `port_id` parameter, the OpenStack Networking API v2.0
     /// allocates a port and creates an interface for it on the network.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Cow<'a, str>>,
@@ -78,7 +73,6 @@ pub struct InterfaceAttachment<'a> {
     /// devices from the metadata API and on the config drive, if enabled.
     ///
     /// **New in version 2.49**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
@@ -88,12 +82,10 @@ pub struct InterfaceAttachment<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Specify the `interfaceAttachment` action in the request body.
-    ///
     #[builder(setter(into))]
     pub(crate) interface_attachment: InterfaceAttachment<'a>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

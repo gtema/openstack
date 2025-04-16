@@ -22,9 +22,11 @@ use structable::{StructTable, StructTableOptions};
 /// AutoAllocatedTopology response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AutoAllocatedTopologyResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

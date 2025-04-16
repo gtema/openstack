@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/messages/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::message::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::message::response::get::MessageResponse;
 
 /// Return the given message.
-///
 #[derive(Args)]
 pub struct MessageCommand {
     /// Request Query parameters
@@ -57,92 +52,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/messages/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Message response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    /// The id of the event to this message, this id could eventually be
-    /// translated into `user_message`.
-    ///
-    #[serde()]
-    #[structable()]
-    event_id: String,
-
-    /// The expire time of the message, this message could be deleted after
-    /// this time.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    guaranteed_until: Option<String>,
-
-    /// The UUID for the message.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Links for the message.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The level of the message, possible value is only ‘ERROR’ now.
-    ///
-    #[serde()]
-    #[structable()]
-    message_level: String,
-
-    /// The id of the request during which the message was created.
-    ///
-    #[serde()]
-    #[structable()]
-    request_id: String,
-
-    /// The resource type corresponding to `resource_uuid`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_type: Option<String>,
-
-    /// The UUID of the resource during whose operation the message was
-    /// created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_uuid: Option<String>,
-
-    /// The translated readable message corresponding to `event_id`.
-    ///
-    #[serde()]
-    #[structable()]
-    user_message: String,
 }
 
 impl MessageCommand {
@@ -169,7 +84,7 @@ impl MessageCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MessageResponse>(data)?;
         Ok(())
     }
 }

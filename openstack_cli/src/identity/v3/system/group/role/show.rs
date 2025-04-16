@@ -20,29 +20,22 @@
 //! Wraps invoking of the `v3/system/groups/{group_id}/roles/{role_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::system::group::role::get;
-use structable_derive::StructTable;
 
 /// Get a specific system role assignment for a group. This is the same API as
 /// `HEAD /v3/system/groups/{group_id}/roles/{role_id}`.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/system_group_role`
-///
 #[derive(Args)]
 #[command(about = "Get system role assignment for a group")]
 pub struct RoleCommand {
@@ -63,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// group_id parameter for /v3/system/groups/{group_id}/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
@@ -72,7 +64,6 @@ struct PathParameters {
     group_id: String,
 
     /// role_id parameter for /v3/system/groups/{group_id}/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -80,9 +71,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Role response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl RoleCommand {
     /// Perform command action
@@ -107,11 +95,7 @@ impl RoleCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

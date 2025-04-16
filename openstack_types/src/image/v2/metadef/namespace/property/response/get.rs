@@ -23,58 +23,66 @@ use structable::{StructTable, StructTableOptions};
 /// Property response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PropertyResponse {
-    #[serde(rename = "additionalItems")]
+    #[serde(default, rename = "additionalItems")]
     #[structable(optional, title = "additionalItems")]
     pub additional_items: Option<bool>,
 
-    #[serde(rename = "default")]
+    #[serde(default, rename = "default")]
     #[structable(optional, serialize, title = "default")]
     pub _default: Option<Value>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
-    #[serde(rename = "enum")]
+    #[serde(default, rename = "enum")]
     #[structable(optional, serialize, title = "enum")]
     pub _enum: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub items: Option<Items>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub maximum: Option<f32>,
 
-    #[serde(rename = "maxItems")]
+    #[serde(default, rename = "maxItems")]
     #[structable(optional, title = "maxItems")]
     pub max_items: Option<i32>,
 
-    #[serde(rename = "maxLength")]
+    #[serde(default, rename = "maxLength")]
     #[structable(optional, title = "maxLength")]
     pub max_length: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub minimum: Option<f32>,
 
-    #[serde(rename = "minItems")]
+    #[serde(default, rename = "minItems")]
     #[structable(optional, title = "minItems")]
     pub min_items: Option<i32>,
 
-    #[serde(rename = "minLength")]
+    #[serde(default, rename = "minLength")]
     #[structable(optional, title = "minLength")]
     pub min_length: Option<i32>,
 
     #[structable()]
     pub name: String,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub operators: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub pattern: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub readonly: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub required: Option<Vec<String>>,
 
@@ -85,7 +93,7 @@ pub struct PropertyResponse {
     #[structable(serialize, title = "type")]
     pub _type: Type,
 
-    #[serde(rename = "uniqueItems")]
+    #[serde(default, rename = "uniqueItems")]
     #[structable(optional, title = "uniqueItems")]
     pub unique_items: Option<bool>,
 }
@@ -115,6 +123,21 @@ pub enum Type {
     // String
     #[serde(rename = "string")]
     String,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "array" => Ok(Self::Array),
+            "boolean" => Ok(Self::Boolean),
+            "integer" => Ok(Self::Integer),
+            "number" => Ok(Self::Number),
+            "object" => Ok(Self::Object),
+            "string" => Ok(Self::String),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Items` type

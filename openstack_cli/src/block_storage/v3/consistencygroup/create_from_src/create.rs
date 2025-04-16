@@ -20,29 +20,24 @@
 //! Wraps invoking of the `v3/consistencygroups/create_from_src` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::consistencygroup::create_from_src::create;
+use openstack_types::block_storage::v3::consistencygroup::create_from_src::response::create::CreateFromSrcResponse;
 use serde_json::Value;
-use std::collections::HashMap;
 
 /// Create a new consistency group from a source.
 ///
 /// The source can be a CG snapshot or a CG. Note that this does not require
 /// volume_types as the "create" API above.
-///
 #[derive(Args)]
 pub struct CreateFromSrcCommand {
     /// Request Query parameters
@@ -65,23 +60,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
-}
 
 impl CreateFromSrcCommand {
     /// Perform command action
@@ -109,7 +87,7 @@ impl CreateFromSrcCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<CreateFromSrcResponse>(data)?;
         Ok(())
     }
 }

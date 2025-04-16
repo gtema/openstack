@@ -17,7 +17,34 @@
 //! Response type for the GET `resource_providers/{uuid}/aggregates` operation
 
 use serde::{Deserialize, Serialize};
+use structable::{StructTable, StructTableOptions};
 
 /// Aggregate response representation
 #[derive(Clone, Deserialize, Serialize)]
-pub struct Aggregate(String);
+pub struct AggregateResponse(String);
+
+impl StructTable for AggregateResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}
+
+impl StructTable for &AggregateResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}

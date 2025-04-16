@@ -83,12 +83,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `volume` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Volume<'a> {
     /// The volume name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
@@ -96,33 +94,28 @@ pub struct Volume<'a> {
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume. See
     /// [valid boolean values](#valid-boolean-values)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) bootable: Option<bool>,
 
     /// The volume description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The OpenStack Block Storage host where the existing resource resides.
     /// Optional only if cluster field is provided.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) host: Option<Option<Cow<'a, str>>>,
 
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     /// The volume name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
@@ -131,13 +124,11 @@ pub struct Volume<'a> {
     /// reference depends on the volume driver implementation. For details
     /// about the required elements in the structure, see the documentation for
     /// the volume driver.
-    ///
     #[serde(rename = "ref")]
     #[builder(setter(into))]
     pub(crate) _ref: Value,
 
     /// The volume name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) volume_type: Option<Option<Cow<'a, str>>>,
@@ -146,7 +137,6 @@ pub struct Volume<'a> {
 impl<'a> VolumeBuilder<'a> {
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -166,7 +156,6 @@ impl<'a> VolumeBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `volume` object.
-    ///
     #[builder(setter(into))]
     pub(crate) volume: Volume<'a>,
 

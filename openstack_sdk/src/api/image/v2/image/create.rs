@@ -106,7 +106,6 @@ pub enum DiskFormat {
 /// Values to be used to populate the corresponding image properties. If the
 /// image status is not 'queued', values must exactly match those already
 /// contained in the image properties.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ValidationData<'a> {
@@ -127,7 +126,7 @@ pub struct ValidationData<'a> {
 #[builder(setter(strip_option))]
 pub struct Locations<'a> {
     #[serde()]
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
 
     #[serde()]
@@ -137,7 +136,6 @@ pub struct Locations<'a> {
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
     /// already contained in the image properties.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) validation_data: Option<ValidationData<'a>>,
@@ -175,7 +173,6 @@ pub struct Request<'a> {
     ///
     /// **Train changes**: The `compressed` container format is a supported
     /// value.
-    ///
     #[builder(default)]
     pub(crate) container_format: Option<ContainerFormat>,
 
@@ -194,7 +191,6 @@ pub struct Request<'a> {
     ///
     /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
-    ///
     #[builder(default)]
     pub(crate) disk_format: Option<DiskFormat>,
 
@@ -217,49 +213,40 @@ pub struct Request<'a> {
     /// If you omit this value, the API generates a UUID for the image. If you
     /// specify a value that has already been assigned, the request fails with
     /// a `409` response code.
-    ///
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// A set of URLs to access the image file kept in external store
-    ///
     #[builder(default, setter(into))]
     pub(crate) locations: Option<Vec<Locations<'a>>>,
 
     /// Amount of disk space in GB that is required to boot the image.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_disk: Option<i32>,
 
     /// Amount of RAM in MB that is required to boot the image.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_ram: Option<i32>,
 
     /// The name of the image.
-    ///
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// If true, image will not appear in default image list response.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) os_hidden: Option<bool>,
 
     /// Owner of the image
-    ///
     #[builder(default, setter(into))]
     pub(crate) owner: Option<Option<Cow<'a, str>>>,
 
     /// Image protection for deletion. Valid value is `true` or `false`.
     /// Default is `false`.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) protected: Option<bool>,
 
     /// List of tags for this image. Each tag is a string of at most 255 chars.
     /// The maximum number of tags allowed on an image is set by the operator.
-    ///
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
@@ -269,7 +256,6 @@ pub struct Request<'a> {
     /// `community`. Some sites may restrict what users can perform member
     /// operations on a `shared` image. *Since the Image API v2.5, the default
     /// value is `shared`.*
-    ///
     #[builder(default)]
     pub(crate) visibility: Option<Visibility>,
 

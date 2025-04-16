@@ -32,7 +32,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// prior_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    ///
     #[builder(default, setter(into))]
     prior_role_id: Cow<'a, str>,
 

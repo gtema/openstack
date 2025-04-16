@@ -23,23 +23,23 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The ID of the domain for the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID for the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }
@@ -47,7 +47,6 @@ pub struct ProjectResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

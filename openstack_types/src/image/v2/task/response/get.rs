@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Task response representation
@@ -28,7 +28,7 @@ pub struct TaskResponse {
     ///
     /// The date and time stamp format is
     /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -43,68 +43,66 @@ pub struct TaskResponse {
     /// This value is only set when the task reaches status `success` or
     /// `failure`. Otherwise its value is `null`. It may not appear in the
     /// response when its value is `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub expires_at: Option<String>,
 
     /// The UUID of the task.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Image associated with the task
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub image_id: Option<String>,
 
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub input: Option<HashMap<String, Value>>,
+    pub input: Option<BTreeMap<String, Value>>,
 
     /// Human-readable text, possibly an empty string, usually displayed in an
     /// error situation to provide more information about what has occurred.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub message: Option<String>,
 
     /// An identifier for the owner of the task, usually the tenant ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub owner: Option<String>,
 
     /// Human-readable informative request-id
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub request_id: Option<String>,
 
     /// A JSON object specifying information about the ultimate outcome of the
     /// task. Consult your cloud provider’s documentation for details.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub result: Option<HashMap<String, Value>>,
+    pub result: Option<BTreeMap<String, Value>>,
 
     /// The URI for the schema describing an image task.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
     /// A URI for this task.
-    ///
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// The current status of this task. The value can be `pending`,
     /// `processing`, `success` or `failure`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The type of task represented by this content.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, serialize, title = "type")]
     pub _type: Option<Type>,
 
@@ -115,12 +113,12 @@ pub struct TaskResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// User associated with the task
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 }
@@ -140,6 +138,18 @@ pub enum Type {
     LocationImport,
 }
 
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "api_image_import" => Ok(Self::ApiImageImport),
+            "import" => Ok(Self::Import),
+            "location_import" => Ok(Self::LocationImport),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Failure
@@ -157,4 +167,17 @@ pub enum Status {
     // Success
     #[serde(rename = "success")]
     Success,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "failure" => Ok(Self::Failure),
+            "pending" => Ok(Self::Pending),
+            "processing" => Ok(Self::Processing),
+            "success" => Ok(Self::Success),
+            _ => Err(()),
+        }
+    }
 }

@@ -90,7 +90,7 @@ pub struct Volume<'a> {
     pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) bootable: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -102,7 +102,7 @@ pub struct Volume<'a> {
     pub(crate) host: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

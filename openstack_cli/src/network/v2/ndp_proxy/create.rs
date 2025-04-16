@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2.0/ndp-proxies` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::ndp_proxy::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::ndp_proxy::response::create::NdpProxyResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct NdpProxyCommand {
     /// Request Query parameters
@@ -78,50 +74,6 @@ struct NdpProxy {
 
     #[arg(help_heading = "Body parameters", long)]
     router_id: Option<String>,
-}
-
-/// NdpProxy response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    ip_address: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    port_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    router_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl NdpProxyCommand {
@@ -175,7 +127,7 @@ impl NdpProxyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<NdpProxyResponse>(data)?;
         Ok(())
     }
 }

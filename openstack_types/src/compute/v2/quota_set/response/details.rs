@@ -24,7 +24,7 @@ use structable::{StructTable, StructTableOptions};
 pub struct QuotaSetResponse {
     /// The object of detailed cores quota, including in_use, limit and
     /// reserved number of cores.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub cores: Option<Cores>,
 
@@ -32,7 +32,7 @@ pub struct QuotaSetResponse {
     /// reserved number of fixed ips.
     ///
     /// **Available until version 2.35**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub fixed_ips: Option<FixedIps>,
 
@@ -40,12 +40,11 @@ pub struct QuotaSetResponse {
     /// reserved number of floating ips.
     ///
     /// **Available until version 2.35**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub floating_ips: Option<FloatingIps>,
 
     /// The UUID of the tenant/user the quotas listed for.
-    ///
     #[structable()]
     pub id: String,
 
@@ -53,25 +52,25 @@ pub struct QuotaSetResponse {
     /// and reserved number of injected files.
     ///
     /// **Available until version 2.56**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub injected_files: Option<InjectedFiles>,
 
     /// The object of detailed injected file content bytes quota, including
     /// in_use, limit and reserved number of injected file content bytes.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub injected_files_content_bytes: Option<InjectedFilesContentBytes>,
 
     /// The object of detailed injected file path bytes quota, including
     /// in_use, limit and reserved number of injected file path bytes.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub injected_files_path_bytes: Option<InjectedFilesPathBytes>,
 
     /// The object of detailed servers quota, including in_use, limit and
     /// reserved number of instances.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub instances: Option<Instances>,
 
@@ -83,26 +82,26 @@ pub struct QuotaSetResponse {
     /// `in_use` field value for keypair quota details is always zero. In Nova,
     /// key_pairs are a user-level resource, not a project- level resource, so
     /// for legacy reasons, the keypair in-use information is not counted.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub key_pairs: Option<KeyPairs>,
 
     /// The object of detailed key metadata items quota, including in_use,
     /// limit and reserved number of metadata items.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub metadata_items: Option<MetadataItems>,
 
     /// The number of private networks that can be created per project.
     ///
     /// **Available until version 2.35**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub networks: Option<Networks>,
 
     /// The object of detailed key ram quota, including in_use, limit and
     /// reserved number of ram.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub ram: Option<Ram>,
 
@@ -110,7 +109,7 @@ pub struct QuotaSetResponse {
     /// limit and reserved number of security group rules.
     ///
     /// **Available until version 2.35**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub security_group_rules: Option<SecurityGroupRules>,
 
@@ -118,26 +117,25 @@ pub struct QuotaSetResponse {
     /// reserved number of security groups.
     ///
     /// **Available until version 2.35**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub security_groups: Option<SecurityGroups>,
 
     /// The object of detailed server group members, including in_use, limit
     /// and reserved number of server group members.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub server_group_members: Option<ServerGroupMembers>,
 
     /// The object of detailed server groups, including in_use, limit and
     /// reserved number of server groups.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub server_groups: Option<ServerGroups>,
 }
 
 /// The object of detailed servers quota, including in_use, limit and reserved
 /// number of instances.
-///
 /// `Instances` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Instances {
@@ -148,7 +146,6 @@ pub struct Instances {
 
 /// The object of detailed cores quota, including in_use, limit and reserved
 /// number of cores.
-///
 /// `Cores` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Cores {
@@ -159,7 +156,6 @@ pub struct Cores {
 
 /// The object of detailed key ram quota, including in_use, limit and reserved
 /// number of ram.
-///
 /// `Ram` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ram {
@@ -172,7 +168,6 @@ pub struct Ram {
 /// reserved number of floating ips.
 ///
 /// **Available until version 2.35**
-///
 /// `FloatingIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FloatingIps {
@@ -185,7 +180,6 @@ pub struct FloatingIps {
 /// reserved number of fixed ips.
 ///
 /// **Available until version 2.35**
-///
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
@@ -196,7 +190,6 @@ pub struct FixedIps {
 
 /// The object of detailed key metadata items quota, including in_use, limit
 /// and reserved number of metadata items.
-///
 /// `MetadataItems` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MetadataItems {
@@ -213,7 +206,6 @@ pub struct MetadataItems {
 /// `in_use` field value for keypair quota details is always zero. In Nova,
 /// key_pairs are a user-level resource, not a project- level resource, so for
 /// legacy reasons, the keypair in-use information is not counted.
-///
 /// `KeyPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct KeyPairs {
@@ -226,7 +218,6 @@ pub struct KeyPairs {
 /// reserved number of security groups.
 ///
 /// **Available until version 2.35**
-///
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
@@ -239,7 +230,6 @@ pub struct SecurityGroups {
 /// and reserved number of security group rules.
 ///
 /// **Available until version 2.35**
-///
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
@@ -252,7 +242,6 @@ pub struct SecurityGroupRules {
 /// reserved number of injected files.
 ///
 /// **Available until version 2.56**
-///
 /// `InjectedFiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFiles {
@@ -263,7 +252,6 @@ pub struct InjectedFiles {
 
 /// The object of detailed injected file content bytes quota, including in_use,
 /// limit and reserved number of injected file content bytes.
-///
 /// `InjectedFilesContentBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesContentBytes {
@@ -274,7 +262,6 @@ pub struct InjectedFilesContentBytes {
 
 /// The object of detailed injected file path bytes quota, including in_use,
 /// limit and reserved number of injected file path bytes.
-///
 /// `InjectedFilesPathBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesPathBytes {
@@ -285,7 +272,6 @@ pub struct InjectedFilesPathBytes {
 
 /// The object of detailed server groups, including in_use, limit and reserved
 /// number of server groups.
-///
 /// `ServerGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroups {
@@ -296,7 +282,6 @@ pub struct ServerGroups {
 
 /// The object of detailed server group members, including in_use, limit and
 /// reserved number of server group members.
-///
 /// `ServerGroupMembers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroupMembers {
@@ -308,7 +293,6 @@ pub struct ServerGroupMembers {
 /// The number of private networks that can be created per project.
 ///
 /// **Available until version 2.35**
-///
 /// `Networks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Networks {

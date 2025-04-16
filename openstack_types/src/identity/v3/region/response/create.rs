@@ -23,18 +23,18 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RegionResponse {
     /// The region description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID for the region.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub parent_id: Option<String>,
 }

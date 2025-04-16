@@ -23,13 +23,11 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoadbalancerResponse {
     /// A load balancer status object.
-    ///
     #[structable(serialize)]
     pub loadbalancer: Loadbalancer,
 }
 
 /// Defines which attributes are to be shown on status response.
-///
 /// `HealthMonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct HealthMonitor {
@@ -41,7 +39,6 @@ pub struct HealthMonitor {
 }
 
 /// Defines which attributes are to be shown on status response.
-///
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
@@ -54,7 +51,6 @@ pub struct Members {
 }
 
 /// Defines which attributes are to be shown on status response.
-///
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {
@@ -67,7 +63,6 @@ pub struct Pools {
 }
 
 /// Defines which attributes are to be shown on status response.
-///
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
@@ -79,7 +74,6 @@ pub struct Listeners {
 }
 
 /// A load balancer status object.
-///
 /// `Loadbalancer` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancer {

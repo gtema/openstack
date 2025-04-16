@@ -36,76 +36,66 @@ use std::borrow::Cow;
 
 /// The ID and links for the flavor for your server instance. A flavor is a
 /// combination of memory, disk size, and CPUs.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavor<'a> {
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) disk: i32,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
     /// UUID will be assigned.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Option<Cow<'a, str>>>,
 
     /// The display name of a flavor.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// Whether the flavor is public (available to all projects) or scoped to a
     /// set of projects. Default is True if not specified.
-    ///
     #[serde(
         rename = "os-flavor-access:is_public",
         skip_serializing_if = "Option::is_none"
     )]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) os_flavor_access_is_public: Option<bool>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
-    ///
     #[serde(
         rename = "OS-FLV-EXT-DATA:ephemeral",
         skip_serializing_if = "Option::is_none"
     )]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) os_flv_ext_data_ephemeral: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) ram: i32,
 
     /// The receive / transmit factor (as a float) that will be set on ports if
     /// the network backend supports the QOS extension. Otherwise it will be
     /// ignored. It defaults to 1.0.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) rxtx_factor: Option<Cow<'a, str>>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) swap: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) vcpus: i32,
 }
 
@@ -114,7 +104,6 @@ pub struct Flavor<'a> {
 pub struct Request<'a> {
     /// The ID and links for the flavor for your server instance. A flavor is a
     /// combination of memory, disk size, and CPUs.
-    ///
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 

@@ -25,12 +25,12 @@ pub struct EndpointResponse {
     /// Indicates whether the endpoint appears in the service catalog: -
     /// `false`. The endpoint does not appear in the service catalog. - `true`.
     /// The endpoint appears in the service catalog.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The endpoint ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -39,27 +39,27 @@ pub struct EndpointResponse {
     /// network interface. - `internal`. Visible by end users on an unmetered
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub interface: Option<Interface>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub region: Option<String>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub service_id: Option<String>,
 
     /// The endpoint URL.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub url: Option<String>,
 }
@@ -77,4 +77,16 @@ pub enum Interface {
     // Public
     #[serde(rename = "public")]
     Public,
+}
+
+impl std::str::FromStr for Interface {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "admin" => Ok(Self::Admin),
+            "internal" => Ok(Self::Internal),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
 }

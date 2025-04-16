@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v1/clusters/actions/resize` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::action::resize::create;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::container_infrastructure_management::v1::cluster::action::resize::response::create::ResizeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ResizeCommand {
     /// Request Query parameters
@@ -57,7 +53,6 @@ pub struct ResizeCommand {
     nodegroup: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     nodes_to_remove: Option<Vec<String>>,
 
@@ -72,13 +67,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Resize response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable()]
-    uuid: String,
-}
 
 impl ResizeCommand {
     /// Perform command action
@@ -125,7 +113,7 @@ impl ResizeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResizeResponse>(data)?;
         Ok(())
     }
 }

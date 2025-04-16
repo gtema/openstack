@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/floatingips/{floatingip_id}/port_forwardings` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::floatingip::port_forwarding::response::list::PortForwardingResponse;
 
 /// Lists floating IP port forwardings that the project has access to.
 ///
@@ -58,7 +55,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 404
-///
 #[derive(Args)]
 #[command(about = "List floating IP port forwardings")]
 pub struct PortForwardingsCommand {
@@ -80,31 +76,26 @@ pub struct PortForwardingsCommand {
 struct QueryParameters {
     /// description query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// external_port query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     external_port: Option<f32>,
 
     /// external_port_range query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     external_port_range: Option<f32>,
 
     /// id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// internal_port_id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     internal_port_id: Option<String>,
 
@@ -112,37 +103,31 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// protocol query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -152,77 +137,12 @@ struct QueryParameters {
 struct PathParameters {
     /// floatingip_id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_floatingip_id",
         value_name = "FLOATINGIP_ID"
     )]
     floatingip_id: String,
-}
-/// PortForwardings response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A text describing the rule, which helps users to manage/find easily
-    /// theirs rules.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The TCP/UDP/other protocol port number of the port forwarding’s
-    /// floating IP address.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    external_port: Option<f32>,
-
-    /// The TCP/UDP/other protocol port range of the port forwarding’s floating
-    /// IP address.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    external_port_range: Option<f32>,
-
-    /// The ID of the floating IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The fixed IPv4 address of the Neutron port associated to the floating
-    /// IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    internal_ip_address: Option<String>,
-
-    /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
-    /// address associated to the floating ip port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    internal_port: Option<f32>,
-
-    /// The ID of the Neutron port associated to the floating IP port
-    /// forwarding.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    internal_port_id: Option<String>,
-
-    /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
-    /// address associated to the floating ip port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    internal_port_range: Option<f32>,
-
-    /// The IP protocol used in the floating IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protocol: Option<String>,
 }
 
 impl PortForwardingsCommand {
@@ -284,8 +204,7 @@ impl PortForwardingsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<PortForwardingResponse>(data)?;
         Ok(())
     }
 }

@@ -17,8 +17,29 @@
 //! Response type for the GET `auth/system` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
+use structable::{StructTable, StructTableOptions};
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct System(HashMap<String, bool>);
+pub struct SystemResponse(BTreeMap<String, bool>);
+
+impl StructTable for SystemResponse {
+    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
+        Some(self.0.keys().map(Into::into).collect())
+    }
+
+    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
+        Vec::from_iter(self.0.values().map(|v| Some(v.to_string())))
+    }
+}
+
+impl StructTable for &SystemResponse {
+    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
+        Some(self.0.keys().map(Into::into).collect())
+    }
+
+    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
+        Vec::from_iter(self.0.values().map(|v| Some(v.to_string())))
+    }
+}

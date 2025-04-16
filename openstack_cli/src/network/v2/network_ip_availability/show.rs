@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.0/network-ip-availabilities/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_ip_availability::get;
-use structable_derive::StructTable;
+use openstack_types::network::v2::network_ip_availability::response::get::NetworkIpAvailabilityResponse;
 
 /// Shows network IP availability details for a network.
 ///
@@ -46,7 +43,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show Network IP Availability")]
 pub struct NetworkIpAvailabilityCommand {
@@ -67,53 +63,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/network-ip-availabilities/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// NetworkIpAvailability response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the network whose IP availability detail is reported.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// Human-readable name of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_name: Option<String>,
-
-    /// A list of dictionaries showing subnet IP availability. It contains
-    /// information for every subnet associated to the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet_ip_availability: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The total number of IP addresses in a network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    total_ips: Option<String>,
-
-    /// The number of used IP addresses of all subnets in a network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    used_ips: Option<String>,
 }
 
 impl NetworkIpAvailabilityCommand {
@@ -140,7 +95,7 @@ impl NetworkIpAvailabilityCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<NetworkIpAvailabilityResponse>(data)?;
         Ok(())
     }
 }

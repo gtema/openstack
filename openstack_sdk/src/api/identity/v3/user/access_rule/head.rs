@@ -31,13 +31,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

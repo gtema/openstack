@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/security-group-rules/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::security_group_rule::set;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::security_group_rule::response::set::SecurityGroupRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct SecurityGroupRuleCommand {
     /// Request Query parameters
@@ -60,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/security-group-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -73,78 +67,6 @@ struct PathParameters {
 struct SecurityGroupRule {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
-}
-
-/// SecurityGroupRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    belongs_to_default_sg: Option<BoolString>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    ethertype: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    normalized_cidr: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    port_range_max: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    port_range_min: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    remote_address_group_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    remote_group_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    remote_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    security_group_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl SecurityGroupRuleCommand {
@@ -179,7 +101,7 @@ impl SecurityGroupRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<SecurityGroupRuleResponse>(data)?;
         Ok(())
     }
 }

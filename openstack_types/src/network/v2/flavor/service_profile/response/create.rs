@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProfileResponse {
     /// The ID of the resource.
-    ///
     #[structable()]
     pub id: String,
 }

@@ -23,17 +23,17 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The description of the group.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain of the group.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// The ID of the group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -41,12 +41,12 @@ pub struct GroupResponse {
     /// indicates that the membership never expires.
     ///
     /// **New in version 3.14**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub membership_expires_at: Option<String>,
 
     /// The name of the group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

@@ -23,27 +23,27 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortAssociationResponse {
     /// The IP of the port associated with the Local IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_ip: Option<String>,
 
     /// The ID of the port associated with the Local IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_port_id: Option<String>,
 
     /// The host of the port associated with the Local IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
     /// The actual IP address of the Local IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub local_ip_address: Option<String>,
 
     /// The ID of the Local IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub local_ip_id: Option<String>,
 }

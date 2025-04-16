@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/conntrack_helpers/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::conntrack_helper::get;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::router::conntrack_helper::response::get::ConntrackHelperResponse;
 
 /// Shows information for a router conntrack helper.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 404
-///
 #[derive(Args)]
 #[command(about = "Show conntrack helper")]
 pub struct ConntrackHelperCommand {
@@ -66,7 +61,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_router_id",
@@ -75,40 +69,12 @@ struct PathParameters {
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// ConntrackHelper response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The netfilter conntrack helper module.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    helper: Option<String>,
-
-    /// The ID of the conntrack helper.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The network port for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port: Option<IntString>,
-
-    /// The network protocol for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
 }
 
 impl ConntrackHelperCommand {
@@ -136,7 +102,7 @@ impl ConntrackHelperCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ConntrackHelperResponse>(data)?;
         Ok(())
     }
 }

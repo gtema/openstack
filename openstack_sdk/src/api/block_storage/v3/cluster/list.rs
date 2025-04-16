@@ -32,37 +32,30 @@ pub struct Request<'a> {
     /// Filter the cluster list result by binary name of the clustered
     /// services. One of cinder-api, cinder-scheduler, cinder-volume or
     /// cinder-backup.
-    ///
     #[builder(default, setter(into))]
     binary: Option<Cow<'a, str>>,
 
     /// Filter the cluster list result by status.
-    ///
     #[builder(default)]
     disabled: Option<bool>,
 
     /// Filter the cluster list result by state.
-    ///
     #[builder(default)]
     is_up: Option<bool>,
 
     /// Filter the cluster list result by cluster name.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Filter the cluster list result by number of down hosts.
-    ///
     #[builder(default)]
     num_down_hosts: Option<f32>,
 
     /// Filter the cluster list result by number of hosts.
-    ///
     #[builder(default)]
     num_hosts: Option<f32>,
 
     /// Filter the cluster list result by replication status.
-    ///
     #[builder(default, setter(into))]
     replication_stats: Option<Cow<'a, str>>,
 

@@ -20,31 +20,24 @@
 //! Wraps invoking of the `v2.0/vpn/ipsec-site-connections` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ipsec_site_connection::create;
-use openstack_sdk::types::BoolString;
-use openstack_sdk::types::IntString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::ipsec_site_connection::response::create::IpsecSiteConnectionResponse;
 
 /// Creates a site-to-site IPsec connection for a service.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401
-///
 #[derive(Args)]
 #[command(about = "Create IPsec connection")]
 pub struct IpsecSiteConnectionCommand {
@@ -57,7 +50,6 @@ pub struct IpsecSiteConnectionCommand {
     path: PathParameters,
 
     /// An `ipsec_site_connection` object.
-    ///
     #[command(flatten)]
     ipsec_site_connection: IpsecSiteConnection,
 }
@@ -81,35 +73,29 @@ enum Initiator {
 struct IpsecSiteConnection {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// A dictionary with dead peer detection (DPD) protocol controls.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     dpd: Option<String>,
 
     /// The ID of the IKE policy.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ikepolicy_id: Option<String>,
 
     /// Indicates whether this VPN can only respond to connections or both
     /// respond to and initiate connections. A valid value is `response- only`
     /// or `bi-directional`. Default is `bi-directional`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     initiator: Option<Initiator>,
 
     /// The ID of the IPsec policy.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ipsecpolicy_id: Option<String>,
 
@@ -117,7 +103,6 @@ struct IpsecSiteConnection {
     /// local side of the connection. Yo must specify this parameter with the
     /// `peer_ep_group_id` parameter unless in backward- compatible mode where
     /// `peer_cidrs` is provided with a `subnet_id` for the VPN service.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     local_ep_group_id: Option<String>,
 
@@ -126,23 +111,19 @@ struct IpsecSiteConnection {
     /// east-west traffic. Most often, local ID would be domain name, email
     /// address, etc. If this is not configured then the external IP address
     /// will be used as the ID.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     local_id: Option<String>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     mtu: Option<i32>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The peer gateway public IPv4 or IPv6 address or FQDN.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     peer_address: Option<String>,
 
@@ -150,7 +131,6 @@ struct IpsecSiteConnection {
     /// net_address > / < prefix > .
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     peer_cidrs: Option<Vec<String>>,
 
@@ -159,181 +139,25 @@ struct IpsecSiteConnection {
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     peer_ep_group_id: Option<String>,
 
     /// The peer router identity for authentication. A valid value is an IPv4
     /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
     /// value matches the `peer_address` value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     peer_id: Option<String>,
 
     /// The pre-shared key. A valid value is any string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     psk: Option<String>,
 
     /// The ID of the project.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 
     /// The ID of the VPN service.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    vpnservice_id: Option<String>,
-}
-
-/// IpsecSiteConnection response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    /// The authentication mode. A valid value is `psk`, which is the default.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    auth_mode: Option<String>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A dictionary with dead peer detection (DPD) protocol controls.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dpd: Option<String>,
-
-    /// The ID of the IPsec site-to-site connection.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the IKE policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ikepolicy_id: Option<String>,
-
-    /// Indicates whether this VPN can only respond to connections or both
-    /// respond to and initiate connections. A valid value is `response- only`
-    /// or `bi-directional`. Default is `bi-directional`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    initiator: Option<String>,
-
-    /// The ID of the IPsec policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipsecpolicy_id: Option<String>,
-
-    /// The ID for the endpoint group that contains private subnets for the
-    /// local side of the connection. Yo must specify this parameter with the
-    /// `peer_ep_group_id` parameter unless in backward- compatible mode where
-    /// `peer_cidrs` is provided with a `subnet_id` for the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_ep_group_id: Option<String>,
-
-    /// An ID to be used instead of the external IP address for a virtual
-    /// router used in traffic between instances on different networks in
-    /// east-west traffic. Most often, local ID would be domain name, email
-    /// address, etc. If this is not configured then the external IP address
-    /// will be used as the ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_id: Option<String>,
-
-    /// The maximum transmission unit (MTU) value to address fragmentation.
-    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    mtu: Option<IntString>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The peer gateway public IPv4 or IPv6 address or FQDN.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_address: Option<String>,
-
-    /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / < prefix > .
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    peer_cidrs: Option<Value>,
-
-    /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / < prefix > for the peer side of the connection. You
-    /// must specify this parameter with the `local_ep_group_id` parameter
-    /// unless in backward-compatible mode where `peer_cidrs` is provided with
-    /// a `subnet_id` for the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_ep_group_id: Option<String>,
-
-    /// The peer router identity for authentication. A valid value is an IPv4
-    /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
-    /// value matches the `peer_address` value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_id: Option<String>,
-
-    /// The pre-shared key. A valid value is any string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    psk: Option<String>,
-
-    /// The route mode. A valid value is `static`, which is the default.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    route_mode: Option<String>,
-
-    /// Indicates whether the IPsec connection is currently operational. Values
-    /// are `ACTIVE`, `DOWN`, `BUILD`, `ERROR`, `PENDING_CREATE`,
-    /// `PENDING_UPDATE`, or `PENDING_DELETE`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The ID of the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
     vpnservice_id: Option<String>,
 }
 
@@ -437,7 +261,7 @@ impl IpsecSiteConnectionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<IpsecSiteConnectionResponse>(data)?;
         Ok(())
     }
 }

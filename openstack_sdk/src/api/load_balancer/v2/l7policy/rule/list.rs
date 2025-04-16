@@ -58,17 +58,14 @@ pub struct Request<'a> {
 
     /// l7policy_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
-    ///
     #[builder(default, setter(into))]
     l7policy_id: Cow<'a, str>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
@@ -76,7 +73,6 @@ pub struct Request<'a> {
     operating_status: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 

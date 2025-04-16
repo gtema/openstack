@@ -32,25 +32,21 @@ pub struct IdentityProvider<'a> {
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database. If left unset, the
     /// default value configured in keystone will be used, if enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) authorization_ttl: Option<Option<i32>>,
 
     /// The identity provider description
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// Whether the identity provider is enabled or not
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// List of the unique identity provider's remote IDs
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remote_ids: Option<Vec<Cow<'a, str>>>,
@@ -63,7 +59,6 @@ pub struct Request<'a> {
     pub(crate) identity_provider: IdentityProvider<'a>,
 
     /// idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
-    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 

@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MserviceResponse {
     /// The name of the binary form of the Magnum service.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub binary: Option<Binary>,
 
@@ -41,36 +41,37 @@ pub struct MserviceResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disabled: Option<String>,
 
     /// The disable reason of the service, `null` if the service is enabled or
     /// disabled without reason provided.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disabled_reason: Option<String>,
 
     /// The host for the service.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub host: Option<String>,
 
     /// The ID of the Magnum service.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<i32>,
 
     /// The total number of report.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub report_count: Option<i32>,
 
     /// The current state of Magnum services.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, status)]
     pub state: Option<State>,
 
@@ -91,7 +92,7 @@ pub struct MserviceResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -103,6 +104,16 @@ pub enum Binary {
     MagnumConductor,
 }
 
+impl std::str::FromStr for Binary {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "magnum-conductor" => Ok(Self::MagnumConductor),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum State {
     // Down
@@ -112,4 +123,15 @@ pub enum State {
     // Up
     #[serde(rename = "up")]
     Up,
+}
+
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "down" => Ok(Self::Down),
+            "up" => Ok(Self::Up),
+            _ => Err(()),
+        }
+    }
 }

@@ -30,13 +30,11 @@ pub struct Request<'a> {
 
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 
     /// tag_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
-    ///
     #[builder(default, setter(into))]
     tag_name: Cow<'a, str>,
 

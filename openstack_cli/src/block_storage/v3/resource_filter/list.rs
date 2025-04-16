@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/resource_filters` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::resource_filter::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::resource_filter::response::list::ResourceFilterResponse;
 
 /// Return a list of resource filters.
-///
 #[derive(Args)]
 pub struct ResourceFiltersCommand {
     /// Request Query parameters
@@ -56,21 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceFilters response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The resource filter array.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    filters: Option<Value>,
-
-    /// Resource which the filters will be applied to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource: Option<String>,
-}
 
 impl ResourceFiltersCommand {
     /// Perform command action
@@ -95,8 +75,7 @@ impl ResourceFiltersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ResourceFilterResponse>(data)?;
         Ok(())
     }
 }

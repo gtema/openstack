@@ -20,22 +20,19 @@
 //! Wraps invoking of the `v3/services/{service_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::service::find;
 use openstack_sdk::api::identity::v3::service::set;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::service::response::set::ServiceResponse;
 
 /// Updates a service.
 ///
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/services`
-///
 #[derive(Args)]
 #[command(about = "Update service")]
 pub struct ServiceCommand {
@@ -57,7 +53,6 @@ pub struct ServiceCommand {
     path: PathParameters,
 
     /// A `service` object.
-    ///
     #[command(flatten)]
     service: Service,
 }
@@ -70,7 +65,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// service_id parameter for /v3/services/{service_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -85,57 +79,16 @@ struct Service {
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
     /// service catalog. Default is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The service name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    _type: Option<String>,
-}
-
-/// Service response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The service description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Defines whether the service and its endpoints appear in the service
-    /// catalog: - `false`. The service and its endpoints do not appear in the
-    /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The UUID of the service to which the endpoint belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The service name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The service type, which describes the API implemented by the service.
-    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
     _type: Option<String>,
 }
 
@@ -191,7 +144,7 @@ impl ServiceCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceResponse>(data)?;
         Ok(())
     }
 }

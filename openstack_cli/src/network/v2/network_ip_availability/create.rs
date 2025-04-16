@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/network-ip-availabilities` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_ip_availability::create;
+use openstack_types::network::v2::network_ip_availability::response::create::NetworkIpAvailabilityResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct NetworkIpAvailabilityCommand {
     /// Request Query parameters
@@ -61,33 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// NetworkIpAvailability response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    network_name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    subnet_ip_availability: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    total_ips: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    used_ips: Option<String>,
-}
 
 impl NetworkIpAvailabilityCommand {
     /// Perform command action
@@ -115,7 +83,7 @@ impl NetworkIpAvailabilityCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<NetworkIpAvailabilityResponse>(data)?;
         Ok(())
     }
 }

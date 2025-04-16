@@ -25,13 +25,11 @@ pub struct ServerResponse {
     /// The administrative password for the server. If you set
     /// `enable_instance_password` configuration option to `False`, the API
     /// wouldn’t return the `adminPass` field in response.
-    ///
-    #[serde(rename = "adminPass")]
+    #[serde(default, rename = "adminPass")]
     #[structable(optional, title = "adminPass")]
     pub admin_pass: Option<String>,
 
     /// The UUID of the server.
-    ///
     #[structable()]
     pub id: String,
 
@@ -40,7 +38,7 @@ pub struct ServerResponse {
     /// for more info.
     ///
     /// **New in version 2.40**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
@@ -52,13 +50,12 @@ pub struct ServerResponse {
     /// - `MANUAL`. The API builds the server by using the partition scheme and
     ///   file system that is in the source image. If the target flavor disk is
     ///   larger, The API does not partition the remaining disk space.
-    ///
-    #[serde(rename = "OS-DCF:diskConfig")]
+    #[serde(default, rename = "OS-DCF:diskConfig")]
     #[structable(optional, serialize, title = "OS-DCF:diskConfig")]
     pub os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// One or more security groups objects.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub security_groups: Option<Vec<SecurityGroups>>,
 }
@@ -74,6 +71,17 @@ pub enum OsDcfDiskConfig {
     Manual,
 }
 
+impl std::str::FromStr for OsDcfDiskConfig {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "AUTO" => Ok(Self::Auto),
+            "MANUAL" => Ok(Self::Manual),
+            _ => Err(()),
+        }
+    }
+}
+
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
@@ -83,7 +91,6 @@ pub struct SecurityGroups {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

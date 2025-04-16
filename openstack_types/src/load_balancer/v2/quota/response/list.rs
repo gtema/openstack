@@ -22,61 +22,64 @@ use structable::{StructTable, StructTableOptions};
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub health_monitor: Option<i32>,
 
     /// The configured health monitor quota limit. A setting of `null` means it
     /// is using the deployment default quota. A setting of `-1` means
     /// unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub healthmonitor: Option<i32>,
 
     /// The configured l7policy quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub l7policy: Option<i32>,
 
     /// The configured l7rule quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub l7rule: Option<i32>,
 
     /// The configured listener quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub listener: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub load_balancer: Option<i32>,
 
     /// The configured load balancer quota limit. A setting of `null` means it
     /// is using the deployment default quota. A setting of `-1` means
     /// unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub loadbalancer: Option<i32>,
 
     /// The configured member quota limit. A setting of `null` means it is
     /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub member: Option<i32>,
 
     /// The configured pool quota limit. A setting of `null` means it is using
     /// the deployment default quota. A setting of `-1` means unlimited.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub pool: Option<i32>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

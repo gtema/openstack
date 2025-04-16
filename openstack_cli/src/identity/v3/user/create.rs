@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v3/users` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::user::create;
+use openstack_types::identity::v3::user::response::create::UserResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates a user.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/users`
-///
 #[derive(Args)]
 #[command(about = "Create user")]
 pub struct UserCommand {
@@ -54,7 +49,6 @@ pub struct UserCommand {
     path: PathParameters,
 
     /// A `user` object
-    ///
     #[command(flatten)]
     user: User,
 }
@@ -89,8 +83,7 @@ struct Options {
     multi_factor_auth_enabled: Option<bool>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="[String] as JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="[String] as JSON", value_parser=crate::common::parse_json)]
     multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }
 
@@ -105,12 +98,10 @@ struct User {
     /// their default project, the default project is ignored at token
     /// creation. (Since v3.1) Additionally, if your default project is not
     /// valid, a token is issued without an explicit scope of authorization.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     default_project_id: Option<String>,
 
     /// The resource description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -118,13 +109,11 @@ struct User {
     /// the request, the Identity service will attempt to pull the domain ID
     /// from the token used in the request. Note that this requires the use of
     /// a domain-scoped token.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
@@ -146,12 +135,10 @@ struct User {
     /// ```
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     federated: Option<Vec<Value>>,
 
     /// The user name. Must be unique within the owning domain.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
@@ -160,107 +147,12 @@ struct User {
     /// `ignore_lockout_failure_attempts`, `lock_password`,
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
-    ///
     #[command(flatten)]
     options: Option<Options>,
 
     /// The password for the user.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
-}
-
-/// User response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the default project for the user.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_project_id: Option<String>,
-
-    /// The resource description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// List of federated objects associated with a user. Each object in the
-    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol_id` and `unique_id` of the
-    /// protocol and user respectively. For example:
-    ///
-    /// ```text
-    /// "federated": [
-    ///   {
-    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-    ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
-    ///     ]
-    ///   }
-    /// ]
-    ///
-    /// ```
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    federated: Option<Value>,
-
-    /// The user ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The links for the `user` resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The resource options for the user. Available resource options are
-    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-    /// `ignore_lockout_failure_attempts`, `lock_password`,
-    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-    /// `ignore_user_inactivity`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    options: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    password: Option<String>,
-
-    /// The date and time when the password expires. The time zone is UTC.
-    ///
-    /// This is a response object attribute; not valid for requests. A `null`
-    /// value indicates that the password never expires.
-    ///
-    /// **New in version 3.7**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    password_expires_at: Option<String>,
 }
 
 impl UserCommand {
@@ -346,7 +238,7 @@ impl UserCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<UserResponse>(data)?;
         Ok(())
     }
 }

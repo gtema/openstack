@@ -20,22 +20,17 @@
 //! Wraps invoking of the `v2.0/flavors` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::create;
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::flavor::response::create::FlavorResponse;
 
 /// Creates a flavor.
 ///
@@ -64,7 +59,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Create flavor")]
 pub struct FlavorCommand {
@@ -77,7 +71,6 @@ pub struct FlavorCommand {
     path: PathParameters,
 
     /// A `flavor` object.
-    ///
     #[command(flatten)]
     flavor: Flavor,
 }
@@ -93,68 +86,23 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Flavor {
     /// The human-readable description for the flavor.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Indicates whether the flavor is enabled or not. Default is true.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<Option<bool>>,
 
     /// Name of the flavor.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_profiles: Option<Vec<String>>,
 
     /// Service type for the flavor. Example: FIREWALL.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    service_type: Option<String>,
-}
-
-/// Flavor response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The human-readable description for the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Indicates whether the flavor is enabled or not. Default is true.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<BoolString>,
-
-    /// The ID of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Name of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Service profile UUIDs associated with this flavor.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    service_profiles: Option<Value>,
-
-    /// Service type for the flavor. Example: FIREWALL.
-    ///
-    #[serde()]
-    #[structable(optional)]
     service_type: Option<String>,
 }
 
@@ -205,7 +153,7 @@ impl FlavorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FlavorResponse>(data)?;
         Ok(())
     }
 }

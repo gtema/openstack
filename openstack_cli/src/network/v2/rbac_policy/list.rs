@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/rbac-policies` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::rbac_policy::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::rbac_policy::response::list::RbacPolicyResponse;
 
 /// List RBAC policies that belong to a given tenant.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List RBAC policies")]
 pub struct RbacPoliciesCommand {
@@ -75,12 +71,10 @@ pub struct RbacPoliciesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// action query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     action: Option<String>,
 
     /// id query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -88,51 +82,42 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// object_id query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     object_id: Option<String>,
 
     /// object_type query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     object_type: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// target_tenant query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     target_tenant: Option<String>,
 
     /// tenant_id query parameter for /v2.0/rbac-policies API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -140,53 +125,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// RbacPolicies response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Action for the RBAC policy which is `access_as_external` or
-    /// `access_as_shared`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    action: Option<String>,
-
-    /// The ID of the RBAC policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the `object_type` resource. An `object_type` of `network`
-    /// returns a network ID, an `object_type` of `qos-policy` returns a QoS
-    /// policy ID, an `object_type` of `security-group` returns a security
-    /// group ID, an `object_type` of `address-scope` returns a address scope
-    /// ID, an `object_type` of `subnetpool` returns a subnetpool ID and an
-    /// `object_type` of `address-group` returns an address group ID.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    object_id: Option<String>,
-
-    /// The type of the object that the RBAC policy affects. Types include
-    /// `qos-policy`, `network`, `security-group`, `address-scope`,
-    /// `subnetpool` or `address-group`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    object_type: Option<String>,
-
-    /// The ID of the tenant to which the RBAC policy will be enforced.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    target_tenant: Option<String>,
-
-    /// The ID of the project that owns the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl RbacPoliciesCommand {
     /// Perform command action
@@ -246,8 +184,7 @@ impl RbacPoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<RbacPolicyResponse>(data)?;
         Ok(())
     }
 }

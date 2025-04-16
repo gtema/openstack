@@ -39,13 +39,11 @@ use std::borrow::Cow;
 
 /// The ID and links for the flavor for your server instance. A flavor is a
 /// combination of memory, disk size, and CPUs.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavor<'a> {
     /// A free form description of the flavor. Limited to 65535 characters in
     /// length. Only printable characters are allowed.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -56,12 +54,10 @@ pub struct Flavor<'a> {
 pub struct Request<'a> {
     /// The ID and links for the flavor for your server instance. A flavor is a
     /// combination of memory, disk size, and CPUs.
-    ///
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 
     /// id parameter for /v2.1/flavors/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

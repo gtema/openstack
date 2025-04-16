@@ -82,7 +82,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// Type for additional vips
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AdditionalVips<'a> {
@@ -154,7 +153,6 @@ pub enum Type {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SessionPersistence<'a> {
@@ -167,7 +165,7 @@ pub struct SessionPersistence<'a> {
     pub(crate) persistence_granularity: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) persistence_timeout: Option<i32>,
 
     #[serde(rename = "type")]
@@ -216,16 +214,15 @@ pub enum HttpMethod {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Healthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -241,15 +238,15 @@ pub struct Healthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -259,13 +256,12 @@ pub struct Healthmonitor<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -278,7 +274,6 @@ pub struct Healthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Members<'a> {
@@ -287,11 +282,11 @@ pub struct Members<'a> {
     pub(crate) address: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) backup: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -299,7 +294,7 @@ pub struct Members<'a> {
     pub(crate) monitor_address: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) monitor_port: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -307,11 +302,11 @@ pub struct Members<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) protocol_port: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) request_sriov: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -323,17 +318,16 @@ pub struct Members<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct DefaultPool<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -353,7 +347,6 @@ pub struct DefaultPool<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<Healthmonitor<'a>>,
@@ -375,7 +368,6 @@ pub struct DefaultPool<'a> {
     pub(crate) protocol: Option<DefaultPoolProtocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -393,7 +385,7 @@ pub struct DefaultPool<'a> {
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -450,16 +442,15 @@ pub enum RedirectPoolHealthmonitorType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RedirectPoolHealthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -475,15 +466,15 @@ pub struct RedirectPoolHealthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -495,7 +486,7 @@ pub struct RedirectPoolHealthmonitor<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -508,12 +499,11 @@ pub struct RedirectPoolHealthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RedirectPool<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -533,7 +523,6 @@ pub struct RedirectPool<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<RedirectPoolHealthmonitor<'a>>,
@@ -555,7 +544,6 @@ pub struct RedirectPool<'a> {
     pub(crate) protocol: Option<RedirectPoolProtocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -573,7 +561,7 @@ pub struct RedirectPool<'a> {
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -616,12 +604,11 @@ pub enum CompareType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rules<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
@@ -629,7 +616,7 @@ pub struct Rules<'a> {
     pub(crate) compare_type: CompareType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) invert: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -650,7 +637,6 @@ pub struct Rules<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct L7policies<'a> {
@@ -659,7 +645,7 @@ pub struct L7policies<'a> {
     pub(crate) action: Action,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -671,15 +657,14 @@ pub struct L7policies<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) position: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) redirect_http_code: Option<i32>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redirect_pool: Option<RedirectPool<'a>>,
@@ -730,12 +715,11 @@ pub enum ListenersProtocol {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Listeners<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -759,11 +743,10 @@ pub struct Listeners<'a> {
     pub(crate) client_crl_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) connection_limit: Option<i32>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_pool: Option<DefaultPool<'a>>,
@@ -781,19 +764,19 @@ pub struct Listeners<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_include_subdomains: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_max_age: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_preload: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_insert_headers"))]
+    #[builder(default, private, setter(into, name = "_insert_headers"))]
     pub(crate) insert_headers: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -809,7 +792,7 @@ pub struct Listeners<'a> {
     pub(crate) protocol: ListenersProtocol,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) protocol_port: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -821,19 +804,19 @@ pub struct Listeners<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_client_data: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_member_connect: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_member_data: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_tcp_inspect: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -897,16 +880,15 @@ pub enum PoolsHealthmonitorType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct PoolsHealthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -922,15 +904,15 @@ pub struct PoolsHealthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -942,7 +924,7 @@ pub struct PoolsHealthmonitor<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -955,12 +937,11 @@ pub struct PoolsHealthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Pools<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -980,7 +961,6 @@ pub struct Pools<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<PoolsHealthmonitor<'a>>,
@@ -1002,7 +982,6 @@ pub struct Pools<'a> {
     pub(crate) protocol: Option<PoolsProtocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -1020,7 +999,7 @@ pub struct Pools<'a> {
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1029,7 +1008,6 @@ pub struct Pools<'a> {
 }
 
 /// A load balancer object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Loadbalancer<'a> {
@@ -1040,44 +1018,37 @@ pub struct Loadbalancer<'a> {
     /// primary VIP.
     ///
     /// **New in version 2.26**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) additional_vips: Option<Vec<AdditionalVips<'a>>>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// An availability zone name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The ID of the flavor.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
     /// The associated listener IDs, if any.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) listeners: Option<Vec<Listeners<'a>>>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -1087,13 +1058,11 @@ pub struct Loadbalancer<'a> {
     pub(crate) pools: Option<Vec<Pools<'a>>>,
 
     /// The ID of the project owning this resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// Provider name for the load balancer. Default is `octavia`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) provider: Option<Cow<'a, str>>,
@@ -1107,27 +1076,23 @@ pub struct Loadbalancer<'a> {
     pub(crate) tenant_id: Option<Cow<'a, str>>,
 
     /// The IP address of the Virtual IP (VIP).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_address: Option<Cow<'a, str>>,
 
     /// The ID of the network for the Virtual IP (VIP). One of
     /// `vip_network_id`, `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_network_id: Option<Cow<'a, str>>,
 
     /// The ID of the Virtual IP (VIP) port. One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_port_id: Option<Cow<'a, str>>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_qos_policy_id: Option<Cow<'a, str>>,
@@ -1136,14 +1101,12 @@ pub struct Loadbalancer<'a> {
     /// Balancer.
     ///
     /// **New in version 2.29**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_sg_ids: Option<Vec<Cow<'a, str>>>,
 
     /// The ID of the subnet for the Virtual IP (VIP). One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_subnet_id: Option<Cow<'a, str>>,
@@ -1153,7 +1116,6 @@ pub struct Loadbalancer<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A load balancer object.
-    ///
     #[builder(setter(into))]
     pub(crate) loadbalancer: Loadbalancer<'a>,
 

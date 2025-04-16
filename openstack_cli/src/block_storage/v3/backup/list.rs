@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/backups/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::backup::response::list_detailed::BackupResponse;
 
 /// Returns a detailed list of backups.
-///
 #[derive(Args)]
 pub struct BackupsCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ pub struct BackupsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Shows details for all project. Admin only.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenants: Option<bool>,
 
@@ -66,34 +60,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
@@ -101,12 +90,10 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Whether to show count in API response or not, default is False.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     with_count: Option<bool>,
 }
@@ -114,149 +101,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Backups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone: Option<String>,
-
-    /// The container name or null.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    container: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The time when the data on the volume was first saved. If it is a backup
-    /// from volume, it will be the same as `created_at` for a backup. If it is
-    /// a backup from a snapshot, it will be the same as `created_at` for the
-    /// snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    data_timestamp: Option<String>,
-
-    /// The backup description or null.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// If the backup failed, the reason for the failure. Otherwise, null.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    fail_reason: Option<String>,
-
-    /// If this value is `true`, there are other backups depending on this
-    /// backup.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    has_dependent_backups: Option<bool>,
-
-    /// The UUID of the backup.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Indicates whether the backup mode is incremental. If this value is
-    /// `true`, the backup mode is incremental. If this value is `false`, the
-    /// backup mode is full.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    is_incremental: Option<bool>,
-
-    /// The backup metadata key value pairs.
-    ///
-    /// **New in version 3.43**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    metadata: Option<Value>,
-
-    /// The backup name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The number of objects in the backup.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    object_count: Option<i32>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable(wide)]
-    size: i64,
-
-    /// The UUID of the source volume snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    snapshot_id: Option<String>,
-
-    /// The backup status. Refer to Backup statuses table for the possible
-    /// status value.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    volume_id: String,
-}
 
 impl BackupsCommand {
     /// Perform command action
@@ -307,8 +151,7 @@ impl BackupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<BackupResponse>(data)?;
         Ok(())
     }
 }

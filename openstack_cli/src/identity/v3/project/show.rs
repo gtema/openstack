@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v3/projects/{project_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::project::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::project::response::get::ProjectResponse;
 
 /// Shows details for a project.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/project`
-///
 #[derive(Args)]
 #[command(about = "Show project details")]
 pub struct ProjectCommand {
@@ -62,81 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// project_id parameter for /v3/projects/{project_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Project response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_domain: Option<bool>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    options: Option<Value>,
-
-    /// The ID of the parent for the project.
-    ///
-    /// **New in version 3.4**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    parent_id: Option<String>,
-
-    /// A list of simple strings assigned to a project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
 }
 
 impl ProjectCommand {
@@ -159,7 +85,7 @@ impl ProjectCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<ProjectResponse>(find_data)?;
         Ok(())
     }
 }

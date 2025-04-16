@@ -24,14 +24,12 @@ use structable::{StructTable, StructTableOptions};
 pub struct LimitResponse {
     /// Name/value pairs that set quota limits within a deployment and
     /// Name/value pairs of resource usage.
-    ///
     #[structable(serialize)]
     pub absolute: Absolute,
 }
 
 /// Name/value pairs that set quota limits within a deployment and Name/value
 /// pairs of resource usage.
-///
 /// `Absolute` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {

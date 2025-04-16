@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SimpleTenantUsageResponse {
     /// A list of the tenant usage objects.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tenant_usages: Option<Vec<TenantUsages>>,
 
@@ -32,7 +32,7 @@ pub struct SimpleTenantUsageResponse {
     /// for more info.
     ///
     /// **New in version 2.40**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tenant_usages_links: Option<Vec<TenantUsagesLinks>>,
 }
@@ -70,7 +70,6 @@ pub struct TenantUsages {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `TenantUsagesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TenantUsagesLinks {

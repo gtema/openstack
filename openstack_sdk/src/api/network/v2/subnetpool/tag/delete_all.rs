@@ -27,7 +27,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     subnetpool_id: Cow<'a, str>,
 

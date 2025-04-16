@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/remote-consoles` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::remote_console::create_299;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::remote_console::response::create::RemoteConsoleResponse;
 
 /// The API provides a unified request for creating a remote console. The user
 /// can get a URL to connect the console from this API. The URL includes the
@@ -46,7 +43,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), notImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Create Console (microversion = 2.99)")]
 pub struct RemoteConsoleCommand {
@@ -59,7 +55,6 @@ pub struct RemoteConsoleCommand {
     path: PathParameters,
 
     /// The remote console object.
-    ///
     #[command(flatten)]
     remote_console: RemoteConsole,
 }
@@ -72,7 +67,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
@@ -106,7 +100,6 @@ struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
     /// `serial` and `mks`. The protocol `mks` is added since Microversion
     /// `2.8`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     protocol: Protocol,
 
@@ -114,36 +107,8 @@ struct RemoteConsole {
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
     /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
     /// was added in Microversion `2.99`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Type,
-}
-
-/// RemoteConsole response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `serial` and `mks`. The protocol `mks` is added since Microversion
-    /// `2.8`.
-    ///
-    #[serde()]
-    #[structable()]
-    protocol: String,
-
-    /// The type of remote console. The valid values are `novnc`,
-    /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-    /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
-    /// was added in Microversion `2.99`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(title = "type")]
-    _type: String,
-
-    /// The URL is used to connect the console.
-    ///
-    #[serde()]
-    #[structable()]
-    url: String,
 }
 
 impl RemoteConsoleCommand {
@@ -195,7 +160,7 @@ impl RemoteConsoleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RemoteConsoleResponse>(data)?;
         Ok(())
     }
 }

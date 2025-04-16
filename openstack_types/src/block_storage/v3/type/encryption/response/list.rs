@@ -24,49 +24,49 @@ use structable::{StructTable, StructTableOptions};
 pub struct EncryptionResponse {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub cipher: Option<String>,
 
     /// Notional service where encryption is performed. Valid values are
     /// “front-end” or “back-end”. The default value is “front-end”.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub control_location: Option<ControlLocation>,
 
     /// The date and time when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The resource is deleted or not.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub deleted: Option<bool>,
 
     /// The date and time when the resource was deleted.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub deleted_at: Option<String>,
 
     /// The UUID of the encryption.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub encryption_id: Option<String>,
 
     /// Size of encryption key, in bits. This is usually 256. The default value
     /// is None.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub key_size: Option<i32>,
 
     /// The class that provides encryption support.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provider: Option<String>,
 
     /// The date and time when the resource was updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -80,4 +80,15 @@ pub enum ControlLocation {
     // FrontEnd
     #[serde(rename = "front-end")]
     FrontEnd,
+}
+
+impl std::str::FromStr for ControlLocation {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "back-end" => Ok(Self::BackEnd),
+            "front-end" => Ok(Self::FrontEnd),
+            _ => Err(()),
+        }
+    }
 }

@@ -109,12 +109,11 @@ pub enum CompareType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rules<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
@@ -122,7 +121,7 @@ pub struct Rules<'a> {
     pub(crate) compare_type: CompareType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) invert: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -132,7 +131,6 @@ pub struct Rules<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -147,50 +145,42 @@ pub struct Rules<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct L7policy<'a> {
     /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
     /// `REDIRECT_TO_URL`, or `REJECT`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) action: Action,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The ID of the listener.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) listener_id: Cow<'a, str>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The position of this policy on the listener. Positions start at 1.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) position: Option<i32>,
 
     /// The ID of the project owning this resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
@@ -201,30 +191,26 @@ pub struct L7policy<'a> {
     /// 303, 307, or 308. Default is 302.
     ///
     /// **New in version 2.9**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) redirect_http_code: Option<i32>,
 
     /// Requests matching this policy will be redirected to the pool with this
     /// ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some
     /// restrictions, See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redirect_pool_id: Option<Cow<'a, str>>,
 
     /// Requests matching this policy will be redirected to this Prefix URL.
     /// Only valid if `action` is `REDIRECT_PREFIX`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redirect_prefix: Option<Cow<'a, str>>,
 
     /// Requests matching this policy will be redirected to this URL. Only
     /// valid if `action` is `REDIRECT_TO_URL`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redirect_url: Option<Cow<'a, str>>,
@@ -246,7 +232,6 @@ pub struct L7policy<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) l7policy: L7policy<'a>,
 

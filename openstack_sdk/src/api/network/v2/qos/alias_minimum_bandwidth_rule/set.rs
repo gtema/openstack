@@ -40,7 +40,7 @@ pub struct AliasMinimumBandwidthRule {
     pub(crate) direction: Option<Direction>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_kbps: Option<i32>,
 }
 
@@ -51,7 +51,6 @@ pub struct Request<'a> {
     pub(crate) alias_minimum_bandwidth_rule: AliasMinimumBandwidthRule,
 
     /// id parameter for /v2.0/qos/alias-minimum-bandwidth-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

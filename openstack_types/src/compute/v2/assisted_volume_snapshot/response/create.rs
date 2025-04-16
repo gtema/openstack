@@ -29,12 +29,10 @@ pub struct AssistedVolumeSnapshotResponse {
     /// This string is passed back to user as it is and not being used in Nova
     /// internally. So use `snapshot_id` instead for further operation on this
     /// snapshot.
-    ///
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The source volume ID.
-    ///
     #[serde(rename = "volumeId")]
     #[structable(title = "volumeId")]
     pub volume_id: String,

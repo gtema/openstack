@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_trust::trust::role::get;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::identity::v3::os_trust::trust::role::response::get::RoleResponse;
 
 /// Get a role that has been assigned to a trust.
-///
 #[derive(Args)]
 pub struct RoleCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_trust_id",
@@ -68,30 +62,12 @@ struct PathParameters {
 
     /// role_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl RoleCommand {
@@ -119,7 +95,7 @@ impl RoleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RoleResponse>(data)?;
         Ok(())
     }
 }

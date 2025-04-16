@@ -20,24 +20,18 @@
 //! Wraps invoking of the `allocations` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::allocation::create_134;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create, update or delete allocations for multiple consumers in a single
 /// request. This allows a client to atomically set or swap allocations for
@@ -53,7 +47,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: badRequest(400), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Manage allocations (microversion = 1.34)")]
 pub struct AllocationCommand {
@@ -77,9 +70,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Allocation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl AllocationCommand {
     /// Perform command action
@@ -114,11 +104,7 @@ impl AllocationCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

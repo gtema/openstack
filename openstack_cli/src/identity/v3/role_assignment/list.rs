@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v3/role_assignments` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role_assignment::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::role_assignment::response::list::RoleAssignmentResponse;
 
 /// Get a list of role assignments.
 ///
@@ -107,7 +103,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/role_assignments`
-///
 #[derive(Args)]
 #[command(about = "List role assignments")]
 pub struct RoleAssignmentsCommand {
@@ -139,7 +134,6 @@ struct QueryParameters {
     role_id: Option<String>,
 
     /// The ID of the domain.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     scope_domain_id: Option<String>,
 
@@ -147,7 +141,6 @@ struct QueryParameters {
     scope_os_inherit_inherited_to: Option<String>,
 
     /// The ID of the project.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     scope_project_id: Option<String>,
 
@@ -161,25 +154,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// RoleAssignments response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, pretty)]
-    group: Option<Value>,
-
-    #[serde()]
-    #[structable(pretty)]
-    role: Value,
-
-    #[serde()]
-    #[structable(pretty)]
-    scope: Value,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    user: Option<Value>,
-}
 
 impl RoleAssignmentsCommand {
     /// Perform command action
@@ -233,9 +207,8 @@ impl RoleAssignmentsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<RoleAssignmentResponse>(data)?;
         Ok(())
     }
 }

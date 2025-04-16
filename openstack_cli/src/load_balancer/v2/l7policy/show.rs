@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/l7policies/{l7policy_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::l7policy::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::l7policy::response::get::L7policyResponse;
 
 /// Shows the details of a L7 policy.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 /// response code.
 ///
 /// This operation does not require a request body.
-///
 #[derive(Args)]
 #[command(about = "Show L7 Policy details")]
 pub struct L7PolicyCommand {
@@ -65,144 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// L7Policy response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
-    /// `REDIRECT_TO_URL`, or `REJECT`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    action: Option<String>,
-
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the L7 policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the listener.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    listener_id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    /// The position of this policy on the listener. Positions start at 1.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    position: Option<i32>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    /// Requests matching this policy will be redirected to the specified URL
-    /// or Prefix URL with the HTTP response code. Valid if `action` is
-    /// `REDIRECT_TO_URL` or `REDIRECT_PREFIX`. Valid options are: 301, 302,
-    /// 303, 307, or 308. Default is 302.
-    ///
-    /// **New in version 2.9**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    redirect_http_code: Option<i32>,
-
-    /// Requests matching this policy will be redirected to the pool with this
-    /// ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some
-    /// restrictions, See
-    /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    redirect_pool_id: Option<String>,
-
-    /// Requests matching this policy will be redirected to this Prefix URL.
-    /// Only valid if `action` is `REDIRECT_PREFIX`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    redirect_prefix: Option<String>,
-
-    /// Requests matching this policy will be redirected to this URL. Only
-    /// valid if `action` is `REDIRECT_TO_URL`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    redirect_url: Option<String>,
-
-    /// List of associated L7 rule IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    rules: Option<Value>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl L7PolicyCommand {
@@ -225,7 +88,7 @@ impl L7PolicyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<L7policyResponse>(find_data)?;
         Ok(())
     }
 }

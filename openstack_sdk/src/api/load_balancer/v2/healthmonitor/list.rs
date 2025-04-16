@@ -39,135 +39,110 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The type of health monitor.
-    ///
     #[builder(default, setter(into))]
     _type: Option<Cow<'a, str>>,
 
     /// The administrative state of the resource
-    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[builder(default, setter(into))]
     created_at: Option<Cow<'a, str>>,
 
     /// The time, in seconds, between sending probes to members.
-    ///
     #[builder(default)]
     delay: Option<i32>,
 
     /// A human-readable description for the resource.
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// The list of HTTP status codes expected in response from the member to
     /// declare it healthy.
-    ///
     #[builder(default, setter(into))]
     expected_codes: Option<Cow<'a, str>>,
 
     /// The HTTP method that the health monitor uses for requests.
-    ///
     #[builder(default, setter(into))]
     http_method: Option<Cow<'a, str>>,
 
     /// The ID of the resource
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// The number of successful checks before changing the operating status of
     /// the member to ONLINE. A valid value is from 1 to 10.
-    ///
     #[builder(default)]
     max_retries: Option<i32>,
 
     /// The number of allowed check failures before changing the operating
     /// status of the member to ERROR. A valid value is from 1 to 10.
-    ///
     #[builder(default)]
     max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags_any: Option<Cow<'a, str>>,
 
     /// The operating status of the resource.
-    ///
     #[builder(default, setter(into))]
     operating_status: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// The ID of the pool.
-    ///
     #[builder(default, setter(into))]
     pool_id: Option<Cow<'a, str>>,
 
     /// The ID of the project owning this resource.
-    ///
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
     /// The provisioning status of the resource.
-    ///
     #[builder(default, setter(into))]
     provisioning_status: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[builder(default, setter(into))]
     tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[builder(default, setter(into))]
     tags_any: Option<Cow<'a, str>>,
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out.
-    ///
     #[builder(default)]
     timeout: Option<i32>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (/).
-    ///
     #[builder(default, setter(into))]
     url_path: Option<Cow<'a, str>>,
 

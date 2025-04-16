@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/migrations/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::migration::force_complete_222;
-use structable_derive::StructTable;
 
 /// Force an in-progress live migration for a given server to complete.
 ///
@@ -72,7 +66,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Force Migration Complete Action (force_complete Action) (microversion = 2.22)")]
 pub struct MigrationCommand {
@@ -94,7 +87,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/migrations/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
@@ -103,7 +95,6 @@ struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -111,9 +102,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Migration response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl MigrationCommand {
     /// Perform command action
@@ -139,11 +127,7 @@ impl MigrationCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

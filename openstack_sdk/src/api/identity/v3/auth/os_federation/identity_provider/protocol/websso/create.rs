@@ -31,14 +31,12 @@ pub struct Request<'a> {
     /// idp_id parameter for
     /// /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
     /// API
-    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 
     /// protocol_id parameter for
     /// /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
     /// API
-    ///
     #[builder(default, setter(into))]
     protocol_id: Cow<'a, str>,
 

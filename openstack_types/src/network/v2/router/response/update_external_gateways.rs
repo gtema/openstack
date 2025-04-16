@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the PUT `routers/{id}/update_external_gateways` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -25,20 +24,19 @@ use structable::{StructTable, StructTableOptions};
 pub struct RouterResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub availability_zone_hints: Option<Vec<String>>,
 
     /// The availability zone(s) for the router. It is available when
     /// `router_availability_zone` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub availability_zones: Option<Vec<String>>,
 
@@ -46,23 +44,23 @@ pub struct RouterResponse {
     /// has multiple conntrack helper resources, this field has multiple
     /// entries. Each entry consists of netfilter conntrack helper (`helper`),
     /// the network protocol (`protocol`), the network port (`port`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub conntrack_helpers: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub distributed: Option<bool>,
 
@@ -72,7 +70,7 @@ pub struct RouterResponse {
     /// is disabled, the IPv6 address of internal subnets attached to the
     /// router can not be published to external by `ndp_proxy`. It is available
     /// when `router-extend-ndp-proxy` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub enable_ndp_proxy: Option<bool>,
 
@@ -81,60 +79,60 @@ pub struct RouterResponse {
     /// `enable_snat`, `external_fixed_ips`, `qos_policy_id`,
     /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
     /// this would be `null`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub external_gateway_info: Option<ExternalGatewayInfo>,
 
     /// The ID of the flavor associated with the router.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub ha: Option<bool>,
 
     /// The ID of the router.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub routes: Option<Vec<Routes>>,
 
     /// The router status.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of tags on the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -150,7 +148,6 @@ pub struct ExternalFixedIps {
 /// external gateway, this would be a dict with `network_id`, `enable_snat`,
 /// `external_fixed_ips`, `qos_policy_id`, `enable_default_route_ecmp` and
 /// `enable_default_route_bfd`. Otherwise, this would be `null`.
-///
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {

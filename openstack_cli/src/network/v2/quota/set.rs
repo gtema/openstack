@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v2.0/quotas/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::quota::set;
-use structable_derive::StructTable;
+use openstack_types::network::v2::quota::response::set::QuotaResponse;
 
 /// Updates quotas for a project. Use when non-default quotas are desired.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403
-///
 #[derive(Args)]
 #[command(about = "Update quota for a project")]
 pub struct QuotaCommand {
@@ -53,7 +49,6 @@ pub struct QuotaCommand {
     path: PathParameters,
 
     /// A `quota` object.
-    ///
     #[command(flatten)]
     quota: Quota,
 }
@@ -66,7 +61,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/quotas/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -79,134 +73,51 @@ struct PathParameters {
 struct Quota {
     /// The number of floating IP addresses allowed for each project. A value
     /// of `-1` means no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     floatingip: Option<i32>,
 
     /// The number of networks allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     network: Option<i32>,
 
     /// The number of ports allowed for each project. A value of `-1` means no
     /// limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     port: Option<i32>,
 
     /// The ID of the project.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project. A value of `-1` means no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     rbac_policy: Option<i32>,
 
     /// The number of routers allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     router: Option<i32>,
 
     /// The number of security groups allowed for each project. A value of `-1`
     /// means no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_group: Option<i32>,
 
     /// The number of security group rules allowed for each project. A value of
     /// `-1` means no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_group_rule: Option<i32>,
 
     /// The number of subnets allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     subnet: Option<i32>,
 
     /// The number of subnet pools allowed for each project. A value of `-1`
     /// means no limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    subnetpool: Option<i32>,
-}
-
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of floating IP addresses allowed for each project. A value
-    /// of `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    floatingip: Option<i32>,
-
-    /// The number of networks allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network: Option<i32>,
-
-    /// The number of ports allowed for each project. A value of `-1` means no
-    /// limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port: Option<i32>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The number of role-based access control (RBAC) policies for each
-    /// project. A value of `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    rbac_policy: Option<i32>,
-
-    /// The number of routers allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    router: Option<i32>,
-
-    /// The number of security groups allowed for each project. A value of `-1`
-    /// means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group: Option<i32>,
-
-    /// The number of security group rules allowed for each project. A value of
-    /// `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group_rule: Option<i32>,
-
-    /// The number of subnets allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet: Option<i32>,
-
-    /// The number of subnet pools allowed for each project. A value of `-1`
-    /// means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
     subnetpool: Option<i32>,
 }
 
@@ -278,7 +189,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

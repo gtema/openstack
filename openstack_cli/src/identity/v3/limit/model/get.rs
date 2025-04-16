@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v3/limits/model` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::limit::model::get;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::limit::model::response::get::ModelResponse;
 
 /// Return the configured limit enforcement model.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/limit_model`
-///
 #[derive(Args)]
 #[command(about = "Get Enforcement Model")]
 pub struct ModelCommand {
@@ -59,21 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Model response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A short description of the enforcement model used
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The name of the enforcement model
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl ModelCommand {
     /// Perform command action
@@ -98,7 +79,7 @@ impl ModelCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ModelResponse>(data)?;
         Ok(())
     }
 }

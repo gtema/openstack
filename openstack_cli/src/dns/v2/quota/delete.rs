@@ -20,31 +20,23 @@
 //! Wraps invoking of the `v2/quotas/{project_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::dns::v2::quota::delete;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Reset all quotas for a project to default
-///
 #[derive(Args)]
 #[command(about = "Reset Quotas")]
 pub struct QuotaCommand {
@@ -83,9 +75,6 @@ struct ProjectInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
 }
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl QuotaCommand {
     /// Perform command action
@@ -158,8 +147,7 @@ impl QuotaCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

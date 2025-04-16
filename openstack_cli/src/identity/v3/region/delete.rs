@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v3/regions/{region_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::region::delete;
-use structable_derive::StructTable;
 
 /// Deletes a region.
 ///
@@ -43,7 +37,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/region`
-///
 #[derive(Args)]
 #[command(about = "Delete region")]
 pub struct RegionCommand {
@@ -64,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -72,9 +64,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Region response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl RegionCommand {
     /// Perform command action
@@ -98,8 +87,7 @@ impl RegionCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

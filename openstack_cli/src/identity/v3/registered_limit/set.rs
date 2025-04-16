@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/registered_limits/{registered_limit_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::registered_limit::set;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::registered_limit::response::set::RegisteredLimitResponse;
 
 /// Updates the specified registered limit.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/registered_limit`
-///
 #[derive(Args)]
 #[command(about = "Update Registered Limit")]
 pub struct RegisteredLimitCommand {
@@ -53,7 +48,6 @@ pub struct RegisteredLimitCommand {
     path: PathParameters,
 
     /// A `registered_limit` objects
-    ///
     #[command(flatten)]
     registered_limit: RegisteredLimit,
 }
@@ -67,7 +61,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// registered_limit_id parameter for
     /// /v3/registered_limits/{registered_limit_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -79,80 +72,28 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct RegisteredLimit {
     /// The default limit for the registered limit.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     default_limit: Option<i32>,
 
     /// The registered limit description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the region that contains the service endpoint. Either
     /// service_id, resource_name, or region_id must be different than existing
     /// value otherwise it will raise 409.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
 
     /// The resource name. Either service_id, resource_name or region_id must
     /// be different than existing value otherwise it will raise 409.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     resource_name: Option<String>,
 
     /// The UUID of the service to update to which the registered limit
     /// belongs. Either service_id, resource_name, or region_id must be
     /// different than existing value otherwise it will raise 409.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    service_id: Option<String>,
-}
-
-/// RegisteredLimit response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The default limit for the registered limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_limit: Option<i32>,
-
-    /// The registered limit description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The registered limit ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The ID of the region that contains the service endpoint. The value can
-    /// be None.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region_id: Option<String>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_name: Option<String>,
-
-    /// The UUID of the service to which the registered limit belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
     service_id: Option<String>,
 }
 
@@ -204,7 +145,7 @@ impl RegisteredLimitCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RegisteredLimitResponse>(data)?;
         Ok(())
     }
 }

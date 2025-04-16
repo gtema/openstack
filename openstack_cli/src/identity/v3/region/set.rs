@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v3/regions/{region_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::region::set;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::region::response::set::RegionResponse;
 
 /// Updates a region.
 ///
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/region`
-///
 #[derive(Args)]
 #[command(about = "Update region")]
 pub struct RegionCommand {
@@ -57,7 +53,6 @@ pub struct RegionCommand {
     path: PathParameters,
 
     /// A `region` object
-    ///
     #[command(flatten)]
     region: Region,
 }
@@ -70,7 +65,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,37 +76,12 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Region {
     /// The region description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    parent_id: Option<String>,
-}
-
-/// Region response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The region description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID for the region.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// To make this region a child of another region, set this parameter to
-    /// the ID of the parent region.
-    ///
-    #[serde()]
-    #[structable(optional)]
     parent_id: Option<String>,
 }
 
@@ -152,7 +121,7 @@ impl RegionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RegionResponse>(data)?;
         Ok(())
     }
 }

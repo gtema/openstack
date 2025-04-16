@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v1/mservices` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::mservice::list;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::mservice::response::list::MserviceResponse;
 
 /// Enables administrative users to list all Magnum services.
 ///
 /// Container infrastructure service information include service id, binary,
 /// host, report count, creation time, last updated time, health status, and
 /// the reason for disabling service.
-///
 #[derive(Args)]
 #[command(about = "List container infrastructure management services")]
 pub struct MservicesCommand {
@@ -60,91 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Mservices response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the binary form of the Magnum service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    binary: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    disabled: Option<String>,
-
-    /// The disable reason of the service, `null` if the service is enabled or
-    /// disabled without reason provided.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    disabled_reason: Option<String>,
-
-    /// The host for the service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    host: Option<String>,
-
-    /// The ID of the Magnum service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    /// The total number of report.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    report_count: Option<i32>,
-
-    /// The current state of Magnum services.
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    state: Option<String>,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl MservicesCommand {
     /// Perform command action
@@ -169,8 +80,7 @@ impl MservicesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MserviceResponse>(data)?;
         Ok(())
     }
 }

@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Image response representation
@@ -29,7 +29,7 @@ pub struct ImageResponse {
     /// beginning with the Victoria release. It remains present for backward
     /// compatibility with legacy images. To validate image data, instead use
     /// the secure multihash fields `os_hash_algo` and `os_hash_value`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub checksum: Option<String>,
 
@@ -48,9 +48,9 @@ pub struct ImageResponse {
     ///
     /// **Train changes**: The `compressed` container format is a supported
     /// value.
-    ///
-    #[structable(optional, serialize)]
-    pub container_format: Option<ContainerFormat>,
+    #[serde(default)]
+    #[structable(optional)]
+    pub container_format: Option<String>,
 
     /// The date and time when the resource was created.
     ///
@@ -66,7 +66,7 @@ pub struct ImageResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -74,7 +74,7 @@ pub struct ImageResponse {
     /// only if the* `show_image_direct_url` *option is* `true` *in the Image
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub direct_url: Option<String>,
 
@@ -93,12 +93,12 @@ pub struct ImageResponse {
     ///
     /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
-    ///
-    #[structable(optional, serialize)]
-    pub disk_format: Option<DiskFormat>,
+    #[serde(default)]
+    #[structable(optional)]
+    pub disk_format: Option<String>,
 
     /// The URL for the virtual machine image file.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub file: Option<String>,
 
@@ -119,7 +119,7 @@ pub struct ImageResponse {
     /// ```
     ///
     /// If you omit this value, the API generates a UUID for the image.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -131,24 +131,24 @@ pub struct ImageResponse {
     /// `show_multiple_locations` *option is set to* `true` *in the Image
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space in GB that is required to boot the image. The
     /// value might be `null` (JSON null data type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub min_disk: Option<i32>,
 
     /// Amount of RAM in MB that is required to boot the image. The value might
     /// be `null` (JSON null data type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub min_ram: Option<i32>,
 
     /// The name of the image. Value might be `null` (JSON null data type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
@@ -157,7 +157,7 @@ pub struct ImageResponse {
     /// `os_hash_value` property. The value might be `null` (JSON null data
     /// type). The algorithm used is chosen by the cloud operator; it may not
     /// be configured by end users. *(Since Image API v2.7)*
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub os_hash_algo: Option<String>,
 
@@ -166,7 +166,7 @@ pub struct ImageResponse {
     /// value might be `null` (JSON null data type) if data has not yet been
     /// associated with this image, or if the image was created using a version
     /// of the Image Service API prior to version 2.7. *(Since Image API v2.7)*
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub os_hash_value: Option<String>,
 
@@ -177,53 +177,52 @@ pub struct ImageResponse {
     /// needed for server rebuilds. By hiding it from the default image list,
     /// it’s easier for end users to find and use a more up-to-date version of
     /// this image. *(Since Image API v2.7)*
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub os_hidden: Option<bool>,
 
     /// An identifier for the owner of the image, usually the project (also
     /// called the “tenant”) ID. The value might be `null` (JSON null data
     /// type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub owner: Option<String>,
 
     /// A boolean value that must be `false` or the image cannot be deleted.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub protected: Option<bool>,
 
     /// The URL for the schema describing a virtual machine image.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
     /// The URL for the virtual machine image.
-    ///
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// The size of the image data, in bytes. The value might be `null` (JSON
     /// null data type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub size: Option<i64>,
 
     /// The image status.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub stores: Option<String>,
 
     /// List of tags for this image, possibly an empty list.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
@@ -244,18 +243,18 @@ pub struct ImageResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The virtual size of the image. The value might be `null` (JSON null
     /// data type).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub virtual_size: Option<i64>,
 
     /// Image visibility, that is, the access permission for the image.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub visibility: Option<Visibility>,
 }
@@ -299,6 +298,24 @@ pub enum Status {
     Uploading,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "active" => Ok(Self::Active),
+            "deactivated" => Ok(Self::Deactivated),
+            "deleted" => Ok(Self::Deleted),
+            "importing" => Ok(Self::Importing),
+            "killed" => Ok(Self::Killed),
+            "pending_delete" => Ok(Self::PendingDelete),
+            "queued" => Ok(Self::Queued),
+            "saving" => Ok(Self::Saving),
+            "uploading" => Ok(Self::Uploading),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Visibility {
     // Community
@@ -318,92 +335,22 @@ pub enum Visibility {
     Shared,
 }
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum ContainerFormat {
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Ami
-    #[serde(rename = "ami")]
-    Ami,
-
-    // Ari
-    #[serde(rename = "ari")]
-    Ari,
-
-    // Bare
-    #[serde(rename = "bare")]
-    Bare,
-
-    // Compressed
-    #[serde(rename = "compressed")]
-    Compressed,
-
-    // Docker
-    #[serde(rename = "docker")]
-    Docker,
-
-    // Ova
-    #[serde(rename = "ova")]
-    Ova,
-
-    // Ovf
-    #[serde(rename = "ovf")]
-    Ovf,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum DiskFormat {
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Ami
-    #[serde(rename = "ami")]
-    Ami,
-
-    // Ari
-    #[serde(rename = "ari")]
-    Ari,
-
-    // Iso
-    #[serde(rename = "iso")]
-    Iso,
-
-    // Ploop
-    #[serde(rename = "ploop")]
-    Ploop,
-
-    // Qcow2
-    #[serde(rename = "qcow2")]
-    Qcow2,
-
-    // Raw
-    #[serde(rename = "raw")]
-    Raw,
-
-    // Vdi
-    #[serde(rename = "vdi")]
-    Vdi,
-
-    // Vhd
-    #[serde(rename = "vhd")]
-    Vhd,
-
-    // Vhdx
-    #[serde(rename = "vhdx")]
-    Vhdx,
-
-    // Vmdk
-    #[serde(rename = "vmdk")]
-    Vmdk,
+impl std::str::FromStr for Visibility {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "community" => Ok(Self::Community),
+            "private" => Ok(Self::Private),
+            "public" => Ok(Self::Public),
+            "shared" => Ok(Self::Shared),
+            _ => Err(()),
+        }
+    }
 }
 
 /// Values to be used to populate the corresponding image properties. If the
 /// image status is not 'queued', values must exactly match those already
 /// contained in the image properties.
-///
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
@@ -415,7 +362,7 @@ pub struct ValidationData {
 /// `Locations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Locations {
-    pub metadata: HashMap<String, Value>,
+    pub metadata: BTreeMap<String, Value>,
     pub url: String,
     pub validation_data: Option<ValidationData>,
 }

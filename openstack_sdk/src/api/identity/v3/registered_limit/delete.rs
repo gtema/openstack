@@ -32,7 +32,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// registered_limit_id parameter for
     /// /v3/registered_limits/{registered_limit_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

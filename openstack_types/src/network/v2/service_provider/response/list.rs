@@ -25,19 +25,18 @@ pub struct ServiceProviderResponse {
     /// Defines whether the provider is the default for the service type. If
     /// this value is `true`, the provider is the default. If this value is
     /// `false`, the provider is not the default.
-    ///
-    #[serde(rename = "default")]
+    #[serde(default, rename = "default")]
     #[structable(optional, title = "default", wide)]
     pub _default: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The service type, which is `CORE`, `DUMMY`, `FIREWALL`, `FLAVORS`,
     /// `L3_ROUTER_NAT`, `METERING`, `QOS`, or `VPN`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub service_type: Option<String>,
 }

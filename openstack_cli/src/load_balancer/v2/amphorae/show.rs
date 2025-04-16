@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2/octavia/amphorae/{amphora_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::get;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::amphorae::response::get::AmphoraeResponse;
 
 /// Shows the details of an amphora.
 ///
@@ -41,7 +38,6 @@ use structable_derive::StructTable;
 /// `Forbidden (403)` response code.
 ///
 /// This operation does not require a request body.
-///
 #[derive(Args)]
 #[command(about = "Show Amphora details")]
 pub struct AmphoraeCommand {
@@ -62,143 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// amphora_id parameter for /v2/octavia/amphorae/{amphora_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_amphora_id",
         value_name = "AMPHORA_ID"
     )]
     amphora_id: String,
-}
-/// Amphorae response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The availability zone of a compute instance, cached at create time.
-    /// This is not guaranteed to be current. May be an empty-string if the
-    /// compute service does not use zones.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cached_zone: Option<String>,
-
-    /// Whether the certificate is in the process of being replaced.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cert_busy: Option<bool>,
-
-    /// The date the certificate for the amphora expires.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cert_expiration: Option<String>,
-
-    /// The ID of the compute flavor used for the amphora.
-    ///
-    /// **New in version 2.3**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    compute_flavor: Option<String>,
-
-    /// The ID of the amphora resource in the compute system.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    compute_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The IP address of the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ha_ip: Option<String>,
-
-    /// The ID of the Virtual IP (VIP) port.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ha_port_id: Option<String>,
-
-    /// The associated amphora ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the glance image used for the amphora.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    image_id: Option<String>,
-
-    /// The management IP of the amphora.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    lb_network_ip: Option<String>,
-
-    /// The ID of the load balancer.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    loadbalancer_id: Option<String>,
-
-    /// The role of the amphora. One of `STANDALONE`, `MASTER`, `BACKUP`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    role: Option<String>,
-
-    /// The status of the amphora. One of: `BOOTING`, `ALLOCATED`, `READY`,
-    /// `PENDING_CREATE`, `PENDING_DELETE`, `DELETED`, `ERROR`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The vrrp group’s ID for the amphora.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vrrp_id: Option<i32>,
-
-    /// The bound interface name of the vrrp port on the amphora.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vrrp_interface: Option<String>,
-
-    /// The address of the vrrp port on the amphora.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vrrp_ip: Option<String>,
-
-    /// The vrrp port’s ID in the networking system.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vrrp_port_id: Option<String>,
-
-    /// The priority of the amphora in the vrrp group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vrrp_priority: Option<i32>,
 }
 
 impl AmphoraeCommand {
@@ -225,7 +90,7 @@ impl AmphoraeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AmphoraeResponse>(data)?;
         Ok(())
     }
 }

@@ -17,19 +17,19 @@
 //! Response type for the GET `backups/detail` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Backup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BackupResponse {
     /// The name of the availability zone.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub availability_zone: Option<String>,
 
     /// The container name or null.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub container: Option<String>,
 
@@ -47,7 +47,7 @@ pub struct BackupResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -55,68 +55,64 @@ pub struct BackupResponse {
     /// from volume, it will be the same as `created_at` for a backup. If it is
     /// a backup from a snapshot, it will be the same as `created_at` for the
     /// snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub data_timestamp: Option<String>,
 
     /// The backup description or null.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// If the backup failed, the reason for the failure. Otherwise, null.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub fail_reason: Option<String>,
 
     /// If this value is `true`, there are other backups depending on this
     /// backup.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub has_dependent_backups: Option<bool>,
 
     /// The UUID of the backup.
-    ///
     #[structable()]
     pub id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// `true`, the backup mode is incremental. If this value is `false`, the
     /// backup mode is full.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub is_incremental: Option<bool>,
 
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<BTreeMap<String, String>>,
 
     /// The backup name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The number of objects in the backup.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub object_count: Option<i32>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[structable(wide)]
     pub size: i64,
 
     /// The UUID of the source volume snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub snapshot_id: Option<String>,
 
     /// The backup status. Refer to Backup statuses table for the possible
     /// status value.
-    ///
     #[structable()]
     pub status: String,
 
@@ -137,12 +133,11 @@ pub struct BackupResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the volume.
-    ///
     #[structable(wide)]
     pub volume_id: String,
 }
@@ -150,7 +145,6 @@ pub struct BackupResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

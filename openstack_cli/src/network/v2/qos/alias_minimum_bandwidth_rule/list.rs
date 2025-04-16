@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/qos/alias-minimum-bandwidth-rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_bandwidth_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::alias_minimum_bandwidth_rule::response::list::AliasMinimumBandwidthRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasMinimumBandwidthRulesCommand {
     /// Request Query parameters
@@ -59,12 +54,10 @@ pub struct AliasMinimumBandwidthRulesCommand {
 struct QueryParameters {
     /// direction query parameter for /v2.0/qos/alias-minimum-bandwidth-rules
     /// API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["egress","ingress"])]
     direction: Option<String>,
 
     /// id query parameter for /v2.0/qos/alias-minimum-bandwidth-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -72,37 +65,31 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// min_kbps query parameter for /v2.0/qos/alias-minimum-bandwidth-rules
     /// API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     min_kbps: Option<i32>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -110,25 +97,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AliasMinimumBandwidthRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    min_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl AliasMinimumBandwidthRulesCommand {
     /// Perform command action
@@ -179,8 +147,7 @@ impl AliasMinimumBandwidthRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AliasMinimumBandwidthRuleResponse>(data)?;
         Ok(())
     }
 }

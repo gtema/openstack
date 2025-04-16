@@ -22,36 +22,47 @@ use structable::{StructTable, StructTableOptions};
 /// LocalIp response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LocalIpResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub ip_mode: Option<IpMode>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub local_ip_address: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub local_port_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub network_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -65,4 +76,15 @@ pub enum IpMode {
     // Translate
     #[serde(rename = "translate")]
     Translate,
+}
+
+impl std::str::FromStr for IpMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "passthrough" => Ok(Self::Passthrough),
+            "translate" => Ok(Self::Translate),
+            _ => Err(()),
+        }
+    }
 }

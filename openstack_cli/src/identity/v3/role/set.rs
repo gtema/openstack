@@ -20,29 +20,24 @@
 //! Wraps invoking of the `v3/roles/{role_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::role::find;
 use openstack_sdk::api::identity::v3::role::set;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::role::response::set::RoleResponse;
 
 /// Updates a role.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/role`
-///
 #[derive(Args)]
 #[command(about = "Update role")]
 pub struct RoleCommand {
@@ -55,7 +50,6 @@ pub struct RoleCommand {
     path: PathParameters,
 
     /// A `role` object
-    ///
     #[command(flatten)]
     role: Role,
 }
@@ -68,7 +62,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// role_id parameter for /v3/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -88,66 +81,21 @@ struct Options {
 #[derive(Args, Clone)]
 struct Role {
     /// The new role description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the domain.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// The new role name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
-    ///
     #[command(flatten)]
     options: Option<Options>,
-}
-
-/// Role response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The role description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// The role ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the role. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    options: Option<Value>,
 }
 
 impl RoleCommand {
@@ -210,7 +158,7 @@ impl RoleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RoleResponse>(data)?;
         Ok(())
     }
 }

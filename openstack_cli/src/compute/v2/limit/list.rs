@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.1/limits` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::limit::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::limit::response::list::LimitResponse;
 
 /// Shows rate and absolute limits for the project.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Show Rate And Absolute Limits")]
 pub struct LimitCommand {
@@ -64,16 +59,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Limit response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Name/value pairs that set quota limits within a deployment and
-    /// Name/value pairs of resource usage.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    absolute: Value,
-}
 
 impl LimitCommand {
     /// Perform command action
@@ -101,7 +86,7 @@ impl LimitCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LimitResponse>(data)?;
         Ok(())
     }
 }

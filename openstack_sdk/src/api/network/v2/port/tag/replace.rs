@@ -29,7 +29,6 @@ pub struct Request<'a> {
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 

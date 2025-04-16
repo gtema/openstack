@@ -23,17 +23,17 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeTransferResponse {
     /// The UUID of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The UUID of the volume.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
@@ -41,7 +41,6 @@ pub struct VolumeTransferResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

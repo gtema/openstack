@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/diagnostics` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::diagnostic::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::diagnostic::response::get::DiagnosticResponse;
 
 /// Shows basic usage data for a server.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), notfound(404),
 /// conflict(409), notimplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Show Server Diagnostics")]
 pub struct DiagnosticCommand {
@@ -66,176 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/diagnostics API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// Diagnostic response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Indicates whether or not a config drive was used for this server.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    config_drive: Option<bool>,
-
-    /// The list of dictionaries with detailed information about VM CPUs.
-    /// Following fields are presented in each dictionary:
-    ///
-    /// - `id` - the ID of CPU (Integer)
-    /// - `time` - CPU Time in nano seconds (Integer)
-    /// - `utilisation` - CPU utilisation in percents (Integer)
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    cpu_details: Option<Value>,
-
-    /// The list of dictionaries with detailed information about VM disks.
-    /// Following fields are presented in each dictionary:
-    ///
-    /// - `read_bytes` - Disk reads in bytes (Integer)
-    /// - `read_requests` - Read requests (Integer)
-    /// - `write_bytes` - Disk writes in bytes (Integer)
-    /// - `write_requests` - Write requests (Integer)
-    /// - `errors_count` - Disk errors (Integer)
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    disk_details: Option<Value>,
-
-    /// The driver on which the VM is running. Possible values are:
-    ///
-    /// - `libvirt`
-    /// - `xenapi`
-    /// - `vmwareapi`
-    /// - `ironic`
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    driver: Option<String>,
-
-    /// The hypervisor on which the VM is running. Examples for libvirt driver
-    /// may be: `qemu`, `kvm` or `xen`.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hypervisor: Option<String>,
-
-    /// The hypervisor OS.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hypervisor_os: Option<String>,
-
-    /// Id of the resource
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The dictionary with information about VM memory usage. Following fields
-    /// are presented in the dictionary:
-    ///
-    /// - `maximum` - Amount of memory provisioned for the VM in MiB (Integer)
-    /// - `used` - Amount of memory that is currently used by the guest
-    ///   operating system and its applications in MiB (Integer)
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    memory_details: Option<Value>,
-
-    /// Name
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The list of dictionaries with detailed information about VM NICs.
-    /// Following fields are presented in each dictionary:
-    ///
-    /// - `mac_address` - Mac address of the interface (String)
-    /// - `rx_octets` - Received octets (Integer)
-    /// - `rx_errors` - Received errors (Integer)
-    /// - `rx_drop` - Received packets dropped (Integer)
-    /// - `rx_packets` - Received packets (Integer)
-    /// - `rx_rate` - Receive rate in bytes (Integer)
-    /// - `tx_octets` - Transmitted Octets (Integer)
-    /// - `tx_errors` - Transmit errors (Integer)
-    /// - `tx_drop` - Transmit dropped packets (Integer)
-    /// - `tx_packets` - Transmit packets (Integer)
-    /// - `tx_rate` - Transmit rate in bytes (Integer)
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    nic_details: Option<Value>,
-
-    /// The number of vCPUs.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_cpus: Option<i32>,
-
-    /// The number of disks.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_disks: Option<i32>,
-
-    /// The number of vNICs.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_nics: Option<i32>,
-
-    /// A string enum denoting the current state of the VM. Possible values
-    /// are:
-    ///
-    /// - `pending`
-    /// - `running`
-    /// - `paused`
-    /// - `shutdown`
-    /// - `crashed`
-    /// - `suspended`
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    state: Option<String>,
-
-    /// The amount of time in seconds that the VM has been running.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uptime: Option<i32>,
 }
 
 impl DiagnosticCommand {
@@ -262,7 +93,7 @@ impl DiagnosticCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<DiagnosticResponse>(data)?;
         Ok(())
     }
 }

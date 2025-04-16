@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/groups/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group::response::list_detailed::GroupResponse;
 
 /// Returns a detailed list of groups.
-///
 #[derive(Args)]
 pub struct GroupsCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ pub struct GroupsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Shows details for all project. Admin only.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenants: Option<bool>,
 
@@ -66,34 +60,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
@@ -101,7 +90,6 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -109,110 +97,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Groups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    group_snapshot_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    group_type: Option<String>,
-
-    /// The UUID of the group.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The name of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    /// **New in version 3.58**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The group replication status.
-    ///
-    /// **New in version 3.38**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    replication_status: Option<String>,
-
-    /// The UUID of the source group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    source_group_id: Option<String>,
-
-    /// The status of the generic group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The list of volume types. In an environment with multiple-storage back
-    /// ends, the scheduler determines where to send the volume based on the
-    /// volume type. For information about how to use volume types to create
-    /// multiple- storage back ends, see
-    /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    volume_types: Option<Value>,
-
-    /// A list of `volume` ids, available only when `list_volume` set true.
-    ///
-    /// **New in version 3.25**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    volumes: Option<Value>,
-}
 
 impl GroupsCommand {
     /// Perform command action
@@ -260,8 +144,7 @@ impl GroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<GroupResponse>(data)?;
         Ok(())
     }
 }

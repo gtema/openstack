@@ -75,7 +75,6 @@ pub struct Events<'a> {
     /// - `volume-extended` (since microversion `2.51`)
     /// - `power-update` (since microversion `2.76`)
     /// - `accelerator-request-bound` (since microversion `2.82`)
-    ///
     #[serde()]
     #[builder()]
     pub(crate) name: Name,
@@ -83,14 +82,12 @@ pub struct Events<'a> {
     /// The UUID of the server instance to which the API dispatches the event.
     /// You must assign this instance to a host. Otherwise, this call does not
     /// dispatch the event to the instance.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) server_uuid: Cow<'a, str>,
 
     /// The event status. A valid value is `failed`, `completed`, or
     /// `in-progress`. Default is `completed`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) status: Option<Status>,
@@ -103,7 +100,6 @@ pub struct Events<'a> {
     /// - For the `power-update` event the tag must be either be `POWER_ON` or
     ///   `POWER_OFF`.
     /// - For the `volume-extended` event the tag must be the volume id.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
@@ -113,7 +109,6 @@ pub struct Events<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// List of external events to process.
-    ///
     #[builder(setter(into))]
     pub(crate) events: Vec<Events<'a>>,
 

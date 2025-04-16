@@ -17,7 +17,7 @@
 //! Response type for the GET `snapshots/detail` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Snapshot response representation
@@ -28,14 +28,14 @@ pub struct SnapshotResponse {
     /// perform an operation.
     ///
     /// **New in version 3.65**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub consumes_quota: Option<bool>,
 
     /// The total count of requested resource before pagination is applied.
     ///
     /// **New in version 3.45**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub count: Option<i32>,
 
@@ -53,56 +53,49 @@ pub struct SnapshotResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
     #[structable()]
     pub created_at: String,
 
     /// A description for the snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
     /// **New in version 3.14**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub group_snapshot_id: Option<String>,
 
     /// The snapshot UUID.
-    ///
     #[structable()]
     pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot, if any.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<BTreeMap<String, String>>,
 
     /// The name of the object.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// A percentage value for the build progress.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:progress")]
+    #[serde(default, rename = "os-extended-snapshot-attributes:progress")]
     #[structable(optional, title = "os-extended-snapshot-attributes:progress", wide)]
     pub os_extended_snapshot_attributes_progress: Option<String>,
 
     /// The UUID of the owning project.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:project_id")]
+    #[serde(default, rename = "os-extended-snapshot-attributes:project_id")]
     #[structable(optional, title = "os-extended-snapshot-attributes:project_id", wide)]
     pub os_extended_snapshot_attributes_project_id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[structable(wide)]
     pub size: i64,
 
     /// The status for the snapshot.
-    ///
     #[structable(serialize)]
     pub status: Status,
 
@@ -123,12 +116,11 @@ pub struct SnapshotResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// If the snapshot was created from a volume, the volume ID.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
@@ -170,4 +162,22 @@ pub enum Status {
     // Unmanaging
     #[serde(rename = "unmanaging")]
     Unmanaging,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "available" => Ok(Self::Available),
+            "backing-up" => Ok(Self::BackingUp),
+            "creating" => Ok(Self::Creating),
+            "deleted" => Ok(Self::Deleted),
+            "deleting" => Ok(Self::Deleting),
+            "error" => Ok(Self::Error),
+            "error_deleting" => Ok(Self::ErrorDeleting),
+            "restoring" => Ok(Self::Restoring),
+            "unmanaging" => Ok(Self::Unmanaging),
+            _ => Err(()),
+        }
+    }
 }

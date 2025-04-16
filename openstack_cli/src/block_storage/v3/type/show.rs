@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/types/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::r#type::response::get::TypeResponse;
 
 /// Return a single volume type item.
-///
 #[derive(Args)]
 pub struct TypeCommand {
     /// Request Query parameters
@@ -58,61 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/types/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Type response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The volume type description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A key and value pair that contains additional specifications that are
-    /// associated with the volume type. Examples include capabilities,
-    /// capacity, compression, and so on, depending on the storage driver in
-    /// use.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    extra_specs: Option<Value>,
-
-    /// The UUID of the volume type.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Whether the volume type is publicly visible.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_public: Option<bool>,
-
-    /// The name of the volume type.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// Whether the volume type is publicly visible.
-    ///
-    #[serde(rename = "os-volume-type-access:is_public")]
-    #[structable(optional, title = "os-volume-type-access:is_public")]
-    os_volume_type_access_is_public: Option<bool>,
-
-    /// The QoS specifications ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    qos_specs_id: Option<String>,
 }
 
 impl TypeCommand {
@@ -135,7 +81,7 @@ impl TypeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<TypeResponse>(find_data)?;
         Ok(())
     }
 }

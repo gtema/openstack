@@ -23,35 +23,34 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// The role ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The resource name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 }
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

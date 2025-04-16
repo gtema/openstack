@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsMigrateLive<'a> {
@@ -34,9 +33,8 @@ pub struct OsMigrateLive<'a> {
     /// commit. This setting affects only the libvirt virt driver.
     ///
     /// **Available until version 2.25**
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) block_migration: bool,
 
     /// Set to `True` to enable over commit when the destination host is
@@ -44,9 +42,8 @@ pub struct OsMigrateLive<'a> {
     /// commit. This setting affects only the libvirt virt driver.
     ///
     /// **Available until version 2.25**
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) disk_over_commit: bool,
 
     /// The host to which to migrate the server. If this parameter is `None`,
@@ -60,7 +57,6 @@ pub struct OsMigrateLive<'a> {
     /// recommended to either not specify a host so that the scheduler will
     /// pick one, or specify a host with microversion >= 2.30 and without
     /// `force=True` set.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
@@ -70,12 +66,10 @@ pub struct OsMigrateLive<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
-    ///
     #[builder(setter(into))]
     pub(crate) os_migrate_live: OsMigrateLive<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

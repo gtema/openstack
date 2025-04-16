@@ -41,7 +41,6 @@ pub struct Request<'a> {
     pub(crate) default_type: DefaultType<'a>,
 
     /// id parameter for /v3/default-types/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

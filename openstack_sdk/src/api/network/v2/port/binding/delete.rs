@@ -30,12 +30,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 

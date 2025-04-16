@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/shares` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::share::create_297;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::share::response::create::ShareResponse;
 
 /// Attach a share to an instance.
 ///
@@ -41,7 +38,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), forbidden(403), itemNotFound(404),
 /// conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Attach a share to an instance (microversion = 2.97)")]
 pub struct ShareCommand {
@@ -65,7 +61,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/shares/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
@@ -77,60 +72,14 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Share {
     /// The UUID of the attached share.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     share_id: String,
 
     /// The device tag to be used by users to mount the share within the
     /// instance, if not provided then the share UUID will be used
     /// automatically.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     tag: Option<String>,
-}
-
-/// Share response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The export location used to attach the share to the underlying host.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    export_location: Option<String>,
-
-    /// The UUID of the attached share.
-    ///
-    #[serde()]
-    #[structable()]
-    share_id: String,
-
-    /// Status of the Share:
-    ///
-    /// - attaching: The share is being attached to the VM by the compute node.
-    /// - detaching: The share is being detached from the VM by the compute
-    ///   node.
-    /// - inactive: The share is attached but inactive because the VM is
-    ///   stopped.
-    /// - active: The share is attached, and the VM is running.
-    /// - error: The share is in an error state.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The device tag to be used by users to mount the share within the
-    /// instance, if not provided then the share UUID will be used
-    /// automatically.
-    ///
-    #[serde()]
-    #[structable()]
-    tag: String,
-
-    /// The UUID of the attached share.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
 }
 
 impl ShareCommand {
@@ -169,7 +118,7 @@ impl ShareCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ShareResponse>(data)?;
         Ok(())
     }
 }

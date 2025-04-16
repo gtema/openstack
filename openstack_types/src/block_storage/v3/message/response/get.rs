@@ -36,55 +36,49 @@ pub struct MessageResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
     #[structable()]
     pub created_at: String,
 
     /// The id of the event to this message, this id could eventually be
     /// translated into `user_message`.
-    ///
     #[structable()]
     pub event_id: String,
 
     /// The expire time of the message, this message could be deleted after
     /// this time.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub guaranteed_until: Option<String>,
 
     /// The UUID for the message.
-    ///
     #[structable()]
     pub id: String,
 
     /// Links for the message.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The level of the message, possible value is only ‘ERROR’ now.
-    ///
     #[structable()]
     pub message_level: String,
 
     /// The id of the request during which the message was created.
-    ///
     #[structable()]
     pub request_id: String,
 
     /// The resource type corresponding to `resource_uuid`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource_type: Option<String>,
 
     /// The UUID of the resource during whose operation the message was
     /// created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource_uuid: Option<String>,
 
     /// The translated readable message corresponding to `event_id`.
-    ///
     #[structable()]
     pub user_message: String,
 }
@@ -92,7 +86,6 @@ pub struct MessageResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

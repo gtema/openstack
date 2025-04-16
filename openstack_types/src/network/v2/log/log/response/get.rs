@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `log/logs/{id}` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -24,63 +23,62 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LogResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Indicates whether this log object is enabled or disabled.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub event: Option<Event>,
 
     /// The ID of the log object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The ID of resource log (e.g security group ID).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource_id: Option<String>,
 
     /// The resource log type such as ‘security_group’.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource_type: Option<String>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// The ID of resource target log such as port ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub target_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -98,4 +96,16 @@ pub enum Event {
     // Drop
     #[serde(rename = "DROP")]
     Drop,
+}
+
+impl std::str::FromStr for Event {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ACCEPT" => Ok(Self::Accept),
+            "ALL" => Ok(Self::All),
+            "DROP" => Ok(Self::Drop),
+            _ => Err(()),
+        }
+    }
 }

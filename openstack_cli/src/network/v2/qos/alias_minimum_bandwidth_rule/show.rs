@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/qos/alias-minimum-bandwidth-rules/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_bandwidth_rule::get;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::alias_minimum_bandwidth_rule::response::get::AliasMinimumBandwidthRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasMinimumBandwidthRuleCommand {
     /// Request Query parameters
@@ -57,32 +52,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/qos/alias-minimum-bandwidth-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// AliasMinimumBandwidthRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    min_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl AliasMinimumBandwidthRuleCommand {
@@ -109,7 +84,7 @@ impl AliasMinimumBandwidthRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AliasMinimumBandwidthRuleResponse>(data)?;
         Ok(())
     }
 }

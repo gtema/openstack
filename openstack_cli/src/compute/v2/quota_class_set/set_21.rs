@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/os-quota-class-sets/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_class_set::set_21;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::compute::v2::quota_class_set::response::set::QuotaClassSetResponse;
 
 /// Update the quotas for the Quota Class.
 ///
@@ -45,7 +41,6 @@ use std::collections::HashMap;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Create or Update Quotas for Quota Class (microversion = 2.1)")]
 pub struct QuotaClassSetCommand {
@@ -58,7 +53,6 @@ pub struct QuotaClassSetCommand {
     path: PathParameters,
 
     /// A `quota_class_set` object.
-    ///
     #[command(flatten)]
     quota_class_set: QuotaClassSet,
 }
@@ -71,7 +65,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-quota-class-sets/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -85,125 +78,92 @@ struct QuotaClassSet {
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     cores: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     floating_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_file_content_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_file_path_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_files: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     instances: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     key_pairs: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     metadata_items: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     networks: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ram: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_group_rules: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_groups: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     server_group_members: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     server_groups: Option<i32>,
-}
-
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl QuotaClassSetCommand {
@@ -295,7 +255,7 @@ impl QuotaClassSetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaClassSetResponse>(data)?;
         Ok(())
     }
 }

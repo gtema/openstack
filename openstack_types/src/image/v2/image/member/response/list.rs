@@ -23,30 +23,31 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MemberResponse {
     /// Date and time of image member creation
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// An identifier for the image
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub image_id: Option<String>,
 
     /// An identifier for the image member (tenantId)
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub member_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
     /// The status of this image member
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Date and time of last modification of image member
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -64,4 +65,16 @@ pub enum Status {
     // Rejected
     #[serde(rename = "rejected")]
     Rejected,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "accepted" => Ok(Self::Accepted),
+            "pending" => Ok(Self::Pending),
+            "rejected" => Ok(Self::Rejected),
+            _ => Err(()),
+        }
+    }
 }

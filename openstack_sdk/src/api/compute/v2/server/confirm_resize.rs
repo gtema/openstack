@@ -30,7 +30,6 @@ pub struct Request<'a> {
     pub(crate) confirm_resize: Value,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

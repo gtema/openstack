@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2.1/os-migrations` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,7 +34,7 @@ use openstack_sdk::api::compute::v2::migration::get;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::migration::response::get::MigrationResponse;
 use tracing::warn;
 
 /// Lists migrations.
@@ -52,7 +49,6 @@ use tracing::warn;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "List Migrations")]
 pub struct MigrationCommand {
@@ -140,150 +136,6 @@ struct ProjectInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Migration response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The target compute for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dest_compute: Option<String>,
-
-    /// The target host for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dest_host: Option<String>,
-
-    /// The target node for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dest_node: Option<String>,
-
-    /// The ID of the server migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    /// The UUID of the server.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    instance_uuid: Option<String>,
-
-    /// The type of the server migration. This is one of `live-migration`,
-    /// `migration`, `resize` and `evacuation`.
-    ///
-    /// **New in version 2.23**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    migration_type: Option<String>,
-
-    /// In `resize` case, the flavor ID for resizing the server. In the other
-    /// cases, this parameter is same as the flavor ID of the server when the
-    /// migration was started.
-    ///
-    /// Note
-    ///
-    /// This is an internal ID and is not exposed in any other API. In
-    /// particular, this is not the ID specified or automatically generated
-    /// during flavor creation or returned via the `GET /flavors` API.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    new_instance_type_id: Option<i32>,
-
-    /// The flavor ID of the server when the migration was started.
-    ///
-    /// Note
-    ///
-    /// This is an internal ID and is not exposed in any other API. In
-    /// particular, this is not the ID specified or automatically generated
-    /// during flavor creation or returned via the `GET /flavors` API.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    old_instance_type_id: Option<i32>,
-
-    /// The ID of the project which initiated the server migration. The value
-    /// may be `null` for older migration records.
-    ///
-    /// **New in version 2.80**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The source compute for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_compute: Option<String>,
-
-    /// The source node for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_node: Option<String>,
-
-    /// The current status of the migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The ID of the user which initiated the server migration. The value may
-    /// be `null` for older migration records.
-    ///
-    /// **New in version 2.80**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
-
-    /// The UUID of the migration.
-    ///
-    /// **New in version 2.59**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
-}
 
 impl MigrationCommand {
     /// Perform command action
@@ -424,7 +276,7 @@ impl MigrationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MigrationResponse>(data)?;
         Ok(())
     }
 }

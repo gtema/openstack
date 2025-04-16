@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/metadata/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::metadata::delete;
-use structable_derive::StructTable;
 
 /// Deletes a metadata item, by key, from a server.
 ///
@@ -47,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Delete Metadata Item")]
 pub struct MetadataCommand {
@@ -68,7 +61,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
@@ -77,7 +69,6 @@ struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -85,9 +76,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Metadata response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl MetadataCommand {
     /// Perform command action
@@ -112,8 +100,7 @@ impl MetadataCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

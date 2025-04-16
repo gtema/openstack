@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::delete;
-use structable_derive::StructTable;
 
 /// DELETE operation on /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}
-///
 #[derive(Args)]
 pub struct EndpointGroupCommand {
     /// Request Query parameters
@@ -59,7 +52,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// endpoint_group_id parameter for
     /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -67,9 +59,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// EndpointGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl EndpointGroupCommand {
     /// Perform command action
@@ -93,8 +82,7 @@ impl EndpointGroupCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

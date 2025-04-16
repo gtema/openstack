@@ -22,21 +22,27 @@ use structable::{StructTable, StructTableOptions};
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub hard_limit: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub resource: Option<Resource>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -46,4 +52,14 @@ pub enum Resource {
     // Cluster
     #[serde(rename = "Cluster")]
     Cluster,
+}
+
+impl std::str::FromStr for Resource {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "Cluster" => Ok(Self::Cluster),
+            _ => Err(()),
+        }
+    }
 }

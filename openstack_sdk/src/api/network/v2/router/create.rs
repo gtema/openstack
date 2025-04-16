@@ -43,13 +43,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct ExternalFixedIps<'a> {
     /// IP Address
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ip_address: Option<Cow<'a, str>>,
 
     /// The subnet ID from which the IP address is assigned
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Cow<'a, str>>,
@@ -58,12 +56,11 @@ pub struct ExternalFixedIps<'a> {
 /// The external gateway information of the router. If the router has an
 /// external gateway, this would be a dict with `network_id`, `enable_snat`,
 /// `external_fixed_ips` and `qos_policy_id`. Otherwise, this would be `null`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalGatewayInfo<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enable_snat: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -80,34 +77,29 @@ pub struct ExternalGatewayInfo<'a> {
 }
 
 /// A `router` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone_hints: Option<Vec<Cow<'a, str>>>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) distributed: Option<Option<bool>>,
@@ -116,7 +108,6 @@ pub struct Router<'a> {
     /// attribute value, set the `enable_ndp_proxy_by_default` option in the
     /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
     /// extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enable_ndp_proxy: Option<Option<bool>>,
@@ -125,26 +116,22 @@ pub struct Router<'a> {
     /// external gateway, this would be a dict with `network_id`,
     /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
     /// this would be `null`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_gateway_info: Option<Option<ExternalGatewayInfo<'a>>>,
 
     /// The ID of the flavor associated with the router.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ha: Option<Option<bool>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -152,7 +139,6 @@ pub struct Router<'a> {
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -162,7 +148,6 @@ pub struct Router<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `router` object.
-    ///
     #[builder(setter(into))]
     pub(crate) router: Router<'a>,
 

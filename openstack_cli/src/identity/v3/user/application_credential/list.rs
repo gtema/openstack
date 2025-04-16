@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users/{user_id}/application_credentials` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,15 +33,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::application_credential::response::list::ApplicationCredentialResponse;
 use tracing::warn;
 
 /// List all application credentials for a user.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
-///
 #[derive(Args)]
 #[command(about = "List application credentials")]
 pub struct ApplicationCredentialsCommand {
@@ -61,7 +56,6 @@ pub struct ApplicationCredentialsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The name of the application credential. Must be unique to a user.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 }
@@ -87,62 +81,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// ApplicationCredentials response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of access_rules objects
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    access_rules: Option<Value>,
-
-    /// A description of the application credential's purpose.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    expires_at: Option<String>,
-
-    /// The ID of the application credential.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the application credential. Must be unique to a user.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project the application credential was created for and
-    /// that authentication requests using this application credential will be
-    /// scoped to.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project. If
-    /// not provided, the roles assigned to the application credential will be
-    /// the same as the roles in the current token.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    roles: Option<Value>,
-
-    /// An optional flag to restrict whether the application credential may be
-    /// used for the creation or destruction of other application credentials
-    /// or trusts. Defaults to false.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    unrestricted: Option<bool>,
 }
 
 impl ApplicationCredentialsCommand {
@@ -216,8 +154,7 @@ impl ApplicationCredentialsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ApplicationCredentialResponse>(data)?;
         Ok(())
     }
 }

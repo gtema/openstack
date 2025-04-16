@@ -20,28 +20,23 @@
 //! Wraps invoking of the `resource_providers/{uuid}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_provider::response::get::ResourceProviderResponse;
 
 /// Return a representation of the resource provider identified by {uuid}.
 ///
 /// Normal Response Codes: 200
 ///
 /// Error response codes: itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show resource provider")]
 pub struct ResourceProviderCommand {
@@ -62,62 +57,11 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
-    uuid: String,
-}
-/// ResourceProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    generation: i32,
-
-    /// A list of links associated with one resource provider.
-    ///
-    /// Note
-    ///
-    /// Aggregates relationship link is available starting from version 1.1.
-    /// Traits relationship link is available starting from version 1.6.
-    /// Allocations relationship link is available starting from version 1.11.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    links: Value,
-
-    /// The name of one resource provider.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The UUID of the immediate parent of the resource provider.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    parent_provider_uuid: Option<String>,
-
-    /// Read-only UUID of the top-most provider in this provider tree.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    root_provider_uuid: Option<String>,
-
-    /// The uuid of a resource provider.
-    ///
-    #[serde()]
-    #[structable()]
     uuid: String,
 }
 
@@ -145,7 +89,7 @@ impl ResourceProviderCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResourceProviderResponse>(data)?;
         Ok(())
     }
 }

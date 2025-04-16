@@ -34,40 +34,38 @@ pub struct InventoryResponse {
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub allocation_ratio: Option<f32>,
 
     /// A maximum amount any single allocation against an inventory can have.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_unit: Option<i32>,
 
     /// A minimum amount any single allocation against an inventory can have.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub min_unit: Option<i32>,
 
     /// The amount of the resource a provider has reserved for its own use.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub reserved: Option<i32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[structable()]
     pub resource_provider_generation: i32,
 
     /// A representation of the divisible amount of the resource that may be
     /// requested. For example, step_size = 5 means that only values divisible
     /// by 5 (5, 10, 15, etc.) can be requested.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub step_size: Option<i32>,
 
     /// The actual amount of the resource that the provider can accommodate.
-    ///
     #[structable()]
     pub total: i32,
 }

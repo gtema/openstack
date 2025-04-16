@@ -40,11 +40,11 @@ pub struct PacketRateLimitRule {
     pub(crate) direction: Option<Direction>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_burst_kpps: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_kpps: Option<i32>,
 }
 
@@ -56,13 +56,11 @@ pub struct Request<'a> {
 
     /// id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

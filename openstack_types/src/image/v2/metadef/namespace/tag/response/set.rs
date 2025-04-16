@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TagResponse {
     /// Date and time of tag creation
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -31,7 +31,7 @@ pub struct TagResponse {
     pub name: String,
 
     /// Date and time of the last tag modification
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

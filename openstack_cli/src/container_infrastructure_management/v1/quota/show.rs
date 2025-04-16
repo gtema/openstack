@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v1/quotas/{quota_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::quota::get;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::quota::response::get::QuotaResponse;
 
 /// Retrieve Quota information for the given project_id.
 ///
 /// | | | | --- | --- | | param id: | project id. | | param resource: |
 /// resource name. |
-///
 #[derive(Args)]
 pub struct QuotaCommand {
     /// Request Query parameters
@@ -59,40 +55,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// quota_id parameter for /v1/quotas/{quota_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    hard_limit: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    resource: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl QuotaCommand {
@@ -119,7 +87,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

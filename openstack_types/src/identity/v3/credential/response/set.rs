@@ -23,40 +23,38 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct CredentialResponse {
     /// The credential itself, as a serialized blob.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub blob: Option<String>,
 
     /// The UUID for the credential.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The ID for the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The credential type, such as `ec2` or `cert`. The implementation
     /// determines the list of supported types.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
     /// The ID of the user who owns the credential.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

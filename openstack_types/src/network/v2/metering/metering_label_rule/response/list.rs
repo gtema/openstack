@@ -16,50 +16,51 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `metering/metering-label-rules` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// MeteringLabelRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelRuleResponse {
+    #[serde(default)]
     #[structable(optional, wide)]
     pub destination_ip_prefix: Option<String>,
 
     /// Ingress or egress, which is the direction in which the metering rule is
     /// applied.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub direction: Option<Direction>,
 
     /// Indicates whether to count the traffic of a specific IP address with
     /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
     /// values.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional, wide)]
     pub excluded: Option<bool>,
 
     /// The ID of the metering label rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The metering label ID associated with this metering rule.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub metering_label_id: Option<String>,
 
     /// (deprecated) The source IP prefix that is matched by this metering
     /// rule. By source IP prefix, one should read the internal/private IPs
     /// used in OpenStack.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub remote_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub source_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 }
@@ -73,4 +74,15 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

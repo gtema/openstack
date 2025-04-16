@@ -24,12 +24,12 @@ use structable::{StructTable, StructTableOptions};
 pub struct RbacPolicyResponse {
     /// Action for the RBAC policy which is `access_as_external` or
     /// `access_as_shared`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub action: Option<String>,
 
     /// The ID of the RBAC policy.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -39,24 +39,24 @@ pub struct RbacPolicyResponse {
     /// group ID, an `object_type` of `address-scope` returns a address scope
     /// ID, an `object_type` of `subnetpool` returns a subnetpool ID and an
     /// `object_type` of `address-group` returns an address group ID.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub object_id: Option<String>,
 
     /// The type of the object that the RBAC policy affects. Types include
     /// `qos-policy`, `network`, `security-group`, `address-scope`,
     /// `subnetpool` or `address-group`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub object_type: Option<String>,
 
     /// The ID of the tenant to which the RBAC policy will be enforced.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub target_tenant: Option<String>,
 
     /// The ID of the project that owns the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 }

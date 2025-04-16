@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2.1/flavors/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::flavor::find;
 use openstack_sdk::api::compute::v2::flavor::set_255;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::flavor::response::set::FlavorResponse;
 
 /// Updates a flavor description.
 ///
@@ -50,7 +46,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Update Flavor Description (microversion = 2.55)")]
 pub struct FlavorCommand {
@@ -64,7 +59,6 @@ pub struct FlavorCommand {
 
     /// The ID and links for the flavor for your server instance. A flavor is a
     /// combination of memory, disk size, and CPUs.
-    ///
     #[command(flatten)]
     flavor: Flavor,
 }
@@ -77,7 +71,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -90,108 +83,8 @@ struct PathParameters {
 struct Flavor {
     /// A free form description of the flavor. Limited to 65535 characters in
     /// length. Only printable characters are allowed.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: String,
-}
-
-/// Flavor response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The size of the root disk that will be created in GiB. If 0 the root
-    /// disk will be set to exactly the size of the image used to deploy the
-    /// instance. However, in this case the scheduler cannot select the compute
-    /// host based on the virtual image size. Therefore, 0 should only be used
-    /// for volume booted instances or for testing purposes. Volume-backed
-    /// instances can be enforced for flavors with zero root disk via the
-    /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
-    ///
-    #[serde()]
-    #[structable()]
-    disk: i32,
-
-    /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
-    /// only be included if the user is allowed by policy to index flavor
-    /// extra_specs.
-    ///
-    /// **New in version 2.61**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    extra_specs: Option<Value>,
-
-    /// The ID of the flavor. While people often make this look like an int,
-    /// this is really a string.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Links to the resources in question. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    links: Value,
-
-    /// The display name of a flavor.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(pretty, title = "os-flavor-access:is_public")]
-    os_flavor_access_is_public: Value,
-
-    /// Whether or not the flavor has been administratively disabled. This is
-    /// an artifact of the legacy v2 API and will always be set to `false`.
-    /// There is currently no way to disable a flavor and set this to `true`.
-    ///
-    #[serde(rename = "OS-FLV-DISABLED:disabled")]
-    #[structable(title = "OS-FLV-DISABLED:disabled")]
-    os_flv_disabled_disabled: bool,
-
-    /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
-    /// disks may be written over on server state changes. So should only be
-    /// used as a scratch space for applications that are aware of its
-    /// limitations. Defaults to 0.
-    ///
-    #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    #[structable(title = "OS-FLV-EXT-DATA:ephemeral")]
-    os_flv_ext_data_ephemeral: i32,
-
-    /// The amount of RAM a flavor has, in MiB.
-    ///
-    #[serde()]
-    #[structable()]
-    ram: i32,
-
-    #[serde()]
-    #[structable(pretty)]
-    rxtx_factor: Value,
-
-    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
-    /// (the default), no dedicated swap disk will be created. Currently, the
-    /// empty string (‘’) is used to represent 0. As of microversion 2.75
-    /// default return value of swap is 0 instead of empty string.
-    ///
-    #[serde()]
-    #[structable()]
-    swap: i32,
-
-    /// The number of virtual CPUs that will be allocated to the server.
-    ///
-    #[serde()]
-    #[structable()]
-    vcpus: i32,
 }
 
 impl FlavorCommand {
@@ -239,7 +132,7 @@ impl FlavorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FlavorResponse>(data)?;
         Ok(())
     }
 }

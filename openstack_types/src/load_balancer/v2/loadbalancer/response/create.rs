@@ -17,7 +17,7 @@
 //! Response type for the POST `lbaas/loadbalancers` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Loadbalancer response representation
@@ -30,85 +30,96 @@ pub struct LoadbalancerResponse {
     /// primary VIP.
     ///
     /// **New in version 2.26**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub additional_vips: Option<Vec<AdditionalVips>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// An availability zone name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The associated listener IDs, if any.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub listeners: Option<Vec<Listeners>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The associated pool IDs, if any.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub pools: Option<Vec<PoolsStructResponse>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// Provider name for the load balancer.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provider: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_qos_policy_id: Option<String>,
 
@@ -116,12 +127,12 @@ pub struct LoadbalancerResponse {
     /// Balancer.
     ///
     /// **New in version 2.29**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub vip_sg_ids: Option<Vec<String>>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_subnet_id: Option<String>,
 
@@ -129,13 +140,12 @@ pub struct LoadbalancerResponse {
     /// `direct`.
     ///
     /// **New in version 2.28**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_vnic_type: Option<String>,
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
@@ -156,7 +166,6 @@ pub struct Rules {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `L7policies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct L7policies {
@@ -182,7 +191,6 @@ pub struct L7policies {
 }
 
 /// Base type for complex types
-///
 /// `Loadbalancers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancers {
@@ -190,7 +198,6 @@ pub struct Loadbalancers {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
@@ -209,7 +216,7 @@ pub struct Listeners {
     pub hsts_max_age: Option<i32>,
     pub hsts_preload: Option<bool>,
     pub id: Option<String>,
-    pub insert_headers: Option<HashMap<String, String>>,
+    pub insert_headers: Option<BTreeMap<String, String>>,
     pub l7policies: Option<Vec<L7policies>>,
     pub loadbalancers: Option<Vec<Loadbalancers>>,
     pub name: Option<String>,
@@ -231,7 +238,6 @@ pub struct Listeners {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
@@ -256,7 +262,6 @@ pub struct Members {
 }
 
 /// Base type for complex types
-///
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {
@@ -264,7 +269,6 @@ pub struct Pools {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `Healthmonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Healthmonitor {
@@ -292,7 +296,6 @@ pub struct Healthmonitor {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionPersistence {
@@ -303,7 +306,6 @@ pub struct SessionPersistence {
 }
 
 /// Base type for complex types
-///
 /// `PoolsListeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoolsListeners {
@@ -311,7 +313,6 @@ pub struct PoolsListeners {
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `PoolsStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoolsStructResponse {
@@ -344,7 +345,6 @@ pub struct PoolsStructResponse {
 }
 
 /// Type for additional vips
-///
 /// `AdditionalVips` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AdditionalVips {

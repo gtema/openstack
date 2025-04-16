@@ -20,22 +20,17 @@
 //! Wraps invoking of the `v2/schemas/tasks` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::schema::tasks::get;
-use structable_derive::StructTable;
+use openstack_types::image::v2::schema::tasks::response::get::TasksResponse;
 
 /// *(Since Images v2.2)*
 ///
@@ -50,7 +45,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "Show tasks schema")]
 pub struct TasksCommand {
@@ -70,9 +64,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Tasks response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl TasksCommand {
     /// Perform command action
@@ -96,8 +87,7 @@ impl TasksCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data: serde_json::Value = serde_json::from_slice(rsp.body())?;
+        let data: serde_json::Value = ep.query_async(client).await?;
         op.output_machine(data)?;
         Ok(())
     }

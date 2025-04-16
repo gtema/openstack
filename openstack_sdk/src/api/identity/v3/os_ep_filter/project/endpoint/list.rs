@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/OS-EP-FILTER/projects/{project_id}/endpoints API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 

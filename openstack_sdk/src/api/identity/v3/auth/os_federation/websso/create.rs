@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// protocol_id parameter for /v3/auth/OS-FEDERATION/websso/{protocol_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     protocol_id: Cow<'a, str>,
 

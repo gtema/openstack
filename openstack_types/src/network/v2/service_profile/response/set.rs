@@ -23,28 +23,28 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProfileResponse {
     /// The human-readable description for the service profile.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Provider driver to use for this profile.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub driver: Option<String>,
 
     /// Indicates whether this service profile is enabled or not. Default is
     /// `true`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The UUID of the service profile.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// JSON-formatted meta information of the service profile.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub metainfo: Option<String>,
 }

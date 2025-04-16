@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/flavors/{flavor_id}/next_providers` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::next_provider::create;
+use openstack_types::network::v2::flavor::next_provider::response::create::NextProviderResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct NextProviderCommand {
     /// Request Query parameters
@@ -63,28 +58,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_flavor_id",
         value_name = "FLAVOR_ID"
     )]
     flavor_id: String,
-}
-/// NextProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    driver: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    metainfo: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    provider: Option<String>,
 }
 
 impl NextProviderCommand {
@@ -114,7 +93,7 @@ impl NextProviderCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<NextProviderResponse>(data)?;
         Ok(())
     }
 }

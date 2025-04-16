@@ -23,14 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ManageableVolumeResponse {
     /// A list of manageable volumes.
-    ///
     #[serde(rename = "manageable-volumes")]
     #[structable(serialize, title = "manageable-volumes")]
     pub manageable_volumes: Vec<ManageableVolumes>,
 }
 
 /// Some information for the resource.
-///
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
@@ -38,7 +36,6 @@ pub struct Reference {
 }
 
 /// Manageable volume object.
-///
 /// `ManageableVolumes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ManageableVolumes {

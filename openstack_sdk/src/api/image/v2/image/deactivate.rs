@@ -45,7 +45,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// image_id parameter for /v2/images/{image_id}/actions/deactivate API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

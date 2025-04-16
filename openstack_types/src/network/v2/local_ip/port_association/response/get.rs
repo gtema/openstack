@@ -22,18 +22,23 @@ use structable::{StructTable, StructTableOptions};
 /// PortAssociation response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortAssociationResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_ip: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_port_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub local_ip_address: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub local_ip_id: Option<String>,
 }

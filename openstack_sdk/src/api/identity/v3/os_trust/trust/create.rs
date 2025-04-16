@@ -40,7 +40,6 @@ pub struct Roles<'a> {
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// The resource name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -52,7 +51,6 @@ pub struct Trust<'a> {
     /// If set to true then a trust between a trustor and any third-party user
     /// may be issued by the trustee just like a regular trust. If set to
     /// false, stops further redelegation. False by default.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) allow_redelegation: Option<Option<bool>>,
@@ -63,7 +61,6 @@ pub struct Trust<'a> {
     /// value of the corresponding expires_at field of the redelegated trust or
     /// it may be omitted, then the expires_at value is copied from the
     /// redelegated trust.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) expires_at: Option<Option<Cow<'a, str>>>,
@@ -73,21 +70,18 @@ pub struct Trust<'a> {
     /// thus allowing the trustee to impersonate the trustor. If impersonation
     /// if set to false, then the token's user attribute will represent that of
     /// the trustee.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) impersonation: bool,
 
     /// Identifies the project upon which the trustor is delegating
     /// authorization.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Option<Cow<'a, str>>>,
 
     /// Returned with redelegated trust provides information about the
     /// predecessor in the trust chain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redelegated_trust_id: Option<Option<Cow<'a, str>>>,
@@ -110,7 +104,6 @@ pub struct Trust<'a> {
     /// redelegatable trust-scoped token decremented by 1. Note, if the
     /// resulting value is 0, this means that the new trust will not be
     /// redelegatable, regardless of the value of allow_redelegation.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redelegation_count: Option<Option<i32>>,
@@ -121,7 +114,6 @@ pub struct Trust<'a> {
     /// default value is null, meaning there is no limit on the number of
     /// tokens issued through the trust. If redelegation is enabled it must not
     /// be set.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remaining_uses: Option<Option<i32>>,
@@ -131,14 +123,12 @@ pub struct Trust<'a> {
     pub(crate) roles: Option<Vec<Roles<'a>>>,
 
     /// Represents the user who is capable of consuming the trust.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) trustee_user_id: Cow<'a, str>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) trustor_user_id: Cow<'a, str>,

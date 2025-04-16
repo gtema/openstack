@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v3/auth/catalog` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::catalog::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::auth::catalog::response::list::CatalogResponse;
 
 /// New in version 3.3
 ///
@@ -47,7 +43,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_catalog`
-///
 #[derive(Args)]
 #[command(about = "Get service catalog")]
 pub struct CatalogsCommand {
@@ -67,34 +62,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Catalogs response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of `endpoint` objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    endpoints: Option<Value>,
-
-    /// The UUID of the service to which the endpoint belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The service name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The service type, which describes the API implemented by the service.
-    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-}
 
 impl CatalogsCommand {
     /// Perform command action
@@ -119,8 +86,7 @@ impl CatalogsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<CatalogResponse>(data)?;
         Ok(())
     }
 }

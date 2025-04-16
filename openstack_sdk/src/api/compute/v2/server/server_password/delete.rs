@@ -40,7 +40,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/os-server-password
     /// API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

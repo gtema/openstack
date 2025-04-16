@@ -31,23 +31,22 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) api_export_size: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) recordset_records: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) zone_records: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) zone_recorsets: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) zones: Option<i32>,
 
     /// project_id parameter for /v2/quotas/{project_id} API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 

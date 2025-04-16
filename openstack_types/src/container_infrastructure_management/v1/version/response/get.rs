@@ -22,48 +22,60 @@ use structable::{StructTable, StructTableOptions};
 /// Version response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VersionResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub certificates: Option<Vec<Certificates>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub clusters: Option<Vec<Clusters>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub clustertemplates: Option<Vec<Clustertemplates>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub federations: Option<Vec<Federations>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub media_types: Option<Vec<MediaTypes>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub mservices: Option<Vec<Mservices>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub nodegroups: Option<Vec<Nodegroups>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub quotas: Option<Vec<Quotas>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub stats: Option<Vec<Stats>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
 /// A media type representation.
-///
 /// `MediaTypes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MediaTypes {
@@ -74,7 +86,6 @@ pub struct MediaTypes {
 }
 
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -86,7 +97,6 @@ pub struct Links {
 }
 
 /// A link representation.
-///
 /// `Clustertemplates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Clustertemplates {
@@ -98,7 +108,6 @@ pub struct Clustertemplates {
 }
 
 /// A link representation.
-///
 /// `Clusters` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Clusters {
@@ -110,7 +119,6 @@ pub struct Clusters {
 }
 
 /// A link representation.
-///
 /// `Quotas` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Quotas {
@@ -122,7 +130,6 @@ pub struct Quotas {
 }
 
 /// A link representation.
-///
 /// `Certificates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Certificates {
@@ -134,7 +141,6 @@ pub struct Certificates {
 }
 
 /// A link representation.
-///
 /// `Mservices` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Mservices {
@@ -146,7 +152,6 @@ pub struct Mservices {
 }
 
 /// A link representation.
-///
 /// `Stats` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Stats {
@@ -158,7 +163,6 @@ pub struct Stats {
 }
 
 /// A link representation.
-///
 /// `Federations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Federations {
@@ -170,7 +174,6 @@ pub struct Federations {
 }
 
 /// A link representation.
-///
 /// `Nodegroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Nodegroups {

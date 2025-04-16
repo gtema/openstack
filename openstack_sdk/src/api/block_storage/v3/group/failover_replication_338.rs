@@ -28,7 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct FailoverReplication<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) allow_attached_volume: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

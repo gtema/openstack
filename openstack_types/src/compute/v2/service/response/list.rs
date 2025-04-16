@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `os-services` operation
 
-use crate::common::deser_num_str;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -24,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceResponse {
     /// The binary name of the service.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub binary: Option<String>,
 
     /// The reason for disabling a service.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disabled_reason: Option<String>,
 
@@ -37,33 +36,29 @@ pub struct ServiceResponse {
     /// administrator after the service was fenced. This value is useful to
     /// know that some 3rd party has verified the service should be marked
     /// down.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub forced_down: Option<bool>,
 
     /// The name of the host.
-    ///
     #[structable(wide)]
     pub host: String,
 
     /// The id of the service as a uuid.
-    ///
-    #[serde(deserialize_with = "deser_num_str")]
+    #[serde(deserialize_with = "crate::common::deser_num_str")]
     #[structable()]
     pub id: i64,
 
     /// Service name
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The state of the service. One of `up` or `down`.
-    ///
     #[structable()]
     pub state: String,
 
     /// The status of the service. One of `enabled` or `disabled`.
-    ///
     #[structable(serialize)]
     pub status: Status,
 
@@ -78,12 +73,11 @@ pub struct ServiceResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The availability zone name.
-    ///
     #[structable(wide)]
     pub zone: String,
 }
@@ -97,4 +91,15 @@ pub enum Status {
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
+    }
 }

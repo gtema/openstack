@@ -23,14 +23,14 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NameserverResponse {
     /// The hostname of the nameserver that the zone should be delegated to
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hostname: Option<String>,
 
     /// The priority of the nameserver. This is used to determine the order of
     /// the the nameserver listings, and which server is used in the SOA record
     /// for the zone.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub priority: Option<i32>,
 }

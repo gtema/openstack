@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Hypervisor response representation
@@ -34,9 +34,9 @@ pub struct HypervisorResponse {
     /// of string.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub cpu_info: Option<HashMap<String, Value>>,
+    pub cpu_info: Option<BTreeMap<String, Value>>,
 
     /// The current_workload is the number of tasks the hypervisor is
     /// responsible for. This will be equal or greater than the number of
@@ -44,7 +44,7 @@ pub struct HypervisorResponse {
     /// and the hypervisor is still cleaning up).
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub current_workload: Option<i32>,
 
@@ -54,7 +54,7 @@ pub struct HypervisorResponse {
     /// overcommitted.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disk_available_least: Option<i32>,
 
@@ -63,7 +63,7 @@ pub struct HypervisorResponse {
     /// negative.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub free_disk_gb: Option<i32>,
 
@@ -71,33 +71,33 @@ pub struct HypervisorResponse {
     /// ratios used for overcommit into account so this value may be negative.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub free_ram_mb: Option<i32>,
 
     /// The IP address of the hypervisor’s host.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub host_ip: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub hypervisor_hostname: Option<String>,
 
     /// The hypervisor type.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub hypervisor_type: Option<String>,
 
     /// The hypervisor version.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub hypervisor_version: Option<i32>,
 
     /// The id of the hypervisor. From version 2.53 it is a string as UUID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -106,14 +106,14 @@ pub struct HypervisorResponse {
     /// between this and the used count.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub local_gb: Option<i32>,
 
     /// The disk used in this hypervisor (in GiB).
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub local_gb_used: Option<i32>,
 
@@ -122,21 +122,21 @@ pub struct HypervisorResponse {
     /// between this and the used count.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub memory_mb: Option<i32>,
 
     /// The memory used in this hypervisor (in MiB).
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub memory_mb_used: Option<i32>,
 
     /// The number of running VMs on this hypervisor.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub running_vms: Option<i32>,
 
@@ -145,22 +145,22 @@ pub struct HypervisorResponse {
     /// returned.
     ///
     /// **New in version 2.53**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub servers: Option<Vec<Servers>>,
 
     /// The hypervisor service object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub service: Option<Service>,
 
     /// The state of the hypervisor. One of `up` or `down`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
@@ -169,7 +169,7 @@ pub struct HypervisorResponse {
     /// feature.
     ///
     /// **New in version 2.88**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub uptime: Option<String>,
 
@@ -178,20 +178,19 @@ pub struct HypervisorResponse {
     /// between this and the used count.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub vcpus: Option<i32>,
 
     /// The number of vCPU used in this hypervisor.
     ///
     /// **Available until version 2.87**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub vcpus_used: Option<i32>,
 }
 
 /// The hypervisor service object.
-///
 /// `Service` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Service {
@@ -211,6 +210,17 @@ pub enum State {
     Up,
 }
 
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "down" => Ok(Self::Down),
+            "up" => Ok(Self::Up),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Disabled
@@ -220,6 +230,17 @@ pub enum Status {
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Servers` type

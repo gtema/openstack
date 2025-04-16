@@ -20,33 +20,25 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/shares/{zone_share_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::share::delete;
 use openstack_sdk::api::find_by_name;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Delete a zone share.
 ///
 /// **New in version 2.1**
-///
 #[derive(Args)]
 #[command(about = "Delete a Zone Share")]
 pub struct ShareCommand {
@@ -72,7 +64,6 @@ struct PathParameters {
 
     /// zone_share_id parameter for /v2/zones/{zone_id}/shares/{zone_share_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_zone_share_id",
@@ -92,9 +83,6 @@ struct ZoneInput {
     #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
     zone_id: Option<String>,
 }
-/// Share response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ShareCommand {
     /// Perform command action
@@ -154,8 +142,7 @@ impl ShareCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

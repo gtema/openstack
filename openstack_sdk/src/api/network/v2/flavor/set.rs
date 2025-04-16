@@ -34,24 +34,20 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `flavor` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavor<'a> {
     /// The human-readable description for the flavor.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// Indicates whether the flavor is enabled or not. Default is true.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enabled: Option<Option<bool>>,
 
     /// Name of the flavor.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -65,12 +61,10 @@ pub struct Flavor<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `flavor` object.
-    ///
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 
     /// id parameter for /v2.0/flavors/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

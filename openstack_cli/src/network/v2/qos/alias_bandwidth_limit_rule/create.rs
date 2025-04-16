@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/qos/alias-bandwidth-limit-rules` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::create;
-use openstack_sdk::types::IntString;
+use openstack_types::network::v2::qos::alias_bandwidth_limit_rule::response::create::AliasBandwidthLimitRuleResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasBandwidthLimitRuleCommand {
     /// Request Query parameters
@@ -61,29 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AliasBandwidthLimitRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_burst_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-}
 
 impl AliasBandwidthLimitRuleCommand {
     /// Perform command action
@@ -111,7 +83,7 @@ impl AliasBandwidthLimitRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AliasBandwidthLimitRuleResponse>(data)?;
         Ok(())
     }
 }

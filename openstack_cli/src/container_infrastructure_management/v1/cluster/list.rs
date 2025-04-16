@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v1/clusters` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::cluster::response::list::ClusterResponse;
 
 /// List all clusters in Magnum.
-///
 #[derive(Args)]
 #[command(about = "List all clusters")]
 pub struct ClustersCommand {
@@ -57,178 +52,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Clusters response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    api_address: Option<String>,
-
-    /// The UUID of the cluster template.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    cluster_template_id: String,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    coe_version: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    container_version: Option<String>,
-
-    /// The timeout for cluster creation in minutes. The value expected is a
-    /// positive integer and the default is 60 minutes. If the timeout is
-    /// reached during cluster creation process, the operation will be aborted
-    /// and the cluster status will be set to `CREATE_FAILED`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    create_timeout: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    discovery_url: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    docker_volume_size: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    faults: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    fixed_network: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    fixed_subnet: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    flavor_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    floating_ip_enabled: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    health_status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    health_status_reason: Option<Value>,
-
-    /// The name of the SSH keypair to configure in the cluster servers for ssh
-    /// access. Users will need the key to be able to ssh to the servers in the
-    /// cluster. The login name is specific to the cluster driver, for example
-    /// with fedora-atomic image, default login name is `fedora`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    keypair: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    labels: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_added: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_overridden: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_skipped: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    master_addresses: Option<Value>,
-
-    /// The number of servers that will serve as master for the cluster. The
-    /// default is 1. Set to more than 1 master to enable High Availability. If
-    /// the option `master-lb-enabled` is specified in the cluster template,
-    /// the master servers will be placed in a load balancer pool.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    master_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    master_flavor_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    master_lb_enabled: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    merge_labels: Option<String>,
-
-    /// Name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    node_addresses: Option<Value>,
-
-    /// The number of servers that will serve as node in the cluster. The
-    /// default is 1.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    node_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The reference UUID of orchestration stack from Heat orchestration
-    /// service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    stack_id: Option<String>,
-
-    /// The current state of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    status_reason: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    user_id: Option<String>,
-
-    /// The UUID of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
-}
 
 impl ClustersCommand {
     /// Perform command action
@@ -253,8 +76,7 @@ impl ClustersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ClusterResponse>(data)?;
         Ok(())
     }
 }

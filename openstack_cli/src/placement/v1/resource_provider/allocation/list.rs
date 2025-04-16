@@ -20,22 +20,17 @@
 //! Wraps invoking of the `resource_providers/{uuid}/allocations` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::allocation::list;
-use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_provider::allocation::response::list::AllocationResponse;
 
 /// Return a representation of all allocations made against this resource
 /// provider, keyed by consumer uuid. Each allocation includes one or more
@@ -44,7 +39,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List resource provider allocations")]
 pub struct AllocationCommand {
@@ -65,41 +59,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid}/allocations API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
     uuid: String,
-}
-/// Allocation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A dictionary of allocation records keyed by consumer uuid.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    allocations: Value,
-
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    resource_provider_generation: i32,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllocationsItem {
-    resources: Value,
-}
-
-impl fmt::Display for ResponseAllocationsItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!("resources={}", self.resources)]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl AllocationCommand {
@@ -126,7 +91,7 @@ impl AllocationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AllocationResponse>(data)?;
         Ok(())
     }
 }

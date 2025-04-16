@@ -28,14 +28,12 @@ pub struct Request<'a> {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 
     /// resource_type parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[builder(default, setter(into))]
     resource_type: Cow<'a, str>,
 

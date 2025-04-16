@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Diagnostic response representation
@@ -27,7 +27,7 @@ pub struct DiagnosticResponse {
     /// Indicates whether or not a config drive was used for this server.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub config_drive: Option<bool>,
 
@@ -39,9 +39,9 @@ pub struct DiagnosticResponse {
     /// - `utilisation` - CPU utilisation in percents (Integer)
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub cpu_details: Option<Vec<HashMap<String, Value>>>,
+    pub cpu_details: Option<Vec<BTreeMap<String, Value>>>,
 
     /// The list of dictionaries with detailed information about VM disks.
     /// Following fields are presented in each dictionary:
@@ -53,9 +53,9 @@ pub struct DiagnosticResponse {
     /// - `errors_count` - Disk errors (Integer)
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub disk_details: Option<Vec<HashMap<String, Value>>>,
+    pub disk_details: Option<Vec<BTreeMap<String, Value>>>,
 
     /// The driver on which the VM is running. Possible values are:
     ///
@@ -65,7 +65,7 @@ pub struct DiagnosticResponse {
     /// - `ironic`
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub driver: Option<Driver>,
 
@@ -73,19 +73,18 @@ pub struct DiagnosticResponse {
     /// may be: `qemu`, `kvm` or `xen`.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hypervisor: Option<String>,
 
     /// The hypervisor OS.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hypervisor_os: Option<String>,
 
     /// Id of the resource
-    ///
     #[structable()]
     pub id: String,
 
@@ -97,12 +96,11 @@ pub struct DiagnosticResponse {
     ///   operating system and its applications in MiB (Integer)
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub memory_details: Option<Vec<HashMap<String, Value>>>,
+    pub memory_details: Option<Vec<BTreeMap<String, Value>>>,
 
     /// Name
-    ///
     #[structable()]
     pub name: String,
 
@@ -122,28 +120,28 @@ pub struct DiagnosticResponse {
     /// - `tx_rate` - Transmit rate in bytes (Integer)
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub nic_details: Option<Vec<NicDetails>>,
 
     /// The number of vCPUs.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub num_cpus: Option<i32>,
 
     /// The number of disks.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub num_disks: Option<i32>,
 
     /// The number of vNICs.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub num_nics: Option<i32>,
 
@@ -158,14 +156,14 @@ pub struct DiagnosticResponse {
     /// - `suspended`
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The amount of time in seconds that the VM has been running.
     ///
     /// **New in version 2.48**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uptime: Option<i32>,
 }
@@ -191,6 +189,20 @@ pub enum Driver {
     // Xenapi
     #[serde(rename = "xenapi")]
     Xenapi,
+}
+
+impl std::str::FromStr for Driver {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "hyperv" => Ok(Self::Hyperv),
+            "ironic" => Ok(Self::Ironic),
+            "libvirt" => Ok(Self::Libvirt),
+            "vmwareapi" => Ok(Self::Vmwareapi),
+            "xenapi" => Ok(Self::Xenapi),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `NicDetails` type
@@ -234,4 +246,19 @@ pub enum State {
     // Suspended
     #[serde(rename = "suspended")]
     Suspended,
+}
+
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "crashed" => Ok(Self::Crashed),
+            "paused" => Ok(Self::Paused),
+            "pending" => Ok(Self::Pending),
+            "running" => Ok(Self::Running),
+            "shutdown" => Ok(Self::Shutdown),
+            "suspended" => Ok(Self::Suspended),
+            _ => Err(()),
+        }
+    }
 }

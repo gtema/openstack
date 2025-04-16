@@ -20,25 +20,19 @@
 //! Wraps invoking of the `v2/octavia` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::octavia::get;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::octavia::response::get::OctaviaResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct OctaviaCommand {
     /// Request Query parameters
@@ -57,9 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Octavia response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl OctaviaCommand {
     /// Perform command action
@@ -83,10 +74,8 @@ impl OctaviaCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<OctaviaResponse>(data)?;
         Ok(())
     }
 }

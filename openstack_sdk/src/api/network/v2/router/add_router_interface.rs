@@ -57,17 +57,14 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID of the port. One of subnet_id or port_id must be specified.
-    ///
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Cow<'a, str>>,
 
     /// The ID of the subnet. One of subnet_id or port_id must be specified.
-    ///
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Cow<'a, str>>,
 
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

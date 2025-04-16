@@ -44,11 +44,11 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct AllocationsItem<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) generation: Option<i32>,
 
     #[serde()]
-    #[builder(private, setter(name = "_resources"))]
+    #[builder(private, setter(into, name = "_resources"))]
     pub(crate) resources: BTreeMap<Cow<'a, str>, i32>,
 }
 
@@ -70,7 +70,7 @@ impl<'a> AllocationsItemBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Item<'a> {
     #[serde()]
-    #[builder(private, setter(name = "_allocations"))]
+    #[builder(private, setter(into, name = "_allocations"))]
     pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
     #[serde()]
@@ -82,7 +82,7 @@ pub struct Item<'a> {
     pub(crate) consumer_type: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_mappings"))]
+    #[builder(default, private, setter(into, name = "_mappings"))]
     pub(crate) mappings: Option<BTreeMap<Cow<'a, str>, Vec<Cow<'a, str>>>>,
 
     #[serde()]

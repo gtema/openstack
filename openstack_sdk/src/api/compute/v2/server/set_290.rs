@@ -40,18 +40,15 @@ pub enum OsDcfDiskConfig {
 }
 
 /// A `server` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Server<'a> {
     /// IPv4 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv4: Option<Cow<'a, str>>,
 
     /// IPv6 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv6: Option<Cow<'a, str>>,
@@ -60,7 +57,6 @@ pub struct Server<'a> {
     /// length. Before microversion 2.19 this was set to the server name.
     ///
     /// **New in version 2.19**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -77,13 +73,11 @@ pub struct Server<'a> {
     /// instance.
     ///
     /// **New in version 2.90**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hostname: Option<Cow<'a, str>>,
 
     /// The server name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -104,7 +98,6 @@ pub struct Server<'a> {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
@@ -114,12 +107,10 @@ pub struct Server<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `server` object.
-    ///
     #[builder(setter(into))]
     pub(crate) server: Server<'a>,
 
     /// id parameter for /v2.1/servers/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/os-services/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::service::set_20;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::service::response::set::ServiceResponse;
 
 /// Update a compute service to enable or disable scheduling, including
 /// recording a reason why a compute service was disabled from scheduling. Set
@@ -47,7 +43,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Update Compute Service (microversion = 2.0)")]
 pub struct ServiceCommand {
@@ -65,7 +60,6 @@ pub struct ServiceCommand {
     /// The reason for disabling a service. The minimum length is 1 and the
     /// maximum length is 255. This may only be requested with
     /// `status=disabled`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     disabled_reason: Option<String>,
 
@@ -81,89 +75,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-services/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Service response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The binary name of the service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    binary: Option<String>,
-
-    /// The reason for disabling a service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    disabled_reason: Option<String>,
-
-    /// Whether or not this service was forced down manually by an
-    /// administrator after the service was fenced. This value is useful to
-    /// know that some 3rd party has verified the service should be marked
-    /// down.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    forced_down: Option<bool>,
-
-    /// The name of the host.
-    ///
-    #[serde()]
-    #[structable()]
-    host: String,
-
-    /// The id of the service as a uuid.
-    ///
-    #[serde()]
-    #[structable()]
-    id: IntString,
-
-    /// Service name
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The state of the service. One of `up` or `down`.
-    ///
-    #[serde()]
-    #[structable()]
-    state: String,
-
-    /// The status of the service. One of `enabled` or `disabled`.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The availability zone name.
-    ///
-    #[serde()]
-    #[structable()]
-    zone: String,
 }
 
 impl ServiceCommand {
@@ -201,7 +118,7 @@ impl ServiceCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceResponse>(data)?;
         Ok(())
     }
 }

@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::minimum_packet_rate_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::policy::minimum_packet_rate_rule::response::list::MinimumPacketRateRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct MinimumPacketRateRulesCommand {
     /// Request Query parameters
@@ -59,13 +54,11 @@ pub struct MinimumPacketRateRulesCommand {
 struct QueryParameters {
     /// direction query parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["any","egress","ingress"])]
     direction: Option<String>,
 
     /// id query parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -73,37 +66,31 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// min_kpps query parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     min_kpps: Option<i32>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -113,28 +100,12 @@ struct QueryParameters {
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
         value_name = "POLICY_ID"
     )]
     policy_id: String,
-}
-/// MinimumPacketRateRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    min_kpps: Option<IntString>,
 }
 
 impl MinimumPacketRateRulesCommand {
@@ -187,8 +158,7 @@ impl MinimumPacketRateRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MinimumPacketRateRuleResponse>(data)?;
         Ok(())
     }
 }

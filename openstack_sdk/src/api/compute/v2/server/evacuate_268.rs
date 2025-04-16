@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to evacuate a server to another host.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Evacuate<'a> {
@@ -33,7 +32,6 @@ pub struct Evacuate<'a> {
     /// this parameter, the operation generates a new password. Up to API
     /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
     /// is specified, an error is raised.
-    ///
     #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) admin_pass: Option<Cow<'a, str>>,
@@ -49,7 +47,6 @@ pub struct Evacuate<'a> {
     /// recommended to either not specify a host so that the scheduler will
     /// pick one, or specify a host with microversion >= 2.29 and without
     /// `force=True` set.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
@@ -59,12 +56,10 @@ pub struct Evacuate<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to evacuate a server to another host.
-    ///
     #[builder(setter(into))]
     pub(crate) evacuate: Evacuate<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

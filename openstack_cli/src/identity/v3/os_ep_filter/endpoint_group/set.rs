@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::set;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_ep_filter::endpoint_group::response::set::EndpointGroupResponse;
 
 /// Update existing endpoint groups
 ///
 /// PATCH /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}
-///
 #[derive(Args)]
 pub struct EndpointGroupCommand {
     /// Request Query parameters
@@ -64,7 +59,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// endpoint_group_id parameter for
     /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -87,7 +81,6 @@ struct Filters {
     /// Indicates whether the endpoint appears in the service catalog -false.
     /// The endpoint does not appear in the service catalog. -true. The
     /// endpoint appears in the service catalog.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
@@ -96,17 +89,14 @@ struct Filters {
     /// interface. -internal. Visible by end users on an unmetered internal
     /// network interface. -admin. Visible by administrative users on a secure
     /// network interface.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     interface: Option<Interface>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs
-    ///
     #[arg(help_heading = "Body parameters", long)]
     service_id: Option<String>,
 }
@@ -115,7 +105,6 @@ struct Filters {
 #[derive(Args, Clone)]
 struct EndpointGroup {
     /// The endpoint group description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -123,50 +112,11 @@ struct EndpointGroup {
     /// used must be an endpoint property, such as interface, service_id,
     /// region, and enabled. Note that if using interface as a filter, the only
     /// available values are public, internal, and admin.
-    ///
     #[command(flatten)]
     filters: Option<Filters>,
 
     /// The name of the endpoint group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
-/// EndpointGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The endpoint group description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Describes the filtering performed by the endpoint group. The filter
-    /// used must be an endpoint property, such as interface, service_id,
-    /// region, and enabled. Note that if using interface as a filter, the only
-    /// available values are public, internal, and admin.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    filters: Option<Value>,
-
-    /// The endpoint group ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of the endpoint group.
-    ///
-    #[serde()]
-    #[structable(optional)]
     name: Option<String>,
 }
 
@@ -228,7 +178,7 @@ impl EndpointGroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<EndpointGroupResponse>(data)?;
         Ok(())
     }
 }

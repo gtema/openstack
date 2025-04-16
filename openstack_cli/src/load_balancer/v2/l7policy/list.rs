@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/l7policies` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::l7policy::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::l7policy::response::list::L7policyResponse;
 use tracing::warn;
 
 /// Lists all L7 policies for the project.
@@ -52,7 +48,6 @@ use tracing::warn;
 /// own to list L7 policies for other projects.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List L7 Policies")]
 pub struct L7PoliciesCommand {
@@ -82,7 +77,6 @@ struct QueryParameters {
     description: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
@@ -90,7 +84,6 @@ struct QueryParameters {
     listener_id: Option<String>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
@@ -101,7 +94,6 @@ struct QueryParameters {
     operating_status: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -143,137 +135,6 @@ struct ProjectInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// L7Policies response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
-    /// `REDIRECT_TO_URL`, or `REJECT`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    action: Option<String>,
-
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the L7 policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the listener.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    listener_id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    operating_status: Option<String>,
-
-    /// The position of this policy on the listener. Positions start at 1.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    position: Option<i32>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provisioning_status: Option<String>,
-
-    /// Requests matching this policy will be redirected to the specified URL
-    /// or Prefix URL with the HTTP response code. Valid if `action` is
-    /// `REDIRECT_TO_URL` or `REDIRECT_PREFIX`. Valid options are: 301, 302,
-    /// 303, 307, or 308. Default is 302.
-    ///
-    /// **New in version 2.9**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redirect_http_code: Option<i32>,
-
-    /// Requests matching this policy will be redirected to the pool with this
-    /// ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some
-    /// restrictions, See
-    /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redirect_pool_id: Option<String>,
-
-    /// Requests matching this policy will be redirected to this Prefix URL.
-    /// Only valid if `action` is `REDIRECT_PREFIX`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redirect_prefix: Option<String>,
-
-    /// Requests matching this policy will be redirected to this URL. Only
-    /// valid if `action` is `REDIRECT_TO_URL`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redirect_url: Option<String>,
-
-    /// List of associated L7 rule IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    rules: Option<Value>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl L7PoliciesCommand {
     /// Perform command action
@@ -385,8 +246,7 @@ impl L7PoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<L7policyResponse>(data)?;
         Ok(())
     }
 }

@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2/reverse/floatingips/{fip_key}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::reverse::floatingip::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::reverse::floatingip::response::get::FloatingipResponse;
 
 /// Shows a particular FloatingIP PTR
-///
 #[derive(Args)]
 #[command(about = "Show FloatingIP’s PTR record")]
 pub struct FloatingipCommand {
@@ -58,66 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// fip_key parameter for /v2/reverse/floatingips/{fip_key} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_fip_key",
         value_name = "FIP_KEY"
     )]
     fip_key: String,
-}
-/// Floatingip response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// current action in progress on the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    action: Option<String>,
-
-    /// The floatingip address for this PTR record.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    address: Option<String>,
-
-    /// Description for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// ID for PTR record in the format of <region>:\<floatingip_id>
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links to the resource, and other related resources. When a response has
-    /// been broken into pages, we will include a `next` link that should be
-    /// followed to retrieve all results
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// Domain name for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ptrdname: Option<String>,
-
-    /// The status of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// Time to live for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ttl: Option<i32>,
 }
 
 impl FloatingipCommand {
@@ -144,7 +85,7 @@ impl FloatingipCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FloatingipResponse>(data)?;
         Ok(())
     }
 }

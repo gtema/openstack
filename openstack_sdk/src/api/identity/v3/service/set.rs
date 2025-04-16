@@ -35,7 +35,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `service` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Service<'a> {
@@ -43,20 +42,17 @@ pub struct Service<'a> {
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
     /// service catalog. Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The service name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
-    ///
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) _type: Option<Cow<'a, str>>,
@@ -84,12 +80,10 @@ impl<'a> ServiceBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `service` object.
-    ///
     #[builder(setter(into))]
     pub(crate) service: Service<'a>,
 
     /// service_id parameter for /v3/services/{service_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

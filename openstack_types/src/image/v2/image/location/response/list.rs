@@ -18,14 +18,14 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Location response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LocationResponse {
     #[structable(serialize)]
-    pub metadata: HashMap<String, Value>,
+    pub metadata: BTreeMap<String, Value>,
 
     #[structable()]
     pub url: String,
@@ -33,7 +33,7 @@ pub struct LocationResponse {
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
     /// already contained in the image properties.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub validation_data: Option<ValidationData>,
 }
@@ -41,7 +41,6 @@ pub struct LocationResponse {
 /// Values to be used to populate the corresponding image properties. If the
 /// image status is not 'queued', values must exactly match those already
 /// contained in the image properties.
-///
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {

@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/availability_zones` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::availability_zone::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::availability_zone::response::list::AvailabilityZoneResponse;
 
 /// Lists all availability zones.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List all availability zones")]
 pub struct AvailabilityZonesCommand {
@@ -78,46 +74,38 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/availability_zones API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// resource query parameter for /v2.0/availability_zones API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     resource: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// state query parameter for /v2.0/availability_zones API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     state: Option<String>,
 }
@@ -125,29 +113,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AvailabilityZones response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource type of the availability zone. The supported resource
-    /// types are `network` and `router`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource: Option<String>,
-
-    /// The state of the availability zone, which is either `available` or
-    /// `unavailable`.
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    state: Option<String>,
-}
 
 impl AvailabilityZonesCommand {
     /// Perform command action
@@ -198,8 +163,7 @@ impl AvailabilityZonesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AvailabilityZoneResponse>(data)?;
         Ok(())
     }
 }

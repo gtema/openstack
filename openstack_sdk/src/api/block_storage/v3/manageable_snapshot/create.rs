@@ -73,24 +73,20 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `snapshot` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Snapshot<'a> {
     /// A description for the snapshot. Default is `None`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// One or more metadata key and value pairs for the snapshot.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     /// The name of the snapshot. Default is `None`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
@@ -99,13 +95,11 @@ pub struct Snapshot<'a> {
     /// reference depends on the volume driver implementation. For details
     /// about the required elements in the structure, see the documentation for
     /// the volume driver.
-    ///
     #[serde(rename = "ref")]
     #[builder(setter(into))]
     pub(crate) _ref: Option<Value>,
 
     /// The UUID of the volume.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -113,7 +107,6 @@ pub struct Snapshot<'a> {
 
 impl<'a> SnapshotBuilder<'a> {
     /// One or more metadata key and value pairs for the snapshot.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -133,7 +126,6 @@ impl<'a> SnapshotBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `snapshot` object.
-    ///
     #[builder(setter(into))]
     pub(crate) snapshot: Snapshot<'a>,
 

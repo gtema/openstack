@@ -20,22 +20,19 @@
 //! Wraps invoking of the `v2.0/network_segment_ranges/{network_segment_range_id}/tags` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_segment_range::tag::replace;
+use openstack_types::network::v2::network_segment_range::tag::response::replace::TagResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct TagCommand {
     /// Request Query parameters
@@ -47,7 +44,6 @@ pub struct TagCommand {
     path: PathParameters,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Vec<String>,
 }
@@ -61,36 +57,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// network_segment_range_id parameter for
     /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_network_segment_range_id",
         value_name = "NETWORK_SEGMENT_RANGE_ID"
     )]
     network_segment_range_id: String,
-}
-/// Tag response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .into_iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl TagCommand {
@@ -120,7 +92,7 @@ impl TagCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TagResponse>(data)?;
         Ok(())
     }
 }

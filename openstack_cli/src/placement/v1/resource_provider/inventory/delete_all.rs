@@ -20,22 +20,16 @@
 //! Wraps invoking of the `resource_providers/{uuid}/inventories` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::inventory::delete_all;
-use structable_derive::StructTable;
 
 /// Deletes all inventory records for the resource provider identified by
 /// {uuid}.
@@ -49,7 +43,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 204
 ///
 /// Error response codes: itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Delete resource provider inventories")]
 pub struct InventoryCommand {
@@ -71,7 +64,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
@@ -79,9 +71,6 @@ struct PathParameters {
     )]
     uuid: String,
 }
-/// Inventory response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl InventoryCommand {
     /// Perform command action
@@ -105,8 +94,7 @@ impl InventoryCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

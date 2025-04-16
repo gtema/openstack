@@ -36,29 +36,29 @@ pub struct MemberResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The UUID of the image.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub image_id: Option<String>,
 
     /// The ID of the image member. An image member is usually a project (also
     /// called the “tenant”) with whom the image is shared.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub member_id: Option<String>,
 
     /// The URL for the schema describing an image member.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
     /// The status of this image member. Value is one of `pending`, `accepted`,
     /// `rejected`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
@@ -79,7 +79,7 @@ pub struct MemberResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -97,4 +97,16 @@ pub enum Status {
     // Rejected
     #[serde(rename = "rejected")]
     Rejected,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "accepted" => Ok(Self::Accepted),
+            "pending" => Ok(Self::Pending),
+            "rejected" => Ok(Self::Rejected),
+            _ => Err(()),
+        }
+    }
 }

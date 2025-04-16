@@ -20,34 +20,26 @@
 //! Wraps invoking of the `v3/system/users/{user_id}/roles/{role_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::system::user::role::set;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Grant a user a role on the system.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/system_user_role`
-///
 #[derive(Args)]
 #[command(about = "Assign a system role to a user")]
 pub struct RoleCommand {
@@ -72,7 +64,6 @@ struct PathParameters {
     user: UserInput,
 
     /// role_id parameter for /v3/system/users/{user_id}/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -95,9 +86,6 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// Role response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl RoleCommand {
     /// Perform command action
@@ -166,11 +154,7 @@ impl RoleCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

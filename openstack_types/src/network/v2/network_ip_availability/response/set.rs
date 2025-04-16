@@ -22,21 +22,27 @@ use structable::{StructTable, StructTableOptions};
 /// NetworkIpAvailability response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkIpAvailabilityResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub network_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub network_name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_ip_availability: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub total_ips: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub used_ips: Option<String>,
 }

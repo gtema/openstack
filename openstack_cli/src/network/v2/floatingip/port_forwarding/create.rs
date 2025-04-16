@@ -20,28 +20,24 @@
 //! Wraps invoking of the `v2.0/floatingips/{floatingip_id}/port_forwardings` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::floatingip::port_forwarding::response::create::PortForwardingResponse;
 
 /// Creates a floating IP port forwarding.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 404
-///
 #[derive(Args)]
 #[command(about = "Create port forwarding")]
 pub struct PortForwardingCommand {
@@ -54,7 +50,6 @@ pub struct PortForwardingCommand {
     path: PathParameters,
 
     /// A `floating IP port forwarding` object.
-    ///
     #[command(flatten)]
     port_forwarding: PortForwarding,
 }
@@ -68,7 +63,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// floatingip_id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_floatingip_id",
@@ -92,43 +86,36 @@ enum Protocol {
 struct PortForwarding {
     /// A text describing the rule, which helps users to manage/find easily
     /// theirs rules.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     external_port: Option<Option<f32>>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP address.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     external_port_range: Option<f32>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     internal_ip_address: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     internal_port: Option<Option<f32>>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     internal_port_id: Option<String>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     internal_port_range: Option<f32>,
 
@@ -136,74 +123,8 @@ struct PortForwarding {
     project_id: Option<String>,
 
     /// The IP protocol used in the floating IP port forwarding.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     protocol: Option<Protocol>,
-}
-
-/// PortForwarding response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A text describing the rule, which helps users to manage/find easily
-    /// theirs rules.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The TCP/UDP/other protocol port number of the port forwarding’s
-    /// floating IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    external_port: Option<f32>,
-
-    /// The TCP/UDP/other protocol port range of the port forwarding’s floating
-    /// IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    external_port_range: Option<f32>,
-
-    /// The ID of the floating IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The fixed IPv4 address of the Neutron port associated to the floating
-    /// IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    internal_ip_address: Option<String>,
-
-    /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
-    /// address associated to the floating ip port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    internal_port: Option<f32>,
-
-    /// The ID of the Neutron port associated to the floating IP port
-    /// forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    internal_port_id: Option<String>,
-
-    /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
-    /// address associated to the floating ip port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    internal_port_range: Option<f32>,
-
-    /// The IP protocol used in the floating IP port forwarding.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
 }
 
 impl PortForwardingCommand {
@@ -278,7 +199,7 @@ impl PortForwardingCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<PortForwardingResponse>(data)?;
         Ok(())
     }
 }

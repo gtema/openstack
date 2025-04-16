@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The UUID of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The group name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

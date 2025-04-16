@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users/{user_id}/access_rules/{access_rule_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,15 +33,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::access_rule::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::access_rule::response::get::AccessRuleResponse;
 use tracing::warn;
 
 /// Show details of an access rule.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
-///
 #[derive(Args)]
 #[command(about = "Show access rule details")]
 pub struct AccessRuleCommand {
@@ -70,7 +65,6 @@ struct PathParameters {
 
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -92,42 +86,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// AccessRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the access rule
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The request method that the application credential is permitted to use
-    /// for a given API endpoint.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    method: Option<String>,
-
-    /// The API path that the application credential is permitted to access.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    path: Option<String>,
-
-    /// The service type identifier for the service that the application
-    /// credential is permitted to access. Must be a service type that is
-    /// listed in the service catalog and not a code name for a service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    service: Option<String>,
 }
 
 impl AccessRuleCommand {
@@ -199,7 +157,7 @@ impl AccessRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AccessRuleResponse>(data)?;
         Ok(())
     }
 }

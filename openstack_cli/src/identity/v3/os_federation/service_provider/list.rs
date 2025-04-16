@@ -20,25 +20,21 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/service_providers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::service_provider::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::service_provider::response::list::ServiceProviderResponse;
 
 /// List service providers.
 ///
 /// GET/HEAD /OS-FEDERATION/service_providers
-///
 #[derive(Args)]
 pub struct ServiceProvidersCommand {
     /// Request Query parameters
@@ -54,12 +50,10 @@ pub struct ServiceProvidersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Whether the service provider is enabled or not
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// The service provider ID
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 }
@@ -67,45 +61,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ServiceProviders response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The URL to authenticate against
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    auth_url: Option<String>,
-
-    /// The description of the service provider
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// Whether the service provider is enabled or not
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// The service provider ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The prefix of the RelayState SAML attribute
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    relay_state_prefix: Option<String>,
-
-    /// The service provider's URL
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    sp_url: Option<String>,
-}
 
 impl ServiceProvidersCommand {
     /// Perform command action
@@ -136,8 +91,7 @@ impl ServiceProvidersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ServiceProviderResponse>(data)?;
         Ok(())
     }
 }

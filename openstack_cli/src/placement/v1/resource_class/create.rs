@@ -20,21 +20,17 @@
 //! Wraps invoking of the `resource_classes` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::create;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_class::response::create::ResourceClassResponse;
 
 /// Create a new resource class. The new class must be a *custom* resource
 /// class, prefixed with CUSTOM\_ and distinct from the standard resource
@@ -49,7 +45,6 @@ use structable_derive::StructTable;
 ///
 /// A 409 Conflict response code will be returned if another resource class
 /// exists with the provided name.
-///
 #[derive(Args)]
 #[command(about = "Create resource class")]
 pub struct ResourceClassCommand {
@@ -62,7 +57,6 @@ pub struct ResourceClassCommand {
     path: PathParameters,
 
     /// The name of one resource class.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 }
@@ -74,21 +68,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceClass response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of links associated with one resource class.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of one resource class.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl ResourceClassCommand {
     /// Perform command action
@@ -115,7 +94,7 @@ impl ResourceClassCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResourceClassResponse>(data)?;
         Ok(())
     }
 }

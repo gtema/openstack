@@ -34,7 +34,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The host aggregate object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Aggregate<'a> {
@@ -42,13 +41,11 @@ pub struct Aggregate<'a> {
     /// availability zone rather than the default returned by the
     /// os-availability-zone API. The availability zone must not include ‘:’ in
     /// its name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
 
     /// The name of the host aggregate.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -58,7 +55,6 @@ pub struct Aggregate<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The host aggregate object.
-    ///
     #[builder(setter(into))]
     pub(crate) aggregate: Aggregate<'a>,
 

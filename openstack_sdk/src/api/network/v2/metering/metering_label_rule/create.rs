@@ -39,7 +39,6 @@ pub enum Direction {
 }
 
 /// A `metering_label_rule` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct MeteringLabelRule<'a> {
@@ -49,7 +48,6 @@ pub struct MeteringLabelRule<'a> {
 
     /// Ingress or egress, which is the direction in which the metering rule is
     /// applied.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) direction: Option<Direction>,
@@ -57,13 +55,11 @@ pub struct MeteringLabelRule<'a> {
     /// Indicates whether to count the traffic of a specific IP address with
     /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
     /// values. Default is `false`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) excluded: Option<bool>,
 
     /// The metering label ID associated with this metering rule.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) metering_label_id: Option<Cow<'a, str>>,
@@ -71,7 +67,6 @@ pub struct MeteringLabelRule<'a> {
     /// (deprecated) The source IP prefix that is matched by this metering
     /// rule. By source IP prefix, one should read the internal/private IPs
     /// used in OpenStack.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remote_ip_prefix: Option<Cow<'a, str>>,
@@ -89,7 +84,6 @@ pub struct MeteringLabelRule<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `metering_label_rule` object.
-    ///
     #[builder(setter(into))]
     pub(crate) metering_label_rule: MeteringLabelRule<'a>,
 

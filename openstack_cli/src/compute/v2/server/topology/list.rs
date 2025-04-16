@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/topology` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::topology::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::topology::response::list::TopologyResponse;
 
 /// Shows NUMA topology information for a server.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), notfound(404), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Show Server Topology")]
 pub struct TopologiesCommand {
@@ -66,53 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// Topologies response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The mapping of server cores to host physical CPU
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    cpu_pinning: Option<Value>,
-
-    /// The host NUMA node the virtual NUMA node is map to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host_node: Option<i32>,
-
-    /// The amount of memory assigned to this NUMA node in MB.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    memory_mb: Option<i32>,
-
-    /// The page size in KB of a server. This field is `null` if the page size
-    /// information is not available.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    pagesize_kb: Option<i32>,
-
-    /// A mapping of host cpus thread sibling.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    siblings: Option<Value>,
-
-    /// A list of IDs of the virtual CPU assigned to this NUMA node.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    vcpu_set: Option<Value>,
 }
 
 impl TopologiesCommand {
@@ -139,8 +93,7 @@ impl TopologiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TopologyResponse>(data)?;
         Ok(())
     }
 }

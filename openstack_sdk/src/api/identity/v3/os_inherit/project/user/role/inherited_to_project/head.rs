@@ -34,21 +34,18 @@ pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// role_id parameter for
     /// /v3/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
-    ///
     #[builder(default, setter(into))]
     role_id: Cow<'a, str>,
 
     /// user_id parameter for
     /// /v3/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

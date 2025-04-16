@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.0/address-scopes` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_scope::create;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::address_scope::response::create::AddressScopeResponse;
 
 /// Creates an address scope.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Create address scope")]
 pub struct AddressScopeCommand {
@@ -54,7 +49,6 @@ pub struct AddressScopeCommand {
     path: PathParameters,
 
     /// An `address scope` object.
-    ///
     #[command(flatten)]
     address_scope: AddressScope,
 }
@@ -70,60 +64,22 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct AddressScope {
     /// The IP protocol version. Valid value is `4` or `6`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ip_version: Option<i32>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     shared: Option<bool>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    tenant_id: Option<String>,
-}
-
-/// AddressScope response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the address scope.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ip_version: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Indicates whether this resource is shared across all projects.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared: Option<BoolString>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
     tenant_id: Option<String>,
 }
 
@@ -170,7 +126,7 @@ impl AddressScopeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AddressScopeResponse>(data)?;
         Ok(())
     }
 }

@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/qos/alias-minimum-packet-rate-rules` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_packet_rate_rule::create;
-use openstack_sdk::types::IntString;
+use openstack_types::network::v2::qos::alias_minimum_packet_rate_rule::response::create::AliasMinimumPacketRateRuleResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasMinimumPacketRateRuleCommand {
     /// Request Query parameters
@@ -61,21 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AliasMinimumPacketRateRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    min_kpps: Option<IntString>,
-}
 
 impl AliasMinimumPacketRateRuleCommand {
     /// Perform command action
@@ -104,7 +84,7 @@ impl AliasMinimumPacketRateRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AliasMinimumPacketRateRuleResponse>(data)?;
         Ok(())
     }
 }

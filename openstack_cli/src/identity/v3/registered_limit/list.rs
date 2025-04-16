@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v3/registered_limits` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::registered_limit::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::registered_limit::response::list::RegisteredLimitResponse;
 
 /// Lists Registered Limits.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/registered_limits`
-///
 #[derive(Args)]
 #[command(about = "List Registered Limits")]
 pub struct RegisteredLimitsCommand {
@@ -56,17 +52,14 @@ pub struct RegisteredLimitsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The ID of the region.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     region_id: Option<String>,
 
     /// The resource name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     resource_name: Option<String>,
 
     /// Filters the response by a service ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     service_id: Option<String>,
 }
@@ -74,46 +67,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// RegisteredLimits response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The default limit for the registered limit.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    default_limit: Option<i32>,
-
-    /// The registered limit description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The registered limit ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the region that contains the service endpoint. The value can
-    /// be None.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    region_id: Option<String>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resource_name: Option<String>,
-
-    /// The UUID of the service to which the registered limit belongs.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    service_id: Option<String>,
-}
 
 impl RegisteredLimitsCommand {
     /// Perform command action
@@ -146,9 +99,8 @@ impl RegisteredLimitsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<RegisteredLimitResponse>(data)?;
         Ok(())
     }
 }

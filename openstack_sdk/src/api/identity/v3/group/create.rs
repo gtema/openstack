@@ -32,12 +32,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `group` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Group<'a> {
     /// The description of the group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -46,13 +44,11 @@ pub struct Group<'a> {
     /// the request, the Identity service will attempt to pull the domain ID
     /// from the token used in the request. Note that this requires the use of
     /// a domain-scoped token.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
     /// The name of the group.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -80,7 +76,6 @@ impl<'a> GroupBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `group` object
-    ///
     #[builder(setter(into))]
     pub(crate) group: Group<'a>,
 

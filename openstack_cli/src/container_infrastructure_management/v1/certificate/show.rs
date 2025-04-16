@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v1/certificates/{certificate_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::certificate::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::certificate::response::get::CertificateResponse;
 
 /// Show CA certificate details that are associated with the created cluster
 /// based on the given CA certificate type.
-///
 #[derive(Args)]
 #[command(about = "Show details about the CA certificate for a cluster")]
 pub struct CertificateCommand {
@@ -59,50 +54,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// certificate_id parameter for /v1/certificates/{certificate_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Certificate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    ca_cert_type: Option<String>,
-
-    /// The UUID of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cluster_uuid: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    csr: Option<String>,
-
-    /// Links to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// CA certificate for the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    pem: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl CertificateCommand {
@@ -129,7 +86,7 @@ impl CertificateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<CertificateResponse>(data)?;
         Ok(())
     }
 }

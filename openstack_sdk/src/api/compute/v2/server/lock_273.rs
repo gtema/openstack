@@ -26,7 +26,6 @@ use std::borrow::Cow;
 
 /// The action to lock a server. This parameter can be `null`. Up to
 /// microversion 2.73, this parameter should be `null`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Lock<'a> {
@@ -40,12 +39,10 @@ pub struct Lock<'a> {
 pub struct Request<'a> {
     /// The action to lock a server. This parameter can be `null`. Up to
     /// microversion 2.73, this parameter should be `null`.
-    ///
     #[builder(setter(into))]
     pub(crate) lock: Option<Lock<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

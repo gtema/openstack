@@ -20,21 +20,17 @@
 //! Wraps invoking of the `resource_providers/{uuid}/usages` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::usage::get;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::placement::v1::resource_provider::usage::response::get::UsageResponse;
 
 /// Return a report of usage information for resources associated with the
 /// resource provider identified by {uuid}. The value is a dictionary of
@@ -44,7 +40,6 @@ use std::collections::HashMap;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List resource provider usages")]
 pub struct UsageCommand {
@@ -65,30 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid}/usages API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
     uuid: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl UsageCommand {
@@ -115,7 +92,7 @@ impl UsageCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<UsageResponse>(data)?;
         Ok(())
     }
 }

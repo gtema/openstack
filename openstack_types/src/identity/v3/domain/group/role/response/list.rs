@@ -23,23 +23,22 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The role ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The role name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

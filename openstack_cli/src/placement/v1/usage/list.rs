@@ -20,15 +20,12 @@
 //! Wraps invoking of the `usages` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::placement::v1::usage::list;
-use std::collections::HashMap;
-use std::fmt;
+use openstack_types::placement::v1::usage::response::list::UsageResponse;
 use tracing::warn;
 
 /// Return a report of usage information for resources associated with the
@@ -49,7 +45,6 @@ use tracing::warn;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: badRequest(400)
-///
 #[derive(Args)]
 #[command(about = "List usages")]
 pub struct UsagesCommand {
@@ -71,7 +66,6 @@ struct QueryParameters {
     /// consumer_type=INSTANCE should be provided. The all query parameter may
     /// be specified to group all results under one key, all. The unknown query
     /// parameter may be specified to group all results under one key, unknown.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     consumer_type: Option<String>,
 
@@ -117,37 +111,6 @@ struct UserInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, ResponseItem>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(
-            self.0
-                .iter()
-                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
-        );
-        (headers, rows)
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseItem {
-    consumer_count: Option<i32>,
-}
-
-impl fmt::Display for ResponseItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "consumer_count={}",
-            self.consumer_count.map_or(String::new(), |v| v.to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
 
 impl UsagesCommand {
     /// Perform command action
@@ -261,7 +224,7 @@ impl UsagesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<UsageResponse>(data)?;
         Ok(())
     }
 }

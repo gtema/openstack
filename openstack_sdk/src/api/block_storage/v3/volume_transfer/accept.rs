@@ -41,7 +41,6 @@ pub struct Request<'a> {
     pub(crate) accept: Accept<'a>,
 
     /// id parameter for /v3/volume-transfers/{id}/accept API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

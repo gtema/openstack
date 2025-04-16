@@ -23,22 +23,22 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AttachmentResponse {
     /// The ID of attachment.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The UUID of the attaching instance.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub instance: Option<String>,
 
     /// The status of the attachment.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
@@ -72,4 +72,20 @@ pub enum Status {
     // Reserved
     #[serde(rename = "reserved")]
     Reserved,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "attached" => Ok(Self::Attached),
+            "attaching" => Ok(Self::Attaching),
+            "deleted" => Ok(Self::Deleted),
+            "detached" => Ok(Self::Detached),
+            "error_attaching" => Ok(Self::ErrorAttaching),
+            "error_detaching" => Ok(Self::ErrorDetaching),
+            "reserved" => Ok(Self::Reserved),
+            _ => Err(()),
+        }
+    }
 }

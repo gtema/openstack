@@ -28,7 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct AliasDscpMarkingRule {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) dscp_mark: Option<i32>,
 }
 
@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) alias_dscp_marking_rule: AliasDscpMarkingRule,
 
     /// id parameter for /v2.0/qos/alias-dscp-marking-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

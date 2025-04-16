@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/projects/{project_id}/groups/{group_id}/roles` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,14 +34,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::project::group::role::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::project::group::role::response::list::RoleResponse;
 use tracing::warn;
 
 /// Lists role assignments for a group on a project.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
-///
 #[derive(Args)]
 #[command(about = "List role assignments for group on project")]
 pub struct RolesCommand {
@@ -70,7 +66,6 @@ struct PathParameters {
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
@@ -92,27 +87,6 @@ struct ProjectInput {
     /// Current project.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
-}
-/// Roles response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The role description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The role ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The role name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl RolesCommand {
@@ -189,8 +163,7 @@ impl RolesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<RoleResponse>(data)?;
         Ok(())
     }
 }

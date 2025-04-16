@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/flavorprofiles/{flavorprofile_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::flavor_profile::delete;
-use structable_derive::StructTable;
 
 /// Deletes a Flavor Profile
-///
 #[derive(Args)]
 pub struct FlavorProfileCommand {
     /// Request Query parameters
@@ -59,7 +52,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavorprofile_id parameter for
     /// /v2/lbaas/flavorprofiles/{flavorprofile_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -67,9 +59,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// FlavorProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl FlavorProfileCommand {
     /// Perform command action
@@ -93,8 +82,7 @@ impl FlavorProfileCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

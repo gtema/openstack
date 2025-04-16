@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.1/os-quota-class-sets/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_class_set::get;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::quota_class_set::response::get::QuotaClassSetResponse;
 
 /// Show the quota for the Quota Class.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Show the quota for Quota Class")]
 pub struct QuotaClassSetCommand {
@@ -62,143 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-quota-class-sets/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// QuotaClassSet response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cores: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_ips: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    floating_ips: Option<IntString>,
-
-    /// The ID of the quota class. Nova supports the `default` Quota Class
-    /// only.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_file_content_bytes: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_file_path_bytes: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_files: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    instances: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    key_pairs: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    metadata_items: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    networks: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ram: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group_rules: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_groups: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    server_group_members: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    server_groups: Option<IntString>,
 }
 
 impl QuotaClassSetCommand {
@@ -225,7 +89,7 @@ impl QuotaClassSetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaClassSetResponse>(data)?;
         Ok(())
     }
 }

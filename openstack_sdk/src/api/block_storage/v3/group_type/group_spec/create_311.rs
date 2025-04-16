@@ -28,13 +28,11 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
-    #[builder(private, setter(name = "_group_specs"))]
+    #[builder(private, setter(into, name = "_group_specs"))]
     pub(crate) group_specs: BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>,
 
     /// group_type_id parameter for
     /// /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[builder(default, setter(into))]
     group_type_id: Cow<'a, str>,
 
@@ -51,7 +49,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
     pub fn group_specs<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

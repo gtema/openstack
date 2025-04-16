@@ -43,7 +43,6 @@ pub struct Request<'a> {
     delete_info: Option<Cow<'a, str>>,
 
     /// id parameter for /v2.1/os-assisted-volume-snapshots/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

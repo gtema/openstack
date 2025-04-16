@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/clusters/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::cluster::set;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::cluster::response::set::ClusterResponse;
 
 /// Enable/Disable scheduling for a cluster.
-///
 #[derive(Args)]
 pub struct ClusterCommand {
     /// Request Query parameters
@@ -48,17 +44,14 @@ pub struct ClusterCommand {
     path: PathParameters,
 
     /// The binary name of the services in the cluster.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     binary: Option<String>,
 
     /// The reason for disabling a resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     disabled_reason: Option<String>,
 
     /// The name to identify the service cluster.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 }
@@ -71,95 +64,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/clusters/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Cluster response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of active storage backend. Only in cinder-volume service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    active_backend_id: Option<String>,
-
-    /// The binary name of the services in the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    binary: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The reason for disabling a resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    disabled_reason: Option<String>,
-
-    /// Whether the cluster is frozen or not.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    frozen: Option<bool>,
-
-    /// The last periodic heartbeat received.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    last_heartbeat: Option<String>,
-
-    /// The name of the service cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The number of down hosts in the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_down_hosts: Option<i32>,
-
-    /// The number of hosts in the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    num_hosts: Option<i32>,
-
-    /// The cluster replication status. Only included in responses if
-    /// configured.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    replication_status: Option<String>,
-
-    /// The state of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    state: Option<String>,
-
-    /// The status of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The date and time when the resource was updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl ClusterCommand {
@@ -198,7 +108,7 @@ impl ClusterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ClusterResponse>(data)?;
         Ok(())
     }
 }

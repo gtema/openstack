@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2.0/agents` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::create;
-use openstack_sdk::types::BoolString;
+use openstack_types::network::v2::agent::response::create::AgentResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AgentCommand {
     /// Request Query parameters
@@ -61,65 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Agent response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    #[serde()]
-    #[structable(optional)]
-    agent_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    alive: Option<bool>,
-
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    binary: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    configurations: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    heartbeat_timestamp: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    resources_synced: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    started_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    topic: Option<String>,
-}
 
 impl AgentCommand {
     /// Perform command action
@@ -147,7 +83,7 @@ impl AgentCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AgentResponse>(data)?;
         Ok(())
     }
 }

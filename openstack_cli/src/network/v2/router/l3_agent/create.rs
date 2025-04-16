@@ -20,28 +20,20 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/l3-agents` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::l3_agent::create;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct L3AgentCommand {
     /// Request Query parameters
@@ -65,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_router_id",
@@ -73,9 +64,6 @@ struct PathParameters {
     )]
     router_id: String,
 }
-/// L3Agent response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl L3AgentCommand {
     /// Perform command action
@@ -102,11 +90,7 @@ impl L3AgentCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

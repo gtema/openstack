@@ -33,41 +33,35 @@ use std::collections::BTreeMap;
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) immutable: Option<bool>,
 }
 
 /// A `role` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Role<'a> {
     /// Add description about the role.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the domain of the role.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
     /// The role name.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
@@ -95,7 +89,6 @@ impl<'a> RoleBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `role` object
-    ///
     #[builder(setter(into))]
     pub(crate) role: Role<'a>,
 

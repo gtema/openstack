@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/qos-specs/{id}/delete_keys` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::delete_keys;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::block_storage::v3::qos_spec::response::delete_keys::QosSpecResponse;
 
 /// Deletes specified keys in qos specs.
-///
 #[derive(Args)]
 pub struct QosSpecCommand {
     /// Request Query parameters
@@ -49,7 +44,6 @@ pub struct QosSpecCommand {
     path: PathParameters,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     keys: Vec<String>,
 }
@@ -62,30 +56,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/qos-specs/{id}/delete_keys API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl QosSpecCommand {
@@ -115,7 +91,7 @@ impl QosSpecCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QosSpecResponse>(data)?;
         Ok(())
     }
 }

@@ -22,12 +22,12 @@ use structable::{StructTable, StructTableOptions};
 /// RuleType response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RuleTypeResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub drivers: Option<String>,
 
     /// The type of QoS rule.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
 }

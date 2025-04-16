@@ -96,7 +96,6 @@ use std::borrow::Cow;
 /// A JSON object indicating what import method you wish to use to import your
 /// image. The content of this JSON object is another JSON object with a `name`
 /// field whose value is the identifier for the import method.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Method<'a> {
@@ -129,28 +128,24 @@ pub struct Request<'a> {
     /// stores returned to a call to /v2/info/stores on the glance-api the
     /// request hits). This can’t be used simultaneously with the `stores`
     /// parameter.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) all_stores: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) all_stores_must_success: Option<bool>,
 
     /// A JSON object indicating what import method you wish to use to import
     /// your image. The content of this JSON object is another JSON object with
     /// a `name` field whose value is the identifier for the import method.
-    ///
     #[builder(default, setter(into))]
     pub(crate) method: Option<Method<'a>>,
 
     /// If present contains the list of store id to import the image binary
     /// data to.
-    ///
     #[builder(default, setter(into))]
     pub(crate) stores: Option<Vec<Cow<'a, str>>>,
 
     /// image_id parameter for /v2/images/{image_id}/import API
-    ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,
 

@@ -26,7 +26,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_network_ip_availability"))]
+    #[builder(private, setter(into, name = "_network_ip_availability"))]
     pub(crate) network_ip_availability: BTreeMap<Cow<'a, str>, Value>,
 
     #[builder(setter(name = "_headers"), default, private)]

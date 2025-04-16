@@ -17,93 +17,118 @@
 //! Response type for the GET `clusters/nodegroups/{nodegroup_id}` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Nodegroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NodegroupResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub cluster_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub docker_volume_size: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub image_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub is_default: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels: Option<HashMap<String, String>>,
+    pub labels: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_added: Option<HashMap<String, String>>,
+    pub labels_added: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_overridden: Option<HashMap<String, String>>,
+    pub labels_overridden: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_skipped: Option<HashMap<String, String>>,
+    pub labels_skipped: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub max_node_count: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub merge_labels: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub min_node_count: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub node_addresses: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub node_count: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub role: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub stack_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub version: Option<String>,
 }
 
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -187,4 +212,31 @@ pub enum Status {
     // UpdateInProgress
     #[serde(rename = "UPDATE_IN_PROGRESS")]
     UpdateInProgress,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ADOPT_COMPLETE" => Ok(Self::AdoptComplete),
+            "CHECK_COMPLETE" => Ok(Self::CheckComplete),
+            "CREATE_COMPLETE" => Ok(Self::CreateComplete),
+            "CREATE_FAILED" => Ok(Self::CreateFailed),
+            "CREATE_IN_PROGRESS" => Ok(Self::CreateInProgress),
+            "DELETE_COMPLETE" => Ok(Self::DeleteComplete),
+            "DELETE_FAILED" => Ok(Self::DeleteFailed),
+            "DELETE_IN_PROGRESS" => Ok(Self::DeleteInProgress),
+            "RESTORE_COMPLETE" => Ok(Self::RestoreComplete),
+            "RESUME_COMPLETE" => Ok(Self::ResumeComplete),
+            "RESUME_FAILED" => Ok(Self::ResumeFailed),
+            "ROLLBACK_COMPLETE" => Ok(Self::RollbackComplete),
+            "ROLLBACK_FAILED" => Ok(Self::RollbackFailed),
+            "ROLLBACK_IN_PROGRESS" => Ok(Self::RollbackInProgress),
+            "SNAPSHOT_COMPLETE" => Ok(Self::SnapshotComplete),
+            "UPDATE_COMPLETE" => Ok(Self::UpdateComplete),
+            "UPDATE_FAILED" => Ok(Self::UpdateFailed),
+            "UPDATE_IN_PROGRESS" => Ok(Self::UpdateInProgress),
+            _ => Err(()),
+        }
+    }
 }

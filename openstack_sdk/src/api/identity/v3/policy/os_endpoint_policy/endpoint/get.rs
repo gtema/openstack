@@ -30,13 +30,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// endpoint_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

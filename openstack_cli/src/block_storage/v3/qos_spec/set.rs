@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/qos-specs/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val_opt;
@@ -36,11 +33,9 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::find;
 use openstack_sdk::api::block_storage::v3::qos_spec::set;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::qos_spec::response::set::QosSpecResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct QosSpecCommand {
     /// Request Query parameters
@@ -63,40 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/qos-specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// QosSpec response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The consumer type.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consumer: Option<String>,
-
-    /// The generated ID for the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A `specs` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    specs: Option<Value>,
 }
 
 impl QosSpecCommand {
@@ -143,7 +110,7 @@ impl QosSpecCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QosSpecResponse>(data)?;
         Ok(())
     }
 }

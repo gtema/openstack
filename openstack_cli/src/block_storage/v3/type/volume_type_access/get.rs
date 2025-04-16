@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/types/{type_id}/os-volume-type-access` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::volume_type_access::get;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::r#type::volume_type_access::response::get::VolumeTypeAccessResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct VolumeTypeAccessCommand {
     /// Request Query parameters
@@ -57,28 +53,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/os-volume-type-access/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_type_id",
         value_name = "TYPE_ID"
     )]
     type_id: String,
-}
-/// VolumeTypeAccess response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The UUID of the volume type.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_type_id: Option<String>,
 }
 
 impl VolumeTypeAccessCommand {
@@ -105,7 +85,7 @@ impl VolumeTypeAccessCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<VolumeTypeAccessResponse>(data)?;
         Ok(())
     }
 }

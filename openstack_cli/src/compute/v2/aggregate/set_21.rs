@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2.1/os-aggregates/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::find;
 use openstack_sdk::api::compute::v2::aggregate::set_21;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::aggregate::response::set::AggregateResponse;
 
 /// Updates either or both the name and availability zone for an aggregate. If
 /// the aggregate to be updated has host that already in the given availability
@@ -46,7 +42,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Update Aggregate (microversion = 2.1)")]
 pub struct AggregateCommand {
@@ -59,7 +54,6 @@ pub struct AggregateCommand {
     path: PathParameters,
 
     /// The host aggregate object.
-    ///
     #[command(flatten)]
     aggregate: Aggregate,
 }
@@ -72,7 +66,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -93,113 +86,12 @@ struct Aggregate {
     /// You should not change or unset the availability zone of an aggregate
     /// when that aggregate has hosts which contain servers in it since that
     /// may impact the ability for those servers to move to another host.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// The name of the host aggregate.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-}
-
-/// Aggregate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The availability zone of the host aggregate.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    /// A boolean indicates whether this aggregate is deleted or not, if it has
-    /// not been deleted, `false` will appear.
-    ///
-    #[serde()]
-    #[structable()]
-    deleted: bool,
-
-    /// The date and time when the resource was deleted. If the resource has
-    /// not been deleted yet, this field will be `null`, The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted_at: Option<String>,
-
-    /// An array of host information.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
-
-    /// The ID of the host aggregate.
-    ///
-    #[serde()]
-    #[structable()]
-    id: i32,
-
-    /// Metadata key and value pairs associated with the aggregate.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The name of the host aggregate.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The date and time when the resource was updated, if the resource has
-    /// not been updated, this field will show as `null`. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the host aggregate.
-    ///
-    /// **New in version 2.41**
-    ///
-    #[serde()]
-    #[structable()]
-    uuid: String,
 }
 
 impl AggregateCommand {
@@ -252,7 +144,7 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AggregateResponse>(data)?;
         Ok(())
     }
 }

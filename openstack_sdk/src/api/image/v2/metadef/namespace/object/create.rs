@@ -58,7 +58,7 @@ pub struct Items<'a> {
 #[builder(setter(strip_option))]
 pub struct Properties<'a> {
     #[serde(rename = "additionalItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) additional_items: Option<bool>,
 
     #[serde(rename = "default", skip_serializing_if = "Option::is_none")]
@@ -78,27 +78,27 @@ pub struct Properties<'a> {
     pub(crate) items: Option<Items<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) maximum: Option<f32>,
 
     #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_items: Option<i32>,
 
     #[serde(rename = "maxLength", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_length: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) minimum: Option<f32>,
 
     #[serde(rename = "minItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_items: Option<i32>,
 
     #[serde(rename = "minLength", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_length: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -114,7 +114,7 @@ pub struct Properties<'a> {
     pub(crate) pattern: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) readonly: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -130,7 +130,7 @@ pub struct Properties<'a> {
     pub(crate) _type: Type,
 
     #[serde(rename = "uniqueItems", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) unique_items: Option<bool>,
 }
 
@@ -143,7 +143,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
-    #[builder(default, private, setter(name = "_properties"))]
+    #[builder(default, private, setter(into, name = "_properties"))]
     pub(crate) properties: Option<BTreeMap<Cow<'a, str>, Properties<'a>>>,
 
     #[builder(default, setter(into))]
@@ -151,7 +151,6 @@ pub struct Request<'a> {
 
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 

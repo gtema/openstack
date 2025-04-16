@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.0/qos/rule-types/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::rule_type::get;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::rule_type::response::get::RuleTypeResponse;
 
 /// Shows details for an available QoS rule type.
 ///
@@ -43,7 +40,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show QoS rule type details")]
 pub struct RuleTypeCommand {
@@ -64,36 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/qos/rule-types/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// RuleType response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// List of loaded QoS drivers with supported rule type parameters with
-    /// possible values for each. Each driver is represented by a dict with the
-    /// keys `name` and `supported_parameters`. Field `name` contains the name
-    /// of a backend driver. Field `supported_parameters` contains a list of
-    /// dicts with `parameter_name`, `parameter_type` and `parameter_values`
-    /// fields. The valid values for `parameter_type` are `choices` or `range`.
-    /// If `parameter_type` is `choices` then `parameter_values` contains a
-    /// list of acceptable values, otherwise it contains a dict with keys of
-    /// `start` and `end` which define the range of acceptable values.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    drivers: Option<String>,
-
-    /// The type of QoS rule.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
 }
 
 impl RuleTypeCommand {
@@ -120,7 +92,7 @@ impl RuleTypeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RuleTypeResponse>(data)?;
         Ok(())
     }
 }

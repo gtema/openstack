@@ -23,19 +23,19 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RouterResponse {
     /// The ID of the router.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the router.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub routes: Option<Vec<Routes>>,
 }

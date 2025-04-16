@@ -44,52 +44,43 @@ pub struct Request<'a> {
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) allocation_ratio: Option<f32>,
 
     /// A maximum amount any single allocation against an inventory can have.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_unit: Option<i32>,
 
     /// A minimum amount any single allocation against an inventory can have.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_unit: Option<i32>,
 
     /// The amount of the resource a provider has reserved for its own use.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) reserved: Option<i32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) resource_provider_generation: i32,
 
     /// A representation of the divisible amount of the resource that may be
     /// requested. For example, step_size = 5 means that only values divisible
     /// by 5 (5, 10, 15, etc.) can be requested.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) step_size: Option<i32>,
 
     /// The actual amount of the resource that the provider can accommodate.
-    ///
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) total: i32,
 
     /// resource_class parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[builder(default, setter(into))]
     resource_class: Cow<'a, str>,
 
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

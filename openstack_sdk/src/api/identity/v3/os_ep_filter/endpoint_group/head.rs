@@ -30,7 +30,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The name of the endpoint group.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

@@ -55,22 +55,18 @@ pub struct Request<'a> {
     /// external system that an application running inside some OpenStack
     /// virtual machine is trying to access. Moreover, instead of an IP, one
     /// can also use a CIDR as the destination IP prefix.
-    ///
     #[builder(default, setter(into))]
     destination_ip_prefix: Option<Cow<'a, str>>,
 
     /// direction query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[builder(default, setter(into))]
     direction: Option<Cow<'a, str>>,
 
     /// excluded query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[builder(default)]
     excluded: Option<bool>,
 
     /// id query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
@@ -78,43 +74,36 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// metering_label_id query parameter for
     /// /v2.0/metering/metering-label-rules API
-    ///
     #[builder(default, setter(into))]
     metering_label_id: Option<Cow<'a, str>>,
 
     /// Reverse the page direction
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// remote_ip_prefix query parameter for
     /// /v2.0/metering/metering-label-rules API
-    ///
     #[builder(default, setter(into))]
     remote_ip_prefix: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_dir"))]
     sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
@@ -125,7 +114,6 @@ pub struct Request<'a> {
     /// egress rule, the source IP is the internal IP associated with some
     /// OpenStack VM. Moreover, instead of an IP, one can also use a CIDR as
     /// the source IP prefix.
-    ///
     #[builder(default, setter(into))]
     source_ip_prefix: Option<Cow<'a, str>>,
 
@@ -142,7 +130,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -157,7 +144,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

@@ -69,7 +69,6 @@ pub struct Router<'a> {
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) routes: Option<Vec<Routes<'a>>>,
@@ -82,7 +81,6 @@ pub struct Request<'a> {
     pub(crate) router: Router<'a>,
 
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -47,7 +47,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// loadbalancer_id parameter for
     /// /v2/lbaas/loadbalancers/{loadbalancer_id}/status API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

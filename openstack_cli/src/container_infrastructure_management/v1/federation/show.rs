@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v1/federations/{federation_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::federation::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::federation::response::get::FederationResponse;
 
 /// Retrieve information about a given Federation.
 ///
 /// | param federation_ident: | | | --- | --- | | | UUID or logical name of the
 /// Federation. |
-///
 #[derive(Args)]
 pub struct FederationCommand {
     /// Request Query parameters
@@ -60,56 +55,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// federation_id parameter for /v1/federations/{federation_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Federation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    hostcluster_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    member_ids: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    properties: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    status_reason: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
 }
 
 impl FederationCommand {
@@ -136,7 +87,7 @@ impl FederationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FederationResponse>(data)?;
         Ok(())
     }
 }

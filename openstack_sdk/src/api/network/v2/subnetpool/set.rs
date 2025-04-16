@@ -31,12 +31,10 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `subnetpool` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Subnetpool<'a> {
     /// An address scope to assign to the subnet pool.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) address_scope_id: Option<Option<Cow<'a, str>>>,
@@ -44,9 +42,8 @@ pub struct Subnetpool<'a> {
     /// The size of the prefix to allocate when the `cidr` or `prefixlen`
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) default_prefixlen: Option<i32>,
 
     /// A per-project quota on the prefix space that can be allocated from the
@@ -55,41 +52,35 @@ pub struct Subnetpool<'a> {
     /// `default_quota` is measured in units of /32. For IPv6 subnet pools,
     /// `default_quota` is measured units of /64. All projects that use the
     /// subnet pool have the same prefix quota applied.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) default_quota: Option<i32>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The subnetpool is default pool or not.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_default: Option<bool>,
 
     /// The maximum prefix size that can be allocated from the subnet pool. For
     /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
     /// `128`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_prefixlen: Option<i32>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_prefixlen: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -98,7 +89,6 @@ pub struct Subnetpool<'a> {
     /// adjacent prefixes and treats them as a single prefix. Each subnet
     /// prefix must be unique among all subnet prefixes in all subnet pools
     /// that are associated with the address scope.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) prefixes: Option<Vec<Cow<'a, str>>>,
@@ -108,12 +98,10 @@ pub struct Subnetpool<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `subnetpool` object.
-    ///
     #[builder(setter(into))]
     pub(crate) subnetpool: Subnetpool<'a>,
 
     /// id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

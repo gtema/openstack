@@ -105,7 +105,6 @@ pub enum Type {
 /// A JSON object specifying the session persistence for the pool or `null` for
 /// no session persistence. See
 /// [Pool Session Persistence](#session-persistence). Default is `null`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SessionPersistence<'a> {
@@ -118,7 +117,7 @@ pub struct SessionPersistence<'a> {
     pub(crate) persistence_granularity: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) persistence_timeout: Option<i32>,
 
     #[serde(rename = "type")]
@@ -167,16 +166,15 @@ pub enum HttpMethod {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Healthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -192,15 +190,15 @@ pub struct Healthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -210,13 +208,12 @@ pub struct Healthmonitor<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -229,7 +226,6 @@ pub struct Healthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Members<'a> {
@@ -238,11 +234,11 @@ pub struct Members<'a> {
     pub(crate) address: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) backup: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -250,7 +246,7 @@ pub struct Members<'a> {
     pub(crate) monitor_address: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) monitor_port: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -258,11 +254,11 @@ pub struct Members<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) protocol_port: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) request_sriov: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -274,26 +270,23 @@ pub struct Members<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Pool<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.24**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) alpn_protocols: Option<Vec<Cow<'a, str>>>,
@@ -304,7 +297,6 @@ pub struct Pool<'a> {
     /// pools.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ca_tls_container_ref: Option<Cow<'a, str>>,
@@ -313,26 +305,22 @@ pub struct Pool<'a> {
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
     /// secret containing a PEM format CA revocation list file for
     /// `tls_enabled` pools.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) crl_container_ref: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<Healthmonitor<'a>>,
 
     /// The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`,
     /// `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) lb_algorithm: LbAlgorithm,
@@ -341,14 +329,12 @@ pub struct Pool<'a> {
     /// `loadbalancer_id` must be specified. The listener has some
     /// restrictions, See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) listener_id: Option<Cow<'a, str>>,
 
     /// The ID of the load balancer for the pool. Either `listener_id` or
     /// `loadbalancer_id` must be specified.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) loadbalancer_id: Option<Cow<'a, str>>,
@@ -358,20 +344,17 @@ pub struct Pool<'a> {
     pub(crate) members: Option<Vec<Members<'a>>>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The ID of the project owning this resource. (deprecated)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`,
     /// `PROXYV2`, `SCTP`, `TCP`, or `UDP`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) protocol: Protocol,
@@ -379,7 +362,6 @@ pub struct Pool<'a> {
     /// A JSON object specifying the session persistence for the pool or `null`
     /// for no session persistence. See
     /// [Pool Session Persistence](#session-persistence). Default is `null`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -396,7 +378,6 @@ pub struct Pool<'a> {
     /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
     ///
     /// **New in version 2.15**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tls_ciphers: Option<Cow<'a, str>>,
@@ -408,7 +389,6 @@ pub struct Pool<'a> {
     /// servers.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
@@ -417,16 +397,14 @@ pub struct Pool<'a> {
     /// encryption. Default is `false`.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
     /// TLSv1.1, TLSv1.2, TLSv1.3
     ///
     /// **New in version 2.17**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tls_versions: Option<Vec<Cow<'a, str>>>,
@@ -436,7 +414,6 @@ pub struct Pool<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) pool: Pool<'a>,
 

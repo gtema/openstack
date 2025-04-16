@@ -17,7 +17,34 @@
 //! Response type for the PUT `resource_providers/{uuid}/traits` operation
 
 use serde::{Deserialize, Serialize};
+use structable::{StructTable, StructTableOptions};
 
 /// Trait response representation
 #[derive(Clone, Deserialize, Serialize)]
-pub struct Trait(String);
+pub struct TraitResponse(String);
+
+impl StructTable for TraitResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}
+
+impl StructTable for &TraitResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}

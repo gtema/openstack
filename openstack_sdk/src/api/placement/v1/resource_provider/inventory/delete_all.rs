@@ -40,7 +40,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

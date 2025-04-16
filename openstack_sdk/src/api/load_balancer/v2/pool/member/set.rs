@@ -39,42 +39,36 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines attributes that are acceptable of a PUT request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Member<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// Is the member a backup? Backup members only receive traffic when all
     /// non-backup members are down.
     ///
     /// **New in version 2.1**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) backup: Option<bool>,
 
     /// An alternate IP address used for health monitoring a backend member.
     /// Default is `null` which monitors the member `address`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) monitor_address: Option<Cow<'a, str>>,
 
     /// An alternate protocol port used for health monitoring a backend member.
     /// Default is `null` which monitors the member `protocol_port`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) monitor_port: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -82,7 +76,6 @@ pub struct Member<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -93,9 +86,8 @@ pub struct Member<'a> {
     /// requests as a member with a weight of 2. A value of 0 means the member
     /// does not receive new connections but continues to service existing
     /// connections. A valid value is from `0` to `256`. Default is `1`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
 }
 
@@ -103,18 +95,15 @@ pub struct Member<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines attributes that are acceptable of a PUT request.
-    ///
     #[builder(setter(into))]
     pub(crate) member: Member<'a>,
 
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    ///
     #[builder(default, setter(into))]
     pool_id: Cow<'a, str>,
 

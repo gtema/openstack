@@ -31,7 +31,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) created_at: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_batch_size: Option<i32>,
 
     #[builder(default, setter(into))]

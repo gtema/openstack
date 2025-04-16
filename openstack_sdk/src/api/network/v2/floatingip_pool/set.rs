@@ -27,11 +27,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_floatingip_pool"))]
+    #[builder(private, setter(into, name = "_floatingip_pool"))]
     pub(crate) floatingip_pool: BTreeMap<Cow<'a, str>, Value>,
 
     /// id parameter for /v2.0/floatingip-pools/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

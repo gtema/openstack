@@ -32,7 +32,7 @@ pub struct VolumeType<'a> {
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_public: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -47,7 +47,6 @@ pub struct Request<'a> {
     pub(crate) volume_type: VolumeType<'a>,
 
     /// id parameter for /v3/types/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/vpn/endpoint-groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::endpoint_group::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::endpoint_group::response::list::EndpointGroupResponse;
 
 /// Lists VPN endpoint groups.
 ///
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403
-///
 #[derive(Args)]
 #[command(about = "List VPN endpoint groups")]
 pub struct EndpointGroupsCommand {
@@ -79,31 +74,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -111,49 +101,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// EndpointGroups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// List of endpoints of the same type, for the endpoint group. The values
-    /// will depend on type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    endpoints: Option<Value>,
-
-    /// The ID of the VPN endpoint group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The type of the endpoints in the group. A valid value is `subnet`,
-    /// `cidr`, `network`, `router`, or `vlan`. Only `subnet` and `cidr` are
-    /// supported at this moment.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-}
 
 impl EndpointGroupsCommand {
     /// Perform command action
@@ -195,8 +142,7 @@ impl EndpointGroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<EndpointGroupResponse>(data)?;
         Ok(())
     }
 }

@@ -20,29 +20,24 @@
 //! Wraps invoking of the `v2.1/os-server-groups/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_group::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server_group::response::get::ServerGroupResponse;
 
 /// Shows details for a server group.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show Server Group Details")]
 pub struct ServerGroupCommand {
@@ -63,115 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-server-groups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// ServerGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the server group.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// A list of members in the server group.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    members: Option<Value>,
-
-    /// Metadata key and value pairs. The maximum size for each metadata key
-    /// and value pair is 255 bytes. It’s always empty and only used for
-    /// keeping compatibility.
-    ///
-    /// **Available until version 2.63**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The name of the server group.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// A list of exactly one policy name to associate with the server group.
-    /// The current valid policy names are:
-    ///
-    /// - `anti-affinity` - servers in this group must be scheduled to
-    ///   different hosts.
-    /// - `affinity` - servers in this group must be scheduled to the same
-    ///   host.
-    /// - `soft-anti-affinity` - servers in this group should be scheduled to
-    ///   different hosts if possible, but if not possible then they should
-    ///   still be scheduled instead of resulting in a build failure. This
-    ///   policy was added in microversion 2.15.
-    /// - `soft-affinity` - servers in this group should be scheduled to the
-    ///   same host if possible, but if not possible then they should still be
-    ///   scheduled instead of resulting in a build failure. This policy was
-    ///   added in microversion 2.15.
-    ///
-    /// **Available until version 2.63**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    policies: Option<Value>,
-
-    /// The `policy` field represents the name of the policy. The current valid
-    /// policy names are:
-    ///
-    /// - `anti-affinity` - servers in this group must be scheduled to
-    ///   different hosts.
-    /// - `affinity` - servers in this group must be scheduled to the same
-    ///   host.
-    /// - `soft-anti-affinity` - servers in this group should be scheduled to
-    ///   different hosts if possible, but if not possible then they should
-    ///   still be scheduled instead of resulting in a build failure.
-    /// - `soft-affinity` - servers in this group should be scheduled to the
-    ///   same host if possible, but if not possible then they should still be
-    ///   scheduled instead of resulting in a build failure.
-    ///
-    /// **New in version 2.64**
-    ///
-    #[serde()]
-    #[structable()]
-    policy: String,
-
-    /// The project ID who owns the server group.
-    ///
-    /// **New in version 2.13**
-    ///
-    #[serde()]
-    #[structable()]
-    project_id: String,
-
-    /// The `rules` field, which is a dict, can be applied to the policy.
-    /// Currently, only the `max_server_per_host` rule is supported for the
-    /// `anti-affinity` policy. The `max_server_per_host` rule allows
-    /// specifying how many members of the anti-affinity group can reside on
-    /// the same compute host. If not specified, only one member from the same
-    /// anti-affinity group can reside on a given host.
-    ///
-    /// **New in version 2.64**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    rules: Option<Value>,
-
-    /// The user ID who owns the server group.
-    ///
-    /// **New in version 2.13**
-    ///
-    #[serde()]
-    #[structable()]
-    user_id: String,
 }
 
 impl ServerGroupCommand {
@@ -194,7 +86,7 @@ impl ServerGroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<ServerGroupResponse>(find_data)?;
         Ok(())
     }
 }

@@ -63,9 +63,6 @@ use crate::tracing_stats::{HttpRequestStats, RequestTracingCollector};
 pub use cli::Cli;
 use cli::TopLevelCommands;
 
-pub(crate) use output::OutputConfig;
-pub(crate) use output::StructTable;
-
 use comfy_table::ContentArrangement;
 use comfy_table::Table;
 use comfy_table::presets::UTF8_FULL_CONDENSED;

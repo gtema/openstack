@@ -29,7 +29,6 @@ pub struct Request<'a> {
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// trunk_id parameter for /v2.0/trunks/{trunk_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     trunk_id: Cow<'a, str>,
 

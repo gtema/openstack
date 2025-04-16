@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2/schemas/members` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::schema::members::get;
-use structable_derive::StructTable;
 
 /// *(Since Images v2.1)*
 ///
@@ -49,7 +43,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401
-///
 #[derive(Args)]
 #[command(about = "Show image members schema")]
 pub struct MembersCommand {
@@ -69,9 +62,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Members response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl MembersCommand {
     /// Perform command action
@@ -95,8 +85,7 @@ impl MembersCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data: serde_json::Value = serde_json::from_slice(rsp.body())?;
+        let data: serde_json::Value = ep.query_async(client).await?;
         op.output_machine(data)?;
         Ok(())
     }

@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/address-groups/{id}/remove_addresses` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_group::remove_addresses;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::address_group::response::remove_addresses::AddressGroupResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AddressGroupCommand {
     /// Request Query parameters
@@ -60,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/address-groups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -74,55 +68,8 @@ struct AddressGroup {
     /// A list of IP addresses.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     addresses: Option<Vec<String>>,
-}
-
-/// AddressGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of IP addresses.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    addresses: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the address group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl AddressGroupCommand {
@@ -157,7 +104,7 @@ impl AddressGroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AddressGroupResponse>(data)?;
         Ok(())
     }
 }

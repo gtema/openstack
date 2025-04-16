@@ -63,36 +63,35 @@ pub struct Federated<'a> {
 /// `ignore_lockout_failure_attempts`, `lock_password`,
 /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
 /// `ignore_user_inactivity`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_change_password_upon_first_use: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_lockout_failure_attempts: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_password_expiry: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_user_inactivity: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) lock_password: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) multi_factor_auth_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_multi_factor_auth_rules"))]
+    #[builder(default, private, setter(into, name = "_multi_factor_auth_rules"))]
     pub(crate) multi_factor_auth_rules: Option<Vec<Vec<Cow<'a, str>>>>,
 }
 
@@ -112,18 +111,15 @@ impl<'a> OptionsBuilder<'a> {
 }
 
 /// A `user` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
     /// The new ID of the default project for the user.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
     /// The resource description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -134,9 +130,8 @@ pub struct User<'a> {
     /// longer valid. If you reenable this user, pre-existing tokens do not
     /// become valid. To enable the user, set to `true`. To disable the user,
     /// set to `false`. Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -155,13 +150,11 @@ pub struct User<'a> {
     /// ]
     ///
     /// ```
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) federated: Option<Vec<Federated<'a>>>,
 
     /// The new name for the user. Must be unique within the owning domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -171,13 +164,11 @@ pub struct User<'a> {
     /// `ignore_lockout_failure_attempts`, `lock_password`,
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options<'a>>,
 
     /// The new password for the user.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) password: Option<Option<Cow<'a, str>>>,
@@ -205,12 +196,10 @@ impl<'a> UserBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `user` object
-    ///
     #[builder(setter(into))]
     pub(crate) user: User<'a>,
 
     /// user_id parameter for /v3/users/{user_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

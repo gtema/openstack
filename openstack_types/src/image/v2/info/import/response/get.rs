@@ -22,13 +22,15 @@ use structable::{StructTable, StructTableOptions};
 /// Import response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImportResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub value: Option<Vec<String>>,
 }

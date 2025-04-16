@@ -23,34 +23,33 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InterfaceResponse {
     /// Fixed IP addresses with subnet IDs.
-    ///
     #[structable(serialize)]
     pub fixed_ips: Vec<FixedIps>,
 
     /// The MAC address.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub mac_addr: Option<String>,
 
     /// The network ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub net_id: Option<String>,
 
     /// The port ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub port_id: Option<String>,
 
     /// The port state.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub port_state: Option<String>,
 
     /// The device tag applied to the virtual network interface or `null`.
     ///
     /// **New in version 2.70**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tag: Option<String>,
 }

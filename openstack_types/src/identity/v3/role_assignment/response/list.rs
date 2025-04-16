@@ -22,6 +22,7 @@ use structable::{StructTable, StructTableOptions};
 /// RoleAssignment response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleAssignmentResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub group: Option<Group>,
 
@@ -31,6 +32,7 @@ pub struct RoleAssignmentResponse {
     #[structable(serialize)]
     pub scope: Scope,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub user: Option<User>,
 }

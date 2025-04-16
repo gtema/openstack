@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,14 +34,13 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::group::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::identity::v3::group::response::list::GroupResponse;
 use tracing::warn;
 
 /// Lists groups.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/groups`
-///
 #[derive(Args)]
 #[command(about = "List groups")]
 pub struct GroupsCommand {
@@ -72,22 +68,18 @@ struct QueryParameters {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// The resource name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Sort direction. A valid value is asc (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts resources by attribute.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -110,33 +102,6 @@ struct DomainInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Groups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl GroupsCommand {
     /// Perform command action
@@ -221,8 +186,7 @@ impl GroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<GroupResponse>(data)?;
         Ok(())
     }
 }

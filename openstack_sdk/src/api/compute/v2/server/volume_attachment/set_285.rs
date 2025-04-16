@@ -44,7 +44,6 @@ use std::borrow::Cow;
 /// A dictionary representation of a volume attachment containing the field
 /// `volumeId` which is the UUID of the replacement volume, and other fields to
 /// update in the attachment.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
@@ -52,15 +51,13 @@ pub struct VolumeAttachment<'a> {
     /// server is deleted.
     ///
     /// **New in version 2.85**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) delete_on_termination: Option<bool>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     /// **New in version 2.85**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) device: Option<Option<Cow<'a, str>>>,
@@ -68,7 +65,6 @@ pub struct VolumeAttachment<'a> {
     /// The UUID of the attachment.
     ///
     /// **New in version 2.85**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -76,7 +72,6 @@ pub struct VolumeAttachment<'a> {
     /// The UUID of the server.
     ///
     /// **New in version 2.85**
-    ///
     #[serde(rename = "serverId", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) server_id: Option<Cow<'a, str>>,
@@ -84,13 +79,11 @@ pub struct VolumeAttachment<'a> {
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.85**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
     /// The UUID of the volume to attach instead of the attached volume.
-    ///
     #[serde(rename = "volumeId")]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -102,19 +95,16 @@ pub struct Request<'a> {
     /// A dictionary representation of a volume attachment containing the field
     /// `volumeId` which is the UUID of the replacement volume, and other
     /// fields to update in the attachment.
-    ///
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

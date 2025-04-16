@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/qos/rule-types` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::rule_type::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::rule_type::response::list::RuleTypeResponse;
 
 /// Lists available qos rule types.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List QoS rule types")]
 pub struct RuleTypesCommand {
@@ -75,12 +71,10 @@ pub struct RuleTypesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// all_rules query parameter for /v2.0/qos/rule-types API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_rules: Option<bool>,
 
     /// all_supported query parameter for /v2.0/qos/rule-types API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_supported: Option<bool>,
 
@@ -88,31 +82,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -120,19 +109,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// RuleTypes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    drivers: Option<String>,
-
-    /// The type of QoS rule.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-}
 
 impl RuleTypesCommand {
     /// Perform command action
@@ -180,8 +156,7 @@ impl RuleTypesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<RuleTypeResponse>(data)?;
         Ok(())
     }
 }

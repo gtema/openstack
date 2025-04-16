@@ -23,40 +23,39 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DomainResponse {
     /// The description of the domain.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// If set to `true`, domain is enabled. If set to `false`, domain is
     /// disabled.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID of the domain.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 
     /// A list of simple strings assigned to a project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -65,7 +64,6 @@ pub struct Links {
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

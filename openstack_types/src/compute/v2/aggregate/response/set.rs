@@ -18,14 +18,13 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Aggregate response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AggregateResponse {
     /// The availability zone of the host aggregate.
-    ///
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
@@ -40,13 +39,11 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable()]
     pub created_at: String,
 
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
-    ///
     #[structable()]
     pub deleted: bool,
 
@@ -62,27 +59,22 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable(optional)]
     pub deleted_at: Option<String>,
 
     /// An array of host information.
-    ///
     #[structable(serialize)]
     pub hosts: Vec<String>,
 
     /// The ID of the host aggregate.
-    ///
     #[structable()]
     pub id: i32,
 
     /// Metadata key and value pairs associated with the aggregate.
-    ///
     #[structable(optional, serialize)]
-    pub metadata: Option<HashMap<String, Value>>,
+    pub metadata: Option<BTreeMap<String, Value>>,
 
     /// The name of the host aggregate.
-    ///
     #[structable()]
     pub name: String,
 
@@ -98,14 +90,12 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the host aggregate.
     ///
     /// **New in version 2.41**
-    ///
     #[structable()]
     pub uuid: String,
 }

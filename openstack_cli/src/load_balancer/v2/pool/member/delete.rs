@@ -20,28 +20,21 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}/members/{member_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::pool::member::delete;
-use structable_derive::StructTable;
 
 /// Removes a member and its associated configuration from the pool.
 ///
 /// The API immediately purges any and all configuration data, depending on the
 /// configuration settings. You cannot recover it.
-///
 #[derive(Args)]
 #[command(about = "Remove a Member")]
 pub struct MemberCommand {
@@ -62,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_pool_id",
@@ -72,7 +64,6 @@ struct PathParameters {
 
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -80,9 +71,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Member response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl MemberCommand {
     /// Perform command action
@@ -107,8 +95,7 @@ impl MemberCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

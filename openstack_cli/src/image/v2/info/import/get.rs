@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2/info/import` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::info::import::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::info::import::response::get::ImportResponse;
 
 /// Returns information concerning the constraints around image import in the
 /// cloud in which the call is made, for example, supported container formats,
@@ -46,7 +42,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403
-///
 #[derive(Args)]
 #[command(about = "Import methods and values discovery")]
 pub struct ImportCommand {
@@ -66,21 +61,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Import response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    value: Option<Value>,
-}
 
 impl ImportCommand {
     /// Perform command action
@@ -105,7 +85,7 @@ impl ImportCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ImportResponse>(data)?;
         Ok(())
     }
 }

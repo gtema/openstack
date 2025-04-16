@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v1/clusters/{cluster_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::set;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::cluster::response::set::ClusterResponse;
 
 /// Update information of one cluster attributes using operations including:
 /// `add`, `replace` or `remove`. The attributes to `add` and `replace` in the
 /// form of `key=value` while `remove` only needs the keys.
-///
 #[derive(Args)]
 #[command(about = "Update information of cluster")]
 pub struct ClusterCommand {
@@ -54,17 +50,14 @@ pub struct ClusterCommand {
     /// The operation used to modify resource’s attributes. Supported
     /// operations are following: `add`, `replace` and `remove`. In case of
     /// `remove`, users only need to provide `path` for deleting attribute.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     op: Op,
 
     /// Resource attribute’s name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     path: String,
 
     /// Resource attribute’s value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     value: Option<String>,
 }
@@ -77,7 +70,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// cluster_id parameter for /v1/clusters/{cluster_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -91,16 +83,6 @@ enum Op {
     Add,
     Remove,
     Replace,
-}
-
-/// Cluster response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the cluster.
-    ///
-    #[serde()]
-    #[structable()]
-    uuid: String,
 }
 
 impl ClusterCommand {
@@ -142,7 +124,7 @@ impl ClusterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ClusterResponse>(data)?;
         Ok(())
     }
 }

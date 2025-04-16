@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::auth::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::auth::response::get::AuthResponse;
 
 /// Authenticate from dedicated uri endpoint.
 ///
 /// GET/HEAD /OS-FEDERATION/identity_providers/
 /// {idp_id}/protocols/{protocol_id}/auth
-///
 #[derive(Args)]
 pub struct AuthCommand {
     /// Request Query parameters
@@ -62,7 +57,6 @@ struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_idp_id",
@@ -73,69 +67,12 @@ struct PathParameters {
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_protocol_id",
         value_name = "PROTOCOL_ID"
     )]
     protocol_id: String,
-}
-/// Auth response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of one or two audit IDs. An audit ID is a unique, randomly
-    /// generated, URL-safe string that you can use to track a token. The first
-    /// audit ID is the current audit ID for the token. The second audit ID is
-    /// present for only re-scoped tokens and is the audit ID from the token
-    /// before it was re-scoped. A re- scoped token is one that was exchanged
-    /// for another token of the same or different scope. You can use these
-    /// audit IDs to track the use of a token or chain of tokens across
-    /// multiple requests and endpoints without exposing the token ID to
-    /// non-privileged users.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    audit_ids: Option<Value>,
-
-    /// A catalog object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    catalog: Option<Value>,
-
-    /// The date and time when the token expires.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    /// The date and time when the token was issued.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    issues_at: Option<String>,
-
-    /// The authentication methods, which are commonly password, token, or
-    /// other methods. Indicates the accumulated set of authentication methods
-    /// that were used to obtain the token. For example, if the token was
-    /// obtained by password authentication, it contains password. Later, if
-    /// the token is exchanged by using the token authentication method one or
-    /// more times, the subsequently created tokens contain both password and
-    /// token in their methods attribute. Unlike multi-factor authentication,
-    /// the methods attribute merely indicates the methods that were used to
-    /// authenticate the user in exchange for a token. The client is
-    /// responsible for determining the total number of authentication factors.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    methods: Option<Value>,
-
-    /// A user object
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    user: Option<Value>,
 }
 
 impl AuthCommand {
@@ -163,7 +100,7 @@ impl AuthCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AuthResponse>(data)?;
         Ok(())
     }
 }

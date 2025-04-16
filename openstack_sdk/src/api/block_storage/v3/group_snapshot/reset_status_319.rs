@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) reset_status: ResetStatus<'a>,
 
     /// id parameter for /v3/group_snapshots/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -51,20 +51,17 @@ pub struct Request<'a> {
     /// group_policy=isolate, suffixed groups are guaranteed to be satisfied by
     /// different providers - though there may still be overlap with the
     /// suffixless group.
-    ///
     #[builder(default, setter(into))]
     group_policy: Option<Cow<'a, str>>,
 
     /// A string representing a resource provider uuid. When supplied, it will
     /// filter the returned allocation candidates to only those resource
     /// providers that are in the same tree with the given resource provider.
-    ///
     #[builder(default, setter(into))]
     in_tree: Option<Cow<'a, str>>,
 
     /// A positive integer used to limit the maximum number of allocation
     /// candidates returned in the response.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
@@ -99,7 +96,6 @@ pub struct Request<'a> {
     /// return empty allocation_requests and provider_summaries, while:
     /// `member_of=in:AGGA_UUID,AGGB_UUID&member_of=!AGGA_UUID` would return
     /// resource providers that are NOT in AGGA but in AGGB.
-    ///
     #[builder(default, private, setter(name = "_member_of"))]
     member_of: Option<Vec<Cow<'a, str>>>,
 
@@ -123,7 +119,6 @@ pub struct Request<'a> {
     /// params within the same request is supported. So:
     /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
     /// not T2 and (T3 or T4).
-    ///
     #[builder(default, private, setter(name = "_required"))]
     required: Option<Vec<Cow<'a, str>>>,
 
@@ -133,7 +128,6 @@ pub struct Request<'a> {
     /// `resources=VCPU:4,DISK_GB:64,MEMORY_MB:2048` These resources may be
     /// satisfied by any provider in the same non-sharing tree or associated
     /// via aggregate.
-    ///
     #[builder(default, setter(into))]
     resources: Option<Cow<'a, str>>,
 
@@ -144,7 +138,6 @@ pub struct Request<'a> {
     /// (non-sharing) tree’s root provider satisfies the specified trait
     /// requirements. Traits which are forbidden (must not be present on the
     /// root provider) are expressed by prefixing the trait with a !.
-    ///
     #[builder(default, setter(into))]
     root_required: Option<Cow<'a, str>>,
 
@@ -155,7 +148,6 @@ pub struct Request<'a> {
     /// providers satisfying a specified request group must be an ancestor of
     /// the rest. The same_subtree query parameter can be repeated and each
     /// repeat group is treated independently.
-    ///
     #[builder(default, setter(into))]
     same_subtree: Option<Cow<'a, str>>,
 
@@ -190,7 +182,6 @@ impl<'a> RequestBuilder<'a> {
     /// params within the same request is supported. So:
     /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
     /// not T2 and (T3 or T4).
-    ///
     pub fn required<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -234,7 +225,6 @@ impl<'a> RequestBuilder<'a> {
     /// return empty allocation_requests and provider_summaries, while:
     /// `member_of=in:AGGA_UUID,AGGB_UUID&member_of=!AGGA_UUID` would return
     /// resource providers that are NOT in AGGA but in AGGB.
-    ///
     pub fn member_of<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

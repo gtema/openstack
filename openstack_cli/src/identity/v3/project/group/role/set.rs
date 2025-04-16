@@ -20,34 +20,26 @@
 //! Wraps invoking of the `v3/projects/{project_id}/groups/{group_id}/roles/{role_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::project::group::role::set;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Assigns a role to a group on a project.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
-///
 #[derive(Args)]
 #[command(about = "Assign role to group on project")]
 pub struct RoleCommand {
@@ -73,7 +65,6 @@ struct PathParameters {
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
@@ -83,7 +74,6 @@ struct PathParameters {
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -106,9 +96,6 @@ struct ProjectInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
 }
-/// Role response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl RoleCommand {
     /// Perform command action
@@ -183,11 +170,7 @@ impl RoleCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -23,47 +23,44 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupSnapshotResponse {
     /// The date and time when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group snapshot description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_id: Option<String>,
 
     /// The group type ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_type: Option<String>,
 
     /// The group type ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_type_id: Option<String>,
 
     /// The ID of the group snapshot.
-    ///
     #[structable()]
     pub id: String,
 
     /// The group snapshot name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The UUID of the volume group project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The status of the generic group snapshot.
-    ///
     #[structable()]
     pub status: String,
 }

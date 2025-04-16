@@ -32,12 +32,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID of the router.
-    ///
     #[builder(setter(into))]
     pub(crate) router_id: Cow<'a, str>,
 
     /// agent_id parameter for /v2.0/agents/{agent_id}/l3-routers/{id} API
-    ///
     #[builder(default, setter(into))]
     agent_id: Cow<'a, str>,
 

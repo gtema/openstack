@@ -24,25 +24,22 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// It is always `null`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hosts: Option<Value>,
 
     /// The availability zone name.
-    ///
     #[serde(rename = "zoneName")]
     #[structable(title = "zoneName")]
     pub zone_name: String,
 
     /// The current state of the availability zone.
-    ///
     #[serde(rename = "zoneState")]
     #[structable(serialize, title = "zoneState")]
     pub zone_state: ZoneState,
 }
 
 /// The current state of the availability zone.
-///
 /// `ZoneState` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ZoneState {

@@ -20,29 +20,24 @@
 //! Wraps invoking of the `v3/domains/{domain_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::domain::find;
 use openstack_sdk::api::identity::v3::domain::set;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::domain::response::set::DomainResponse;
 
 /// Updates a domain.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/domain`
-///
 #[derive(Args)]
 #[command(about = "Update domain")]
 pub struct DomainCommand {
@@ -55,7 +50,6 @@ pub struct DomainCommand {
     path: PathParameters,
 
     /// A `domain` object
-    ///
     #[command(flatten)]
     domain: Domain,
 }
@@ -68,7 +62,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// domain_id parameter for /v3/domains/{domain_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -88,7 +81,6 @@ struct Options {
 #[derive(Args, Clone)]
 struct Domain {
     /// The new description of the domain.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -101,73 +93,21 @@ struct Domain {
     /// things. When you disable a domain, all tokens that are authorized for
     /// that domain become invalid. However, if you reenable the domain, these
     /// tokens become valid again, providing that they haven’t expired.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The new name of the domain.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The resource options for the domain. Available resource options are
     /// `immutable`.
-    ///
     #[command(flatten)]
     options: Option<Options>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
-}
-
-/// Domain response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// If set to `true`, domain is enabled. If set to `false`, domain is
-    /// disabled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the role. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    options: Option<Value>,
-
-    /// A list of simple strings assigned to a project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
 }
 
 impl DomainCommand {
@@ -234,7 +174,7 @@ impl DomainCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<DomainResponse>(data)?;
         Ok(())
     }
 }

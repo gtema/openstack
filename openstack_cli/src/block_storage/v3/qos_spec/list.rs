@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/qos-specs` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::qos_spec::response::list::QosSpecResponse;
 
 /// Returns the list of qos_specs.
-///
 #[derive(Args)]
 pub struct QosSpecsCommand {
     /// Request Query parameters
@@ -61,34 +56,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
@@ -96,7 +86,6 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -104,33 +93,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// QosSpecs response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The consumer type.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    consumer: Option<String>,
-
-    /// The generated ID for the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A `specs` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    specs: Option<Value>,
-}
 
 impl QosSpecsCommand {
     /// Perform command action
@@ -175,8 +137,7 @@ impl QosSpecsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<QosSpecResponse>(data)?;
         Ok(())
     }
 }

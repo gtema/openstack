@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/segments` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::segment::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::segment::response::list::SegmentResponse;
 
 /// Lists segments to which the project has access.
 ///
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List segments")]
 pub struct SegmentsCommand {
@@ -76,12 +71,10 @@ pub struct SegmentsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -89,56 +82,46 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_id query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// network_type query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_type: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// physical_network query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     physical_network: Option<String>,
 
     /// revision_number query parameter for /v2.0/segments API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -146,74 +129,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Segments response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The UUID of the segment.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the attached network.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    network_id: Option<String>,
-
-    /// The type of physical network that maps to this network resource. For
-    /// example, `flat`, `vlan`, `vxlan`, or `gre`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    network_type: Option<String>,
-
-    /// The physical network where this network/segment is implemented.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    physical_network: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    /// The ID of the isolated segment on the physical network. The
-    /// `network_type` attribute defines the segmentation model. For example,
-    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
-    /// the `network_type` value is gre, this ID is a gre key. `Note` that only
-    /// the segmentation-id of VLAN type networks can be changed!
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    segmentation_id: Option<IntString>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl SegmentsCommand {
     /// Perform command action
@@ -276,8 +191,7 @@ impl SegmentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<SegmentResponse>(data)?;
         Ok(())
     }
 }

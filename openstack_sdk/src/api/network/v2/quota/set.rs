@@ -31,77 +31,66 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `quota` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Quota<'a> {
     /// The number of floating IP addresses allowed for each project. A value
     /// of `-1` means no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) floatingip: Option<i32>,
 
     /// The number of networks allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) network: Option<i32>,
 
     /// The number of ports allowed for each project. A value of `-1` means no
     /// limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) port: Option<i32>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project. A value of `-1` means no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) rbac_policy: Option<i32>,
 
     /// The number of routers allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) router: Option<i32>,
 
     /// The number of security groups allowed for each project. A value of `-1`
     /// means no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) security_group: Option<i32>,
 
     /// The number of security group rules allowed for each project. A value of
     /// `-1` means no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) security_group_rule: Option<i32>,
 
     /// The number of subnets allowed for each project. A value of `-1` means
     /// no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) subnet: Option<i32>,
 
     /// The number of subnet pools allowed for each project. A value of `-1`
     /// means no limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) subnetpool: Option<i32>,
 }
 
@@ -109,12 +98,10 @@ pub struct Quota<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `quota` object.
-    ///
     #[builder(setter(into))]
     pub(crate) quota: Quota<'a>,
 
     /// id parameter for /v2.0/quotas/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

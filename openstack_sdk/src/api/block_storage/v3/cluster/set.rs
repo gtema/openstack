@@ -28,22 +28,18 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The binary name of the services in the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) binary: Option<Option<Cow<'a, str>>>,
 
     /// The reason for disabling a resource.
-    ///
     #[builder(default, setter(into))]
     pub(crate) disabled_reason: Option<Option<Cow<'a, str>>>,
 
     /// The name to identify the service cluster.
-    ///
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// id parameter for /v3/clusters/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

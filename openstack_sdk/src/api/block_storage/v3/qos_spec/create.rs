@@ -27,12 +27,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `qos_specs` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct QosSpecs<'a> {
     /// The name of the QoS specification.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -60,7 +58,6 @@ impl<'a> QosSpecsBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `qos_specs` object.
-    ///
     #[builder(setter(into))]
     pub(crate) qos_specs: QosSpecs<'a>,
 

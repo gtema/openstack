@@ -31,12 +31,10 @@ pub enum Type {
 }
 
 /// The action.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsGetSerialConsole {
     /// The type of serial console. The only valid value is `serial`.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -46,12 +44,10 @@ pub struct OsGetSerialConsole {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
-    ///
     #[builder(setter(into))]
     pub(crate) os_get_serial_console: OsGetSerialConsole,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

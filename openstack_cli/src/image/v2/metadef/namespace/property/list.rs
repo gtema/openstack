@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/properties` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::property::list;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::image::v2::metadef::namespace::property::response::list::PropertyResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct PropertyCommand {
     /// Request Query parameters
@@ -58,30 +53,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
         value_name = "NAMESPACE_NAME"
     )]
     namespace_name: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl PropertyCommand {
@@ -108,7 +85,7 @@ impl PropertyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<PropertyResponse>(data)?;
         Ok(())
     }
 }

@@ -20,28 +20,24 @@
 //! Wraps invoking of the `v2.1/os-keypairs/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::keypair::find;
 use openstack_sdk::api::find;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::keypair::response::get::KeypairResponse;
 
 /// Shows details for a keypair that is associated with the account.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show Keypair Details")]
 pub struct KeypairCommand {
@@ -81,89 +77,12 @@ struct UserInput {
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-keypairs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Keypair response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A boolean indicates whether this keypair is deleted or not. The value
-    /// is always `false` (not deleted).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted: Option<bool>,
-
-    /// It is always `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted_at: Option<String>,
-
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    fingerprint: String,
-
-    /// The keypair ID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: i32,
-
-    /// The name for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The keypair public key.
-    ///
-    #[serde()]
-    #[structable()]
-    public_key: String,
-
-    /// The type of the keypair. Allowed values are `ssh` or `x509`.
-    ///
-    /// **New in version 2.2**
-    ///
-    #[serde(rename = "type")]
-    #[structable(title = "type")]
-    _type: String,
-
-    /// It is always `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The user_id for a keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    user_id: String,
 }
 
 impl KeypairCommand {
@@ -186,7 +105,7 @@ impl KeypairCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<KeypairResponse>(find_data)?;
         Ok(())
     }
 }

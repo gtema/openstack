@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.0/local-ips/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::local_ip::find;
-use structable_derive::StructTable;
+use openstack_types::network::v2::local_ip::response::get::LocalIpResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct LocalIpCommand {
     /// Request Query parameters
@@ -57,60 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/local-ips/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// LocalIp response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    ip_mode: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    local_ip_address: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    local_port_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl LocalIpCommand {
@@ -133,7 +81,7 @@ impl LocalIpCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<LocalIpResponse>(find_data)?;
         Ok(())
     }
 }

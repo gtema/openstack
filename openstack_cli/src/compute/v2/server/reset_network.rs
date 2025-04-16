@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::reset_network;
-use structable_derive::StructTable;
 
 /// Resets networking on a server.
 ///
@@ -49,7 +43,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409), gone(410)
-///
 #[derive(Args)]
 #[command(about = "Reset Networking On A Server (resetNetwork Action) (DEPRECATED)")]
 pub struct ServerCommand {
@@ -70,7 +63,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -78,9 +70,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ServerCommand {
     /// Perform command action
@@ -104,11 +93,7 @@ impl ServerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

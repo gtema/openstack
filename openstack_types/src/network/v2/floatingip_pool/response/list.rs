@@ -22,18 +22,23 @@ use structable::{StructTable, StructTableOptions};
 /// FloatingipPool response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipPoolResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub cidr: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub network_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_name: Option<String>,
 }

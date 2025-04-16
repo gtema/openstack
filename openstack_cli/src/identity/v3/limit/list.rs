@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/limits` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,14 +34,13 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::limit::list;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::limit::response::list::LimitResponse;
 use tracing::warn;
 
 /// Lists Limits.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/limits`
-///
 #[derive(Args)]
 #[command(about = "List Limits")]
 pub struct LimitsCommand {
@@ -69,17 +65,14 @@ struct QueryParameters {
     project: ProjectInput,
 
     /// The ID of the region.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     region_id: Option<String>,
 
     /// The resource name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     resource_name: Option<String>,
 
     /// Filters the response by a service ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     service_id: Option<String>,
 }
@@ -117,58 +110,6 @@ struct DomainInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Limits response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The limit description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// The limit ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The ID of the region that contains the service endpoint. The value can
-    /// be None.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    region_id: Option<String>,
-
-    /// The override limit.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resource_limit: Option<i32>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resource_name: Option<String>,
-
-    /// The UUID of the service to which the limit belongs.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    service_id: Option<String>,
-}
 
 impl LimitsCommand {
     /// Perform command action
@@ -287,9 +228,8 @@ impl LimitsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<LimitResponse>(data)?;
         Ok(())
     }
 }

@@ -16,63 +16,77 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `network-segment-ranges` operation
 
-use crate::common::deser_bool_str_opt;
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// NetworkSegmentRange response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkSegmentRangeResponse {
+    #[serde(default)]
     #[structable(optional, wide)]
     pub available: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
-    #[serde(deserialize_with = "deser_bool_str_opt", rename = "default")]
+    #[serde(
+        default,
+        deserialize_with = "crate::common::deser_bool_str_opt",
+        rename = "default"
+    )]
     #[structable(optional, title = "default", wide)]
     pub _default: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional, wide)]
     pub maximum: Option<i64>,
 
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional, wide)]
     pub minimum: Option<i64>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub network_type: Option<NetworkType>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub physical_network: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional, wide)]
     pub shared: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub used: Option<String>,
 }
@@ -94,4 +108,17 @@ pub enum NetworkType {
     // Vxlan
     #[serde(rename = "vxlan")]
     Vxlan,
+}
+
+impl std::str::FromStr for NetworkType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "geneve" => Ok(Self::Geneve),
+            "gre" => Ok(Self::Gre),
+            "vlan" => Ok(Self::Vlan),
+            "vxlan" => Ok(Self::Vxlan),
+            _ => Err(()),
+        }
+    }
 }

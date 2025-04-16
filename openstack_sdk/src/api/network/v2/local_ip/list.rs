@@ -27,17 +27,14 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// description query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// id query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// ip_mode query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     ip_mode: Option<Cow<'a, str>>,
 
@@ -45,61 +42,50 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// local_ip_address query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     local_ip_address: Option<Cow<'a, str>>,
 
     /// local_port_id query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     local_port_id: Option<Cow<'a, str>>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// network_id query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     network_id: Option<Cow<'a, str>>,
 
     /// Reverse the page direction
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// project_id query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
     /// revision_number query parameter for /v2.0/local-ips API
-    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_dir"))]
     sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
@@ -116,7 +102,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -131,7 +116,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

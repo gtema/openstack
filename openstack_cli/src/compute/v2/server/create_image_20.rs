@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::create_image_20;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::create_image::ServerResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "Create Image (createImage Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -51,7 +47,6 @@ pub struct ServerCommand {
 
     /// The action to create a snapshot of the image or the volume(s) of the
     /// server.
-    ///
     #[command(flatten)]
     create_image: CreateImage,
 }
@@ -64,7 +59,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -77,24 +71,12 @@ struct PathParameters {
 struct CreateImage {
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The display name of an Image.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID for the resulting image snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    image_id: String,
 }
 
 impl ServerCommand {
@@ -133,7 +115,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/group_snapshots` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_snapshot::create_314;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group_snapshot::response::create::GroupSnapshotResponse;
 
 /// Create a new group_snapshot.
-///
 #[derive(Args)]
 pub struct GroupSnapshotCommand {
     /// Request Query parameters
@@ -48,7 +44,6 @@ pub struct GroupSnapshotCommand {
     path: PathParameters,
 
     /// The group snapshot.
-    ///
     #[command(flatten)]
     group_snapshot: GroupSnapshot,
 }
@@ -64,77 +59,16 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct GroupSnapshot {
     /// The group snapshot description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     group_id: String,
 
     /// The group snapshot name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-}
-
-/// GroupSnapshot response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group snapshot description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type_id: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The group snapshot name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The status of the generic group snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
 }
 
 impl GroupSnapshotCommand {
@@ -176,7 +110,7 @@ impl GroupSnapshotCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<GroupSnapshotResponse>(data)?;
         Ok(())
     }
 }

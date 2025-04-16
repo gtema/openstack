@@ -58,7 +58,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Attachment<'a> {
     #[serde()]
-    #[builder(private, setter(name = "_connector"))]
+    #[builder(private, setter(into, name = "_connector"))]
     pub(crate) connector: BTreeMap<Cow<'a, str>, Value>,
 }
 
@@ -83,7 +83,6 @@ pub struct Request<'a> {
     pub(crate) attachment: Attachment<'a>,
 
     /// id parameter for /v3/attachments/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

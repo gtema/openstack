@@ -45,7 +45,6 @@ pub struct Request<'a> {
     pub(crate) restore: Option<Restore<'a>>,
 
     /// id parameter for /v3/backups/{id}/restore API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

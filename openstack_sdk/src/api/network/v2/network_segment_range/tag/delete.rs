@@ -27,13 +27,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// id parameter for
     /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// network_segment_range_id parameter for
     /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     network_segment_range_id: Cow<'a, str>,
 

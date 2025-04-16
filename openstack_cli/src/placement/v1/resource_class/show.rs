@@ -20,28 +20,23 @@
 //! Wraps invoking of the `resource_classes/{name}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_class::response::get::ResourceClassResponse;
 
 /// Return a representation of the resource class identified by {name}.
 ///
 /// Normal Response Codes: 200
 ///
 /// Error response codes: itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show resource class")]
 pub struct ResourceClassCommand {
@@ -62,28 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// name parameter for /resource_classes/{name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_name",
         value_name = "NAME"
     )]
     name: String,
-}
-/// ResourceClass response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of links associated with one resource class.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of one resource class.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl ResourceClassCommand {
@@ -110,7 +89,7 @@ impl ResourceClassCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResourceClassResponse>(data)?;
         Ok(())
     }
 }

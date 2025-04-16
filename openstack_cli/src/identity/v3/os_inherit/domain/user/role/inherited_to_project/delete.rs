@@ -20,35 +20,27 @@
 //! Wraps invoking of the `v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/{role_id}/inherited_to_projects` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::os_inherit::domain::user::role::inherited_to_project::delete;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Revokes an inherited project role from a user in a domain.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-INHERIT/1.0/rel/domain_user_role_inherited_to_projects`
-///
 #[derive(Args)]
 #[command(about = "Revoke an inherited project role from user on domain")]
 pub struct InheritedToProjectCommand {
@@ -79,7 +71,6 @@ struct PathParameters {
     /// role_id parameter for
     /// /v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_role_id",
@@ -117,9 +108,6 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// InheritedToProject response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl InheritedToProjectCommand {
     /// Perform command action
@@ -242,8 +230,7 @@ impl InheritedToProjectCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

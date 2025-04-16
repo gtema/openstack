@@ -31,27 +31,22 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID of the domain.
-    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
     /// The ID of the project.
-    ///
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
     /// The ID of the region.
-    ///
     #[builder(default, setter(into))]
     region_id: Option<Cow<'a, str>>,
 
     /// The resource name.
-    ///
     #[builder(default, setter(into))]
     resource_name: Option<Cow<'a, str>>,
 
     /// Filters the response by a service ID.
-    ///
     #[builder(default, setter(into))]
     service_id: Option<Cow<'a, str>>,
 

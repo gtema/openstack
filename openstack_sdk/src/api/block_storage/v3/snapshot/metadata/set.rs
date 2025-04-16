@@ -28,17 +28,14 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// A metadata object. Contains one or more metadata key and value pairs
     /// that are associated with the resource.
-    ///
-    #[builder(private, setter(name = "_meta"))]
+    #[builder(private, setter(into, name = "_meta"))]
     pub(crate) meta: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// id parameter for /v3/snapshots/{snapshot_id}/metadata/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata API
-    ///
     #[builder(default, setter(into))]
     snapshot_id: Cow<'a, str>,
 
@@ -55,7 +52,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// A metadata object. Contains one or more metadata key and value pairs
     /// that are associated with the resource.
-    ///
     pub fn meta<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

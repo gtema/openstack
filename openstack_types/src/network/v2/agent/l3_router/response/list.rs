@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct L3RouterResponse {
     /// A list of `router` objects.
-    ///
     #[structable(serialize)]
     pub routers: Vec<Routers>,
 }
@@ -39,7 +38,6 @@ pub struct ExternalFixedIps {
 /// external gateway, this would be a dict with `network_id`, `enable_snat`,
 /// `external_fixed_ips`, `qos_policy_id`, `enable_default_route_ecmp` and
 /// `enable_default_route_bfd`. Otherwise, this would be `null`.
-///
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {

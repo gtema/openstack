@@ -23,14 +23,13 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceTypeResponse {
     /// Date and time of resource type association
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Resource type names should be aligned with Heat resource types whenever
     /// possible:
     /// https://docs.openstack.org/heat/latest/template_guide/openstack.html
-    ///
     #[structable()]
     pub name: String,
 
@@ -38,7 +37,7 @@ pub struct ResourceTypeResponse {
     /// in the namespace should be prefixed with this prefix when being applied
     /// to the specified resource type. Must include prefix separator (e.g. a
     /// colon :).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub prefix: Option<String>,
 
@@ -46,12 +45,12 @@ pub struct ResourceTypeResponse {
     /// For example, Cinder allows user and image metadata on volumes. Only the
     /// image properties metadata is evaluated by Nova (scheduling or drivers).
     /// This property allows a namespace target to remove the ambiguity.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub properties_target: Option<String>,
 
     /// Date and time of the last resource type association modification
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

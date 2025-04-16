@@ -66,7 +66,7 @@ pub struct OsVolumeUploadImage<'a> {
     pub(crate) disk_format: Option<DiskFormat>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) force: Option<bool>,
 
     #[serde()]
@@ -74,7 +74,7 @@ pub struct OsVolumeUploadImage<'a> {
     pub(crate) image_name: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) protected: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -89,7 +89,6 @@ pub struct Request<'a> {
     pub(crate) os_volume_upload_image: OsVolumeUploadImage<'a>,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

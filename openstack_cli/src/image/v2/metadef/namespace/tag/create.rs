@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::tag::create;
-use structable_derive::StructTable;
+use openstack_types::image::v2::metadef::namespace::tag::response::create::TagResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct TagCommand {
     /// Request Query parameters
@@ -60,7 +56,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
@@ -70,32 +65,12 @@ struct PathParameters {
 
     /// tag_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_tag_name",
         value_name = "TAG_NAME"
     )]
     tag_name: String,
-}
-/// Tag response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Date and time of tag creation
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// Date and time of the last tag modification
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl TagCommand {
@@ -125,7 +100,7 @@ impl TagCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<TagResponse>(data)?;
         Ok(())
     }
 }

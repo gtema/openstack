@@ -20,23 +20,20 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/tags` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::tag::list;
 use openstack_sdk::api::{Pagination, paged};
+use openstack_types::network::v2::router::tag::response::list::TagResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters
@@ -59,31 +56,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -92,36 +84,12 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_router_id",
         value_name = "ROUTER_ID"
     )]
     router_id: String,
-}
-/// Tags response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl TagsCommand {
@@ -165,8 +133,7 @@ impl TagsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TagResponse>(data)?;
         Ok(())
     }
 }

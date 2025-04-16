@@ -20,22 +20,19 @@
 //! Wraps invoking of the `v3/attachments` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::attachment::create_327;
+use openstack_types::block_storage::v3::attachment::response::create::AttachmentResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create an attachment.
 ///
@@ -100,7 +97,6 @@ use structable_derive::StructTable;
 /// NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
 ///
 /// returns: A summary view of the attachment object
-///
 #[derive(Args)]
 pub struct AttachmentCommand {
     /// Request Query parameters
@@ -112,7 +108,6 @@ pub struct AttachmentCommand {
     path: PathParameters,
 
     /// An attachment object.
-    ///
     #[command(flatten)]
     attachment: Attachment,
 }
@@ -128,72 +123,16 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Attachment {
     /// The `connector` object.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     connector: Option<Vec<(String, Value)>>,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     instance_uuid: Option<String>,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     volume_uuid: String,
-}
-
-/// Attachment response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The attach mode of attachment, read-only (‘ro’) or read-and-write
-    /// (‘rw’), default is ‘rw’.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    attach_mode: Option<String>,
-
-    /// The time when attachment is attached.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    attached_at: Option<String>,
-
-    /// The connection info used for server to connect the volume.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    connection_info: Option<Value>,
-
-    /// The time when attachment is detached.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    detached_at: Option<String>,
-
-    /// The ID of attachment.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The UUID of the attaching instance.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    instance: Option<String>,
-
-    /// The status of the attachment.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The UUID of the volume which the attachment belongs to.
-    ///
-    #[serde()]
-    #[structable()]
-    volume_id: String,
 }
 
 impl AttachmentCommand {
@@ -234,7 +173,7 @@ impl AttachmentCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AttachmentResponse>(data)?;
         Ok(())
     }
 }

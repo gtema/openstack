@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.0/qos/alias-dscp-marking-rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_dscp_marking_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::alias_dscp_marking_rule::response::list::AliasDscpMarkingRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasDscpMarkingRulesCommand {
     /// Request Query parameters
@@ -57,12 +53,10 @@ pub struct AliasDscpMarkingRulesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// dscp_mark query parameter for /v2.0/qos/alias-dscp-marking-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     dscp_mark: Option<i32>,
 
     /// id query parameter for /v2.0/qos/alias-dscp-marking-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -70,31 +64,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -102,21 +91,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AliasDscpMarkingRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    dscp_mark: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl AliasDscpMarkingRulesCommand {
     /// Perform command action
@@ -164,8 +138,7 @@ impl AliasDscpMarkingRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AliasDscpMarkingRuleResponse>(data)?;
         Ok(())
     }
 }

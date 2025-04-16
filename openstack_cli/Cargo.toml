@@ -57,6 +57,7 @@ _test_net_vpn = []
 
 [dependencies]
 bytes = {workspace = true}
+chrono = { workspace= true }
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
 color-eyre = { workspace = true }
@@ -66,13 +67,14 @@ eyre = { workspace = true }
 http = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.20", default-features = false, features = ["async", "identity"] }
+openstack_types = { path="../openstack_types", version = "^0.20" }
 indicatif = "^0.17"
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
 strip-ansi-escapes = { workspace = true }
-structable_derive = { version = "^0.1" }
+structable = { workspace = true }
 tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std"]}
 tokio-util = {workspace = true}
 thiserror = { workspace = true }

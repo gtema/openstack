@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/metering/metering-labels/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::metering::metering_label::find;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::metering::metering_label::response::get::MeteringLabelResponse;
 
 /// Shows details for a metering label.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show metering label details")]
 pub struct MeteringLabelCommand {
@@ -66,46 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/metering/metering-labels/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// MeteringLabel response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the metering label.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Indicates whether this metering label is shared across all projects.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared: Option<BoolString>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl MeteringLabelCommand {
@@ -128,7 +89,7 @@ impl MeteringLabelCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<MeteringLabelResponse>(find_data)?;
         Ok(())
     }
 }

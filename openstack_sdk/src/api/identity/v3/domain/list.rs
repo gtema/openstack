@@ -34,7 +34,6 @@ pub struct Request<'a> {
     /// If set to true, then only domains that are enabled will be returned, if
     /// set to false only that are disabled will be returned. Any value other
     /// than 0, including no value, will be interpreted as true.
-    ///
     #[builder(default)]
     enabled: Option<bool>,
 
@@ -42,12 +41,10 @@ pub struct Request<'a> {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// The resource name.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

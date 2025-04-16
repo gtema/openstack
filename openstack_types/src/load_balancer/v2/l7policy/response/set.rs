@@ -24,60 +24,60 @@ use structable::{StructTable, StructTableOptions};
 pub struct L7policyResponse {
     /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
     /// `REDIRECT_TO_URL`, or `REJECT`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub action: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the L7 policy.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the listener.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub listener_id: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The position of this policy on the listener. Positions start at 1.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub position: Option<i32>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
@@ -87,7 +87,7 @@ pub struct L7policyResponse {
     /// 303, 307, or 308. Default is 302.
     ///
     /// **New in version 2.9**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub redirect_http_code: Option<i32>,
 
@@ -95,45 +95,45 @@ pub struct L7policyResponse {
     /// ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some
     /// restrictions, See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub redirect_pool_id: Option<String>,
 
     /// Requests matching this policy will be redirected to this Prefix URL.
     /// Only valid if `action` is `REDIRECT_PREFIX`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub redirect_prefix: Option<String>,
 
     /// Requests matching this policy will be redirected to this URL. Only
     /// valid if `action` is `REDIRECT_TO_URL`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub redirect_url: Option<String>,
 
     /// List of associated L7 rule IDs.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub rules: Option<Vec<Rules>>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
 /// Base type for complex types
-///
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {

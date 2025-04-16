@@ -29,7 +29,6 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Shows details for all project. Admin only.
-    ///
     #[builder(default)]
     all_tenants: Option<bool>,
 
@@ -38,7 +37,6 @@ pub struct Request<'a> {
     /// operation. Default is to not filter by it. Filtering by this option may
     /// not be always possible in a cloud, see List Resource Filters to
     /// determine whether this filter is available in your cloud.
-    ///
     #[builder(default)]
     consumes_quota: Option<bool>,
 
@@ -46,34 +44,29 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[builder(default)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[builder(default, setter(into))]
     sort: Option<Cow<'a, str>>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
@@ -81,12 +74,10 @@ pub struct Request<'a> {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
     /// Whether to show count in API response or not, default is False.
-    ///
     #[builder(default)]
     with_count: Option<bool>,
 

@@ -30,7 +30,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// consumer_id parameter for /v3/OS-OAUTH1/consumers/{consumer_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

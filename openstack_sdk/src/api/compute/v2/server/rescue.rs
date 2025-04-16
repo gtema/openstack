@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to rescue a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rescue<'a> {
@@ -42,12 +41,10 @@ pub struct Rescue<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to rescue a server.
-    ///
     #[builder(setter(into))]
     pub(crate) rescue: Option<Rescue<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

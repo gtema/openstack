@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InterfaceResponse {
     /// List of the interface attachments.
-    ///
     #[serde(rename = "interfaceAttachments")]
     #[structable(serialize, title = "interfaceAttachments", wide)]
     pub interface_attachments: Vec<InterfaceAttachments>,
@@ -37,7 +36,6 @@ pub struct FixedIps {
 }
 
 /// The interface attachment.
-///
 /// `InterfaceAttachments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InterfaceAttachments {

@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsMigrateLive<'a> {
@@ -38,9 +37,8 @@ pub struct OsMigrateLive<'a> {
     /// the source and destination hosts are not on the shared storage.
     ///
     /// **New in version 2.25**
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) block_migration: bool,
 
     /// Force a live-migration by not verifying the provided destination host
@@ -56,9 +54,8 @@ pub struct OsMigrateLive<'a> {
     /// **New in version 2.30**
     ///
     /// **Available until version 2.67**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) force: Option<bool>,
 
     /// The host to which to migrate the server. If this parameter is `None`,
@@ -72,7 +69,6 @@ pub struct OsMigrateLive<'a> {
     /// recommended to either not specify a host so that the scheduler will
     /// pick one, or specify a host with microversion >= 2.30 and without
     /// `force=True` set.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
@@ -82,12 +78,10 @@ pub struct OsMigrateLive<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
-    ///
     #[builder(setter(into))]
     pub(crate) os_migrate_live: OsMigrateLive<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

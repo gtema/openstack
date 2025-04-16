@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/metadata` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::metadata::create;
-use std::collections::HashMap;
+use openstack_types::compute::v2::server::metadata::response::create::MetadataResponse;
 
 /// Create or update one or more metadata items for a server.
 ///
@@ -50,7 +47,6 @@ use std::collections::HashMap;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Create or Update Metadata Items")]
 pub struct MetadataCommand {
@@ -64,7 +60,6 @@ pub struct MetadataCommand {
 
     /// Metadata key and value pairs. The maximum size for each metadata key
     /// and value pair is 255 bytes.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Vec<(String, String)>,
 }
@@ -77,29 +72,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, String>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(
-            self.0
-                .iter()
-                .map(|(k, v)| Vec::from([k.clone(), v.clone()])),
-        );
-        (headers, rows)
-    }
 }
 
 impl MetadataCommand {
@@ -129,7 +107,7 @@ impl MetadataCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MetadataResponse>(data)?;
         Ok(())
     }
 }

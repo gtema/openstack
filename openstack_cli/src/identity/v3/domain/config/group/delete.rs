@@ -20,27 +20,20 @@
 //! Wraps invoking of the `v3/domains/{domain_id}/config/{group}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::group::delete;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Deletes a domain group configuration.
@@ -49,7 +42,6 @@ use tracing::warn;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
-///
 #[derive(Args)]
 #[command(about = "Delete domain group configuration")]
 pub struct GroupCommand {
@@ -74,7 +66,6 @@ struct PathParameters {
     domain: DomainInput,
 
     /// group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group",
@@ -97,9 +88,6 @@ struct DomainInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_domain: bool,
 }
-/// Group response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl GroupCommand {
     /// Perform command action
@@ -177,8 +165,7 @@ impl GroupCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

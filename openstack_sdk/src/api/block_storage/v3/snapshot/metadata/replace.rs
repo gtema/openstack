@@ -27,12 +27,10 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// One or more metadata key and value pairs for the snapshot, if any.
-    ///
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata API
-    ///
     #[builder(default, setter(into))]
     snapshot_id: Cow<'a, str>,
 
@@ -48,7 +46,6 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// One or more metadata key and value pairs for the snapshot, if any.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

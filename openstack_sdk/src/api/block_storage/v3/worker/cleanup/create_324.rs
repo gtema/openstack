@@ -43,13 +43,13 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) cluster_name: Option<Option<Cow<'a, str>>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) disabled: Option<bool>,
 
     #[builder(default, setter(into))]
     pub(crate) host: Option<Option<Cow<'a, str>>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_up: Option<bool>,
 
     #[builder(default, setter(into))]

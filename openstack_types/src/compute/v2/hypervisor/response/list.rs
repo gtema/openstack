@@ -24,14 +24,12 @@ use structable::{StructTable, StructTableOptions};
 pub struct HypervisorResponse {
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
-    ///
     #[structable(wide)]
     pub hypervisor_hostname: String,
 
     /// The id of the hypervisor as a UUID.
     ///
     /// **New in version 2.53**
-    ///
     #[structable()]
     pub id: String,
 
@@ -40,17 +38,15 @@ pub struct HypervisorResponse {
     /// returned.
     ///
     /// **New in version 2.53**
-    ///
     #[structable(serialize, wide)]
     pub servers: Vec<Servers>,
 
     /// The state of the hypervisor. One of `up` or `down`.
-    ///
     #[structable(serialize)]
     pub state: State,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 }
@@ -66,6 +62,17 @@ pub enum State {
     Up,
 }
 
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "down" => Ok(Self::Down),
+            "up" => Ok(Self::Up),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Disabled
@@ -75,6 +82,17 @@ pub enum Status {
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Servers` type

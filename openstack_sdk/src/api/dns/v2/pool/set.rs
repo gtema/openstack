@@ -30,7 +30,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// pool_id parameter for /v2/pools/{pool_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

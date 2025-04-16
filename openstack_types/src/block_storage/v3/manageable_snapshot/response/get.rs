@@ -23,14 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ManageableSnapshotResponse {
     /// A list of manageable snapshots.
-    ///
     #[serde(rename = "manageable-snapshots")]
     #[structable(serialize, title = "manageable-snapshots")]
     pub manageable_snapshots: Vec<ManageableSnapshots>,
 }
 
 /// The snapshot’s origin volume information.
-///
 /// `SourceReference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SourceReference {
@@ -38,7 +36,6 @@ pub struct SourceReference {
 }
 
 /// Some information for the resource.
-///
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {

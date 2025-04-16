@@ -32,18 +32,15 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `user` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User {
     /// The original password for the user.
-    ///
     #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
     pub(crate) original_password: SecretString,
 
     /// The new password for the user.
-    ///
     #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
     pub(crate) password: SecretString,
@@ -53,12 +50,10 @@ pub struct User {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `user` object
-    ///
     #[builder(setter(into))]
     pub(crate) user: User,
 
     /// user_id parameter for /v3/users/{user_id}/password API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

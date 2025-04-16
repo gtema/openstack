@@ -22,6 +22,7 @@ use structable::{StructTable, StructTableOptions};
 /// Share response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub shared_zones: Option<Vec<SharedZones>>,
 }
@@ -29,7 +30,6 @@ pub struct ShareResponse {
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -38,7 +38,6 @@ pub struct Links {
 }
 
 /// Shared DNS Zone
-///
 /// `SharedZones` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SharedZones {

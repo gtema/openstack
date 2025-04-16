@@ -23,28 +23,7 @@ use std::io::{self, Write};
 
 use crate::OpenStackCliError;
 use crate::cli::{Cli, OutputFormat};
-
-/// Output configuration data structure
-#[derive(Clone, Debug, Default)]
-pub struct OutputConfig {
-    /// Set of fields to be included in the response
-    pub fields: BTreeSet<String>,
-    /// Flag whether to include additional attributes in the output
-    pub wide: bool,
-    /// Flag to pretty-print complex objects in the output
-    pub pretty: bool,
-}
-
-/// Trait for structures that should be represented as a table in the human output mode
-pub trait StructTable {
-    /// Build a vector of headers and rows from the data
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
-
-    /// Get a status of entry
-    fn status(&self) -> Vec<Option<String>> {
-        Vec::from([None])
-    }
-}
+use structable::{OutputConfig, StructTable};
 
 /// Output Processor
 pub(crate) struct OutputProcessor {
@@ -89,14 +68,59 @@ impl OutputProcessor {
         data: Vec<serde_json::Value>,
     ) -> Result<(), OpenStackCliError>
     where
-        Vec<T>: StructTable,
+        T: StructTable,
         T: DeserializeOwned,
+        for<'a> &'a T: StructTable,
     {
         match self.target {
             OutputFor::Human => {
                 let table: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))
-                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
-                self.output_human(&table)
+                    .wrap_err_with(|| {
+                        format!(
+                            "json: {:?}",
+                            data.iter()
+                                .filter(|&item| serde_json::from_value::<T>(item.clone()).is_err())
+                                .map(|x| x.to_string())
+                                .collect::<Vec<_>>()
+                        )
+                    })
+                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())
+                ?;
+
+                let (headers, table_rows) =
+                    structable::build_list_table(table.iter(), &self.config);
+                let mut statuses: Vec<Option<String>> =
+                    table.iter().map(|item| item.status()).collect();
+
+                // Ensure we have as many statuses as rows to zip them properly
+                statuses.resize_with(table_rows.len(), Default::default);
+
+                let rows = table_rows
+                    .iter()
+                    .zip(statuses.iter())
+                    .map(|(data, status)| {
+                        let color = match EntryStatus::from(status.as_ref()) {
+                            EntryStatus::Error => Some(Color::Red),
+                            EntryStatus::Pending => Some(Color::Yellow),
+                            EntryStatus::Inactive => Some(Color::Cyan),
+                            _ => None,
+                        };
+                        data.iter().map(move |cell| {
+                            if let Some(color) = color {
+                                Cell::new(cell).fg(color)
+                            } else {
+                                Cell::new(cell)
+                            }
+                        })
+                    });
+                let mut table = Table::new();
+                table
+                    .load_preset(UTF8_FULL_CONDENSED)
+                    .set_content_arrangement(ContentArrangement::Dynamic)
+                    .set_header(headers)
+                    .add_rows(rows);
+                println!("{table}");
+                Ok(())
             }
             _ => self.output_machine(serde_json::from_value(serde_json::Value::Array(data))?),
         }
@@ -112,44 +136,23 @@ impl OutputProcessor {
             OutputFor::Human => {
                 let table: T = serde_json::from_value(data.clone())
                     .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
+
                 self.output_human(&table)
             }
             _ => self.output_machine(serde_json::from_value(data)?),
         }
     }
 
-    /// Produce output for humans (table)
+    /// Produce output for humans (table) for a single resource
     pub(crate) fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
-        let (headers, table_rows) = data.build(&self.config);
-        let mut statuses = data.status();
+        let (headers, table_rows) = structable::build_table(data, &self.config);
 
-        // Ensure we have as many statuses as rows to zip them properly
-        statuses.resize_with(table_rows.len(), Default::default);
-
-        let rows = table_rows
-            .iter()
-            .zip(statuses.iter())
-            .map(|(data, status)| {
-                let color = match EntryStatus::from(status.as_ref()) {
-                    EntryStatus::Error => Some(Color::Red),
-                    EntryStatus::Pending => Some(Color::Yellow),
-                    EntryStatus::Inactive => Some(Color::Cyan),
-                    _ => None,
-                };
-                data.iter().map(move |cell| {
-                    if let Some(color) = color {
-                        Cell::new(cell).fg(color)
-                    } else {
-                        Cell::new(cell)
-                    }
-                })
-            });
         let mut table = Table::new();
         table
             .load_preset(UTF8_FULL_CONDENSED)
             .set_content_arrangement(ContentArrangement::Dynamic)
             .set_header(headers)
-            .add_rows(rows);
+            .add_rows(table_rows);
         println!("{table}");
         Ok(())
     }

@@ -20,33 +20,25 @@
 //! Wraps invoking of the `v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
 use eyre::eyre;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::delete;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Delete specific access token.
 ///
 /// DELETE /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}
-///
 #[derive(Args)]
 pub struct AccessTokenCommand {
     /// Request Query parameters
@@ -71,7 +63,6 @@ struct PathParameters {
 
     /// access_token_id parameter for
     /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -94,9 +85,6 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// AccessToken response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl AccessTokenCommand {
     /// Perform command action
@@ -165,8 +153,7 @@ impl AccessTokenCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

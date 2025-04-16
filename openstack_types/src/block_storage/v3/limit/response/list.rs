@@ -23,19 +23,16 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LimitResponse {
     /// An `absolute` limits object.
-    ///
     #[structable(serialize)]
     pub absolute: Absolute,
 
     /// Rate-limit volume copy bandwidth, used to mitigate slow down of data
     /// access from the instances.
-    ///
     #[structable(serialize)]
     pub rate: Vec<String>,
 }
 
 /// An `absolute` limits object.
-///
 /// `Absolute` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {

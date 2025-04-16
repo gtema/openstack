@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v1/stats` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::stat::get;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::stat::response::get::StatResponse;
 
 /// Show overall Magnum system stats. If the requester is non-admin user show
 /// self stats.
-///
 #[derive(Args)]
 #[command(about = "Show overall stats")]
 pub struct StatCommand {
@@ -57,29 +53,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Stat response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of clusters.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    clusters: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The total number of nodes including master nodes.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    nodes: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl StatCommand {
     /// Perform command action
@@ -104,7 +77,7 @@ impl StatCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<StatResponse>(data)?;
         Ok(())
     }
 }

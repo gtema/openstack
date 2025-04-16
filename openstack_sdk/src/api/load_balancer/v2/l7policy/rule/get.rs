@@ -35,13 +35,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// rule_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// l7policy_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
-    ///
     #[builder(default, setter(into))]
     l7policy_id: Cow<'a, str>,
 

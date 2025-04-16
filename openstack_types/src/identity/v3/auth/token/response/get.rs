@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Token response representation
@@ -33,19 +33,19 @@ pub struct TokenResponse {
     /// audit IDs to track the use of a token or chain of tokens across
     /// multiple requests and endpoints without exposing the token ID to
     /// non-privileged users.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub audit_ids: Option<Vec<String>>,
 
     /// A `catalog` object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub catalog: Option<Vec<Catalog>>,
 
     /// A domain object including the id and name representing the domain the
     /// token is scoped to. This is only included in tokens that are scoped to
     /// a domain.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub domain: Option<DomainStructResponse>,
 
@@ -62,15 +62,16 @@ pub struct TokenResponse {
     /// For example, `2015-08-27T09:49:58.000000Z`.
     ///
     /// A `null` value indicates that the token never expires.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub expires_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub is_domain: Option<bool>,
 
     /// The date and time when the token was issued.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub issues_at: Option<String>,
 
@@ -85,19 +86,19 @@ pub struct TokenResponse {
     /// that were used to authenticate the user in exchange for a token. The
     /// client is responsible for determining the total number of
     /// authentication factors.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub methods: Option<Vec<String>>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
     /// in tokens that are scoped to a project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub project: Option<Project>,
 
     /// A list of `role` objects
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
@@ -105,12 +106,12 @@ pub struct TokenResponse {
     /// system the token is scoped to. If the token is scoped to the entire
     /// deployment system, the `system` object will consist of `{"all": true}`.
     /// This is only included in tokens that are scoped to the system.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub system: Option<HashMap<String, bool>>,
+    pub system: Option<BTreeMap<String, bool>>,
 
     /// A `user` object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub user: Option<User>,
 }
@@ -128,6 +129,18 @@ pub enum Interface {
     // Public
     #[serde(rename = "public")]
     Public,
+}
+
+impl std::str::FromStr for Interface {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "admin" => Ok(Self::Admin),
+            "internal" => Ok(Self::Internal),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Endpoints` type
@@ -151,7 +164,6 @@ pub struct Catalog {
 /// A `domain` object including the `id` and `name` representing the domain the
 /// token is scoped to. This is only included in tokens that are scoped to a
 /// domain.
-///
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
@@ -160,20 +172,18 @@ pub struct Domain {
 }
 
 /// A `user` object.
-///
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
     pub domain: Option<Domain>,
     pub id: Option<String>,
     pub name: Option<String>,
-    pub os_federation: Option<HashMap<String, Value>>,
+    pub os_federation: Option<BTreeMap<String, Value>>,
     pub password_expires_at: Option<String>,
 }
 
 /// A domain object including the id and name representing the domain the token
 /// is scoped to. This is only included in tokens that are scoped to a domain.
-///
 /// `DomainStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DomainStructResponse {
@@ -184,7 +194,6 @@ pub struct DomainStructResponse {
 /// A `project` object including the `id`, `name` and `domain` object
 /// representing the project the token is scoped to. This is only included in
 /// tokens that are scoped to a project.
-///
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {

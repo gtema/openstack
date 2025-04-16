@@ -22,15 +22,19 @@ use structable::{StructTable, StructTableOptions};
 /// FlavorProfile response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorProfileResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_data: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub provider_name: Option<String>,
 }

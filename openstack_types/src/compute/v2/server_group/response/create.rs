@@ -17,19 +17,18 @@
 //! Response type for the POST `os-server-groups` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// ServerGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerGroupResponse {
     /// The UUID of the server group.
-    ///
     #[structable()]
     pub id: String,
 
     /// A list of members in the server group.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub members: Option<Vec<String>>,
 
@@ -38,12 +37,11 @@ pub struct ServerGroupResponse {
     /// keeping compatibility.
     ///
     /// **Available until version 2.63**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<BTreeMap<String, String>>,
 
     /// The name of the server group.
-    ///
     #[structable()]
     pub name: String,
 
@@ -64,7 +62,7 @@ pub struct ServerGroupResponse {
     ///   added in microversion 2.15.
     ///
     /// **Available until version 2.63**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub policies: Option<Vec<Policies>>,
 
@@ -83,14 +81,12 @@ pub struct ServerGroupResponse {
     ///   scheduled instead of resulting in a build failure.
     ///
     /// **New in version 2.64**
-    ///
     #[structable(serialize)]
     pub policy: Policy,
 
     /// The project ID who owns the server group.
     ///
     /// **New in version 2.13**
-    ///
     #[structable()]
     pub project_id: String,
 
@@ -102,14 +98,13 @@ pub struct ServerGroupResponse {
     /// anti-affinity group can reside on a given host.
     ///
     /// **New in version 2.64**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub rules: Option<Rules>,
 
     /// The user ID who owns the server group.
     ///
     /// **New in version 2.13**
-    ///
     #[structable()]
     pub user_id: String,
 }
@@ -133,6 +128,19 @@ pub enum Policies {
     SoftAntiAffinity,
 }
 
+impl std::str::FromStr for Policies {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "affinity" => Ok(Self::Affinity),
+            "anti-affinity" => Ok(Self::AntiAffinity),
+            "soft-affinity" => Ok(Self::SoftAffinity),
+            "soft-anti-affinity" => Ok(Self::SoftAntiAffinity),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Policy {
     // Affinity
@@ -152,6 +160,19 @@ pub enum Policy {
     SoftAntiAffinity,
 }
 
+impl std::str::FromStr for Policy {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "affinity" => Ok(Self::Affinity),
+            "anti-affinity" => Ok(Self::AntiAffinity),
+            "soft-affinity" => Ok(Self::SoftAffinity),
+            "soft-anti-affinity" => Ok(Self::SoftAntiAffinity),
+            _ => Err(()),
+        }
+    }
+}
+
 /// The `rules` field, which is a dict, can be applied to the policy.
 /// Currently, only the `max_server_per_host` rule is supported for the
 /// `anti-affinity` policy. The `max_server_per_host` rule allows specifying
@@ -160,7 +181,6 @@ pub enum Policy {
 /// can reside on a given host.
 ///
 /// **New in version 2.64**
-///
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {

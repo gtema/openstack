@@ -32,7 +32,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// image_id parameter for /v2/cache/{image_id} API
-    ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,
 

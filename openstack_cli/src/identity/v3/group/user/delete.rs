@@ -20,32 +20,24 @@
 //! Wraps invoking of the `v3/groups/{group_id}/users/{user_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::group::user::delete;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Removes a user from a group.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/group_user`
-///
 #[derive(Args)]
 #[command(about = "Remove user from group")]
 pub struct UserCommand {
@@ -66,7 +58,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
@@ -93,9 +84,6 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// User response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl UserCommand {
     /// Perform command action
@@ -155,8 +143,7 @@ impl UserCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -18,8 +18,29 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
+use structable::{StructTable, StructTableOptions};
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct L3Router(HashMap<String, Value>);
+pub struct L3RouterResponse(BTreeMap<String, Value>);
+
+impl StructTable for L3RouterResponse {
+    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
+        Some(self.0.keys().map(Into::into).collect())
+    }
+
+    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
+        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    }
+}
+
+impl StructTable for &L3RouterResponse {
+    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
+        Some(self.0.keys().map(Into::into).collect())
+    }
+
+    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
+        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    }
+}

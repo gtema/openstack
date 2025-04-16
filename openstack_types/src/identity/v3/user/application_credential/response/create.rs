@@ -23,32 +23,33 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ApplicationCredentialResponse {
     /// A list of access_rules objects
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub access_rules: Option<Vec<AccessRules>>,
 
     /// A description of the application credential's purpose.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub expires_at: Option<String>,
 
     /// The ID of the application credential.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the application credential. Must be unique to a user.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
     /// scoped to.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
@@ -56,7 +57,7 @@ pub struct ApplicationCredentialResponse {
     /// may only contain roles that the user has assigned on the project. If
     /// not provided, the roles assigned to the application credential will be
     /// the same as the roles in the current token.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
@@ -64,14 +65,14 @@ pub struct ApplicationCredentialResponse {
     /// server or provided by the user. This is only ever shown once in the
     /// response to a create request. It is not stored nor ever shown again. If
     /// the secret is lost, a new application credential must be created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub secret: Option<String>,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
     /// or trusts. Defaults to false.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub unrestricted: Option<bool>,
 }

@@ -37,24 +37,20 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `config` object.
-    ///
-    #[builder(private, setter(name = "_config"))]
+    #[builder(private, setter(into, name = "_config"))]
     pub(crate) config: BTreeMap<Cow<'a, str>, Value>,
 
     /// domain_id parameter for /v3/domains/{domain_id}/config/{group}/{option}
     /// API
-    ///
     #[builder(default, setter(into))]
     domain_id: Cow<'a, str>,
 
     /// group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
-    ///
     #[builder(default, setter(into))]
     group: Cow<'a, str>,
 
     /// option parameter for /v3/domains/{domain_id}/config/{group}/{option}
     /// API
-    ///
     #[builder(default, setter(into))]
     option: Cow<'a, str>,
 
@@ -70,7 +66,6 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// A `config` object.
-    ///
     pub fn config<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

@@ -24,17 +24,17 @@ use structable::{StructTable, StructTableOptions};
 pub struct HealthmonitorResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The time, in seconds, between sending probes to members.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub delay: Option<i32>,
 
@@ -42,7 +42,7 @@ pub struct HealthmonitorResponse {
     /// backend server for HTTP health check.
     ///
     /// **New in version 2.10**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub domain_name: Option<String>,
 
@@ -52,105 +52,105 @@ pub struct HealthmonitorResponse {
     /// - A single value, such as `200`
     /// - A list, such as `200, 202`
     /// - A range, such as `200-204`
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub expected_codes: Option<String>,
 
     /// The HTTP method that the health monitor uses for requests. One of
     /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
     /// or `TRACE`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub http_method: Option<String>,
 
     /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
     ///
     /// **New in version 2.10**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub http_version: Option<f32>,
 
     /// The associated health monitor ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The number of successful checks before changing the `operating status`
     /// of the member to `ONLINE`. A valid value is from `1` to `10`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_retries: Option<i32>,
 
     /// The number of allowed check failures before changing the
     /// `operating status` of the member to `ERROR`. A valid value is from `1`
     /// to `10`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub pools: Option<Vec<Pools>>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out. This value must be less than the delay value.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub timeout: Option<i32>,
 
     /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
     /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (`/`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub url_path: Option<String>,
 }
 
 /// Base type for complex types
-///
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {

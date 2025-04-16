@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/address-scopes` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_scope::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::address_scope::response::list::AddressScopeResponse;
 
 /// Lists address scopes that the project has access to.
 ///
@@ -59,7 +55,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List address scopes")]
 pub struct AddressScopesCommand {
@@ -80,12 +75,10 @@ pub struct AddressScopesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// id query parameter for /v2.0/address-scopes API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// ip_version query parameter for /v2.0/address-scopes API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     ip_version: Option<i32>,
 
@@ -93,46 +86,38 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/address-scopes API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// shared query parameter for /v2.0/address-scopes API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/address-scopes API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -140,39 +125,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AddressScopes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the address scope.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ip_version: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Indicates whether this resource is shared across all projects.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    shared: Option<BoolString>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl AddressScopesCommand {
     /// Perform command action
@@ -229,8 +181,7 @@ impl AddressScopesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AddressScopeResponse>(data)?;
         Ok(())
     }
 }

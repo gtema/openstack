@@ -23,18 +23,20 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StatResponse {
     /// The number of clusters.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub clusters: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The total number of nodes including master nodes.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub nodes: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

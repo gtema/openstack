@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/healthmonitors` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::healthmonitor::response::list::HealthmonitorResponse;
 use tracing::warn;
 
 /// Lists all health monitors for the project.
@@ -52,7 +48,6 @@ use tracing::warn;
 /// own to list health monitors for other projects.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List Health Monitors")]
 pub struct HealthmonitorsCommand {
@@ -73,97 +68,79 @@ pub struct HealthmonitorsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The type of health monitor.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["HTTP","HTTPS","PING","SCTP","TCP","TLS-HELLO","UDP-CONNECT"])]
     _type: Option<String>,
 
     /// The administrative state of the resource
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// The time, in seconds, between sending probes to members.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     delay: Option<i32>,
 
     /// A human-readable description for the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// The list of HTTP status codes expected in response from the member to
     /// declare it healthy.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     expected_codes: Option<String>,
 
     /// The HTTP method that the health monitor uses for requests.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["CONNECT","DELETE","GET","HEAD","OPTIONS","PATCH","POST","PUT","TRACE"])]
     http_method: Option<String>,
 
     /// The ID of the resource
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// The number of successful checks before changing the operating status of
     /// the member to ONLINE. A valid value is from 1 to 10.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_retries: Option<i32>,
 
     /// The number of allowed check failures before changing the operating
     /// status of the member to ERROR. A valid value is from 1 to 10.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags: Option<String>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags_any: Option<String>,
 
     /// The operating status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// The ID of the pool.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     pool_id: Option<String>,
 
@@ -172,35 +149,29 @@ struct QueryParameters {
     project: ProjectInput,
 
     /// The provisioning status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
     provisioning_status: Option<String>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags: Option<String>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags_any: Option<String>,
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     timeout: Option<i32>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (/).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     url_path: Option<String>,
 }
@@ -223,155 +194,6 @@ struct ProjectInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Healthmonitors response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The time, in seconds, between sending probes to members.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    delay: Option<i32>,
-
-    /// The domain name, which be injected into the HTTP Host Header to the
-    /// backend server for HTTP health check.
-    ///
-    /// **New in version 2.10**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_name: Option<String>,
-
-    /// The list of HTTP status codes expected in response from the member to
-    /// declare it healthy. Specify one of the following values:
-    ///
-    /// - A single value, such as `200`
-    /// - A list, such as `200, 202`
-    /// - A range, such as `200-204`
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    expected_codes: Option<String>,
-
-    /// The HTTP method that the health monitor uses for requests. One of
-    /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
-    /// or `TRACE`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    http_method: Option<String>,
-
-    /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
-    ///
-    /// **New in version 2.10**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    http_version: Option<f32>,
-
-    /// The associated health monitor ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The number of successful checks before changing the `operating status`
-    /// of the member to `ONLINE`. A valid value is from `1` to `10`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    max_retries: Option<i32>,
-
-    /// The number of allowed check failures before changing the
-    /// `operating status` of the member to `ERROR`. A valid value is from `1`
-    /// to `10`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    max_retries_down: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    operating_status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    pools: Option<Value>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provisioning_status: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The maximum time, in seconds, that a monitor waits to connect before it
-    /// times out. This value must be less than the delay value.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    timeout: Option<i32>,
-
-    /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
-    /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The HTTP URL path of the request sent by the monitor to test the health
-    /// of a backend member. Must be a string that begins with a forward slash
-    /// (`/`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    url_path: Option<String>,
-}
 
 impl HealthmonitorsCommand {
     /// Perform command action
@@ -513,8 +335,7 @@ impl HealthmonitorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<HealthmonitorResponse>(data)?;
         Ok(())
     }
 }

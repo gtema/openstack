@@ -19,10 +19,10 @@ use tracing::info;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
-use crate::OutputConfig;
+use structable::StructTableOptions;
 use crate::StructTable;
 use crate::{OSCCommand, OpenStackCliError};
-use structable_derive::StructTable;
+
 
 use openstack_sdk::AsyncOpenStack;
 

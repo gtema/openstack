@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v3/types/{type_id}/extra_specs/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val_opt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::extra_spec::set;
-use std::collections::HashMap;
+use openstack_types::block_storage::v3::r#type::extra_spec::response::set::ExtraSpecResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ExtraSpecCommand {
     /// Request Query parameters
@@ -61,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_type_id",
@@ -70,29 +65,12 @@ struct PathParameters {
     type_id: String,
 
     /// id parameter for /v3/types/{type_id}/extra_specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Option<String>>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(
-            self.0.iter().map(|(k, v)| {
-                Vec::from([k.clone(), v.clone().unwrap_or(String::new()).to_string()])
-            }),
-        );
-        (headers, rows)
-    }
 }
 
 impl ExtraSpecCommand {
@@ -127,7 +105,7 @@ impl ExtraSpecCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ExtraSpecResponse>(data)?;
         Ok(())
     }
 }

@@ -72,7 +72,6 @@ pub struct ExternalGateways<'a> {
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
     /// The list of external gateways of the router.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_gateways: Option<Vec<ExternalGateways<'a>>>,
@@ -85,7 +84,6 @@ pub struct Request<'a> {
     pub(crate) router: Router<'a>,
 
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

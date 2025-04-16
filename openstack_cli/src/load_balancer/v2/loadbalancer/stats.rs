@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers/{loadbalancer_id}/stats` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::stats;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::loadbalancer::response::stats::LoadbalancerResponse;
 
 /// Shows the current statistics for a load balancer.
 ///
@@ -45,7 +42,6 @@ use structable_derive::StructTable;
 /// response code.
 ///
 /// This operation does not require a request body.
-///
 #[derive(Args)]
 #[command(about = "Get Load Balancer statistics")]
 pub struct LoadbalancerCommand {
@@ -67,46 +63,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// loadbalancer_id parameter for
     /// /v2/lbaas/loadbalancers/{loadbalancer_id}/stats API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Loadbalancer response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The currently active connections.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    active_connections: Option<i32>,
-
-    /// The total bytes received.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    bytes_in: Option<i32>,
-
-    /// The total bytes sent.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    bytes_out: Option<i32>,
-
-    /// The total requests that were unable to be fulfilled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    request_errors: Option<i32>,
-
-    /// The total connections handled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    total_connections: Option<i32>,
 }
 
 impl LoadbalancerCommand {
@@ -133,7 +95,7 @@ impl LoadbalancerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LoadbalancerResponse>(data)?;
         Ok(())
     }
 }

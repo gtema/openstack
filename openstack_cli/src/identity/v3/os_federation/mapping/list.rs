@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/mappings` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::mapping::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::mapping::response::list::MappingResponse;
 
 /// GET operation on /v3/OS-FEDERATION/mappings
-///
 #[derive(Args)]
 pub struct MappingsCommand {
     /// Request Query parameters
@@ -56,25 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Mappings response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The Federation Mapping unique ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    rules: Option<Value>,
-
-    /// Mapping schema version
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    schema_version: Option<String>,
-}
 
 impl MappingsCommand {
     /// Perform command action
@@ -99,8 +75,7 @@ impl MappingsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MappingResponse>(data)?;
         Ok(())
     }
 }

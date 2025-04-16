@@ -31,22 +31,19 @@ use std::borrow::Cow;
 
 /// The resource options for the project. Available resource options are
 /// `immutable`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) immutable: Option<bool>,
 }
 
 /// A `project` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Project<'a> {
     /// The description of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -63,35 +60,30 @@ pub struct Project<'a> {
     /// domain to which the client’s token is scoped. If both `domain_id` and
     /// `parent_id` are specified, and they do not indicate the same domain, an
     /// `Bad Request (400)` will be returned.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled. The default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled. The default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_domain: Option<bool>,
 
     /// The name of the project, which must be unique within the owning domain.
     /// A project can have the same name as its domain.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
@@ -110,14 +102,12 @@ pub struct Project<'a> {
     /// created - hence a project cannot be moved within the hierarchy.
     ///
     /// **New in version 3.4**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) parent_id: Option<Option<Cow<'a, str>>>,
 
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -127,7 +117,6 @@ pub struct Project<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `project` object
-    ///
     #[builder(setter(into))]
     pub(crate) project: Project<'a>,
 

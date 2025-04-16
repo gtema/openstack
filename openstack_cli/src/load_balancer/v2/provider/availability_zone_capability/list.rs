@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2/lbaas/providers/{provider}/availability_zone_capabilities` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::provider::availability_zone_capability::list;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::provider::availability_zone_capability::response::list::AvailabilityZoneCapabilityResponse;
 
 /// Shows the provider driver availability zone capabilities. These are the
 /// features of the provider driver that can be configured in an Octavia
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 /// feature.
 ///
 /// **New in version 2.14**
-///
 #[derive(Args)]
 #[command(about = "Show Provider Availability Zone Capabilities")]
 pub struct AvailabilityZoneCapabilitiesCommand {
@@ -66,28 +62,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// provider parameter for
     /// /v2/lbaas/providers/{provider}/availability_zone_capabilities API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_provider",
         value_name = "PROVIDER"
     )]
     provider: String,
-}
-/// AvailabilityZoneCapabilities response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The provider availability zone capability description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The provider availability zone capability name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl AvailabilityZoneCapabilitiesCommand {
@@ -114,8 +94,7 @@ impl AvailabilityZoneCapabilitiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AvailabilityZoneCapabilityResponse>(data)?;
         Ok(())
     }
 }

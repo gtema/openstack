@@ -23,12 +23,10 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BackupResponse {
     /// The UUID of the backup.
-    ///
     #[structable()]
     pub id: String,
 
     /// The backup name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 }
@@ -36,7 +34,6 @@ pub struct BackupResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

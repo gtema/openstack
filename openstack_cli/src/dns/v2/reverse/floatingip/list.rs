@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/reverse/floatingips` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::reverse::floatingip::list;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::reverse::floatingip::response::list::FloatingipResponse;
 
 /// List FloatingIP PTR records
-///
 #[derive(Args)]
 #[command(about = "List FloatingIP’s PTR record")]
 pub struct FloatingipsCommand {
@@ -56,51 +52,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Floatingips response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// current action in progress on the resource
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    action: Option<String>,
-
-    /// The floatingip address for this PTR record.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    address: Option<String>,
-
-    /// Description for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// ID for PTR record in the format of <region>:\<floatingip_id>
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Domain name for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ptrdname: Option<String>,
-
-    /// The status of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// Time to live for this PTR record
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ttl: Option<i32>,
-}
 
 impl FloatingipsCommand {
     /// Perform command action
@@ -125,8 +76,7 @@ impl FloatingipsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<FloatingipResponse>(data)?;
         Ok(())
     }
 }

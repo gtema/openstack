@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::identity_provider::response::list::IdentityProviderResponse;
 
 /// List all identity providers.
 ///
 /// GET/HEAD /OS-FEDERATION/identity_providers
-///
 #[derive(Args)]
 pub struct IdentityProvidersCommand {
     /// Request Query parameters
@@ -55,12 +50,10 @@ pub struct IdentityProvidersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Whether the identity provider is enabled or not
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// The identity provider ID
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 }
@@ -68,46 +61,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// IdentityProviders response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    authorization_ttl: Option<i32>,
-
-    /// The Identity Provider description
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of a domain that is associated with the Identity Provider.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// Whether the Identity Provider is enabled or not
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// The Identity Provider unique ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// List of the unique Identity Provider’s remote IDs
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    remote_ids: Option<Value>,
-}
 
 impl IdentityProvidersCommand {
     /// Perform command action
@@ -138,8 +91,7 @@ impl IdentityProvidersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<IdentityProviderResponse>(data)?;
         Ok(())
     }
 }

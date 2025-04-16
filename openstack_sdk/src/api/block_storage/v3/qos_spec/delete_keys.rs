@@ -31,7 +31,6 @@ pub struct Request<'a> {
     pub(crate) keys: Vec<Cow<'a, str>>,
 
     /// id parameter for /v3/qos-specs/{id}/delete_keys API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

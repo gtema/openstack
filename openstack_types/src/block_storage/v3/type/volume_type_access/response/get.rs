@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeTypeAccessResponse {
     /// The UUID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The UUID of the volume type.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub volume_type_id: Option<String>,
 }

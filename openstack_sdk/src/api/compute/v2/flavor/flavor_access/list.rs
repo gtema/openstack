@@ -32,7 +32,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    ///
     #[builder(default, setter(into))]
     flavor_id: Cow<'a, str>,
 

@@ -20,20 +20,17 @@
 //! Wraps invoking of the `resource_providers/{uuid}/inventories/{resource_class}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::inventory::set;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_provider::inventory::response::set::InventoryResponse;
 
 /// Replace the inventory record of the {resource_class} for the resource
 /// provider identified by {uuid}.
@@ -41,7 +38,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: badRequest(400), itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Update resource provider inventory")]
 pub struct InventoryCommand {
@@ -65,40 +61,33 @@ pub struct InventoryCommand {
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     allocation_ratio: Option<f32>,
 
     /// A maximum amount any single allocation against an inventory can have.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_unit: Option<i32>,
 
     /// A minimum amount any single allocation against an inventory can have.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     min_unit: Option<i32>,
 
     /// The amount of the resource a provider has reserved for its own use.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     reserved: Option<i32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     resource_provider_generation: i32,
 
     /// A representation of the divisible amount of the resource that may be
     /// requested. For example, step_size = 5 means that only values divisible
     /// by 5 (5, 10, 15, etc.) can be requested.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     step_size: Option<i32>,
 
     /// The actual amount of the resource that the provider can accommodate.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     total: i32,
 }
@@ -112,7 +101,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
@@ -122,72 +110,12 @@ struct PathParameters {
 
     /// resource_class parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_resource_class",
         value_name = "RESOURCE_CLASS"
     )]
     resource_class: String,
-}
-/// Inventory response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// It is used in determining whether consumption of the resource of the
-    /// provider can exceed physical constraints.
-    ///
-    /// For example, for a vCPU resource with:
-    ///
-    /// ```text
-    /// allocation_ratio = 16.0
-    /// total = 8
-    ///
-    /// ```
-    ///
-    /// Overall capacity is equal to 128 vCPUs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    allocation_ratio: Option<f32>,
-
-    /// A maximum amount any single allocation against an inventory can have.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_unit: Option<i32>,
-
-    /// A minimum amount any single allocation against an inventory can have.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    min_unit: Option<i32>,
-
-    /// The amount of the resource a provider has reserved for its own use.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    reserved: Option<i32>,
-
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    resource_provider_generation: i32,
-
-    /// A representation of the divisible amount of the resource that may be
-    /// requested. For example, step_size = 5 means that only values divisible
-    /// by 5 (5, 10, 15, etc.) can be requested.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    step_size: Option<i32>,
-
-    /// The actual amount of the resource that the provider can accommodate.
-    ///
-    #[serde()]
-    #[structable()]
-    total: i32,
 }
 
 impl InventoryCommand {
@@ -245,7 +173,7 @@ impl InventoryCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<InventoryResponse>(data)?;
         Ok(())
     }
 }

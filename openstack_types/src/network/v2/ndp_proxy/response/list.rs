@@ -22,33 +22,43 @@ use structable::{StructTable, StructTableOptions};
 /// NdpProxy response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NdpProxyResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ip_address: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub port_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub router_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

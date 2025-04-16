@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/projects/{project_id}/tags` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,13 +34,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::project::tag::list;
+use openstack_types::identity::v3::project::tag::response::list::TagResponse;
 use tracing::warn;
 
 /// Lists all tags within a project.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
-///
 #[derive(Args)]
 #[command(about = "List tags for a project")]
 pub struct TagsCommand {
@@ -81,29 +78,6 @@ struct ProjectInput {
     /// Current project.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
-}
-/// Tags response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .into_iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl TagsCommand {
@@ -179,8 +153,7 @@ impl TagsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TagResponse>(data)?;
         Ok(())
     }
 }

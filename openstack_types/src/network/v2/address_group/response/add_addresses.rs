@@ -23,36 +23,39 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AddressGroupResponse {
     /// A list of IP addresses.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub addresses: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the address group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

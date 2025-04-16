@@ -23,28 +23,26 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExtensionResponse {
     /// A short name by which this extension is also known.
-    ///
     #[structable()]
     pub alias: String,
 
     /// Text describing this extension’s purpose.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Links pertaining to this extension. This is a list of dictionaries,
     /// each including keys `href` and `rel`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// Name of the extension.
-    ///
     #[structable()]
     pub name: String,
 
     /// A URL pointing to the namespace for this extension.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub namespace: Option<String>,
 
@@ -59,7 +57,7 @@ pub struct ExtensionResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated: Option<String>,
 }
@@ -67,7 +65,6 @@ pub struct ExtensionResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

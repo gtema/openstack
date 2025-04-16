@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InstanceActionResponse {
     /// The name of the action.
-    ///
     #[structable()]
     pub action: String,
 
@@ -35,27 +34,24 @@ pub struct InstanceActionResponse {
     /// providers can change these permissions through the `policy.json` file.
     ///
     /// **New in version 2.51**
-    ///
     #[structable(serialize)]
     pub events: Vec<Events>,
 
     /// The related error message for when an action fails.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub message: Option<String>,
 
     /// The ID of the project which initiated the server action.
-    ///
     #[structable()]
     pub project_id: String,
 
     /// The request id generated when execute the API of this action.
-    ///
     #[structable()]
     pub request_id: String,
 
     /// The date and time when the action was started.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub start_time: Option<String>,
 
@@ -73,12 +69,11 @@ pub struct InstanceActionResponse {
     /// example, the offset value is `-05:00`.
     ///
     /// **New in version 2.58**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server action.
-    ///
     #[structable()]
     pub user_id: String,
 }

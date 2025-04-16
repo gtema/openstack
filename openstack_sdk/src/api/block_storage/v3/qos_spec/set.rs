@@ -26,11 +26,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_qos_specs"))]
+    #[builder(private, setter(into, name = "_qos_specs"))]
     pub(crate) qos_specs: BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>,
 
     /// id parameter for /v3/qos-specs/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

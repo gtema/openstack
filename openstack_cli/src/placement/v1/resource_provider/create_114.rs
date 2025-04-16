@@ -20,21 +20,17 @@
 //! Wraps invoking of the `resource_providers` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::create_114;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_provider::response::create::ResourceProviderResponse;
 
 /// Create a new resource provider.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// A 409 Conflict response code will be returned if another resource provider
 /// exists with the provided name or uuid.
-///
 #[derive(Args)]
 #[command(about = "Create resource provider (microversion = 1.14)")]
 pub struct ResourceProviderCommand {
@@ -58,7 +53,6 @@ pub struct ResourceProviderCommand {
     path: PathParameters,
 
     /// The name of one resource provider.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
@@ -74,12 +68,10 @@ pub struct ResourceProviderCommand {
     ///   be invalidated by that move.
     ///
     /// **New in version 1.14**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     parent_provider_uuid: Option<String>,
 
     /// The uuid of a resource provider.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     uuid: Option<String>,
 }
@@ -91,56 +83,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    generation: i32,
-
-    /// A list of links associated with one resource provider.
-    ///
-    /// Note
-    ///
-    /// Aggregates relationship link is available starting from version 1.1.
-    /// Traits relationship link is available starting from version 1.6.
-    /// Allocations relationship link is available starting from version 1.11.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    links: Value,
-
-    /// The name of one resource provider.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The UUID of the immediate parent of the resource provider.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    parent_provider_uuid: Option<String>,
-
-    /// Read-only UUID of the top-most provider in this provider tree.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    root_provider_uuid: Option<String>,
-
-    /// The uuid of a resource provider.
-    ///
-    #[serde()]
-    #[structable()]
-    uuid: String,
-}
 
 impl ResourceProviderCommand {
     /// Perform command action
@@ -178,7 +120,7 @@ impl ResourceProviderCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResourceProviderResponse>(data)?;
         Ok(())
     }
 }

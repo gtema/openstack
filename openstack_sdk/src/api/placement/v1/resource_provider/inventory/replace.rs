@@ -47,41 +47,35 @@ pub struct InventoriesItem {
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) allocation_ratio: Option<f32>,
 
     /// A maximum amount any single allocation against an inventory can have.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_unit: Option<i32>,
 
     /// A minimum amount any single allocation against an inventory can have.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_unit: Option<i32>,
 
     /// The amount of the resource a provider has reserved for its own use.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) reserved: Option<i32>,
 
     /// A representation of the divisible amount of the resource that may be
     /// requested. For example, step_size = 5 means that only values divisible
     /// by 5 (5, 10, 15, etc.) can be requested.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) step_size: Option<i32>,
 
     /// The actual amount of the resource that the provider can accommodate.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) total: i32,
 }
 
@@ -89,19 +83,16 @@ pub struct InventoriesItem {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A dictionary of inventories keyed by resource classes.
-    ///
-    #[builder(private, setter(name = "_inventories"))]
+    #[builder(private, setter(into, name = "_inventories"))]
     pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) resource_provider_generation: i32,
 
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 
@@ -117,7 +108,6 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// A dictionary of inventories keyed by resource classes.
-    ///
     pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

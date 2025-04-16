@@ -27,11 +27,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_metering_label"))]
+    #[builder(private, setter(into, name = "_metering_label"))]
     pub(crate) metering_label: BTreeMap<Cow<'a, str>, Value>,
 
     /// id parameter for /v2.0/metering/metering-labels/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

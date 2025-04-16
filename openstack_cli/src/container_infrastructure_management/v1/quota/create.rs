@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v1/quotas` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::quota::create;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::quota::response::create::QuotaResponse;
 
 /// Create new quota for a project.
-///
 #[derive(Args)]
 #[command(about = "Set new quota")]
 pub struct QuotaCommand {
@@ -79,34 +75,6 @@ struct PathParameters {}
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Resource {
     Cluster,
-}
-
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    hard_limit: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    resource: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl QuotaCommand {
@@ -164,7 +132,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

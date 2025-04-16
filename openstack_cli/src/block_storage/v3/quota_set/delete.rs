@@ -20,28 +20,21 @@
 //! Wraps invoking of the `v3/os-quota-sets/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_set::delete;
-use structable_derive::StructTable;
 
 /// Delete Quota for a particular tenant.
 ///
 /// | | | | --- | --- | | param req: | request | | param id: | target project
 /// id that needs to be deleted |
-///
 #[derive(Args)]
 pub struct QuotaSetCommand {
     /// Request Query parameters
@@ -61,7 +54,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/os-quota-sets/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -69,9 +61,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// QuotaSet response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl QuotaSetCommand {
     /// Perform command action
@@ -95,8 +84,7 @@ impl QuotaSetCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

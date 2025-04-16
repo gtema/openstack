@@ -52,22 +52,19 @@ pub enum Policy {
 /// than `anti-affinity` will be 400.
 ///
 /// **New in version 2.64**
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rules {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_server_per_host: Option<i32>,
 }
 
 /// The server group object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ServerGroup<'a> {
     /// The name of the server group.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -87,7 +84,6 @@ pub struct ServerGroup<'a> {
     ///   scheduled instead of resulting in a build failure.
     ///
     /// **New in version 2.64**
-    ///
     #[serde()]
     #[builder()]
     pub(crate) policy: Policy,
@@ -101,7 +97,6 @@ pub struct ServerGroup<'a> {
     /// with any other policy than `anti-affinity` will be 400.
     ///
     /// **New in version 2.64**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) rules: Option<Rules>,
@@ -111,7 +106,6 @@ pub struct ServerGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The server group object.
-    ///
     #[builder(setter(into))]
     pub(crate) server_group: ServerGroup<'a>,
 

@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}/members` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::pool::member::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::pool::member::response::list::MemberResponse;
 use tracing::warn;
 
 /// Lists all members for the project.
@@ -52,7 +48,6 @@ use tracing::warn;
 /// own to list members for other projects.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List Members")]
 pub struct MembersCommand {
@@ -73,79 +68,64 @@ pub struct MembersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The IP address of the backend member server.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     address: Option<String>,
 
     /// The administrative state of the resource
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// Is the member a backup?
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     backup: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// The ID of the resource
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// An alternate IP address used for health monitoring a backend member.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     monitor_address: Option<String>,
 
     /// An alternate protocol port used for health monitoring a backend member.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     monitor_port: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags: Option<String>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags_any: Option<String>,
 
     /// The operating status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -154,38 +134,31 @@ struct QueryParameters {
     project: ProjectInput,
 
     /// The protocol port number the backend member server is listening on.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     protocol_port: Option<i32>,
 
     /// The provisioning status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
     provisioning_status: Option<String>,
 
     /// The subnet ID the member service is accessible from.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     subnet_id: Option<String>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags: Option<String>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags_any: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
     /// The weight of a member determines the portion of requests or
     /// connections it services compared to the other members of the pool.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     weight: Option<i32>,
 }
@@ -209,140 +182,12 @@ struct ProjectInput {
 #[derive(Args)]
 struct PathParameters {
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_pool_id",
         value_name = "POOL_ID"
     )]
     pool_id: String,
-}
-/// Members response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP address of the backend member server.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    address: Option<String>,
-
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
-
-    /// Is the member a backup? Backup members only receive traffic when all
-    /// non-backup members are down.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    backup: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The ID of the member.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// An alternate IP address used for health monitoring a backend member.
-    /// Default is `null` which monitors the member `address`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    monitor_address: Option<String>,
-
-    /// An alternate protocol port used for health monitoring a backend member.
-    /// Default is `null` which monitors the member `protocol_port`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    monitor_port: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    operating_status: Option<String>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The protocol port number the backend member server is listening on.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protocol_port: Option<i32>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provisioning_status: Option<String>,
-
-    /// The subnet ID the member service is accessible from.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    subnet_id: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The member vNIC type used for the member port. One of `normal` or
-    /// `direct`.
-    ///
-    /// **New in version 2.29**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vnic_type: Option<String>,
-
-    /// The weight of a member determines the portion of requests or
-    /// connections it services compared to the other members of the pool. For
-    /// example, a member with a weight of 10 receives five times as many
-    /// requests as a member with a weight of 2. A value of 0 means the member
-    /// does not receive new connections but continues to service existing
-    /// connections. A valid value is from `0` to `256`. Default is `1`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    weight: Option<i32>,
 }
 
 impl MembersCommand {
@@ -480,8 +325,7 @@ impl MembersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MemberResponse>(data)?;
         Ok(())
     }
 }

@@ -20,29 +20,24 @@
 //! Wraps invoking of the `resource_providers/{uuid}/inventories` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::inventory::create;
+use openstack_types::placement::v1::resource_provider::inventory::response::create::InventoryResponse;
 use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
 
 /// POST to create one inventory.
 ///
 /// On success return a 201 response, a location header pointing to the newly
 /// created inventory and an application/json representation of the inventory.
-///
 #[derive(Args)]
 pub struct InventoryCommand {
     /// Request Query parameters
@@ -54,13 +49,11 @@ pub struct InventoryCommand {
     path: PathParameters,
 
     /// A dictionary of inventories keyed by resource classes.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     inventories: Vec<(String, Value)>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     resource_provider_generation: i32,
 }
@@ -74,69 +67,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// uuid parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
     uuid: String,
-}
-/// Inventory response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A dictionary of inventories keyed by resource classes.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    inventories: Value,
-
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    resource_provider_generation: i32,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseInventoriesItem {
-    allocation_ratio: Option<f32>,
-    max_unit: Option<i32>,
-    min_unit: Option<i32>,
-    reserved: Option<i32>,
-    step_size: Option<i32>,
-    total: i32,
-}
-
-impl fmt::Display for ResponseInventoriesItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "allocation_ratio={}",
-                self.allocation_ratio
-                    .map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "max_unit={}",
-                self.max_unit.map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "min_unit={}",
-                self.min_unit.map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "reserved={}",
-                self.reserved.map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "step_size={}",
-                self.step_size.map_or(String::new(), |v| v.to_string())
-            ),
-            format!("total={}", self.total),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl InventoryCommand {
@@ -177,7 +113,7 @@ impl InventoryCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<InventoryResponse>(data)?;
         Ok(())
     }
 }

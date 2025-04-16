@@ -80,7 +80,7 @@ pub struct Snapshot<'a> {
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

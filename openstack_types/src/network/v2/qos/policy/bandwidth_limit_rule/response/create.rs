@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the POST `qos/policies/{policy_id}/bandwidth_limit_rules` operation
 
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -26,25 +25,23 @@ pub struct BandwidthLimitRuleResponse {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
     /// The ID of the QoS Bandwidth limit rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The maximum burst size (in kilobits).
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub max_burst_kbps: Option<i64>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub max_kbps: Option<i64>,
 }
@@ -58,4 +55,15 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v3/auth/domains` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::domain::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::auth::domain::response::list::DomainResponse;
 
 /// New in version 3.3
 ///
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_domains`
-///
 #[derive(Args)]
 #[command(about = "Get available domain scopes")]
 pub struct DomainsCommand {
@@ -64,34 +60,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Domains response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// If set to `true`, domain is enabled. If set to `false`, domain is
-    /// disabled.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl DomainsCommand {
     /// Perform command action
@@ -116,8 +84,7 @@ impl DomainsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<DomainResponse>(data)?;
         Ok(())
     }
 }

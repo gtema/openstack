@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.0/vpn/vpnservices` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::vpnservice::create;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::vpnservice::response::create::VpnserviceResponse;
 
 /// Creates a VPN service.
 ///
@@ -50,7 +46,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401
-///
 #[derive(Args)]
 #[command(about = "Create VPN service")]
 pub struct VpnserviceCommand {
@@ -63,7 +58,6 @@ pub struct VpnserviceCommand {
     path: PathParameters,
 
     /// A `vpnservice` object.
-    ///
     #[command(flatten)]
     vpnservice: Vpnservice,
 }
@@ -80,23 +74,19 @@ struct PathParameters {}
 struct Vpnservice {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the flavor.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     flavor_id: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -107,92 +97,11 @@ struct Vpnservice {
     /// available IP from that subnet to the port. If you specify both a subnet
     /// UUID and an IP address, OpenStack Networking tries to allocate the
     /// address to the port.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
 
     /// The ID of the project.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    tenant_id: Option<String>,
-}
-
-/// Vpnservice response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Read-only external (public) IPv4 address that is used for the VPN
-    /// service. The VPN plugin sets this address if an IPv4 interface is
-    /// available.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    external_v4_ip: Option<String>,
-
-    /// Read-only external (public) IPv6 address that is used for the VPN
-    /// service. The VPN plugin sets this address if an IPv6 interface is
-    /// available.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    external_v6_ip: Option<String>,
-
-    /// The ID of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    flavor_id: Option<String>,
-
-    /// The ID of the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    router_id: Option<String>,
-
-    /// Indicates whether IPsec VPN service is currently operational. Values
-    /// are `ACTIVE`, `DOWN`, `BUILD`, `ERROR`, `PENDING_CREATE`,
-    /// `PENDING_UPDATE`, or `PENDING_DELETE`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// If you specify only a subnet UUID, OpenStack Networking allocates an
-    /// available IP from that subnet to the port. If you specify both a subnet
-    /// UUID and an IP address, OpenStack Networking tries to allocate the
-    /// address to the port.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet_id: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
     tenant_id: Option<String>,
 }
 
@@ -251,7 +160,7 @@ impl VpnserviceCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<VpnserviceResponse>(data)?;
         Ok(())
     }
 }

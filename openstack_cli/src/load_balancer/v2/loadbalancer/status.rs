@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers/{loadbalancer_id}/status` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::status;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::loadbalancer::response::status::LoadbalancerResponse;
 
 /// Shows the status tree for a load balancer.
 ///
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// If the operation succeeds, the returned element is a status tree that
 /// contains the load balancer and all provisioning and operating statuses for
 /// its children.
-///
 #[derive(Args)]
 #[command(about = "Get the Load Balancer status tree")]
 pub struct LoadbalancerCommand {
@@ -77,22 +72,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// loadbalancer_id parameter for
     /// /v2/lbaas/loadbalancers/{loadbalancer_id}/status API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Loadbalancer response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A load balancer status object.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    loadbalancer: Value,
 }
 
 impl LoadbalancerCommand {
@@ -119,7 +104,7 @@ impl LoadbalancerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LoadbalancerResponse>(data)?;
         Ok(())
     }
 }

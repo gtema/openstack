@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/groups/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group::response::get::GroupResponse;
 
 /// Return data about the given group.
-///
 #[derive(Args)]
 pub struct GroupCommand {
     /// Request Query parameters
@@ -58,96 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/groups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Group response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_snapshot_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type: Option<String>,
-
-    /// The UUID of the group.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The group name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The group replication status.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    replication_status: Option<String>,
-
-    /// The UUID of the source group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_group_id: Option<String>,
-
-    /// The status of the generic group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The list of volume types. In an environment with multiple-storage back
-    /// ends, the scheduler determines where to send the volume based on the
-    /// volume type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    volume_types: Option<Value>,
-
-    /// A list of volume ids, available only when list_volume set true.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    volumes: Option<Value>,
 }
 
 impl GroupCommand {
@@ -170,7 +81,7 @@ impl GroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<GroupResponse>(find_data)?;
         Ok(())
     }
 }

@@ -2193,6 +2193,7 @@ version = "0.11.1"
 dependencies = [
  "assert_cmd",
  "bytes",
+ "chrono",
  "clap",
  "clap_complete",
  "color-eyre",
@@ -2204,13 +2205,14 @@ dependencies = [
  "indicatif",
  "json-patch",
  "openstack_sdk",
+ "openstack_types",
  "rand",
  "regex",
  "reqwest",
  "serde",
  "serde_json",
  "strip-ansi-escapes",
- "structable_derive 0.1.6",
+ "structable",
  "tempfile",
  "thiserror 2.0.12",
  "tokio",
@@ -2295,7 +2297,6 @@ dependencies = [
  "signal-hook",
  "strip-ansi-escapes",
  "structable",
- "structable_derive 0.2.1",
  "strum 0.27.1",
  "thiserror 2.0.12",
  "tokio",
@@ -2313,7 +2314,6 @@ dependencies = [
  "serde",
  "serde_json",
  "structable",
- "structable_derive 0.2.1",
 ]
 
 [[package]]
@@ -3185,31 +3185,19 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "structable"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e060eee777598e644249ae88375f90200956fd7d9d9a33d5046b736ae6b89e6"
+checksum = "467397e10211f0f42073d8f970d31d4077afc47c769713d357ae6589cb04fdc0"
 dependencies = [
  "serde",
- "structable_derive 0.2.1",
+ "structable_derive",
 ]
 
 [[package]]
 name = "structable_derive"
-version = "0.1.6"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddaee16db414869b59fcfaa1348ecda6308465f95c04d8e89acab76dd246269b"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "syn 2.0.100",
-]
-
-[[package]]
-name = "structable_derive"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37f7156c361e1604aeb8f541b9166bfcf1a0565ac9953c9fc3583a6181d7d737"
+checksum = "d7b98de247cf613484794bcaa319bb4ce292081932782d03febf8b135fb1bf62"
 dependencies = [
  "darling",
  "proc-macro2",

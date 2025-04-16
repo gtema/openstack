@@ -48,7 +48,6 @@ use std::collections::BTreeMap;
 /// and `os_hash_algo` to be added to the image. If `do_secure_hash` is not
 /// passed then it is the responsibility of the consumer of location add API to
 /// provide the correct values in `validation_data`’
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ValidationData<'a> {
@@ -68,11 +67,10 @@ pub struct ValidationData<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
 
     /// The URL of the new location to be added in the image.
-    ///
     #[builder(setter(into))]
     pub(crate) url: Cow<'a, str>,
 
@@ -81,12 +79,10 @@ pub struct Request<'a> {
     /// `do_secure_hash` is not passed then it is the responsibility of the
     /// consumer of location add API to provide the correct values in
     /// `validation_data`’
-    ///
     #[builder(default, setter(into))]
     pub(crate) validation_data: Option<ValidationData<'a>>,
 
     /// image_id parameter for /v2/images/{image_id}/locations API
-    ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,
 

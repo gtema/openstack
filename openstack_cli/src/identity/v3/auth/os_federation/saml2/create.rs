@@ -20,31 +20,23 @@
 //! Wraps invoking of the `v3/auth/OS-FEDERATION/saml2` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
-use bytes::Bytes;
 use clap::ValueEnum;
 use dialoguer::Password;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::create;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Exchange a scoped token for a SAML assertion.
 ///
 /// POST /v3/auth/OS-FEDERATION/saml2
-///
 #[derive(Args)]
 pub struct Saml2Command {
     /// Request Query parameters
@@ -56,7 +48,6 @@ pub struct Saml2Command {
     path: PathParameters,
 
     /// An `auth` object.
-    ///
     #[command(flatten)]
     auth: Auth,
 }
@@ -82,24 +73,20 @@ enum Methods {
 #[group(required = false, multiple = true)]
 struct User {
     /// A `domain` object
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     domain: Option<Value>,
 
     /// The ID of the user. Required if you do not specify the user name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name. Required if you do not specify the ID of the user. If
     /// you specify the user name, you must also specify the domain, by ID or
     /// name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// User Password
-    ///
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
@@ -109,7 +96,6 @@ struct User {
 #[group(required = false, multiple = true)]
 struct Password {
     /// A `user` object.
-    ///
     #[command(flatten)]
     user: Option<User>,
 }
@@ -119,7 +105,6 @@ struct Password {
 #[group(required = false, multiple = true)]
 struct Token {
     /// Authorization Token value
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     id: Option<String>,
 }
@@ -129,22 +114,18 @@ struct Token {
 #[group(required = true, multiple = true)]
 struct TotpUser {
     /// A `domain` object
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     domain: Option<Value>,
 
     /// The user ID
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// MFA passcode
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     passcode: Option<String>,
 }
@@ -168,14 +149,12 @@ struct ApplicationCredential {
     name: Option<String>,
 
     /// The secret for authenticating the application credential.
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     secret: Option<String>,
 
     /// A user object, required if an application credential is identified by
     /// name and not ID.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     user: Option<Value>,
 }
 
@@ -184,7 +163,6 @@ struct ApplicationCredential {
 #[group(required = true, multiple = true)]
 struct Identity {
     /// An application credential object.
-    ///
     #[command(flatten)]
     application_credential: Option<ApplicationCredential>,
 
@@ -192,22 +170,18 @@ struct Identity {
     /// `password`.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, required=false)]
     methods: Vec<Methods>,
 
     /// The `password` object, contains the authentication information.
-    ///
     #[command(flatten)]
     password: Option<Password>,
 
     /// A `token` object
-    ///
     #[command(flatten)]
     token: Option<Token>,
 
     /// Multi Factor Authentication information
-    ///
     #[command(flatten)]
     totp: Option<Totp>,
 }
@@ -217,12 +191,10 @@ struct Identity {
 #[group(required = false, multiple = true)]
 struct ScopeDomain {
     /// Domain id
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Domain name
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
@@ -253,7 +225,7 @@ struct Scope {
     #[command(flatten)]
     os_trust_trust: Option<OsTrustTrust>,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     project: Option<Value>,
 
     #[command(flatten)]
@@ -264,7 +236,6 @@ struct Scope {
 #[derive(Args, Clone)]
 struct Auth {
     /// An `identity` object.
-    ///
     #[command(flatten)]
     identity: Identity,
 
@@ -277,14 +248,9 @@ struct Auth {
     /// domain of the project must also be specified in order to uniquely
     /// identify the project by name. A domain scope may be specified by either
     /// the domain’s ID or name with equivalent results.
-    ///
     #[command(flatten)]
     scope: Option<Scope>,
 }
-
-/// Saml2 response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl Saml2Command {
     /// Perform command action
@@ -422,11 +388,7 @@ impl Saml2Command {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

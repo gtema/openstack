@@ -22,13 +22,15 @@ use structable::{StructTable, StructTableOptions};
 /// Store response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StoreResponse {
-    #[serde(rename = "default")]
+    #[serde(default, rename = "default")]
     #[structable(optional, title = "default", wide)]
     pub _default: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 }

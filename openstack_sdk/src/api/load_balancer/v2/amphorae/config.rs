@@ -39,7 +39,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/config API
-    ///
     #[builder(default, setter(into))]
     amphora_id: Cow<'a, str>,
 

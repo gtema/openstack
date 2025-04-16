@@ -52,26 +52,22 @@ pub enum Type {
 pub struct EndpointGroup<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// List of endpoints of the same type, for the endpoint group. The values
     /// will depend on type.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) endpoints: Option<Vec<Cow<'a, str>>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -79,7 +75,6 @@ pub struct EndpointGroup<'a> {
     /// The type of the endpoints in the group. A valid value is `subnet`,
     /// `cidr`, `network`, `router`, or `vlan`. Only `subnet` and `cidr` are
     /// supported at this moment.
-    ///
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) _type: Option<Type>,

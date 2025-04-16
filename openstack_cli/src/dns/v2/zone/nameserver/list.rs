@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/nameservers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::nameserver::list;
 use openstack_sdk::api::find_by_name;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::zone::nameserver::response::list::NameserverResponse;
 use tracing::warn;
 
 /// Show the nameservers for a zone
-///
 #[derive(Args)]
 #[command(about = "Get the Name Servers for a Zone")]
 pub struct NameserversCommand {
@@ -74,23 +70,6 @@ struct ZoneInput {
     /// Zone ID.
     #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
     zone_id: Option<String>,
-}
-/// Nameservers response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The hostname of the nameserver that the zone should be delegated to
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hostname: Option<String>,
-
-    /// The priority of the nameserver. This is used to determine the order of
-    /// the the nameserver listings, and which server is used in the SOA record
-    /// for the zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    priority: Option<i32>,
 }
 
 impl NameserversCommand {
@@ -152,8 +131,7 @@ impl NameserversCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<NameserverResponse>(data)?;
         Ok(())
     }
 }

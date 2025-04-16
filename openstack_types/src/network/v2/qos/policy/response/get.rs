@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `qos/policies/{id}` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -24,57 +23,56 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PolicyResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the QoS policy.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// If `true`, the QoS `policy` is the default policy.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub is_default: Option<bool>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// A set of zero or more policy rules.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub rules: Option<String>,
 
     /// Indicates whether this policy is shared across all projects.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub shared: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

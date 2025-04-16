@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::migrate_256;
-use structable_derive::StructTable;
 
 /// Migrates a server to a host.
 ///
@@ -63,7 +57,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Migrate Server (migrate Action) (microversion = 2.56)")]
 pub struct ServerCommand {
@@ -77,7 +70,6 @@ pub struct ServerCommand {
 
     /// The action to cold migrate a server. This parameter can be `null`. Up
     /// to microversion 2.55, this parameter should be `null`.
-    ///
     #[command(flatten)]
     migrate: Option<Migrate>,
 }
@@ -90,7 +82,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -104,10 +95,6 @@ struct Migrate {
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
 }
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ServerCommand {
     /// Perform command action
@@ -140,11 +127,7 @@ impl ServerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

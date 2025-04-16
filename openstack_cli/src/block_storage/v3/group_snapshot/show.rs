@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v3/group_snapshots/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_snapshot::find;
 use openstack_sdk::api::find;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group_snapshot::response::get::GroupSnapshotResponse;
 
 /// Return data about the given group_snapshot.
-///
 #[derive(Args)]
 pub struct GroupSnapshotCommand {
     /// Request Query parameters
@@ -57,70 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/group_snapshots/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// GroupSnapshot response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group snapshot description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type_id: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The group snapshot name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The status of the generic group snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
 }
 
 impl GroupSnapshotCommand {
@@ -143,7 +81,7 @@ impl GroupSnapshotCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<GroupSnapshotResponse>(find_data)?;
         Ok(())
     }
 }

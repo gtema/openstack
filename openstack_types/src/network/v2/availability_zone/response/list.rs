@@ -23,19 +23,19 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource type of the availability zone. The supported resource
     /// types are `network` and `router`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource: Option<String>,
 
     /// The state of the availability zone, which is either `available` or
     /// `unavailable`.
-    ///
+    #[serde(default)]
     #[structable(optional, status)]
     pub state: Option<String>,
 }

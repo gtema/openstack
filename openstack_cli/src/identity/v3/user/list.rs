@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,15 +34,13 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::user::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::response::list::UserResponse;
 use tracing::warn;
 
 /// Lists users.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/users`
-///
 #[derive(Args)]
 #[command(about = "List users")]
 pub struct UsersCommand {
@@ -70,12 +65,10 @@ struct QueryParameters {
     domain: DomainInput,
 
     /// Whether the identity provider is enabled or not
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// Filters the response by an identity provider ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     idp_id: Option<String>,
 
@@ -83,12 +76,10 @@ struct QueryParameters {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// The resource name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
@@ -108,27 +99,22 @@ struct QueryParameters {
     /// example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z` The
     /// example would return a list of users whose password expired before the
     /// timestamp `(2016-12-08T22:02:00Z).`
-    ///
     #[arg(help_heading = "Query parameters", long)]
     password_expires_at: Option<String>,
 
     /// Filters the response by a protocol ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     protocol_id: Option<String>,
 
     /// Sort direction. A valid value is asc (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts resources by attribute.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Filters the response by a unique ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     unique_id: Option<String>,
 }
@@ -151,88 +137,6 @@ struct DomainInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Users response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the default project for the user.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    default_project_id: Option<String>,
-
-    /// The resource description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// List of federated objects associated with a user. Each object in the
-    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol_id` and `unique_id` of the
-    /// protocol and user respectively. For example:
-    ///
-    /// ```text
-    /// "federated": [
-    ///   {
-    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-    ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
-    ///     ]
-    ///   }
-    /// ]
-    ///
-    /// ```
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    federated: Option<Value>,
-
-    /// The user ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the user. Available resource options are
-    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-    /// `ignore_lockout_failure_attempts`, `lock_password`,
-    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-    /// `ignore_user_inactivity`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    options: Option<Value>,
-
-    /// The date and time when the password expires. The time zone is UTC.
-    ///
-    /// This is a response object attribute; not valid for requests. A `null`
-    /// value indicates that the password never expires.
-    ///
-    /// **New in version 3.7**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    password_expires_at: Option<String>,
-}
 
 impl UsersCommand {
     /// Perform command action
@@ -332,8 +236,7 @@ impl UsersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<UserResponse>(data)?;
         Ok(())
     }
 }

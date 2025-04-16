@@ -29,19 +29,16 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filter results to only show zones that have a type matching the filter
-    ///
     #[builder(default, setter(into))]
     _type: Option<Cow<'a, str>>,
 
     /// Filter results to only show recordsets that have a record with data
     /// matching the filter
-    ///
     #[builder(default, setter(into))]
     data: Option<Cow<'a, str>>,
 
     /// Filter results to only show zones that have a description matching the
     /// filter
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
@@ -49,19 +46,16 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     market: Option<Cow<'a, str>>,
 
     /// Filter results to only show zones that have a name matching the filter
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
@@ -70,7 +64,6 @@ pub struct Request<'a> {
     /// multiple pairs of sort key and sort direction query parameters. If you
     /// omit the sort direction in a pair, the API uses the natural sorting
     /// direction of the server attribute that is provided as the sort_key.
-    ///
     #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
@@ -79,23 +72,19 @@ pub struct Request<'a> {
     /// If you omit the sort direction in a pair, the API uses the natural
     /// sorting direction of the server attribute that is provided as the
     /// sort_key.
-    ///
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
     /// Filter results to only show zones that have a status matching the
     /// filter
-    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// Filter results to only show zones that have a ttl matching the filter
-    ///
     #[builder(default)]
     ttl: Option<i32>,
 
     /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
-    ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,
 

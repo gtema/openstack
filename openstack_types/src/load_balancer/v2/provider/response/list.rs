@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProviderResponse {
     /// Provider description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Provider name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

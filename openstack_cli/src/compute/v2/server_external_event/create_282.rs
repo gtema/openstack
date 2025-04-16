@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.1/os-server-external-events` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_external_event::create_282;
+use openstack_types::compute::v2::server_external_event::response::create::ServerExternalEventResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates one or more external events, which the API dispatches to the host a
 /// server is assigned to. If the server is not currently assigned to a host
@@ -51,7 +47,6 @@ use structable_derive::StructTable;
 /// explain further what went wrong.
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Run Events (microversion = 2.82)")]
 pub struct ServerExternalEventCommand {
@@ -66,8 +61,7 @@ pub struct ServerExternalEventCommand {
     /// List of external events to process.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     events: Vec<Value>,
 }
 
@@ -78,15 +72,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ServerExternalEvent response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// List of external events to process.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    events: Value,
-}
 
 impl ServerExternalEventCommand {
     /// Perform command action
@@ -120,7 +105,7 @@ impl ServerExternalEventCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerExternalEventResponse>(data)?;
         Ok(())
     }
 }

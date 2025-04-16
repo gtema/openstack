@@ -20,29 +20,21 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
-use bytes::Bytes;
 use clap::ValueEnum;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::rebuild_20;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "Rebuild Server (rebuild Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -55,7 +47,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action to rebuild a server.
-    ///
     #[command(flatten)]
     rebuild: Rebuild,
 }
@@ -68,7 +59,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -87,18 +77,15 @@ enum OsDcfDiskConfig {
 #[derive(Args, Clone)]
 struct Rebuild {
     /// IPv4 address that should be used to access this server.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     access_ipv6: Option<String>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
@@ -111,18 +98,15 @@ struct Rebuild {
     /// specifying a new image will result in validating that the image is
     /// acceptable for the current compute host on which the server exists. If
     /// the new image is not valid, the server will go into `ERROR` status.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     image_ref: String,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The server name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -142,7 +126,6 @@ struct Rebuild {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
@@ -154,8 +137,7 @@ struct Rebuild {
     /// **Available until version 2.56**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     personality: Option<Vec<Value>>,
 
     /// Indicates whether the server is rebuilt with the preservation of the
@@ -166,14 +148,9 @@ struct Rebuild {
     /// This only works with baremetal servers provided by Ironic. Passing it
     /// to any other server instance results in a fault and will prevent the
     /// rebuild from happening.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     preserve_ephemeral: Option<bool>,
 }
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ServerCommand {
     /// Perform command action
@@ -244,11 +221,7 @@ impl ServerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

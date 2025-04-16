@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/system/groups/{group_id}/roles` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::system::group::role::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::system::group::role::response::list::RoleResponse;
 
 /// Lists all system role assignment a group has.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/system_group_roles`
-///
 #[derive(Args)]
 #[command(about = "List system role assignments for a group")]
 pub struct RolesCommand {
@@ -61,47 +56,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// group_id parameter for /v3/system/groups/{group_id}/roles/{role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
         value_name = "GROUP_ID"
     )]
     group_id: String,
-}
-/// Roles response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The role description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// The role ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the role. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    options: Option<Value>,
 }
 
 impl RolesCommand {
@@ -127,9 +87,8 @@ impl RolesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<RoleResponse>(data)?;
         Ok(())
     }
 }

@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v2.1/flavors/{flavor_id}/os-flavor-access` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::flavor::flavor_access::list;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::flavor::flavor_access::response::list::FlavorAccessResponse;
 
 /// Lists flavor access information.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List Flavor Access Information For Given Flavor")]
 pub struct FlavorAccessesCommand {
@@ -61,29 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_flavor_id",
         value_name = "FLAVOR_ID"
     )]
     flavor_id: String,
-}
-/// FlavorAccesses response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the flavor. While people often make this look like an int,
-    /// this is really a string.
-    ///
-    #[serde()]
-    #[structable()]
-    flavor_id: String,
-
-    /// The UUID of the tenant in a multi-tenancy cloud.
-    ///
-    #[serde()]
-    #[structable()]
-    tenant_id: String,
 }
 
 impl FlavorAccessesCommand {
@@ -110,8 +89,7 @@ impl FlavorAccessesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<FlavorAccessResponse>(data)?;
         Ok(())
     }
 }

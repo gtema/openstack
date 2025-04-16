@@ -31,25 +31,21 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `log` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Log<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Indicates whether this log object is enabled or disabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -59,12 +55,10 @@ pub struct Log<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `log` object.
-    ///
     #[builder(setter(into))]
     pub(crate) log: Log<'a>,
 
     /// id parameter for /v2.0/log/logs/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
