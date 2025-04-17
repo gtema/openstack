@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/images/{image_id}/locations` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::location::create;
+use openstack_types::image::v2::image::location::response::create::LocationResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Add location to an image which is in `queued` state. Accepts location url,
 /// validation_data in JSON body.
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 403, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Add Location")]
 pub struct LocationCommand {
@@ -71,7 +66,6 @@ pub struct LocationCommand {
     metadata: Vec<(String, Value)>,
 
     /// The URL of the new location to be added in the image.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     url: String,
 
@@ -80,7 +74,6 @@ pub struct LocationCommand {
     /// `do_secure_hash` is not passed then it is the responsibility of the
     /// consumer of location add API to provide the correct values in
     /// `validation_data`’
-    ///
     #[command(flatten)]
     validation_data: Option<ValidationData>,
 }
@@ -93,7 +86,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/locations API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
@@ -112,26 +104,6 @@ struct ValidationData {
 
     #[arg(help_heading = "Body parameters", long)]
     os_hash_value: String,
-}
-
-/// Location response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(pretty)]
-    metadata: Value,
-
-    #[serde()]
-    #[structable()]
-    url: String,
-
-    /// Values to be used to populate the corresponding image properties. If
-    /// the image status is not 'queued', values must exactly match those
-    /// already contained in the image properties.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    validation_data: Option<Value>,
 }
 
 impl LocationCommand {
@@ -178,7 +150,7 @@ impl LocationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LocationResponse>(data)?;
         Ok(())
     }
 }

@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/quotas` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::quota::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::quota::response::list::QuotaResponse;
 
 /// Lists quotas for projects with non-default quota values.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403
-///
 #[derive(Args)]
 #[command(about = "List quotas for projects with non-default quota values")]
 pub struct QuotasCommand {
@@ -78,31 +74,26 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -110,78 +101,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Quotas response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of floating IP addresses allowed for each project. A value
-    /// of `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    floatingip: Option<i32>,
-
-    /// The number of networks allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network: Option<i32>,
-
-    /// The number of ports allowed for each project. A value of `-1` means no
-    /// limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port: Option<i32>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The number of role-based access control (RBAC) policies for each
-    /// project. A value of `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    rbac_policy: Option<i32>,
-
-    /// The number of routers allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    router: Option<i32>,
-
-    /// The number of security groups allowed for each project. A value of `-1`
-    /// means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group: Option<i32>,
-
-    /// The number of security group rules allowed for each project. A value of
-    /// `-1` means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group_rule: Option<i32>,
-
-    /// The number of subnets allowed for each project. A value of `-1` means
-    /// no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet: Option<i32>,
-
-    /// The number of subnet pools allowed for each project. A value of `-1`
-    /// means no limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnetpool: Option<i32>,
-}
 
 impl QuotasCommand {
     /// Perform command action
@@ -223,8 +142,7 @@ impl QuotasCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<QuotaResponse>(data)?;
         Ok(())
     }
 }

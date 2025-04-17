@@ -27,13 +27,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// id parameter for /v2.0/security-groups/{security_group_id}/tags/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// security_group_id parameter for
     /// /v2.0/security-groups/{security_group_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     security_group_id: Cow<'a, str>,
 

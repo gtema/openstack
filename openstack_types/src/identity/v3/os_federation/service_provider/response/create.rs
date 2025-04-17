@@ -23,43 +23,42 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProviderResponse {
     /// The URL to authenticate against
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub auth_url: Option<String>,
 
     /// The description of the service provider
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Whether the service provider is enabled or not
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The service provider ID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The prefix of the RelayState SAML attribute
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub relay_state_prefix: Option<String>,
 
     /// The service provider's URL
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub sp_url: Option<String>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

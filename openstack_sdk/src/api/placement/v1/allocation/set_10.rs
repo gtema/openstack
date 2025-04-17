@@ -50,7 +50,7 @@ pub struct Allocations<'a> {
     pub(crate) resource_provider: ResourceProvider<'a>,
 
     #[serde()]
-    #[builder(private, setter(name = "_resources"))]
+    #[builder(private, setter(into, name = "_resources"))]
     pub(crate) resources: BTreeMap<Cow<'a, str>, i32>,
 }
 
@@ -75,7 +75,6 @@ pub struct Request<'a> {
     pub(crate) allocations: Vec<Allocations<'a>>,
 
     /// consumer_uuid parameter for /allocations/{consumer_uuid} API
-    ///
     #[builder(default, setter(into))]
     consumer_uuid: Cow<'a, str>,
 

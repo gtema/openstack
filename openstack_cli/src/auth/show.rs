@@ -13,14 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Show current auth information
+use chrono::prelude::*;
 use clap::Parser;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::{self, OutputProcessor};
+use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::types::identity::v3::AuthResponse;
@@ -39,40 +41,70 @@ use openstack_sdk::types::identity::v3::AuthResponse;
 #[derive(Debug, Parser)]
 pub struct ShowCommand {}
 
-impl StructTable for AuthResponse {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Field".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        if let Some(issued_at) = self.token.issued_at {
-            rows.push(Vec::from(["issued_at".to_string(), issued_at.to_string()]));
-        }
-        rows.push(Vec::from([
-            "expires_at".to_string(),
-            self.token.expires_at.to_string(),
-        ]));
-        rows.push(Vec::from([
-            "user".to_string(),
-            serde_json::to_string(&self.token.user).expect("Should never happen"),
-        ]));
-        if let Some(data) = &self.token.roles {
-            rows.push(Vec::from([
-                "roles".to_string(),
-                serde_json::to_string(&data).expect("Should never happen"),
-            ]));
-        }
-        if let Some(data) = &self.token.project {
-            rows.push(Vec::from([
-                "project".to_string(),
-                serde_json::to_string(&data).expect("Should never happen"),
-            ]));
-        }
-        if let Some(data) = &self.token.domain {
-            rows.push(Vec::from([
-                "domain".to_string(),
-                serde_json::to_string(&data).expect("Should never happen"),
-            ]));
-        }
-        (headers, rows)
+/// Authentication info
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize, StructTable)]
+pub struct Auth {
+    /// Auth roles
+    #[structable(optional, serialize)]
+    pub roles: Option<Value>,
+
+    /// Authenticated user
+    #[structable(serialize)]
+    pub user: Value,
+
+    /// Project scope information
+    #[structable(optional, serialize)]
+    pub project: Option<Value>,
+
+    /// Domain scope information
+    #[structable(optional, serialize)]
+    pub domain: Option<Value>,
+
+    /// System scope information
+    #[structable(optional, serialize)]
+    pub system: Option<Value>,
+
+    /// Issued at of the token
+    #[structable(optional, serialize)]
+    pub issued_at: Option<DateTime<Utc>>,
+
+    /// Token expiration time
+    #[structable(serialize)]
+    pub expires_at: DateTime<Utc>,
+}
+
+impl TryFrom<&AuthResponse> for Auth {
+    type Error = eyre::Report;
+    fn try_from(value: &AuthResponse) -> Result<Self, Self::Error> {
+        let roles: Option<Value> = if let Some(val) = &value.token.roles {
+            Some(serde_json::to_value(val)?)
+        } else {
+            None
+        };
+        let project: Option<Value> = if let Some(val) = &value.token.project {
+            Some(serde_json::to_value(val)?)
+        } else {
+            None
+        };
+        let domain: Option<Value> = if let Some(val) = &value.token.domain {
+            Some(serde_json::to_value(val)?)
+        } else {
+            None
+        };
+        let system: Option<Value> = if let Some(val) = &value.token.system {
+            Some(serde_json::to_value(val)?)
+        } else {
+            None
+        };
+        Ok(Self {
+            roles,
+            user: serde_json::to_value(&value.token.user)?,
+            project,
+            domain,
+            system,
+            issued_at: value.token.issued_at,
+            expires_at: value.token.expires_at,
+        })
     }
 }
 
@@ -90,7 +122,7 @@ impl ShowCommand {
         if let Some(auth_info) = client.get_auth_info() {
             match op.target {
                 output::OutputFor::Human => {
-                    op.output_human(&auth_info)?;
+                    op.output_human(&Auth::try_from(&auth_info)?)?;
                 }
                 _ => {
                     op.output_machine(serde_json::to_value(auth_info)?)?;

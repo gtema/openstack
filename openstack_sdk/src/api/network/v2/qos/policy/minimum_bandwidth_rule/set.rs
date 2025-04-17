@@ -43,23 +43,20 @@ pub enum Direction {
 }
 
 /// A `minimum_bandwidth_rule` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct MinimumBandwidthRule {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) direction: Option<Direction>,
 
     /// The minimum KBPS (kilobits per second) value which should be available
     /// for port.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_kbps: Option<i32>,
 }
 
@@ -67,19 +64,16 @@ pub struct MinimumBandwidthRule {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `minimum_bandwidth_rule` object.
-    ///
     #[builder(setter(into))]
     pub(crate) minimum_bandwidth_rule: MinimumBandwidthRule,
 
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

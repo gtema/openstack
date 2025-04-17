@@ -16,8 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the PUT `subnetpools/{id}` operation
 
-use crate::common::deser_bool_str_opt;
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -25,20 +23,19 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SubnetpoolResponse {
     /// An address scope to assign to the subnet pool.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub address_scope_id: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The size of the prefix to allocate when the `cidr` or `prefixlen`
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub default_prefixlen: Option<i64>,
 
@@ -48,49 +45,45 @@ pub struct SubnetpoolResponse {
     /// `default_quota` is measured in units of /32. For IPv6 subnet pools,
     /// `default_quota` is measured units of /64. All projects that use the
     /// subnet pool have the same prefix quota applied.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub default_quota: Option<i64>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the subnet pool.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub ip_version: Option<i32>,
 
     /// The subnetpool is default pool or not.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub is_default: Option<bool>,
 
     /// The maximum prefix size that can be allocated from the subnet pool. For
     /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
     /// `128`.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub max_prefixlen: Option<i64>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub min_prefixlen: Option<i64>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
@@ -98,34 +91,33 @@ pub struct SubnetpoolResponse {
     /// adjacent prefixes and treats them as a single prefix. Each subnet
     /// prefix must be unique among all subnet prefixes in all subnet pools
     /// that are associated with the address scope.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub prefixes: Option<Vec<String>>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub shared: Option<bool>,
 
     /// The list of tags on the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }

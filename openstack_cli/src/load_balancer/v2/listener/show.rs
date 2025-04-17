@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/listeners/{listener_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::listener::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::listener::response::get::ListenerResponse;
 
 /// Shows the details of a listener.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 /// response code.
 ///
 /// This operation does not require a request body.
-///
 #[derive(Args)]
 #[command(about = "Show Listener details")]
 pub struct ListenerCommand {
@@ -65,282 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// listener_id parameter for /v2/lbaas/listeners/{listener_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Listener response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// A list of IPv4, IPv6 or mix of both CIDRs.
-    ///
-    /// **New in version 2.12**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    allowed_cidrs: Option<Value>,
-
-    /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
-    ///
-    /// **New in version 2.20**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    alpn_protocols: Option<Value>,
-
-    /// The TLS client authentication mode. One of the options `NONE`,
-    /// `OPTIONAL` or `MANDATORY`.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    client_authentication: Option<String>,
-
-    /// The ref of the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PEM format client CA certificate bundle for
-    /// `TERMINATED_HTTPS` listeners.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    client_ca_tls_container_ref: Option<String>,
-
-    /// The URI of the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PEM format CA revocation list file for
-    /// `TERMINATED_HTTPS` listeners.
-    ///
-    /// **New in version 2.8**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    client_crl_container_ref: Option<String>,
-
-    /// The maximum number of connections permitted for this listener. Default
-    /// value is -1 which represents infinite connections or a default value
-    /// defined by the provider driver.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    connection_limit: Option<i32>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The ID of the pool used by the listener if no L7 policies match. The
-    /// pool has some restrictions. See
-    /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_pool_id: Option<String>,
-
-    /// The URI of the
-    /// [key manager service](https://docs.openstack.org/castellan/latest/)
-    /// secret containing a PKCS12 format certificate/key bundle for
-    /// `TERMINATED_HTTPS` listeners. DEPRECATED: A secret container of type
-    /// “certificate” containing the certificate and key for `TERMINATED_HTTPS`
-    /// listeners.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_tls_container_ref: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Defines whether the `includeSubDomains` directive should be added to
-    /// the Strict-Transport-Security HTTP response header.
-    ///
-    /// **New in version 2.27**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hsts_include_subdomains: Option<bool>,
-
-    /// The value of the `max_age` directive for the Strict-Transport-Security
-    /// HTTP response header.
-    ///
-    /// **New in version 2.27**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hsts_max_age: Option<i32>,
-
-    /// Defines whether the `preload` directive should be added to the
-    /// Strict-Transport-Security HTTP response header.
-    ///
-    /// **New in version 2.27**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    hsts_preload: Option<bool>,
-
-    /// The ID of the listener.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// A dictionary of optional headers to insert into the request before it
-    /// is sent to the backend `member`. See
-    /// [Supported HTTP Header Insertions](#header-insertions). Both keys and
-    /// values are always specified as strings.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    insert_headers: Option<Value>,
-
-    /// A list of L7 policy IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    l7policies: Option<Value>,
-
-    /// A list of load balancer IDs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    loadbalancers: Option<Value>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`,
-    /// `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
-
-    /// The protocol port number for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol_port: Option<i32>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    /// A list of URIs to the
-    /// [key manager service](https://docs.openstack.org/barbican/latest/)
-    /// secrets containing PKCS12 format certificate/key bundles for
-    /// `TERMINATED_HTTPS` listeners. (DEPRECATED) Secret containers of type
-    /// “certificate” containing the certificates and keys for
-    /// `TERMINATED_HTTPS` listeners.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    sni_container_refs: Option<Value>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// Frontend client inactivity timeout in milliseconds. Default: 50000.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    timeout_client_data: Option<i32>,
-
-    /// Backend member connection timeout in milliseconds. Default: 5000.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    timeout_member_connect: Option<i32>,
-
-    /// Backend member inactivity timeout in milliseconds. Default: 50000.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    timeout_member_data: Option<i32>,
-
-    /// Time, in milliseconds, to wait for additional TCP packets for content
-    /// inspection. Default: 0.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    timeout_tcp_inspect: Option<i32>,
-
-    /// List of ciphers in OpenSSL format (colon-separated). See
-    /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
-    ///
-    /// **New in version 2.15**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tls_ciphers: Option<String>,
-
-    /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
-    /// TLSv1.1, TLSv1.2, TLSv1.3
-    ///
-    /// **New in version 2.17**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tls_versions: Option<Value>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl ListenerCommand {
@@ -363,7 +88,7 @@ impl ListenerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<ListenerResponse>(find_data)?;
         Ok(())
     }
 }

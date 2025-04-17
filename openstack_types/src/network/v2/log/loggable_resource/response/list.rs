@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoggableResourceResponse {
     /// The resource log type such as ‘security_group’.
-    ///
     #[serde(rename = "type")]
     #[structable(title = "type", wide)]
     pub _type: String,

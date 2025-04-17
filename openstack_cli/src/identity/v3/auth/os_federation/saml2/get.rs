@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/auth/OS-FEDERATION/saml2` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::get;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::identity::v3::auth::os_federation::saml2::response::get::Saml2Response;
 
 /// GET operation on /v3/auth/OS-FEDERATION/saml2
-///
 #[derive(Args)]
 pub struct Saml2Command {
     /// Request Query parameters
@@ -56,23 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
-}
 
 impl Saml2Command {
     /// Perform command action
@@ -97,7 +75,7 @@ impl Saml2Command {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<Saml2Response>(data)?;
         Ok(())
     }
 }

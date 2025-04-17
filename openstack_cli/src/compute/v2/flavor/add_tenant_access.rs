@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/flavors/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::flavor::add_tenant_access;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::flavor::response::add_tenant_access::FlavorResponse;
 
 /// Adds flavor access to a tenant and flavor.
 ///
@@ -44,7 +40,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Add Flavor Access To Tenant (addTenantAccess Action)")]
 pub struct FlavorCommand {
@@ -57,7 +52,6 @@ pub struct FlavorCommand {
     path: PathParameters,
 
     /// The action.
-    ///
     #[command(flatten)]
     add_tenant_access: AddTenantAccess,
 }
@@ -70,7 +64,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,19 +75,8 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct AddTenantAccess {
     /// The UUID of the tenant in a multi-tenancy cloud.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     tenant: String,
-}
-
-/// Flavor response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    flavor_access: Value,
 }
 
 impl FlavorCommand {
@@ -128,7 +110,7 @@ impl FlavorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<FlavorResponse>(data)?;
         Ok(())
     }
 }

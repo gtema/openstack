@@ -37,11 +37,11 @@ pub struct ImageCommand {
 #[derive(Subcommand)]
 pub enum ImageCommands {
     /// Image commands
-    Image(image::ImageCommand),
+    Image(Box<image::ImageCommand>),
     /// Metadef commands
-    Metadef(metadef::MetadefCommand),
+    Metadef(Box<metadef::MetadefCommand>),
     /// Schema commands
-    Schema(schema::SchemaCommand),
+    Schema(Box<schema::SchemaCommand>),
 }
 
 impl ImageCommand {

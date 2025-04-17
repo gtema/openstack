@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/volume-transfers/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume_transfer::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::volume_transfer::response::get::VolumeTransferResponse;
 
 /// Return data about active transfers.
-///
 #[derive(Args)]
 pub struct VolumeTransferCommand {
     /// Request Query parameters
@@ -58,91 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/volume-transfers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// VolumeTransfer response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Records if this transfer was accepted or not.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    accepted: Option<bool>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Records the destination project_id after volume transfer.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    destination_project_id: Option<String>,
-
-    /// The UUID of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links for the message.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Transfer volume without snapshots. Defaults to False if not specified.
-    ///
-    /// **New in version 3.55**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    no_snapshots: Option<bool>,
-
-    /// Records the source project_id before volume transfer.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_project_id: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
 }
 
 impl VolumeTransferCommand {
@@ -165,7 +81,7 @@ impl VolumeTransferCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<VolumeTransferResponse>(find_data)?;
         Ok(())
     }
 }

@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AutoAllocatedTopologyResponse {
     /// The ID of the network for the auto allocated topology.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the project owning the auto allocated topology.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

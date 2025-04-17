@@ -29,12 +29,10 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// group_type_id parameter for
     /// /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[builder(default, setter(into))]
     group_type_id: Cow<'a, str>,
 
     /// id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

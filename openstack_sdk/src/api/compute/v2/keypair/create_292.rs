@@ -40,7 +40,6 @@ pub enum Type {
 }
 
 /// Keypair object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Keypair<'a> {
@@ -51,14 +50,12 @@ pub struct Keypair<'a> {
     /// Since microversion 2.92, allowed characters are ASCII letters
     /// `[a-zA-Z]`, digits `[0-9]` and the following special characters:
     /// `[@._- ]`.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// The public ssh key to import. Was optional before microversion 2.92 :
     /// if you were omitting this value, a keypair was generated for you.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) public_key: Cow<'a, str>,
@@ -66,7 +63,6 @@ pub struct Keypair<'a> {
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
-    ///
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) _type: Option<Type>,
@@ -75,7 +71,6 @@ pub struct Keypair<'a> {
     /// keys for other users than themselves.
     ///
     /// **New in version 2.10**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) user_id: Option<Cow<'a, str>>,
@@ -85,7 +80,6 @@ pub struct Keypair<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Keypair object
-    ///
     #[builder(setter(into))]
     pub(crate) keypair: Keypair<'a>,
 

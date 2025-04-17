@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users/{user_id}/groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,14 +33,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::group::list;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::group::response::list::GroupResponse;
 use tracing::warn;
 
 /// Lists groups to which a user belongs.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/user_groups`
-///
 #[derive(Args)]
 #[command(about = "List groups to which a user belongs")]
 pub struct GroupsCommand {
@@ -81,42 +77,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// Groups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain of the group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The date and time when the group membership expires. A `null` value
-    /// indicates that the membership never expires.
-    ///
-    /// **New in version 3.14**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    membership_expires_at: Option<String>,
-
-    /// The name of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl GroupsCommand {
@@ -187,8 +147,7 @@ impl GroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<GroupResponse>(data)?;
         Ok(())
     }
 }

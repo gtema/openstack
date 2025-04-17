@@ -29,27 +29,22 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The floatingip address for this PTR record.
-    ///
     #[builder(default, setter(into))]
     pub(crate) address: Option<Cow<'a, str>>,
 
     /// Description for this PTR record
-    ///
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Domain name for this PTR record
-    ///
     #[builder(default, setter(into))]
     pub(crate) ptrdname: Option<Option<Cow<'a, str>>>,
 
     /// Time to live for this PTR record
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ttl: Option<i32>,
 
     /// fip_key parameter for /v2/reverse/floatingips/{fip_key} API
-    ///
     #[builder(default, setter(into))]
     fip_key: Cow<'a, str>,
 

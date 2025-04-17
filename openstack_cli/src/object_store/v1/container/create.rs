@@ -25,10 +25,8 @@ use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
-use structable_derive::StructTable;
+use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::{
     AsyncOpenStack,

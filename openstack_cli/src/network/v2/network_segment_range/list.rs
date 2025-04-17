@@ -20,27 +20,20 @@
 //! Wraps invoking of the `v2.0/network-segment-ranges` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_segment_range::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use openstack_sdk::types::IntString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::network_segment_range::response::list::NetworkSegmentRangeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct NetworkSegmentRangesCommand {
     /// Request Query parameters
@@ -60,12 +53,10 @@ pub struct NetworkSegmentRangesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -73,76 +64,62 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_type query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["geneve","gre","vlan","vxlan"])]
     network_type: Option<String>,
 
     /// not-tags query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// physical_network query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     physical_network: Option<String>,
 
     /// project_id query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     project_id: Option<String>,
 
     /// revision_number query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// tags query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/network-segment-ranges API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 }
@@ -150,73 +127,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// NetworkSegmentRanges response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    available: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde(rename = "default")]
-    #[structable(optional, title = "default", wide)]
-    _default: Option<BoolString>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    maximum: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    minimum: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    network_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    physical_network: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    shared: Option<BoolString>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    used: Option<String>,
-}
 
 impl NetworkSegmentRangesCommand {
     /// Perform command action
@@ -291,8 +201,7 @@ impl NetworkSegmentRangesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<NetworkSegmentRangeResponse>(data)?;
         Ok(())
     }
 }

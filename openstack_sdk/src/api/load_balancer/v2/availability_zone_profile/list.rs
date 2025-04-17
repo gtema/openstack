@@ -35,12 +35,10 @@ pub struct Request<'a> {
     id: Option<Cow<'a, str>>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
@@ -48,7 +46,6 @@ pub struct Request<'a> {
     name: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 

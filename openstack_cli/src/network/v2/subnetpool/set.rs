@@ -20,32 +20,25 @@
 //! Wraps invoking of the `v2.0/subnetpools/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::subnetpool::find;
 use openstack_sdk::api::network::v2::subnetpool::set;
-use openstack_sdk::types::BoolString;
-use openstack_sdk::types::IntString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::subnetpool::response::set::SubnetpoolResponse;
 
 /// Updates a subnet pool.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404, 412
-///
 #[derive(Args)]
 #[command(about = "Update subnet pool")]
 pub struct SubnetpoolCommand {
@@ -58,7 +51,6 @@ pub struct SubnetpoolCommand {
     path: PathParameters,
 
     /// A `subnetpool` object.
-    ///
     #[command(flatten)]
     subnetpool: Subnetpool,
 }
@@ -71,7 +63,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -83,14 +74,12 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Subnetpool {
     /// An address scope to assign to the subnet pool.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     address_scope_id: Option<String>,
 
     /// The size of the prefix to allocate when the `cidr` or `prefixlen`
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     default_prefixlen: Option<i32>,
 
@@ -100,36 +89,30 @@ struct Subnetpool {
     /// `default_quota` is measured in units of /32. For IPv6 subnet pools,
     /// `default_quota` is measured units of /64. All projects that use the
     /// subnet pool have the same prefix quota applied.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     default_quota: Option<i32>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The subnetpool is default pool or not.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     is_default: Option<bool>,
 
     /// The maximum prefix size that can be allocated from the subnet pool. For
     /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
     /// `128`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_prefixlen: Option<i32>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     min_prefixlen: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -139,129 +122,8 @@ struct Subnetpool {
     /// that are associated with the address scope.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     prefixes: Option<Vec<String>>,
-}
-
-/// Subnetpool response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An address scope to assign to the subnet pool.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    address_scope_id: Option<String>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The size of the prefix to allocate when the `cidr` or `prefixlen`
-    /// attributes are omitted when you create the subnet. Default is
-    /// `min_prefixlen`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_prefixlen: Option<IntString>,
-
-    /// A per-project quota on the prefix space that can be allocated from the
-    /// subnet pool for project subnets. Default is no quota is enforced on
-    /// allocations from the subnet pool. For IPv4 subnet pools,
-    /// `default_quota` is measured in units of /32. For IPv6 subnet pools,
-    /// `default_quota` is measured units of /64. All projects that use the
-    /// subnet pool have the same prefix quota applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    default_quota: Option<IntString>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the subnet pool.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ip_version: Option<i32>,
-
-    /// The subnetpool is default pool or not.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_default: Option<BoolString>,
-
-    /// The maximum prefix size that can be allocated from the subnet pool. For
-    /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
-    /// `128`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_prefixlen: Option<IntString>,
-
-    /// The smallest prefix that can be allocated from a subnet pool. For IPv4
-    /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    min_prefixlen: Option<IntString>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A list of subnet prefixes to assign to the subnet pool. The API merges
-    /// adjacent prefixes and treats them as a single prefix. Each subnet
-    /// prefix must be unique among all subnet prefixes in all subnet pools
-    /// that are associated with the address scope.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    prefixes: Option<Value>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// Indicates whether this resource is shared across all projects. By
-    /// default, only administrative users can change this value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared: Option<BoolString>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl SubnetpoolCommand {
@@ -340,7 +202,7 @@ impl SubnetpoolCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<SubnetpoolResponse>(data)?;
         Ok(())
     }
 }

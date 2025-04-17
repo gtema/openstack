@@ -58,69 +58,56 @@ pub enum Status {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Datetime when this resource was created
-    ///
     #[builder(default, setter(into))]
     pub(crate) created_at: Option<Cow<'a, str>>,
 
     /// Datetime when this resource would be subject to removal
-    ///
     #[builder(default, setter(into))]
     pub(crate) expires_at: Option<Option<Cow<'a, str>>>,
 
     /// An identifier for the task
-    ///
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// Image associated with the task
-    ///
     #[builder(default, setter(into))]
     pub(crate) image_id: Option<Cow<'a, str>>,
 
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
-    ///
-    #[builder(default, private, setter(name = "_input"))]
+    #[builder(default, private, setter(into, name = "_input"))]
     pub(crate) input: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
-    ///
     #[builder(default, setter(into))]
     pub(crate) message: Option<Cow<'a, str>>,
 
     /// An identifier for the owner of this task
-    ///
     #[builder(default, setter(into))]
     pub(crate) owner: Option<Cow<'a, str>>,
 
     /// Human-readable informative request-id
-    ///
     #[builder(default, setter(into))]
     pub(crate) request_id: Option<Cow<'a, str>>,
 
     /// The result of current task, JSON blob
-    ///
-    #[builder(default, private, setter(name = "_result"))]
+    #[builder(default, private, setter(into, name = "_result"))]
     pub(crate) result: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// The current status of this task
-    ///
     #[builder(default)]
     pub(crate) status: Option<Status>,
 
     /// The type of task represented by this content.
-    ///
     #[builder(default)]
     pub(crate) _type: Option<Type>,
 
     /// Datetime when this resource was updated
-    ///
     #[builder(default, setter(into))]
     pub(crate) updated_at: Option<Cow<'a, str>>,
 
     /// User associated with the task
-    ///
     #[builder(default, setter(into))]
     pub(crate) user_id: Option<Cow<'a, str>>,
 
@@ -137,7 +124,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
-    ///
     pub fn input<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -153,7 +139,6 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// The result of current task, JSON blob
-    ///
     pub fn result<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

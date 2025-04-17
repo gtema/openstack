@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ModelResponse {
     /// A short description of the enforcement model used
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The name of the enforcement model
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

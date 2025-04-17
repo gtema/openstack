@@ -17,7 +17,7 @@
 //! Response type for the GET `snapshots` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Snapshot response representation
@@ -26,7 +26,7 @@ pub struct SnapshotResponse {
     /// The total count of requested resource before pagination is applied.
     ///
     /// **New in version 3.45**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub count: Option<i32>,
 
@@ -44,37 +44,30 @@ pub struct SnapshotResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
     #[structable()]
     pub created_at: String,
 
     /// A description for the snapshot.
-    ///
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The snapshot UUID.
-    ///
     #[structable()]
     pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot, if any.
-    ///
     #[structable(serialize, wide)]
-    pub metadata: HashMap<String, String>,
+    pub metadata: BTreeMap<String, String>,
 
     /// The name of the object.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[structable(wide)]
     pub size: i64,
 
     /// The status for the snapshot.
-    ///
     #[structable(serialize)]
     pub status: Status,
 
@@ -95,12 +88,10 @@ pub struct SnapshotResponse {
     ///
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
-    ///
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// If the snapshot was created from a volume, the volume ID.
-    ///
     #[structable(wide)]
     pub volume_id: String,
 }
@@ -142,4 +133,22 @@ pub enum Status {
     // Unmanaging
     #[serde(rename = "unmanaging")]
     Unmanaging,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "available" => Ok(Self::Available),
+            "backing-up" => Ok(Self::BackingUp),
+            "creating" => Ok(Self::Creating),
+            "deleted" => Ok(Self::Deleted),
+            "deleting" => Ok(Self::Deleting),
+            "error" => Ok(Self::Error),
+            "error_deleting" => Ok(Self::ErrorDeleting),
+            "restoring" => Ok(Self::Restoring),
+            "unmanaging" => Ok(Self::Unmanaging),
+            _ => Err(()),
+        }
+    }
 }

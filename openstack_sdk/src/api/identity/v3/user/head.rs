@@ -31,17 +31,14 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID of the domain.
-    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
     /// Whether the identity provider is enabled or not
-    ///
     #[builder(default)]
     enabled: Option<bool>,
 
     /// Filters the response by an identity provider ID.
-    ///
     #[builder(default, setter(into))]
     idp_id: Option<Cow<'a, str>>,
 
@@ -49,12 +46,10 @@ pub struct Request<'a> {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// The resource name.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
@@ -74,27 +69,22 @@ pub struct Request<'a> {
     /// example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z` The
     /// example would return a list of users whose password expired before the
     /// timestamp `(2016-12-08T22:02:00Z).`
-    ///
     #[builder(default, setter(into))]
     password_expires_at: Option<Cow<'a, str>>,
 
     /// Filters the response by a protocol ID.
-    ///
     #[builder(default, setter(into))]
     protocol_id: Option<Cow<'a, str>>,
 
     /// Sort direction. A valid value is asc (ascending) or desc (descending).
-    ///
     #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
     /// Sorts resources by attribute.
-    ///
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
     /// Filters the response by a unique ID.
-    ///
     #[builder(default, setter(into))]
     unique_id: Option<Cow<'a, str>>,
 

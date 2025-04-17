@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v1/clustertemplates/{clustertemplate_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::delete;
-use structable_derive::StructTable;
 
 /// Delete a cluster template.
-///
 #[derive(Args)]
 #[command(about = "Delete a cluster template")]
 pub struct ClustertemplateCommand {
@@ -60,7 +53,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// clustertemplate_id parameter for
     /// /v1/clustertemplates/{clustertemplate_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -68,9 +60,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Clustertemplate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ClustertemplateCommand {
     /// Perform command action
@@ -94,8 +83,7 @@ impl ClustertemplateCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

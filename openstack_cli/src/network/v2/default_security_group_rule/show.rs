@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.0/default-security-group-rules/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::default_security_group_rule::get;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::default_security_group_rule::response::get::DefaultSecurityGroupRuleResponse;
 
 /// Shows detailed information for a security group default rule.
 ///
@@ -47,7 +43,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show security group default rule")]
 pub struct DefaultSecurityGroupRuleCommand {
@@ -68,112 +63,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/default-security-group-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// DefaultSecurityGroupRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Ingress or egress, which is the direction in which the security group
-    /// rule is applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
-    /// ingress or egress rules.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ethertype: Option<String>,
-
-    /// The ID of the security group default rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The maximum port number in the range that is matched by the security
-    /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
-    /// value must be greater than or equal to the `port_range_min` attribute
-    /// value. If the protocol is ICMP, this value must be an ICMP code.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_range_max: Option<i32>,
-
-    /// The minimum port number in the range that is matched by the security
-    /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
-    /// value must be less than or equal to the `port_range_max` attribute
-    /// value. If the protocol is ICMP, this value must be an ICMP type.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_range_min: Option<i32>,
-
-    /// The IP protocol can be represented by a string, an integer, or `null`.
-    /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
-    /// or `33`, `egp` or `8`, `esp` or `50`, `gre` or `47`, `icmp` or `1`,
-    /// `icmpv6` or `58`, `igmp` or `2`, `ipip` or `4`, `ipv6-encap` or `41`,
-    /// `ipv6-frag` or `44`, `ipv6-icmp` or `58`, `ipv6-nonxt` or `59`,
-    /// `ipv6-opts` or `60`, `ipv6-route` or `43`, `ospf` or `89`, `pgm` or
-    /// `113`, `rsvp` or `46`, `sctp` or `132`, `tcp` or `6`, `udp` or `17`,
-    /// `udplite` or `136`, `vrrp` or `112`. Additionally, any integer value
-    /// between [0-255] is also valid. The string `any` (or integer `0`) means
-    /// `all` IP protocols. See the constants in `neutron_lib.constants` for
-    /// the most up-to-date list of supported strings.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
-
-    /// The remote address group UUID to associate with this security group
-    /// rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    remote_address_group_id: Option<String>,
-
-    /// The remote group UUID to associate with this security group rule. You
-    /// can specify either the `remote_group_id` or `remote_ip_prefix`
-    /// attribute in the request body.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    remote_group_id: Option<String>,
-
-    /// The remote IP prefix that is matched by this security group rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    remote_ip_prefix: Option<String>,
-
-    /// Whether this security group rule template should be used in default
-    /// security group created automatically for each new project. Default
-    /// value is `False`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    used_in_default_sg: Option<BoolString>,
-
-    /// Whether this security group rule template should be used in custom
-    /// security groups created by project user. Default value is `True`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    used_in_non_default_sg: Option<BoolString>,
 }
 
 impl DefaultSecurityGroupRuleCommand {
@@ -200,7 +95,7 @@ impl DefaultSecurityGroupRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<DefaultSecurityGroupRuleResponse>(data)?;
         Ok(())
     }
 }

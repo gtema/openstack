@@ -33,21 +33,18 @@ pub struct Request<'a> {
     /// region_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 
     /// service_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     service_id: Cow<'a, str>,
 

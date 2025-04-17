@@ -22,15 +22,16 @@ use structable::{StructTable, StructTableOptions};
 /// FlavorProfile response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorProfileResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub flavorprofile_links: Option<Vec<FlavorprofileLinks>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub flavorprofiles: Option<Vec<Flavorprofiles>>,
 }
 
 /// Defines which attributes are to be shown on any response.
-///
 /// `Flavorprofiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Flavorprofiles {
@@ -41,7 +42,6 @@ pub struct Flavorprofiles {
 }
 
 /// Base type for complex types
-///
 /// `FlavorprofileLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FlavorprofileLinks {

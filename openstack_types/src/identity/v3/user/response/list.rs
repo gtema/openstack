@@ -23,23 +23,23 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct UserResponse {
     /// The ID of the default project for the user.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub default_project_id: Option<String>,
 
     /// The resource description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
@@ -59,17 +59,17 @@ pub struct UserResponse {
     /// ]
     ///
     /// ```
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub federated: Option<Vec<Federated>>,
 
     /// The user ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
@@ -78,7 +78,7 @@ pub struct UserResponse {
     /// `ignore_lockout_failure_attempts`, `lock_password`,
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 
@@ -88,7 +88,7 @@ pub struct UserResponse {
     /// value indicates that the password never expires.
     ///
     /// **New in version 3.7**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub password_expires_at: Option<String>,
 }
@@ -108,7 +108,6 @@ pub struct Federated {
 }
 
 /// The links for the `user` resource.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -122,7 +121,6 @@ pub struct Links {
 /// `ignore_lockout_failure_attempts`, `lock_password`,
 /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
 /// `ignore_user_inactivity`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

@@ -33,7 +33,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// uuid parameter for /resource_providers/{uuid}/aggregates API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

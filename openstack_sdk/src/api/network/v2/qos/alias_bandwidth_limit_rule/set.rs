@@ -40,11 +40,11 @@ pub struct AliasBandwidthLimitRule {
     pub(crate) direction: Option<Direction>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_burst_kbps: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_kbps: Option<i32>,
 }
 
@@ -55,7 +55,6 @@ pub struct Request<'a> {
     pub(crate) alias_bandwidth_limit_rule: AliasBandwidthLimitRule,
 
     /// id parameter for /v2.0/qos/alias-bandwidth-limit-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

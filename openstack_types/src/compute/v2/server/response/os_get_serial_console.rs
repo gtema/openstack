@@ -23,13 +23,11 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The type of the remote console
-    ///
     #[serde(rename = "type")]
     #[structable(serialize, title = "type")]
     pub _type: Type,
 
     /// The URL used to connect to the console.
-    ///
     #[structable()]
     pub url: String,
 }
@@ -51,4 +49,17 @@ pub enum Type {
     // SpiceHtml5
     #[serde(rename = "spice-html5")]
     SpiceHtml5,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "novnc" => Ok(Self::Novnc),
+            "rdp-html5" => Ok(Self::RdpHtml5),
+            "serial" => Ok(Self::Serial),
+            "spice-html5" => Ok(Self::SpiceHtml5),
+            _ => Err(()),
+        }
+    }
 }

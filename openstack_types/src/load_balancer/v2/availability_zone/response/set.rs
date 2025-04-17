@@ -22,15 +22,19 @@ use structable::{StructTable, StructTableOptions};
 /// AvailabilityZone response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone_profile_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

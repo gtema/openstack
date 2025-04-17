@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) os_migrate_volume_completion: OsMigrateVolumeCompletion<'a>,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

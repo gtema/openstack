@@ -31,7 +31,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// zone_import_id parameter for /v2/zones/tasks/imports/{zone_import_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     zone_import_id: Cow<'a, str>,
 

@@ -40,32 +40,27 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `vpnservice` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Vpnservice<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The ID of the flavor.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Option<Cow<'a, str>>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -78,13 +73,11 @@ pub struct Vpnservice<'a> {
     /// available IP from that subnet to the port. If you specify both a subnet
     /// UUID and an IP address, OpenStack Networking tries to allocate the
     /// address to the port.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -94,7 +87,6 @@ pub struct Vpnservice<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `vpnservice` object.
-    ///
     #[builder(setter(into))]
     pub(crate) vpnservice: Vpnservice<'a>,
 

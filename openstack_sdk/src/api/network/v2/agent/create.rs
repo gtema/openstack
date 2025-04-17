@@ -26,7 +26,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_agent"))]
+    #[builder(private, setter(into, name = "_agent"))]
     pub(crate) agent: BTreeMap<Cow<'a, str>, Value>,
 
     #[builder(setter(name = "_headers"), default, private)]

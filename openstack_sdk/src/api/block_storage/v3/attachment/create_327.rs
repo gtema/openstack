@@ -91,24 +91,20 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// An attachment object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Attachment<'a> {
     /// The `connector` object.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_connector"))]
+    #[builder(default, private, setter(into, name = "_connector"))]
     pub(crate) connector: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) instance_uuid: Option<Cow<'a, str>>,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_uuid: Cow<'a, str>,
@@ -116,7 +112,6 @@ pub struct Attachment<'a> {
 
 impl<'a> AttachmentBuilder<'a> {
     /// The `connector` object.
-    ///
     pub fn connector<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -136,7 +131,6 @@ impl<'a> AttachmentBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An attachment object.
-    ///
     #[builder(setter(into))]
     pub(crate) attachment: Attachment<'a>,
 

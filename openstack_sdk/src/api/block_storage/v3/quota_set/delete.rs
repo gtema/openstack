@@ -31,7 +31,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v3/os-quota-sets/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

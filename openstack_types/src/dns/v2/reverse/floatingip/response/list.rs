@@ -23,37 +23,37 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipResponse {
     /// current action in progress on the resource
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub action: Option<Action>,
 
     /// The floatingip address for this PTR record.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub address: Option<String>,
 
     /// Description for this PTR record
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// ID for PTR record in the format of <region>:\<floatingip_id>
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Domain name for this PTR record
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ptrdname: Option<String>,
 
     /// The status of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Time to live for this PTR record
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ttl: Option<i32>,
 }
@@ -81,6 +81,20 @@ pub enum Status {
     Success,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ACTIVE" => Ok(Self::Active),
+            "DELETED" => Ok(Self::Deleted),
+            "ERROR" => Ok(Self::Error),
+            "PENDING" => Ok(Self::Pending),
+            "SUCCESS" => Ok(Self::Success),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Action {
     // Delete
@@ -96,10 +110,21 @@ pub enum Action {
     Update,
 }
 
+impl std::str::FromStr for Action {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "DELETE" => Ok(Self::Delete),
+            "NONE" => Ok(Self::None),
+            "UPDATE" => Ok(Self::Update),
+            _ => Err(()),
+        }
+    }
+}
+
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

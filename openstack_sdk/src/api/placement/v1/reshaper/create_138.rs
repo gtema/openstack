@@ -38,31 +38,31 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct InventoriesItem {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) allocation_ratio: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_unit: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_unit: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) reserved: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) resource_provider_generation: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) step_size: Option<i32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) total: i32,
 }
 
@@ -70,22 +70,19 @@ pub struct InventoriesItem {
 #[builder(setter(strip_option))]
 pub struct InventoriesItemStruct<'a> {
     /// A dictionary of inventories keyed by resource classes.
-    ///
     #[serde()]
-    #[builder(private, setter(name = "_inventories"))]
+    #[builder(private, setter(into, name = "_inventories"))]
     pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) resource_provider_generation: i32,
 }
 
 impl<'a> InventoriesItemStructBuilder<'a> {
     /// A dictionary of inventories keyed by resource classes.
-    ///
     pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -103,19 +100,17 @@ impl<'a> InventoriesItemStructBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct AllocationsItem<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) generation: Option<i32>,
 
     /// A dictionary of resource records keyed by resource class name.
-    ///
     #[serde()]
-    #[builder(private, setter(name = "_resources"))]
+    #[builder(private, setter(into, name = "_resources"))]
     pub(crate) resources: BTreeMap<Cow<'a, str>, i32>,
 }
 
 impl<'a> AllocationsItemBuilder<'a> {
     /// A dictionary of resource records keyed by resource class name.
-    ///
     pub fn resources<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -135,14 +130,12 @@ pub struct AllocationsItemStruct<'a> {
     /// A dictionary of resource allocations keyed by resource provider uuid.
     /// If this is an empty object, allocations for this consumer will be
     /// removed.
-    ///
     #[serde()]
-    #[builder(private, setter(name = "_allocations"))]
+    #[builder(private, setter(into, name = "_allocations"))]
     pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
     /// The generation of the consumer. Should be set to null when indicating
     /// that the caller expects the consumer does not yet exist.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) consumer_generation: Option<i32>,
@@ -153,7 +146,6 @@ pub struct AllocationsItemStruct<'a> {
     /// allocations and it is up to the client to ensure correct choices
     /// amongst collaborating services. For example, the compute service may
     /// choose to type some consumers ‘INSTANCE’ and others ‘MIGRATION’.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) consumer_type: Cow<'a, str>,
@@ -163,19 +155,16 @@ pub struct AllocationsItemStruct<'a> {
     /// string and [a-zA-Z0-9\_-]+ are valid suffixes. This field may be sent
     /// when writing allocations back to the server but will be ignored; this
     /// preserves symmetry between read and write representations.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_mappings"))]
+    #[builder(default, private, setter(into, name = "_mappings"))]
     pub(crate) mappings: Option<BTreeMap<Cow<'a, str>, Vec<Cow<'a, str>>>>,
 
     /// The uuid of a project.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) project_id: Cow<'a, str>,
 
     /// The uuid of a user.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) user_id: Cow<'a, str>,
@@ -185,7 +174,6 @@ impl<'a> AllocationsItemStructBuilder<'a> {
     /// A dictionary of resource allocations keyed by resource provider uuid.
     /// If this is an empty object, allocations for this consumer will be
     /// removed.
-    ///
     pub fn allocations<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -203,7 +191,6 @@ impl<'a> AllocationsItemStructBuilder<'a> {
     /// string and [a-zA-Z0-9\_-]+ are valid suffixes. This field may be sent
     /// when writing allocations back to the server but will be ignored; this
     /// preserves symmetry between read and write representations.
-    ///
     pub fn mappings<I, K, V, V1>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -229,16 +216,14 @@ pub struct Request<'a> {
     /// dictionary indicates no change in existing allocations, whereas an
     /// empty `allocations` dictionary **within** a consumer dictionary
     /// indicates that all allocations for that consumer should be deleted.
-    ///
-    #[builder(private, setter(name = "_allocations"))]
+    #[builder(private, setter(into, name = "_allocations"))]
     pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItemStruct<'a>>,
 
     /// A dictionary of multiple inventories, keyed by resource provider uuid.
     /// Each inventory describes the desired full inventory for each resource
     /// provider. An empty dictionary causes the inventory for that provider to
     /// be deleted.
-    ///
-    #[builder(private, setter(name = "_inventories"))]
+    #[builder(private, setter(into, name = "_inventories"))]
     pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItemStruct<'a>>,
 
     #[builder(setter(name = "_headers"), default, private)]
@@ -256,7 +241,6 @@ impl<'a> RequestBuilder<'a> {
     /// Each inventory describes the desired full inventory for each resource
     /// provider. An empty dictionary causes the inventory for that provider to
     /// be deleted.
-    ///
     pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -276,7 +260,6 @@ impl<'a> RequestBuilder<'a> {
     /// dictionary indicates no change in existing allocations, whereas an
     /// empty `allocations` dictionary **within** a consumer dictionary
     /// indicates that all allocations for that consumer should be deleted.
-    ///
     pub fn allocations<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

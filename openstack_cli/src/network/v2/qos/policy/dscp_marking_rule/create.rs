@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/dscp_marking_rules` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::dscp_marking_rule::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::policy::dscp_marking_rule::response::create::DscpMarkingRuleResponse;
 
 /// Creates a DSCP marking rule for a QoS policy.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Create DSCP marking rule")]
 pub struct DscpMarkingRuleCommand {
@@ -53,7 +49,6 @@ pub struct DscpMarkingRuleCommand {
     path: PathParameters,
 
     /// A `dscp_marking_rule` object.
-    ///
     #[command(flatten)]
     dscp_marking_rule: DscpMarkingRule,
 }
@@ -67,7 +62,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -79,25 +73,8 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct DscpMarkingRule {
     /// The DSCP mark value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     dscp_mark: Option<i32>,
-}
-
-/// DscpMarkingRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The DSCP mark value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dscp_mark: Option<i32>,
-
-    /// The ID of the QoS DSCP marking rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
 }
 
 impl DscpMarkingRuleCommand {
@@ -132,7 +109,7 @@ impl DscpMarkingRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<DscpMarkingRuleResponse>(data)?;
         Ok(())
     }
 }

@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v2.0/ports/{port_id}/bindings` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::binding::create;
+use openstack_types::network::v2::port::binding::response::create::BindingResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct BindingCommand {
     /// Request Query parameters
@@ -63,7 +58,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_port_id",
@@ -101,38 +95,6 @@ struct Binding {
 
     #[arg(help_heading = "Body parameters", long)]
     vnic_type: Option<VnicType>,
-}
-
-/// Binding response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    profile: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vif_details: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vif_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vnic_type: Option<String>,
 }
 
 impl BindingCommand {
@@ -192,7 +154,7 @@ impl BindingCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<BindingResponse>(data)?;
         Ok(())
     }
 }

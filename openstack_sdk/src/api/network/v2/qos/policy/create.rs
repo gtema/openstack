@@ -41,40 +41,34 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A QoS `policy` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Policy<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// If `true`, the QoS `policy` is the default policy.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_default: Option<bool>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Set to `true` to share this policy with other projects. Default is
     /// `false`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) shared: Option<bool>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -84,7 +78,6 @@ pub struct Policy<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A QoS `policy` object.
-    ///
     #[builder(setter(into))]
     pub(crate) policy: Policy<'a>,
 

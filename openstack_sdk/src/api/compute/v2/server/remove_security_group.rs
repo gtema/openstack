@@ -27,12 +27,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// The action to remove a security group from the server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoveSecurityGroup<'a> {
     /// The security group name.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -42,12 +40,10 @@ pub struct RemoveSecurityGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to remove a security group from the server.
-    ///
     #[builder(setter(into))]
     pub(crate) remove_security_group: RemoveSecurityGroup<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) local_ip: LocalIp<'a>,
 
     /// id parameter for /v2.0/local-ips/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

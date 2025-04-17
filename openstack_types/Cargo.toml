@@ -38,6 +38,5 @@ placement = []
 [dependencies]
 chrono = { workspace= true }
 serde = { workspace = true }
-serde_json = {workspace = true}
-structable = { version = "^0.2" }
-structable_derive = { version = "^0.2" }
+serde_json = { workspace = true }
+structable = { workspace = true }

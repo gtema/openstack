@@ -23,17 +23,17 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RestoreResponse {
     /// The UUID for a backup.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub backup_id: Option<String>,
 
     /// The volume name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub backup_name: Option<String>,
 
     /// The UUID of the volume.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub volume_id: Option<String>,
 }

@@ -18,138 +18,137 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Image response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImageResponse {
     /// md5 hash of image contents.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub checksum: Option<String>,
 
     /// Format of the container
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub container_format: Option<ContainerFormat>,
+    pub container_format: Option<ContainerFormatStringEnum>,
 
     /// Date and time of image registration
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// URL to access the image file kept in external store
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub direct_url: Option<String>,
 
     /// Format of the disk
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub disk_format: Option<DiskFormat>,
+    pub disk_format: Option<DiskFormatStringEnum>,
 
     /// An image file url
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub file: Option<String>,
 
     /// An identifier for the image
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// A set of URLs to access the image file kept in external store
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space (in GB) required to boot image.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub min_disk: Option<i32>,
 
     /// Amount of ram (in MB) required to boot image.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub min_ram: Option<i32>,
 
     /// Descriptive name for the image
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub os_hash_algo: Option<String>,
 
     /// Hexdigest of the image contents using the algorithm specified by the
     /// os_hash_algo
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub os_hash_value: Option<String>,
 
     /// If true, image will not appear in default image list response.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub os_hidden: Option<bool>,
 
     /// Owner of the image
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub owner: Option<String>,
 
     /// If true, image will not be deletable.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub protected: Option<bool>,
 
     /// An image schema url
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub schema: Option<String>,
 
     /// An image self url
-    ///
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self", wide)]
     pub _self: Option<String>,
 
     /// Size of image file in bytes
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub size: Option<i64>,
 
     /// Status of the image
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub stores: Option<String>,
 
     /// List of strings related to the image
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// Date and time of the last image modification
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Virtual size of image in bytes
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub virtual_size: Option<i64>,
 
     /// Scope of image accessibility
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub visibility: Option<Visibility>,
 }
@@ -193,6 +192,24 @@ pub enum Status {
     Uploading,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "active" => Ok(Self::Active),
+            "deactivated" => Ok(Self::Deactivated),
+            "deleted" => Ok(Self::Deleted),
+            "importing" => Ok(Self::Importing),
+            "killed" => Ok(Self::Killed),
+            "pending_delete" => Ok(Self::PendingDelete),
+            "queued" => Ok(Self::Queued),
+            "saving" => Ok(Self::Saving),
+            "uploading" => Ok(Self::Uploading),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Visibility {
     // Community
@@ -212,8 +229,22 @@ pub enum Visibility {
     Shared,
 }
 
+impl std::str::FromStr for Visibility {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "community" => Ok(Self::Community),
+            "private" => Ok(Self::Private),
+            "public" => Ok(Self::Public),
+            "shared" => Ok(Self::Shared),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum ContainerFormat {
+#[serde(untagged)]
+pub enum ContainerFormatStringEnum {
     // Aki
     #[serde(rename = "aki")]
     Aki,
@@ -245,10 +276,30 @@ pub enum ContainerFormat {
     // Ovf
     #[serde(rename = "ovf")]
     Ovf,
+
+    Other(Option<String>),
+}
+
+impl std::str::FromStr for ContainerFormatStringEnum {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aki" => Ok(Self::Aki),
+            "ami" => Ok(Self::Ami),
+            "ari" => Ok(Self::Ari),
+            "bare" => Ok(Self::Bare),
+            "compressed" => Ok(Self::Compressed),
+            "docker" => Ok(Self::Docker),
+            "ova" => Ok(Self::Ova),
+            "ovf" => Ok(Self::Ovf),
+            other => Ok(Self::Other(Some(other.into()))),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum DiskFormat {
+#[serde(untagged)]
+pub enum DiskFormatStringEnum {
     // Aki
     #[serde(rename = "aki")]
     Aki,
@@ -292,12 +343,33 @@ pub enum DiskFormat {
     // Vmdk
     #[serde(rename = "vmdk")]
     Vmdk,
+
+    Other(Option<String>),
+}
+
+impl std::str::FromStr for DiskFormatStringEnum {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aki" => Ok(Self::Aki),
+            "ami" => Ok(Self::Ami),
+            "ari" => Ok(Self::Ari),
+            "iso" => Ok(Self::Iso),
+            "ploop" => Ok(Self::Ploop),
+            "qcow2" => Ok(Self::Qcow2),
+            "raw" => Ok(Self::Raw),
+            "vdi" => Ok(Self::Vdi),
+            "vhd" => Ok(Self::Vhd),
+            "vhdx" => Ok(Self::Vhdx),
+            "vmdk" => Ok(Self::Vmdk),
+            other => Ok(Self::Other(Some(other.into()))),
+        }
+    }
 }
 
 /// Values to be used to populate the corresponding image properties. If the
 /// image status is not 'queued', values must exactly match those already
 /// contained in the image properties.
-///
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
@@ -309,7 +381,7 @@ pub struct ValidationData {
 /// `Locations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Locations {
-    pub metadata: HashMap<String, Value>,
+    pub metadata: BTreeMap<String, Value>,
     pub url: String,
     pub validation_data: Option<ValidationData>,
 }

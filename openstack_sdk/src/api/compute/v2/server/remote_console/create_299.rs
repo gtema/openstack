@@ -66,14 +66,12 @@ pub enum Type {
 }
 
 /// The remote console object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
     /// `serial` and `mks`. The protocol `mks` is added since Microversion
     /// `2.8`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) protocol: Protocol,
@@ -82,7 +80,6 @@ pub struct RemoteConsole {
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
     /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
     /// was added in Microversion `2.99`.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -92,12 +89,10 @@ pub struct RemoteConsole {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The remote console object.
-    ///
     #[builder(setter(into))]
     pub(crate) remote_console: RemoteConsole,
 
     /// server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

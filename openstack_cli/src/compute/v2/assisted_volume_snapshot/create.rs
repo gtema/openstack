@@ -20,28 +20,24 @@
 //! Wraps invoking of the `v2.1/os-assisted-volume-snapshots` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::assisted_volume_snapshot::create;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::assisted_volume_snapshot::response::create::AssistedVolumeSnapshotResponse;
 
 /// Creates an assisted volume snapshot.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400),unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Create Assisted Volume Snapshots")]
 pub struct AssistedVolumeSnapshotCommand {
@@ -55,7 +51,6 @@ pub struct AssistedVolumeSnapshotCommand {
 
     /// A partial representation of a snapshot that is used to create a
     /// snapshot.
-    ///
     #[command(flatten)]
     snapshot: Snapshot,
 }
@@ -78,23 +73,19 @@ enum Type {
 #[group(required = true, multiple = true)]
 struct CreateInfo {
     /// Its an arbitrary string that gets passed back to the user.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The name of the qcow2 file that Block Storage creates, which becomes
     /// the active image for the VM.
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     new_file: String,
 
     /// The UUID for a snapshot.
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     snapshot_id: String,
 
     /// The snapshot type. A valid value is `qcow2`.
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     _type: Type,
 }
@@ -103,35 +94,11 @@ struct CreateInfo {
 #[derive(Args, Clone)]
 struct Snapshot {
     /// Information for snapshot creation.
-    ///
     #[command(flatten)]
     create_info: CreateInfo,
 
     /// The source volume ID.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    volume_id: String,
-}
-
-/// AssistedVolumeSnapshot response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Its the same arbitrary string which was sent in request body.
-    ///
-    /// Note
-    ///
-    /// This string is passed back to user as it is and not being used in Nova
-    /// internally. So use `snapshot_id` instead for further operation on this
-    /// snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The source volume ID.
-    ///
-    #[serde(rename = "volumeId")]
-    #[structable(title = "volumeId")]
     volume_id: String,
 }
 
@@ -180,7 +147,7 @@ impl AssistedVolumeSnapshotCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AssistedVolumeSnapshotResponse>(data)?;
         Ok(())
     }
 }

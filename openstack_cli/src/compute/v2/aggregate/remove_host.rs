@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.1/os-aggregates/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::remove_host;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::aggregate::response::remove_host::AggregateResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AggregateCommand {
     /// Request Query parameters
@@ -60,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -73,50 +67,6 @@ struct PathParameters {
 struct RemoveHost {
     #[arg(help_heading = "Body parameters", long)]
     host: String,
-}
-
-/// Aggregate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    #[serde()]
-    #[structable()]
-    deleted: bool,
-
-    #[serde()]
-    #[structable()]
-    deleted_at: String,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
-
-    #[serde()]
-    #[structable()]
-    id: i32,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    #[serde()]
-    #[structable()]
-    updated_at: String,
-
-    #[serde()]
-    #[structable()]
-    uuid: String,
 }
 
 impl AggregateCommand {
@@ -150,7 +100,7 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AggregateResponse>(data)?;
         Ok(())
     }
 }

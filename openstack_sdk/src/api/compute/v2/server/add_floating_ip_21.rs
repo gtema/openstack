@@ -26,20 +26,17 @@ use std::borrow::Cow;
 
 /// The action. Contains required floating IP `address` and optional
 /// `fixed_address`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddFloatingIp<'a> {
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) address: Cow<'a, str>,
 
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_address: Option<Cow<'a, str>>,
@@ -50,12 +47,10 @@ pub struct AddFloatingIp<'a> {
 pub struct Request<'a> {
     /// The action. Contains required floating IP `address` and optional
     /// `fixed_address`.
-    ///
     #[builder(setter(into))]
     pub(crate) add_floating_ip: AddFloatingIp<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

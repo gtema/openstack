@@ -20,29 +20,22 @@
 //! Wraps invoking of the `v2.0/agents/{agent_id}/l3-routers/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::l3_router::delete;
-use structable_derive::StructTable;
 
 /// Removes a router from an l3 agent.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Remove l3 router from an l3 agent")]
 pub struct L3RouterCommand {
@@ -63,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// agent_id parameter for /v2.0/agents/{agent_id}/l3-routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_agent_id",
@@ -72,7 +64,6 @@ struct PathParameters {
     agent_id: String,
 
     /// id parameter for /v2.0/agents/{agent_id}/l3-routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -80,9 +71,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// L3Router response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl L3RouterCommand {
     /// Perform command action
@@ -107,8 +95,7 @@ impl L3RouterCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

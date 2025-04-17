@@ -17,11 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::block_storage::v3::backup::response::list_detailed::BackupResponse;
+
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageBackup, BlockStorageBackupApiRequest,
-        BlockStorageBackupList,
+        BlockStorageApiRequest, BlockStorageBackupApiRequest, BlockStorageBackupList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +35,14 @@ use crate::{
 const TITLE: &str = "Backups";
 const VIEW_CONFIG_KEY: &str = "block_storage.backup";
 
-impl ResourceKey for BlockStorageBackup {
+impl ResourceKey for BackupResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type BlockStorageBackups<'a> =
-    TableViewComponentBase<'a, BlockStorageBackup, BlockStorageBackupList>;
+    TableViewComponentBase<'a, BackupResponse, BlockStorageBackupList>;
 
 impl Component for BlockStorageBackups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

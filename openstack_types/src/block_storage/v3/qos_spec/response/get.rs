@@ -17,29 +17,29 @@
 //! Response type for the GET `qos-specs/{id}` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// QosSpec response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QosSpecResponse {
     /// The consumer type.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub consumer: Option<String>,
 
     /// The generated ID for the QoS specification.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the QoS specification.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// A `specs` object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub specs: Option<HashMap<String, Option<String>>>,
+    pub specs: Option<BTreeMap<String, Option<String>>>,
 }

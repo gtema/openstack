@@ -32,12 +32,10 @@ pub struct Request<'a> {
     /// The project ID the zone will be shared with.
     ///
     /// **New in version 2.1**
-    ///
     #[builder(setter(into))]
     pub(crate) target_project_id: Cow<'a, str>,
 
     /// zone_id parameter for /v2/zones/{zone_id}/shares API
-    ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,
 

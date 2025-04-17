@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v1/clusters` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::create;
+use openstack_types::container_infrastructure_management::v1::cluster::response::create::ClusterResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create new cluster based on cluster template.
-///
 #[derive(Args)]
 #[command(about = "Create new cluster")]
 pub struct ClusterCommand {
@@ -56,7 +51,6 @@ pub struct ClusterCommand {
     api_address: Option<String>,
 
     /// The UUID of the cluster template.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     cluster_template_id: String,
 
@@ -70,7 +64,6 @@ pub struct ClusterCommand {
     /// positive integer and the default is 60 minutes. If the timeout is
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     create_timeout: Option<i32>,
 
@@ -91,7 +84,6 @@ pub struct ClusterCommand {
     ///
     /// In this case, Magnum will generate a unique url here for each uster and
     /// store the info for the servers.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     discovery_url: Option<String>,
 
@@ -103,19 +95,16 @@ pub struct ClusterCommand {
 
     /// The name or network ID of a Neutron network to provide connectivity to
     /// the internal network for the cluster.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_network: Option<String>,
 
     /// Fixed subnet that are using to allocate network address for nodes in
     /// cluster.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_subnet: Option<String>,
 
     /// The nova flavor ID or name for booting the node servers. The default is
     /// `m1.small`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     flavor_id: Option<String>,
 
@@ -124,7 +113,6 @@ pub struct ClusterCommand {
     /// provide this option for specifying the choice of using floating IP. If
     /// it’s not set, the value of floating_ip_enabled in template will be
     /// used.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     floating_ip_enabled: Option<String>,
 
@@ -138,7 +126,6 @@ pub struct ClusterCommand {
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     keypair: Option<String>,
 
@@ -146,7 +133,6 @@ pub struct ClusterCommand {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     labels: Option<Vec<(String, String)>>,
 
@@ -160,12 +146,10 @@ pub struct ClusterCommand {
     labels_skipped: Option<Vec<(String, String)>>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     links: Option<Vec<Value>>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     master_addresses: Option<Vec<String>>,
 
@@ -173,12 +157,10 @@ pub struct ClusterCommand {
     /// default is 1. Set to more than 1 master to enable High Availability. If
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     master_count: Option<i32>,
 
     /// The flavor of the master node for this cluster template.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     master_flavor_id: Option<String>,
 
@@ -189,7 +171,6 @@ pub struct ClusterCommand {
     /// without the load balancer. In this case, one of the masters will serve
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     master_lb_enabled: Option<String>,
 
@@ -197,18 +178,15 @@ pub struct ClusterCommand {
     merge_labels: Option<String>,
 
     /// Name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     node_count: Option<i32>,
 
@@ -269,16 +247,6 @@ enum HealthStatus {
     Healthy,
     Unhealthy,
     Unknown,
-}
-
-/// Cluster response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the cluster.
-    ///
-    #[serde()]
-    #[structable()]
-    uuid: String,
 }
 
 impl ClusterCommand {
@@ -510,7 +478,7 @@ impl ClusterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ClusterResponse>(data)?;
         Ok(())
     }
 }

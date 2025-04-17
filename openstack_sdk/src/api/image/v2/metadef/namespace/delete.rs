@@ -27,7 +27,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}
     /// API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 

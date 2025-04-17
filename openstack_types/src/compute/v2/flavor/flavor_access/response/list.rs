@@ -24,12 +24,10 @@ use structable::{StructTable, StructTableOptions};
 pub struct FlavorAccessResponse {
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
-    ///
     #[structable()]
     pub flavor_id: String,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
-    ///
     #[structable()]
     pub tenant_id: String,
 }

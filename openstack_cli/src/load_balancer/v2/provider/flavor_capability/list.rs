@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2/lbaas/providers/{provider}/flavor_capabilities` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::provider::flavor_capability::list;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::provider::flavor_capability::response::list::FlavorCapabilityResponse;
 
 /// Shows the provider driver flavor capabilities. These are the features of
 /// the provider driver that can be configured in an Octavia flavor. This API
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 /// feature.
 ///
 /// **New in version 2.6**
-///
 #[derive(Args)]
 #[command(about = "Show Provider Flavor Capabilities")]
 pub struct FlavorCapabilitiesCommand {
@@ -66,28 +62,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// provider parameter for
     /// /v2/lbaas/providers/{provider}/flavor_capabilities API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_provider",
         value_name = "PROVIDER"
     )]
     provider: String,
-}
-/// FlavorCapabilities response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The provider flavor capability description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The provider flavor capability name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl FlavorCapabilitiesCommand {
@@ -114,8 +94,7 @@ impl FlavorCapabilitiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<FlavorCapabilityResponse>(data)?;
         Ok(())
     }
 }

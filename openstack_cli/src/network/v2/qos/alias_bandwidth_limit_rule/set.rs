@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/qos/alias-bandwidth-limit-rules/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::set;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::alias_bandwidth_limit_rule::response::set::AliasBandwidthLimitRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasBandwidthLimitRuleCommand {
     /// Request Query parameters
@@ -61,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/qos/alias-bandwidth-limit-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -87,30 +81,6 @@ struct AliasBandwidthLimitRule {
 
     #[arg(help_heading = "Body parameters", long)]
     max_kbps: Option<i32>,
-}
-
-/// AliasBandwidthLimitRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_burst_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_kbps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl AliasBandwidthLimitRuleCommand {
@@ -157,7 +127,7 @@ impl AliasBandwidthLimitRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AliasBandwidthLimitRuleResponse>(data)?;
         Ok(())
     }
 }

@@ -37,49 +37,41 @@ pub enum Type {
 }
 
 /// Information for snapshot creation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct CreateInfo<'a> {
     /// Its an arbitrary string that gets passed back to the user.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// The name of the qcow2 file that Block Storage creates, which becomes
     /// the active image for the VM.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) new_file: Cow<'a, str>,
 
     /// The UUID for a snapshot.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) snapshot_id: Cow<'a, str>,
 
     /// The snapshot type. A valid value is `qcow2`.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
 }
 
 /// A partial representation of a snapshot that is used to create a snapshot.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Snapshot<'a> {
     /// Information for snapshot creation.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) create_info: CreateInfo<'a>,
 
     /// The source volume ID.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -90,7 +82,6 @@ pub struct Snapshot<'a> {
 pub struct Request<'a> {
     /// A partial representation of a snapshot that is used to create a
     /// snapshot.
-    ///
     #[builder(setter(into))]
     pub(crate) snapshot: Snapshot<'a>,
 

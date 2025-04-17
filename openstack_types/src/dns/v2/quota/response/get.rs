@@ -22,18 +22,23 @@ use structable::{StructTable, StructTableOptions};
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub api_export_size: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub recordset_records: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub zone_records: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub zone_recorsets: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub zones: Option<i32>,
 }

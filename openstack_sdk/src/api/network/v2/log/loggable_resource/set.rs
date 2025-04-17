@@ -27,11 +27,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_loggable_resource"))]
+    #[builder(private, setter(into, name = "_loggable_resource"))]
     pub(crate) loggable_resource: BTreeMap<Cow<'a, str>, Value>,
 
     /// id parameter for /v2.0/log/loggable-resources/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

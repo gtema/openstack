@@ -22,54 +22,71 @@ use structable::{StructTable, StructTableOptions};
 /// SecurityGroupRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupRuleResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub belongs_to_default_sg: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub ethertype: Option<Ethertype>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub normalized_cidr: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub port_range_max: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub port_range_min: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub protocol: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub remote_address_group_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub remote_group_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub security_group_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -85,6 +102,17 @@ pub enum Direction {
     Ingress,
 }
 
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Ethertype {
     // Ipv4
@@ -94,4 +122,15 @@ pub enum Ethertype {
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+}
+
+impl std::str::FromStr for Ethertype {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "IPv4" => Ok(Self::Ipv4),
+            "IPv6" => Ok(Self::Ipv6),
+            _ => Err(()),
+        }
+    }
 }

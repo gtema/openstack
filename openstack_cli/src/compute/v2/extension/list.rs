@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v2.1/extensions` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::extension::list;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::extension::response::list::ExtensionResponse;
 
 /// Lists all extensions to the API.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401)
-///
 #[derive(Args)]
 #[command(about = "List Extensions")]
 pub struct ExtensionsCommand {
@@ -60,49 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Extensions response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A short name by which this extension is also known.
-    ///
-    #[serde()]
-    #[structable()]
-    alias: String,
-
-    /// Text describing this extension’s purpose.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Name of the extension.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// A URL pointing to the namespace for this extension.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    namespace: Option<String>,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated: Option<String>,
-}
 
 impl ExtensionsCommand {
     /// Perform command action
@@ -127,8 +80,7 @@ impl ExtensionsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ExtensionResponse>(data)?;
         Ok(())
     }
 }

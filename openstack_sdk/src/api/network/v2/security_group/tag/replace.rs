@@ -30,7 +30,6 @@ pub struct Request<'a> {
 
     /// security_group_id parameter for
     /// /v2.0/security-groups/{security_group_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     security_group_id: Cow<'a, str>,
 

@@ -17,28 +17,28 @@
 //! Response type for the GET `clusters/{cluster_id}` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Cluster response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The endpoint URL of COE API exposed to end-users.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub api_address: Option<String>,
 
     /// The UUID of the cluster template.
-    ///
     #[structable()]
     pub cluster_template_id: String,
 
     /// Version info of chosen COE in cluster for helping client in picking the
     /// right version of client.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub coe_version: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub container_version: Option<String>,
 
@@ -46,10 +46,11 @@ pub struct ClusterResponse {
     /// positive integer and the default is 60 minutes. If the timeout is
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub create_timeout: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -67,22 +68,27 @@ pub struct ClusterResponse {
     ///
     /// In this case, Magnum will generate a unique url here for each uster and
     /// store the info for the servers.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub discovery_url: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub docker_volume_size: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub faults: Option<HashMap<String, String>>,
+    pub faults: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_network: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub fixed_subnet: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
@@ -91,43 +97,49 @@ pub struct ClusterResponse {
     /// provide this option for specifying the choice of using floating IP. If
     /// it’s not set, the value of floating_ip_enabled in template will be
     /// used.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub floating_ip_enabled: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub health_status: Option<HealthStatus>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub health_status_reason: Option<HashMap<String, String>>,
+    pub health_status_reason: Option<BTreeMap<String, String>>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub keypair: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels: Option<HashMap<String, String>>,
+    pub labels: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_added: Option<HashMap<String, String>>,
+    pub labels_added: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_overridden: Option<HashMap<String, String>>,
+    pub labels_overridden: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_skipped: Option<HashMap<String, String>>,
+    pub labels_skipped: Option<BTreeMap<String, String>>,
 
     /// Links to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// List of floating IP of all master nodes.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub master_addresses: Option<Vec<String>>,
 
@@ -135,10 +147,11 @@ pub struct ClusterResponse {
     /// default is 1. Set to more than 1 master to enable High Availability. If
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub master_count: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub master_flavor_id: Option<String>,
 
@@ -149,62 +162,65 @@ pub struct ClusterResponse {
     /// without the load balancer. In this case, one of the masters will serve
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub master_lb_enabled: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub merge_labels: Option<String>,
 
     /// Name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// List of floating IP of all servers that serve as node.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub node_count: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The reference UUID of orchestration stack from Heat orchestration
     /// service.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub stack_id: Option<String>,
 
     /// The current state of the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The reason of cluster current status.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 }
 
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -290,6 +306,33 @@ pub enum Status {
     UpdateInProgress,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ADOPT_COMPLETE" => Ok(Self::AdoptComplete),
+            "CHECK_COMPLETE" => Ok(Self::CheckComplete),
+            "CREATE_COMPLETE" => Ok(Self::CreateComplete),
+            "CREATE_FAILED" => Ok(Self::CreateFailed),
+            "CREATE_IN_PROGRESS" => Ok(Self::CreateInProgress),
+            "DELETE_COMPLETE" => Ok(Self::DeleteComplete),
+            "DELETE_FAILED" => Ok(Self::DeleteFailed),
+            "DELETE_IN_PROGRESS" => Ok(Self::DeleteInProgress),
+            "RESTORE_COMPLETE" => Ok(Self::RestoreComplete),
+            "RESUME_COMPLETE" => Ok(Self::ResumeComplete),
+            "RESUME_FAILED" => Ok(Self::ResumeFailed),
+            "ROLLBACK_COMPLETE" => Ok(Self::RollbackComplete),
+            "ROLLBACK_FAILED" => Ok(Self::RollbackFailed),
+            "ROLLBACK_IN_PROGRESS" => Ok(Self::RollbackInProgress),
+            "SNAPSHOT_COMPLETE" => Ok(Self::SnapshotComplete),
+            "UPDATE_COMPLETE" => Ok(Self::UpdateComplete),
+            "UPDATE_FAILED" => Ok(Self::UpdateFailed),
+            "UPDATE_IN_PROGRESS" => Ok(Self::UpdateInProgress),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum HealthStatus {
     // Healthy
@@ -303,4 +346,16 @@ pub enum HealthStatus {
     // Unknown
     #[serde(rename = "UNKNOWN")]
     Unknown,
+}
+
+impl std::str::FromStr for HealthStatus {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "HEALTHY" => Ok(Self::Healthy),
+            "UNHEALTHY" => Ok(Self::Unhealthy),
+            "UNKNOWN" => Ok(Self::Unknown),
+            _ => Err(()),
+        }
+    }
 }

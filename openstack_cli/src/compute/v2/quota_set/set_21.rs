@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2.1/os-quota-sets/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,8 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_set::set_21;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::quota_set::response::set::QuotaSetResponse;
 use tracing::warn;
 
 /// Update the quotas for a project or a project and a user.
@@ -50,7 +46,6 @@ use tracing::warn;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Update Quotas (microversion = 2.1)")]
 pub struct QuotaSetCommand {
@@ -63,7 +58,6 @@ pub struct QuotaSetCommand {
     path: PathParameters,
 
     /// A `quota_set` object.
-    ///
     #[command(flatten)]
     quota_set: QuotaSet,
 }
@@ -95,7 +89,6 @@ struct UserInput {
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-quota-sets/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -109,244 +102,98 @@ struct QuotaSet {
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     cores: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_ips: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     floating_ips: Option<i32>,
 
     /// You can force the update even if the quota has already been used and
     /// the reserved quota exceeds the new quota. To force the update, specify
     /// the `"force": "True"`. Default is `False`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     force: Option<bool>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_file_content_bytes: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_file_path_bytes: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     injected_files: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     instances: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     key_pairs: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     metadata_items: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     networks: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ram: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_group_rules: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     security_groups: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     server_group_members: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
     ///
     /// **Available until version 2.56**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     server_groups: Option<i32>,
-}
-
-/// QuotaSet response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cores: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_ips: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    floating_ips: Option<IntString>,
-
-    /// The UUID of the tenant/user the quotas listed for.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_file_content_bytes: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_file_path_bytes: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    injected_files: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    instances: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    key_pairs: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    metadata_items: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    networks: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ram: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_group_rules: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    security_groups: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    server_group_members: Option<IntString>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    server_groups: Option<IntString>,
 }
 
 impl QuotaSetCommand {
@@ -485,7 +332,7 @@ impl QuotaSetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaSetResponse>(data)?;
         Ok(())
     }
 }

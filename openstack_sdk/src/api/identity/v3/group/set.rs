@@ -35,18 +35,15 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `group` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Group<'a> {
     /// The new description of the group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The new name of the group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -74,12 +71,10 @@ impl<'a> GroupBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `group` object
-    ///
     #[builder(setter(into))]
     pub(crate) group: Group<'a>,
 
     /// group_id parameter for /v3/groups/{group_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

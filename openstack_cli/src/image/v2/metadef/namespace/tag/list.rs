@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/tags` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::tag::list;
-use structable_derive::StructTable;
+use openstack_types::image::v2::metadef::namespace::tag::response::list::TagResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters
@@ -57,32 +53,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
         value_name = "NAMESPACE_NAME"
     )]
     namespace_name: String,
-}
-/// Tags response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Date and time of tag creation
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// Date and time of the last tag modification
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl TagsCommand {
@@ -109,8 +85,7 @@ impl TagsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TagResponse>(data)?;
         Ok(())
     }
 }

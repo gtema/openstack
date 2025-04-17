@@ -32,11 +32,11 @@ pub struct NetworkSegmentRange<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) maximum: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) minimum: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -51,7 +51,6 @@ pub struct Request<'a> {
     pub(crate) network_segment_range: NetworkSegmentRange<'a>,
 
     /// id parameter for /v2.0/network-segment-ranges/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

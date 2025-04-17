@@ -20,27 +20,20 @@
 //! Wraps invoking of the `v2/zones/tasks/imports/{zone_import_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::import::delete;
-use structable_derive::StructTable;
 
 /// This will just delete the record of the zone import, not the imported zone.
 ///
 /// The zone will have to be deleted from the zone delete API
-///
 #[derive(Args)]
 #[command(about = "Delete a Zone Import")]
 pub struct ImportCommand {
@@ -62,7 +55,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// zone_import_id parameter for /v2/zones/tasks/imports/{zone_import_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_zone_import_id",
@@ -70,9 +62,6 @@ struct PathParameters {
     )]
     zone_import_id: String,
 }
-/// Import response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ImportCommand {
     /// Perform command action
@@ -96,8 +85,7 @@ impl ImportCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AggregateResponse {
     /// The availability zone of the host aggregate.
-    ///
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
@@ -38,13 +37,11 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable()]
     pub created_at: String,
 
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
-    ///
     #[structable()]
     pub deleted: bool,
 
@@ -60,17 +57,14 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable(optional)]
     pub deleted_at: Option<String>,
 
     /// The ID of the host aggregate.
-    ///
     #[structable()]
     pub id: i32,
 
     /// The name of the host aggregate.
-    ///
     #[structable()]
     pub name: String,
 
@@ -86,14 +80,12 @@ pub struct AggregateResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the host aggregate.
     ///
     /// **New in version 2.41**
-    ///
     #[structable()]
     pub uuid: String,
 }

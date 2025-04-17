@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::create;
+use openstack_types::load_balancer::v2::loadbalancer::response::create::LoadbalancerResponse;
 use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
 
 /// Creates a load balancer.
 ///
@@ -94,7 +89,6 @@ use structable_derive::StructTable;
 /// VIP port. `vip_sg_ids` are incompatible with SR-IOV load balancer and
 /// cannot be set if the load balancer has a listener that uses
 /// `allowed_cidrs`.
-///
 #[derive(Args)]
 #[command(about = "Create a Load Balancer")]
 pub struct LoadbalancerCommand {
@@ -107,7 +101,6 @@ pub struct LoadbalancerCommand {
     path: PathParameters,
 
     /// A load balancer object.
-    ///
     #[command(flatten)]
     loadbalancer: Loadbalancer,
 }
@@ -150,60 +143,49 @@ struct Loadbalancer {
     /// **New in version 2.26**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     additional_vips: Option<Vec<Value>>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// An availability zone name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the flavor.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     flavor_id: Option<String>,
 
     /// The associated listener IDs, if any.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     listeners: Option<Vec<Value>>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     pools: Option<Vec<Value>>,
 
     /// The ID of the project owning this resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
     /// Provider name for the load balancer. Default is `octavia`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     provider: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -211,24 +193,20 @@ struct Loadbalancer {
     tenant_id: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Body parameters", long)]
     vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP). One of
     /// `vip_network_id`, `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port. One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Body parameters", long)]
     vip_qos_policy_id: Option<String>,
 
@@ -238,165 +216,13 @@ struct Loadbalancer {
     /// **New in version 2.29**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     vip_sg_ids: Option<Vec<String>>,
 
     /// The ID of the subnet for the Virtual IP (VIP). One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     vip_subnet_id: Option<String>,
-}
-
-/// Loadbalancer response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of JSON objects defining “additional VIPs”. The format for these
-    /// is `{"subnet_id": <subnet_id>, "ip_address": <ip_address>}`, where the
-    /// `subnet_id` field is mandatory and the `ip_address` field is optional.
-    /// Additional VIP subnets must all belong to the same network as the
-    /// primary VIP.
-    ///
-    /// **New in version 2.26**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    additional_vips: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// An availability zone name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    flavor_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The associated listener IDs, if any.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    listeners: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    /// The associated pool IDs, if any.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    pools: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// Provider name for the load balancer.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provider: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The IP address of the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_address: Option<String>,
-
-    /// The ID of the network for the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_network_id: Option<String>,
-
-    /// The ID of the Virtual IP (VIP) port.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_port_id: Option<String>,
-
-    /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_qos_policy_id: Option<String>,
-
-    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
-    /// Balancer.
-    ///
-    /// **New in version 2.29**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    vip_sg_ids: Option<Value>,
-
-    /// The ID of the subnet for the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_subnet_id: Option<String>,
-
-    /// The VIP vNIC type used for the load balancer. One of `normal` or
-    /// `direct`.
-    ///
-    /// **New in version 2.28**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vip_vnic_type: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponsePools {
-    id: String,
-}
-
-impl fmt::Display for ResponsePools {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!("id={}", self.id)]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl LoadbalancerCommand {
@@ -510,7 +336,7 @@ impl LoadbalancerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LoadbalancerResponse>(data)?;
         Ok(())
     }
 }

@@ -35,12 +35,10 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     flavor_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

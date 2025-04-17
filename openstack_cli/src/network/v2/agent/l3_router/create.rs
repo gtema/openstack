@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.0/agents/{agent_id}/l3-routers` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::l3_router::create;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::network::v2::agent::l3_router::response::create::L3RouterResponse;
 
 /// Add a router to an l3 agent.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 404
-///
 #[derive(Args)]
 #[command(about = "Schedule router to an l3 agent")]
 pub struct L3RouterCommand {
@@ -54,7 +49,6 @@ pub struct L3RouterCommand {
     path: PathParameters,
 
     /// The ID of the router.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     router_id: String,
 }
@@ -67,30 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// agent_id parameter for /v2.0/agents/{agent_id}/l3-routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_agent_id",
         value_name = "AGENT_ID"
     )]
     agent_id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl L3RouterCommand {
@@ -119,7 +95,7 @@ impl L3RouterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<L3RouterResponse>(data)?;
         Ok(())
     }
 }

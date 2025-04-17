@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users/{user_id}/application_credentials/{application_credential_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,15 +34,13 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::find;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::application_credential::response::get::ApplicationCredentialResponse;
 use tracing::warn;
 
 /// Show details of an application credential.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
-///
 #[derive(Args)]
 #[command(about = "Show application credential details")]
 pub struct ApplicationCredentialCommand {
@@ -72,7 +67,6 @@ struct PathParameters {
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -94,62 +88,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// ApplicationCredential response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of access_rules objects
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    access_rules: Option<Value>,
-
-    /// A description of the application credential's purpose.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    /// The ID of the application credential.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the application credential. Must be unique to a user.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project the application credential was created for and
-    /// that authentication requests using this application credential will be
-    /// scoped to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project. If
-    /// not provided, the roles assigned to the application credential will be
-    /// the same as the roles in the current token.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    roles: Option<Value>,
-
-    /// An optional flag to restrict whether the application credential may be
-    /// used for the creation or destruction of other application credentials
-    /// or trusts. Defaults to false.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    unrestricted: Option<bool>,
 }
 
 impl ApplicationCredentialCommand {
@@ -216,7 +154,7 @@ impl ApplicationCredentialCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<ApplicationCredentialResponse>(find_data)?;
         Ok(())
     }
 }

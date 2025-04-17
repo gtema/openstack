@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v3/types/{type_id}/encryption/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::encryption::delete;
-use structable_derive::StructTable;
 
 /// Delete encryption specs for a given volume type.
-///
 #[derive(Args)]
 pub struct EncryptionCommand {
     /// Request Query parameters
@@ -58,7 +51,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_type_id",
@@ -67,7 +59,6 @@ struct PathParameters {
     type_id: String,
 
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -75,9 +66,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Encryption response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl EncryptionCommand {
     /// Perform command action
@@ -102,8 +90,7 @@ impl EncryptionCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

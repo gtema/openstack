@@ -20,23 +20,17 @@
 //! Wraps invoking of the `v2/images/{image_id}/file` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::build_upload_asyncread;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::image::v2::image::file::upload;
-use structable_derive::StructTable;
 
 /// Uploads binary image data. *(Since Image API v2.0)*
 ///
@@ -66,7 +60,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
-///
 #[derive(Args)]
 #[command(about = "Upload binary image data")]
 pub struct FileCommand {
@@ -91,7 +84,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/file API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
@@ -99,9 +91,6 @@ struct PathParameters {
     )]
     image_id: String,
 }
-/// File response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl FileCommand {
     /// Perform command action
@@ -127,11 +116,10 @@ impl FileCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
         let dst = self.file.clone();
         let data = build_upload_asyncread(dst).await?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_read_body_async(client, data).await?;
+        let _rsp = ep.raw_query_read_body_async(client, data).await?;
         // TODO: what if there is an interesting response
         Ok(())
     }

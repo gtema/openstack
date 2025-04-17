@@ -26,7 +26,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_list_replication_targets"))]
+    #[builder(private, setter(into, name = "_list_replication_targets"))]
     pub(crate) list_replication_targets: BTreeMap<Cow<'a, str>, Value>,
 
     #[builder(setter(name = "_headers"), default, private)]

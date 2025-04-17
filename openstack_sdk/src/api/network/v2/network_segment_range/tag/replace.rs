@@ -30,7 +30,6 @@ pub struct Request<'a> {
 
     /// network_segment_range_id parameter for
     /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     network_segment_range_id: Cow<'a, str>,
 

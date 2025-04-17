@@ -25,14 +25,14 @@ pub struct VolumeAttachmentResponse {
     /// The UUID of the associated volume attachment in Cinder.
     ///
     /// **New in version 2.89**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
     /// **New in version 2.89**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub bdm_uuid: Option<String>,
 
@@ -40,24 +40,21 @@ pub struct VolumeAttachmentResponse {
     /// server is deleted.
     ///
     /// **New in version 2.79**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub delete_on_termination: Option<bool>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
-    ///
     #[structable()]
     pub device: String,
 
     /// The volume ID of the attachment.
     ///
     /// **Available until version 2.88**
-    ///
     #[structable()]
     pub id: String,
 
     /// The UUID of the server.
-    ///
     #[serde(rename = "serverId")]
     #[structable(title = "serverId")]
     pub server_id: String,
@@ -65,12 +62,11 @@ pub struct VolumeAttachmentResponse {
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.70**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tag: Option<String>,
 
     /// The UUID of the attached volume.
-    ///
     #[serde(rename = "volumeId")]
     #[structable(title = "volumeId")]
     pub volume_id: String,

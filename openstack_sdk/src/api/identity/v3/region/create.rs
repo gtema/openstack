@@ -36,19 +36,16 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `region` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Region<'a> {
     /// The region description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) parent_id: Option<Cow<'a, str>>,
@@ -58,7 +55,6 @@ pub struct Region<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `region` object
-    ///
     #[builder(setter(into))]
     pub(crate) region: Region<'a>,
 

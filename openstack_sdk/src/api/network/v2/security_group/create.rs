@@ -34,31 +34,26 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `security_group` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SecurityGroup<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Indicates if the security group is stateful or stateless.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) stateful: Option<bool>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -68,7 +63,6 @@ pub struct SecurityGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `security_group` object.
-    ///
     #[builder(setter(into))]
     pub(crate) security_group: SecurityGroup<'a>,
 

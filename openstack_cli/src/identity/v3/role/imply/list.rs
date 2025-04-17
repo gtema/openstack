@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/roles/{prior_role_id}/implies` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role::imply::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::role::imply::response::list::ImplyResponse;
 
 /// Lists implied (inference) roles for a role.
 ///
 /// Relationship:
 /// `https://developer.openstack.org/api-ref/identity/v3/#list-implied-roles-for-role`
-///
 #[derive(Args)]
 #[command(about = "List implied (inference) roles for role")]
 pub struct ImpliesCommand {
@@ -62,28 +57,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// prior_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_prior_role_id",
         value_name = "PRIOR_ROLE_ID"
     )]
     prior_role_id: String,
-}
-/// Implies response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An array of implied role objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    implies: Option<Value>,
-
-    /// A prior role object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    prior_role: Option<Value>,
 }
 
 impl ImpliesCommand {
@@ -109,9 +88,8 @@ impl ImpliesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ImplyResponse>(data)?;
         Ok(())
     }
 }

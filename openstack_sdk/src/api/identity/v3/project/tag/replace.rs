@@ -32,12 +32,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A list of simple strings assigned to a project.
-    ///
     #[builder(setter(into))]
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// project_id parameter for /v3/projects/{project_id}/tags/{value} API
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 

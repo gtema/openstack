@@ -17,12 +17,13 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::identity::v3::user::application_credential::response::list::ApplicationCredentialResponse;
+
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredential,
-        IdentityUserApplicationCredentialApiRequest, IdentityUserApplicationCredentialList,
-        IdentityUserApplicationCredentialListBuilder,
+        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
+        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -35,7 +36,7 @@ use crate::{
 const TITLE: &str = "Application Credentials";
 const VIEW_CONFIG_KEY: &str = "identity.user/application_credential";
 
-impl ResourceKey for IdentityUserApplicationCredential {
+impl ResourceKey for ApplicationCredentialResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
@@ -43,7 +44,7 @@ impl ResourceKey for IdentityUserApplicationCredential {
 
 pub type IdentityApplicationCredentials<'a> = TableViewComponentBase<
     'a,
-    IdentityUserApplicationCredential,
+    ApplicationCredentialResponse,
     IdentityUserApplicationCredentialList,
 >;
 

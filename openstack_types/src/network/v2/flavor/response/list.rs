@@ -23,32 +23,32 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// The human-readable description for the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// Indicates whether the flavor is enabled or not. Default is true.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID of the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Name of the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// Service profile UUIDs associated with this flavor.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub service_profiles: Option<Vec<String>>,
 
     /// Service type for the flavor. Example: FIREWALL.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub service_type: Option<String>,
 }

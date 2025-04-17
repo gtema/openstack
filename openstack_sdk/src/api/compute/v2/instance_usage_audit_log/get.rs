@@ -33,7 +33,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// Filters the response by the date and time before which to list usage
     /// audits.
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

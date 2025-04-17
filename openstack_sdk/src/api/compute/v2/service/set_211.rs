@@ -43,7 +43,6 @@ pub struct Request<'a> {
     /// The reason for disabling a service. The minimum length is 1 and the
     /// maximum length is 255. This may only be requested with
     /// `status=disabled`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) disabled_reason: Option<Cow<'a, str>>,
 
@@ -57,15 +56,13 @@ pub struct Request<'a> {
     ///
     /// Setting a service forced down without completely fencing it will likely
     /// result in the corruption of VMs on that host.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) forced_down: Option<bool>,
 
     #[builder(setter(into))]
     pub(crate) host: Cow<'a, str>,
 
     /// id parameter for /v2.1/os-services/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

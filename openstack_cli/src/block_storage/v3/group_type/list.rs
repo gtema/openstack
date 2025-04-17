@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/group_types` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group_type::response::list::GroupTypeResponse;
 
 /// Returns the list of group types.
-///
 #[derive(Args)]
 pub struct GroupTypesCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ pub struct GroupTypesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Shows details for all project. Admin only.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenants: Option<bool>,
 
@@ -66,34 +60,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
@@ -101,7 +90,6 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -109,40 +97,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// GroupTypes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The group type description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// A set of key and value pairs that contains the specifications for a
-    /// group type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    group_specs: Option<Value>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Whether the group type is publicly visible.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    is_public: Option<bool>,
-
-    /// The group type name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl GroupTypesCommand {
     /// Perform command action
@@ -190,8 +144,7 @@ impl GroupTypesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<GroupTypeResponse>(data)?;
         Ok(())
     }
 }

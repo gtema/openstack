@@ -16,35 +16,41 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `metering/metering-label-rules/{id}` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// MeteringLabelRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelRuleResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub destination_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub excluded: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub metering_label_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub source_ip_prefix: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }
@@ -58,4 +64,15 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

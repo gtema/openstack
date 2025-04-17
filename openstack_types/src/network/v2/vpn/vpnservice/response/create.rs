@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the POST `vpn/vpnservices` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -25,53 +24,53 @@ use structable::{StructTable, StructTableOptions};
 pub struct VpnserviceResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Read-only external (public) IPv4 address that is used for the VPN
     /// service. The VPN plugin sets this address if an IPv4 interface is
     /// available.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub external_v4_ip: Option<String>,
 
     /// Read-only external (public) IPv6 address that is used for the VPN
     /// service. The VPN plugin sets this address if an IPv6 interface is
     /// available.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub external_v6_ip: Option<String>,
 
     /// The ID of the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
     /// The ID of the VPN service.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub router_id: Option<String>,
 
     /// Indicates whether IPsec VPN service is currently operational. Values
     /// are `ACTIVE`, `DOWN`, `BUILD`, `ERROR`, `PENDING_CREATE`,
     /// `PENDING_UPDATE`, or `PENDING_DELETE`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
@@ -79,12 +78,12 @@ pub struct VpnserviceResponse {
     /// available IP from that subnet to the port. If you specify both a subnet
     /// UUID and an IP address, OpenStack Networking tries to allocate the
     /// address to the port.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_id: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

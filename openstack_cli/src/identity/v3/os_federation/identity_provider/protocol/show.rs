@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::get;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::response::get::ProtocolResponse;
 
 /// Get protocols for an IDP.
 ///
 /// HEAD/GET /OS-FEDERATION/identity_providers/
 /// {idp_id}/protocols/{protocol_id}
-///
 #[derive(Args)]
 pub struct ProtocolCommand {
     /// Request Query parameters
@@ -60,7 +56,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_idp_id",
@@ -71,30 +66,12 @@ struct PathParameters {
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Protocol response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The federation protocol ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    mapping_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    remote_id_attribute: Option<String>,
 }
 
 impl ProtocolCommand {
@@ -122,7 +99,7 @@ impl ProtocolCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ProtocolResponse>(data)?;
         Ok(())
     }
 }

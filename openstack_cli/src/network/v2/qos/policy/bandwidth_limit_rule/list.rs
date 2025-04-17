@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/bandwidth_limit_rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response::list::BandwidthLimitRuleResponse;
 
 /// Lists all bandwidth limit rules for a QoS policy.
 ///
@@ -57,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "List bandwidth limit rules for QoS policy")]
 pub struct BandwidthLimitRulesCommand {
@@ -79,7 +74,6 @@ pub struct BandwidthLimitRulesCommand {
 struct QueryParameters {
     /// id query parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -87,43 +81,36 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// max_burst_kbps query parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_burst_kbps: Option<i32>,
 
     /// max_kbps query parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_kbps: Option<i32>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -133,43 +120,12 @@ struct QueryParameters {
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
         value_name = "POLICY_ID"
     )]
     policy_id: String,
-}
-/// BandwidthLimitRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The direction of the traffic to which the QoS rule is applied, as seen
-    /// from the point of view of the `port`. Valid values are `egress` and
-    /// `ingress`. Default value is `egress`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    direction: Option<String>,
-
-    /// The ID of the QoS Bandwidth limit rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The maximum burst size (in kilobits).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    max_burst_kbps: Option<IntString>,
-
-    /// The maximum KBPS (kilobits per second) value. If you specify this
-    /// value, must be greater than 0 otherwise max_kbps will have no value.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    max_kbps: Option<IntString>,
 }
 
 impl BandwidthLimitRulesCommand {
@@ -222,8 +178,7 @@ impl BandwidthLimitRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<BandwidthLimitRuleResponse>(data)?;
         Ok(())
     }
 }

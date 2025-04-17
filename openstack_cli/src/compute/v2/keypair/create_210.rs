@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.1/os-keypairs` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::keypair::create_210;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::keypair::response::create::KeypairResponse;
 
 /// Imports (or generates) a keypair.
 ///
@@ -42,7 +39,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Import (or create) Keypair (microversion = 2.10)")]
 pub struct KeypairCommand {
@@ -55,7 +51,6 @@ pub struct KeypairCommand {
     path: PathParameters,
 
     /// Keypair object
-    ///
     #[command(flatten)]
     keypair: Keypair,
 }
@@ -84,20 +79,17 @@ struct Keypair {
     /// Since microversion 2.92, allowed characters are ASCII letters
     /// `[a-zA-Z]`, digits `[0-9]` and the following special characters:
     /// `[@._- ]`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// The public ssh key to import. Was optional before microversion 2.92 :
     /// if you were omitting this value, a keypair was generated for you.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     public_key: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Option<Type>,
 
@@ -105,87 +97,8 @@ struct Keypair {
     /// keys for other users than themselves.
     ///
     /// **New in version 2.10**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     user_id: Option<String>,
-}
-
-/// Keypair response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A boolean indicates whether this keypair is deleted or not. The value
-    /// is always false (not deleted).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted: Option<bool>,
-
-    /// It is always null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted_at: Option<String>,
-
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    fingerprint: String,
-
-    /// The keypair ID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: i32,
-
-    /// The name for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// If you do not provide a public key on create, a new keypair will be
-    /// built for you, and the private key will be returned during the initial
-    /// create call. Make sure to save this, as there is no way to get this
-    /// private key again in the future.
-    ///
-    /// **Available until version 2.91**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    private_key: Option<String>,
-
-    /// The keypair public key.
-    ///
-    #[serde()]
-    #[structable()]
-    public_key: String,
-
-    /// The type of the keypair. Allowed values are `ssh` or `x509`.
-    ///
-    /// **New in version 2.2**
-    ///
-    #[serde(rename = "type")]
-    #[structable(title = "type")]
-    _type: String,
-
-    /// It is always null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The user_id for a keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    user_id: String,
 }
 
 impl KeypairCommand {
@@ -235,7 +148,7 @@ impl KeypairCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<KeypairResponse>(data)?;
         Ok(())
     }
 }

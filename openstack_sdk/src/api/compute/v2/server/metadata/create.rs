@@ -43,12 +43,10 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// Metadata key and value pairs. The maximum size for each metadata key
     /// and value pair is 255 bytes.
-    ///
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
@@ -65,7 +63,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// Metadata key and value pairs. The maximum size for each metadata key
     /// and value pair is 255 bytes.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

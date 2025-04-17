@@ -23,24 +23,23 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct CatalogResponse {
     /// A list of `endpoint` objects.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub endpoints: Option<Vec<Endpoints>>,
 
     /// The UUID of the service to which the endpoint belongs.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The service name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
 }
@@ -58,6 +57,18 @@ pub enum Interface {
     // Public
     #[serde(rename = "public")]
     Public,
+}
+
+impl std::str::FromStr for Interface {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "admin" => Ok(Self::Admin),
+            "internal" => Ok(Self::Internal),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Endpoints` type

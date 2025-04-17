@@ -51,33 +51,28 @@ pub enum Event {
 }
 
 /// A `log` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Log<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Indicates whether this log object is enabled or disabled. Default is
     /// true.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`. Default is
     /// `ALL`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) event: Option<Event>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -85,25 +80,21 @@ pub struct Log<'a> {
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The ID of resource log (e.g security group ID).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) resource_id: Option<Option<Cow<'a, str>>>,
 
     /// The resource log type such as ‘security_group’.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) resource_type: Option<Cow<'a, str>>,
 
     /// The ID of resource target log such as port ID.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) target_id: Option<Option<Cow<'a, str>>>,
@@ -113,7 +104,6 @@ pub struct Log<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `log` object.
-    ///
     #[builder(setter(into))]
     pub(crate) log: Log<'a>,
 

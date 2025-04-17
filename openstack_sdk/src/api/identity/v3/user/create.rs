@@ -60,36 +60,35 @@ pub struct Federated<'a> {
 /// `ignore_lockout_failure_attempts`, `lock_password`,
 /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
 /// `ignore_user_inactivity`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_change_password_upon_first_use: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_lockout_failure_attempts: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_password_expiry: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ignore_user_inactivity: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) lock_password: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) multi_factor_auth_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_multi_factor_auth_rules"))]
+    #[builder(default, private, setter(into, name = "_multi_factor_auth_rules"))]
     pub(crate) multi_factor_auth_rules: Option<Vec<Vec<Cow<'a, str>>>>,
 }
 
@@ -109,7 +108,6 @@ impl<'a> OptionsBuilder<'a> {
 }
 
 /// A `user` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
@@ -121,13 +119,11 @@ pub struct User<'a> {
     /// their default project, the default project is ignored at token
     /// creation. (Since v3.1) Additionally, if your default project is not
     /// valid, a token is issued without an explicit scope of authorization.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
     /// The resource description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -136,16 +132,14 @@ pub struct User<'a> {
     /// the request, the Identity service will attempt to pull the domain ID
     /// from the token used in the request. Note that this requires the use of
     /// a domain-scoped token.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -164,13 +158,11 @@ pub struct User<'a> {
     /// ]
     ///
     /// ```
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) federated: Option<Vec<Federated<'a>>>,
 
     /// The user name. Must be unique within the owning domain.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -180,13 +172,11 @@ pub struct User<'a> {
     /// `ignore_lockout_failure_attempts`, `lock_password`,
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options<'a>>,
 
     /// The password for the user.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) password: Option<Option<Cow<'a, str>>>,
@@ -214,7 +204,6 @@ impl<'a> UserBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `user` object
-    ///
     #[builder(setter(into))]
     pub(crate) user: User<'a>,
 

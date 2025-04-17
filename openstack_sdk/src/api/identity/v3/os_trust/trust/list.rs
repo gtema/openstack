@@ -30,13 +30,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Represents the user who is capable of consuming the trust.
-    ///
     #[builder(default, setter(into))]
     trustee_user_id: Option<Cow<'a, str>>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
-    ///
     #[builder(default, setter(into))]
     trustor_user_id: Option<Cow<'a, str>>,
 

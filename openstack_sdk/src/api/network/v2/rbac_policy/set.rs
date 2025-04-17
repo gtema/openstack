@@ -39,7 +39,6 @@ pub struct RbacPolicy<'a> {
     /// example, the name of the project is provided here, it will be accepted
     /// by the Neutron API, but the RBAC rule created will not work as
     /// expected.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) target_tenant: Option<Cow<'a, str>>,
@@ -52,7 +51,6 @@ pub struct Request<'a> {
     pub(crate) rbac_policy: RbacPolicy<'a>,
 
     /// id parameter for /v2.0/rbac-policies/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

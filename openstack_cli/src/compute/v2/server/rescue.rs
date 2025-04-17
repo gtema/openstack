@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::rescue;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::rescue::ServerResponse;
 
 /// Puts a server in rescue mode and changes its status to `RESCUE`.
 ///
@@ -52,7 +49,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), notImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Rescue Server (rescue Action)")]
 pub struct ServerCommand {
@@ -65,7 +61,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action to rescue a server.
-    ///
     #[command(flatten)]
     rescue: Option<Rescue>,
 }
@@ -78,7 +73,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -94,18 +88,6 @@ struct Rescue {
 
     #[arg(help_heading = "Body parameters", long)]
     rescue_image_ref: Option<String>,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An administrative password to access moved instance. If you set
-    /// enable_instance_password configuration option to False, the API
-    /// wouldn’t return the adminPass field in response.
-    ///
-    #[serde(rename = "adminPass")]
-    #[structable(title = "adminPass")]
-    admin_pass: String,
 }
 
 impl ServerCommand {
@@ -143,7 +125,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

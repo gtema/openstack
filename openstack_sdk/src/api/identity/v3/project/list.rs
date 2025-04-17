@@ -32,7 +32,6 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID of the domain.
-    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
@@ -46,12 +45,10 @@ pub struct Request<'a> {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// The resource name.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

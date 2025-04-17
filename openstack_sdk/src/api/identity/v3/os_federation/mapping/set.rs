@@ -167,7 +167,7 @@ pub struct RemoteTypeAnyOneOfRegex<'a> {
     pub(crate) any_one_of: Vec<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) regex: Option<bool>,
 
     #[serde(rename = "type")]
@@ -183,7 +183,7 @@ pub struct RemoteTypeNotAnyOfRegex<'a> {
     pub(crate) not_any_of: Vec<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) regex: Option<bool>,
 
     #[serde(rename = "type")]
@@ -199,7 +199,7 @@ pub struct RemoteTypeBlacklistRegex<'a> {
     pub(crate) blacklist: Vec<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) regex: Option<bool>,
 
     #[serde(rename = "type")]
@@ -211,7 +211,7 @@ pub struct RemoteTypeBlacklistRegex<'a> {
 #[builder(setter(strip_option))]
 pub struct RemoteTypeWhitelistRegex<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) regex: Option<bool>,
 
     #[serde(rename = "type")]
@@ -253,7 +253,6 @@ pub struct Mapping<'a> {
     pub(crate) rules: Vec<Rules<'a>>,
 
     /// Mapping schema version
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) schema_version: Option<Cow<'a, str>>,
@@ -266,7 +265,6 @@ pub struct Request<'a> {
     pub(crate) mapping: Mapping<'a>,
 
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Unshelve<'a> {
@@ -38,12 +37,10 @@ pub struct Unshelve<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
-    ///
     #[builder(setter(into))]
     pub(crate) unshelve: Option<Unshelve<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

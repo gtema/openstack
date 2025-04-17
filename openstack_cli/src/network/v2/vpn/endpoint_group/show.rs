@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/vpn/endpoint-groups/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::endpoint_group::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::endpoint_group::response::get::EndpointGroupResponse;
 
 /// Shows details for a VPN endpoint group.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Show VPN endpoint group")]
 pub struct EndpointGroupCommand {
@@ -66,56 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/vpn/endpoint-groups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// EndpointGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// List of endpoints of the same type, for the endpoint group. The values
-    /// will depend on type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    endpoints: Option<Value>,
-
-    /// The ID of the VPN endpoint group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The type of the endpoints in the group. A valid value is `subnet`,
-    /// `cidr`, `network`, `router`, or `vlan`. Only `subnet` and `cidr` are
-    /// supported at this moment.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
 }
 
 impl EndpointGroupCommand {
@@ -138,7 +89,7 @@ impl EndpointGroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<EndpointGroupResponse>(find_data)?;
         Ok(())
     }
 }

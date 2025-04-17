@@ -37,7 +37,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// provider parameter for
     /// /v2/lbaas/providers/{provider}/flavor_capabilities API
-    ///
     #[builder(default, setter(into))]
     provider: Cow<'a, str>,
 

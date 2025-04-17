@@ -23,17 +23,15 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImportRecordResponse {
     /// The UUID of the backup.
-    ///
     #[structable()]
     pub id: String,
 
     /// Links for the backup.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The backup name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 }
@@ -41,7 +39,6 @@ pub struct ImportRecordResponse {
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) metering_label_rule: MeteringLabelRule<'a>,
 
     /// id parameter for /v2.0/metering/metering-label-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

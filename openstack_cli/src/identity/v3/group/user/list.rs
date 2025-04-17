@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/groups/{group_id}/users` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::group::user::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::group::user::response::list::UserResponse;
 
 /// Lists the users that belong to a group.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/group_users`
-///
 #[derive(Args)]
 #[command(about = "List users in group")]
 pub struct UsersCommand {
@@ -61,7 +56,6 @@ struct QueryParameters {
     /// the two, for example: `password_expires_at={operator}:{timestamp}`.
     /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
     /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     password_expires_at: Option<String>,
 }
@@ -70,95 +64,12 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_id",
         value_name = "GROUP_ID"
     )]
     group_id: String,
-}
-/// Users response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the default project for the user.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    default_project_id: Option<String>,
-
-    /// The resource description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// List of federated objects associated with a user. Each object in the
-    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol_id` and `unique_id` of the
-    /// protocol and user respectively. For example:
-    ///
-    /// ```text
-    /// "federated": [
-    ///   {
-    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-    ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
-    ///     ]
-    ///   }
-    /// ]
-    ///
-    /// ```
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    federated: Option<Value>,
-
-    /// The user ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the user. Available resource options are
-    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-    /// `ignore_lockout_failure_attempts`, `lock_password`,
-    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-    /// `ignore_user_inactivity`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    options: Option<Value>,
-
-    /// The date and time when the password expires. The time zone is UTC.
-    ///
-    /// This is a response object attribute; not valid for requests. A `null`
-    /// value indicates that the password never expires.
-    ///
-    /// **New in version 3.7**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    password_expires_at: Option<String>,
 }
 
 impl UsersCommand {
@@ -188,8 +99,7 @@ impl UsersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<UserResponse>(data)?;
         Ok(())
     }
 }

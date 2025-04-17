@@ -32,12 +32,10 @@ pub struct Request<'a> {
     /// If this parameter has a true value, the returned traits will be those
     /// that are associated with at least one resource provider. Available
     /// values for the parameter are true and false.
-    ///
     #[builder(default)]
     associated: Option<bool>,
 
     /// The name of a resource provider to filter the list.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

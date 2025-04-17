@@ -20,25 +20,21 @@
 //! Wraps invoking of the `v2/lbaas/flavorprofiles/{flavorprofile_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::flavor_profile::find;
 use openstack_sdk::api::load_balancer::v2::flavor_profile::set;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::flavor_profile::response::set::FlavorProfileResponse;
 
 /// Updates a flavor Profile.
-///
 #[derive(Args)]
 pub struct FlavorProfileCommand {
     /// Request Query parameters
@@ -50,7 +46,6 @@ pub struct FlavorProfileCommand {
     path: PathParameters,
 
     /// Defines the attributes of a PUT request.
-    ///
     #[command(flatten)]
     flavorprofile: Flavorprofile,
 }
@@ -64,7 +59,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavorprofile_id parameter for
     /// /v2/lbaas/flavorprofiles/{flavorprofile_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,26 +76,6 @@ struct Flavorprofile {
     name: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
-    provider_name: Option<String>,
-}
-
-/// FlavorProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    flavor_data: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
     provider_name: Option<String>,
 }
 
@@ -157,7 +131,7 @@ impl FlavorProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FlavorProfileResponse>(data)?;
         Ok(())
     }
 }

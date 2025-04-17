@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.1/servers` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::create_20;
+use openstack_types::compute::v2::server::response::create::ServerResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates a server.
 ///
@@ -73,7 +69,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Create Server (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -104,12 +99,10 @@ pub struct ServerCommand {
     ///
     /// For these reasons, it is important to consult each cloud’s user
     /// documentation to know what is available for scheduler hints.
-    ///
     #[command(flatten)]
     os_scheduler_hints: Option<OsSchedulerHints>,
 
     /// A `server` object.
-    ///
     #[command(flatten)]
     server: Server,
 }
@@ -132,18 +125,15 @@ enum OsDcfDiskConfig {
 #[derive(Args, Clone)]
 struct Server {
     /// IPv4 address that should be used to access this server.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     access_ipv6: Option<String>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
@@ -153,13 +143,11 @@ struct Server {
     ///
     /// The `null` value was allowed in the Nova legacy v2 API, but due to
     /// strict input validation, it is not allowed in the Nova v2.1 API.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     block_device_mapping: Option<Vec<Value>>,
 
     /// Enables fine grained control of the block device mapping for an
@@ -189,8 +177,7 @@ struct Server {
     /// with version 2.33. It has been restored in version 2.42.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     block_device_mapping_v2: Option<Vec<Value>>,
 
     /// Indicates whether a config drive enables metadata injection. The
@@ -200,20 +187,17 @@ struct Server {
     /// metadata service. This metadata is different from the user data. Not
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     config_drive: Option<bool>,
 
     /// The flavor reference, as an ID (including a UUID) or full URL, for the
     /// flavor for your server instance.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     flavor_ref: String,
 
     /// The UUID of the image to use for your server instance. This is not
     /// required in case of boot from volume. In all other cases it is required
     /// and must be a valid UUID otherwise API will return 400.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     image_ref: Option<String>,
 
@@ -223,7 +207,6 @@ struct Server {
     ///
     /// The `null` value was allowed in the Nova legacy v2 API, but due to
     /// strict input validation, it is not allowed in the Nova v2.1 API.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     key_name: Option<String>,
 
@@ -232,7 +215,6 @@ struct Server {
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
@@ -245,7 +227,6 @@ struct Server {
     ///
     /// The `null` value was allowed in the Nova legacy v2 API, but due to
     /// strict input validation, it is not allowed in the Nova v2.1 API.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
@@ -288,8 +269,7 @@ struct Server {
     /// not in a list. See the associated example.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     networks: Option<Vec<Value>>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
@@ -308,7 +288,6 @@ struct Server {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
@@ -320,8 +299,7 @@ struct Server {
     /// **Available until version 2.56**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     personality: Option<Vec<Value>>,
 
     /// Indicates whether a config drive enables metadata injection. The
@@ -331,7 +309,6 @@ struct Server {
     /// metadata service. This metadata is different from the user data. Not
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     return_reservation_id: Option<bool>,
 
@@ -341,7 +318,6 @@ struct Server {
     /// not applied to pre-existing ports.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     security_groups: Option<Vec<String>>,
 
@@ -352,7 +328,6 @@ struct Server {
     ///
     /// The `null` value allowed in Nova legacy v2 API, but due to the strict
     /// input validation, it isn’t allowed in Nova v2.1 API.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     user_data: Option<String>,
 }
@@ -363,7 +338,6 @@ struct OsSchedulerHints {
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     build_near_host_ip: Option<String>,
 
@@ -372,7 +346,6 @@ struct OsSchedulerHints {
     /// If `os:scheduler_hints:build_near_host_ip` is specified and this
     /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     cidr: Option<String>,
 
@@ -382,7 +355,6 @@ struct OsSchedulerHints {
     /// environment.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_cell: Option<Vec<String>>,
 
@@ -391,7 +363,6 @@ struct OsSchedulerHints {
     /// `DifferentHostFilter` is available on cloud side.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_host: Option<Vec<String>>,
 
@@ -400,7 +371,6 @@ struct OsSchedulerHints {
     /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
     /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     group: Option<String>,
 
@@ -413,8 +383,7 @@ struct OsSchedulerHints {
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     query: Option<Value>,
 
     /// A list of server UUIDs or a server UUID. Schedule the server on the
@@ -422,63 +391,14 @@ struct OsSchedulerHints {
     /// `SameHostFilter` is available on cloud side.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     same_host: Option<Vec<String>>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     target_cell: Option<String>,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative password for the server. If you set
-    /// `enable_instance_password` configuration option to `False`, the API
-    /// wouldn’t return the `adminPass` field in response.
-    ///
-    #[serde(rename = "adminPass")]
-    #[structable(optional, title = "adminPass")]
-    admin_pass: Option<String>,
-
-    /// The UUID of the server.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Links pertaining to usage. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    /// **New in version 2.40**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// Disk configuration. The value is either:
-    ///
-    /// - `AUTO`. The API builds the server with a single partition the size of
-    ///   the target flavor disk. The API automatically adjusts the file system
-    ///   to fit the entire partition.
-    /// - `MANUAL`. The API builds the server by using the partition scheme and
-    ///   file system that is in the source image. If the target flavor disk is
-    ///   larger, The API does not partition the remaining disk space.
-    ///
-    #[serde(rename = "OS-DCF:diskConfig")]
-    #[structable(optional, title = "OS-DCF:diskConfig")]
-    os_dcf_disk_config: Option<String>,
-
-    /// One or more security groups objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_groups: Option<Value>,
 }
 
 impl ServerCommand {
@@ -653,7 +573,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

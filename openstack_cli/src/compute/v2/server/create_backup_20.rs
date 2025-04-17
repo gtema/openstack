@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::create_backup_20;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::create_backup::ServerResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "Create Server Back Up (createBackup Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -50,7 +46,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action.
-    ///
     #[command(flatten)]
     create_backup: CreateBackup,
 }
@@ -63,7 +58,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -75,36 +69,22 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct CreateBackup {
     /// The type of the backup, for example, `daily`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     backup_type: String,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The name of the image to be backed up.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// The rotation of the back up image, the oldest image will be removed
     /// when image count exceed the rotation count.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     rotation: i32,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID for the resulting image snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    image_id: String,
 }
 
 impl ServerCommand {
@@ -147,7 +127,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

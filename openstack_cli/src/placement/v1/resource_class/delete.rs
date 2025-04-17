@@ -20,22 +20,16 @@
 //! Wraps invoking of the `resource_classes/{name}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::delete;
-use structable_derive::StructTable;
 
 /// Delete the resource class identified by {name}.
 ///
@@ -48,7 +42,6 @@ use structable_derive::StructTable;
 ///
 /// A 409 Conflict response code will be returned if there exist inventories
 /// for the resource class.
-///
 #[derive(Args)]
 #[command(about = "Delete resource class")]
 pub struct ResourceClassCommand {
@@ -69,7 +62,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// name parameter for /resource_classes/{name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_name",
@@ -77,9 +69,6 @@ struct PathParameters {
     )]
     name: String,
 }
-/// ResourceClass response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ResourceClassCommand {
     /// Perform command action
@@ -103,8 +92,7 @@ impl ResourceClassCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -17,20 +17,20 @@
 //! Response type for the GET `clustertemplates` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Clustertemplate response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClustertemplateResponse {
     /// The exposed port of COE API server.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub apiserver_port: Option<i32>,
 
     /// Display the attribute `os_distro` defined as appropriate metadata in
     /// image for the cluster driver.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub cluster_distro: Option<String>,
 
@@ -38,23 +38,24 @@ pub struct ClustertemplateResponse {
     /// include `kubernetes`. If your environment has additional cluster
     /// drivers installed, refer to the cluster driver documentation for the
     /// new COE names.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub coe: Option<Coe>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The DNS nameserver for the servers and containers in the cluster to
     /// use. This is configured in the private Neutron network for the cluster.
     /// The default is `8.8.8.8`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dns_nameserver: Option<String>,
 
     /// The name of a driver to manage the storage for the images and the
     /// container’s writable layer. The default is `devicemapper`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub docker_storage_driver: Option<String>,
 
@@ -63,10 +64,11 @@ pub struct ClustertemplateResponse {
     /// provide the storage. The default is 25 GB. For the `devicemapper`
     /// storage driver, the minimum value is 3GB. For the `overlay` storage
     /// driver, the minimum value is 1GB.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub docker_volume_size: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub driver: Option<String>,
 
@@ -80,38 +82,38 @@ pub struct ClustertemplateResponse {
     /// etc. In the opposite direction, floating IPs will be allocated from the
     /// external network to provide access from the external internet to
     /// servers and the container services hosted in the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub external_network_id: Option<String>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
     /// the internal network for the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub fixed_network: Option<String>,
 
     /// Fixed subnet that are using to allocate network address for nodes in
     /// cluster.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub fixed_subnet: Option<String>,
 
     /// The nova flavor ID or name for booting the node servers. The default is
     /// `m1.small`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub flavor_id: Option<String>,
 
     /// Whether enable or not using the floating IP of cloud provider. Some
     /// cloud providers used floating IP, some used public IP, thus Magnum
     /// provide this option for specifying the choice of using floating IP.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub floating_ip_enabled: Option<String>,
 
     /// Indicates whether the ClusterTemplate is hidden or not, the default
     /// value is false.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hidden: Option<String>,
 
@@ -120,7 +122,7 @@ pub struct ClustertemplateResponse {
     /// in certain countries or enterprises, and the proxy allows the servers
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub http_proxy: Option<String>,
 
@@ -129,20 +131,19 @@ pub struct ClustertemplateResponse {
     /// in certain countries or enterprises, and the proxy allows the servers
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub https_proxy: Option<String>,
 
     /// The name or UUID of the base image in Glance to boot the servers for
     /// the cluster. The image must have the attribute `os_distro` defined as
     /// appropriate for the cluster driver.
-    ///
     #[structable(wide)]
     pub image_id: String,
 
     /// The URL pointing to users’s own private insecure docker registry to
     /// deploy and run docker containers.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub insecure_registry: Option<String>,
 
@@ -150,7 +151,7 @@ pub struct ClustertemplateResponse {
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub keypair_id: Option<String>,
 
@@ -158,12 +159,12 @@ pub struct ClustertemplateResponse {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub labels: Option<HashMap<String, String>>,
+    pub labels: Option<BTreeMap<String, String>>,
 
     /// The flavor of the master node for this cluster template.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub master_flavor_id: Option<String>,
 
@@ -174,12 +175,12 @@ pub struct ClustertemplateResponse {
     /// without the load balancer. In this case, one of the masters will serve
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub master_lb_enabled: Option<String>,
 
     /// Name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
@@ -187,17 +188,18 @@ pub struct ClustertemplateResponse {
     /// containers. Note that this is different and separate from the Neutron
     /// network for the cluster. The operation and networking model are
     /// specific to the particular driver.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub network_driver: Option<String>,
 
     /// When a proxy server is used, some sites should not go through the proxy
     /// and should be accessed normally. In this case, users can specify these
     /// sites as a comma separated list of IPs. The default is `None`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub no_proxy: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
@@ -205,7 +207,7 @@ pub struct ClustertemplateResponse {
     /// users within the same tenant as the owners. Setting this flag makes the
     /// cluster template public and accessible by other users. The default is
     /// not public.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub public: Option<String>,
 
@@ -214,19 +216,19 @@ pub struct ClustertemplateResponse {
     /// option provides an alternative registry based on the Registry V2:
     /// Magnum will create a local registry in the cluster backed by swift to
     /// host the images. The default is to use the public registry.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub registry_enabled: Option<String>,
 
     /// The servers in the cluster can be `vm` or `baremetal`. This parameter
     /// selects the type of server to create for the cluster. The default is
     /// `vm`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub server_type: Option<ServerType>,
 
     /// Administrator tags for the cluster template.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tags: Option<String>,
 
@@ -235,24 +237,26 @@ pub struct ClustertemplateResponse {
     /// for instance during development or to troubleshoot certain problems.
     /// Specifying this parameter will disable TLS so that users can access the
     /// COE endpoints without a certificate. The default is TLS enabled.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tls_disabled: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster template.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 
     /// The name of a volume driver for managing the persistent storage for the
     /// containers. The functionality supported are specific to the driver.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub volume_driver: Option<String>,
 }
@@ -264,8 +268,17 @@ pub enum Coe {
     Kubernetes,
 }
 
+impl std::str::FromStr for Coe {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "kubernetes" => Ok(Self::Kubernetes),
+            _ => Err(()),
+        }
+    }
+}
+
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -285,4 +298,15 @@ pub enum ServerType {
     // Vm
     #[serde(rename = "vm")]
     Vm,
+}
+
+impl std::str::FromStr for ServerType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "bm" => Ok(Self::Bm),
+            "vm" => Ok(Self::Vm),
+            _ => Err(()),
+        }
+    }
 }

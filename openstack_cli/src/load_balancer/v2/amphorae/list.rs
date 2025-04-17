@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2/octavia/amphorae` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::amphorae::response::list::AmphoraeResponse;
 
 /// Lists all amphora for the project.
 ///
@@ -47,7 +44,6 @@ use structable_derive::StructTable;
 /// [Filtering and column selection](#filtering).
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List Amphora")]
 pub struct AmphoraesCommand {
@@ -101,7 +97,6 @@ struct QueryParameters {
     lb_network_ip: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
@@ -109,12 +104,10 @@ struct QueryParameters {
     loadbalancer_id: Option<String>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -146,136 +139,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Amphoraes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The availability zone of a compute instance, cached at create time.
-    /// This is not guaranteed to be current. May be an empty-string if the
-    /// compute service does not use zones.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    cached_zone: Option<String>,
-
-    /// Whether the certificate is in the process of being replaced.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    cert_busy: Option<bool>,
-
-    /// The date the certificate for the amphora expires.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    cert_expiration: Option<String>,
-
-    /// The ID of the compute flavor used for the amphora.
-    ///
-    /// **New in version 2.3**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    compute_flavor: Option<String>,
-
-    /// The ID of the amphora resource in the compute system.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    compute_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The IP address of the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ha_ip: Option<String>,
-
-    /// The ID of the Virtual IP (VIP) port.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ha_port_id: Option<String>,
-
-    /// The associated amphora ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the glance image used for the amphora.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    image_id: Option<String>,
-
-    /// The management IP of the amphora.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    lb_network_ip: Option<String>,
-
-    /// The ID of the load balancer.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    loadbalancer_id: Option<String>,
-
-    /// The role of the amphora. One of `STANDALONE`, `MASTER`, `BACKUP`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    role: Option<String>,
-
-    /// The status of the amphora. One of: `BOOTING`, `ALLOCATED`, `READY`,
-    /// `PENDING_CREATE`, `PENDING_DELETE`, `DELETED`, `ERROR`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The vrrp group’s ID for the amphora.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vrrp_id: Option<i32>,
-
-    /// The bound interface name of the vrrp port on the amphora.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vrrp_interface: Option<String>,
-
-    /// The address of the vrrp port on the amphora.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vrrp_ip: Option<String>,
-
-    /// The vrrp port’s ID in the networking system.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vrrp_port_id: Option<String>,
-
-    /// The priority of the amphora in the vrrp group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vrrp_priority: Option<i32>,
-}
 
 impl AmphoraesCommand {
     /// Perform command action
@@ -371,8 +234,7 @@ impl AmphoraesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AmphoraeResponse>(data)?;
         Ok(())
     }
 }

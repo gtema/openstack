@@ -20,20 +20,17 @@
 //! Wraps invoking of the `resource_providers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::list;
-use structable_derive::StructTable;
+use openstack_types::placement::v1::resource_provider::response::list::ResourceProviderResponse;
 
 /// List an optionally filtered collection of resource providers.
 ///
@@ -43,7 +40,6 @@ use structable_derive::StructTable;
 ///
 /// A 400 BadRequest response code will be returned if a resource class
 /// specified in `resources` request parameter does not exist.
-///
 #[derive(Args)]
 #[command(about = "List resource providers")]
 pub struct ResourceProvidersCommand {
@@ -62,7 +58,6 @@ struct QueryParameters {
     /// A string representing a resource provider uuid. When supplied, it will
     /// filter the returned allocation candidates to only those resource
     /// providers that are in the same tree with the given resource provider.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     in_tree: Option<String>,
 
@@ -97,12 +92,10 @@ struct QueryParameters {
     /// return empty allocation_requests and provider_summaries, while:
     /// `member_of=in:AGGA_UUID,AGGB_UUID&member_of=!AGGA_UUID` would return
     /// resource providers that are NOT in AGGA but in AGGB.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     member_of: Option<Vec<String>>,
 
     /// The name of a resource provider to filter the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
@@ -126,7 +119,6 @@ struct QueryParameters {
     /// params within the same request is supported. So:
     /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
     /// not T2 and (T3 or T4).
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     required: Option<Vec<String>>,
 
@@ -136,12 +128,10 @@ struct QueryParameters {
     /// `resources=VCPU:4,DISK_GB:64,MEMORY_MB:2048` These resources may be
     /// satisfied by any provider in the same non-sharing tree or associated
     /// via aggregate.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     resources: Option<String>,
 
     /// The uuid of a resource provider.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     uuid: Option<String>,
 }
@@ -149,44 +139,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceProviders response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    ///
-    #[serde()]
-    #[structable()]
-    generation: i32,
-
-    /// The name of one resource provider.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The UUID of the immediate parent of the resource provider.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    parent_provider_uuid: Option<String>,
-
-    /// Read-only UUID of the top-most provider in this provider tree.
-    ///
-    /// **New in version 1.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    root_provider_uuid: Option<String>,
-
-    /// The uuid of a resource provider.
-    ///
-    #[serde()]
-    #[structable()]
-    uuid: String,
-}
 
 impl ResourceProvidersCommand {
     /// Perform command action
@@ -229,8 +181,7 @@ impl ResourceProvidersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ResourceProviderResponse>(data)?;
         Ok(())
     }
 }

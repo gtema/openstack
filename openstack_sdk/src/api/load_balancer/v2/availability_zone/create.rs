@@ -27,7 +27,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AvailabilityZone<'a> {
@@ -40,7 +39,7 @@ pub struct AvailabilityZone<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     #[serde()]
@@ -52,7 +51,6 @@ pub struct AvailabilityZone<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) availability_zone: AvailabilityZone<'a>,
 

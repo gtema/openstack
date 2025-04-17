@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/quotas/{id}/details` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::quota::details;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::quota::response::details::QuotaResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct QuotaCommand {
     /// Request Query parameters
@@ -57,71 +52,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/quotas/{id}/details API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Quota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of floating IP addresses allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    floatingip: Option<Value>,
-
-    /// The number of networks allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    network: Option<Value>,
-
-    /// The number of ports allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    port: Option<Value>,
-
-    /// The number of role-based access control (RBAC) policies for each
-    /// project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    rbac_policy: Option<Value>,
-
-    /// The number of routers allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    router: Option<Value>,
-
-    /// The number of security groups allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_group: Option<Value>,
-
-    /// The number of security group rules allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_group_rule: Option<Value>,
-
-    /// The number of subnets allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    subnet: Option<Value>,
-
-    /// The number of subnet pools allowed for each project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    subnetpool: Option<Value>,
 }
 
 impl QuotaCommand {
@@ -148,7 +84,7 @@ impl QuotaCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaResponse>(data)?;
         Ok(())
     }
 }

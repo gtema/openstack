@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2/zones/tasks/exports` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::export::list;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::dns::v2::zone::task::export::response::list::ExportResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "List all Zone Exports")]
 pub struct ExportsCommand {
@@ -57,23 +52,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
-}
 
 impl ExportsCommand {
     /// Perform command action
@@ -98,7 +76,7 @@ impl ExportsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ExportResponse>(data)?;
         Ok(())
     }
 }

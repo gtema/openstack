@@ -39,29 +39,25 @@ pub enum Direction {
 }
 
 /// A `bandwidth_limit_rule` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct BandwidthLimitRule {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) direction: Option<Direction>,
 
     /// The maximum burst size (in kilobits). Default is `0`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_burst_kbps: Option<i32>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_kbps: Option<i32>,
 }
 
@@ -69,19 +65,16 @@ pub struct BandwidthLimitRule {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `bandwidth_limit_rule` object.
-    ///
     #[builder(setter(into))]
     pub(crate) bandwidth_limit_rule: BandwidthLimitRule,
 
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

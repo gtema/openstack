@@ -30,7 +30,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v3/consistencygroups/{id}/delete API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

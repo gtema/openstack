@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// availabilityzoneprofile_id parameter for
     /// /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

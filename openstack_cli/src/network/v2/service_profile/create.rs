@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.0/service_profiles` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::service_profile::create;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::service_profile::response::create::ServiceProfileResponse;
 
 /// Creates a service profile.
 ///
@@ -59,7 +55,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Create service profile")]
 pub struct ServiceProfileCommand {
@@ -72,7 +67,6 @@ pub struct ServiceProfileCommand {
     path: PathParameters,
 
     /// A `service_profile` object.
-    ///
     #[command(flatten)]
     service_profile: ServiceProfile,
 }
@@ -88,59 +82,20 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct ServiceProfile {
     /// The human-readable description for the service profile.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Provider driver to use for this profile.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     driver: Option<String>,
 
     /// Indicates whether this service profile is enabled or not. Default is
     /// `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<Option<bool>>,
 
     /// JSON-formatted meta information of the service profile.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    metainfo: Option<String>,
-}
-
-/// ServiceProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The human-readable description for the service profile.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Provider driver to use for this profile.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    driver: Option<String>,
-
-    /// Indicates whether this service profile is enabled or not. Default is
-    /// `true`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<BoolString>,
-
-    /// The UUID of the service profile.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// JSON-formatted meta information of the service profile.
-    ///
-    #[serde()]
-    #[structable(optional)]
     metainfo: Option<String>,
 }
 
@@ -187,7 +142,7 @@ impl ServiceProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceProfileResponse>(data)?;
         Ok(())
     }
 }

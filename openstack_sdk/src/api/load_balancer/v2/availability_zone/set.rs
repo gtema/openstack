@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines the attributes of a PUT request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AvailabilityZone<'a> {
@@ -34,7 +33,7 @@ pub struct AvailabilityZone<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 }
 
@@ -42,13 +41,11 @@ pub struct AvailabilityZone<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines the attributes of a PUT request.
-    ///
     #[builder(setter(into))]
     pub(crate) availability_zone: AvailabilityZone<'a>,
 
     /// availabilityzone_id parameter for
     /// /v2/lbaas/availabilityzones/{availabilityzone_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

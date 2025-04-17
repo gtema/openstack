@@ -20,22 +20,17 @@
 //! Wraps invoking of the `v2.0/agents/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::get;
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::agent::response::get::AgentResponse;
 
 /// Shows details for an agent.
 ///
@@ -45,7 +40,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show agent details")]
 pub struct AgentCommand {
@@ -66,112 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/agents/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Agent response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    /// The type of agent such as `Open vSwitch agent` or `DHCP agent`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    agent_type: Option<String>,
-
-    /// Indicates the agent is alive and running.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    alive: Option<bool>,
-
-    /// The availability zone of the agent.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The executable command used to start the agent such as
-    /// `neutron-openvswitch-agent` or `neutron-dhcp-agent`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    binary: Option<String>,
-
-    /// An object containing configuration specific key/value pairs; the
-    /// semantics of which are determined by the binary name and type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    configurations: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Time at which the last heartbeat was received.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    heartbeat_timestamp: Option<String>,
-
-    /// The hostname of the system the agent is running on.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    /// The ID of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The value `null` means no resource view synchronization to Placement
-    /// was attempted. `true` / `false` values signify the success of the last
-    /// synchronization attempt. Therefore the relevant resources in Placement
-    /// can only be considered up to date if this attribute is `true`. This
-    /// attribute is read-only, it is only supposed to be updated internally,
-    /// but it is readable for debugging purposes. Not all agent types track
-    /// resources via Placement, therefore the value `null` does not
-    /// necessarily means there is an error in the system.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resources_synced: Option<String>,
-
-    /// Time at which the agent was started.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    started_at: Option<String>,
-
-    /// The name of AMQP topic the agent is listening on such as `dhcp_agent`.
-    /// A special value of `N/A` is used when the agent doesn’t use an AMQP
-    /// topic.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    topic: Option<String>,
 }
 
 impl AgentCommand {
@@ -198,7 +92,7 @@ impl AgentCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AgentResponse>(data)?;
         Ok(())
     }
 }

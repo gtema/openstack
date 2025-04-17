@@ -27,13 +27,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[builder(default, setter(into))]
     local_ip_id: Cow<'a, str>,
 

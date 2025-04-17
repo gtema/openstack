@@ -18,68 +18,72 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Namespace response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NamespaceResponse {
     /// Date and time of namespace creation
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Provides a user friendly description of the namespace.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The user friendly name for the namespace. Used by UI if available.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub display_name: Option<String>,
 
     /// The unique namespace text.
-    ///
     #[structable()]
     pub namespace: String,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub objects: Option<Vec<Objects>>,
 
     /// Owner of the namespace.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub owner: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<BTreeMap<String, Properties>>,
 
     /// If true, namespace will not be deletable.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub protected: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub resource_type_associations: Option<Vec<ResourceTypeAssociations>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<Tags>>,
 
     /// Date and time of the last namespace modification
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Scope of namespace accessibility.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub visibility: Option<Visibility>,
 }
@@ -93,6 +97,17 @@ pub enum Visibility {
     // Public
     #[serde(rename = "public")]
     Public,
+}
+
+impl std::str::FromStr for Visibility {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "private" => Ok(Self::Private),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `ResourceTypeAssociations` type
@@ -128,6 +143,21 @@ pub enum Type {
     // String
     #[serde(rename = "string")]
     String,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "array" => Ok(Self::Array),
+            "boolean" => Ok(Self::Boolean),
+            "integer" => Ok(Self::Integer),
+            "number" => Ok(Self::Number),
+            "object" => Ok(Self::Object),
+            "string" => Ok(Self::String),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Items` type
@@ -166,7 +196,7 @@ pub struct Properties {
 pub struct Objects {
     pub description: Option<String>,
     pub name: Option<String>,
-    pub properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<BTreeMap<String, Properties>>,
     pub required: Option<Vec<String>>,
 }
 

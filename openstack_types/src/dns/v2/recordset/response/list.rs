@@ -23,32 +23,32 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RecordsetResponse {
     /// current action in progress on the resource
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub action: Option<Action>,
 
     /// Date / Time when resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Description for this recordset
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// ID for the resource
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// DNS Name for the recordset
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// ID for the project that owns the resource
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
@@ -56,43 +56,42 @@ pub struct RecordsetResponse {
     /// in Designate These items should conform to the DNS spec for the record
     /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
     /// hostname.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub records: Option<Vec<String>>,
 
     /// The status of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// TTL (Time to Live) for the recordset.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Version of the resource
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub version: Option<i32>,
 
     /// ID for the zone that contains this recordset
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub zone_id: Option<String>,
 
     /// The name of the zone that contains this recordset
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub zone_name: Option<String>,
 }
@@ -120,6 +119,20 @@ pub enum Status {
     Success,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ACTIVE" => Ok(Self::Active),
+            "DELETED" => Ok(Self::Deleted),
+            "ERROR" => Ok(Self::Error),
+            "PENDING" => Ok(Self::Pending),
+            "SUCCESS" => Ok(Self::Success),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Action {
     // Create
@@ -137,6 +150,19 @@ pub enum Action {
     // Update
     #[serde(rename = "UPDATE")]
     Update,
+}
+
+impl std::str::FromStr for Action {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CREATE" => Ok(Self::Create),
+            "DELETE" => Ok(Self::Delete),
+            "NONE" => Ok(Self::None),
+            "UPDATE" => Ok(Self::Update),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -198,10 +224,32 @@ pub enum Type {
     Txt,
 }
 
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "A" => Ok(Self::A),
+            "AAAA" => Ok(Self::Aaaa),
+            "CAA" => Ok(Self::Caa),
+            "CERT" => Ok(Self::Cert),
+            "CNAME" => Ok(Self::Cname),
+            "MX" => Ok(Self::Mx),
+            "NAPTR" => Ok(Self::Naptr),
+            "NS" => Ok(Self::Ns),
+            "PTR" => Ok(Self::Ptr),
+            "SOA" => Ok(Self::Soa),
+            "SPF" => Ok(Self::Spf),
+            "SRV" => Ok(Self::Srv),
+            "SSHFP" => Ok(Self::Sshfp),
+            "TXT" => Ok(Self::Txt),
+            _ => Err(()),
+        }
+    }
+}
+
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

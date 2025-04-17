@@ -35,7 +35,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The name of one resource provider.
-    ///
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
@@ -51,12 +50,10 @@ pub struct Request<'a> {
     ///   be invalidated by that move.
     ///
     /// **New in version 1.14**
-    ///
     #[builder(default, setter(into))]
     pub(crate) parent_provider_uuid: Option<Option<Cow<'a, str>>>,
 
     /// uuid parameter for /resource_providers/{uuid} API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

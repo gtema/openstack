@@ -24,25 +24,22 @@ use structable::{StructTable, StructTableOptions};
 pub struct VersionResponse {
     /// A common name for the version in question. Informative only, it has no
     /// real semantic meaning.
-    ///
     #[structable()]
     pub id: String,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
-    ///
     #[structable(serialize)]
     pub links: Vec<Links>,
 
-    #[serde(rename = "media-types")]
+    #[serde(default, rename = "media-types")]
     #[structable(optional, serialize, title = "media-types")]
     pub media_types: Option<Vec<MediaTypes>>,
 
     /// If this version of the API supports microversions, the minimum
     /// microversion that is supported. This will be the empty string if
     /// microversions are not supported.
-    ///
     #[structable()]
     pub min_version: String,
 
@@ -52,7 +49,6 @@ pub struct VersionResponse {
     /// - `SUPPORTED`: this is an older, but still supported version of the API
     /// - `DEPRECATED`: a deprecated version of the API that is slated for
     ///   removal
-    ///
     #[structable(serialize)]
     pub status: Status,
 
@@ -63,10 +59,10 @@ pub struct VersionResponse {
     ///
     /// It is vestigial and provides no useful information. It will be
     /// deprecated and removed in the future.
-    ///
     #[structable()]
     pub updated: String,
 
+    #[serde(default)]
     #[structable(optional)]
     pub version: Option<String>,
 }
@@ -84,6 +80,18 @@ pub enum Status {
     // Supported
     #[serde(rename = "SUPPORTED")]
     Supported,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CURRENT" => Ok(Self::Current),
+            "DEPRECATED" => Ok(Self::Deprecated),
+            "SUPPORTED" => Ok(Self::Supported),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Links` type

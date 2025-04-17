@@ -38,10 +38,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) created_at: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hard_limit: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) id: Option<i32>,
 
     #[builder(default, setter(into))]

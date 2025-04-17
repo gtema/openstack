@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2/images/{image_id}/members` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::member::list;
-use structable_derive::StructTable;
+use openstack_types::image::v2::image::member::response::list::MemberResponse;
 
 /// Lists the tenants that share this image. *(Since Image API v2.1)*
 ///
@@ -50,7 +47,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "List image members")]
 pub struct MembersCommand {
@@ -71,50 +67,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
         value_name = "IMAGE_ID"
     )]
     image_id: String,
-}
-/// Members response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Date and time of image member creation
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// An identifier for the image
-    ///
-    #[serde()]
-    #[structable(optional)]
-    image_id: Option<String>,
-
-    /// An identifier for the image member (tenantId)
-    ///
-    #[serde()]
-    #[structable(optional)]
-    member_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    schema: Option<String>,
-
-    /// The status of this image member
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// Date and time of last modification of image member
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl MembersCommand {
@@ -141,8 +99,7 @@ impl MembersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MemberResponse>(data)?;
         Ok(())
     }
 }

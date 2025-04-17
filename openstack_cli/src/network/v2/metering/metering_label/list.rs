@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/metering/metering-labels` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::metering::metering_label::response::list::MeteringLabelResponse;
 
 /// Lists all L3 metering labels that belong to the project.
 ///
@@ -57,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List metering labels")]
 pub struct MeteringLabelsCommand {
@@ -78,12 +73,10 @@ pub struct MeteringLabelsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/metering/metering-labels API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/metering/metering-labels API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -91,46 +84,38 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/metering/metering-labels API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// shared query parameter for /v2.0/metering/metering-labels API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/metering/metering-labels API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -138,39 +123,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// MeteringLabels response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the metering label.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Indicates whether this metering label is shared across all projects.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    shared: Option<BoolString>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl MeteringLabelsCommand {
     /// Perform command action
@@ -227,8 +179,7 @@ impl MeteringLabelsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MeteringLabelResponse>(data)?;
         Ok(())
     }
 }

@@ -31,22 +31,19 @@ use std::borrow::Cow;
 
 /// The resource options for the domain. Available resource options are
 /// `immutable`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) immutable: Option<bool>,
 }
 
 /// A `domain` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Domain<'a> {
     /// The new description of the domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -60,20 +57,17 @@ pub struct Domain<'a> {
     /// things. When you disable a domain, all tokens that are authorized for
     /// that domain become invalid. However, if you reenable the domain, these
     /// tokens become valid again, providing that they haven’t expired.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The new name of the domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The resource options for the domain. Available resource options are
     /// `immutable`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
@@ -87,12 +81,10 @@ pub struct Domain<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `domain` object
-    ///
     #[builder(setter(into))]
     pub(crate) domain: Domain<'a>,
 
     /// domain_id parameter for /v3/domains/{domain_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

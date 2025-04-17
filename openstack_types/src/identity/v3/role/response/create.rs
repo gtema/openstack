@@ -17,47 +17,46 @@
 //! Response type for the POST `roles` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Role response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the domain.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub domain_id: Option<String>,
 
     /// The role ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub links: Option<HashMap<String, Option<String>>>,
+    pub links: Option<BTreeMap<String, Option<String>>>,
 
     /// The resource name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub options: Option<Options>,
 }
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

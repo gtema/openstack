@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::delete;
-use structable_derive::StructTable;
 
 /// DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
-///
 #[derive(Args)]
 pub struct IdentityProviderCommand {
     /// Request Query parameters
@@ -58,7 +51,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_idp_id",
@@ -66,9 +58,6 @@ struct PathParameters {
     )]
     idp_id: String,
 }
-/// IdentityProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl IdentityProviderCommand {
     /// Perform command action
@@ -92,8 +81,7 @@ impl IdentityProviderCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

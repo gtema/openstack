@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/images/{image_id}/file` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::download_file;
@@ -37,7 +34,6 @@ use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;
-use structable_derive::StructTable;
 
 /// Downloads binary image data. *(Since Image API v2.0)*
 ///
@@ -57,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200, 204, 206
 ///
 /// Error response codes: 400, 403, 404, 416
-///
 #[derive(Args)]
 #[command(about = "Download binary image data")]
 pub struct FileCommand {
@@ -82,7 +77,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/file API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
@@ -90,9 +84,6 @@ struct PathParameters {
     )]
     image_id: String,
 }
-/// File response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl FileCommand {
     /// Perform command action

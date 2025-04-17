@@ -31,14 +31,12 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The name of the application credential. Must be unique to a user.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// user_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

@@ -34,7 +34,6 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// agent_id parameter for /v2.0/agents/{agent_id}/dhcp-networks/{id} API
-    ///
     #[builder(default, setter(into))]
     agent_id: Cow<'a, str>,
 

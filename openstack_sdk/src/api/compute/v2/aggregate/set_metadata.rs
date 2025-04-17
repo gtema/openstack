@@ -29,7 +29,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct SetMetadata<'a> {
     #[serde()]
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>,
 }
 
@@ -54,7 +54,6 @@ pub struct Request<'a> {
     pub(crate) set_metadata: SetMetadata<'a>,
 
     /// id parameter for /v2.1/os-aggregates/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

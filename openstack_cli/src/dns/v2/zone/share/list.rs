@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/shares` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -38,15 +35,12 @@ use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::share::list;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::zone::share::response::list::ShareResponse;
 use tracing::warn;
 
 /// List all zone shares.
 ///
 /// **New in version 2.1**
-///
 #[derive(Args)]
 #[command(about = "Get All Shared Zones")]
 pub struct SharesCommand {
@@ -70,20 +64,17 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     market: Option<String>,
 
     /// Filter results to only show resources that have a matching
     /// target_project_id
-    ///
     #[arg(help_heading = "Query parameters", long)]
     target_project_id: Option<String>,
 }
@@ -106,35 +97,6 @@ struct ZoneInput {
     /// Zone ID.
     #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
     zone_id: Option<String>,
-}
-/// Shares response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, pretty)]
-    shared_zones: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    _self: Option<String>,
-    zone: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "_self={}",
-                self._self.clone().map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "zone={}",
-                self.zone.clone().map_or(String::new(), |v| v.to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl SharesCommand {
@@ -207,8 +169,7 @@ impl SharesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ShareResponse>(data)?;
         Ok(())
     }
 }

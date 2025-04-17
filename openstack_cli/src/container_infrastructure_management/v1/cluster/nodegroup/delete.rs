@@ -20,28 +20,21 @@
 //! Wraps invoking of the `v1/clusters/nodegroups/{nodegroup_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::delete;
-use structable_derive::StructTable;
 
 /// Delete NodeGroup for a given project_id and resource.
 ///
 /// | param cluster_id: | | | --- | --- | | | cluster id. | | param
 /// nodegroup_id: | | | | resource name. |
-///
 #[derive(Args)]
 pub struct NodegroupCommand {
     /// Request Query parameters
@@ -61,7 +54,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// nodegroup_id parameter for /v1/clusters/nodegroups/{nodegroup_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -69,9 +61,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Nodegroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl NodegroupCommand {
     /// Perform command action
@@ -95,8 +84,7 @@ impl NodegroupCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

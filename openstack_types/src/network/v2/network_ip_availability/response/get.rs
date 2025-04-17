@@ -23,33 +23,33 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkIpAvailabilityResponse {
     /// The ID of the network whose IP availability detail is reported.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub network_id: Option<String>,
 
     /// Human-readable name of the network.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub network_name: Option<String>,
 
     /// A list of dictionaries showing subnet IP availability. It contains
     /// information for every subnet associated to the network.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_ip_availability: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The total number of IP addresses in a network.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub total_ips: Option<String>,
 
     /// The number of used IP addresses of all subnets in a network.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub used_ips: Option<String>,
 }

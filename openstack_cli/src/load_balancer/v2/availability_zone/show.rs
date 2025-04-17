@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/lbaas/availabilityzones/{availabilityzone_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::availability_zone::get;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::availability_zone::response::get::AvailabilityZoneResponse;
 
 /// Gets an Availability Zone's detail.
-///
 #[derive(Args)]
 pub struct AvailabilityZoneCommand {
     /// Request Query parameters
@@ -57,32 +53,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// availabilityzone_id parameter for
     /// /v2/lbaas/availabilityzones/{availabilityzone_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// AvailabilityZone response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    availability_zone_profile_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl AvailabilityZoneCommand {
@@ -109,7 +85,7 @@ impl AvailabilityZoneCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AvailabilityZoneResponse>(data)?;
         Ok(())
     }
 }

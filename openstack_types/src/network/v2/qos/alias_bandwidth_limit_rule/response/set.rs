@@ -16,27 +16,29 @@
 // `openstack-codegenerator`.
 //! Response type for the PUT `qos/alias-bandwidth-limit-rules/{id}` operation
 
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// AliasBandwidthLimitRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasBandwidthLimitRuleResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub max_burst_kbps: Option<i64>,
 
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub max_kbps: Option<i64>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }
@@ -50,4 +52,15 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

@@ -23,27 +23,27 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ListenerResponse {
     /// The currently active connections.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub active_connections: Option<i32>,
 
     /// The total bytes received.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub bytes_in: Option<i32>,
 
     /// The total bytes sent.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub bytes_out: Option<i32>,
 
     /// The total requests that were unable to be fulfilled.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub request_errors: Option<i32>,
 
     /// The total connections handled.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub total_connections: Option<i32>,
 }

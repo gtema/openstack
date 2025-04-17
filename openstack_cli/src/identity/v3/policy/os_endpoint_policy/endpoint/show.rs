@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::endpoint::get;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::identity::v3::policy::os_endpoint_policy::endpoint::response::get::EndpointResponse;
 
 /// GET operation on
 /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}
-///
 #[derive(Args)]
 pub struct EndpointCommand {
     /// Request Query parameters
@@ -59,7 +54,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// policy_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -69,30 +63,12 @@ struct PathParameters {
 
     /// endpoint_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl EndpointCommand {
@@ -120,7 +96,7 @@ impl EndpointCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<EndpointResponse>(data)?;
         Ok(())
     }
 }

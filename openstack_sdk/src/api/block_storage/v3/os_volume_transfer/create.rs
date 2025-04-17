@@ -27,18 +27,15 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The volume transfer object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Transfer<'a> {
     /// The name of the object.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the volume.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -48,7 +45,6 @@ pub struct Transfer<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The volume transfer object.
-    ///
     #[builder(setter(into))]
     pub(crate) transfer: Transfer<'a>,
 

@@ -28,7 +28,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A link representation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Links<'a> {
@@ -110,7 +109,6 @@ pub struct Request<'a> {
     pub(crate) api_address: Option<Cow<'a, str>>,
 
     /// The UUID of the cluster template.
-    ///
     #[builder(setter(into))]
     pub(crate) cluster_template_id: Cow<'a, str>,
 
@@ -124,8 +122,7 @@ pub struct Request<'a> {
     /// positive integer and the default is 60 minutes. If the timeout is
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) create_timeout: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -145,31 +142,27 @@ pub struct Request<'a> {
     ///
     /// In this case, Magnum will generate a unique url here for each uster and
     /// store the info for the servers.
-    ///
     #[builder(default, setter(into))]
     pub(crate) discovery_url: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) docker_volume_size: Option<i32>,
 
-    #[builder(default, private, setter(name = "_faults"))]
+    #[builder(default, private, setter(into, name = "_faults"))]
     pub(crate) faults: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
     /// the internal network for the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) fixed_network: Option<Cow<'a, str>>,
 
     /// Fixed subnet that are using to allocate network address for nodes in
     /// cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) fixed_subnet: Option<Cow<'a, str>>,
 
     /// The nova flavor ID or name for booting the node servers. The default is
     /// `m1.small`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
@@ -178,21 +171,19 @@ pub struct Request<'a> {
     /// provide this option for specifying the choice of using floating IP. If
     /// it’s not set, the value of floating_ip_enabled in template will be
     /// used.
-    ///
     #[builder(default, setter(into))]
     pub(crate) floating_ip_enabled: Option<Cow<'a, str>>,
 
     #[builder(default)]
     pub(crate) health_status: Option<HealthStatus>,
 
-    #[builder(default, private, setter(name = "_health_status_reason"))]
+    #[builder(default, private, setter(into, name = "_health_status_reason"))]
     pub(crate) health_status_reason: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) keypair: Option<Cow<'a, str>>,
 
@@ -200,17 +191,16 @@ pub struct Request<'a> {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
-    #[builder(default, private, setter(name = "_labels"))]
+    #[builder(default, private, setter(into, name = "_labels"))]
     pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_added"))]
+    #[builder(default, private, setter(into, name = "_labels_added"))]
     pub(crate) labels_added: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_overridden"))]
+    #[builder(default, private, setter(into, name = "_labels_overridden"))]
     pub(crate) labels_overridden: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_skipped"))]
+    #[builder(default, private, setter(into, name = "_labels_skipped"))]
     pub(crate) labels_skipped: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[builder(default, setter(into))]
@@ -223,12 +213,10 @@ pub struct Request<'a> {
     /// default is 1. Set to more than 1 master to enable High Availability. If
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) master_count: Option<i32>,
 
     /// The flavor of the master node for this cluster template.
-    ///
     #[builder(default, setter(into))]
     pub(crate) master_flavor_id: Option<Cow<'a, str>>,
 
@@ -239,7 +227,6 @@ pub struct Request<'a> {
     /// without the load balancer. In this case, one of the masters will serve
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) master_lb_enabled: Option<Cow<'a, str>>,
 
@@ -247,7 +234,6 @@ pub struct Request<'a> {
     pub(crate) merge_labels: Option<Cow<'a, str>>,
 
     /// Name of the resource.
-    ///
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
@@ -256,8 +242,7 @@ pub struct Request<'a> {
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) node_count: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -296,7 +281,6 @@ impl<'a> RequestBuilder<'a> {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
     pub fn labels<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

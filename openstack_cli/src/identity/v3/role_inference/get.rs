@@ -28,7 +28,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
+use structable::StructTableOptions;
 use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::role_inference::get;

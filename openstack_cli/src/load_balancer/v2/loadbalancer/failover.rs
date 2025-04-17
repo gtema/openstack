@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers/{loadbalancer_id}/failover` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::failover;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::load_balancer::v2::loadbalancer::response::failover::LoadbalancerResponse;
 
 /// Performs a failover of a load balancer.
 ///
 /// This operation is only available to users with load balancer administrative
 /// rights.
-///
 #[derive(Args)]
 #[command(about = "Failover a load balancer")]
 pub struct LoadbalancerCommand {
@@ -62,30 +57,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// loadbalancer_id parameter for
     /// /v2/lbaas/loadbalancers/{loadbalancer_id}/failover API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl LoadbalancerCommand {
@@ -112,7 +89,7 @@ impl LoadbalancerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LoadbalancerResponse>(data)?;
         Ok(())
     }
 }

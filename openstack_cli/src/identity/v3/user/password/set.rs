@@ -20,34 +20,26 @@
 //! Wraps invoking of the `v3/users/{user_id}/password` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use dialoguer::Password;
 use eyre::OptionExt;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::password::set;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Changes the password for a user.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/user_change_password`
-///
 #[derive(Args)]
 #[command(about = "Change password for user")]
 pub struct PasswordCommand {
@@ -60,7 +52,6 @@ pub struct PasswordCommand {
     path: PathParameters,
 
     /// A `user` object
-    ///
     #[command(flatten)]
     user: User,
 }
@@ -95,19 +86,13 @@ struct UserInput {
 #[derive(Args, Clone)]
 struct User {
     /// The original password for the user.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     original_password: Option<String>,
 
     /// The new password for the user.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
-
-/// Password response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl PasswordCommand {
     /// Perform command action
@@ -199,11 +184,7 @@ impl PasswordCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

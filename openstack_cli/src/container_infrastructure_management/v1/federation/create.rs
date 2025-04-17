@@ -20,30 +20,25 @@
 //! Wraps invoking of the `v1/federations` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::federation::create;
+use openstack_types::container_infrastructure_management::v1::federation::response::create::FederationResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create a new federation.
 ///
 /// | param federation: | | | --- | --- | | | a federation within the request
 /// body. |
-///
 #[derive(Args)]
 pub struct FederationCommand {
     /// Request Query parameters
@@ -61,12 +56,10 @@ pub struct FederationCommand {
     hostcluster_id: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     links: Option<Vec<Value>>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     member_ids: Option<Vec<String>>,
 
@@ -108,14 +101,6 @@ enum Status {
     UpdateComplete,
     UpdateFailed,
     UpdateInProgress,
-}
-
-/// Federation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable()]
-    uuid: String,
 }
 
 impl FederationCommand {
@@ -205,7 +190,7 @@ impl FederationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<FederationResponse>(data)?;
         Ok(())
     }
 }

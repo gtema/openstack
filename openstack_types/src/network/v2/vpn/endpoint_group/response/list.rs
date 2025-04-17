@@ -24,36 +24,35 @@ use structable::{StructTable, StructTableOptions};
 pub struct EndpointGroupResponse {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// List of endpoints of the same type, for the endpoint group. The values
     /// will depend on type.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub endpoints: Option<Vec<String>>,
 
     /// The ID of the VPN endpoint group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// The type of the endpoints in the group. A valid value is `subnet`,
     /// `cidr`, `network`, `router`, or `vlan`. Only `subnet` and `cidr` are
     /// supported at this moment.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 }
@@ -79,4 +78,18 @@ pub enum Type {
     // Vlan
     #[serde(rename = "vlan")]
     Vlan,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "cidr" => Ok(Self::Cidr),
+            "network" => Ok(Self::Network),
+            "router" => Ok(Self::Router),
+            "subnet" => Ok(Self::Subnet),
+            "vlan" => Ok(Self::Vlan),
+            _ => Err(()),
+        }
+    }
 }

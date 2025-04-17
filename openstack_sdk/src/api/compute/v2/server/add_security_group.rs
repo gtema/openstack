@@ -27,12 +27,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// The action to add a security group to a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddSecurityGroup<'a> {
     /// The security group name.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -42,12 +40,10 @@ pub struct AddSecurityGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to add a security group to a server.
-    ///
     #[builder(setter(into))]
     pub(crate) add_security_group: AddSecurityGroup<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

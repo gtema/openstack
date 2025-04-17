@@ -22,36 +22,39 @@ use structable::{StructTable, StructTableOptions};
 /// Certificate response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct CertificateResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub ca_cert_type: Option<String>,
 
     /// The UUID of the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub cluster_uuid: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub csr: Option<String>,
 
     /// Links to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// CA certificate for the cluster.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub pem: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

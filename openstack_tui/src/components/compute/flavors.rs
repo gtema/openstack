@@ -17,9 +17,11 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::compute::v2::flavor::response::list_detailed::FlavorResponse;
+
 use crate::{
     action::Action,
-    cloud_worker::compute::v2::{ComputeFlavor, ComputeFlavorList, ComputeServerListBuilder},
+    cloud_worker::compute::v2::{ComputeFlavorList, ComputeServerListBuilder},
     cloud_worker::types::*,
     components::{Component, table_view::TableViewComponentBase},
     config::Config,
@@ -31,13 +33,13 @@ use crate::{
 const TITLE: &str = "Compute Flavors";
 const VIEW_CONFIG_KEY: &str = "compute.flavor";
 
-impl ResourceKey for ComputeFlavor {
+impl ResourceKey for FlavorResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeFlavors<'a> = TableViewComponentBase<'a, ComputeFlavor, ComputeFlavorList>;
+pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorResponse, ComputeFlavorList>;
 
 impl ComputeFlavors<'_> {
     /// Normalize filters

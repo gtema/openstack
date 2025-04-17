@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// clustertemplate_id parameter for
     /// /v1/clustertemplates/{clustertemplate_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

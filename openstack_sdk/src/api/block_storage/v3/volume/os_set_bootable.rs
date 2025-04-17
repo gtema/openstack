@@ -28,7 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct OsSetBootable {
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) bootable: bool,
 }
 
@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) os_set_bootable: OsSetBootable,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

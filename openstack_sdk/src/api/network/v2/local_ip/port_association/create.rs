@@ -38,13 +38,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct PortAssociation<'a> {
     /// The requested IP of the port associated with the Local IP.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ip: Option<Cow<'a, str>>,
 
     /// The requested ID of the port associated with the Local IP.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_port_id: Option<Cow<'a, str>>,
@@ -62,7 +60,6 @@ pub struct Request<'a> {
 
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[builder(default, setter(into))]
     local_ip_id: Cow<'a, str>,
 

@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Attachment response representation
@@ -26,42 +26,38 @@ use structable::{StructTable, StructTableOptions};
 pub struct AttachmentResponse {
     /// The attach mode of attachment, read-only (‘ro’) or read-and-write
     /// (‘rw’), default is ‘rw’.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub attach_mode: Option<AttachMode>,
 
     /// The time when attachment is attached.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub attached_at: Option<String>,
 
     /// The connection info used for server to connect the volume.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub connection_info: Option<HashMap<String, Value>>,
+    pub connection_info: Option<BTreeMap<String, Value>>,
 
     /// The time when attachment is detached.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub detached_at: Option<String>,
 
     /// The ID of attachment.
-    ///
     #[structable()]
     pub id: String,
 
     /// The UUID of the attaching instance.
-    ///
     #[structable(optional)]
     pub instance: Option<String>,
 
     /// The status of the attachment.
-    ///
     #[structable(serialize)]
     pub status: Status,
 
     /// The UUID of the volume which the attachment belongs to.
-    ///
     #[structable()]
     pub volume_id: String,
 }
@@ -75,6 +71,17 @@ pub enum AttachMode {
     // Rw
     #[serde(rename = "rw")]
     Rw,
+}
+
+impl std::str::FromStr for AttachMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ro" => Ok(Self::Ro),
+            "rw" => Ok(Self::Rw),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -106,4 +113,20 @@ pub enum Status {
     // Reserved
     #[serde(rename = "reserved")]
     Reserved,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "attached" => Ok(Self::Attached),
+            "attaching" => Ok(Self::Attaching),
+            "deleted" => Ok(Self::Deleted),
+            "detached" => Ok(Self::Detached),
+            "error_attaching" => Ok(Self::ErrorAttaching),
+            "error_detaching" => Ok(Self::ErrorDetaching),
+            "reserved" => Ok(Self::Reserved),
+            _ => Err(()),
+        }
+    }
 }

@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) security_group_rule: SecurityGroupRule<'a>,
 
     /// id parameter for /v2.0/security-group-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

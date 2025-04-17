@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::os_migrate_live_268;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)")]
 pub struct ServerCommand {
@@ -51,7 +44,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action.
-    ///
     #[command(flatten)]
     os_migrate_live: OsMigrateLive,
 }
@@ -64,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -84,7 +75,6 @@ struct OsMigrateLive {
     /// the source and destination hosts are not on the shared storage.
     ///
     /// **New in version 2.25**
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     block_migration: bool,
 
@@ -99,14 +89,9 @@ struct OsMigrateLive {
     /// recommended to either not specify a host so that the scheduler will
     /// pick one, or specify a host with microversion >= 2.30 and without
     /// `force=True` set.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     host: String,
 }
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ServerCommand {
     /// Perform command action
@@ -140,11 +125,7 @@ impl ServerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

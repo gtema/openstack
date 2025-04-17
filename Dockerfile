@@ -48,7 +48,7 @@ RUN cargo build --target x86_64-unknown-linux-musl --release -p openstack_cli
 COPY . /usr/src/openstack/
 
 ## Touch main.rs to prevent cached release build
-RUN touch openstack_sdk/src/lib.rs && touch openstack_cli/src/bin/osc.rs && touch openstack_cli/src/lib.rs
+RUN touch openstack_sdk/src/lib.rs && touch openstack_cli/src/bin/osc.rs && touch openstack_cli/src/lib.rs && touch openstack_types/src/lib.rs
 
 # This is the actual application build.
 RUN cargo build --target x86_64-unknown-linux-musl --release --bin osc

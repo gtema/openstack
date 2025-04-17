@@ -17,20 +17,18 @@
 //! Response type for the GET `resource_providers/{uuid}/inventories` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Inventory response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InventoryResponse {
     /// A dictionary of inventories keyed by resource classes.
-    ///
     #[structable(serialize)]
-    pub inventories: HashMap<String, InventoriesItem>,
+    pub inventories: BTreeMap<String, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[structable()]
     pub resource_provider_generation: i32,
 }

@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/manageable_snapshots` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_snapshot::create;
+use openstack_types::block_storage::v3::manageable_snapshot::response::create::ManageableSnapshotResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Instruct Cinder to manage a storage snapshot object.
 ///
@@ -83,7 +79,6 @@ use structable_derive::StructTable;
 /// metadata       Key/value pairs to be associated with the new snapshot.
 ///
 /// ```
-///
 #[derive(Args)]
 pub struct ManageableSnapshotCommand {
     /// Request Query parameters
@@ -95,7 +90,6 @@ pub struct ManageableSnapshotCommand {
     path: PathParameters,
 
     /// A `snapshot` object.
-    ///
     #[command(flatten)]
     snapshot: Snapshot,
 }
@@ -111,17 +105,14 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Snapshot {
     /// A description for the snapshot. Default is `None`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// One or more metadata key and value pairs for the snapshot.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The name of the snapshot. Default is `None`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -129,137 +120,12 @@ struct Snapshot {
     /// reference depends on the volume driver implementation. For details
     /// about the required elements in the structure, see the documentation for
     /// the volume driver.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     _ref: Option<Value>,
 
     /// The UUID of the volume.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
-}
-
-/// ManageableSnapshot response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Whether this resource consumes quota or not. Resources that not counted
-    /// for quota usage are usually temporary internal resources created to
-    /// perform an operation.
-    ///
-    /// **New in version 3.65**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consumes_quota: Option<bool>,
-
-    /// The total count of requested resource before pagination is applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    count: Option<i32>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    /// A description for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    /// **New in version 3.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_snapshot_id: Option<String>,
-
-    /// The UUID of the object.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// One or more metadata key and value pairs for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The name of the snapshot. Default is `None`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A percentage value for the build progress.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:progress")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:progress")]
-    os_extended_snapshot_attributes_progress: Option<String>,
-
-    /// The UUID of the owning project.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:project_id")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:project_id")]
-    os_extended_snapshot_attributes_project_id: Option<String>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable()]
-    size: i64,
-
-    /// The status for the snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
 }
 
 impl ManageableSnapshotCommand {
@@ -307,7 +173,7 @@ impl ManageableSnapshotCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ManageableSnapshotResponse>(data)?;
         Ok(())
     }
 }

@@ -31,22 +31,19 @@ use std::borrow::Cow;
 
 /// The resource options for the domain. Available resource options are
 /// `immutable`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) immutable: Option<bool>,
 }
 
 /// A `domain` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Domain<'a> {
     /// The description of the domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -58,29 +55,25 @@ pub struct Domain<'a> {
     /// projects). In addition, users can only authenticate if the domain that
     /// owns them is also enabled. Disabling a domain prevents both of these
     /// things.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The ID of the domain. A domain created this way will not use an
     /// auto-generated ID, but will use the ID passed in instead. Identifiers
     /// passed in this way must conform to the existing ID generation scheme:
     /// UUID4 without dashes.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) explicit_domain_id: Option<Cow<'a, str>>,
 
     /// The name of the domain.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// The resource options for the domain. Available resource options are
     /// `immutable`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
@@ -94,7 +87,6 @@ pub struct Domain<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `domain` object
-    ///
     #[builder(setter(into))]
     pub(crate) domain: Domain<'a>,
 

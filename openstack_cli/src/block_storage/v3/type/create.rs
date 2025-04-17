@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/types/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val_opt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::create;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_types::block_storage::v3::r#type::response::create::TypeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct TypeCommand {
     /// Request Query parameters
@@ -61,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/types/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -83,24 +77,6 @@ struct VolumeType {
 
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     os_volume_type_access_is_public: Option<bool>,
-}
-
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl TypeCommand {
@@ -147,7 +123,7 @@ impl TypeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<TypeResponse>(data)?;
         Ok(())
     }
 }

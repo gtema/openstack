@@ -30,7 +30,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A link representation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Links<'a> {

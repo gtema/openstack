@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerPasswordResponse {
     /// The password returned from metadata server.
-    ///
     #[structable()]
     pub password: String,
 }

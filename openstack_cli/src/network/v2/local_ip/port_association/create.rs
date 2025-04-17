@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.0/local_ips/{local_ip_id}/port_associations` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::port_association::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::local_ip::port_association::response::create::PortAssociationResponse;
 
 /// Creates a Local IP association with a given Port. If a Port has multiple
 /// fixed IPs user must specify which IP to use for association.
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Create Local IP Association")]
 pub struct PortAssociationCommand {
@@ -69,7 +65,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_local_ip_id",
@@ -81,49 +76,15 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct PortAssociation {
     /// The requested IP of the port associated with the Local IP.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_ip: Option<String>,
 
     /// The requested ID of the port associated with the Local IP.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     fixed_port_id: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
-}
-
-/// PortAssociation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_ip: Option<String>,
-
-    /// The ID of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_port_id: Option<String>,
-
-    /// The host of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    local_ip_address: Option<String>,
-
-    /// The ID of the associated Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_ip_id: Option<String>,
 }
 
 impl PortAssociationCommand {
@@ -166,7 +127,7 @@ impl PortAssociationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<PortAssociationResponse>(data)?;
         Ok(())
     }
 }

@@ -17,14 +17,14 @@
 //! Response type for the GET `types/{id}` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Type response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TypeResponse {
     /// The volume type description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
@@ -32,33 +32,30 @@ pub struct TypeResponse {
     /// associated with the volume type. Examples include capabilities,
     /// capacity, compression, and so on, depending on the storage driver in
     /// use.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub extra_specs: Option<HashMap<String, Option<String>>>,
+    pub extra_specs: Option<BTreeMap<String, Option<String>>>,
 
     /// The UUID of the volume type.
-    ///
     #[structable()]
     pub id: String,
 
     /// Whether the volume type is publicly visible.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub is_public: Option<bool>,
 
     /// The name of the volume type.
-    ///
     #[structable()]
     pub name: String,
 
     /// Whether the volume type is publicly visible.
-    ///
-    #[serde(rename = "os-volume-type-access:is_public")]
+    #[serde(default, rename = "os-volume-type-access:is_public")]
     #[structable(optional, title = "os-volume-type-access:is_public")]
     pub os_volume_type_access_is_public: Option<bool>,
 
     /// The QoS specifications ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub qos_specs_id: Option<String>,
 }

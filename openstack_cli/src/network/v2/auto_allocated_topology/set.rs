@@ -20,25 +20,21 @@
 //! Wraps invoking of the `v2.0/auto-allocated-topology/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::auto_allocated_topology::set;
+use openstack_types::network::v2::auto_allocated_topology::response::set::AutoAllocatedTopologyResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AutoAllocatedTopologyCommand {
     /// Request Query parameters
@@ -61,24 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/auto-allocated-topology/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// AutoAllocatedTopology response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl AutoAllocatedTopologyCommand {
@@ -108,7 +92,7 @@ impl AutoAllocatedTopologyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AutoAllocatedTopologyResponse>(data)?;
         Ok(())
     }
 }

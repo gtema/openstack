@@ -18,34 +18,32 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// SecurityGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
     /// Security group description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the security group.
-    ///
     #[structable()]
     pub id: String,
 
     /// The security group name.
-    ///
     #[structable()]
     pub name: String,
 
     /// The list of security group rules.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub rules: Option<Vec<Rules>>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 }
@@ -63,7 +61,7 @@ pub struct Rules {
     pub group: Option<Group>,
     pub id: Option<String>,
     pub ip_protocol: Option<String>,
-    pub ip_range: Option<HashMap<String, Value>>,
+    pub ip_range: Option<BTreeMap<String, Value>>,
     pub parent_group_id: Option<String>,
     pub to_port: Option<i32>,
 }

@@ -28,7 +28,6 @@ pub struct Request<'a> {
     /// Resource type names should be aligned with Heat resource types whenever
     /// possible:
     /// https://docs.openstack.org/heat/latest/template_guide/openstack.html
-    ///
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
@@ -36,7 +35,6 @@ pub struct Request<'a> {
     /// in the namespace should be prefixed with this prefix when being applied
     /// to the specified resource type. Must include prefix separator (e.g. a
     /// colon :).
-    ///
     #[builder(default, setter(into))]
     pub(crate) prefix: Option<Cow<'a, str>>,
 
@@ -44,14 +42,12 @@ pub struct Request<'a> {
     /// For example, Cinder allows user and image metadata on volumes. Only the
     /// image properties metadata is evaluated by Nova (scheduling or drivers).
     /// This property allows a namespace target to remove the ambiguity.
-    ///
     #[builder(default, setter(into))]
     pub(crate) properties_target: Option<Cow<'a, str>>,
 
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 

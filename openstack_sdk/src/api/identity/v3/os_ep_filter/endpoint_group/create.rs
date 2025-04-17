@@ -42,16 +42,14 @@ pub enum Interface {
 /// must be an endpoint property, such as interface, service_id, region, and
 /// enabled. Note that if using interface as a filter, the only available
 /// values are public, internal, and admin.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Filters<'a> {
     /// Indicates whether the endpoint appears in the service catalog -false.
     /// The endpoint does not appear in the service catalog. -true. The
     /// endpoint appears in the service catalog.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The interface type, which describes the visibility of the endpoint.
@@ -59,19 +57,16 @@ pub struct Filters<'a> {
     /// interface. -internal. Visible by end users on an unmetered internal
     /// network interface. -admin. Visible by administrative users on a secure
     /// network interface.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) interface: Option<Interface>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the service to which the endpoint belongs
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service_id: Option<Cow<'a, str>>,
@@ -81,7 +76,6 @@ pub struct Filters<'a> {
 #[builder(setter(strip_option))]
 pub struct EndpointGroup<'a> {
     /// The endpoint group description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -90,13 +84,11 @@ pub struct EndpointGroup<'a> {
     /// used must be an endpoint property, such as interface, service_id,
     /// region, and enabled. Note that if using interface as a filter, the only
     /// available values are public, internal, and admin.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) filters: Filters<'a>,
 
     /// The name of the endpoint group.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,

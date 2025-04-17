@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v3/backups/{id}/restore` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::restore::create;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::backup::restore::response::create::RestoreResponse;
 
 /// Restore an existing backup to a volume.
-///
 #[derive(Args)]
 pub struct RestoreCommand {
     /// Request Query parameters
@@ -59,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/backups/{id}/restore API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -74,28 +69,6 @@ struct Restore {
     name: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
-    volume_id: Option<String>,
-}
-
-/// Restore response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID for a backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    backup_id: Option<String>,
-
-    /// The volume name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    backup_name: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
     volume_id: Option<String>,
 }
 
@@ -134,7 +107,7 @@ impl RestoreCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RestoreResponse>(data)?;
         Ok(())
     }
 }

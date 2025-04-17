@@ -18,7 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Aggregate response representation
@@ -43,7 +43,7 @@ pub struct AggregateResponse {
     pub id: i32,
 
     #[structable(optional, serialize)]
-    pub metadata: Option<HashMap<String, Value>>,
+    pub metadata: Option<BTreeMap<String, Value>>,
 
     #[structable()]
     pub name: String,

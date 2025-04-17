@@ -24,7 +24,6 @@ use structable::{StructTable, StructTableOptions};
 pub struct EncryptionResponse {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
-    ///
     #[structable()]
     pub cipher: String,
 }

@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/segments/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::segment::find;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::segment::response::get::SegmentResponse;
 
 /// Shows details for a segment.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show segment details")]
 pub struct SegmentCommand {
@@ -66,81 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/segments/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Segment response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The UUID of the segment.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the attached network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// The type of physical network that maps to this network resource. For
-    /// example, `flat`, `vlan`, `vxlan`, or `gre`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_type: Option<String>,
-
-    /// The physical network where this network/segment is implemented.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    physical_network: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// The ID of the isolated segment on the physical network. The
-    /// `network_type` attribute defines the segmentation model. For example,
-    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
-    /// the `network_type` value is gre, this ID is a gre key. `Note` that only
-    /// the segmentation-id of VLAN type networks can be changed!
-    ///
-    #[serde()]
-    #[structable(optional)]
-    segmentation_id: Option<IntString>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl SegmentCommand {
@@ -163,7 +89,7 @@ impl SegmentCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<SegmentResponse>(find_data)?;
         Ok(())
     }
 }

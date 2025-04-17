@@ -38,37 +38,31 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `credential` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Credential<'a> {
     /// The credential itself, as a serialized blob.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) blob: Cow<'a, str>,
 
     /// The UUID for the credential.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// The ID for the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Option<Cow<'a, str>>>,
 
     /// The credential type, such as `ec2` or `cert`. The implementation
     /// determines the list of supported types.
-    ///
     #[serde(rename = "type")]
     #[builder(setter(into))]
     pub(crate) _type: Cow<'a, str>,
 
     /// The ID of the user who owns the credential.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) user_id: Cow<'a, str>,
@@ -96,7 +90,6 @@ impl<'a> CredentialBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `credential` object.
-    ///
     #[builder(setter(into))]
     pub(crate) credential: Credential<'a>,
 

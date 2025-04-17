@@ -31,7 +31,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// service_provider_id parameter for
     /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

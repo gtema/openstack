@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-interface` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::interface::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::interface::response::list::InterfaceResponse;
 
 /// Lists port interfaces that are attached to a server.
 ///
@@ -42,7 +38,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// NotImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "List Port Interfaces")]
 pub struct InterfacesCommand {
@@ -63,22 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// Interfaces response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// List of the interface attachments.
-    ///
-    #[serde(rename = "interfaceAttachments")]
-    #[structable(pretty, title = "interfaceAttachments", wide)]
-    interface_attachments: Value,
 }
 
 impl InterfacesCommand {
@@ -105,8 +90,7 @@ impl InterfacesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<InterfaceResponse>(data)?;
         Ok(())
     }
 }

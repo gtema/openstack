@@ -20,24 +20,18 @@
 //! Wraps invoking of the `v2.0/networks/{network_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
-use openstack_sdk::types::BoolString;
-use openstack_sdk::types::IntString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::network::response::get::NetworkResponse;
 
 /// Shows details for a network.
 ///
@@ -47,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show network details")]
 pub struct NetworkCommand {
@@ -68,183 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Network response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the network, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    /// The availability zone candidate for the network.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    availability_zone_hints: Option<Value>,
-
-    /// The availability zone for the network.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    availability_zones: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_domain: Option<String>,
-
-    /// The ID of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the IPv4 address scope that the network is associated with.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipv4_address_scope: Option<String>,
-
-    /// The ID of the IPv6 address scope that the network is associated with.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipv6_address_scope: Option<String>,
-
-    /// The network is default pool or not.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_default: Option<BoolString>,
-
-    /// Indicates whether L2 connectivity is available throughout the
-    /// `network`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    l2_adjacency: Option<String>,
-
-    /// The maximum transmission unit (MTU) value to address fragmentation.
-    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    mtu: Option<IntString>,
-
-    /// Human-readable name of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The port security status of the network. Valid values are enabled
-    /// (`true`) and disabled (`false`). This value is used as the default
-    /// value of `port_security_enabled` field of a newly created port.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_security_enabled: Option<BoolString>,
-
-    #[serde(rename = "provider:network_type")]
-    #[structable(optional, title = "provider:network_type")]
-    provider_network_type: Option<String>,
-
-    #[serde(rename = "provider:physical_network")]
-    #[structable(optional, title = "provider:physical_network")]
-    provider_physical_network: Option<String>,
-
-    #[serde(rename = "provider:segmentation_id")]
-    #[structable(optional, title = "provider:segmentation_id")]
-    provider_segmentation_id: Option<IntString>,
-
-    /// The ID of the QoS policy associated with the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    qos_policy_id: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// Defines whether the network may be used for creation of floating IPs.
-    /// Only networks with this flag may be an external gateway for routers.
-    /// The network must have an external routing facility that is not managed
-    /// by the networking service. If the network is updated from external to
-    /// internal the unused floating IPs of this network are automatically
-    /// deleted when extension `floatingip-autodelete-internal` is present.
-    ///
-    #[serde(rename = "router:external")]
-    #[structable(optional, title = "router:external")]
-    router_external: Option<BoolString>,
-
-    /// A list of provider `segment` objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    segments: Option<Value>,
-
-    /// Indicates whether this network is shared across all tenants. By
-    /// default, only administrative users can change this value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared: Option<BoolString>,
-
-    /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The associated subnets.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    subnets: Option<Value>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl NetworkCommand {
@@ -267,7 +89,7 @@ impl NetworkCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<NetworkResponse>(find_data)?;
         Ok(())
     }
 }

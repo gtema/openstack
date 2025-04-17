@@ -20,24 +20,18 @@
 //! Wraps invoking of the `reshaper` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::reshaper::create_138;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Atomically migrate resource provider inventories and associated
 /// allocations. This is used when some of the inventory needs to move from one
@@ -47,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 204
 ///
 /// Error Response Codes: badRequest(400), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Reshaper (microversion = 1.38)")]
 pub struct ReshaperCommand {
@@ -66,7 +59,6 @@ pub struct ReshaperCommand {
     /// dictionary indicates no change in existing allocations, whereas an
     /// empty `allocations` dictionary **within** a consumer dictionary
     /// indicates that all allocations for that consumer should be deleted.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     allocations: Vec<(String, Value)>,
 
@@ -74,7 +66,6 @@ pub struct ReshaperCommand {
     /// Each inventory describes the desired full inventory for each resource
     /// provider. An empty dictionary causes the inventory for that provider to
     /// be deleted.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     inventories: Vec<(String, Value)>,
 }
@@ -86,9 +77,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Reshaper response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ReshaperCommand {
     /// Perform command action
@@ -137,11 +125,7 @@ impl ReshaperCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

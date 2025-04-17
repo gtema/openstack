@@ -30,12 +30,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Whether the identity provider is enabled or not
-    ///
     #[builder(default)]
     enabled: Option<bool>,
 
     /// The identity provider ID
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 

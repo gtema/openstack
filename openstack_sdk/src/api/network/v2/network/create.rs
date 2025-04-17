@@ -40,7 +40,6 @@ pub struct Segments<'a> {
     /// The type of physical network that this network should be mapped to. For
     /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
     /// networking back-end.
-    ///
     #[serde(
         rename = "provider:network_type",
         skip_serializing_if = "Option::is_none"
@@ -53,7 +52,6 @@ pub struct Segments<'a> {
     /// networks. For example, the Open vSwitch plug-in configuration file
     /// defines a symbolic name that maps to specific bridges on each compute
     /// host.
-    ///
     #[serde(
         rename = "provider:physical_network",
         skip_serializing_if = "Option::is_none"
@@ -65,65 +63,56 @@ pub struct Segments<'a> {
     /// `network_type` attribute defines the segmentation model. For example,
     /// if the `network_type` value is vlan, this ID is a vlan identifier. If
     /// the `network_type` value is gre, this ID is a gre key.
-    ///
     #[serde(
         rename = "provider:segmentation_id",
         skip_serializing_if = "Option::is_none"
     )]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) provider_segmentation_id: Option<i32>,
 }
 
 /// A `network` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Network<'a> {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// The availability zone candidate for the network.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone_hints: Option<Vec<Cow<'a, str>>>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// A valid DNS domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) dns_domain: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ha: Option<bool>,
 
     /// The network is default or not.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_default: Option<bool>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) mtu: Option<i32>,
 
     /// Human-readable name of the network.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -131,9 +120,8 @@ pub struct Network<'a> {
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
     /// value of `port_security_enabled` field of a newly created port.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) port_security_enabled: Option<bool>,
 
     #[serde(
@@ -158,35 +146,30 @@ pub struct Network<'a> {
     pub(crate) provider_segmentation_id: Option<Cow<'a, str>>,
 
     /// The ID of the QoS policy associated with the network.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
     /// Indicates whether the network has an external routing facility that’s
     /// not managed by the networking service.
-    ///
     #[serde(rename = "router:external", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) router_external: Option<bool>,
 
     /// A list of provider `segment` objects.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) segments: Option<Vec<Segments<'a>>>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) shared: Option<bool>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -196,7 +179,6 @@ pub struct Network<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `network` object.
-    ///
     #[builder(setter(into))]
     pub(crate) network: Network<'a>,
 

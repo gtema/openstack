@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2.0/qos/rule-types` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::rule_type::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::rule_type::response::create::RuleTypeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct RuleTypeCommand {
     /// Request Query parameters
@@ -66,18 +62,6 @@ struct RuleType {
 
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     all_supported: Option<Option<bool>>,
-}
-
-/// RuleType response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    drivers: Option<String>,
-
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
 }
 
 impl RuleTypeCommand {
@@ -115,7 +99,7 @@ impl RuleTypeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RuleTypeResponse>(data)?;
         Ok(())
     }
 }

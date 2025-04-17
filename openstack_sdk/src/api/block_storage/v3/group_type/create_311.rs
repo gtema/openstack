@@ -28,32 +28,27 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `group_type` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct GroupType<'a> {
     /// The group type description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_group_specs"))]
+    #[builder(default, private, setter(into, name = "_group_specs"))]
     pub(crate) group_specs: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     /// Whether the group type is publicly visible. See
     /// [valid boolean values](#valid-boolean-values)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) is_public: Option<bool>,
 
     /// The group type name.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -62,7 +57,6 @@ pub struct GroupType<'a> {
 impl<'a> GroupTypeBuilder<'a> {
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
     pub fn group_specs<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -82,7 +76,6 @@ impl<'a> GroupTypeBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `group_type` object.
-    ///
     #[builder(setter(into))]
     pub(crate) group_type: GroupType<'a>,
 

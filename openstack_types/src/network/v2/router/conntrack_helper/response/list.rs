@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `routers/{router_id}/conntrack_helpers` operation
 
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -24,23 +23,22 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ConntrackHelperResponse {
     /// The netfilter conntrack helper module.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub helper: Option<String>,
 
     /// The ID of the conntrack helper.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional, wide)]
     pub port: Option<i64>,
 
     /// The network protocol for the netfilter conntrack target rule.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub protocol: Option<Protocol>,
 }
@@ -70,4 +68,19 @@ pub enum Protocol {
     // Udp
     #[serde(rename = "udp")]
     Udp,
+}
+
+impl std::str::FromStr for Protocol {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "dccp" => Ok(Self::Dccp),
+            "icmp" => Ok(Self::Icmp),
+            "ipv6-icmp" => Ok(Self::Ipv6Icmp),
+            "sctp" => Ok(Self::Sctp),
+            "tcp" => Ok(Self::Tcp),
+            "udp" => Ok(Self::Udp),
+            _ => Err(()),
+        }
+    }
 }

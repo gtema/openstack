@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::loadbalancer::response::list::LoadbalancerResponse;
 use tracing::warn;
 
 /// Lists all load balancers for the project.
@@ -52,7 +48,6 @@ use tracing::warn;
 /// own to list load balancers for other projects.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List Load Balancers")]
 pub struct LoadbalancersCommand {
@@ -73,64 +68,52 @@ pub struct LoadbalancersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// An availability zone name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     availability_zone: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// The ID of the flavor.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     flavor_id: Option<String>,
 
     /// The ID of the resource
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags: Option<String>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     not_tags_any: Option<String>,
 
     /// The operating status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -139,52 +122,42 @@ struct QueryParameters {
     project: ProjectInput,
 
     /// Provider name for the load balancer.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     provider: Option<String>,
 
     /// The provisioning status of the resource.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
     provisioning_status: Option<String>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags: Option<String>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tags_any: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     vip_qos_policy_id: Option<String>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     vip_subnet_id: Option<String>,
 }
@@ -207,168 +180,6 @@ struct ProjectInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Loadbalancers response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of JSON objects defining “additional VIPs”. The format for these
-    /// is `{"subnet_id": <subnet_id>, "ip_address": <ip_address>}`, where the
-    /// `subnet_id` field is mandatory and the `ip_address` field is optional.
-    /// Additional VIP subnets must all belong to the same network as the
-    /// primary VIP.
-    ///
-    /// **New in version 2.26**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    additional_vips: Option<Value>,
-
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
-
-    /// An availability zone name.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone: Option<String>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    flavor_id: Option<String>,
-
-    /// The ID of the load balancer.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The associated listener IDs, if any.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    listeners: Option<Value>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    operating_status: Option<String>,
-
-    /// The associated pool IDs, if any.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    pools: Option<Value>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// Provider name for the load balancer.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provider: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provisioning_status: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The IP address of the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_address: Option<String>,
-
-    /// The ID of the network for the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_network_id: Option<String>,
-
-    /// The ID of the Virtual IP (VIP) port.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_port_id: Option<String>,
-
-    /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_qos_policy_id: Option<String>,
-
-    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
-    /// Balancer.
-    ///
-    /// **New in version 2.29**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    vip_sg_ids: Option<Value>,
-
-    /// The ID of the subnet for the Virtual IP (VIP).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_subnet_id: Option<String>,
-
-    /// The VIP vNIC type used for the load balancer. One of `normal` or
-    /// `direct`.
-    ///
-    /// **New in version 2.28**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vip_vnic_type: Option<String>,
-}
 
 impl LoadbalancersCommand {
     /// Perform command action
@@ -504,8 +315,7 @@ impl LoadbalancersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<LoadbalancerResponse>(data)?;
         Ok(())
     }
 }

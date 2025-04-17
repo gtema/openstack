@@ -27,11 +27,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_network_ip_availability"))]
+    #[builder(private, setter(into, name = "_network_ip_availability"))]
     pub(crate) network_ip_availability: BTreeMap<Cow<'a, str>, Value>,
 
     /// id parameter for /v2.0/network-ip-availabilities/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

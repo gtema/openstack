@@ -53,7 +53,6 @@ pub struct Request<'a> {
     pub(crate) snapshot: Snapshot<'a>,
 
     /// id parameter for /v3/snapshots/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

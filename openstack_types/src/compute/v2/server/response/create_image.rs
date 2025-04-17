@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The UUID for the resulting image snapshot.
-    ///
     #[structable()]
     pub image_id: String,
 }

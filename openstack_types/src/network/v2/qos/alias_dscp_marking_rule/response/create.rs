@@ -22,12 +22,15 @@ use structable::{StructTable, StructTableOptions};
 /// AliasDscpMarkingRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasDscpMarkingRuleResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub dscp_mark: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

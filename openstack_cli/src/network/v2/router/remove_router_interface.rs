@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/routers/{id}/remove_router_interface` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::remove_router_interface;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::router::response::remove_router_interface::RouterResponse;
 
 /// Request body
-///
 #[derive(Args)]
 #[command(about = "Remove interface from router")]
 pub struct RouterCommand {
@@ -50,12 +45,10 @@ pub struct RouterCommand {
     path: PathParameters,
 
     /// The ID of the port. One of subnet_id or port_id must be specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
     /// The ID of the subnet. One of subnet_id or port_id must be specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
 }
@@ -68,65 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Router response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the router.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Network ID which the router interface is connected to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// The ID of the port which represents the router interface.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_id: Option<String>,
-
-    /// The ID of the project who owns the router interface.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The ID of the subnet which the router interface belongs to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet_id: Option<String>,
-
-    /// A list of the ID of the subnet which the router interface belongs to.
-    /// The list contains only one member.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    subnet_ids: Option<Value>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// The ID of the project who owns the router interface.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl RouterCommand {
@@ -162,7 +102,7 @@ impl RouterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RouterResponse>(data)?;
         Ok(())
     }
 }

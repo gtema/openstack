@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2/images` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::image::response::list::ImageResponse;
 
 /// Lists public virtual machine (VM) images. *(Since Image API v2.0)*
 ///
@@ -133,7 +129,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403
-///
 #[derive(Args)]
 #[command(about = "List images")]
 pub struct ImagesCommand {
@@ -155,12 +150,10 @@ pub struct ImagesCommand {
 struct QueryParameters {
     /// Specify a comparison filter based on the date and time when the
     /// resource was created.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// id filter parameter
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -168,56 +161,47 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Filters the response by a member status. A valid value is accepted,
     /// pending, rejected, or all. Default is accepted.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["accepted","all","pending","rejected"])]
     member_status: Option<String>,
 
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// When true, filters the response to display only "hidden" images. By
     /// default, "hidden" images are not included in the image-list response.
     /// (Since Image API v2.7)
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     os_hidden: Option<bool>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     owner: Option<String>,
 
     /// Filters the response by the ‘protected’ image property. A valid value
     /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
     /// result in a 400 response.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     protected: Option<bool>,
 
     /// Filters the response by a maximum image size, in bytes.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     size_max: Option<String>,
 
     /// Filters the response by a minimum image size, in bytes.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     size_min: Option<String>,
 
@@ -225,7 +209,6 @@ struct QueryParameters {
     /// combinations. You can also set multiple sort keys and directions.
     /// Default direction is desc. Use the comma (,) character to separate
     /// multiple values. For example: `sort=name:asc,status:desc`
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
@@ -233,32 +216,27 @@ struct QueryParameters {
     /// (sort_key) combinations. A valid value for the sort direction is asc
     /// (ascending) or desc (descending). If you omit the sort direction in a
     /// set, the default is desc.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts the response by an attribute, such as name, id, or updated_at.
     /// Default is created_at. The API uses the natural sorting direction of
     /// the sort_key image attribute.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Filters the response by an image status.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// Filters the response by the specified tag value. May be repeated, but
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tag: Option<Vec<String>>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was most recently modified.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
@@ -269,7 +247,6 @@ struct QueryParameters {
     /// member_status filter in the request.) If you omit this parameter, the
     /// response shows public, private, and those shared images with a member
     /// status of accepted.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["all","community","private","public","shared"])]
     visibility: Option<String>,
 }
@@ -277,162 +254,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Images response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// md5 hash of image contents.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    checksum: Option<String>,
-
-    /// Format of the container
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    container_format: Option<String>,
-
-    /// Date and time of image registration
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// URL to access the image file kept in external store
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    direct_url: Option<String>,
-
-    /// Format of the disk
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    disk_format: Option<String>,
-
-    /// An image file url
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    file: Option<String>,
-
-    /// An identifier for the image
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// A set of URLs to access the image file kept in external store
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    locations: Option<Value>,
-
-    /// Amount of disk space (in GB) required to boot image.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    min_disk: Option<i32>,
-
-    /// Amount of ram (in MB) required to boot image.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    min_ram: Option<i32>,
-
-    /// Descriptive name for the image
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Algorithm to calculate the os_hash_value
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    os_hash_algo: Option<String>,
-
-    /// Hexdigest of the image contents using the algorithm specified by the
-    /// os_hash_algo
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    os_hash_value: Option<String>,
-
-    /// If true, image will not appear in default image list response.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    os_hidden: Option<bool>,
-
-    /// Owner of the image
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    owner: Option<String>,
-
-    /// If true, image will not be deletable.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protected: Option<bool>,
-
-    /// An image schema url
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    schema: Option<String>,
-
-    /// An image self url
-    ///
-    #[serde(rename = "self")]
-    #[structable(optional, title = "self", wide)]
-    _self: Option<String>,
-
-    /// Size of image file in bytes
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    size: Option<i64>,
-
-    /// Status of the image
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// Store in which image data resides. Only present when the operator has
-    /// enabled multiple stores. May be a comma-separated list of store
-    /// identifiers.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    stores: Option<String>,
-
-    /// List of strings related to the image
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    /// Date and time of the last image modification
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// Virtual size of image in bytes
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    virtual_size: Option<i64>,
-
-    /// Scope of image accessibility
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    visibility: Option<String>,
-}
 
 impl ImagesCommand {
     /// Perform command action
@@ -513,8 +334,7 @@ impl ImagesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ImageResponse>(data)?;
         Ok(())
     }
 }

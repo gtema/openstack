@@ -20,31 +20,26 @@
 //! Wraps invoking of the `v2/tasks` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::create;
+use openstack_types::image::v2::task::response::create::TaskResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates a task.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 401, 413, 415
-///
 #[derive(Args)]
 #[command(about = "Create task")]
 pub struct TaskCommand {
@@ -57,69 +52,56 @@ pub struct TaskCommand {
     path: PathParameters,
 
     /// Datetime when this resource was created
-    ///
     #[arg(help_heading = "Body parameters", long)]
     created_at: Option<String>,
 
     /// Datetime when this resource would be subject to removal
-    ///
     #[arg(help_heading = "Body parameters", long)]
     expires_at: Option<String>,
 
     /// An identifier for the task
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Image associated with the task
-    ///
     #[arg(help_heading = "Body parameters", long)]
     image_id: Option<String>,
 
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     input: Option<Vec<(String, Value)>>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
-    ///
     #[arg(help_heading = "Body parameters", long)]
     message: Option<String>,
 
     /// An identifier for the owner of this task
-    ///
     #[arg(help_heading = "Body parameters", long)]
     owner: Option<String>,
 
     /// Human-readable informative request-id
-    ///
     #[arg(help_heading = "Body parameters", long)]
     request_id: Option<String>,
 
     /// The result of current task, JSON blob
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     result: Option<Vec<(String, Value)>>,
 
     /// The current status of this task
-    ///
     #[arg(help_heading = "Body parameters", long)]
     status: Option<Status>,
 
     /// The type of task represented by this content.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Option<Type>,
 
     /// Datetime when this resource was updated
-    ///
     #[arg(help_heading = "Body parameters", long)]
     updated_at: Option<String>,
 
     /// User associated with the task
-    ///
     #[arg(help_heading = "Body parameters", long)]
     user_id: Option<String>,
 }
@@ -145,113 +127,6 @@ enum Status {
     Pending,
     Processing,
     Success,
-}
-
-/// Task response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the task was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Datetime when this resource would be subject to removal
-    ///
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    /// The UUID of the task.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Image associated with the task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    image_id: Option<String>,
-
-    /// A JSON object specifying the input parameters to the task. Consult your
-    /// cloud provider’s documentation for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    input: Option<Value>,
-
-    /// Human-readable text, possibly an empty string, usually displayed in an
-    /// error situation to provide more information about what has occurred.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    message: Option<String>,
-
-    /// An identifier for the owner of the task, usually the tenant ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    owner: Option<String>,
-
-    /// Human-readable informative request-id
-    ///
-    #[serde()]
-    #[structable(optional)]
-    request_id: Option<String>,
-
-    /// A JSON object specifying information about the ultimate outcome of the
-    /// task. Consult your cloud provider’s documentation for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    result: Option<Value>,
-
-    /// The URI for the schema describing an image task.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    schema: Option<String>,
-
-    /// A URI for this task.
-    ///
-    #[serde(rename = "self")]
-    #[structable(optional, title = "self")]
-    _self: Option<String>,
-
-    /// The current status of this task. The value can be `pending`,
-    /// `processing`, `success` or `failure`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The type of task represented by this content.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
-    /// The date and time when the task was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// User associated with the task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
 }
 
 impl TaskCommand {
@@ -352,7 +227,7 @@ impl TaskCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<TaskResponse>(data)?;
         Ok(())
     }
 }

@@ -26,11 +26,10 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_quota_class_set"))]
+    #[builder(private, setter(into, name = "_quota_class_set"))]
     pub(crate) quota_class_set: BTreeMap<Cow<'a, str>, i32>,
 
     /// id parameter for /v3/os-quota-class-sets/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

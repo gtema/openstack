@@ -18,29 +18,33 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Store response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StoreResponse {
-    #[serde(rename = "default")]
+    #[serde(default, rename = "default")]
     #[structable(optional, title = "default", wide)]
     pub _default: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub properties: Option<HashMap<String, Value>>,
+    pub properties: Option<BTreeMap<String, Value>>,
 
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub weight: Option<f32>,
 }

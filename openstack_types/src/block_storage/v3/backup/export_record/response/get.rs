@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExportRecordResponse {
     /// The service used to perform the backup.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub backup_service: Option<String>,
 
     /// An identifier string to locate the backup.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub backup_url: Option<String>,
 }

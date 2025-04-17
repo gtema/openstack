@@ -56,7 +56,7 @@ pub struct Items<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) additional_items: Option<bool>,
 
     #[builder(default, setter(into))]
@@ -71,22 +71,22 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) items: Option<Items<'a>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) maximum: Option<f32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_items: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_length: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) minimum: Option<f32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_items: Option<i32>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_length: Option<i32>,
 
     #[builder(setter(into))]
@@ -98,7 +98,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) pattern: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) readonly: Option<bool>,
 
     #[builder(default, setter(into))]
@@ -110,18 +110,16 @@ pub struct Request<'a> {
     #[builder()]
     pub(crate) _type: Type,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) unique_items: Option<bool>,
 
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 
     /// property_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
-    ///
     #[builder(default, setter(into))]
     property_name: Cow<'a, str>,
 

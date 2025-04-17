@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/os-availability-zone/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::availability_zone::list_detail;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::availability_zone::response::list_detail::AvailabilityZoneResponse;
 
 /// Gets detailed availability zone information. Policy defaults enable only
 /// users with the administrative role to perform this operation. Cloud
@@ -43,7 +39,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Get Detailed Availability Zone Information")]
 pub struct AvailabilityZonesCommand {
@@ -63,30 +58,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AvailabilityZones response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An object containing a list of host information. The host information
-    /// is comprised of host and service objects. The service object returns
-    /// three parameters representing the states of the service: `active`,
-    /// `available`, and `updated_at`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
-
-    /// The availability zone name.
-    ///
-    #[serde(rename = "zoneName")]
-    #[structable(title = "zoneName")]
-    zone_name: String,
-
-    /// The current state of the availability zone.
-    ///
-    #[serde(rename = "zoneState")]
-    #[structable(pretty, title = "zoneState")]
-    zone_state: Value,
-}
 
 impl AvailabilityZonesCommand {
     /// Perform command action
@@ -111,8 +82,7 @@ impl AvailabilityZonesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AvailabilityZoneResponse>(data)?;
         Ok(())
     }
 }

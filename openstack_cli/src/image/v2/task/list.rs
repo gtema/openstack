@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2/tasks` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::task::response::list::TaskResponse;
 
 /// Lists tasks.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 403, 404, 413
-///
 #[derive(Args)]
 #[command(about = "List tasks")]
 pub struct TasksCommand {
@@ -61,96 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Tasks response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Datetime when this resource was created
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Datetime when this resource would be subject to removal
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    expires_at: Option<String>,
-
-    /// An identifier for the task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Image associated with the task
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    image_id: Option<String>,
-
-    /// The parameters required by task, JSON blob
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    input: Option<Value>,
-
-    /// Human-readable informative message only included when appropriate
-    /// (usually on failure)
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    message: Option<String>,
-
-    /// An identifier for the owner of this task
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    owner: Option<String>,
-
-    /// Human-readable informative request-id
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    request_id: Option<String>,
-
-    /// The result of current task, JSON blob
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    result: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    schema: Option<String>,
-
-    #[serde(rename = "self")]
-    #[structable(optional, title = "self", wide)]
-    _self: Option<String>,
-
-    /// The current status of this task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The type of task represented by this content
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// Datetime when this resource was updated
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// User associated with the task
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    user_id: Option<String>,
-}
 
 impl TasksCommand {
     /// Perform command action
@@ -174,9 +79,8 @@ impl TasksCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<TaskResponse>(data)?;
         Ok(())
     }
 }

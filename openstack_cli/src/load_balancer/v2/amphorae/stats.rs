@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2/octavia/amphorae/{amphora_id}/stats` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::stats;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::amphorae::response::stats::AmphoraeResponse;
 
 /// Show the statistics for an amphora.
 ///
@@ -45,7 +41,6 @@ use structable_derive::StructTable;
 /// the response body.
 ///
 /// **New in version 2.3**
-///
 #[derive(Args)]
 #[command(about = "Show Amphora Statistics")]
 pub struct AmphoraeCommand {
@@ -66,24 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/stats API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_amphora_id",
         value_name = "AMPHORA_ID"
     )]
     amphora_id: String,
-}
-/// Amphorae response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of amphora statistics objects, one per listener.
-    ///
-    /// **New in version 2.3**
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    amphora_stats: Value,
 }
 
 impl AmphoraeCommand {
@@ -110,7 +93,7 @@ impl AmphoraeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AmphoraeResponse>(data)?;
         Ok(())
     }
 }

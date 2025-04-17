@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/metering/metering-label-rules/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::set;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::metering::metering_label_rule::response::set::MeteringLabelRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct MeteringLabelRuleCommand {
     /// Request Query parameters
@@ -60,7 +55,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/metering/metering-label-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -76,42 +70,6 @@ struct MeteringLabelRule {
 
     #[arg(help_heading = "Body parameters", long)]
     source_ip_prefix: Option<String>,
-}
-
-/// MeteringLabelRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    destination_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    excluded: Option<BoolString>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    metering_label_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    remote_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    source_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl MeteringLabelRuleCommand {
@@ -150,7 +108,7 @@ impl MeteringLabelRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MeteringLabelRuleResponse>(data)?;
         Ok(())
     }
 }

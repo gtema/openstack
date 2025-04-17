@@ -17,11 +17,13 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::identity::v3::group::response::list::GroupResponse;
+
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroup, IdentityGroupApiRequest, IdentityGroupList,
-        IdentityGroupUserList, IdentityGroupUserListBuilder, IdentityGroupUserListBuilderError,
+        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupList, IdentityGroupUserList,
+        IdentityGroupUserListBuilder, IdentityGroupUserListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,15 +36,15 @@ use crate::{
 const TITLE: &str = "Identity Groups";
 const VIEW_CONFIG_KEY: &str = "identity.group";
 
-impl ResourceKey for IdentityGroup {
+impl ResourceKey for GroupResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&IdentityGroup> for IdentityGroupUserList {
+impl TryFrom<&GroupResponse> for IdentityGroupUserList {
     type Error = IdentityGroupUserListBuilderError;
-    fn try_from(value: &IdentityGroup) -> Result<Self, Self::Error> {
+    fn try_from(value: &GroupResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityGroupUserListBuilder::default();
         if let Some(val) = &value.id {
             builder.group_id(val.clone());
@@ -54,7 +56,7 @@ impl TryFrom<&IdentityGroup> for IdentityGroupUserList {
     }
 }
 
-pub type IdentityGroups<'a> = TableViewComponentBase<'a, IdentityGroup, IdentityGroupList>;
+pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupResponse, IdentityGroupList>;
 
 impl Component for IdentityGroups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

@@ -99,28 +99,24 @@ pub enum HttpMethod {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Healthmonitor<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// The time, in seconds, between sending probes to members.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     /// The domain name, which be injected into the HTTP Host Header to the
     /// backend server for HTTP health check.
     ///
     /// **New in version 2.10**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_name: Option<Cow<'a, str>>,
@@ -133,7 +129,6 @@ pub struct Healthmonitor<'a> {
     /// - A range, such as `200-204`
     ///
     /// The default is 200.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) expected_codes: Option<Cow<'a, str>>,
@@ -141,7 +136,6 @@ pub struct Healthmonitor<'a> {
     /// The HTTP method that the health monitor uses for requests. One of
     /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
     /// or `TRACE`. The default is `GET`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) http_method: Option<HttpMethod>,
@@ -149,40 +143,34 @@ pub struct Healthmonitor<'a> {
     /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
     ///
     /// **New in version 2.10**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     /// The number of successful checks before changing the `operating status`
     /// of the member to `ONLINE`. A valid value is from `1` to `10`.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     /// The number of allowed check failures before changing the
     /// `operating status` of the member to `ERROR`. A valid value is from `1`
     /// to `10`. The default is `3`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The ID of the pool.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) pool_id: Cow<'a, str>,
 
     /// The ID of the project owning this resource. (deprecated)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
@@ -190,7 +178,6 @@ pub struct Healthmonitor<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -201,14 +188,12 @@ pub struct Healthmonitor<'a> {
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out. This value must be less than the delay value.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
     /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -216,7 +201,6 @@ pub struct Healthmonitor<'a> {
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (`/`). The default URL path is `/`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) url_path: Option<Cow<'a, str>>,
@@ -226,7 +210,6 @@ pub struct Healthmonitor<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) healthmonitor: Healthmonitor<'a>,
 

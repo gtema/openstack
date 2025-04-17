@@ -23,36 +23,35 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AccessRuleResponse {
     /// The UUID of the access rule
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The request method that the application credential is permitted to use
     /// for a given API endpoint.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub method: Option<Method>,
 
     /// The API path that the application credential is permitted to access.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub path: Option<String>,
 
     /// The service type identifier for the service that the application
     /// credential is permitted to access. Must be a service type that is
     /// listed in the service catalog and not a code name for a service.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub service: Option<String>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -84,4 +83,19 @@ pub enum Method {
     // Put
     #[serde(rename = "PUT")]
     Put,
+}
+
+impl std::str::FromStr for Method {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "DELETE" => Ok(Self::Delete),
+            "GET" => Ok(Self::Get),
+            "HEAD" => Ok(Self::Head),
+            "PATCH" => Ok(Self::Patch),
+            "POST" => Ok(Self::Post),
+            "PUT" => Ok(Self::Put),
+            _ => Err(()),
+        }
+    }
 }

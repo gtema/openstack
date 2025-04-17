@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::minimum_packet_rate_rule::get;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::policy::minimum_packet_rate_rule::response::get::MinimumPacketRateRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct MinimumPacketRateRuleCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -68,28 +62,12 @@ struct PathParameters {
 
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// MinimumPacketRateRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    min_kpps: Option<IntString>,
 }
 
 impl MinimumPacketRateRuleCommand {
@@ -117,7 +95,7 @@ impl MinimumPacketRateRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MinimumPacketRateRuleResponse>(data)?;
         Ok(())
     }
 }

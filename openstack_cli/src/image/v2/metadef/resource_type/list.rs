@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/metadefs/resource_types` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::resource_type::list;
-use structable_derive::StructTable;
+use openstack_types::image::v2::metadef::resource_type::response::list::ResourceTypeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ResourceTypesCommand {
     /// Request Query parameters
@@ -55,27 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// ResourceTypes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Resource type creation date
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Resource type name
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Resource type update date
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl ResourceTypesCommand {
     /// Perform command action
@@ -100,8 +75,7 @@ impl ResourceTypesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ResourceTypeResponse>(data)?;
         Ok(())
     }
 }

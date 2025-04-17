@@ -20,25 +20,21 @@
 //! Wraps invoking of the `v3/users/{user_id}/application_credentials` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use eyre::OptionExt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::create;
 use openstack_sdk::api::identity::v3::user::find as find_user;
+use openstack_types::identity::v3::user::application_credential::response::create::ApplicationCredentialResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Creates an application credential for a user on the project to which the
@@ -46,7 +42,6 @@ use tracing::warn;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
-///
 #[derive(Args)]
 #[command(about = "Create application credential")]
 pub struct ApplicationCredentialCommand {
@@ -59,7 +54,6 @@ pub struct ApplicationCredentialCommand {
     path: PathParameters,
 
     /// An application credential object.
-    ///
     #[command(flatten)]
     application_credential: ApplicationCredential,
 }
@@ -96,35 +90,29 @@ struct ApplicationCredential {
     /// A list of `access_rules` objects
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     access_rules: Option<Vec<Value>>,
 
     /// A description of the application credential’s purpose.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// An optional expiry time for the application credential. If unset, the
     /// application credential does not expire.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     expires_at: Option<String>,
 
     /// The UUID for the credential.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The name of the application credential. Must be unique to a user.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
     /// scoped to.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
@@ -134,13 +122,11 @@ struct ApplicationCredential {
     /// the same as the roles in the current token.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     roles: Option<Vec<Value>>,
 
     /// The secret that the application credential will be created with. If not
     /// provided, one will be generated.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     secret: Option<String>,
 
@@ -150,75 +136,8 @@ struct ApplicationCredential {
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
     /// or trusts. Defaults to false.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     unrestricted: Option<Option<bool>>,
-}
-
-/// ApplicationCredential response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of access_rules objects
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    access_rules: Option<Value>,
-
-    /// A description of the application credential's purpose.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    /// The ID of the application credential.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the application credential. Must be unique to a user.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project the application credential was created for and
-    /// that authentication requests using this application credential will be
-    /// scoped to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project. If
-    /// not provided, the roles assigned to the application credential will be
-    /// the same as the roles in the current token.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    roles: Option<Value>,
-
-    /// The secret for the application credential, either generated by the
-    /// server or provided by the user. This is only ever shown once in the
-    /// response to a create request. It is not stored nor ever shown again. If
-    /// the secret is lost, a new application credential must be created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    secret: Option<String>,
-
-    /// An optional flag to restrict whether the application credential may be
-    /// used for the creation or destruction of other application credentials
-    /// or trusts. Defaults to false.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    unrestricted: Option<bool>,
 }
 
 impl ApplicationCredentialCommand {
@@ -339,7 +258,7 @@ impl ApplicationCredentialCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ApplicationCredentialResponse>(data)?;
         Ok(())
     }
 }

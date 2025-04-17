@@ -26,7 +26,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 

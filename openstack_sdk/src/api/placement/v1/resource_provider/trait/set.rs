@@ -34,12 +34,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A list of traits.
-    ///
     #[builder(setter(into))]
     pub(crate) traits: Vec<Cow<'a, str>>,
 
     /// uuid parameter for /resource_providers/{uuid}/traits API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

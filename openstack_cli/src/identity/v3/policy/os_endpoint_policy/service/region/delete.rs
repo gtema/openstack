@@ -20,26 +20,19 @@
 //! Wraps invoking of the `v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::service::region::delete;
-use structable_derive::StructTable;
 
 /// DELETE operation on
 /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-///
 #[derive(Args)]
 pub struct RegionCommand {
     /// Request Query parameters
@@ -61,7 +54,6 @@ struct PathParameters {
     /// policy_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -72,7 +64,6 @@ struct PathParameters {
     /// service_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_service_id",
@@ -83,7 +74,6 @@ struct PathParameters {
     /// region_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -91,9 +81,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Region response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl RegionCommand {
     /// Perform command action
@@ -119,8 +106,7 @@ impl RegionCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

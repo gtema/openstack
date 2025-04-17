@@ -32,7 +32,7 @@ pub struct OsReimage<'a> {
     pub(crate) image_id: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) reimage_reserved: Option<bool>,
 }
 
@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) os_reimage: OsReimage<'a>,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

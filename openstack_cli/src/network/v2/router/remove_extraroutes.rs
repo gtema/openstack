@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/routers/{id}/remove_extraroutes` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::remove_extraroutes;
+use openstack_types::network::v2::router::response::remove_extraroutes::RouterResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Request body
-///
 #[derive(Args)]
 #[command(about = "Remove extra routes from router")]
 pub struct RouterCommand {
@@ -62,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -78,33 +72,8 @@ struct Router {
     /// `extraroute` extension is enabled.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     routes: Option<Vec<Value>>,
-}
-
-/// Router response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the router.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the router.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The extra routes configuration for L3 router. A list of dictionaries
-    /// with `destination` and `nexthop` parameters. It is available when
-    /// `extraroute` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    routes: Option<Value>,
 }
 
 impl RouterCommand {
@@ -143,7 +112,7 @@ impl RouterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RouterResponse>(data)?;
         Ok(())
     }
 }

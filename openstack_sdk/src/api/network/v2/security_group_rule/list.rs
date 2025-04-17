@@ -50,27 +50,22 @@ use crate::api::Pageable;
 pub struct Request<'a> {
     /// belongs_to_default_sg query parameter for /v2.0/security-group-rules
     /// API
-    ///
     #[builder(default)]
     belongs_to_default_sg: Option<bool>,
 
     /// description query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// direction query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     direction: Option<Cow<'a, str>>,
 
     /// ethertype query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     ethertype: Option<Cow<'a, str>>,
 
     /// id query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
@@ -78,82 +73,67 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// normalized_cidr query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     normalized_cidr: Option<Cow<'a, str>>,
 
     /// Reverse the page direction
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// port_range_max query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default)]
     port_range_max: Option<i32>,
 
     /// port_range_min query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default)]
     port_range_min: Option<i32>,
 
     /// protocol query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     protocol: Option<Cow<'a, str>>,
 
     /// remote_address_group_id query parameter for /v2.0/security-group-rules
     /// API
-    ///
     #[builder(default, setter(into))]
     remote_address_group_id: Option<Cow<'a, str>>,
 
     /// remote_group_id query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     remote_group_id: Option<Cow<'a, str>>,
 
     /// remote_ip_prefix query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     remote_ip_prefix: Option<Cow<'a, str>>,
 
     /// revision_number query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// security_group_id query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     security_group_id: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_dir"))]
     sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
     /// tenant_id query parameter for /v2.0/security-group-rules API
-    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
@@ -170,7 +150,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -185,7 +164,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

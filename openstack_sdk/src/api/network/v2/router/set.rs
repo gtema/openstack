@@ -38,13 +38,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct ExternalFixedIps<'a> {
     /// IP Address
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ip_address: Option<Cow<'a, str>>,
 
     /// The subnet ID from which the IP address is assigned
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Cow<'a, str>>,
@@ -53,12 +51,11 @@ pub struct ExternalFixedIps<'a> {
 /// The external gateway information of the router. If the router has an
 /// external gateway, this would be a dict with `network_id`, `enable_snat`,
 /// `external_fixed_ips` and `qos_policy_id`. Otherwise, this would be `null`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalGatewayInfo<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enable_snat: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -87,27 +84,23 @@ pub struct Routes<'a> {
 }
 
 /// A `router` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) distributed: Option<Option<bool>>,
@@ -116,7 +109,6 @@ pub struct Router<'a> {
     /// attribute value, set the `enable_ndp_proxy_by_default` option in the
     /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
     /// extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enable_ndp_proxy: Option<Option<bool>>,
@@ -125,20 +117,17 @@ pub struct Router<'a> {
     /// external gateway, this would be a dict with `network_id`,
     /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
     /// this would be `null`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_gateway_info: Option<Option<ExternalGatewayInfo<'a>>>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ha: Option<Option<bool>>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -146,7 +135,6 @@ pub struct Router<'a> {
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled. Default is an empty list (`[]`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) routes: Option<Vec<Routes<'a>>>,
@@ -156,12 +144,10 @@ pub struct Router<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `router` object.
-    ///
     #[builder(setter(into))]
     pub(crate) router: Router<'a>,
 
     /// id parameter for /v2.0/routers/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

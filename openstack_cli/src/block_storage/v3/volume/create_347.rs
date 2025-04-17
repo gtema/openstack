@@ -20,29 +20,25 @@
 //! Wraps invoking of the `v3/volumes` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::create_347;
+use openstack_types::block_storage::v3::volume::response::create::VolumeResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates a new volume.
 ///
 /// | | | | --- | --- | | param req: | the request | | param body: | the
 /// request body | | returns: | dict -- the new volume dictionary | | raises
 /// HTTPNotFound, HTTPBadRequest: | | | | |
-///
 #[derive(Args)]
 pub struct VolumeCommand {
     /// Request Query parameters
@@ -54,12 +50,10 @@ pub struct VolumeCommand {
     path: PathParameters,
 
     /// The dictionary of data to send to the scheduler.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     os_sch_hnt_scheduler_hints: Option<Vec<(String, Value)>>,
 
     /// A `volume` object.
-    ///
     #[command(flatten)]
     volume: Volume,
 }
@@ -75,24 +69,20 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Volume {
     /// The name of the availability zone.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// The UUID of the backup.
     ///
     /// **New in version 3.47**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     backup_id: Option<String>,
 
     /// The UUID of the consistency group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     consistencygroup_id: Option<String>,
 
     /// The volume description.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -117,13 +107,11 @@ struct Volume {
     /// `snapshot_id` contained in the `block_device_mapping` image property to
     /// locate the volume snapshot, and will use that to create the volume
     /// instead.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     image_ref: Option<String>,
 
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
@@ -131,22 +119,18 @@ struct Volume {
     multiattach: Option<Option<bool>>,
 
     /// The volume name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[arg(help_heading = "Body parameters", long)]
     size: Option<Option<i32>>,
 
     /// The UUID of the consistency group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     snapshot_id: Option<String>,
 
     /// The UUID of the consistency group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     source_volid: Option<String>,
 
@@ -160,257 +144,8 @@ struct Volume {
     /// on the volume type. Default is `None`. For information about how to use
     /// volume types to create multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-    ///
     #[arg(help_heading = "Body parameters", long)]
     volume_type: Option<String>,
-}
-
-/// Volume response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Instance attachment information. If this volume is attached to a server
-    /// instance, the attachments list includes the UUID of the attached
-    /// server, an attachment UUID, the name of the attached host, if any, the
-    /// volume UUID, the device, and the device UUID. Otherwise, this list is
-    /// empty. For example:
-    ///
-    /// ```text
-    /// [
-    ///   {
-    ///     'server_id': '6c8cf6e0-4c8f-442f-9196-9679737feec6',
-    ///     'attachment_id': '3dafcac4-1cb9-4b60-a227-d729baa10cf6',
-    ///     'attached_at': '2019-09-30T19:30:34.000000',
-    ///     'host_name': null,
-    ///     'volume_id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53',
-    ///     'device': '/dev/vda',
-    ///     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
-    ///   }
-    /// ]
-    ///
-    /// ```
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    attachments: Value,
-
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// Enables or disables the bootable attribute. You can boot an instance
-    /// from a bootable volume.
-    ///
-    #[serde()]
-    #[structable()]
-    bootable: String,
-
-    /// The cluster name of volume backend.
-    ///
-    /// **New in version 3.61**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    cluster_name: Option<String>,
-
-    /// The UUID of the consistency group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consistencygroup_id: Option<String>,
-
-    /// Whether this resource consumes quota or not. Resources that not counted
-    /// for quota usage are usually temporary internal resources created to
-    /// perform an operation.
-    ///
-    /// **New in version 3.65**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consumes_quota: Option<bool>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The volume description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// If true, this volume is encrypted.
-    ///
-    #[serde()]
-    #[structable()]
-    encrypted: bool,
-
-    /// The ID of the group.
-    ///
-    /// **New in version 3.13**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_id: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The volume links.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// A `metadata` object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The volume migration status. Admin only.
-    ///
-    #[serde()]
-    #[structable()]
-    migration_status: String,
-
-    /// If true, this volume can attach to more than one instance.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    multiattach: Option<bool>,
-
-    /// The volume name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The provider ID for the volume. The value is either a string set by the
-    /// driver or `null` if the driver doesn’t use the field or if it hasn’t
-    /// created it yet. Only returned for administrators.
-    ///
-    /// **New in version 3.21**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provider_id: Option<String>,
-
-    /// The volume replication status.
-    ///
-    #[serde()]
-    #[structable()]
-    replication_status: String,
-
-    /// A unique identifier that’s used to indicate what node the
-    /// volume-service for a particular volume is being serviced by.
-    ///
-    /// **New in version 3.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    service_uuid: Option<String>,
-
-    /// An indicator whether the host connecting the volume should lock for the
-    /// whole attach/detach process or not. `true` means only is iSCSI
-    /// initiator running on host doesn’t support manual scans, `false` means
-    /// never use locks, and `null` means to always use locks. Look at
-    /// os-brick’s `guard_connection` context manager. Default=True.
-    ///
-    /// **New in version 3.69**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared_targets: Option<bool>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable()]
-    size: i64,
-
-    /// To create a volume from an existing snapshot, specify the UUID of the
-    /// volume snapshot. The volume is created in same availability zone and
-    /// with same size as the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    snapshot_id: Option<String>,
-
-    /// The UUID of the source volume. The API creates a new volume with the
-    /// same size as the source volume unless a larger size is requested.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_volid: Option<String>,
-
-    /// The volume status.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the user.
-    ///
-    #[serde()]
-    #[structable()]
-    user_id: String,
-
-    /// The associated volume type name for the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_type: Option<String>,
-
-    /// The associated volume type ID for the volume.
-    ///
-    /// **New in version 3.63**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_type_id: Option<String>,
 }
 
 impl VolumeCommand {
@@ -510,7 +245,7 @@ impl VolumeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<VolumeResponse>(data)?;
         Ok(())
     }
 }

@@ -24,19 +24,19 @@ use structable::{StructTable, StructTableOptions};
 pub struct IpsecpolicyResponse {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The encapsulation mode. A valid value is `tunnel` or `transport`.
     /// Default is `tunnel`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub encapsulation_mode: Option<EncapsulationMode>,
 
@@ -46,41 +46,41 @@ pub struct IpsecpolicyResponse {
     /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The ID of the IPsec policy.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub lifetime: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub pfs: Option<Pfs>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// The transform protocol. A valid value is `ESP`, `AH`, or `AH- ESP`.
     /// Default is `ESP`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub transform_protocol: Option<TransformProtocol>,
 }
@@ -188,6 +188,40 @@ pub enum EncryptionAlgorithm {
     Aes256Gcm8,
 }
 
+impl std::str::FromStr for EncryptionAlgorithm {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "3des" => Ok(Self::_3des),
+            "aes-128" => Ok(Self::Aes128),
+            "aes-128-ccm-12" => Ok(Self::Aes128Ccm12),
+            "aes-128-ccm-16" => Ok(Self::Aes128Ccm16),
+            "aes-128-ccm-8" => Ok(Self::Aes128Ccm8),
+            "aes-128-ctr" => Ok(Self::Aes128Ctr),
+            "aes-128-gcm-12" => Ok(Self::Aes128Gcm12),
+            "aes-128-gcm-16" => Ok(Self::Aes128Gcm16),
+            "aes-128-gcm-8" => Ok(Self::Aes128Gcm8),
+            "aes-192" => Ok(Self::Aes192),
+            "aes-192-ccm-12" => Ok(Self::Aes192Ccm12),
+            "aes-192-ccm-16" => Ok(Self::Aes192Ccm16),
+            "aes-192-ccm-8" => Ok(Self::Aes192Ccm8),
+            "aes-192-ctr" => Ok(Self::Aes192Ctr),
+            "aes-192-gcm-12" => Ok(Self::Aes192Gcm12),
+            "aes-192-gcm-16" => Ok(Self::Aes192Gcm16),
+            "aes-192-gcm-8" => Ok(Self::Aes192Gcm8),
+            "aes-256" => Ok(Self::Aes256),
+            "aes-256-ccm-12" => Ok(Self::Aes256Ccm12),
+            "aes-256-ccm-16" => Ok(Self::Aes256Ccm16),
+            "aes-256-ccm-8" => Ok(Self::Aes256Ccm8),
+            "aes-256-ctr" => Ok(Self::Aes256Ctr),
+            "aes-256-gcm-12" => Ok(Self::Aes256Gcm12),
+            "aes-256-gcm-16" => Ok(Self::Aes256Gcm16),
+            "aes-256-gcm-8" => Ok(Self::Aes256Gcm8),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum TransformProtocol {
     // Ah
@@ -201,6 +235,18 @@ pub enum TransformProtocol {
     // Esp
     #[serde(rename = "esp")]
     Esp,
+}
+
+impl std::str::FromStr for TransformProtocol {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ah" => Ok(Self::Ah),
+            "ah-esp" => Ok(Self::AhEsp),
+            "esp" => Ok(Self::Esp),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -230,6 +276,21 @@ pub enum AuthAlgorithm {
     Sha512,
 }
 
+impl std::str::FromStr for AuthAlgorithm {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aes-cmac" => Ok(Self::AesCmac),
+            "aes-xcbc" => Ok(Self::AesXcbc),
+            "sha1" => Ok(Self::Sha1),
+            "sha256" => Ok(Self::Sha256),
+            "sha384" => Ok(Self::Sha384),
+            "sha512" => Ok(Self::Sha512),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncapsulationMode {
     // Transport
@@ -239,6 +300,17 @@ pub enum EncapsulationMode {
     // Tunnel
     #[serde(rename = "tunnel")]
     Tunnel,
+}
+
+impl std::str::FromStr for EncapsulationMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "transport" => Ok(Self::Transport),
+            "tunnel" => Ok(Self::Tunnel),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -322,4 +394,33 @@ pub enum Pfs {
     // Group5
     #[serde(rename = "group5")]
     Group5,
+}
+
+impl std::str::FromStr for Pfs {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "group14" => Ok(Self::Group14),
+            "group15" => Ok(Self::Group15),
+            "group16" => Ok(Self::Group16),
+            "group17" => Ok(Self::Group17),
+            "group18" => Ok(Self::Group18),
+            "group19" => Ok(Self::Group19),
+            "group2" => Ok(Self::Group2),
+            "group20" => Ok(Self::Group20),
+            "group21" => Ok(Self::Group21),
+            "group22" => Ok(Self::Group22),
+            "group23" => Ok(Self::Group23),
+            "group24" => Ok(Self::Group24),
+            "group25" => Ok(Self::Group25),
+            "group26" => Ok(Self::Group26),
+            "group27" => Ok(Self::Group27),
+            "group28" => Ok(Self::Group28),
+            "group29" => Ok(Self::Group29),
+            "group30" => Ok(Self::Group30),
+            "group31" => Ok(Self::Group31),
+            "group5" => Ok(Self::Group5),
+            _ => Err(()),
+        }
+    }
 }

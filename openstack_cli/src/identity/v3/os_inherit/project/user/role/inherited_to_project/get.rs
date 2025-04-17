@@ -20,33 +20,28 @@
 //! Wraps invoking of the `v3/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
 use eyre::eyre;
-use openstack_sdk::api::QueryAsync;
+use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_inherit::project::user::role::inherited_to_project::get;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::identity::v3::os_inherit::project::user::role::inherited_to_project::response::get::InheritedToProjectResponse;
 use tracing::warn;
 
 /// Check for an inherited grant for a user on a project.
 ///
 /// GET/HEAD /OS-INHERIT/projects/{project_id}/users/{user_id}
 /// /roles/{role_id}/inherited_to_projects
-///
 #[derive(Args)]
 pub struct InheritedToProjectCommand {
     /// Request Query parameters
@@ -76,7 +71,6 @@ struct PathParameters {
     /// role_id parameter for
     /// /v3/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_role_id",
@@ -113,23 +107,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl InheritedToProjectCommand {
@@ -251,7 +228,7 @@ impl InheritedToProjectCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<InheritedToProjectResponse>(data)?;
         Ok(())
     }
 }

@@ -20,29 +20,24 @@
 //! Wraps invoking of the `v2.0/metering/metering-label-rules` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::create;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::metering::metering_label_rule::response::create::MeteringLabelRuleResponse;
 
 /// Creates an L3 metering label rule.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Create metering label rule")]
 pub struct MeteringLabelRuleCommand {
@@ -55,7 +50,6 @@ pub struct MeteringLabelRuleCommand {
     path: PathParameters,
 
     /// A `metering_label_rule` object.
-    ///
     #[command(flatten)]
     metering_label_rule: MeteringLabelRule,
 }
@@ -82,26 +76,22 @@ struct MeteringLabelRule {
 
     /// Ingress or egress, which is the direction in which the metering rule is
     /// applied.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     direction: Option<Direction>,
 
     /// Indicates whether to count the traffic of a specific IP address with
     /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
     /// values. Default is `false`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     excluded: Option<bool>,
 
     /// The metering label ID associated with this metering rule.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     metering_label_id: Option<String>,
 
     /// (deprecated) The source IP prefix that is matched by this metering
     /// rule. By source IP prefix, one should read the internal/private IPs
     /// used in OpenStack.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     remote_ip_prefix: Option<String>,
 
@@ -109,57 +99,6 @@ struct MeteringLabelRule {
     source_ip_prefix: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
-    tenant_id: Option<String>,
-}
-
-/// MeteringLabelRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    destination_ip_prefix: Option<String>,
-
-    /// Ingress or egress, which is the direction in which the metering rule is
-    /// applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    /// Indicates whether to count the traffic of a specific IP address with
-    /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
-    /// values.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    excluded: Option<BoolString>,
-
-    /// The ID of the metering label rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The metering label ID associated with this metering rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    metering_label_id: Option<String>,
-
-    /// (deprecated) The source IP prefix that is matched by this metering
-    /// rule. By source IP prefix, one should read the internal/private IPs
-    /// used in OpenStack.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    remote_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    source_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
     tenant_id: Option<String>,
 }
 
@@ -222,7 +161,7 @@ impl MeteringLabelRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MeteringLabelRuleResponse>(data)?;
         Ok(())
     }
 }

@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/policies/{policy_id}/packet_rate_limit_rules/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::policy::packet_rate_limit_rule::set;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::policy::packet_rate_limit_rule::response::set::PacketRateLimitRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct PacketRateLimitRuleCommand {
     /// Request Query parameters
@@ -62,7 +57,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -72,7 +66,6 @@ struct PathParameters {
 
     /// id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -98,26 +91,6 @@ struct PacketRateLimitRule {
 
     #[arg(help_heading = "Body parameters", long)]
     max_kpps: Option<i32>,
-}
-
-/// PacketRateLimitRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_burst_kpps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional)]
-    max_kpps: Option<IntString>,
 }
 
 impl PacketRateLimitRuleCommand {
@@ -165,7 +138,7 @@ impl PacketRateLimitRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<PacketRateLimitRuleResponse>(data)?;
         Ok(())
     }
 }

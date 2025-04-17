@@ -43,39 +43,32 @@ pub struct Request<'a> {
     /// Key:Value pairs of information about this zone, and the pool the user
     /// would like to place the zone in. This information can be used by the
     /// scheduler to place zones on the correct pool.
-    ///
-    #[builder(default, private, setter(name = "_attributes"))]
+    #[builder(default, private, setter(into, name = "_attributes"))]
     pub(crate) attributes: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// Description for this zone
-    ///
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// e-mail for the zone. Used in SOA records for the zone
-    ///
     #[builder(default, setter(into))]
     pub(crate) email: Option<Cow<'a, str>>,
 
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
-    ///
     #[builder(default, setter(into))]
     pub(crate) masters: Option<Vec<Cow<'a, str>>>,
 
     /// DNS Name for the zone
-    ///
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// TTL (Time to Live) for the zone.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ttl: Option<i32>,
 
     /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
     /// slaved from another DNS Server. Defaults to PRIMARY
-    ///
     #[builder(default)]
     pub(crate) _type: Option<Type>,
 
@@ -93,7 +86,6 @@ impl<'a> RequestBuilder<'a> {
     /// Key:Value pairs of information about this zone, and the pool the user
     /// would like to place the zone in. This information can be used by the
     /// scheduler to place zones on the correct pool.
-    ///
     pub fn attributes<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

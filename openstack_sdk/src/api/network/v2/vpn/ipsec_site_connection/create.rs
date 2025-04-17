@@ -39,32 +39,27 @@ pub enum Initiator {
 }
 
 /// An `ipsec_site_connection` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IpsecSiteConnection<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// A dictionary with dead peer detection (DPD) protocol controls.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) dpd: Option<Cow<'a, str>>,
 
     /// The ID of the IKE policy.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ikepolicy_id: Option<Cow<'a, str>>,
@@ -72,13 +67,11 @@ pub struct IpsecSiteConnection<'a> {
     /// Indicates whether this VPN can only respond to connections or both
     /// respond to and initiate connections. A valid value is `response- only`
     /// or `bi-directional`. Default is `bi-directional`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) initiator: Option<Initiator>,
 
     /// The ID of the IPsec policy.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ipsecpolicy_id: Option<Cow<'a, str>>,
@@ -87,7 +80,6 @@ pub struct IpsecSiteConnection<'a> {
     /// local side of the connection. Yo must specify this parameter with the
     /// `peer_ep_group_id` parameter unless in backward- compatible mode where
     /// `peer_cidrs` is provided with a `subnet_id` for the VPN service.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) local_ep_group_id: Option<Option<Cow<'a, str>>>,
@@ -97,33 +89,28 @@ pub struct IpsecSiteConnection<'a> {
     /// east-west traffic. Most often, local ID would be domain name, email
     /// address, etc. If this is not configured then the external IP address
     /// will be used as the ID.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) local_id: Option<Cow<'a, str>>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) mtu: Option<i32>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The peer gateway public IPv4 or IPv6 address or FQDN.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) peer_address: Option<Cow<'a, str>>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
     /// net_address > / < prefix > .
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) peer_cidrs: Option<Vec<Cow<'a, str>>>,
@@ -133,7 +120,6 @@ pub struct IpsecSiteConnection<'a> {
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) peer_ep_group_id: Option<Option<Cow<'a, str>>>,
@@ -141,25 +127,21 @@ pub struct IpsecSiteConnection<'a> {
     /// The peer router identity for authentication. A valid value is an IPv4
     /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
     /// value matches the `peer_address` value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) peer_id: Option<Cow<'a, str>>,
 
     /// The pre-shared key. A valid value is any string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) psk: Option<Cow<'a, str>>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
 
     /// The ID of the VPN service.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vpnservice_id: Option<Cow<'a, str>>,
@@ -169,7 +151,6 @@ pub struct IpsecSiteConnection<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `ipsec_site_connection` object.
-    ///
     #[builder(setter(into))]
     pub(crate) ipsec_site_connection: IpsecSiteConnection<'a>,
 

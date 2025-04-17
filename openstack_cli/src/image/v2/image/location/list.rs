@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2/images/{image_id}/locations` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::location::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::image::location::response::list::LocationResponse;
 
 /// Lists all locations associated to an image with location url and store-id,
 /// accessible to only service user, for non service users API will return
@@ -43,7 +39,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 403, 404
-///
 #[derive(Args)]
 #[command(about = "Get Location")]
 pub struct LocationsCommand {
@@ -64,32 +59,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/locations API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
         value_name = "IMAGE_ID"
     )]
     image_id: String,
-}
-/// Locations response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(pretty)]
-    metadata: Value,
-
-    #[serde()]
-    #[structable()]
-    url: String,
-
-    /// Values to be used to populate the corresponding image properties. If
-    /// the image status is not 'queued', values must exactly match those
-    /// already contained in the image properties.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    validation_data: Option<Value>,
 }
 
 impl LocationsCommand {
@@ -115,9 +90,8 @@ impl LocationsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<LocationResponse>(data)?;
         Ok(())
     }
 }

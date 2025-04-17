@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-server-password` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::server_password::get;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::server_password::response::get::ServerPasswordResponse;
 
 /// Shows the administrative password for a server.
 ///
@@ -51,7 +48,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show Server Password")]
 pub struct ServerPasswordCommand {
@@ -73,22 +69,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/os-server-password
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// ServerPassword response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The password returned from metadata server.
-    ///
-    #[serde()]
-    #[structable()]
-    password: String,
 }
 
 impl ServerPasswordCommand {
@@ -115,7 +101,7 @@ impl ServerPasswordCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerPasswordResponse>(data)?;
         Ok(())
     }
 }

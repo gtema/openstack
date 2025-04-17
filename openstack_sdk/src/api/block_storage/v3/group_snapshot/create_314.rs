@@ -27,24 +27,20 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The group snapshot.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct GroupSnapshot<'a> {
     /// The group snapshot description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the group.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) group_id: Cow<'a, str>,
 
     /// The group snapshot name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
@@ -54,7 +50,6 @@ pub struct GroupSnapshot<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The group snapshot.
-    ///
     #[builder(setter(into))]
     pub(crate) group_snapshot: GroupSnapshot<'a>,
 

@@ -16,10 +16,9 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `agents/{id}` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Agent response representation
@@ -27,60 +26,59 @@ use structable::{StructTable, StructTableOptions};
 pub struct AgentResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The type of agent such as `Open vSwitch agent` or `DHCP agent`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub agent_type: Option<String>,
 
     /// Indicates the agent is alive and running.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub alive: Option<bool>,
 
     /// The availability zone of the agent.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The executable command used to start the agent such as
     /// `neutron-openvswitch-agent` or `neutron-dhcp-agent`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub binary: Option<String>,
 
     /// An object containing configuration specific key/value pairs; the
     /// semantics of which are determined by the binary name and type.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub configurations: Option<HashMap<String, Value>>,
+    pub configurations: Option<BTreeMap<String, Value>>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Time at which the last heartbeat was received.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub heartbeat_timestamp: Option<String>,
 
     /// The hostname of the system the agent is running on.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
     /// The ID of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -92,19 +90,19 @@ pub struct AgentResponse {
     /// but it is readable for debugging purposes. Not all agent types track
     /// resources via Placement, therefore the value `null` does not
     /// necessarily means there is an error in the system.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resources_synced: Option<String>,
 
     /// Time at which the agent was started.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub started_at: Option<String>,
 
     /// The name of AMQP topic the agent is listening on such as `dhcp_agent`.
     /// A special value of `N/A` is used when the agent doesn’t use an AMQP
     /// topic.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub topic: Option<String>,
 }

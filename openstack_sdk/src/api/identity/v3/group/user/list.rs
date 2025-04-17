@@ -31,7 +31,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
-    ///
     #[builder(default, setter(into))]
     group_id: Cow<'a, str>,
 
@@ -40,7 +39,6 @@ pub struct Request<'a> {
     /// the two, for example: `password_expires_at={operator}:{timestamp}`.
     /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
     /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
-    ///
     #[builder(default, setter(into))]
     password_expires_at: Option<Cow<'a, str>>,
 

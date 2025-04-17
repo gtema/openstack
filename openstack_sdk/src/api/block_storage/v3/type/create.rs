@@ -33,7 +33,7 @@ pub struct VolumeType<'a> {
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_extra_specs"))]
+    #[builder(default, private, setter(into, name = "_extra_specs"))]
     pub(crate) extra_specs: Option<BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>>,
 
     #[serde()]
@@ -44,7 +44,7 @@ pub struct VolumeType<'a> {
         rename = "os-volume-type-access:is_public",
         skip_serializing_if = "Option::is_none"
     )]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) os_volume_type_access_is_public: Option<bool>,
 }
 
@@ -70,7 +70,6 @@ pub struct Request<'a> {
     pub(crate) volume_type: VolumeType<'a>,
 
     /// id parameter for /v3/types/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

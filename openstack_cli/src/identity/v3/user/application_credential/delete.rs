@@ -20,33 +20,25 @@
 //! Wraps invoking of the `v3/users/{user_id}/application_credentials/{application_credential_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
 use eyre::OptionExt;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::delete;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// Delete an application credential.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
-///
 #[derive(Args)]
 #[command(about = "Delete application credential")]
 pub struct ApplicationCredentialCommand {
@@ -73,7 +65,6 @@ struct PathParameters {
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -96,9 +87,6 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// ApplicationCredential response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ApplicationCredentialCommand {
     /// Perform command action
@@ -167,8 +155,7 @@ impl ApplicationCredentialCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

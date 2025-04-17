@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) ndp_proxy: NdpProxy<'a>,
 
     /// id parameter for /v2.0/ndp-proxies/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

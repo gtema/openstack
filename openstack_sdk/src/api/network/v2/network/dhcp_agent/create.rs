@@ -29,7 +29,6 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     network_id: Cow<'a, str>,
 

@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/recordsets` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
@@ -36,12 +33,10 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::create;
 use openstack_sdk::api::find_by_name;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::zone::recordset::response::create::RecordsetResponse;
 use tracing::warn;
 
 /// Create a recordset in a zone
-///
 #[derive(Args)]
 #[command(about = "Create Recordset")]
 pub struct RecordsetCommand {
@@ -54,12 +49,10 @@ pub struct RecordsetCommand {
     path: PathParameters,
 
     /// Description for this recordset
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// DNS Name for the recordset
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -69,17 +62,14 @@ pub struct RecordsetCommand {
     /// hostname.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     records: Option<Vec<String>>,
 
     /// TTL (Time to Live) for the recordset.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Option<Type>,
 }
@@ -124,105 +114,6 @@ enum Type {
     Srv,
     Sshfp,
     Txt,
-}
-
-/// Recordset response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// current action in progress on the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    action: Option<String>,
-
-    /// Date / Time when resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Description for this recordset
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// ID for the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links to the resource, and other related resources. When a response has
-    /// been broken into pages, we will include a `next` link that should be
-    /// followed to retrieve all results
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// DNS Name for the recordset
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// ID for the project that owns the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// A list of data for this recordset. Each item will be a separate record
-    /// in Designate These items should conform to the DNS spec for the record
-    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
-    /// hostname.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    records: Option<Value>,
-
-    /// The status of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// TTL (Time to Live) for the recordset.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ttl: Option<i32>,
-
-    /// They RRTYPE of the recordset.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
-    /// Date / Time when resource last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// Version of the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    version: Option<i32>,
-
-    /// ID for the zone that contains this recordset
-    ///
-    #[serde()]
-    #[structable(optional)]
-    zone_id: Option<String>,
-
-    /// The name of the zone that contains this recordset
-    ///
-    #[serde()]
-    #[structable(optional)]
-    zone_name: Option<String>,
 }
 
 impl RecordsetCommand {
@@ -324,7 +215,7 @@ impl RecordsetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RecordsetResponse>(data)?;
         Ok(())
     }
 }

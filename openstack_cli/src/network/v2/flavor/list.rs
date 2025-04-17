@@ -20,23 +20,18 @@
 //! Wraps invoking of the `v2.0/flavors` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::flavor::response::list::FlavorResponse;
 
 /// Lists all flavors visible to the project.
 ///
@@ -58,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List flavors")]
 pub struct FlavorsCommand {
@@ -79,17 +73,14 @@ pub struct FlavorsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/flavors API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// enabled query parameter for /v2.0/flavors API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// id query parameter for /v2.0/flavors API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -97,41 +88,34 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/flavors API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// service_type query parameter for /v2.0/flavors API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     service_type: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -139,45 +123,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Flavors response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The human-readable description for the flavor.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// Indicates whether the flavor is enabled or not. Default is true.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<BoolString>,
-
-    /// The ID of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Name of the flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Service profile UUIDs associated with this flavor.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    service_profiles: Option<Value>,
-
-    /// Service type for the flavor. Example: FIREWALL.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    service_type: Option<String>,
-}
 
 impl FlavorsCommand {
     /// Perform command action
@@ -234,8 +179,7 @@ impl FlavorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<FlavorResponse>(data)?;
         Ok(())
     }
 }

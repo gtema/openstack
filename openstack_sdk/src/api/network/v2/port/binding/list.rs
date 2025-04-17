@@ -34,7 +34,6 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// host query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
     #[builder(default, setter(into))]
     host: Option<Cow<'a, str>>,
 
@@ -42,51 +41,42 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Reverse the page direction
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_dir"))]
     sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
     /// status query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// vif_type query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
     #[builder(default, setter(into))]
     vif_type: Option<Cow<'a, str>>,
 
     /// vnic_type query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
     #[builder(default, setter(into))]
     vnic_type: Option<Cow<'a, str>>,
 
@@ -103,7 +93,6 @@ impl<'a> Request<'a> {
 impl<'a> RequestBuilder<'a> {
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -118,7 +107,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

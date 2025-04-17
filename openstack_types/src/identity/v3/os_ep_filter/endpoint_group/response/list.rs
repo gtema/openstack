@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EndpointGroupResponse {
     /// The endpoint group description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
@@ -31,23 +31,22 @@ pub struct EndpointGroupResponse {
     /// used must be an endpoint property, such as interface, service_id,
     /// region, and enabled. Note that if using interface as a filter, the only
     /// available values are public, internal, and admin.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub filters: Option<Filters>,
 
     /// The endpoint group ID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the endpoint group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -69,11 +68,22 @@ pub enum Interface {
     Public,
 }
 
+impl std::str::FromStr for Interface {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "admin" => Ok(Self::Admin),
+            "internal" => Ok(Self::Internal),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
+}
+
 /// Describes the filtering performed by the endpoint group. The filter used
 /// must be an endpoint property, such as interface, service_id, region, and
 /// enabled. Note that if using interface as a filter, the only available
 /// values are public, internal, and admin.
-///
 /// `Filters` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Filters {

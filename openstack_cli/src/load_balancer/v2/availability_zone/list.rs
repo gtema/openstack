@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2/lbaas/availabilityzones` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::availability_zone::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::availability_zone::response::list::AvailabilityZoneResponse;
 
 /// Lists all Availability Zones.
-///
 #[derive(Args)]
 pub struct AvailabilityZonesCommand {
     /// Request Query parameters
@@ -63,12 +59,10 @@ struct QueryParameters {
     description: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
@@ -76,7 +70,6 @@ struct QueryParameters {
     name: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -87,25 +80,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AvailabilityZones response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    availability_zone_profile_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl AvailabilityZonesCommand {
     /// Perform command action
@@ -153,8 +127,7 @@ impl AvailabilityZonesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AvailabilityZoneResponse>(data)?;
         Ok(())
     }
 }

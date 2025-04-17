@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/projects` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,15 +34,13 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::project::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::project::response::list::ProjectResponse;
 use tracing::warn;
 
 /// Lists projects.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
-///
 #[derive(Args)]
 #[command(about = "List projects")]
 pub struct ProjectsCommand {
@@ -79,12 +74,10 @@ struct QueryParameters {
     limit: Option<i32>,
 
     /// ID of the last fetched entry
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// The resource name.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
@@ -122,68 +115,6 @@ struct DomainInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Projects response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the domain for the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    is_domain: Option<bool>,
-
-    /// The name of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    options: Option<Value>,
-
-    /// The ID of the parent for the project.
-    ///
-    /// **New in version 3.4**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    parent_id: Option<String>,
-
-    /// A list of simple strings assigned to a project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-}
 
 impl ProjectsCommand {
     /// Perform command action
@@ -283,8 +214,7 @@ impl ProjectsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ProjectResponse>(data)?;
         Ok(())
     }
 }

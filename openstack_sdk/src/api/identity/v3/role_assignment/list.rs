@@ -113,7 +113,6 @@ pub struct Request<'a> {
     role_id: Option<Cow<'a, str>>,
 
     /// The ID of the domain.
-    ///
     #[builder(default, setter(into))]
     scope_domain_id: Option<Cow<'a, str>>,
 
@@ -121,7 +120,6 @@ pub struct Request<'a> {
     scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
 
     /// The ID of the project.
-    ///
     #[builder(default, setter(into))]
     scope_project_id: Option<Cow<'a, str>>,
 

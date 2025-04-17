@@ -81,12 +81,10 @@ pub struct Request<'a> {
     pub(crate) encryption: Encryption<'a>,
 
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
     #[builder(default, setter(into))]
     type_id: Cow<'a, str>,
 

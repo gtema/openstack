@@ -28,18 +28,15 @@ use std::borrow::Cow;
 
 /// An object recording volume backup metadata, including `backup_service` and
 /// `backup_url`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct BackupRecord<'a> {
     /// The service used to perform the backup.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) backup_service: Cow<'a, str>,
 
     /// An identifier string to locate the backup.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) backup_url: Cow<'a, str>,
@@ -50,7 +47,6 @@ pub struct BackupRecord<'a> {
 pub struct Request<'a> {
     /// An object recording volume backup metadata, including `backup_service`
     /// and `backup_url`.
-    ///
     #[builder(setter(into))]
     pub(crate) backup_record: BackupRecord<'a>,
 

@@ -31,21 +31,18 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// An `address scope` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddressScope<'a> {
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) shared: Option<bool>,
 }
 
@@ -53,12 +50,10 @@ pub struct AddressScope<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `address scope` object.
-    ///
     #[builder(setter(into))]
     pub(crate) address_scope: AddressScope<'a>,
 
     /// id parameter for /v2.0/address-scopes/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

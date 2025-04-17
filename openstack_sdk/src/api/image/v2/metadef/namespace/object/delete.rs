@@ -27,13 +27,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
-    ///
     #[builder(default, setter(into))]
     namespace_name: Cow<'a, str>,
 
     /// object_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
-    ///
     #[builder(default, setter(into))]
     object_name: Cow<'a, str>,
 

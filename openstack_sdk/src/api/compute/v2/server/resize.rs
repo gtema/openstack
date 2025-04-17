@@ -33,7 +33,6 @@ pub enum OsDcfDiskConfig {
 }
 
 /// The action to resize a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Resize<'a> {
@@ -43,7 +42,6 @@ pub struct Resize<'a> {
     ///
     /// If a specified flavor ID is the same as the current one of the server,
     /// the request returns a `Bad Request (400)` response code.
-    ///
     #[serde(rename = "flavorRef")]
     #[builder(setter(into))]
     pub(crate) flavor_ref: Cow<'a, str>,
@@ -64,7 +62,6 @@ pub struct Resize<'a> {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
@@ -74,12 +71,10 @@ pub struct Resize<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to resize a server.
-    ///
     #[builder(setter(into))]
     pub(crate) resize: Resize<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

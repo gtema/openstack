@@ -17,35 +17,33 @@
 //! Response type for the GET `group_types` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// GroupType response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupTypeResponse {
     /// The group type description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub group_specs: Option<HashMap<String, String>>,
+    pub group_specs: Option<BTreeMap<String, String>>,
 
     /// The group type ID.
-    ///
     #[structable()]
     pub id: String,
 
     /// Whether the group type is publicly visible.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub is_public: Option<bool>,
 
     /// The group type name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 }

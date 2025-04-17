@@ -28,7 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct OsExtend {
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) new_size: i32,
 }
 
@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) os_extend: OsExtend,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

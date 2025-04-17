@@ -125,12 +125,10 @@ use crate::api::Pageable;
 pub struct Request<'a> {
     /// Specify a comparison filter based on the date and time when the
     /// resource was created.
-    ///
     #[builder(default, setter(into))]
     created_at: Option<Cow<'a, str>>,
 
     /// id filter parameter
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
@@ -138,56 +136,47 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Filters the response by a member status. A valid value is accepted,
     /// pending, rejected, or all. Default is accepted.
-    ///
     #[builder(default, setter(into))]
     member_status: Option<Cow<'a, str>>,
 
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// When true, filters the response to display only "hidden" images. By
     /// default, "hidden" images are not included in the image-list response.
     /// (Since Image API v2.7)
-    ///
     #[builder(default)]
     os_hidden: Option<bool>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
-    ///
     #[builder(default, setter(into))]
     owner: Option<Cow<'a, str>>,
 
     /// Filters the response by the ‘protected’ image property. A valid value
     /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
     /// result in a 400 response.
-    ///
     #[builder(default)]
     protected: Option<bool>,
 
     /// Filters the response by a maximum image size, in bytes.
-    ///
     #[builder(default, setter(into))]
     size_max: Option<Cow<'a, str>>,
 
     /// Filters the response by a minimum image size, in bytes.
-    ///
     #[builder(default, setter(into))]
     size_min: Option<Cow<'a, str>>,
 
@@ -195,7 +184,6 @@ pub struct Request<'a> {
     /// combinations. You can also set multiple sort keys and directions.
     /// Default direction is desc. Use the comma (,) character to separate
     /// multiple values. For example: `sort=name:asc,status:desc`
-    ///
     #[builder(default, setter(into))]
     sort: Option<Cow<'a, str>>,
 
@@ -203,32 +191,27 @@ pub struct Request<'a> {
     /// (sort_key) combinations. A valid value for the sort direction is asc
     /// (ascending) or desc (descending). If you omit the sort direction in a
     /// set, the default is desc.
-    ///
     #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
     /// Sorts the response by an attribute, such as name, id, or updated_at.
     /// Default is created_at. The API uses the natural sorting direction of
     /// the sort_key image attribute.
-    ///
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
     /// Filters the response by an image status.
-    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// Filters the response by the specified tag value. May be repeated, but
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
-    ///
     #[builder(default, private, setter(name = "_tag"))]
     tag: Option<Vec<Cow<'a, str>>>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was most recently modified.
-    ///
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
 
@@ -239,7 +222,6 @@ pub struct Request<'a> {
     /// member_status filter in the request.) If you omit this parameter, the
     /// response shows public, private, and those shared images with a member
     /// status of accepted.
-    ///
     #[builder(default, setter(into))]
     visibility: Option<Cow<'a, str>>,
 
@@ -257,7 +239,6 @@ impl<'a> RequestBuilder<'a> {
     /// Filters the response by the specified tag value. May be repeated, but
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
-    ///
     pub fn tag<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

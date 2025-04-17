@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/roles/{prior_role_id}/implies/{implied_role_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role::imply::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::role::imply::response::get::ImplyResponse;
 
 /// Gets a role inference rule.
 ///
 /// Relationship:
 /// `https://developer.openstack.org/api-ref/identity/v3/#get-role-inference-rule`
-///
 #[derive(Args)]
 #[command(about = "Get role inference rule")]
 pub struct ImplyCommand {
@@ -62,7 +57,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// prior_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_prior_role_id",
@@ -72,28 +66,12 @@ struct PathParameters {
 
     /// implied_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_implied_role_id",
         value_name = "IMPLIED_ROLE_ID"
     )]
     implied_role_id: String,
-}
-/// Imply response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A prior role object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    implies: Option<Value>,
-
-    /// A prior role object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    prior_role: Option<Value>,
 }
 
 impl ImplyCommand {
@@ -121,7 +99,7 @@ impl ImplyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ImplyResponse>(data)?;
         Ok(())
     }
 }

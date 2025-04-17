@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v3/limits` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::limit::create;
+use openstack_types::identity::v3::limit::response::create::LimitResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Creates limits. It supports to create more than one limit in one request.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/limits`
-///
 #[derive(Args)]
 #[command(about = "Create Limits")]
 pub struct LimitCommand {
@@ -56,8 +51,7 @@ pub struct LimitCommand {
     /// A list of `limits` objects
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     limits: Vec<Value>,
 }
 
@@ -68,64 +62,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Limit response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The limit description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// The limit ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The ID of the region that contains the service endpoint. The value can
-    /// be None.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region_id: Option<String>,
-
-    /// The override limit.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_limit: Option<i32>,
-
-    /// The resource name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_name: Option<String>,
-
-    /// The UUID of the service to which the limit belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    service_id: Option<String>,
-}
 
 impl LimitCommand {
     /// Perform command action
@@ -158,7 +94,7 @@ impl LimitCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LimitResponse>(data)?;
         Ok(())
     }
 }

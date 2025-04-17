@@ -23,18 +23,17 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleInferenceResponse {
     /// An implied role object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub implies: Option<Vec<Implies>>,
 
     /// A prior role object.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub prior_role: Option<PriorRole>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -42,7 +41,6 @@ pub struct Links {
 }
 
 /// A prior role object.
-///
 /// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
@@ -53,7 +51,6 @@ pub struct PriorRole {
 }
 
 /// A prior role object.
-///
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {

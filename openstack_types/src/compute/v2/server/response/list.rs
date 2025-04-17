@@ -23,12 +23,10 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The UUID of the server.
-    ///
     #[structable()]
     pub id: String,
 
     /// The server name.
-    ///
     #[structable()]
     pub name: String,
 }

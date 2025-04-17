@@ -40,7 +40,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The name of one resource class.
-    ///
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 

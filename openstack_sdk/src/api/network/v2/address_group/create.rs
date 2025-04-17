@@ -31,24 +31,20 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// An `address group` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddressGroup<'a> {
     /// A list of IP addresses.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) addresses: Option<Vec<Cow<'a, str>>>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -62,7 +58,6 @@ pub struct AddressGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `address group` object.
-    ///
     #[builder(setter(into))]
     pub(crate) address_group: AddressGroup<'a>,
 

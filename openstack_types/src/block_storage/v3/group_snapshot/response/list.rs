@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupSnapshotResponse {
     /// The ID of the group snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The group snapshot name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

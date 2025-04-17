@@ -18,30 +18,37 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Binding response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BindingResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub profile: Option<HashMap<String, Value>>,
+    pub profile: Option<BTreeMap<String, Value>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub vif_details: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub vif_type: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub vnic_type: Option<VnicType>,
 }
@@ -91,4 +98,24 @@ pub enum VnicType {
     // VirtioForwarder
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
+}
+
+impl std::str::FromStr for VnicType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "accelerator-direct" => Ok(Self::AcceleratorDirect),
+            "accelerator-direct-physical" => Ok(Self::AcceleratorDirectPhysical),
+            "baremetal" => Ok(Self::Baremetal),
+            "direct" => Ok(Self::Direct),
+            "direct-physical" => Ok(Self::DirectPhysical),
+            "macvtap" => Ok(Self::Macvtap),
+            "normal" => Ok(Self::Normal),
+            "remote-managed" => Ok(Self::RemoteManaged),
+            "smart-nic" => Ok(Self::SmartNic),
+            "vdpa" => Ok(Self::Vdpa),
+            "virtio-forwarder" => Ok(Self::VirtioForwarder),
+            _ => Err(()),
+        }
+    }
 }

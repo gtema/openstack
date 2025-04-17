@@ -35,7 +35,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A link representation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Links<'a> {
@@ -109,13 +108,13 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) created_at: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) docker_volume_size: Option<i32>,
 
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) id: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -124,28 +123,28 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) is_default: Option<Cow<'a, str>>,
 
-    #[builder(default, private, setter(name = "_labels"))]
+    #[builder(default, private, setter(into, name = "_labels"))]
     pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_added"))]
+    #[builder(default, private, setter(into, name = "_labels_added"))]
     pub(crate) labels_added: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_overridden"))]
+    #[builder(default, private, setter(into, name = "_labels_overridden"))]
     pub(crate) labels_overridden: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    #[builder(default, private, setter(name = "_labels_skipped"))]
+    #[builder(default, private, setter(into, name = "_labels_skipped"))]
     pub(crate) labels_skipped: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[builder(default, setter(into))]
     pub(crate) links: Option<Vec<Links<'a>>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_node_count: Option<i32>,
 
     #[builder(default, setter(into))]
     pub(crate) merge_labels: Option<Cow<'a, str>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_node_count: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -154,7 +153,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) node_addresses: Option<Vec<Cow<'a, str>>>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) node_count: Option<i32>,
 
     #[builder(default, setter(into))]

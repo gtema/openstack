@@ -49,13 +49,11 @@ pub struct Request<'a> {
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
-    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 

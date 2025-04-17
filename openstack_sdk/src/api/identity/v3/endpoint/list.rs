@@ -35,17 +35,14 @@ pub struct Request<'a> {
     /// interface. -internal. Visible by end users on an unmetered internal
     /// network interface.-admin. Visible by administrative users on a secure
     /// network interface.
-    ///
     #[builder(default, setter(into))]
     interface: Option<Cow<'a, str>>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
     #[builder(default, setter(into))]
     region_id: Option<Cow<'a, str>>,
 
     /// The UUID of the service to which the endpoint belongs
-    ///
     #[builder(default, setter(into))]
     service_id: Option<Cow<'a, str>>,
 

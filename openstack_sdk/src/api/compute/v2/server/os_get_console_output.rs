@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to get console output of the server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsGetConsoleOutput {
@@ -36,7 +35,6 @@ pub struct OsGetConsoleOutput {
     ///
     /// This parameter can be specified as not only ‘integer’ but also
     /// ‘string’.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) length: Option<Option<i32>>,
@@ -46,12 +44,10 @@ pub struct OsGetConsoleOutput {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to get console output of the server.
-    ///
     #[builder(setter(into))]
     pub(crate) os_get_console_output: OsGetConsoleOutput,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

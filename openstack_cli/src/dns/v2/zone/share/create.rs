@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/shares` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,14 +34,12 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::share::create;
 use openstack_sdk::api::find_by_name;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::zone::share::response::create::ShareResponse;
 use tracing::warn;
 
 /// Share a zone with another project.
 ///
 /// **New in version 2.1**
-///
 #[derive(Args)]
 #[command(about = "Create Shared Zone")]
 pub struct ShareCommand {
@@ -59,7 +54,6 @@ pub struct ShareCommand {
     /// The project ID the zone will be shared with.
     ///
     /// **New in version 2.1**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     target_project_id: String,
 }
@@ -86,49 +80,6 @@ struct ZoneInput {
     /// Zone ID.
     #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
     zone_id: Option<String>,
-}
-/// Share response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Date / Time when resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// ID for the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links to the resource, and other related resources. When a response has
-    /// been broken into pages, we will include a `next` link that should be
-    /// followed to retrieve all results
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// ID for the project that owns the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The project ID the zone will be shared with.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    target_project_id: Option<String>,
-
-    /// Date / Time when resource last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl ShareCommand {
@@ -192,7 +143,7 @@ impl ShareCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ShareResponse>(data)?;
         Ok(())
     }
 }

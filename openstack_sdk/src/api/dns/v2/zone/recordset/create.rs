@@ -62,12 +62,10 @@ pub enum Type {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Description for this recordset
-    ///
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// DNS Name for the recordset
-    ///
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
@@ -75,22 +73,18 @@ pub struct Request<'a> {
     /// in Designate These items should conform to the DNS spec for the record
     /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
     /// hostname.
-    ///
     #[builder(default, setter(into))]
     pub(crate) records: Option<Vec<Cow<'a, str>>>,
 
     /// TTL (Time to Live) for the recordset.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
-    ///
     #[builder(default)]
     pub(crate) _type: Option<Type>,
 
     /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
-    ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,
 

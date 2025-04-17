@@ -20,30 +20,22 @@
 //! Wraps invoking of the `v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::project::delete;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use structable_derive::StructTable;
 use tracing::warn;
 
 /// DELETE operation on
 /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}
-///
 #[derive(Args)]
 pub struct ProjectCommand {
     /// Request Query parameters
@@ -65,7 +57,6 @@ struct PathParameters {
     /// endpoint_group_id parameter for
     /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_endpoint_group_id",
@@ -92,9 +83,6 @@ struct ProjectInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
 }
-/// Project response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ProjectCommand {
     /// Perform command action
@@ -154,8 +142,7 @@ impl ProjectCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

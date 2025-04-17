@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/snapshots/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::snapshot::response::list_detailed::SnapshotResponse;
 
 /// Returns a detailed list of snapshots.
-///
 #[derive(Args)]
 pub struct SnapshotsCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ pub struct SnapshotsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Shows details for all project. Admin only.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenants: Option<bool>,
 
@@ -67,7 +61,6 @@ struct QueryParameters {
     /// operation. Default is to not filter by it. Filtering by this option may
     /// not be always possible in a cloud, see List Resource Filters to
     /// determine whether this filter is available in your cloud.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     consumes_quota: Option<bool>,
 
@@ -75,34 +68,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
@@ -110,12 +98,10 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Whether to show count in API response or not, default is False.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     with_count: Option<bool>,
 }
@@ -123,130 +109,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Snapshots response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Whether this resource consumes quota or not. Resources that not counted
-    /// for quota usage are usually temporary internal resources created to
-    /// perform an operation.
-    ///
-    /// **New in version 3.65**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    consumes_quota: Option<bool>,
-
-    /// The total count of requested resource before pagination is applied.
-    ///
-    /// **New in version 3.45**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    count: Option<i32>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    /// A description for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    /// **New in version 3.14**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    group_snapshot_id: Option<String>,
-
-    /// The snapshot UUID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// One or more metadata key and value pairs for the snapshot, if any.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    metadata: Option<Value>,
-
-    /// The name of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A percentage value for the build progress.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:progress")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:progress", wide)]
-    os_extended_snapshot_attributes_progress: Option<String>,
-
-    /// The UUID of the owning project.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:project_id")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:project_id", wide)]
-    os_extended_snapshot_attributes_project_id: Option<String>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable(wide)]
-    size: i64,
-
-    /// The status for the snapshot.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// If the snapshot was created from a volume, the volume ID.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    volume_id: Option<String>,
-}
 
 impl SnapshotsCommand {
     /// Perform command action
@@ -300,8 +162,7 @@ impl SnapshotsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<SnapshotResponse>(data)?;
         Ok(())
     }
 }

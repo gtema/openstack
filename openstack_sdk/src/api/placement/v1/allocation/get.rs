@@ -31,7 +31,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// consumer_uuid parameter for /allocations/{consumer_uuid} API
-    ///
     #[builder(default, setter(into))]
     consumer_uuid: Cow<'a, str>,
 

@@ -32,31 +32,26 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct ServiceProvider<'a> {
     /// The URL to authenticate against
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) auth_url: Cow<'a, str>,
 
     /// The description of the service provider
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// Whether the service provider is enabled or not
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The prefix of the RelayState SAML attribute
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) relay_state_prefix: Option<Option<Cow<'a, str>>>,
 
     /// The service provider's URL
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) sp_url: Cow<'a, str>,
@@ -70,7 +65,6 @@ pub struct Request<'a> {
 
     /// service_provider_id parameter for
     /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

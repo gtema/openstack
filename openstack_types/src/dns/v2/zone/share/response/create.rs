@@ -23,36 +23,36 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
     /// Date / Time when resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// ID for the resource
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// ID for the project that owns the resource
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The project ID the zone will be shared with.
     ///
     /// **New in version 2.1**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub target_project_id: Option<String>,
 
     /// Date / Time when resource last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -60,7 +60,6 @@ pub struct ShareResponse {
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

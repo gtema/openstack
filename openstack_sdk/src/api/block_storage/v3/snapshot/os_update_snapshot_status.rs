@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) os_update_snapshot_status: OsUpdateSnapshotStatus<'a>,
 
     /// id parameter for /v3/snapshots/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

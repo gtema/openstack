@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceClassResponse {
     /// A list of links associated with one resource class.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The name of one resource class.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

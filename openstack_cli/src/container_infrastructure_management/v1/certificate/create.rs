@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v1/certificates` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::certificate::create;
+use openstack_types::container_infrastructure_management::v1::certificate::response::create::CertificateResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Sign a new certificate by the CA.
 ///
 /// | param certificate: | | | --- | --- | | | a certificate within the request
 /// body. |
-///
 #[derive(Args)]
 pub struct CertificateCommand {
     /// Request Query parameters
@@ -65,8 +60,7 @@ pub struct CertificateCommand {
     csr: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     links: Option<Vec<Value>>,
 
     #[arg(help_heading = "Body parameters", long)]
@@ -83,37 +77,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Certificate response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    ca_cert_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    cluster_uuid: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    csr: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    pem: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl CertificateCommand {
     /// Perform command action
@@ -176,7 +139,7 @@ impl CertificateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<CertificateResponse>(data)?;
         Ok(())
     }
 }

@@ -36,7 +36,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/stats API
-    ///
     #[builder(default, setter(into))]
     amphora_id: Cow<'a, str>,
 

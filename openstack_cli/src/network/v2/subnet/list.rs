@@ -20,23 +20,18 @@
 //! Wraps invoking of the `v2.0/subnets` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnet::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::subnet::response::list::SubnetResponse;
 
 /// Lists subnets that the project has access to.
 ///
@@ -61,7 +56,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List subnets")]
 pub struct SubnetsCommand {
@@ -82,42 +76,34 @@ pub struct SubnetsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// cidr query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     cidr: Option<String>,
 
     /// description query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// enable_dhcp query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enable_dhcp: Option<bool>,
 
     /// gateway_ip query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     gateway_ip: Option<String>,
 
     /// id query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// ip_version query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     ip_version: Option<i32>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_address_mode: Option<String>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_ra_mode: Option<String>,
 
@@ -125,91 +111,74 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_id query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// not-tags query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// revision_number query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// The membership of a subnet to an external network.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     router_external: Option<bool>,
 
     /// segment_id query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     segment_id: Option<String>,
 
     /// shared query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
     /// subnetpool_id query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     subnetpool_id: Option<String>,
 
     /// tags query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/subnets API
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/subnets API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
@@ -217,151 +186,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Subnets response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Allocation pools with `start` and `end` IP addresses for this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    allocation_pools: Option<Value>,
-
-    /// The CIDR of the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    cidr: Option<String>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// List of dns name servers associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    dns_nameservers: Option<Value>,
-
-    /// Whether to publish DNS records for IPs from this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    dns_publish_fixed_ip: Option<BoolString>,
-
-    /// Indicates whether dhcp is enabled or disabled for the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enable_dhcp: Option<BoolString>,
-
-    /// Gateway IP of this subnet. If the value is `null` that implies no
-    /// gateway is associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    gateway_ip: Option<String>,
-
-    /// Additional routes for the subnet. A list of dictionaries with
-    /// `destination` and `nexthop` parameters.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    host_routes: Option<Value>,
-
-    /// The ID of the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IP protocol version. Value is `4` or `6`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ip_version: Option<i32>,
-
-    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ipv6_address_mode: Option<String>,
-
-    /// The IPv6 router advertisement specifies whether the networking service
-    /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
-    /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ipv6_ra_mode: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the network to which the subnet belongs.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    network_id: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    #[serde(rename = "router:external")]
-    #[structable(optional, title = "router:external", wide)]
-    router_external: Option<BoolString>,
-
-    /// The ID of a network segment the subnet is associated with. It is
-    /// available when `segment` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    segment_id: Option<String>,
-
-    /// The service types associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    service_types: Option<Value>,
-
-    /// The ID of the subnet pool associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    subnetpool_id: Option<String>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl SubnetsCommand {
     /// Perform command action
@@ -463,8 +287,7 @@ impl SubnetsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<SubnetResponse>(data)?;
         Ok(())
     }
 }

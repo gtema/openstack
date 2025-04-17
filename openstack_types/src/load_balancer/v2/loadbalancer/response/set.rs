@@ -29,108 +29,110 @@ pub struct LoadbalancerResponse {
     /// primary VIP.
     ///
     /// **New in version 2.26**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub additional_vips: Option<Vec<AdditionalVips>>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the flavor.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub flavor_id: Option<String>,
 
     /// The ID of the load balancer.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The associated listener IDs, if any.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub listeners: Option<Vec<Listeners>>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The associated pool IDs, if any.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub pools: Option<Vec<Pools>>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// Provider name for the load balancer.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provider: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_qos_policy_id: Option<String>,
 
@@ -138,12 +140,12 @@ pub struct LoadbalancerResponse {
     /// Balancer.
     ///
     /// **New in version 2.29**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub vip_sg_ids: Option<Vec<String>>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_subnet_id: Option<String>,
 
@@ -151,13 +153,12 @@ pub struct LoadbalancerResponse {
     /// `direct`.
     ///
     /// **New in version 2.28**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vip_vnic_type: Option<String>,
 }
 
 /// Type for additional vips
-///
 /// `AdditionalVips` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AdditionalVips {
@@ -166,7 +167,6 @@ pub struct AdditionalVips {
 }
 
 /// Base type for complex types
-///
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
@@ -174,7 +174,6 @@ pub struct Listeners {
 }
 
 /// Base type for complex types
-///
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {

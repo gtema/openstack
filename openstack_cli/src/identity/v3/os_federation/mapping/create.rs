@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/mappings/{mapping_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::mapping::create;
+use openstack_types::identity::v3::os_federation::mapping::response::create::MappingResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create a mapping.
 ///
 /// PUT /OS-FEDERATION/mappings/{mapping_id}
-///
 #[derive(Args)]
 pub struct MappingCommand {
     /// Request Query parameters
@@ -63,7 +58,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -75,33 +69,11 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Mapping {
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     rules: Vec<Value>,
 
     /// Mapping schema version
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    schema_version: Option<String>,
-}
-
-/// Mapping response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The Federation Mapping unique ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    rules: Option<Value>,
-
-    /// Mapping schema version
-    ///
-    #[serde()]
-    #[structable(optional)]
     schema_version: Option<String>,
 }
 
@@ -145,7 +117,7 @@ impl MappingCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MappingResponse>(data)?;
         Ok(())
     }
 }

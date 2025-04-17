@@ -35,12 +35,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.1/os-quota-sets/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// ID of user to set the quotas for.
-    ///
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 

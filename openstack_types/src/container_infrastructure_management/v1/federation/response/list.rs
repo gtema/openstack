@@ -17,36 +17,45 @@
 //! Response type for the GET `federations` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Federation response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FederationResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub hostcluster_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub member_ids: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub properties: Option<HashMap<String, String>>,
+    pub properties: Option<BTreeMap<String, String>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub status: Option<Status>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 }
@@ -90,8 +99,25 @@ pub enum Status {
     UpdateInProgress,
 }
 
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CREATE_COMPLETE" => Ok(Self::CreateComplete),
+            "CREATE_FAILED" => Ok(Self::CreateFailed),
+            "CREATE_IN_PROGRESS" => Ok(Self::CreateInProgress),
+            "DELETE_COMPLETE" => Ok(Self::DeleteComplete),
+            "DELETE_FAILED" => Ok(Self::DeleteFailed),
+            "DELETE_IN_PROGRESS" => Ok(Self::DeleteInProgress),
+            "UPDATE_COMPLETE" => Ok(Self::UpdateComplete),
+            "UPDATE_FAILED" => Ok(Self::UpdateFailed),
+            "UPDATE_IN_PROGRESS" => Ok(Self::UpdateInProgress),
+            _ => Err(()),
+        }
+    }
+}
+
 /// A link representation.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

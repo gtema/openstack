@@ -33,32 +33,32 @@ pub struct MigrationResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The target compute for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub dest_compute: Option<String>,
 
     /// The target host for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub dest_host: Option<String>,
 
     /// The target node for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub dest_node: Option<String>,
 
     /// The ID of the server migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<i32>,
 
     /// The UUID of the server.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub instance_uuid: Option<String>,
 
@@ -66,7 +66,7 @@ pub struct MigrationResponse {
     /// `migration`, `resize` and `evacuation`.
     ///
     /// **New in version 2.23**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub migration_type: Option<MigrationType>,
 
@@ -79,7 +79,7 @@ pub struct MigrationResponse {
     /// This is an internal ID and is not exposed in any other API. In
     /// particular, this is not the ID specified or automatically generated
     /// during flavor creation or returned via the `GET /flavors` API.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub new_instance_type_id: Option<i32>,
 
@@ -90,7 +90,7 @@ pub struct MigrationResponse {
     /// This is an internal ID and is not exposed in any other API. In
     /// particular, this is not the ID specified or automatically generated
     /// during flavor creation or returned via the `GET /flavors` API.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub old_instance_type_id: Option<i32>,
 
@@ -98,22 +98,22 @@ pub struct MigrationResponse {
     /// may be `null` for older migration records.
     ///
     /// **New in version 2.80**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The source compute for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub source_compute: Option<String>,
 
     /// The source node for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub source_node: Option<String>,
 
     /// The current status of the migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
@@ -128,7 +128,7 @@ pub struct MigrationResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
@@ -136,14 +136,14 @@ pub struct MigrationResponse {
     /// be `null` for older migration records.
     ///
     /// **New in version 2.80**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the migration.
     ///
     /// **New in version 2.59**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 }
@@ -161,4 +161,16 @@ pub enum MigrationType {
     // Resize
     #[serde(rename = "resize")]
     Resize,
+}
+
+impl std::str::FromStr for MigrationType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "live-migration" => Ok(Self::LiveMigration),
+            "migration" => Ok(Self::Migration),
+            "resize" => Ok(Self::Resize),
+            _ => Err(()),
+        }
+    }
 }

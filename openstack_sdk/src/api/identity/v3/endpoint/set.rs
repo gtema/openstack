@@ -42,12 +42,10 @@ pub enum Interface {
 }
 
 /// An `endpoint` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Endpoint<'a> {
     /// A description of the endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -55,9 +53,8 @@ pub struct Endpoint<'a> {
     /// Indicates whether the endpoint appears in the service catalog -false.
     /// The endpoint does not appear in the service catalog. -true. The
     /// endpoint appears in the service catalog.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The interface type, which describes the visibility of the endpoint.
@@ -65,37 +62,31 @@ pub struct Endpoint<'a> {
     /// network interface. - `internal`. Visible by end users on an unmetered
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) interface: Option<Interface>,
 
     /// The name of the endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region: Option<Option<Cow<'a, str>>>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the service to which the endpoint belongs.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service_id: Option<Cow<'a, str>>,
 
     /// The endpoint URL.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) url: Option<Cow<'a, str>>,
@@ -123,12 +114,10 @@ impl<'a> EndpointBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `endpoint` object.
-    ///
     #[builder(setter(into))]
     pub(crate) endpoint: Endpoint<'a>,
 
     /// endpoint_id parameter for /v3/endpoints/{endpoint_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

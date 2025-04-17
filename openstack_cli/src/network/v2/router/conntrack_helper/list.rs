@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/conntrack_helpers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::conntrack_helper::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::router::conntrack_helper::response::list::ConntrackHelperResponse;
 
 /// Lists router conntrack helpers associated with a router.
 ///
@@ -55,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 404
-///
 #[derive(Args)]
 #[command(about = "List router conntrack helpers")]
 pub struct ConntrackHelpersCommand {
@@ -77,12 +72,10 @@ pub struct ConntrackHelpersCommand {
 struct QueryParameters {
     /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     helper: Option<String>,
 
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -90,43 +83,36 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     port: Option<i32>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -136,40 +122,12 @@ struct QueryParameters {
 struct PathParameters {
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_router_id",
         value_name = "ROUTER_ID"
     )]
     router_id: String,
-}
-/// ConntrackHelpers response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The netfilter conntrack helper module.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    helper: Option<String>,
-
-    /// The ID of the conntrack helper.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The network port for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    port: Option<IntString>,
-
-    /// The network protocol for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protocol: Option<String>,
 }
 
 impl ConntrackHelpersCommand {
@@ -225,8 +183,7 @@ impl ConntrackHelpersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ConntrackHelperResponse>(data)?;
         Ok(())
     }
 }

@@ -33,7 +33,6 @@ use std::borrow::Cow;
 
 /// A dictionary representation of a volume attachment containing the fields
 /// `device` and `volumeId`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
@@ -41,9 +40,8 @@ pub struct VolumeAttachment<'a> {
     /// `true`. Otherwise, specify `false`. Default: `false`
     ///
     /// **New in version 2.79**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) delete_on_termination: Option<bool>,
 
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
@@ -52,7 +50,6 @@ pub struct VolumeAttachment<'a> {
     /// of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors
     /// a user-supplied device name. This is the same behavior as if the device
     /// name parameter is not supplied on the request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) device: Option<Option<Cow<'a, str>>>,
@@ -68,13 +65,11 @@ pub struct VolumeAttachment<'a> {
     /// instances.
     ///
     /// **New in version 2.49**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
     /// The UUID of the volume to attach.
-    ///
     #[serde(rename = "volumeId")]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -85,13 +80,11 @@ pub struct VolumeAttachment<'a> {
 pub struct Request<'a> {
     /// A dictionary representation of a volume attachment containing the
     /// fields `device` and `volumeId`.
-    ///
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

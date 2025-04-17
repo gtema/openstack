@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v3/messages` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::message::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::message::response::list::MessageResponse;
 
 /// Returns a list of messages, transformed through view builder.
-///
 #[derive(Args)]
 pub struct MessagesCommand {
     /// Request Query parameters
@@ -60,34 +56,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
@@ -95,7 +86,6 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -103,79 +93,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Messages response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable()]
-    created_at: String,
-
-    /// The id of the event to this message, this id could eventually be
-    /// translated into `user_message`.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    event_id: String,
-
-    /// The expire time of the message, this message could be deleted after
-    /// this time.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    guaranteed_until: Option<String>,
-
-    /// The UUID for the message.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The level of the message, possible value is only ‘ERROR’ now.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    message_level: String,
-
-    /// The id of the request during which the message was created.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    request_id: String,
-
-    /// The resource type corresponding to `resource_uuid`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resource_type: Option<String>,
-
-    /// The UUID of the resource during whose operation the message was
-    /// created.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    resource_uuid: Option<String>,
-
-    /// The translated readable message corresponding to `event_id`.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    user_message: String,
-}
 
 impl MessagesCommand {
     /// Perform command action
@@ -220,8 +137,7 @@ impl MessagesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MessageResponse>(data)?;
         Ok(())
     }
 }

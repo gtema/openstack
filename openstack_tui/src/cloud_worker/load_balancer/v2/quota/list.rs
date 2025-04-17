@@ -24,11 +24,9 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
-use crate::utils::OutputConfig;
-use crate::utils::StructTable;
 use openstack_sdk::api::load_balancer::v2::quota::list::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
-use structable_derive::StructTable;
+use structable::{StructTable, StructTableOptions};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]

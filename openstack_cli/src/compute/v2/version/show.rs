@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v2.1/versions/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::version::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::version::response::get::VersionResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct VersionCommand {
     /// Request Query parameters
@@ -57,70 +52,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/versions/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Version response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A common name for the version in question. Informative only, it has no
-    /// real semantic meaning.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Links to the resources in question. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    links: Value,
-
-    #[serde(rename = "media-types")]
-    #[structable(optional, pretty, title = "media-types")]
-    media_types: Option<Value>,
-
-    /// If this version of the API supports microversions, the minimum
-    /// microversion that is supported. This will be the empty string if
-    /// microversions are not supported.
-    ///
-    #[serde()]
-    #[structable()]
-    min_version: String,
-
-    /// The status of this API version. This can be one of:
-    ///
-    /// - `CURRENT`: this is the preferred version of the API to use
-    /// - `SUPPORTED`: this is an older, but still supported version of the API
-    /// - `DEPRECATED`: a deprecated version of the API that is slated for
-    ///   removal
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// This is a fixed string. It is `2011-01-21T11:33:21Z` in version 2.0,
-    /// `2013-07-23T11:33:21Z` in version 2.1.
-    ///
-    /// Note
-    ///
-    /// It is vestigial and provides no useful information. It will be
-    /// deprecated and removed in the future.
-    ///
-    #[serde()]
-    #[structable()]
-    updated: String,
-
-    #[serde()]
-    #[structable(optional)]
-    version: Option<String>,
 }
 
 impl VersionCommand {
@@ -147,7 +84,7 @@ impl VersionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<VersionResponse>(data)?;
         Ok(())
     }
 }

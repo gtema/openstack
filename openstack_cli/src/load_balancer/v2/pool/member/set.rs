@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}/members/{member_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::pool::member::find;
 use openstack_sdk::api::load_balancer::v2::pool::member::set;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::pool::member::response::set::MemberResponse;
 
 /// Update an existing member.
 ///
@@ -51,7 +47,6 @@ use structable_derive::StructTable;
 ///
 /// This operation returns the updated member object with the `ACTIVE`,
 /// `PENDING_UPDATE`, or `ERROR` provisioning status.
-///
 #[derive(Args)]
 #[command(about = "Update a Member")]
 pub struct MemberCommand {
@@ -64,7 +59,6 @@ pub struct MemberCommand {
     path: PathParameters,
 
     /// Defines attributes that are acceptable of a PUT request.
-    ///
     #[command(flatten)]
     member: Member,
 }
@@ -77,7 +71,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_pool_id",
@@ -87,7 +80,6 @@ struct PathParameters {
 
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -100,7 +92,6 @@ struct PathParameters {
 struct Member {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
@@ -108,24 +99,20 @@ struct Member {
     /// non-backup members are down.
     ///
     /// **New in version 2.1**
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     backup: Option<bool>,
 
     /// An alternate IP address used for health monitoring a backend member.
     /// Default is `null` which monitors the member `address`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     monitor_address: Option<String>,
 
     /// An alternate protocol port used for health monitoring a backend member.
     /// Default is `null` which monitors the member `protocol_port`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     monitor_port: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -134,7 +121,6 @@ struct Member {
     /// **New in version 2.5**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -144,136 +130,7 @@ struct Member {
     /// requests as a member with a weight of 2. A value of 0 means the member
     /// does not receive new connections but continues to service existing
     /// connections. A valid value is from `0` to `256`. Default is `1`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    weight: Option<i32>,
-}
-
-/// Member response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP address of the backend member server.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    address: Option<String>,
-
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// Is the member a backup? Backup members only receive traffic when all
-    /// non-backup members are down.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    backup: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The ID of the member.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// An alternate IP address used for health monitoring a backend member.
-    /// Default is `null` which monitors the member `address`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    monitor_address: Option<String>,
-
-    /// An alternate protocol port used for health monitoring a backend member.
-    /// Default is `null` which monitors the member `protocol_port`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    monitor_port: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The protocol port number the backend member server is listening on.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol_port: Option<i32>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    /// The subnet ID the member service is accessible from.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnet_id: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The member vNIC type used for the member port. One of `normal` or
-    /// `direct`.
-    ///
-    /// **New in version 2.29**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vnic_type: Option<String>,
-
-    /// The weight of a member determines the portion of requests or
-    /// connections it services compared to the other members of the pool. For
-    /// example, a member with a weight of 10 receives five times as many
-    /// requests as a member with a weight of 2. A value of 0 means the member
-    /// does not receive new connections but continues to service existing
-    /// connections. A valid value is from `0` to `256`. Default is `1`.
-    ///
-    #[serde()]
-    #[structable(optional)]
     weight: Option<i32>,
 }
 
@@ -351,7 +208,7 @@ impl MemberCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<MemberResponse>(data)?;
         Ok(())
     }
 }

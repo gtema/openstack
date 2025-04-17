@@ -40,7 +40,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// name parameter for /traits/{name} API
-    ///
     #[builder(default, setter(into))]
     name: Cow<'a, str>,
 

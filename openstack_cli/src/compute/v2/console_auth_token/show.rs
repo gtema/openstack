@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/os-console-auth-tokens/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::console_auth_token::get;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::console_auth_token::response::get::ConsoleAuthTokenResponse;
 
 /// Given the console authentication token for a server, shows the related
 /// connection information.
@@ -46,7 +43,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Show Console Connection Information")]
 pub struct ConsoleAuthTokenCommand {
@@ -67,40 +63,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-console-auth-tokens/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// ConsoleAuthToken response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name or ID of the host.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    /// The UUID of the server.
-    ///
-    #[serde()]
-    #[structable()]
-    instance_uuid: String,
-
-    /// The id representing the internal access path.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    internal_access_path: Option<String>,
-
-    /// The port number.
-    ///
-    #[serde()]
-    #[structable()]
-    port: i32,
 }
 
 impl ConsoleAuthTokenCommand {
@@ -127,7 +95,7 @@ impl ConsoleAuthTokenCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ConsoleAuthTokenResponse>(data)?;
         Ok(())
     }
 }

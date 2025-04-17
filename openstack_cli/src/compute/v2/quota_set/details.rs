@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2.1/os-quota-sets/{id}/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,8 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_set::details;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::quota_set::response::details::QuotaSetResponse;
 use tracing::warn;
 
 /// Show the detail of quota for a project or a project and a user.
@@ -48,7 +44,6 @@ use tracing::warn;
 /// Normal response codes: 200
 ///
 /// Error response codes: badrequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Show The Detail of Quota")]
 pub struct QuotaSetCommand {
@@ -88,144 +83,12 @@ struct UserInput {
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-quota-sets/{id}/detail API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// QuotaSet response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The object of detailed cores quota, including in_use, limit and
-    /// reserved number of cores.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    cores: Option<Value>,
-
-    /// The object of detailed fixed ips quota, including in_use, limit and
-    /// reserved number of fixed ips.
-    ///
-    /// **Available until version 2.35**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    fixed_ips: Option<Value>,
-
-    /// The object of detailed floating ips quota, including in_use, limit and
-    /// reserved number of floating ips.
-    ///
-    /// **Available until version 2.35**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    floating_ips: Option<Value>,
-
-    /// The UUID of the tenant/user the quotas listed for.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The object of detailed injected files quota, including in_use, limit
-    /// and reserved number of injected files.
-    ///
-    /// **Available until version 2.56**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    injected_files: Option<Value>,
-
-    /// The object of detailed injected file content bytes quota, including
-    /// in_use, limit and reserved number of injected file content bytes.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    injected_files_content_bytes: Option<Value>,
-
-    /// The object of detailed injected file path bytes quota, including
-    /// in_use, limit and reserved number of injected file path bytes.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    injected_files_path_bytes: Option<Value>,
-
-    /// The object of detailed servers quota, including in_use, limit and
-    /// reserved number of instances.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    instances: Option<Value>,
-
-    /// The object of detailed key pairs quota, including in_use, limit and
-    /// reserved number of key pairs.
-    ///
-    /// Note
-    ///
-    /// `in_use` field value for keypair quota details is always zero. In Nova,
-    /// key_pairs are a user-level resource, not a project- level resource, so
-    /// for legacy reasons, the keypair in-use information is not counted.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    key_pairs: Option<Value>,
-
-    /// The object of detailed key metadata items quota, including in_use,
-    /// limit and reserved number of metadata items.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata_items: Option<Value>,
-
-    /// The number of private networks that can be created per project.
-    ///
-    /// **Available until version 2.35**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    networks: Option<Value>,
-
-    /// The object of detailed key ram quota, including in_use, limit and
-    /// reserved number of ram.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    ram: Option<Value>,
-
-    /// The object of detailed security group rules quota, including in_use,
-    /// limit and reserved number of security group rules.
-    ///
-    /// **Available until version 2.35**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_group_rules: Option<Value>,
-
-    /// The object of detailed security groups, including in_use, limit and
-    /// reserved number of security groups.
-    ///
-    /// **Available until version 2.35**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_groups: Option<Value>,
-
-    /// The object of detailed server group members, including in_use, limit
-    /// and reserved number of server group members.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    server_group_members: Option<Value>,
-
-    /// The object of detailed server groups, including in_use, limit and
-    /// reserved number of server groups.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    server_groups: Option<Value>,
 }
 
 impl QuotaSetCommand {
@@ -295,7 +158,7 @@ impl QuotaSetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QuotaSetResponse>(data)?;
         Ok(())
     }
 }

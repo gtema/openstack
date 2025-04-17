@@ -118,9 +118,8 @@ pub struct BlockDeviceMapping<'a> {
     /// metadata service. This metadata is different from the user data. Not
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) delete_on_termination: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -144,7 +143,7 @@ pub struct BlockDeviceMapping<'a> {
     pub(crate) volume_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) volume_size: Option<i32>,
 }
 
@@ -180,7 +179,7 @@ pub struct BlockDeviceMappingV2<'a> {
     pub(crate) connection_info: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) delete_on_termination: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -236,7 +235,7 @@ pub struct BlockDeviceMappingV2<'a> {
     pub(crate) volume_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) volume_size: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -250,32 +249,27 @@ pub struct SecurityGroups<'a> {
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 }
 
 /// A `server` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Server<'a> {
     /// IPv4 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv4: Option<Cow<'a, str>>,
 
     /// IPv6 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv6: Option<Cow<'a, str>>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
-    ///
     #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) admin_pass: Option<Cow<'a, str>>,
@@ -283,7 +277,6 @@ pub struct Server<'a> {
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Cow<'a, str>>,
@@ -317,7 +310,6 @@ pub struct Server<'a> {
     ///
     /// A bug has caused the `tag` attribute to no longer be accepted starting
     /// with version 2.33. It has been restored in version 2.42.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) block_device_mapping_v2: Option<Vec<BlockDeviceMappingV2<'a>>>,
@@ -329,23 +321,20 @@ pub struct Server<'a> {
     /// metadata service. This metadata is different from the user data. Not
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) config_drive: Option<bool>,
 
     /// A free form description of the server. Limited to 255 characters in
     /// length. Before microversion 2.19 this was set to the server name.
     ///
     /// **New in version 2.19**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The flavor reference, as an ID (including a UUID) or full URL, for the
     /// flavor for your server instance.
-    ///
     #[serde(rename = "flavorRef")]
     #[builder(setter(into))]
     pub(crate) flavor_ref: Cow<'a, str>,
@@ -355,7 +344,6 @@ pub struct Server<'a> {
     /// hostname. By default, it can be specified by administrators only.
     ///
     /// **New in version 2.74**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
@@ -372,7 +360,6 @@ pub struct Server<'a> {
     /// instance.
     ///
     /// **New in version 2.90**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hostname: Option<Cow<'a, str>>,
@@ -382,7 +369,6 @@ pub struct Server<'a> {
     /// hostname. By default, it can be specified by administrators only.
     ///
     /// **New in version 2.74**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hypervisor_hostname: Option<Cow<'a, str>>,
@@ -390,7 +376,6 @@ pub struct Server<'a> {
     /// The UUID of the image to use for your server instance. This is not
     /// required in case of boot from volume. In all other cases it is required
     /// and must be a valid UUID otherwise API will return 400.
-    ///
     #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) image_ref: Option<Cow<'a, str>>,
@@ -398,30 +383,27 @@ pub struct Server<'a> {
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) key_name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_count: Option<i32>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_count: Option<i32>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -463,7 +445,6 @@ pub struct Server<'a> {
     /// other network values, including other network uuids, ports, fixed IPs
     /// or device tags. These are requested as strings for the networks value,
     /// not in a list. See the associated example.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) networks: ServerNetworks<'a>,
@@ -484,7 +465,6 @@ pub struct Server<'a> {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
@@ -496,16 +476,14 @@ pub struct Server<'a> {
     /// metadata service. This metadata is different from the user data. Not
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) return_reservation_id: Option<bool>,
 
     /// One or more security groups. Specify the name of the security group in
     /// the `name` attribute. If you omit this attribute, the API creates the
     /// server in the `default` security group. Requested security groups are
     /// not applied to pre-existing ports.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) security_groups: Option<Vec<SecurityGroups<'a>>>,
@@ -521,7 +499,6 @@ pub struct Server<'a> {
     /// - Each server can have up to 50 tags.
     ///
     /// **New in version 2.52**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -533,7 +510,6 @@ pub struct Server<'a> {
     /// volume-backed instances.
     ///
     /// **New in version 2.63**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) trusted_image_certificates: Option<Vec<Cow<'a, str>>>,
@@ -545,7 +521,6 @@ pub struct Server<'a> {
     ///
     /// The `null` value allowed in Nova legacy v2 API, but due to the strict
     /// input validation, it isn’t allowed in Nova v2.1 API.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) user_data: Option<Cow<'a, str>>,
@@ -554,7 +529,6 @@ pub struct Server<'a> {
 impl<'a> ServerBuilder<'a> {
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -588,14 +562,12 @@ impl<'a> ServerBuilder<'a> {
 ///
 /// For these reasons, it is important to consult each cloud’s user
 /// documentation to know what is available for scheduler hints.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsSchedulerHints<'a> {
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
@@ -605,7 +577,6 @@ pub struct OsSchedulerHints<'a> {
     /// If `os:scheduler_hints:build_near_host_ip` is specified and this
     /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cidr: Option<Cow<'a, str>>,
@@ -614,7 +585,6 @@ pub struct OsSchedulerHints<'a> {
     /// a cell that is not specified. It is available when
     /// `DifferentCellFilter` is available on cloud side that is cell v1
     /// environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
@@ -622,7 +592,6 @@ pub struct OsSchedulerHints<'a> {
     /// A list of server UUIDs or a server UUID. Schedule the server on a
     /// different host from a set of servers. It is available when
     /// `DifferentHostFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
@@ -632,7 +601,6 @@ pub struct OsSchedulerHints<'a> {
     /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
     /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) group: Option<Cow<'a, str>>,
@@ -646,7 +614,6 @@ pub struct OsSchedulerHints<'a> {
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) query: Option<Value>,
@@ -654,7 +621,6 @@ pub struct OsSchedulerHints<'a> {
     /// A list of server UUIDs or a server UUID. Schedule the server on the
     /// same host as another server in a set of servers. It is available when
     /// `SameHostFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
@@ -662,7 +628,6 @@ pub struct OsSchedulerHints<'a> {
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) target_cell: Option<Cow<'a, str>>,
@@ -692,7 +657,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
@@ -702,7 +666,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// If `os:scheduler_hints:build_near_host_ip` is specified and this
     /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cidr: Option<Cow<'a, str>>,
@@ -711,7 +674,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// a cell that is not specified. It is available when
     /// `DifferentCellFilter` is available on cloud side that is cell v1
     /// environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
@@ -719,7 +681,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// A list of server UUIDs or a server UUID. Schedule the server on a
     /// different host from a set of servers. It is available when
     /// `DifferentHostFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
@@ -729,7 +690,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
     /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) group: Option<Cow<'a, str>>,
@@ -743,7 +703,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) query: Option<Value>,
@@ -751,7 +710,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// A list of server UUIDs or a server UUID. Schedule the server on the
     /// same host as another server in a set of servers. It is available when
     /// `SameHostFilter` is available on cloud side.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
@@ -759,7 +717,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) target_cell: Option<Cow<'a, str>>,
@@ -808,12 +765,10 @@ pub struct Request<'a> {
     ///
     /// For these reasons, it is important to consult each cloud’s user
     /// documentation to know what is available for scheduler hints.
-    ///
     #[builder(default, setter(into))]
     pub(crate) os_scheduler_hints: Option<OsSchedulerHints<'a>>,
 
     /// A `server` object.
-    ///
     #[builder(setter(into))]
     pub(crate) server: Server<'a>,
 

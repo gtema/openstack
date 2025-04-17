@@ -25,10 +25,11 @@ pub struct TrustResponse {
     /// If set to true then a trust between a trustor and any third-party user
     /// may be issued by the trustee just like a regular trust. If set to
     /// false, stops further redelegation. False by default.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub allow_redelegation: Option<bool>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub deleted_at: Option<String>,
 
@@ -38,12 +39,12 @@ pub struct TrustResponse {
     /// value of the corresponding expires_at field of the redelegated trust or
     /// it may be omitted, then the expires_at value is copied from the
     /// redelegated trust.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub expires_at: Option<String>,
 
     /// The ID of the trust.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
@@ -52,19 +53,19 @@ pub struct TrustResponse {
     /// thus allowing the trustee to impersonate the trustor. If impersonation
     /// if set to false, then the token's user attribute will represent that of
     /// the trustee.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub impersonation: Option<bool>,
 
     /// Identifies the project upon which the trustor is delegating
     /// authorization.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// Returned with redelegated trust provides information about the
     /// predecessor in the trust chain.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub redelegated_trust_id: Option<String>,
 
@@ -86,7 +87,7 @@ pub struct TrustResponse {
     /// redelegatable trust-scoped token decremented by 1. Note, if the
     /// resulting value is 0, this means that the new trust will not be
     /// redelegatable, regardless of the value of allow_redelegation.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub redelegation_count: Option<i32>,
 
@@ -96,32 +97,32 @@ pub struct TrustResponse {
     /// default value is null, meaning there is no limit on the number of
     /// tokens issued through the trust. If redelegation is enabled it must not
     /// be set.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub remaining_uses: Option<i32>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub roles: Option<Vec<Roles>>,
 
     /// The links for the `user` resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub roles_links: Option<RolesLinks>,
 
     /// Represents the user who is capable of consuming the trust.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub trustee_user_id: Option<String>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub trustor_user_id: Option<String>,
 }
 
 /// The links for the `user` resource.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -148,7 +149,6 @@ pub struct Roles {
 }
 
 /// The links for the `user` resource.
-///
 /// `RolesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RolesLinks {

@@ -23,17 +23,14 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AssociationResponse {
     /// The QoS association type.
-    ///
     #[structable(wide)]
     pub association_type: String,
 
     /// The Qos association ID.
-    ///
     #[structable()]
     pub id: String,
 
     /// The QoS association name.
-    ///
     #[structable()]
     pub name: String,
 }

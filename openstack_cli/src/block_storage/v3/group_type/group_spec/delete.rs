@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v3/group_types/{group_type_id}/group_specs/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::group_spec::delete;
-use structable_derive::StructTable;
 
 /// Deletes an existing group spec.
-///
 #[derive(Args)]
 pub struct GroupSpecCommand {
     /// Request Query parameters
@@ -59,7 +52,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// group_type_id parameter for
     /// /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_type_id",
@@ -68,7 +60,6 @@ struct PathParameters {
     group_type_id: String,
 
     /// id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -76,9 +67,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// GroupSpec response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl GroupSpecCommand {
     /// Perform command action
@@ -103,8 +91,7 @@ impl GroupSpecCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

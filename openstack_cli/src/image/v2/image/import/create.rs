@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2/images/{image_id}/import` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::import::create;
-use structable_derive::StructTable;
 
 /// Signals the Image Service to complete the image import workflow by
 /// processing data that has been made available to the OpenStack image
@@ -105,7 +99,6 @@ use structable_derive::StructTable;
 ///
 /// If the image import process is not enabled in your cloud, this request will
 /// result in a 404 response code with an appropriate message.
-///
 #[derive(Args)]
 #[command(about = "Import an image")]
 pub struct ImportCommand {
@@ -122,7 +115,6 @@ pub struct ImportCommand {
     /// stores returned to a call to /v2/info/stores on the glance-api the
     /// request hits). This can’t be used simultaneously with the `stores`
     /// parameter.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     all_stores: Option<bool>,
 
@@ -132,7 +124,6 @@ pub struct ImportCommand {
     /// A JSON object indicating what import method you wish to use to import
     /// your image. The content of this JSON object is another JSON object with
     /// a `name` field whose value is the identifier for the import method.
-    ///
     #[command(flatten)]
     method: Option<Method>,
 
@@ -140,7 +131,6 @@ pub struct ImportCommand {
     /// data to.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     stores: Option<Vec<String>>,
 }
@@ -153,7 +143,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/import API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_image_id",
@@ -179,10 +168,6 @@ struct Method {
     #[arg(help_heading = "Body parameters", long)]
     uri: Option<String>,
 }
-
-/// Import response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ImportCommand {
     /// Perform command action
@@ -246,11 +231,7 @@ impl ImportCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -39,165 +39,134 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The administrative state of the resource
-    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
-    ///
     #[builder(default, setter(into))]
     alpn_protocols: Option<Cow<'a, str>>,
 
     /// The maximum number of connections permitted for this listener. Default
     /// value is -1 which represents infinite connections or a default value
     /// defined by the provider driver.
-    ///
     #[builder(default, setter(into))]
     connection_limit: Option<Cow<'a, str>>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[builder(default, setter(into))]
     created_at: Option<Cow<'a, str>>,
 
     /// The ID of the pool used by the listener if no L7 policies match.
-    ///
     #[builder(default, setter(into))]
     default_pool_id: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// Defines whether the includeSubDomains directive should be added to the
     /// Strict-Transport-Security HTTP response header.
-    ///
     #[builder(default)]
     hsts_include_subdomains: Option<bool>,
 
     /// The value of the max_age directive for the Strict-Transport-Security
     /// HTTP response header.
-    ///
     #[builder(default)]
     hsts_max_age: Option<i32>,
 
     /// Defines whether the preload directive should be added to the
     /// Strict-Transport-Security HTTP response header.
-    ///
     #[builder(default)]
     hsts_preload: Option<bool>,
 
     /// The ID of the resource
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// Load balancer ID
-    ///
     #[builder(default, setter(into))]
     load_balancer_id: Option<Cow<'a, str>>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags_any: Option<Cow<'a, str>>,
 
     /// The operating status of the resource.
-    ///
     #[builder(default, setter(into))]
     operating_status: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// The ID of the project owning this resource.
-    ///
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
     /// The protocol for the resource.
-    ///
     #[builder(default, setter(into))]
     protocol: Option<Cow<'a, str>>,
 
     /// The protocol port number for the resource.
-    ///
     #[builder(default)]
     protocol_port: Option<i32>,
 
     /// The provisioning status of the resource.
-    ///
     #[builder(default, setter(into))]
     provisioning_status: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[builder(default, setter(into))]
     tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[builder(default, setter(into))]
     tags_any: Option<Cow<'a, str>>,
 
     /// Frontend client inactivity timeout in milliseconds.
-    ///
     #[builder(default)]
     timeout_client_data: Option<i32>,
 
     /// Backend member connection timeout in milliseconds.
-    ///
     #[builder(default)]
     timeout_member_connect: Option<i32>,
 
     /// Backend member inactivity timeout in milliseconds.
-    ///
     #[builder(default)]
     timeout_member_data: Option<i32>,
 
     /// Time, in milliseconds, to wait for additional TCP packets for content
     /// inspection.
-    ///
     #[builder(default)]
     timeout_tcp_inspect: Option<i32>,
 
     /// List of ciphers in OpenSSL format
-    ///
     #[builder(default, setter(into))]
     tls_ciphers: Option<Cow<'a, str>>,
 
     /// A list of TLS protocol versions.
-    ///
     #[builder(default, setter(into))]
     tls_versions: Option<Cow<'a, str>>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
 

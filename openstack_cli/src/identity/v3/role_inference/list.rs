@@ -20,27 +20,22 @@
 //! Wraps invoking of the `v3/role_inferences` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role_inference::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::role_inference::response::list::RoleInferenceResponse;
 
 /// Lists all role inference rules.
 ///
 /// Relationship:
 /// `https://developer.openstack.org/api-ref/identity/v3/#list-all-role-inference-rules`
-///
 #[derive(Args)]
 #[command(about = "List all role inference rules")]
 pub struct RoleInferencesCommand {
@@ -60,21 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// RoleInferences response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An implied role object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    implies: Option<Value>,
-
-    /// A prior role object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    prior_role: Option<Value>,
-}
 
 impl RoleInferencesCommand {
     /// Perform command action
@@ -99,8 +79,7 @@ impl RoleInferencesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<RoleInferenceResponse>(data)?;
         Ok(())
     }
 }

@@ -20,26 +20,22 @@
 //! Wraps invoking of the `v3/endpoints/{endpoint_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::endpoint::get;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::endpoint::response::get::EndpointResponse;
 
 /// Shows details for an endpoint.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
-///
 #[derive(Args)]
 #[command(about = "Show endpoint details")]
 pub struct EndpointCommand {
@@ -60,64 +56,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// endpoint_id parameter for /v3/endpoints/{endpoint_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Endpoint response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Indicates whether the endpoint appears in the service catalog: -
-    /// `false`. The endpoint does not appear in the service catalog. - `true`.
-    /// The endpoint appears in the service catalog.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The endpoint ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The interface type, which describes the visibility of the endpoint.
-    /// Value is: - `public`. Visible by end users on a publicly available
-    /// network interface. - `internal`. Visible by end users on an unmetered
-    /// internal network interface. - `admin`. Visible by administrative users
-    /// on a secure network interface.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    interface: Option<String>,
-
-    /// (Deprecated in v3.2) The geographic location of the service endpoint.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region: Option<String>,
-
-    /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region_id: Option<String>,
-
-    /// The UUID of the service to which the endpoint belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    service_id: Option<String>,
-
-    /// The endpoint URL.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    url: Option<String>,
 }
 
 impl EndpointCommand {
@@ -144,7 +88,7 @@ impl EndpointCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<EndpointResponse>(data)?;
         Ok(())
     }
 }

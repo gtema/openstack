@@ -28,7 +28,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) created_at: Option<Cow<'a, str>>,
 
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) node_count: i32,
 
     #[builder(default, setter(into))]

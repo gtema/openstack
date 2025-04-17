@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.0/flavors/{flavor_id}/service_profiles` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::service_profile::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::flavor::service_profile::response::create::ServiceProfileResponse;
 
 /// Associate a flavor with a service profile.
 ///
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404, 409
-///
 #[derive(Args)]
 #[command(about = "Associate flavor with a service profile")]
 pub struct ServiceProfileCommand {
@@ -57,7 +53,6 @@ pub struct ServiceProfileCommand {
     path: PathParameters,
 
     /// A `service_profile` object.
-    ///
     #[command(flatten)]
     service_profile: ServiceProfile,
 }
@@ -71,7 +66,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_flavor_id",
@@ -83,19 +77,8 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct ServiceProfile {
     /// The UUID of the service profile.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
-}
-
-/// ServiceProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the resource.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
 }
 
 impl ServiceProfileCommand {
@@ -130,7 +113,7 @@ impl ServiceProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceProfileResponse>(data)?;
         Ok(())
     }
 }

@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/local_ips/{local_ip_id}/port_associations` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::port_association::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::local_ip::port_association::response::list::PortAssociationResponse;
 
 /// Lists Associations for the given Local IP.
 ///
@@ -54,7 +51,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List Local IP Associations")]
 pub struct PortAssociationsCommand {
@@ -76,19 +72,16 @@ pub struct PortAssociationsCommand {
 struct QueryParameters {
     /// fixed_ip query parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     fixed_ip: Option<String>,
 
     /// fixed_port_id query parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     fixed_port_id: Option<String>,
 
     /// host query parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     host: Option<String>,
 
@@ -96,37 +89,31 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// local_ip_address query parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     local_ip_address: Option<String>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -136,46 +123,12 @@ struct QueryParameters {
 struct PathParameters {
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_local_ip_id",
         value_name = "LOCAL_IP_ID"
     )]
     local_ip_id: String,
-}
-/// PortAssociations response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_ip: Option<String>,
-
-    /// The ID of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_port_id: Option<String>,
-
-    /// The host of the port associated with the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host: Option<String>,
-
-    /// The actual IP address of the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_ip_address: Option<String>,
-
-    /// The ID of the Local IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_ip_id: Option<String>,
 }
 
 impl PortAssociationsCommand {
@@ -231,8 +184,7 @@ impl PortAssociationsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<PortAssociationResponse>(data)?;
         Ok(())
     }
 }

@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::os_get_console_output;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::os_get_console_output::ServerResponse;
 
 /// Shows console output for a server.
 ///
@@ -48,7 +45,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), notFound(404),
 /// conflict(409), methodNotImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Show Console Output (os-getConsoleOutput Action)")]
 pub struct ServerCommand {
@@ -61,7 +57,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action to get console output of the server.
-    ///
     #[command(flatten)]
     os_get_console_output: OsGetConsoleOutput,
 }
@@ -74,7 +69,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -92,17 +86,8 @@ struct OsGetConsoleOutput {
     ///
     /// This parameter can be specified as not only ‘integer’ but also
     /// ‘string’.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     length: Option<Option<i32>>,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable()]
-    output: String,
 }
 
 impl ServerCommand {
@@ -138,7 +123,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

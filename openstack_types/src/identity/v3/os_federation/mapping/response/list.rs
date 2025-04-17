@@ -23,15 +23,16 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MappingResponse {
     /// The Federation Mapping unique ID
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub rules: Option<Vec<Rules>>,
 
     /// Mapping schema version
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub schema_version: Option<String>,
 }
@@ -52,6 +53,17 @@ pub enum Type {
     // Local
     #[serde(rename = "local")]
     Local,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ephemeral" => Ok(Self::Ephemeral),
+            "local" => Ok(Self::Local),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `User` type

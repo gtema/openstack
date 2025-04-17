@@ -28,58 +28,49 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `backup` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Backup<'a> {
     /// The container name or null.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) container: Option<Option<Cow<'a, str>>>,
 
     /// The backup description or null.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// Indicates whether to backup, even if the volume is attached. Default is
     /// `false`. See [valid boolean values](#valid-boolean-values)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) force: Option<bool>,
 
     /// Indicates whether to backup, even if the volume is attached. Default is
     /// `false`. See [valid boolean values](#valid-boolean-values)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) incremental: Option<bool>,
 
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     /// The name of the Volume Backup.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the source snapshot that you want to back up.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the volume that you want to back up.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
@@ -89,7 +80,6 @@ impl<'a> BackupBuilder<'a> {
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -109,7 +99,6 @@ impl<'a> BackupBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `backup` object.
-    ///
     #[builder(setter(into))]
     pub(crate) backup: Backup<'a>,
 

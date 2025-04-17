@@ -29,7 +29,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct OsSetImageMetadata<'a> {
     #[serde()]
-    #[builder(private, setter(name = "_metadata"))]
+    #[builder(private, setter(into, name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 }
 
@@ -54,7 +54,6 @@ pub struct Request<'a> {
     pub(crate) os_set_image_metadata: OsSetImageMetadata<'a>,
 
     /// id parameter for /v3/volumes/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

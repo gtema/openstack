@@ -20,19 +20,17 @@
 //! Wraps invoking of the `resource_providers/{uuid}/aggregates` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::aggregate::list;
+use openstack_types::placement::v1::resource_provider::aggregate::response::list::AggregateResponse;
 
 /// Return a list of aggregates associated with the resource provider
 /// identified by {uuid}.
@@ -42,7 +40,6 @@ use openstack_sdk::api::placement::v1::resource_provider::aggregate::list;
 /// Error response codes: itemNotFound(404) if the provider does not exist. (If
 /// the provider has no aggregates, the result is 200 with an empty aggregate
 /// list.)
-///
 #[derive(Args)]
 #[command(about = "List resource provider aggregates")]
 pub struct AggregateCommand {
@@ -63,36 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid}/aggregates API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
     uuid: String,
-}
-/// Aggregate response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl AggregateCommand {
@@ -119,7 +92,7 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AggregateResponse>(data)?;
         Ok(())
     }
 }

@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::get;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response::get::BandwidthLimitRuleResponse;
 
 /// Shows details for a bandwidth limit rule for a QoS policy.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show bandwidth limit rule details")]
 pub struct BandwidthLimitRuleCommand {
@@ -63,7 +58,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
@@ -73,43 +67,12 @@ struct PathParameters {
 
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// BandwidthLimitRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The direction of the traffic to which the QoS rule is applied, as seen
-    /// from the point of view of the `port`. Valid values are `egress` and
-    /// `ingress`. Default value is `egress`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    /// The ID of the QoS Bandwidth limit rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The maximum burst size (in kilobits).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_burst_kbps: Option<IntString>,
-
-    /// The maximum KBPS (kilobits per second) value. If you specify this
-    /// value, must be greater than 0 otherwise max_kbps will have no value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_kbps: Option<IntString>,
 }
 
 impl BandwidthLimitRuleCommand {
@@ -137,7 +100,7 @@ impl BandwidthLimitRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<BandwidthLimitRuleResponse>(data)?;
         Ok(())
     }
 }

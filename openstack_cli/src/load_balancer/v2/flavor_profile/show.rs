@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2/lbaas/flavorprofiles/{flavorprofile_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::flavor_profile::find;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::flavor_profile::response::get::FlavorProfileResponse;
 
 /// Gets a flavor profile's detail.
-///
 #[derive(Args)]
 pub struct FlavorProfileCommand {
     /// Request Query parameters
@@ -58,32 +54,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavorprofile_id parameter for
     /// /v2/lbaas/flavorprofiles/{flavorprofile_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// FlavorProfile response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    flavor_data: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    provider_name: Option<String>,
 }
 
 impl FlavorProfileCommand {
@@ -106,7 +82,7 @@ impl FlavorProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<FlavorProfileResponse>(find_data)?;
         Ok(())
     }
 }

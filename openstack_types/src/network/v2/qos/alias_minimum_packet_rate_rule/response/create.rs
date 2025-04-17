@@ -16,20 +16,21 @@
 // `openstack-codegenerator`.
 //! Response type for the POST `qos/alias-minimum-packet-rate-rules` operation
 
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// AliasMinimumPacketRateRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasMinimumPacketRateRuleResponse {
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional)]
     pub min_kpps: Option<i64>,
 }
@@ -47,4 +48,16 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "any" => Ok(Self::Any),
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

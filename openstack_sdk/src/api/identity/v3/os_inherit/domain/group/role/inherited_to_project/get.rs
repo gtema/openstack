@@ -34,14 +34,12 @@ pub struct Request<'a> {
     /// domain_id parameter for
     /// /v3/OS-INHERIT/domains/{domain_id}/groups/{group_id}/roles/inherited_to_projects
     /// API
-    ///
     #[builder(default, setter(into))]
     domain_id: Cow<'a, str>,
 
     /// group_id parameter for
     /// /v3/OS-INHERIT/domains/{domain_id}/groups/{group_id}/roles/inherited_to_projects
     /// API
-    ///
     #[builder(default, setter(into))]
     group_id: Cow<'a, str>,
 

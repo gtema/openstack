@@ -28,22 +28,18 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Description for this zone
-    ///
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// e-mail for the zone. Used in SOA records for the zone
-    ///
     #[builder(default, setter(into))]
     pub(crate) email: Option<Cow<'a, str>>,
 
     /// TTL (Time to Live) for the zone.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ttl: Option<i32>,
 
     /// zone_id parameter for /v2/zones/{zone_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

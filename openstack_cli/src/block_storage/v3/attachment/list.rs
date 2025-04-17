@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/attachments/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::attachment::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::attachment::response::list_detailed::AttachmentResponse;
 
 /// Return a detailed list of attachments.
-///
 #[derive(Args)]
 pub struct AttachmentsCommand {
     /// Request Query parameters
@@ -58,7 +53,6 @@ pub struct AttachmentsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Shows details for all project. Admin only.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenants: Option<bool>,
 
@@ -66,34 +60,29 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
@@ -101,7 +90,6 @@ struct QueryParameters {
     /// disk_format, size, id, created_at, or updated_at. Default is
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 }
@@ -109,58 +97,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Attachments response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The attach mode of attachment, read-only (‘ro’) or read-and-write
-    /// (‘rw’), default is ‘rw’.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    attach_mode: Option<String>,
-
-    /// The time when attachment is attached.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    attached_at: Option<String>,
-
-    /// The connection info used for server to connect the volume.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    connection_info: Option<Value>,
-
-    /// The time when attachment is detached.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    detached_at: Option<String>,
-
-    /// The ID of attachment.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The UUID of the attaching instance.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    instance: Option<String>,
-
-    /// The status of the attachment.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The UUID of the volume which the attachment belongs to.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    volume_id: String,
-}
 
 impl AttachmentsCommand {
     /// Perform command action
@@ -208,8 +144,7 @@ impl AttachmentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AttachmentResponse>(data)?;
         Ok(())
     }
 }

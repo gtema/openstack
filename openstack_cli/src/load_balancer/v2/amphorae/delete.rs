@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2/octavia/amphorae/{amphora_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::delete;
-use structable_derive::StructTable;
 
 /// Removes an amphora and its associated configuration.
 ///
@@ -43,7 +37,6 @@ use structable_derive::StructTable;
 /// configuration settings. You cannot recover it.
 ///
 /// **New in version 2.20**
-///
 #[derive(Args)]
 #[command(about = "Remove an Amphora")]
 pub struct AmphoraeCommand {
@@ -64,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// amphora_id parameter for /v2/octavia/amphorae/{amphora_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_amphora_id",
@@ -72,9 +64,6 @@ struct PathParameters {
     )]
     amphora_id: String,
 }
-/// Amphorae response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl AmphoraeCommand {
     /// Perform command action
@@ -98,8 +87,7 @@ impl AmphoraeCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

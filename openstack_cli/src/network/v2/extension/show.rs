@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.0/extensions/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::extension::get;
-use structable_derive::StructTable;
+use openstack_types::network::v2::extension::response::get::ExtensionResponse;
 
 /// Shows details for an extension, by alias. The response shows the extension
 /// name and its alias. To show details for an extension, you specify the
@@ -45,7 +42,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
-///
 #[derive(Args)]
 #[command(about = "Show extension details")]
 pub struct ExtensionCommand {
@@ -66,46 +62,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/extensions/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Extension response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The alias for the extension. For example “quotas” or “security-group”.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    alias: Option<String>,
-
-    /// The human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A URL pointing to the namespace for this extension.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    namespace: Option<String>,
-
-    /// The date and timestamp when the extension was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated: Option<String>,
 }
 
 impl ExtensionCommand {
@@ -132,7 +94,7 @@ impl ExtensionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ExtensionResponse>(data)?;
         Ok(())
     }
 }

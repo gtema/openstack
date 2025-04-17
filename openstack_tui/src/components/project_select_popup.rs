@@ -20,7 +20,7 @@ use ratatui::{
 };
 use serde::Deserialize;
 use serde_json::Value;
-use structable_derive::StructTable;
+use structable::{StructTable, StructTableOptions};
 
 use crate::{
     action::Action,
@@ -33,7 +33,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable, centered_rect_fixed},
+    utils::centered_rect_fixed,
 };
 
 const TITLE: &str = " Select project to switch to: ";

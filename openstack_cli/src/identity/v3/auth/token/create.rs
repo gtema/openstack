@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/auth/tokens` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use clap::ValueEnum;
 use dialoguer::Password;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::token::create;
+use openstack_types::identity::v3::auth::token::response::create::TokenResponse;
 use serde_json::Value;
-use std::fmt;
-use structable_derive::StructTable;
 
 /// Authenticates an identity and generates a token. Uses the password
 /// authentication method. Authorization is unscoped.
@@ -49,7 +44,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
-///
 #[derive(Args)]
 #[command(about = "Password authentication with unscoped authorization")]
 pub struct TokenCommand {
@@ -62,7 +56,6 @@ pub struct TokenCommand {
     path: PathParameters,
 
     /// An `auth` object.
-    ///
     #[command(flatten)]
     auth: Auth,
 }
@@ -88,24 +81,20 @@ enum Methods {
 #[group(required = false, multiple = true)]
 struct User {
     /// A `domain` object
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     domain: Option<Value>,
 
     /// The ID of the user. Required if you do not specify the user name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name. Required if you do not specify the ID of the user. If
     /// you specify the user name, you must also specify the domain, by ID or
     /// name.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// User Password
-    ///
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
@@ -115,7 +104,6 @@ struct User {
 #[group(required = false, multiple = true)]
 struct Password {
     /// A `user` object.
-    ///
     #[command(flatten)]
     user: Option<User>,
 }
@@ -125,7 +113,6 @@ struct Password {
 #[group(required = false, multiple = true)]
 struct Token {
     /// Authorization Token value
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     id: Option<String>,
 }
@@ -135,22 +122,18 @@ struct Token {
 #[group(required = true, multiple = true)]
 struct TotpUser {
     /// A `domain` object
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     domain: Option<Value>,
 
     /// The user ID
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// MFA passcode
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     passcode: Option<String>,
 }
@@ -174,14 +157,12 @@ struct ApplicationCredential {
     name: Option<String>,
 
     /// The secret for authenticating the application credential.
-    ///
     #[arg(help_heading = "Body parameters", long, required = false)]
     secret: Option<String>,
 
     /// A user object, required if an application credential is identified by
     /// name and not ID.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     user: Option<Value>,
 }
 
@@ -190,7 +171,6 @@ struct ApplicationCredential {
 #[group(required = true, multiple = true)]
 struct Identity {
     /// An application credential object.
-    ///
     #[command(flatten)]
     application_credential: Option<ApplicationCredential>,
 
@@ -198,22 +178,18 @@ struct Identity {
     /// `password`.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, required=false)]
     methods: Vec<Methods>,
 
     /// The `password` object, contains the authentication information.
-    ///
     #[command(flatten)]
     password: Option<Password>,
 
     /// A `token` object
-    ///
     #[command(flatten)]
     token: Option<Token>,
 
     /// Multi Factor Authentication information
-    ///
     #[command(flatten)]
     totp: Option<Totp>,
 }
@@ -223,12 +199,10 @@ struct Identity {
 #[group(required = false, multiple = true)]
 struct ScopeDomain {
     /// Domain id
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Domain name
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
@@ -259,7 +233,7 @@ struct Scope {
     #[command(flatten)]
     os_trust_trust: Option<OsTrustTrust>,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     project: Option<Value>,
 
     #[command(flatten)]
@@ -270,7 +244,6 @@ struct Scope {
 #[derive(Args, Clone)]
 struct Auth {
     /// An `identity` object.
-    ///
     #[command(flatten)]
     identity: Identity,
 
@@ -283,136 +256,8 @@ struct Auth {
     /// domain of the project must also be specified in order to uniquely
     /// identify the project by name. A domain scope may be specified by either
     /// the domain’s ID or name with equivalent results.
-    ///
     #[command(flatten)]
     scope: Option<Scope>,
-}
-
-/// Token response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of one or two audit IDs. An audit ID is a unique, randomly
-    /// generated, URL-safe string that you can use to track a token. The first
-    /// audit ID is the current audit ID for the token. The second audit ID is
-    /// present for only re-scoped tokens and is the audit ID from the token
-    /// before it was re-scoped. A re- scoped token is one that was exchanged
-    /// for another token of the same or different scope. You can use these
-    /// audit IDs to track the use of a token or chain of tokens across
-    /// multiple requests and endpoints without exposing the token ID to
-    /// non-privileged users.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    audit_ids: Option<Value>,
-
-    /// A `catalog` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    catalog: Option<Value>,
-
-    /// A domain object including the id and name representing the domain the
-    /// token is scoped to. This is only included in tokens that are scoped to
-    /// a domain.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    domain: Option<Value>,
-
-    /// The date and time when the token expires.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss.sssZ
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58.000000Z`.
-    ///
-    /// A `null` value indicates that the token never expires.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    is_domain: Option<bool>,
-
-    /// The date and time when the token was issued.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    issues_at: Option<String>,
-
-    /// The authentication methods, which are commonly `password`, `token`, or
-    /// other methods. Indicates the accumulated set of authentication methods
-    /// that were used to obtain the token. For example, if the token was
-    /// obtained by password authentication, it contains `password`. Later, if
-    /// the token is exchanged by using the token authentication method one or
-    /// more times, the subsequently created tokens contain both `password` and
-    /// `token` in their `methods` attribute. Unlike multi-factor
-    /// authentication, the `methods` attribute merely indicates the methods
-    /// that were used to authenticate the user in exchange for a token. The
-    /// client is responsible for determining the total number of
-    /// authentication factors.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    methods: Option<Value>,
-
-    /// A `project` object including the `id`, `name` and `domain` object
-    /// representing the project the token is scoped to. This is only included
-    /// in tokens that are scoped to a project.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    project: Option<Value>,
-
-    /// A list of `role` objects
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    roles: Option<Value>,
-
-    /// A `system` object containing information about which parts of the
-    /// system the token is scoped to. If the token is scoped to the entire
-    /// deployment system, the `system` object will consist of `{"all": true}`.
-    /// This is only included in tokens that are scoped to the system.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    system: Option<Value>,
-
-    /// A `user` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    user: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseDomain {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseDomain {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id.clone().map_or(String::new(), |v| v.to_string())
-            ),
-            format!(
-                "name={}",
-                self.name.clone().map_or(String::new(), |v| v.to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl TokenCommand {
@@ -553,7 +398,7 @@ impl TokenCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<TokenResponse>(data)?;
         Ok(())
     }
 }

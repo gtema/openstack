@@ -20,28 +20,24 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-volume_attachments` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::volume_attachment::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::volume_attachment::response::list::VolumeAttachmentResponse;
 
 /// List volume attachments for an instance.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List volume attachments for an instance")]
 pub struct VolumeAttachmentsCommand {
@@ -73,75 +69,12 @@ struct QueryParameters {
 struct PathParameters {
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// VolumeAttachments response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the associated volume attachment in Cinder.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    attachment_id: Option<String>,
-
-    /// The UUID of the block device mapping record in Nova for the attachment.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    bdm_uuid: Option<String>,
-
-    /// A flag indicating if the attached volume will be deleted when the
-    /// server is deleted.
-    ///
-    /// **New in version 2.79**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    delete_on_termination: Option<bool>,
-
-    /// Name of the device in the attachment object, such as, `/dev/vdb`.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    device: String,
-
-    /// The volume ID of the attachment.
-    ///
-    /// **Available until version 2.88**
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The UUID of the server.
-    ///
-    #[serde(rename = "serverId")]
-    #[structable(title = "serverId", wide)]
-    server_id: String,
-
-    /// The device tag applied to the volume block device or `null`.
-    ///
-    /// **New in version 2.70**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tag: Option<String>,
-
-    /// The UUID of the attached volume.
-    ///
-    #[serde(rename = "volumeId")]
-    #[structable(title = "volumeId", wide)]
-    volume_id: String,
 }
 
 impl VolumeAttachmentsCommand {
@@ -176,8 +109,7 @@ impl VolumeAttachmentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<VolumeAttachmentResponse>(data)?;
         Ok(())
     }
 }

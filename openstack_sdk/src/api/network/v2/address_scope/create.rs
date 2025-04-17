@@ -31,33 +31,28 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// An `address scope` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddressScope<'a> {
     /// The IP protocol version. Valid value is `4` or `6`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) ip_version: Option<i32>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) shared: Option<bool>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -67,7 +62,6 @@ pub struct AddressScope<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `address scope` object.
-    ///
     #[builder(setter(into))]
     pub(crate) address_scope: AddressScope<'a>,
 

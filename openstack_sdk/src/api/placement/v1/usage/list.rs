@@ -40,17 +40,14 @@ pub struct Request<'a> {
     /// consumer_type=INSTANCE should be provided. The all query parameter may
     /// be specified to group all results under one key, all. The unknown query
     /// parameter may be specified to group all results under one key, unknown.
-    ///
     #[builder(default, setter(into))]
     consumer_type: Option<Cow<'a, str>>,
 
     /// The uuid of a project.
-    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// The uuid of a user.
-    ///
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 

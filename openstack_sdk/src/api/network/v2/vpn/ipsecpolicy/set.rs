@@ -163,27 +163,23 @@ pub enum Pfs {
 }
 
 /// An `ipsecpolicy` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Ipsecpolicy<'a> {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The encapsulation mode. A valid value is `tunnel` or `transport`.
     /// Default is `tunnel`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) encapsulation_mode: Option<EncapsulationMode>,
@@ -194,7 +190,6 @@ pub struct Ipsecpolicy<'a> {
     /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) encryption_algorithm: Option<EncryptionAlgorithm>,
@@ -202,27 +197,23 @@ pub struct Ipsecpolicy<'a> {
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) lifetime: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) pfs: Option<Pfs>,
 
     /// The transform protocol. A valid value is `ESP`, `AH`, or `AH- ESP`.
     /// Default is `ESP`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) transform_protocol: Option<TransformProtocol>,
@@ -232,12 +223,10 @@ pub struct Ipsecpolicy<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `ipsecpolicy` object.
-    ///
     #[builder(setter(into))]
     pub(crate) ipsecpolicy: Ipsecpolicy<'a>,
 
     /// id parameter for /v2.0/vpn/ipsecpolicies/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

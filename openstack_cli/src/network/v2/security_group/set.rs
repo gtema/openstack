@@ -20,31 +20,25 @@
 //! Wraps invoking of the `v2.0/security-groups/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::security_group::find;
 use openstack_sdk::api::network::v2::security_group::set;
-use openstack_sdk::types::BoolString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::security_group::response::set::SecurityGroupResponse;
 
 /// Updates a security group.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404, 412
-///
 #[derive(Args)]
 #[command(about = "Update security group")]
 pub struct SecurityGroupCommand {
@@ -57,7 +51,6 @@ pub struct SecurityGroupCommand {
     path: PathParameters,
 
     /// A `security_group` object.
-    ///
     #[command(flatten)]
     security_group: SecurityGroup,
 }
@@ -70,7 +63,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/security-groups/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -83,81 +75,15 @@ struct PathParameters {
 struct SecurityGroup {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     stateful: Option<bool>,
-}
-
-/// SecurityGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the security group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// A list of `security_group_rule` objects. Refer to
-    /// [Security group rules](#security-group-rules) for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_group_rules: Option<Value>,
-
-    /// Indicates whether this security group is shared to the requester’s
-    /// project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    shared: Option<BoolString>,
-
-    /// Indicates if the security group is stateful or stateless.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    stateful: Option<BoolString>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl SecurityGroupCommand {
@@ -212,7 +138,7 @@ impl SecurityGroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<SecurityGroupResponse>(data)?;
         Ok(())
     }
 }

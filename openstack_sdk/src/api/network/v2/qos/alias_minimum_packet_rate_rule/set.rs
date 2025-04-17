@@ -42,7 +42,7 @@ pub struct AliasMinimumPacketRateRule {
     pub(crate) direction: Option<Direction>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) min_kpps: Option<i32>,
 }
 
@@ -53,7 +53,6 @@ pub struct Request<'a> {
     pub(crate) alias_minimum_packet_rate_rule: AliasMinimumPacketRateRule,
 
     /// id parameter for /v2.0/qos/alias-minimum-packet-rate-rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

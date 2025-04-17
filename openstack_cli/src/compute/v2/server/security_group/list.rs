@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-security-groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::security_group::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::security_group::response::list::SecurityGroupResponse;
 
 /// Lists security groups for a server.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List Security Groups By Server")]
 pub struct SecurityGroupsCommand {
@@ -63,46 +58,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/os-security-groups
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// SecurityGroups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Security group description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of the security group.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// The security group name.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The list of security group rules.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    rules: Option<Value>,
-
-    /// The UUID of the tenant in a multi-tenancy cloud.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
 }
 
 impl SecurityGroupsCommand {
@@ -129,8 +90,7 @@ impl SecurityGroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<SecurityGroupResponse>(data)?;
         Ok(())
     }
 }

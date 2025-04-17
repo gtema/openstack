@@ -30,13 +30,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// zone_id parameter for /v2/zones/{zone_id}/shares API
-    ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,
 
     /// zone_share_id parameter for /v2/zones/{zone_id}/shares/{zone_share_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     zone_share_id: Cow<'a, str>,
 

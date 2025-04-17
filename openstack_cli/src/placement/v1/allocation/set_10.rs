@@ -20,24 +20,17 @@
 //! Wraps invoking of the `allocations/{consumer_uuid}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::allocation::set_10;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Create or update one or more allocation records representing the
 /// consumption of one or more classes of resources from one or more resource
@@ -47,7 +40,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 204
 ///
 /// Error response codes: badRequest(400), itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Update allocations (microversion = 1.0)")]
 pub struct AllocationCommand {
@@ -60,8 +52,7 @@ pub struct AllocationCommand {
     path: PathParameters,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     allocations: Vec<Value>,
 }
 
@@ -73,7 +64,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// consumer_uuid parameter for /allocations/{consumer_uuid} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_consumer_uuid",
@@ -81,9 +71,6 @@ struct PathParameters {
     )]
     consumer_uuid: String,
 }
-/// Allocation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl AllocationCommand {
     /// Perform command action
@@ -116,11 +103,7 @@ impl AllocationCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

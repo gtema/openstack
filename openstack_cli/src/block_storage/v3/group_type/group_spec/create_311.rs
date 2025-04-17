@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v3/group_types/{group_type_id}/group_specs` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val_opt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::group_spec::create_311;
-use std::collections::HashMap;
+use openstack_types::block_storage::v3::group_type::group_spec::response::create::GroupSpecResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct GroupSpecCommand {
     /// Request Query parameters
@@ -50,7 +46,6 @@ pub struct GroupSpecCommand {
 
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
     group_specs: Vec<(String, Option<String>)>,
 }
@@ -64,29 +59,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// group_type_id parameter for
     /// /v3/group_types/{group_type_id}/group_specs/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_group_type_id",
         value_name = "GROUP_TYPE_ID"
     )]
     group_type_id: String,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, String>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(
-            self.0
-                .iter()
-                .map(|(k, v)| Vec::from([k.clone(), v.clone()])),
-        );
-        (headers, rows)
-    }
 }
 
 impl GroupSpecCommand {
@@ -122,7 +100,7 @@ impl GroupSpecCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<GroupSpecResponse>(data)?;
         Ok(())
     }
 }

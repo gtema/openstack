@@ -18,14 +18,14 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Binding response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BindingResponse {
     /// The hostname of the system the agent is running on.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
@@ -33,13 +33,15 @@ pub struct BindingResponse {
     /// to pass and receive vif port information specific to the networking
     /// back-end. The networking API does not define a specific format of this
     /// field. If the update request is null this response field will be {}.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub profile: Option<HashMap<String, Value>>,
+    pub profile: Option<BTreeMap<String, Value>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
@@ -50,7 +52,7 @@ pub struct BindingResponse {
     /// anti MAC/IP spoofing. `ovs_hybrid_plug` is a boolean used to inform an
     /// API consumer like nova that the hybrid plugging strategy for OVS should
     /// be used.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vif_details: Option<String>,
 
@@ -62,7 +64,7 @@ pub struct BindingResponse {
     /// also special values: `unbound` and `binding_failed`. `unbound` means
     /// the port is not bound to a networking back-end. `binding_failed` means
     /// an error that the port failed to be bound to a networking back-end.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vif_type: Option<String>,
 
@@ -72,7 +74,7 @@ pub struct BindingResponse {
     /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
     /// `remote-managed`. What type of vNIC is actually available depends on
     /// deployments.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub vnic_type: Option<VnicType>,
 }
@@ -122,4 +124,24 @@ pub enum VnicType {
     // VirtioForwarder
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
+}
+
+impl std::str::FromStr for VnicType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "accelerator-direct" => Ok(Self::AcceleratorDirect),
+            "accelerator-direct-physical" => Ok(Self::AcceleratorDirectPhysical),
+            "baremetal" => Ok(Self::Baremetal),
+            "direct" => Ok(Self::Direct),
+            "direct-physical" => Ok(Self::DirectPhysical),
+            "macvtap" => Ok(Self::Macvtap),
+            "normal" => Ok(Self::Normal),
+            "remote-managed" => Ok(Self::RemoteManaged),
+            "smart-nic" => Ok(Self::SmartNic),
+            "vdpa" => Ok(Self::Vdpa),
+            "virtio-forwarder" => Ok(Self::VirtioForwarder),
+            _ => Err(()),
+        }
+    }
 }

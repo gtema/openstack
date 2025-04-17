@@ -32,12 +32,10 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The server group object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ServerGroup<'a> {
     /// The name of the server group.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -59,7 +57,6 @@ pub struct ServerGroup<'a> {
     ///   added in microversion 2.15.
     ///
     /// **Available until version 2.63**
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) policies: Vec<Cow<'a, str>>,
@@ -69,7 +66,6 @@ pub struct ServerGroup<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The server group object.
-    ///
     #[builder(setter(into))]
     pub(crate) server_group: ServerGroup<'a>,
 

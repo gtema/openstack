@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v3/OS-EP-FILTER/endpoint_groups` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_ep_filter::endpoint_group::response::list::EndpointGroupResponse;
 
 /// List all endpoint groups.
 ///
 /// GET /v3/OS-EP-FILTER/endpoint_groups
-///
 #[derive(Args)]
 pub struct EndpointGroupsCommand {
     /// Request Query parameters
@@ -55,7 +50,6 @@ pub struct EndpointGroupsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The name of the endpoint group.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 }
@@ -63,36 +57,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// EndpointGroups response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The endpoint group description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// Describes the filtering performed by the endpoint group. The filter
-    /// used must be an endpoint property, such as interface, service_id,
-    /// region, and enabled. Note that if using interface as a filter, the only
-    /// available values are public, internal, and admin.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    filters: Option<Value>,
-
-    /// The endpoint group ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the endpoint group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl EndpointGroupsCommand {
     /// Perform command action
@@ -120,8 +84,7 @@ impl EndpointGroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<EndpointGroupResponse>(data)?;
         Ok(())
     }
 }

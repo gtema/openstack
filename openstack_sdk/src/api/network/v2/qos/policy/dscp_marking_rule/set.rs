@@ -31,14 +31,12 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `dscp_marking_rule` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct DscpMarkingRule {
     /// The DSCP mark value.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) dscp_mark: Option<i32>,
 }
 
@@ -46,19 +44,16 @@ pub struct DscpMarkingRule {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `dscp_marking_rule` object.
-    ///
     #[builder(setter(into))]
     pub(crate) dscp_marking_rule: DscpMarkingRule,
 
     /// id parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

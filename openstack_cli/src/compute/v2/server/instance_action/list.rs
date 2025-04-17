@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-instance-actions` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::instance_action::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::instance_action::response::list::InstanceActionResponse;
 
 /// Lists actions for a server.
 ///
@@ -50,7 +46,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "List Actions For Server")]
 pub struct InstanceActionsCommand {
@@ -88,84 +83,12 @@ struct QueryParameters {
 struct PathParameters {
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/os-instance-actions/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_server_id",
         value_name = "SERVER_ID"
     )]
     server_id: String,
-}
-/// InstanceActions response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the action.
-    ///
-    #[serde()]
-    #[structable()]
-    action: String,
-
-    /// The events which occurred in this action in descending order of
-    /// creation.
-    ///
-    /// Policy defaults enable only users with the administrative role or the
-    /// owner of the server to see instance action event information. Cloud
-    /// providers can change these permissions through the `policy.json` file.
-    ///
-    /// **New in version 2.51**
-    ///
-    #[serde()]
-    #[structable(pretty)]
-    events: Value,
-
-    /// The related error message for when an action fails.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    message: Option<String>,
-
-    /// The ID of the project which initiated the server action.
-    ///
-    #[serde()]
-    #[structable()]
-    project_id: String,
-
-    /// The request id generated when execute the API of this action.
-    ///
-    #[serde()]
-    #[structable()]
-    request_id: String,
-
-    /// The date and time when the action was started.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    start_time: Option<String>,
-
-    /// The date and time when the instance action or the action event of
-    /// instance action was updated. The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    /// **New in version 2.58**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The ID of the user which initiated the server action.
-    ///
-    #[serde()]
-    #[structable()]
-    user_id: String,
 }
 
 impl InstanceActionsCommand {
@@ -206,8 +129,7 @@ impl InstanceActionsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<InstanceActionResponse>(data)?;
         Ok(())
     }
 }

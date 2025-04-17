@@ -31,50 +31,43 @@ use std::borrow::Cow;
 
 /// The resource options for the project. Available resource options are
 /// `immutable`.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) immutable: Option<bool>,
 }
 
 /// A `project` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Project<'a> {
     /// The description of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     /// The name of the project, which must be unique within the owning domain.
     /// A project can have the same name as its domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
 
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -84,12 +77,10 @@ pub struct Project<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `project` object
-    ///
     #[builder(setter(into))]
     pub(crate) project: Project<'a>,
 
     /// project_id parameter for /v3/projects/{project_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/properties/{property_name}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::property::set;
+use openstack_types::image::v2::metadef::namespace::property::response::set::PropertyResponse;
 use serde_json::Value;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct PropertyCommand {
     /// Request Query parameters
@@ -53,18 +48,17 @@ pub struct PropertyCommand {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     additional_items: Option<bool>,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     _default: Option<Value>,
 
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     _enum: Option<Vec<String>>,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     items: Option<Value>,
 
     #[arg(help_heading = "Body parameters", long)]
@@ -89,7 +83,6 @@ pub struct PropertyCommand {
     name: String,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     operators: Option<Vec<String>>,
 
@@ -100,7 +93,6 @@ pub struct PropertyCommand {
     readonly: Option<bool>,
 
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     required: Option<Vec<String>>,
 
@@ -123,7 +115,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
@@ -133,7 +124,6 @@ struct PathParameters {
 
     /// property_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_property_name",
@@ -150,86 +140,6 @@ enum Type {
     Number,
     Object,
     String,
-}
-
-/// Property response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde(rename = "additionalItems")]
-    #[structable(optional, title = "additionalItems")]
-    additional_items: Option<bool>,
-
-    #[serde(rename = "default")]
-    #[structable(optional, pretty, title = "default")]
-    _default: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde(rename = "enum")]
-    #[structable(optional, pretty, title = "enum")]
-    _enum: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    items: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    maximum: Option<f32>,
-
-    #[serde(rename = "maxItems")]
-    #[structable(optional, title = "maxItems")]
-    max_items: Option<i32>,
-
-    #[serde(rename = "maxLength")]
-    #[structable(optional, title = "maxLength")]
-    max_length: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    minimum: Option<f32>,
-
-    #[serde(rename = "minItems")]
-    #[structable(optional, title = "minItems")]
-    min_items: Option<i32>,
-
-    #[serde(rename = "minLength")]
-    #[structable(optional, title = "minLength")]
-    min_length: Option<i32>,
-
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    operators: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    pattern: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    readonly: Option<bool>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    required: Option<Value>,
-
-    #[serde()]
-    #[structable()]
-    title: String,
-
-    #[serde(rename = "type")]
-    #[structable(title = "type")]
-    _type: String,
-
-    #[serde(rename = "uniqueItems")]
-    #[structable(optional, title = "uniqueItems")]
-    unique_items: Option<bool>,
 }
 
 impl PropertyCommand {
@@ -353,7 +263,7 @@ impl PropertyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<PropertyResponse>(data)?;
         Ok(())
     }
 }

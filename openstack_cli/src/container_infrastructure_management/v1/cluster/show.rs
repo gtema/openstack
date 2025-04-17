@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v1/clusters/{cluster_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::cluster::response::get::ClusterResponse;
 
 /// Get all information of a cluster in Magnum.
-///
 #[derive(Args)]
 #[command(about = "Show details of a cluster")]
 pub struct ClusterCommand {
@@ -58,231 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// cluster_id parameter for /v1/clusters/{cluster_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Cluster response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The endpoint URL of COE API exposed to end-users.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    api_address: Option<String>,
-
-    /// The UUID of the cluster template.
-    ///
-    #[serde()]
-    #[structable()]
-    cluster_template_id: String,
-
-    /// Version info of chosen COE in cluster for helping client in picking the
-    /// right version of client.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    coe_version: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    container_version: Option<String>,
-
-    /// The timeout for cluster creation in minutes. The value expected is a
-    /// positive integer and the default is 60 minutes. If the timeout is
-    /// reached during cluster creation process, the operation will be aborted
-    /// and the cluster status will be set to `CREATE_FAILED`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    create_timeout: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The custom discovery url for node discovery. This is used by the COE to
-    /// discover the servers that have been created to host the containers. The
-    /// actual discovery mechanism varies with the COE. In some cases, Magnum
-    /// fills in the server info in the discovery service. In other cases, if
-    /// the `discovery_url` is not specified, Magnum will use the public
-    /// discovery service at:
-    ///
-    /// ```text
-    /// https://discovery.etcd.io
-    ///
-    /// ```
-    ///
-    /// In this case, Magnum will generate a unique url here for each uster and
-    /// store the info for the servers.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    discovery_url: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    docker_volume_size: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    faults: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    fixed_network: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    fixed_subnet: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    flavor_id: Option<String>,
-
-    /// Whether enable or not using the floating IP of cloud provider. Some
-    /// cloud providers used floating IP, some used public IP, thus Magnum
-    /// provide this option for specifying the choice of using floating IP. If
-    /// it’s not set, the value of floating_ip_enabled in template will be
-    /// used.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    floating_ip_enabled: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    health_status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    health_status_reason: Option<Value>,
-
-    /// The name of the SSH keypair to configure in the cluster servers for ssh
-    /// access. Users will need the key to be able to ssh to the servers in the
-    /// cluster. The login name is specific to the cluster driver, for example
-    /// with fedora-atomic image, default login name is `fedora`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    keypair: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_added: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_overridden: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    labels_skipped: Option<Value>,
-
-    /// Links to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// List of floating IP of all master nodes.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    master_addresses: Option<Value>,
-
-    /// The number of servers that will serve as master for the cluster. The
-    /// default is 1. Set to more than 1 master to enable High Availability. If
-    /// the option `master-lb-enabled` is specified in the cluster template,
-    /// the master servers will be placed in a load balancer pool.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    master_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    master_flavor_id: Option<String>,
-
-    /// Since multiple masters may exist in a cluster, a Neutron load balancer
-    /// is created to provide the API endpoint for the cluster and to direct
-    /// requests to the masters. In some cases, such as when the LBaaS service
-    /// is not available, this option can be set to `false` to create a cluster
-    /// without the load balancer. In this case, one of the masters will serve
-    /// as the API endpoint. The default is `true`, i.e. to create the load
-    /// balancer for the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    master_lb_enabled: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    merge_labels: Option<String>,
-
-    /// Name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// List of floating IP of all servers that serve as node.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    node_addresses: Option<Value>,
-
-    /// The number of servers that will serve as node in the cluster. The
-    /// default is 1.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    node_count: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The reference UUID of orchestration stack from Heat orchestration
-    /// service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    stack_id: Option<String>,
-
-    /// The current state of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The reason of cluster current status.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status_reason: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
-
-    /// The UUID of the cluster.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
 }
 
 impl ClusterCommand {
@@ -309,7 +85,7 @@ impl ClusterCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ClusterResponse>(data)?;
         Ok(())
     }
 }

@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v3/auth/system` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::system::list;
-use std::collections::HashMap;
+use openstack_types::identity::v3::auth::system::response::list::SystemResponse;
 
 /// New in version 3.10
 ///
@@ -42,7 +39,6 @@ use std::collections::HashMap;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_system`
-///
 #[derive(Args)]
 #[command(about = "Get available system scopes")]
 pub struct SystemsCommand {
@@ -62,22 +58,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, bool>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(
-            self.0
-                .iter()
-                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
-        );
-        (headers, rows)
-    }
-}
 
 impl SystemsCommand {
     /// Perform command action
@@ -101,8 +81,8 @@ impl SystemsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        op.output_list::<SystemResponse>(data)?;
         Ok(())
     }
 }

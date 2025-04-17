@@ -17,12 +17,14 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
+
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroup, NetworkSecurityGroupApiRequest,
-        NetworkSecurityGroupList, NetworkSecurityGroupRuleList,
-        NetworkSecurityGroupRuleListBuilder, NetworkSecurityGroupRuleListBuilderError,
+        NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
+        NetworkSecurityGroupRuleList, NetworkSecurityGroupRuleListBuilder,
+        NetworkSecurityGroupRuleListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -35,15 +37,15 @@ use crate::{
 const TITLE: &str = "SecurityGroups";
 const VIEW_CONFIG_KEY: &str = "network.security_group";
 
-impl ResourceKey for NetworkSecurityGroup {
+impl ResourceKey for SecurityGroupResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&NetworkSecurityGroup> for NetworkSecurityGroupRuleList {
+impl TryFrom<&SecurityGroupResponse> for NetworkSecurityGroupRuleList {
     type Error = NetworkSecurityGroupRuleListBuilderError;
-    fn try_from(value: &NetworkSecurityGroup) -> Result<Self, Self::Error> {
+    fn try_from(value: &SecurityGroupResponse) -> Result<Self, Self::Error> {
         let mut builder = NetworkSecurityGroupRuleListBuilder::default();
         if let Some(val) = &value.id {
             builder.security_group_id(val.clone());
@@ -56,7 +58,7 @@ impl TryFrom<&NetworkSecurityGroup> for NetworkSecurityGroupRuleList {
 }
 
 pub type NetworkSecurityGroups<'a> =
-    TableViewComponentBase<'a, NetworkSecurityGroup, NetworkSecurityGroupList>;
+    TableViewComponentBase<'a, SecurityGroupResponse, NetworkSecurityGroupList>;
 
 impl NetworkSecurityGroups<'_> {
     /// Normalize filters

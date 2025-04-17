@@ -23,54 +23,53 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
     /// The number of floating IP addresses allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub floatingip: Option<Floatingip>,
 
     /// The number of networks allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub network: Option<Network>,
 
     /// The number of ports allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub port: Option<Port>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub rbac_policy: Option<RbacPolicy>,
 
     /// The number of routers allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub router: Option<Router>,
 
     /// The number of security groups allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub security_group: Option<SecurityGroup>,
 
     /// The number of security group rules allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub security_group_rule: Option<SecurityGroupRule>,
 
     /// The number of subnets allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub subnet: Option<Subnet>,
 
     /// The number of subnet pools allowed for each project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub subnetpool: Option<Subnetpool>,
 }
 
 /// The number of floating IP addresses allowed for each project.
-///
 /// `Floatingip` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Floatingip {
@@ -80,7 +79,6 @@ pub struct Floatingip {
 }
 
 /// The number of networks allowed for each project.
-///
 /// `Network` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Network {
@@ -90,7 +88,6 @@ pub struct Network {
 }
 
 /// The number of ports allowed for each project.
-///
 /// `Port` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Port {
@@ -100,7 +97,6 @@ pub struct Port {
 }
 
 /// The number of role-based access control (RBAC) policies for each project.
-///
 /// `RbacPolicy` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RbacPolicy {
@@ -110,7 +106,6 @@ pub struct RbacPolicy {
 }
 
 /// The number of routers allowed for each project.
-///
 /// `Router` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Router {
@@ -120,7 +115,6 @@ pub struct Router {
 }
 
 /// The number of security groups allowed for each project.
-///
 /// `SecurityGroup` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroup {
@@ -130,7 +124,6 @@ pub struct SecurityGroup {
 }
 
 /// The number of security group rules allowed for each project.
-///
 /// `SecurityGroupRule` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRule {
@@ -140,7 +133,6 @@ pub struct SecurityGroupRule {
 }
 
 /// The number of subnets allowed for each project.
-///
 /// `Subnet` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnet {
@@ -150,7 +142,6 @@ pub struct Subnet {
 }
 
 /// The number of subnet pools allowed for each project.
-///
 /// `Subnetpool` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnetpool {

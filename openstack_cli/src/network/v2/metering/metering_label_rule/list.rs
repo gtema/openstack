@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/metering/metering-label-rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::metering::metering_label_rule::response::list::MeteringLabelRuleResponse;
 
 /// Lists a summary of all L3 metering label rules that belong to the project.
 ///
@@ -57,7 +53,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
-///
 #[derive(Args)]
 #[command(about = "List metering label rules")]
 pub struct MeteringLabelRulesCommand {
@@ -85,22 +80,18 @@ struct QueryParameters {
     /// external system that an application running inside some OpenStack
     /// virtual machine is trying to access. Moreover, instead of an IP, one
     /// can also use a CIDR as the destination IP prefix.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     destination_ip_prefix: Option<String>,
 
     /// direction query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["egress","ingress"])]
     direction: Option<String>,
 
     /// excluded query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     excluded: Option<bool>,
 
     /// id query parameter for /v2.0/metering/metering-label-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -108,43 +99,36 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// metering_label_id query parameter for
     /// /v2.0/metering/metering-label-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     metering_label_id: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// remote_ip_prefix query parameter for
     /// /v2.0/metering/metering-label-rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     remote_ip_prefix: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
@@ -155,7 +139,6 @@ struct QueryParameters {
     /// egress rule, the source IP is the internal IP associated with some
     /// OpenStack VM. Moreover, instead of an IP, one can also use a CIDR as
     /// the source IP prefix.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     source_ip_prefix: Option<String>,
 }
@@ -163,56 +146,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// MeteringLabelRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    destination_ip_prefix: Option<String>,
-
-    /// Ingress or egress, which is the direction in which the metering rule is
-    /// applied.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    direction: Option<String>,
-
-    /// Indicates whether to count the traffic of a specific IP address with
-    /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
-    /// values.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    excluded: Option<BoolString>,
-
-    /// The ID of the metering label rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The metering label ID associated with this metering rule.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    metering_label_id: Option<String>,
-
-    /// (deprecated) The source IP prefix that is matched by this metering
-    /// rule. By source IP prefix, one should read the internal/private IPs
-    /// used in OpenStack.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    remote_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    source_ip_prefix: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-}
 
 impl MeteringLabelRulesCommand {
     /// Perform command action
@@ -275,8 +208,7 @@ impl MeteringLabelRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<MeteringLabelRuleResponse>(data)?;
         Ok(())
     }
 }

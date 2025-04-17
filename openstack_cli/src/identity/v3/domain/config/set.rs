@@ -20,18 +20,14 @@
 //! Wraps invoking of the `v3/domains/{domain_id}/config` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_json;
 use eyre::OptionExt;
 use eyre::WrapErr;
 use eyre::eyre;
@@ -39,16 +35,15 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::set;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
+use openstack_types::identity::v3::domain::config::response::set::ConfigResponse;
 use serde_json::Value;
 use std::collections::BTreeMap;
-use std::collections::HashMap;
 use tracing::warn;
 
 /// Updates a domain configuration.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
-///
 #[derive(Args)]
 #[command(about = "Update domain configuration")]
 pub struct ConfigCommand {
@@ -61,8 +56,7 @@ pub struct ConfigCommand {
     path: PathParameters,
 
     /// A `config` object.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     config: Value,
 }
 
@@ -91,23 +85,6 @@ struct DomainInput {
     /// Current domain.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_domain: bool,
-}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
 }
 
 impl ConfigCommand {
@@ -196,7 +173,7 @@ impl ConfigCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ConfigResponse>(data)?;
         Ok(())
     }
 }

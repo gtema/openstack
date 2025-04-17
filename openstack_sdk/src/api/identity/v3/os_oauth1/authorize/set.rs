@@ -31,7 +31,6 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// request_token_id parameter for
     /// /v3/OS-OAUTH1/authorize/{request_token_id} API
-    ///
     #[builder(default, setter(into))]
     request_token_id: Cow<'a, str>,
 

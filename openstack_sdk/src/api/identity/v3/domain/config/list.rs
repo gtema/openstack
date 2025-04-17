@@ -32,7 +32,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// domain_id parameter for /v3/domains/{domain_id}/config/{group}/{option}
     /// API
-    ///
     #[builder(default, setter(into))]
     domain_id: Cow<'a, str>,
 

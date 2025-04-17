@@ -20,29 +20,22 @@
 //! Wraps invoking of the `v2.0/flavors/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::delete;
-use structable_derive::StructTable;
 
 /// Deletes a flavor.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Delete flavor")]
 pub struct FlavorCommand {
@@ -63,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/flavors/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -71,9 +63,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Flavor response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl FlavorCommand {
     /// Perform command action
@@ -97,8 +86,7 @@ impl FlavorCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

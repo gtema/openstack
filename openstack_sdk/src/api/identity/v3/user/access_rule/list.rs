@@ -32,24 +32,20 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// The request method that the application credential is permitted to use
     /// for a given API endpoint.
-    ///
     #[builder(default, setter(into))]
     method: Option<Cow<'a, str>>,
 
     /// The API path that the application credential is permitted to access.
-    ///
     #[builder(default, setter(into))]
     path: Option<Cow<'a, str>>,
 
     /// The service type identifier for the service that the application is
     /// permitted to access.
-    ///
     #[builder(default, setter(into))]
     service: Option<Cow<'a, str>>,
 
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

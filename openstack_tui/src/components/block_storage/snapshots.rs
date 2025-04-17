@@ -17,11 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::block_storage::v3::snapshot::response::list_detailed::SnapshotResponse;
+
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageSnapshot, BlockStorageSnapshotApiRequest,
-        BlockStorageSnapshotList,
+        BlockStorageApiRequest, BlockStorageSnapshotApiRequest, BlockStorageSnapshotList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +35,14 @@ use crate::{
 const TITLE: &str = "Snapshots";
 const VIEW_CONFIG_KEY: &str = "block_storage.snapshot";
 
-impl ResourceKey for BlockStorageSnapshot {
+impl ResourceKey for SnapshotResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type BlockStorageSnapshots<'a> =
-    TableViewComponentBase<'a, BlockStorageSnapshot, BlockStorageSnapshotList>;
+    TableViewComponentBase<'a, SnapshotResponse, BlockStorageSnapshotList>;
 
 impl Component for BlockStorageSnapshots<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

@@ -118,7 +118,6 @@ pub enum Type {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SessionPersistence<'a> {
@@ -131,7 +130,7 @@ pub struct SessionPersistence<'a> {
     pub(crate) persistence_granularity: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) persistence_timeout: Option<i32>,
 
     #[serde(rename = "type")]
@@ -180,16 +179,15 @@ pub enum HttpMethod {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Healthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -205,15 +203,15 @@ pub struct Healthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -223,13 +221,12 @@ pub struct Healthmonitor<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -242,7 +239,6 @@ pub struct Healthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Members<'a> {
@@ -251,11 +247,11 @@ pub struct Members<'a> {
     pub(crate) address: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) backup: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -263,7 +259,7 @@ pub struct Members<'a> {
     pub(crate) monitor_address: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) monitor_port: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -271,11 +267,11 @@ pub struct Members<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) protocol_port: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) request_sriov: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -287,23 +283,21 @@ pub struct Members<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
 }
 
 /// A pool object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct DefaultPool<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.20**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) alpn_protocols: Option<Vec<Cow<'a, str>>>,
@@ -321,7 +315,6 @@ pub struct DefaultPool<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<Healthmonitor<'a>>,
@@ -343,7 +336,6 @@ pub struct DefaultPool<'a> {
     pub(crate) protocol: Option<DefaultPoolProtocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -356,7 +348,6 @@ pub struct DefaultPool<'a> {
     /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
     ///
     /// **New in version 2.15**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tls_ciphers: Option<Cow<'a, str>>,
@@ -366,14 +357,13 @@ pub struct DefaultPool<'a> {
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
     /// TLSv1.1, TLSv1.2, TLSv1.3
     ///
     /// **New in version 2.17**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tls_versions: Option<Vec<Cow<'a, str>>>,
@@ -428,16 +418,15 @@ pub enum RedirectPoolHealthmonitorType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RedirectPoolHealthmonitor<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) delay: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -453,15 +442,15 @@ pub struct RedirectPoolHealthmonitor<'a> {
     pub(crate) http_method: Option<HttpMethod>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) http_version: Option<f32>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) max_retries: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) max_retries_down: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -473,7 +462,7 @@ pub struct RedirectPoolHealthmonitor<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) timeout: i32,
 
     #[serde(rename = "type")]
@@ -486,12 +475,11 @@ pub struct RedirectPoolHealthmonitor<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RedirectPool<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -511,7 +499,6 @@ pub struct RedirectPool<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) healthmonitor: Option<RedirectPoolHealthmonitor<'a>>,
@@ -533,7 +520,6 @@ pub struct RedirectPool<'a> {
     pub(crate) protocol: Option<RedirectPoolProtocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) session_persistence: Option<SessionPersistence<'a>>,
@@ -551,7 +537,7 @@ pub struct RedirectPool<'a> {
     pub(crate) tls_container_ref: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) tls_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -594,12 +580,11 @@ pub enum CompareType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rules<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde()]
@@ -607,7 +592,7 @@ pub struct Rules<'a> {
     pub(crate) compare_type: CompareType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) invert: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -628,7 +613,6 @@ pub struct Rules<'a> {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct L7policies<'a> {
@@ -637,7 +621,7 @@ pub struct L7policies<'a> {
     pub(crate) action: Action,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -649,15 +633,14 @@ pub struct L7policies<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) position: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) redirect_http_code: Option<i32>,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) redirect_pool: Option<RedirectPool<'a>>,
@@ -708,22 +691,19 @@ pub enum ListenerProtocol {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Listener<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A list of IPv4, IPv6 or mix of both CIDRs. The default is all allowed.
     /// When a list of CIDRs is provided, the default switches to deny all.
     ///
     /// **New in version 2.12**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) allowed_cidrs: Option<Vec<Cow<'a, str>>>,
@@ -736,7 +716,6 @@ pub struct Listener<'a> {
     /// `OPTIONAL` or `MANDATORY`.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) client_authentication: Option<ClientAuthentication>,
@@ -747,7 +726,6 @@ pub struct Listener<'a> {
     /// `TERMINATED_HTTPS` listeners.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) client_ca_tls_container_ref: Option<Cow<'a, str>>,
@@ -758,7 +736,6 @@ pub struct Listener<'a> {
     /// `TERMINATED_HTTPS` listeners.
     ///
     /// **New in version 2.8**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) client_crl_container_ref: Option<Cow<'a, str>>,
@@ -766,13 +743,11 @@ pub struct Listener<'a> {
     /// The maximum number of connections permitted for this listener. Default
     /// value is -1 which represents infinite connections or a default value
     /// defined by the provider driver.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) connection_limit: Option<i32>,
 
     /// A pool object.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_pool: Option<DefaultPool<'a>>,
@@ -780,7 +755,6 @@ pub struct Listener<'a> {
     /// The ID of the pool used by the listener if no L7 policies match. The
     /// pool has some restrictions. See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_pool_id: Option<Cow<'a, str>>,
@@ -791,13 +765,11 @@ pub struct Listener<'a> {
     /// `TERMINATED_HTTPS` listeners. DEPRECATED: A secret container of type
     /// “certificate” containing the certificate and key for `TERMINATED_HTTPS`
     /// listeners.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_tls_container_ref: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -807,9 +779,8 @@ pub struct Listener<'a> {
     /// setting the `hsts_max_age` option as well in order to become effective.
     ///
     /// **New in version 2.27**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_include_subdomains: Option<bool>,
 
     /// The value of the `max_age` directive for the Strict-Transport-Security
@@ -817,9 +788,8 @@ pub struct Listener<'a> {
     /// Security (HSTS) for the TLS-terminated listener.
     ///
     /// **New in version 2.27**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_max_age: Option<i32>,
 
     /// Defines whether the `preload` directive should be added to the
@@ -827,55 +797,47 @@ pub struct Listener<'a> {
     /// the `hsts_max_age` option as well in order to become effective.
     ///
     /// **New in version 2.27**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) hsts_preload: Option<bool>,
 
     /// A dictionary of optional headers to insert into the request before it
     /// is sent to the backend `member`. See
     /// [Supported HTTP Header Insertions](#header-insertions). Both keys and
     /// values are always specified as strings.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_insert_headers"))]
+    #[builder(default, private, setter(into, name = "_insert_headers"))]
     pub(crate) insert_headers: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// A list of L7 policy objects.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) l7policies: Option<Vec<L7policies<'a>>>,
 
     /// The ID of the load balancer.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) loadbalancer_id: Cow<'a, str>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The ID of the project owning this resource. (deprecated)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`,
     /// `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) protocol: ListenerProtocol,
 
     /// The protocol port number for the resource.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) protocol_port: i32,
 
     /// A list of URIs to the
@@ -884,7 +846,6 @@ pub struct Listener<'a> {
     /// `TERMINATED_HTTPS` listeners. (DEPRECATED) Secret containers of type
     /// “certificate” containing the certificates and keys for
     /// `TERMINATED_HTTPS` listeners.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) sni_container_refs: Option<Vec<Cow<'a, str>>>,
@@ -900,34 +861,30 @@ pub struct Listener<'a> {
     /// Frontend client inactivity timeout in milliseconds. Default: 50000.
     ///
     /// **New in version 2.1**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_client_data: Option<i32>,
 
     /// Backend member connection timeout in milliseconds. Default: 5000.
     ///
     /// **New in version 2.1**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_member_connect: Option<i32>,
 
     /// Backend member inactivity timeout in milliseconds. Default: 50000.
     ///
     /// **New in version 2.1**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_member_data: Option<i32>,
 
     /// Time, in milliseconds, to wait for additional TCP packets for content
     /// inspection. Default: 0.
     ///
     /// **New in version 2.1**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) timeout_tcp_inspect: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -944,7 +901,6 @@ impl<'a> ListenerBuilder<'a> {
     /// is sent to the backend `member`. See
     /// [Supported HTTP Header Insertions](#header-insertions). Both keys and
     /// values are always specified as strings.
-    ///
     pub fn insert_headers<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -963,7 +919,6 @@ impl<'a> ListenerBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) listener: Listener<'a>,
 

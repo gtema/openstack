@@ -18,38 +18,42 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Object response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ObjectResponse {
     /// Date and time of object creation
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     #[structable()]
     pub name: String,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<BTreeMap<String, Properties>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub required: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub schema: Option<String>,
 
-    #[serde(rename = "self")]
+    #[serde(default, rename = "self")]
     #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// Date and time of the last object modification
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -79,6 +83,21 @@ pub enum Type {
     // String
     #[serde(rename = "string")]
     String,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "array" => Ok(Self::Array),
+            "boolean" => Ok(Self::Boolean),
+            "integer" => Ok(Self::Integer),
+            "number" => Ok(Self::Number),
+            "object" => Ok(Self::Object),
+            "string" => Ok(Self::String),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Items` type

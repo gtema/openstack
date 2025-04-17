@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerExternalEventResponse {
     /// List of external events to process.
-    ///
     #[structable(serialize)]
     pub events: Vec<Events>,
 }
@@ -59,6 +58,22 @@ pub enum Name {
     VolumeExtended,
 }
 
+impl std::str::FromStr for Name {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "accelerator-request-bound" => Ok(Self::AcceleratorRequestBound),
+            "network-changed" => Ok(Self::NetworkChanged),
+            "network-vif-deleted" => Ok(Self::NetworkVifDeleted),
+            "network-vif-plugged" => Ok(Self::NetworkVifPlugged),
+            "network-vif-unplugged" => Ok(Self::NetworkVifUnplugged),
+            "power-update" => Ok(Self::PowerUpdate),
+            "volume-extended" => Ok(Self::VolumeExtended),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Completed
@@ -72,6 +87,18 @@ pub enum Status {
     // InProgress
     #[serde(rename = "in-progress")]
     InProgress,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "completed" => Ok(Self::Completed),
+            "failed" => Ok(Self::Failed),
+            "in-progress" => Ok(Self::InProgress),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `Events` type

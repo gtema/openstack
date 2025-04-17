@@ -33,43 +33,36 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Limits<'a> {
     /// The limit description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The name of the domain.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
     /// The ID for the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the region that contains the service endpoint.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region_id: Option<Option<Cow<'a, str>>>,
 
     /// The override limit.
-    ///
     #[serde()]
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) resource_limit: i32,
 
     /// The resource name.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) resource_name: Cow<'a, str>,
 
     /// The UUID of the service to which the limit belongs.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) service_id: Cow<'a, str>,
@@ -79,7 +72,6 @@ pub struct Limits<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A list of `limits` objects
-    ///
     #[builder(setter(into))]
     pub(crate) limits: Vec<Limits<'a>>,
 

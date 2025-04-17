@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// transfer_accept_id parameter for
     /// /v2/zones/tasks/transfer_accepts/{transfer_accept_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

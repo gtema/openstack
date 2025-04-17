@@ -23,13 +23,13 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MemberResponse {
     /// The IP address of the backend member server.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub address: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
@@ -37,76 +37,77 @@ pub struct MemberResponse {
     /// non-backup members are down.
     ///
     /// **New in version 2.1**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub backup: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The ID of the member.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// An alternate IP address used for health monitoring a backend member.
     /// Default is `null` which monitors the member `address`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub monitor_address: Option<String>,
 
     /// An alternate protocol port used for health monitoring a backend member.
     /// Default is `null` which monitors the member `protocol_port`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub monitor_port: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The protocol port number the backend member server is listening on.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub protocol_port: Option<i32>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// The subnet ID the member service is accessible from.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_id: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
@@ -114,7 +115,7 @@ pub struct MemberResponse {
     /// `direct`.
     ///
     /// **New in version 2.29**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub vnic_type: Option<String>,
 
@@ -124,7 +125,7 @@ pub struct MemberResponse {
     /// requests as a member with a weight of 2. A value of 0 means the member
     /// does not receive new connections but continues to service existing
     /// connections. A valid value is from `0` to `256`. Default is `1`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub weight: Option<i32>,
 }

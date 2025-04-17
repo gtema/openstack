@@ -17,11 +17,11 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::dns::v2::recordset::response::list::RecordsetResponse;
+
 use crate::{
     action::Action,
-    cloud_worker::dns::v2::{
-        DnsApiRequest, DnsRecordset, DnsRecordsetApiRequest, DnsRecordsetList,
-    },
+    cloud_worker::dns::v2::{DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
     config::Config,
@@ -33,13 +33,13 @@ use crate::{
 const TITLE: &str = "DNS Recordsets";
 const VIEW_CONFIG_KEY: &str = "dns.recordset";
 
-impl ResourceKey for DnsRecordset {
+impl ResourceKey for RecordsetResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type DnsRecordsets<'a> = TableViewComponentBase<'a, DnsRecordset, DnsRecordsetList>;
+pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetResponse, DnsRecordsetList>;
 
 impl Component for DnsRecordsets<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

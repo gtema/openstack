@@ -35,7 +35,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Share<'a> {
     /// The UUID of the attached share.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) share_id: Cow<'a, str>,
@@ -43,7 +42,6 @@ pub struct Share<'a> {
     /// The device tag to be used by users to mount the share within the
     /// instance, if not provided then the share UUID will be used
     /// automatically.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
@@ -56,7 +54,6 @@ pub struct Request<'a> {
     pub(crate) share: Share<'a>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/shares/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

@@ -33,59 +33,59 @@ pub struct MigrationResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The target compute for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dest_compute: Option<String>,
 
     /// The target host for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dest_host: Option<String>,
 
     /// The target node for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub dest_node: Option<String>,
 
     /// The amount of disk, in bytes, that has been processed during the
     /// migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disk_processed_bytes: Option<i32>,
 
     /// The amount of disk, in bytes, that still needs to be migrated.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disk_remaining_bytes: Option<i32>,
 
     /// The total amount of disk, in bytes, that needs to be migrated.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub disk_total_bytes: Option<i32>,
 
     /// The ID of the server migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<i32>,
 
     /// The amount of memory, in bytes, that has been processed during the
     /// migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub memory_processed_bytes: Option<i32>,
 
     /// The amount of memory, in bytes, that still needs to be migrated.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub memory_remaining_bytes: Option<i32>,
 
     /// The total amount of memory, in bytes, that needs to be migrated.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub memory_total_bytes: Option<i32>,
 
@@ -93,27 +93,27 @@ pub struct MigrationResponse {
     /// may be `null` for older migration records.
     ///
     /// **New in version 2.80**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The UUID of the server.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub server_uuid: Option<String>,
 
     /// The source compute for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub source_compute: Option<String>,
 
     /// The source node for a migration.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub source_node: Option<String>,
 
     /// The current status of the migration.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
@@ -128,7 +128,7 @@ pub struct MigrationResponse {
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
@@ -136,14 +136,14 @@ pub struct MigrationResponse {
     /// be `null` for older migration records.
     ///
     /// **New in version 2.80**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub user_id: Option<String>,
 
     /// The UUID of the migration.
     ///
     /// **New in version 2.59**
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 }

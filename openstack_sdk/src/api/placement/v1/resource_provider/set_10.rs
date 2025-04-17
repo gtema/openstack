@@ -35,12 +35,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The name of one resource provider.
-    ///
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// uuid parameter for /resource_providers/{uuid} API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

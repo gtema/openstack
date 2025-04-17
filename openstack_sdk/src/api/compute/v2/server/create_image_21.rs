@@ -27,19 +27,16 @@ use std::collections::BTreeMap;
 
 /// The action to create a snapshot of the image or the volume(s) of the
 /// server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct CreateImage<'a> {
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// The display name of an Image.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -48,7 +45,6 @@ pub struct CreateImage<'a> {
 impl<'a> CreateImageBuilder<'a> {
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -68,12 +64,10 @@ impl<'a> CreateImageBuilder<'a> {
 pub struct Request<'a> {
     /// The action to create a snapshot of the image or the volume(s) of the
     /// server.
-    ///
     #[builder(setter(into))]
     pub(crate) create_image: CreateImage<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

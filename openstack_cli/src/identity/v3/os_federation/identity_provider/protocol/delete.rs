@@ -20,27 +20,20 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::delete;
-use structable_derive::StructTable;
 
 /// Delete a protocol from an IDP.
 ///
 /// DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
-///
 #[derive(Args)]
 pub struct ProtocolCommand {
     /// Request Query parameters
@@ -61,7 +54,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_idp_id",
@@ -72,7 +64,6 @@ struct PathParameters {
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -80,9 +71,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Protocol response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ProtocolCommand {
     /// Perform command action
@@ -107,8 +95,7 @@ impl ProtocolCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

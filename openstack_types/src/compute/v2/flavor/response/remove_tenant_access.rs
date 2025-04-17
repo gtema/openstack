@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
-    ///
     #[structable(serialize)]
     pub flavor_access: Vec<FlavorAccess>,
 }

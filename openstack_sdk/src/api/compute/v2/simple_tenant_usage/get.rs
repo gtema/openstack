@@ -36,7 +36,6 @@ pub struct Request<'a> {
     end: Option<Cow<'a, str>>,
 
     /// id parameter for /v2.1/os-simple-tenant-usage/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

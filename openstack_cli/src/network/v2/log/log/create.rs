@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.0/log/logs` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::log::log::create;
-use openstack_sdk::types::BoolString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::log::log::response::create::LogResponse;
 
 /// Creates a log resource.
 ///
@@ -52,7 +48,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 409
-///
 #[derive(Args)]
 #[command(about = "Create log")]
 pub struct LogCommand {
@@ -65,7 +60,6 @@ pub struct LogCommand {
     path: PathParameters,
 
     /// A `log` object.
-    ///
     #[command(flatten)]
     log: Log,
 }
@@ -90,124 +84,40 @@ enum Event {
 struct Log {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Indicates whether this log object is enabled or disabled. Default is
     /// true.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`. Default is
     /// `ALL`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     event: Option<Event>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
     /// The ID of resource log (e.g security group ID).
-    ///
     #[arg(help_heading = "Body parameters", long)]
     resource_id: Option<String>,
 
     /// The resource log type such as ‘security_group’.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     resource_type: Option<String>,
 
     /// The ID of resource target log such as port ID.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     target_id: Option<String>,
-}
-
-/// Log response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Indicates whether this log object is enabled or disabled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<BoolString>,
-
-    /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    event: Option<String>,
-
-    /// The ID of the log object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The ID of resource log (e.g security group ID).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_id: Option<String>,
-
-    /// The resource log type such as ‘security_group’.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    resource_type: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// The ID of resource target log such as port ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    target_id: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl LogCommand {
@@ -274,7 +184,7 @@ impl LogCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LogResponse>(data)?;
         Ok(())
     }
 }

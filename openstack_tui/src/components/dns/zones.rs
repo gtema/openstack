@@ -17,11 +17,13 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::dns::v2::zone::response::list::ZoneResponse;
+
 use crate::{
     action::Action,
     cloud_worker::dns::v2::{
         DnsApiRequest, DnsRecordsetList, DnsRecordsetListBuilder, DnsRecordsetListBuilderError,
-        DnsZone, DnsZoneApiRequest, DnsZoneDelete, DnsZoneDeleteBuilder, DnsZoneDeleteBuilderError,
+        DnsZoneApiRequest, DnsZoneDelete, DnsZoneDeleteBuilder, DnsZoneDeleteBuilderError,
         DnsZoneList,
     },
     cloud_worker::types::ApiRequest,
@@ -35,15 +37,15 @@ use crate::{
 const TITLE: &str = "DNS Zones";
 const VIEW_CONFIG_KEY: &str = "dns.zone";
 
-impl ResourceKey for DnsZone {
+impl ResourceKey for ZoneResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&DnsZone> for DnsZoneDelete {
+impl TryFrom<&ZoneResponse> for DnsZoneDelete {
     type Error = DnsZoneDeleteBuilderError;
-    fn try_from(value: &DnsZone) -> Result<Self, Self::Error> {
+    fn try_from(value: &ZoneResponse) -> Result<Self, Self::Error> {
         let mut builder = DnsZoneDeleteBuilder::default();
         if let Some(val) = &value.id {
             builder.id(val.clone());
@@ -55,9 +57,9 @@ impl TryFrom<&DnsZone> for DnsZoneDelete {
     }
 }
 
-impl TryFrom<&DnsZone> for DnsRecordsetList {
+impl TryFrom<&ZoneResponse> for DnsRecordsetList {
     type Error = DnsRecordsetListBuilderError;
-    fn try_from(value: &DnsZone) -> Result<Self, Self::Error> {
+    fn try_from(value: &ZoneResponse) -> Result<Self, Self::Error> {
         let mut builder = DnsRecordsetListBuilder::default();
         if let Some(val) = &value.id {
             builder.zone_id(val.clone());
@@ -69,7 +71,7 @@ impl TryFrom<&DnsZone> for DnsRecordsetList {
     }
 }
 
-pub type DnsZones<'a> = TableViewComponentBase<'a, DnsZone, DnsZoneList>;
+pub type DnsZones<'a> = TableViewComponentBase<'a, ZoneResponse, DnsZoneList>;
 
 impl Component for DnsZones<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

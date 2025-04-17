@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2.0/local-ips` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::network::v2::local_ip::response::list::LocalIpResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct LocalIpsCommand {
     /// Request Query parameters
@@ -57,17 +53,14 @@ pub struct LocalIpsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// description query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// ip_mode query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["passthrough","translate"])]
     ip_mode: Option<String>,
 
@@ -75,61 +68,50 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// local_ip_address query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     local_ip_address: Option<String>,
 
     /// local_port_id query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     local_port_id: Option<String>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// name query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_id query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// project_id query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     project_id: Option<String>,
 
     /// revision_number query parameter for /v2.0/local-ips API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -137,53 +119,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// LocalIps response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    ip_mode: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    local_ip_address: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    local_port_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    network_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl LocalIpsCommand {
     /// Perform command action
@@ -252,8 +187,7 @@ impl LocalIpsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<LocalIpResponse>(data)?;
         Ok(())
     }
 }

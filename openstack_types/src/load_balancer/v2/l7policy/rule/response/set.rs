@@ -24,80 +24,80 @@ use structable::{StructTable, StructTableOptions};
 pub struct RuleResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,
     /// `EQUAL_TO`, `REGEX`, or `STARTS_WITH`.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub compare_type: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The ID of the L7 rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// When `true` the logic of the rule is inverted. For example, with invert
     /// `true`, equal to would become not equal to.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub invert: Option<bool>,
 
     /// The key to use for the comparison. For example, the name of the cookie
     /// to evaluate.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub key: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`,
     /// `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The value to use for the comparison. For example, the file type to
     /// compare.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub value: Option<String>,
 }

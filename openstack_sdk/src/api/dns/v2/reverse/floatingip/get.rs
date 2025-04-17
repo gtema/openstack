@@ -28,7 +28,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// fip_key parameter for /v2/reverse/floatingips/{fip_key} API
-    ///
     #[builder(default, setter(into))]
     fip_key: Cow<'a, str>,
 

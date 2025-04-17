@@ -20,24 +20,18 @@
 //! Wraps invoking of the `v2.0/vpn/ipsec-site-connections/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::ipsec_site_connection::find;
-use openstack_sdk::types::BoolString;
-use openstack_sdk::types::IntString;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::ipsec_site_connection::response::get::IpsecSiteConnectionResponse;
 
 /// Shows details for an IPsec connection.
 ///
@@ -47,7 +41,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Show IPsec connection")]
 pub struct IpsecSiteConnectionCommand {
@@ -68,163 +61,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/vpn/ipsec-site-connections/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// IpsecSiteConnection response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<BoolString>,
-
-    /// The authentication mode. A valid value is `psk`, which is the default.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    auth_mode: Option<String>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A dictionary with dead peer detection (DPD) protocol controls.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dpd: Option<String>,
-
-    /// The ID of the IPsec site-to-site connection.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the IKE policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ikepolicy_id: Option<String>,
-
-    /// Indicates whether this VPN can only respond to connections or both
-    /// respond to and initiate connections. A valid value is `response- only`
-    /// or `bi-directional`. Default is `bi-directional`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    initiator: Option<String>,
-
-    /// The ID of the IPsec policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ipsecpolicy_id: Option<String>,
-
-    /// The ID for the endpoint group that contains private subnets for the
-    /// local side of the connection. Yo must specify this parameter with the
-    /// `peer_ep_group_id` parameter unless in backward- compatible mode where
-    /// `peer_cidrs` is provided with a `subnet_id` for the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_ep_group_id: Option<String>,
-
-    /// An ID to be used instead of the external IP address for a virtual
-    /// router used in traffic between instances on different networks in
-    /// east-west traffic. Most often, local ID would be domain name, email
-    /// address, etc. If this is not configured then the external IP address
-    /// will be used as the ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    local_id: Option<String>,
-
-    /// The maximum transmission unit (MTU) value to address fragmentation.
-    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    mtu: Option<IntString>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The peer gateway public IPv4 or IPv6 address or FQDN.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_address: Option<String>,
-
-    /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / < prefix > .
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    peer_cidrs: Option<Value>,
-
-    /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / < prefix > for the peer side of the connection. You
-    /// must specify this parameter with the `local_ep_group_id` parameter
-    /// unless in backward-compatible mode where `peer_cidrs` is provided with
-    /// a `subnet_id` for the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_ep_group_id: Option<String>,
-
-    /// The peer router identity for authentication. A valid value is an IPv4
-    /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
-    /// value matches the `peer_address` value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    peer_id: Option<String>,
-
-    /// The pre-shared key. A valid value is any string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    psk: Option<String>,
-
-    /// The route mode. A valid value is `static`, which is the default.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    route_mode: Option<String>,
-
-    /// Indicates whether the IPsec connection is currently operational. Values
-    /// are `ACTIVE`, `DOWN`, `BUILD`, `ERROR`, `PENDING_CREATE`,
-    /// `PENDING_UPDATE`, or `PENDING_DELETE`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The ID of the VPN service.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vpnservice_id: Option<String>,
 }
 
 impl IpsecSiteConnectionCommand {
@@ -247,7 +89,7 @@ impl IpsecSiteConnectionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<IpsecSiteConnectionResponse>(find_data)?;
         Ok(())
     }
 }

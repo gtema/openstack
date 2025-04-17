@@ -23,42 +23,42 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LimitResponse {
     /// The max amount of items allowed per page
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_page_limit: Option<i32>,
 
     /// The max length of a recordset name
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_recordset_name_length: Option<i32>,
 
     /// The max amount of records contained in a recordset
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_recordset_records: Option<i32>,
 
     /// The max length of a zone name
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_zone_name_length: Option<i32>,
 
     /// The max amount of records in a zone
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_zone_records: Option<i32>,
 
     /// The max amount of recordsets per zone
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_zone_recordsets: Option<i32>,
 
     /// The max amount of zones for this project
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub max_zones: Option<i32>,
 
     /// The lowest ttl allowed on this system
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub min_ttl: Option<i32>,
 }

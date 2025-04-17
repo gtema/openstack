@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2.1/os-services` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::service::list;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::service::response::list::ServiceResponse;
 
 /// Lists all running Compute services.
 ///
@@ -43,7 +39,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "List Compute Services")]
 pub struct ServicesCommand {
@@ -69,82 +64,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Services response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The binary name of the service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    binary: Option<String>,
-
-    /// The reason for disabling a service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    disabled_reason: Option<String>,
-
-    /// Whether or not this service was forced down manually by an
-    /// administrator after the service was fenced. This value is useful to
-    /// know that some 3rd party has verified the service should be marked
-    /// down.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    forced_down: Option<bool>,
-
-    /// The name of the host.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    host: String,
-
-    /// The id of the service as a uuid.
-    ///
-    #[serde()]
-    #[structable()]
-    id: IntString,
-
-    /// Service name
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The state of the service. One of `up` or `down`.
-    ///
-    #[serde()]
-    #[structable()]
-    state: String,
-
-    /// The status of the service. One of `enabled` or `disabled`.
-    ///
-    #[serde()]
-    #[structable()]
-    status: String,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The availability zone name.
-    ///
-    #[serde()]
-    #[structable(wide)]
-    zone: String,
-}
 
 impl ServicesCommand {
     /// Perform command action
@@ -175,8 +94,7 @@ impl ServicesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ServiceResponse>(data)?;
         Ok(())
     }
 }

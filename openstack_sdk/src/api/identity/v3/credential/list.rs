@@ -35,12 +35,10 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// The credential type, such as ec2 or cert. The implementation determines
     /// the list of supported types.
-    ///
     #[builder(default, setter(into))]
     _type: Option<Cow<'a, str>>,
 
     /// Filters the response by a user ID.
-    ///
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 

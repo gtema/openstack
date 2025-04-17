@@ -35,25 +35,21 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A load balancer object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Loadbalancer<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -61,13 +57,11 @@ pub struct Loadbalancer<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_qos_policy_id: Option<Cow<'a, str>>,
@@ -81,13 +75,11 @@ pub struct Loadbalancer<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A load balancer object.
-    ///
     #[builder(setter(into))]
     pub(crate) loadbalancer: Loadbalancer<'a>,
 
     /// loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

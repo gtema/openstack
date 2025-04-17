@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2.1/os-keypairs` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,7 +34,7 @@ use openstack_sdk::api::compute::v2::keypair::list;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::compute::v2::keypair::response::list::KeypairResponse;
 use tracing::warn;
 
 /// Lists keypairs that are associated with the account.
@@ -45,7 +42,6 @@ use tracing::warn;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "List Keypairs")]
 pub struct KeypairsCommand {
@@ -94,35 +90,6 @@ struct UserInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Keypairs response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    fingerprint: String,
-
-    /// The name for the keypair.
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// The keypair public key.
-    ///
-    #[serde()]
-    #[structable()]
-    public_key: String,
-
-    /// The type of the keypair. Allowed values are `ssh` or `x509`.
-    ///
-    /// **New in version 2.2**
-    ///
-    #[serde(rename = "type")]
-    #[structable(title = "type", wide)]
-    _type: String,
-}
 
 impl KeypairsCommand {
     /// Perform command action
@@ -198,8 +165,7 @@ impl KeypairsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<KeypairResponse>(data)?;
         Ok(())
     }
 }

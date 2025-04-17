@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/credentials` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::credential::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::credential::response::list::CredentialResponse;
 use tracing::warn;
 
 /// Lists all credentials.
@@ -46,7 +43,6 @@ use tracing::warn;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/credentials`
-///
 #[derive(Args)]
 #[command(about = "List credentials")]
 pub struct CredentialsCommand {
@@ -64,7 +60,6 @@ pub struct CredentialsCommand {
 struct QueryParameters {
     /// The credential type, such as ec2 or cert. The implementation determines
     /// the list of supported types.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     _type: Option<String>,
 
@@ -91,40 +86,6 @@ struct UserInput {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Credentials response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The credential itself, as a serialized blob.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    blob: Option<String>,
-
-    /// The UUID for the credential.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The credential type, such as `ec2` or `cert`. The implementation
-    /// determines the list of supported types.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// The ID of the user who owns the credential.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    user_id: Option<String>,
-}
 
 impl CredentialsCommand {
     /// Perform command action
@@ -195,8 +156,7 @@ impl CredentialsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<CredentialResponse>(data)?;
         Ok(())
     }
 }

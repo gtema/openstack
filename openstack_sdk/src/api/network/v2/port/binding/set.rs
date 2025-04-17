@@ -60,7 +60,7 @@ pub struct Binding<'a> {
     pub(crate) host: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_profile"))]
+    #[builder(default, private, setter(into, name = "_profile"))]
     pub(crate) profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -91,12 +91,10 @@ pub struct Request<'a> {
     pub(crate) binding: Binding<'a>,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 

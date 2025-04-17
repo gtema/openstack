@@ -20,22 +20,16 @@
 //! Wraps invoking of the `allocations/{consumer_uuid}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::allocation::delete;
-use structable_derive::StructTable;
 
 /// Delete all allocation records for the consumer identified by
 /// {consumer_uuid} on all resource providers it is consuming.
@@ -43,7 +37,6 @@ use structable_derive::StructTable;
 /// Normal Response Codes: 204
 ///
 /// Error response codes: itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Delete allocations")]
 pub struct AllocationCommand {
@@ -64,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// consumer_uuid parameter for /allocations/{consumer_uuid} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_consumer_uuid",
@@ -72,9 +64,6 @@ struct PathParameters {
     )]
     consumer_uuid: String,
 }
-/// Allocation response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl AllocationCommand {
     /// Perform command action
@@ -98,8 +87,7 @@ impl AllocationCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

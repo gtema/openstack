@@ -39,7 +39,6 @@ pub struct Request<'a> {
     pub(crate) os_reset_status: OsResetStatus<'a>,
 
     /// id parameter for /v3/backups/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

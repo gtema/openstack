@@ -17,11 +17,13 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::load_balancer::v2::pool::member::response::list::MemberResponse;
+
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerPoolApiRequest, LoadBalancerPoolMember,
-        LoadBalancerPoolMemberApiRequest, LoadBalancerPoolMemberList,
+        LoadBalancerApiRequest, LoadBalancerPoolApiRequest, LoadBalancerPoolMemberApiRequest,
+        LoadBalancerPoolMemberList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +36,14 @@ use crate::{
 const TITLE: &str = "LB Pool Members";
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool/member";
 
-impl ResourceKey for LoadBalancerPoolMember {
+impl ResourceKey for MemberResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerPoolMembers<'a> =
-    TableViewComponentBase<'a, LoadBalancerPoolMember, LoadBalancerPoolMemberList>;
+    TableViewComponentBase<'a, MemberResponse, LoadBalancerPoolMemberList>;
 
 impl Component for LoadBalancerPoolMembers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

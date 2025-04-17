@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceFilterResponse {
     /// The resource filter array.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub filters: Option<Vec<String>>,
 
     /// Resource which the filters will be applied to.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub resource: Option<String>,
 }

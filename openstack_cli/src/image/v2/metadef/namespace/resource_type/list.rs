@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/resource_types` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::resource_type::list;
-use structable_derive::StructTable;
+use openstack_types::image::v2::metadef::namespace::resource_type::response::list::ResourceTypeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ResourceTypesCommand {
     /// Request Query parameters
@@ -58,54 +54,12 @@ struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
         value_name = "NAMESPACE_NAME"
     )]
     namespace_name: String,
-}
-/// ResourceTypes response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Date and time of resource type association
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Resource type names should be aligned with Heat resource types whenever
-    /// possible:
-    /// https://docs.openstack.org/heat/latest/template_guide/openstack.html
-    ///
-    #[serde()]
-    #[structable()]
-    name: String,
-
-    /// Specifies the prefix to use for the given resource type. Any properties
-    /// in the namespace should be prefixed with this prefix when being applied
-    /// to the specified resource type. Must include prefix separator (e.g. a
-    /// colon :).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    prefix: Option<String>,
-
-    /// Some resource types allow more than one key / value pair per instance.
-    /// For example, Cinder allows user and image metadata on volumes. Only the
-    /// image properties metadata is evaluated by Nova (scheduling or drivers).
-    /// This property allows a namespace target to remove the ambiguity.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    properties_target: Option<String>,
-
-    /// Date and time of the last resource type association modification
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
 }
 
 impl ResourceTypesCommand {
@@ -132,8 +86,7 @@ impl ResourceTypesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ResourceTypeResponse>(data)?;
         Ok(())
     }
 }

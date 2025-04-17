@@ -31,13 +31,12 @@ pub struct RuleTypeResponse {
     /// If `parameter_type` is `choices` then `parameter_values` contains a
     /// list of acceptable values, otherwise it contains a dict with keys of
     /// `start` and `end` which define the range of acceptable values.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub drivers: Option<String>,
 
     /// The type of QoS rule.
-    ///
-    #[serde(rename = "type")]
+    #[serde(default, rename = "type")]
     #[structable(optional, title = "type")]
     pub _type: Option<String>,
 }

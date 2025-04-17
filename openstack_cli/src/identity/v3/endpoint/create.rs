@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v3/endpoints` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::endpoint::create;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::endpoint::response::create::EndpointResponse;
 
 /// Creates an endpoint.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
-///
 #[derive(Args)]
 #[command(about = "Create endpoint")]
 pub struct EndpointCommand {
@@ -53,7 +49,6 @@ pub struct EndpointCommand {
     path: PathParameters,
 
     /// An `endpoint` object.
-    ///
     #[command(flatten)]
     endpoint: Endpoint,
 }
@@ -77,19 +72,16 @@ enum Interface {
 #[derive(Args, Clone)]
 struct Endpoint {
     /// A description of the endpoint.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Defines whether the endpoint appears in the service catalog: - `false`.
     /// The endpoint does not appear in the service catalog. - `true`. The
     /// endpoint appears in the service catalog. Default is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The endpoint ID.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
@@ -98,86 +90,28 @@ struct Endpoint {
     /// network interface. - `internal`. Visible by end users on an unmetered
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     interface: Interface,
 
     /// The name of the endpoint.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     region: Option<String>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     service_id: String,
 
     /// The endpoint URL.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     url: String,
-}
-
-/// Endpoint response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Indicates whether the endpoint appears in the service catalog: -
-    /// `false`. The endpoint does not appear in the service catalog. - `true`.
-    /// The endpoint appears in the service catalog.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The endpoint ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The interface type, which describes the visibility of the endpoint.
-    /// Value is: - `public`. Visible by end users on a publicly available
-    /// network interface. - `internal`. Visible by end users on an unmetered
-    /// internal network interface. - `admin`. Visible by administrative users
-    /// on a secure network interface.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    interface: Option<String>,
-
-    /// (Deprecated in v3.2) The geographic location of the service endpoint.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region: Option<String>,
-
-    /// (Since v3.2) The ID of the region that contains the service endpoint.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    region_id: Option<String>,
-
-    /// The UUID of the service to which the endpoint belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    service_id: Option<String>,
-
-    /// The endpoint URL.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    url: Option<String>,
 }
 
 impl EndpointCommand {
@@ -242,7 +176,7 @@ impl EndpointCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<EndpointResponse>(data)?;
         Ok(())
     }
 }

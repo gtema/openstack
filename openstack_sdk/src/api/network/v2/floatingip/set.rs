@@ -45,13 +45,11 @@ use std::borrow::Cow;
 /// the instance has the same public IP address each time that it boots,
 /// basically to maintain a consistent IP address for maintaining DNS
 /// assignment.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Floatingip<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -60,7 +58,6 @@ pub struct Floatingip<'a> {
     /// internal port has multiple associated IP addresses, the service chooses
     /// the first IP address unless you explicitly define a fixed IP address in
     /// the `fixed_ip_address` parameter.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
@@ -68,7 +65,6 @@ pub struct Floatingip<'a> {
     /// The ID of a port associated with the floating IP. To associate the
     /// floating IP with a fixed IP, you must specify the ID of the internal
     /// port. To disassociate the floating IP, `null` should be specified.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Option<Cow<'a, str>>>,
@@ -85,12 +81,10 @@ pub struct Request<'a> {
     /// VM, the instance has the same public IP address each time that it
     /// boots, basically to maintain a consistent IP address for maintaining
     /// DNS assignment.
-    ///
     #[builder(setter(into))]
     pub(crate) floatingip: Floatingip<'a>,
 
     /// id parameter for /v2.0/floatingips/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

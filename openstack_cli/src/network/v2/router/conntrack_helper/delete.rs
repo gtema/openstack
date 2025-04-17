@@ -20,29 +20,22 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/conntrack_helpers/{id}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::conntrack_helper::delete;
-use structable_derive::StructTable;
 
 /// Deletes a router conntrack helper.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 404
-///
 #[derive(Args)]
 #[command(about = "Delete a conntrack helper")]
 pub struct ConntrackHelperCommand {
@@ -64,7 +57,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_router_id",
@@ -73,7 +65,6 @@ struct PathParameters {
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -81,9 +72,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// ConntrackHelper response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ConntrackHelperCommand {
     /// Perform command action
@@ -108,8 +96,7 @@ impl ConntrackHelperCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

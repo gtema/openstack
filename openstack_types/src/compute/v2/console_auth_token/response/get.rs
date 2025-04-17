@@ -23,22 +23,20 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ConsoleAuthTokenResponse {
     /// The name or ID of the host.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub host: Option<String>,
 
     /// The UUID of the server.
-    ///
     #[structable()]
     pub instance_uuid: String,
 
     /// The id representing the internal access path.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub internal_access_path: Option<String>,
 
     /// The port number.
-    ///
     #[structable()]
     pub port: i32,
 }

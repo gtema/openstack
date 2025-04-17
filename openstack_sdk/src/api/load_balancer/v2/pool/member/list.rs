@@ -39,125 +39,101 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The IP address of the backend member server.
-    ///
     #[builder(default, setter(into))]
     address: Option<Cow<'a, str>>,
 
     /// The administrative state of the resource
-    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// Is the member a backup?
-    ///
     #[builder(default)]
     backup: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
     #[builder(default, setter(into))]
     created_at: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// The ID of the resource
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// Page size
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// An alternate IP address used for health monitoring a backend member.
-    ///
     #[builder(default, setter(into))]
     monitor_address: Option<Cow<'a, str>>,
 
     /// An alternate protocol port used for health monitoring a backend member.
-    ///
     #[builder(default, setter(into))]
     monitor_port: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource.
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have one or more of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that do not have at least one of the given
     /// tags.
-    ///
     #[builder(default, setter(into))]
     not_tags_any: Option<Cow<'a, str>>,
 
     /// The operating status of the resource.
-    ///
     #[builder(default, setter(into))]
     operating_status: Option<Cow<'a, str>>,
 
     /// The page direction.
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    ///
     #[builder(default, setter(into))]
     pool_id: Cow<'a, str>,
 
     /// The ID of the project owning this resource.
-    ///
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
     /// The protocol port number the backend member server is listening on.
-    ///
     #[builder(default)]
     protocol_port: Option<i32>,
 
     /// The provisioning status of the resource.
-    ///
     #[builder(default, setter(into))]
     provisioning_status: Option<Cow<'a, str>>,
 
     /// The subnet ID the member service is accessible from.
-    ///
     #[builder(default, setter(into))]
     subnet_id: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have this tag or tags.
-    ///
     #[builder(default, setter(into))]
     tags: Option<Cow<'a, str>>,
 
     /// Return the list of entities that have one or more of the given tags.
-    ///
     #[builder(default, setter(into))]
     tags_any: Option<Cow<'a, str>>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
 
     /// The weight of a member determines the portion of requests or
     /// connections it services compared to the other members of the pool.
-    ///
     #[builder(default)]
     weight: Option<i32>,
 

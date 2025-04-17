@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2/limits` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::limit::get;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::limit::response::get::LimitResponse;
 
 /// List project limits
-///
 #[derive(Args)]
 #[command(about = "Get Project Limits")]
 pub struct LimitCommand {
@@ -56,57 +52,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Limit response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The max amount of items allowed per page
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_page_limit: Option<i32>,
-
-    /// The max length of a recordset name
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_recordset_name_length: Option<i32>,
-
-    /// The max amount of records contained in a recordset
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_recordset_records: Option<i32>,
-
-    /// The max length of a zone name
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_zone_name_length: Option<i32>,
-
-    /// The max amount of records in a zone
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_zone_records: Option<i32>,
-
-    /// The max amount of recordsets per zone
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_zone_recordsets: Option<i32>,
-
-    /// The max amount of zones for this project
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_zones: Option<i32>,
-
-    /// The lowest ttl allowed on this system
-    ///
-    #[serde()]
-    #[structable(optional)]
-    min_ttl: Option<i32>,
-}
 
 impl LimitCommand {
     /// Perform command action
@@ -131,7 +76,7 @@ impl LimitCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<LimitResponse>(data)?;
         Ok(())
     }
 }

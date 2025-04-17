@@ -20,24 +20,20 @@
 //! Wraps invoking of the `v2/lbaas/availabilityzoneprofiles` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::availability_zone_profile::response::list::AvailabilityZoneProfileResponse;
 
 /// Lists all Availability Zone Profiles.
-///
 #[derive(Args)]
 pub struct AvailabilityZoneProfilesCommand {
     /// Request Query parameters
@@ -63,12 +59,10 @@ struct QueryParameters {
     id: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
@@ -76,7 +70,6 @@ struct QueryParameters {
     name: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -87,25 +80,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// AvailabilityZoneProfiles response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone_data: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    provider_name: Option<String>,
-}
 
 impl AvailabilityZoneProfilesCommand {
     /// Perform command action
@@ -153,8 +127,7 @@ impl AvailabilityZoneProfilesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AvailabilityZoneProfileResponse>(data)?;
         Ok(())
     }
 }

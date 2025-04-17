@@ -17,28 +17,25 @@
 //! Response type for the GET `resource_providers/{uuid}/allocations` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Allocation response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AllocationResponse {
     /// A dictionary of allocation records keyed by consumer uuid.
-    ///
     #[structable(serialize)]
-    pub allocations: HashMap<String, AllocationsItem>,
+    pub allocations: BTreeMap<String, AllocationsItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
-    ///
     #[structable()]
     pub resource_provider_generation: i32,
 }
 
 /// A dictionary of allocation records keyed by consumer uuid.
-///
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
-    pub resources: HashMap<String, i32>,
+    pub resources: BTreeMap<String, i32>,
 }

@@ -23,7 +23,6 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The UUID of the cluster.
-    ///
     #[structable()]
     pub uuid: String,
 }

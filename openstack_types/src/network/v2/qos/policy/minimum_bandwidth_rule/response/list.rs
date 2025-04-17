@@ -16,7 +16,6 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `qos/policies/{policy_id}/minimum_bandwidth_rules` operation
 
-use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
@@ -26,19 +25,18 @@ pub struct MinimumBandwidthRuleResponse {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub direction: Option<Direction>,
 
     /// The ID of the QoS minimum bandwidth rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The minimum KBPS (kilobits per second) value which should be available
     /// for port.
-    ///
-    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     #[structable(optional, wide)]
     pub min_kbps: Option<i64>,
 }
@@ -52,4 +50,15 @@ pub enum Direction {
     // Ingress
     #[serde(rename = "ingress")]
     Ingress,
+}
+
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
 }

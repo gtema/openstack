@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2.1/os-simple-tenant-usage/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::simple_tenant_usage::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::simple_tenant_usage::response::get::SimpleTenantUsageResponse;
 
 /// Shows usage statistics for a tenant.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "Show Usage Statistics For Tenant")]
 pub struct SimpleTenantUsageCommand {
@@ -74,32 +69,12 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-simple-tenant-usage/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// SimpleTenantUsage response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A list of the tenant usage objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tenant_usages: Option<Value>,
-
-    /// Links pertaining to usage. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    /// **New in version 2.40**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tenant_usages_links: Option<Value>,
 }
 
 impl SimpleTenantUsageCommand {
@@ -138,7 +113,7 @@ impl SimpleTenantUsageCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<SimpleTenantUsageResponse>(data)?;
         Ok(())
     }
 }

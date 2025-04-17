@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/providers` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::provider::list;
 use openstack_sdk::api::{Pagination, paged};
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::provider::response::list::ProviderResponse;
 
 /// Lists all enabled provider drivers.
 ///
@@ -42,7 +39,6 @@ use structable_derive::StructTable;
 /// the response body.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List Providers")]
 pub struct ProvidersCommand {
@@ -66,12 +62,10 @@ struct QueryParameters {
     description: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
@@ -79,7 +73,6 @@ struct QueryParameters {
     name: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 }
@@ -87,21 +80,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Providers response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Provider description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Provider name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl ProvidersCommand {
     /// Perform command action
@@ -143,8 +121,7 @@ impl ProvidersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ProviderResponse>(data)?;
         Ok(())
     }
 }

@@ -23,43 +23,43 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RouterResponse {
     /// The ID of the router.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Network ID which the router interface is connected to.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub network_id: Option<String>,
 
     /// The ID of the port which represents the router interface.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub port_id: Option<String>,
 
     /// The ID of the project who owns the router interface.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The ID of the subnet which the router interface belongs to.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub subnet_id: Option<String>,
 
     /// A list of the ID of the subnet which the router interface belongs to.
     /// The list contains only one member.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub subnet_ids: Option<Vec<String>>,
 
     /// The list of tags on the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project who owns the router interface.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 }

@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::evacuate_20;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::evacuate::ServerResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 #[command(about = "Evacuate Server (evacuate Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -49,7 +45,6 @@ pub struct ServerCommand {
     path: PathParameters,
 
     /// The action to evacuate a server to another host.
-    ///
     #[command(flatten)]
     evacuate: Evacuate,
 }
@@ -62,7 +57,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -77,7 +71,6 @@ struct Evacuate {
     /// this parameter, the operation generates a new password. Up to API
     /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
     /// is specified, an error is raised.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
@@ -92,7 +85,6 @@ struct Evacuate {
     /// recommended to either not specify a host so that the scheduler will
     /// pick one, or specify a host with microversion >= 2.29 and without
     /// `force=True` set.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
 
@@ -105,21 +97,8 @@ struct Evacuate {
     /// removed.
     ///
     /// **Available until version 2.13**
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     on_shared_storage: bool,
-}
-
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// An administrative password to access moved instance. If you set
-    /// enable_instance_password configuration option to False, the API
-    /// wouldn’t return the adminPass field in response.
-    ///
-    #[serde(rename = "adminPass")]
-    #[structable(title = "adminPass")]
-    admin_pass: String,
 }
 
 impl ServerCommand {
@@ -161,7 +140,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

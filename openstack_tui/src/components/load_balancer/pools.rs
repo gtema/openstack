@@ -17,14 +17,15 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::load_balancer::v2::pool::response::list::PoolResponse;
+
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
         LoadBalancerApiRequest, LoadBalancerHealthmonitorList,
         LoadBalancerHealthmonitorListBuilder, LoadBalancerHealthmonitorListBuilderError,
-        LoadBalancerPool, LoadBalancerPoolApiRequest, LoadBalancerPoolList,
-        LoadBalancerPoolMemberList, LoadBalancerPoolMemberListBuilder,
-        LoadBalancerPoolMemberListBuilderError,
+        LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
+        LoadBalancerPoolMemberListBuilder, LoadBalancerPoolMemberListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -37,15 +38,15 @@ use crate::{
 const TITLE: &str = "LB Pools";
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
 
-impl ResourceKey for LoadBalancerPool {
+impl ResourceKey for PoolResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&LoadBalancerPool> for LoadBalancerPoolMemberList {
+impl TryFrom<&PoolResponse> for LoadBalancerPoolMemberList {
     type Error = LoadBalancerPoolMemberListBuilderError;
-    fn try_from(value: &LoadBalancerPool) -> Result<Self, Self::Error> {
+    fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerPoolMemberListBuilder::default();
         if let Some(val) = &value.id {
             builder.pool_id(val.clone());
@@ -57,9 +58,9 @@ impl TryFrom<&LoadBalancerPool> for LoadBalancerPoolMemberList {
     }
 }
 
-impl TryFrom<&LoadBalancerPool> for LoadBalancerHealthmonitorList {
+impl TryFrom<&PoolResponse> for LoadBalancerHealthmonitorList {
     type Error = LoadBalancerHealthmonitorListBuilderError;
-    fn try_from(value: &LoadBalancerPool) -> Result<Self, Self::Error> {
+    fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerHealthmonitorListBuilder::default();
         if let Some(val) = &value.id {
             builder.pool_id(val.clone());
@@ -71,7 +72,7 @@ impl TryFrom<&LoadBalancerPool> for LoadBalancerHealthmonitorList {
     }
 }
 
-pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, LoadBalancerPool, LoadBalancerPoolList>;
+pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolResponse, LoadBalancerPoolList>;
 
 impl Component for LoadBalancerPools<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

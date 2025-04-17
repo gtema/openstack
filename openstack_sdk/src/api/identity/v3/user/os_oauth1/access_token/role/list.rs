@@ -33,14 +33,12 @@ pub struct Request<'a> {
     /// access_token_id parameter for
     /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     access_token_id: Cow<'a, str>,
 
     /// user_id parameter for
     /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

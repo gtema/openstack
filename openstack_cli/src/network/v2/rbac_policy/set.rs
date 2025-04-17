@@ -20,27 +20,23 @@
 //! Wraps invoking of the `v2.0/rbac-policies/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::rbac_policy::set;
-use structable_derive::StructTable;
+use openstack_types::network::v2::rbac_policy::response::set::RbacPolicyResponse;
 
 /// Update RBAC policy for given tenant.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404
-///
 #[derive(Args)]
 #[command(about = "Update RBAC policy")]
 pub struct RbacPolicyCommand {
@@ -64,7 +60,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/rbac-policies/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -81,57 +76,8 @@ struct RbacPolicy {
     /// example, the name of the project is provided here, it will be accepted
     /// by the Neutron API, but the RBAC rule created will not work as
     /// expected.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     target_tenant: Option<String>,
-}
-
-/// RbacPolicy response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Action for the RBAC policy which is `access_as_external` or
-    /// `access_as_shared`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    action: Option<String>,
-
-    /// The ID of the RBAC policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The ID of the `object_type` resource. An `object_type` of `network`
-    /// returns a network ID, an `object_type` of `qos-policy` returns a QoS
-    /// policy ID, an `object_type` of `security-group` returns a security
-    /// group ID, an `object_type` of `address-scope` returns a address scope
-    /// ID, an `object_type` of `subnetpool` returns a subnetpool ID and an
-    /// `object_type` of `address-group` returns an address group ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    object_id: Option<String>,
-
-    /// The type of the object that the RBAC policy affects. Types include
-    /// `qos-policy`, `network`, `security-group`, `address-scope`,
-    /// `subnetpool` or `address-group`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    object_type: Option<String>,
-
-    /// The ID of the tenant to which the RBAC policy will be enforced.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    target_tenant: Option<String>,
-
-    /// The ID of the project that owns the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
 }
 
 impl RbacPolicyCommand {
@@ -166,7 +112,7 @@ impl RbacPolicyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<RbacPolicyResponse>(data)?;
         Ok(())
     }
 }

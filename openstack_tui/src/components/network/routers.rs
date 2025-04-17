@@ -17,10 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::network::v2::router::response::list::RouterResponse;
+
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkRouter, NetworkRouterApiRequest, NetworkRouterList,
+        ApiRequest, NetworkApiRequest, NetworkRouterApiRequest, NetworkRouterList,
     },
     components::{Component, table_view::TableViewComponentBase},
     config::Config,
@@ -32,13 +34,13 @@ use crate::{
 const TITLE: &str = "Routers";
 const VIEW_CONFIG_KEY: &str = "network.router";
 
-impl ResourceKey for NetworkRouter {
+impl ResourceKey for RouterResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkRouters<'a> = TableViewComponentBase<'a, NetworkRouter, NetworkRouterList>;
+pub type NetworkRouters<'a> = TableViewComponentBase<'a, RouterResponse, NetworkRouterList>;
 
 impl NetworkRouters<'_> {
     /// Normalize filters

@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/qos-specs` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::create;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::qos_spec::response::create::QosSpecResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct QosSpecCommand {
     /// Request Query parameters
@@ -49,7 +44,6 @@ pub struct QosSpecCommand {
     path: PathParameters,
 
     /// A `qos_specs` object.
-    ///
     #[command(flatten)]
     qos_specs: QosSpecs,
 }
@@ -65,37 +59,8 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct QosSpecs {
     /// The name of the QoS specification.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
-}
-
-/// QosSpec response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The consumer type.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consumer: Option<String>,
-
-    /// The generated ID for the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the QoS specification.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A `specs` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    specs: Option<Value>,
 }
 
 impl QosSpecCommand {
@@ -128,7 +93,7 @@ impl QosSpecCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<QosSpecResponse>(data)?;
         Ok(())
     }
 }

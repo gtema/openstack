@@ -23,12 +23,12 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneCapabilityResponse {
     /// The provider availability zone capability description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The provider availability zone capability name.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

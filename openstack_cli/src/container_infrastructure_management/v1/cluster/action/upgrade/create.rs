@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v1/clusters/actions/upgrade` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::action::upgrade::create;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::container_infrastructure_management::v1::cluster::action::upgrade::response::create::UpgradeResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct UpgradeCommand {
     /// Request Query parameters
@@ -70,13 +66,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Upgrade response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable()]
-    uuid: String,
-}
 
 impl UpgradeCommand {
     /// Perform command action
@@ -125,7 +114,7 @@ impl UpgradeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<UpgradeResponse>(data)?;
         Ok(())
     }
 }

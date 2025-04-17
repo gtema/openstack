@@ -35,12 +35,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// group parameter for /v3/domains/config/{group}/{option}/default API
-    ///
     #[builder(default, setter(into))]
     group: Cow<'a, str>,
 
     /// option parameter for /v3/domains/config/{group}/{option}/default API
-    ///
     #[builder(default, setter(into))]
     option: Cow<'a, str>,
 

@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v3/backups/import_record` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::import_record::create;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::backup::import_record::response::create::ImportRecordResponse;
 
 /// Import a backup.
-///
 #[derive(Args)]
 pub struct ImportRecordCommand {
     /// Request Query parameters
@@ -50,7 +45,6 @@ pub struct ImportRecordCommand {
 
     /// An object recording volume backup metadata, including `backup_service`
     /// and `backup_url`.
-    ///
     #[command(flatten)]
     backup_record: BackupRecord,
 }
@@ -66,36 +60,12 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct BackupRecord {
     /// The service used to perform the backup.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     backup_service: String,
 
     /// An identifier string to locate the backup.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     backup_url: String,
-}
-
-/// ImportRecord response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the backup.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Links for the backup.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The backup name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl ImportRecordCommand {
@@ -130,7 +100,7 @@ impl ImportRecordCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ImportRecordResponse>(data)?;
         Ok(())
     }
 }

@@ -17,7 +17,7 @@
 //! Response type for the GET `allocation_candidates` operation
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// AllocationCandidate response representation
@@ -26,25 +26,26 @@ pub struct AllocationCandidateResponse {
     /// A list of objects that contain a serialized HTTP body that a client may
     /// subsequently use in a call to PUT /allocations/{consumer_uuid} to claim
     /// resources against a related set of resource providers.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub allocation_requests: Option<Vec<AllocationRequests>>,
 
+    #[serde(default)]
     #[structable(optional, serialize)]
-    pub provider_summaries: Option<HashMap<String, ProviderSummariesItem>>,
+    pub provider_summaries: Option<BTreeMap<String, ProviderSummariesItem>>,
 }
 
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
-    pub resources: Option<HashMap<String, i32>>,
+    pub resources: Option<BTreeMap<String, i32>>,
 }
 
 /// `AllocationRequests` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationRequests {
-    pub allocations: HashMap<String, AllocationsItem>,
-    pub mappings: Option<HashMap<String, Vec<String>>>,
+    pub allocations: BTreeMap<String, AllocationsItem>,
+    pub mappings: Option<BTreeMap<String, Vec<String>>>,
 }
 
 /// `ResourcesItem` type
@@ -58,7 +59,7 @@ pub struct ResourcesItem {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProviderSummariesItem {
     pub parent_provider_uuid: Option<String>,
-    pub resources: HashMap<String, ResourcesItem>,
+    pub resources: BTreeMap<String, ResourcesItem>,
     pub root_provider_uuid: Option<String>,
     pub traits: Option<Vec<String>>,
 }

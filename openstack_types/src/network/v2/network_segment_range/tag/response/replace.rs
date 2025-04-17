@@ -17,7 +17,34 @@
 //! Response type for the PUT `network_segment_ranges/{network_segment_range_id}/tags` operation
 
 use serde::{Deserialize, Serialize};
+use structable::{StructTable, StructTableOptions};
 
 /// Tag response representation
 #[derive(Clone, Deserialize, Serialize)]
-pub struct Tag(String);
+pub struct TagResponse(String);
+
+impl StructTable for TagResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}
+
+impl StructTable for &TagResponse {
+    fn class_headers<O: StructTableOptions>(_options: &O) -> Option<Vec<String>> {
+        Some(Vec::from(["Value".to_string()]))
+    }
+
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        Vec::from([Some(self.0.to_string())])
+    }
+}

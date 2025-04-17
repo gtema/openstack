@@ -34,25 +34,21 @@ pub enum OsDcfDiskConfig {
 }
 
 /// The action to rebuild a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rebuild<'a> {
     /// IPv4 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv4: Option<Cow<'a, str>>,
 
     /// IPv6 address that should be used to access this server.
-    ///
     #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv6: Option<Cow<'a, str>>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
-    ///
     #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) admin_pass: Option<Cow<'a, str>>,
@@ -61,7 +57,6 @@ pub struct Rebuild<'a> {
     /// length. Before microversion 2.19 this was set to the server name.
     ///
     /// **New in version 2.19**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -78,7 +73,6 @@ pub struct Rebuild<'a> {
     /// instance.
     ///
     /// **New in version 2.90**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hostname: Option<Cow<'a, str>>,
@@ -92,7 +86,6 @@ pub struct Rebuild<'a> {
     /// specifying a new image will result in validating that the image is
     /// acceptable for the current compute host on which the server exists. If
     /// the new image is not valid, the server will go into `ERROR` status.
-    ///
     #[serde(rename = "imageRef")]
     #[builder(setter(into))]
     pub(crate) image_ref: Cow<'a, str>,
@@ -109,20 +102,17 @@ pub struct Rebuild<'a> {
     /// keypair by the user calling rebuild.
     ///
     /// **New in version 2.54**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) key_name: Option<Option<Cow<'a, str>>>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     /// The server name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -143,7 +133,6 @@ pub struct Rebuild<'a> {
     /// - `MANUAL`. The API builds the server by using whatever partition
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
-    ///
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
@@ -156,9 +145,8 @@ pub struct Rebuild<'a> {
     /// This only works with baremetal servers provided by Ironic. Passing it
     /// to any other server instance results in a fault and will prevent the
     /// rebuild from happening.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) preserve_ephemeral: Option<bool>,
 
     /// A list of trusted certificate IDs, which are used during image
@@ -171,7 +159,6 @@ pub struct Rebuild<'a> {
     /// unset or reset to the configured defaults.
     ///
     /// **New in version 2.63**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) trusted_image_certificates: Option<Vec<Cow<'a, str>>>,
@@ -181,7 +168,6 @@ pub struct Rebuild<'a> {
     /// existing user_data is unset.
     ///
     /// **New in version 2.57**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) user_data: Option<Option<Cow<'a, str>>>,
@@ -190,7 +176,6 @@ pub struct Rebuild<'a> {
 impl<'a> RebuildBuilder<'a> {
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -209,12 +194,10 @@ impl<'a> RebuildBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to rebuild a server.
-    ///
     #[builder(setter(into))]
     pub(crate) rebuild: Rebuild<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v3/os-hosts/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::host::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::host::response::get::HostResponse;
 
 /// Shows the volume usage info given by hosts.
 ///
@@ -42,7 +38,6 @@ use structable_derive::StructTable;
 /// hostname | | returns: | dict -- the host resources dictionary. ex.:
 /// `  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  `
 /// |
-///
 #[derive(Args)]
 pub struct HostCommand {
     /// Request Query parameters
@@ -62,20 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/os-hosts/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Host response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(pretty)]
-    resource: Value,
 }
 
 impl HostCommand {
@@ -102,7 +89,7 @@ impl HostCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<HostResponse>(data)?;
         Ok(())
     }
 }

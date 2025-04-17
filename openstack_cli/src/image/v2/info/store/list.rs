@@ -20,21 +20,17 @@
 //! Wraps invoking of the `v2/info/stores/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::info::store::list_detailed;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::info::store::response::list_detailed::StoreResponse;
 
 /// Lists all the backend stores, with detail, accessible to admins, for
 /// non-admin user API will return bad request.
@@ -42,7 +38,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 403, 404
-///
 #[derive(Args)]
 #[command(about = "List stores detail")]
 pub struct StoresCommand {
@@ -62,33 +57,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Stores response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde(rename = "default")]
-    #[structable(optional, title = "default", wide)]
-    _default: Option<bool>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    properties: Option<Value>,
-
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    weight: Option<f32>,
-}
 
 impl StoresCommand {
     /// Perform command action
@@ -113,8 +81,7 @@ impl StoresCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<StoreResponse>(data)?;
         Ok(())
     }
 }

@@ -33,14 +33,12 @@ pub struct Request<'a> {
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// user_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
-    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

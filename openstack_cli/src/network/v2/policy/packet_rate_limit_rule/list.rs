@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/policies/{policy_id}/packet_rate_limit_rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::policy::packet_rate_limit_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::policy::packet_rate_limit_rule::response::list::PacketRateLimitRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct PacketRateLimitRulesCommand {
     /// Request Query parameters
@@ -59,13 +54,11 @@ pub struct PacketRateLimitRulesCommand {
 struct QueryParameters {
     /// direction query parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["egress","ingress"])]
     direction: Option<String>,
 
     /// id query parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
@@ -73,43 +66,36 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// max_burst_kpps query parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_burst_kpps: Option<i32>,
 
     /// max_kpps query parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
-    ///
     #[arg(help_heading = "Query parameters", long)]
     max_kpps: Option<i32>,
 
     /// Reverse the page direction
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 }
@@ -119,32 +105,12 @@ struct QueryParameters {
 struct PathParameters {
     /// policy_id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_policy_id",
         value_name = "POLICY_ID"
     )]
     policy_id: String,
-}
-/// PacketRateLimitRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, wide)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    max_burst_kpps: Option<IntString>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    max_kpps: Option<IntString>,
 }
 
 impl PacketRateLimitRulesCommand {
@@ -200,8 +166,7 @@ impl PacketRateLimitRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<PacketRateLimitRuleResponse>(data)?;
         Ok(())
     }
 }

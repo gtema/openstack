@@ -25,18 +25,15 @@ pub struct FlavorResponse {
     /// The description of the flavor.
     ///
     /// **New in version 2.55**
-    ///
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
-    ///
     #[structable()]
     pub id: String,
 
     /// The display name of a flavor.
-    ///
     #[structable()]
     pub name: String,
 }

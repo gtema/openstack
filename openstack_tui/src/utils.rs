@@ -12,7 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::config::ViewConfig;
 use eyre::Result;
 use lazy_static::lazy_static;
 use ratatui::prelude::*;
@@ -26,7 +25,6 @@ use tracing_subscriber::{
 };
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
-pub type OutputConfig = ViewConfig;
 
 pub trait ResourceKey {
     fn get_key() -> &'static str {
@@ -217,12 +215,12 @@ pub(crate) fn as_string<'de, D: Deserializer<'de>>(deserializer: D) -> Result<St
     })
 }
 
-pub trait StructTable {
-    /// Build a vector of headers and rows from the data
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
-    /// Get a status of entry
-    fn status(&self) -> Vec<Option<String>>;
-}
+//pub trait StructTable {
+//    /// Build a vector of headers and rows from the data
+//    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+//    /// Get a status of entry
+//    fn status(&self) -> Vec<Option<String>>;
+//}
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
 pub fn centered_rect_percent(percent_x: u16, percent_y: u16, r: Rect) -> Rect {

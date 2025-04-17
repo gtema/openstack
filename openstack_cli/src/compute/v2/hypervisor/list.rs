@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2.1/os-hypervisors/detail` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::hypervisor::response::list_detailed::HypervisorResponse;
 
 /// Lists hypervisors details.
 ///
@@ -46,7 +42,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-///
 #[derive(Args)]
 #[command(about = "List Hypervisors Details")]
 pub struct HypervisorsCommand {
@@ -82,196 +77,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Hypervisors response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// A dictionary that contains cpu information like `arch`, `model`,
-    /// `vendor`, `features` and `topology`. The content of this field is
-    /// hypervisor specific.
-    ///
-    /// Note
-    ///
-    /// Since version 2.28 `cpu_info` field is returned as a dictionary instead
-    /// of string.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    cpu_info: Option<Value>,
-
-    /// The current_workload is the number of tasks the hypervisor is
-    /// responsible for. This will be equal or greater than the number of
-    /// active VMs on the system (it can be greater when VMs are being deleted
-    /// and the hypervisor is still cleaning up).
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    current_workload: Option<i32>,
-
-    /// The actual free disk on this hypervisor(in GiB). If allocation ratios
-    /// used for overcommit are configured, this may be negative. This is
-    /// intentional as it provides insight into the amount by which the disk is
-    /// overcommitted.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    disk_available_least: Option<i32>,
-
-    /// The free disk remaining on this hypervisor(in GiB). This does not take
-    /// allocation ratios used for overcommit into account so this value may be
-    /// negative.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    free_disk_gb: Option<i32>,
-
-    /// The free RAM in this hypervisor(in MiB). This does not take allocation
-    /// ratios used for overcommit into account so this value may be negative.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    free_ram_mb: Option<i32>,
-
-    /// The IP address of the hypervisor’s host.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    host_ip: Option<String>,
-
-    /// The hypervisor host name provided by the Nova virt driver. For the
-    /// Ironic driver, it is the Ironic node uuid.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    hypervisor_hostname: Option<String>,
-
-    /// The hypervisor type.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    hypervisor_type: Option<String>,
-
-    /// The hypervisor version.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    hypervisor_version: Option<i32>,
-
-    /// The id of the hypervisor. From version 2.53 it is a string as UUID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The disk in this hypervisor (in GiB). This does not take allocation
-    /// ratios used for overcommit into account so there may be disparity
-    /// between this and the used count.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    local_gb: Option<i32>,
-
-    /// The disk used in this hypervisor (in GiB).
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    local_gb_used: Option<i32>,
-
-    /// The memory of this hypervisor (in MiB). This does not take allocation
-    /// ratios used for overcommit into account so there may be disparity
-    /// between this and the used count.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    memory_mb: Option<i32>,
-
-    /// The memory used in this hypervisor (in MiB).
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    memory_mb_used: Option<i32>,
-
-    /// The number of running VMs on this hypervisor.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    running_vms: Option<i32>,
-
-    /// A list of `server` objects. This field has become mandatory in
-    /// microversion 2.75. If no servers is on hypervisor then empty list is
-    /// returned.
-    ///
-    /// **New in version 2.53**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    servers: Option<Value>,
-
-    /// The hypervisor service object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    service: Option<Value>,
-
-    /// The state of the hypervisor. One of `up` or `down`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    state: Option<String>,
-
-    /// The status of the hypervisor. One of `enabled` or `disabled`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The total uptime of the hypervisor and information about average load.
-    /// Only reported for active hosts where the virt driver supports this
-    /// feature.
-    ///
-    /// **New in version 2.88**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    uptime: Option<String>,
-
-    /// The number of vCPU in this hypervisor. This does not take allocation
-    /// ratios used for overcommit into account so there may be disparity
-    /// between this and the used count.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vcpus: Option<i32>,
-
-    /// The number of vCPU used in this hypervisor.
-    ///
-    /// **Available until version 2.87**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vcpus_used: Option<i32>,
-}
 
 impl HypervisorsCommand {
     /// Perform command action
@@ -310,8 +115,7 @@ impl HypervisorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<HypervisorResponse>(data)?;
         Ok(())
     }
 }

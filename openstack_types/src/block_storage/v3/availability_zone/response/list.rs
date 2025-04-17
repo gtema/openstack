@@ -23,12 +23,11 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// The availability zone name.
-    ///
-    #[serde(rename = "zoneName")]
+    #[serde(default, rename = "zoneName")]
     #[structable(optional, title = "zoneName")]
     pub zone_name: Option<String>,
 
-    #[serde(rename = "zoneState")]
+    #[serde(default, rename = "zoneState")]
     #[structable(optional, serialize, title = "zoneState")]
     pub zone_state: Option<ZoneState>,
 }

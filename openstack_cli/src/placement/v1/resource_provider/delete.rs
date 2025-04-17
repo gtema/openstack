@@ -20,22 +20,16 @@
 //! Wraps invoking of the `resource_providers/{uuid}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::delete;
-use structable_derive::StructTable;
 
 /// Delete the resource provider identified by {uuid}. This will also
 /// disassociate aggregates and delete inventories.
@@ -50,7 +44,6 @@ use structable_derive::StructTable;
 ///
 /// This error code will be also returned if there are existing child resource
 /// providers under the parent resource provider being deleted.
-///
 #[derive(Args)]
 #[command(about = "Delete resource provider")]
 pub struct ResourceProviderCommand {
@@ -71,7 +64,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
@@ -79,9 +71,6 @@ struct PathParameters {
     )]
     uuid: String,
 }
-/// ResourceProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ResourceProviderCommand {
     /// Perform command action
@@ -105,8 +94,7 @@ impl ResourceProviderCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

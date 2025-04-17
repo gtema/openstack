@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v3/OS-TRUST/trusts` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_trust::trust::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_trust::trust::response::list::TrustResponse;
 
 /// Dispatch for LIST trusts.
 ///
 /// GET /v3/OS-TRUST/trusts
-///
 #[derive(Args)]
 pub struct TrustsCommand {
     /// Request Query parameters
@@ -55,13 +50,11 @@ pub struct TrustsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Represents the user who is capable of consuming the trust.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     trustee_user_id: Option<String>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     trustor_user_id: Option<String>,
 }
@@ -69,119 +62,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Trusts response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// If set to true then a trust between a trustor and any third-party user
-    /// may be issued by the trustee just like a regular trust. If set to
-    /// false, stops further redelegation. False by default.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    allow_redelegation: Option<bool>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    deleted_at: Option<String>,
-
-    /// Specifies the expiration time of the trust. A trust may be revoked
-    /// ahead of expiration. If the value represents a time in the past, the
-    /// trust is deactivated. In the redelegation case it must not exceed the
-    /// value of the corresponding expires_at field of the redelegated trust or
-    /// it may be omitted, then the expires_at value is copied from the
-    /// redelegated trust.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    expires_at: Option<String>,
-
-    /// The ID of the trust.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// If set to true, then the user attribute of tokens generated based on
-    /// the trust will represent that of the trustor rather than the trustee,
-    /// thus allowing the trustee to impersonate the trustor. If impersonation
-    /// if set to false, then the token's user attribute will represent that of
-    /// the trustee.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    impersonation: Option<bool>,
-
-    /// Identifies the project upon which the trustor is delegating
-    /// authorization.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// Returned with redelegated trust provides information about the
-    /// predecessor in the trust chain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redelegated_trust_id: Option<String>,
-
-    /// Specifies the maximum remaining depth of the redelegated trust chain.
-    /// Each subsequent trust has this field decremented by 1 automatically.
-    /// The initial trustor issuing new trust that can be redelegated, must set
-    /// allow_redelegation to true and may set redelegation_count to an integer
-    /// value less than or equal to max_redelegation_count configuration
-    /// parameter in order to limit the possible length of derived trust
-    /// chains. The trust issued by the trustor using a project-scoped token
-    /// (not redelegating), in which allow_redelegation is set to true (the new
-    /// trust is redelegatable), will be populated with the value specified in
-    /// the max_redelegation_count configuration parameter if
-    /// redelegation_count is not set or set to null. If allow_redelegation is
-    /// set to false then redelegation_count will be set to 0 in the trust. If
-    /// the trust is being issued by the trustee of a redelegatable
-    /// trust-scoped token (redelegation case) then redelegation_count should
-    /// not be set, as it will automatically be set to the value in the
-    /// redelegatable trust-scoped token decremented by 1. Note, if the
-    /// resulting value is 0, this means that the new trust will not be
-    /// redelegatable, regardless of the value of allow_redelegation.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    redelegation_count: Option<i32>,
-
-    /// Specifies how many times the trust can be used to obtain a token. This
-    /// value is decreased each time a token is issued through the trust. Once
-    /// it reaches 0, no further tokens will be issued through the trust. The
-    /// default value is null, meaning there is no limit on the number of
-    /// tokens issued through the trust. If redelegation is enabled it must not
-    /// be set.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    remaining_uses: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    roles: Option<Value>,
-
-    /// The links for the `user` resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    roles_links: Option<Value>,
-
-    /// Represents the user who is capable of consuming the trust.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    trustee_user_id: Option<String>,
-
-    /// Represents the user who created the trust, and who's authorization is
-    /// being delegated.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    trustor_user_id: Option<String>,
-}
 
 impl TrustsCommand {
     /// Perform command action
@@ -212,8 +92,7 @@ impl TrustsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TrustResponse>(data)?;
         Ok(())
     }
 }

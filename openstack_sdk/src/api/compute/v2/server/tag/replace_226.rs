@@ -33,12 +33,10 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A list of tags. The maximum count of tags in this list is 50.
-    ///
     #[builder(setter(into))]
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

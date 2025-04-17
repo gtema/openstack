@@ -20,19 +20,17 @@
 //! Wraps invoking of the `resource_providers/{uuid}/traits` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::r#trait::set;
+use openstack_types::placement::v1::resource_provider::r#trait::response::set::TraitResponse;
 
 /// Associate traits with the resource provider identified by {uuid}. All the
 /// associated traits will be replaced by the traits specified in the request
@@ -41,7 +39,6 @@ use openstack_sdk::api::placement::v1::resource_provider::r#trait::set;
 /// Normal Response Codes: 200
 ///
 /// Error response codes: badRequest(400), itemNotFound(404), conflict(409)
-///
 #[derive(Args)]
 #[command(about = "Update resource provider traits")]
 pub struct TraitCommand {
@@ -56,7 +53,6 @@ pub struct TraitCommand {
     /// A list of traits.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     traits: Vec<String>,
 }
@@ -69,36 +65,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// uuid parameter for /resource_providers/{uuid}/traits API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_uuid",
         value_name = "UUID"
     )]
     uuid: String,
-}
-/// Trait response representation
-#[derive(Deserialize, Serialize, Clone)]
-struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
 }
 
 impl TraitCommand {
@@ -128,7 +100,7 @@ impl TraitCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<TraitResponse>(data)?;
         Ok(())
     }
 }

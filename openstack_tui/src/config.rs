@@ -12,20 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
-    path::{Path, PathBuf},
-};
-
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use derive_deref::{Deref, DerefMut};
 use eyre::Result;
 use ratatui::style::{Color, palette::tailwind};
 use serde::{Deserialize, de::Deserializer};
 use std::fmt;
-use tracing::error;
-
+use std::{
+    collections::{BTreeMap, BTreeSet, HashMap},
+    path::{Path, PathBuf},
+};
+use structable::OutputConfig;
 use thiserror::Error;
+use tracing::error;
 
 use crate::{action::Action, mode::Mode};
 
@@ -53,7 +52,7 @@ pub struct Config {
     #[serde(default)]
     pub styles: Styles,
     #[serde(default)]
-    pub views: HashMap<String, ViewConfig>,
+    pub views: HashMap<String, OutputConfig>,
 }
 
 /// Errors which may occur when dealing with OpenStack connection

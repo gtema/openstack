@@ -43,7 +43,6 @@ pub struct Request<'a> {
     pub(crate) rule_type: RuleType,
 
     /// id parameter for /v2.0/qos/rule-types/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -27,30 +27,25 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A group object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Group<'a> {
     /// The name of the availability zone.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
 
     /// The group description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The group type ID.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) group_type: Cow<'a, str>,
 
     /// The group name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
@@ -60,7 +55,6 @@ pub struct Group<'a> {
     /// volume type. For information about how to use volume types to create
     /// multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) volume_types: Vec<Cow<'a, str>>,
@@ -70,7 +64,6 @@ pub struct Group<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A group object.
-    ///
     #[builder(setter(into))]
     pub(crate) group: Group<'a>,
 

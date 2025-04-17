@@ -25,12 +25,10 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to remove a fixed ip address from a server.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoveFixedIp<'a> {
     /// The IP address.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) address: Cow<'a, str>,
@@ -40,12 +38,10 @@ pub struct RemoveFixedIp<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to remove a fixed ip address from a server.
-    ///
     #[builder(setter(into))]
     pub(crate) remove_fixed_ip: RemoveFixedIp<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -47,27 +47,23 @@ pub enum Ethertype {
 }
 
 /// A `security_group_rule` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SecurityGroupRule<'a> {
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) direction: Option<Direction>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) ethertype: Option<Ethertype>,
@@ -76,7 +72,6 @@ pub struct SecurityGroupRule<'a> {
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be greater than or equal to the `port_range_min` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP code.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_range_max: Option<Option<i32>>,
@@ -85,7 +80,6 @@ pub struct SecurityGroupRule<'a> {
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be less than or equal to the `port_range_max` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP type.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_range_min: Option<Option<i32>>,
@@ -101,7 +95,6 @@ pub struct SecurityGroupRule<'a> {
     /// between [0-255] is also valid. The string `any` (or integer `0`) means
     /// `all` IP protocols. See the constants in `neutron_lib.constants` for
     /// the most up-to-date list of supported strings.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) protocol: Option<Cow<'a, str>>,
@@ -113,19 +106,16 @@ pub struct SecurityGroupRule<'a> {
     /// The remote group UUID to associate with this security group rule. You
     /// can specify either the `remote_group_id` or `remote_ip_prefix`
     /// attribute in the request body.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remote_group_id: Option<Cow<'a, str>>,
 
     /// The remote IP prefix that is matched by this security group rule.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remote_ip_prefix: Option<Cow<'a, str>>,
 
     /// The security group ID to associate with this security group rule.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) security_group_id: Option<Cow<'a, str>>,
@@ -139,7 +129,6 @@ pub struct SecurityGroupRule<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `security_group_rule` object.
-    ///
     #[builder(setter(into))]
     pub(crate) security_group_rule: SecurityGroupRule<'a>,
 

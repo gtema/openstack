@@ -17,11 +17,13 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::image::v2::image::response::list::ImageResponse;
+
 use crate::{
     action::Action,
     cloud_worker::image::v2::{
-        ImageApiRequest, ImageImage, ImageImageApiRequest, ImageImageDelete,
-        ImageImageDeleteBuilder, ImageImageDeleteBuilderError, ImageImageList,
+        ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageDeleteBuilder,
+        ImageImageDeleteBuilderError, ImageImageList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,15 +36,15 @@ use crate::{
 const TITLE: &str = "Images";
 const VIEW_CONFIG_KEY: &str = "image.image";
 
-impl ResourceKey for ImageImage {
+impl ResourceKey for ImageResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&ImageImage> for ImageImageDelete {
+impl TryFrom<&ImageResponse> for ImageImageDelete {
     type Error = ImageImageDeleteBuilderError;
-    fn try_from(value: &ImageImage) -> Result<Self, Self::Error> {
+    fn try_from(value: &ImageResponse) -> Result<Self, Self::Error> {
         let mut builder = ImageImageDeleteBuilder::default();
         if let Some(val) = &value.id {
             builder.id(val.clone());
@@ -54,7 +56,7 @@ impl TryFrom<&ImageImage> for ImageImageDelete {
     }
 }
 
-pub type Images<'a> = TableViewComponentBase<'a, ImageImage, ImageImageList>;
+pub type Images<'a> = TableViewComponentBase<'a, ImageResponse, ImageImageList>;
 
 impl Component for Images<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

@@ -23,58 +23,57 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The description of the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain for the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID for the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub is_domain: Option<bool>,
 
     /// The name of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 
     /// The ID of the parent for the project.
     ///
     /// **New in version 3.4**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 }
 
 /// The link to the resources in question.
-///
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -83,7 +82,6 @@ pub struct Links {
 
 /// The resource options for the project. Available resource options are
 /// `immutable`.
-///
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

@@ -27,7 +27,7 @@ use serde::Serialize;
 #[builder(setter(strip_option))]
 pub struct Delete {
     #[serde(rename = "delete-volumes", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) delete_volumes: Option<bool>,
 }
 

@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v2/lbaas/l7policies/{l7policy_id}/rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -37,8 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::l7policy::rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::l7policy::rule::response::list::RuleResponse;
 use tracing::warn;
 
 /// Lists all L7 rules for the project.
@@ -52,7 +48,6 @@ use tracing::warn;
 /// own to list L7 policies for other projects.
 ///
 /// The list might be empty.
-///
 #[derive(Args)]
 #[command(about = "List L7 Rules")]
 pub struct RulesCommand {
@@ -91,12 +86,10 @@ struct QueryParameters {
     key: Option<String>,
 
     /// Page size
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list
-    ///
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
@@ -104,7 +97,6 @@ struct QueryParameters {
     operating_status: Option<String>,
 
     /// The page direction.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
@@ -142,108 +134,12 @@ struct ProjectInput {
 struct PathParameters {
     /// l7policy_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_l7policy_id",
         value_name = "L7POLICY_ID"
     )]
     l7policy_id: String,
-}
-/// Rules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
-
-    /// The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,
-    /// `EQUAL_TO`, `REGEX`, or `STARTS_WITH`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    compare_type: Option<String>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The ID of the L7 rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// When `true` the logic of the rule is inverted. For example, with invert
-    /// `true`, equal to would become not equal to.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    invert: Option<bool>,
-
-    /// The key to use for the comparison. For example, the name of the cookie
-    /// to evaluate.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    key: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional, status)]
-    operating_status: Option<String>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provisioning_status: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`,
-    /// `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The value to use for the comparison. For example, the file type to
-    /// compare.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    value: Option<String>,
 }
 
 impl RulesCommand {
@@ -354,8 +250,7 @@ impl RulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<RuleResponse>(data)?;
         Ok(())
     }
 }

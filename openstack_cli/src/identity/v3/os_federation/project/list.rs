@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/projects` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::project::list;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::project::response::list::ProjectResponse;
 
 /// Get possible project scopes for token.
 ///
 /// GET/HEAD /v3/auth/projects GET/HEAD /v3/OS-FEDERATION/projects
-///
 #[derive(Args)]
 pub struct ProjectsCommand {
     /// Request Query parameters
@@ -58,34 +53,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Projects response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The ID of the domain for the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    domain_id: Option<String>,
-
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
-
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
 
 impl ProjectsCommand {
     /// Perform command action
@@ -110,8 +77,7 @@ impl ProjectsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ProjectResponse>(data)?;
         Ok(())
     }
 }

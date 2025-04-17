@@ -33,13 +33,11 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

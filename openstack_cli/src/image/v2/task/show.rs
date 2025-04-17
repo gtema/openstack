@@ -20,28 +20,23 @@
 //! Wraps invoking of the `v2/tasks/{task_id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::image::v2::task::response::get::TaskResponse;
 
 /// Shows details for a task.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 404
-///
 #[derive(Args)]
 #[command(about = "Show task details")]
 pub struct TaskCommand {
@@ -62,129 +57,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// task_id parameter for /v2/tasks/{task_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Task response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the task was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The date and time when the task is subject to removal. While the *task
-    /// object*, that is, the record describing the task is subject to
-    /// deletion, the result of the task (for example, an imported image) still
-    /// exists.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
-    /// This value is only set when the task reaches status `success` or
-    /// `failure`. Otherwise its value is `null`. It may not appear in the
-    /// response when its value is `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    /// The UUID of the task.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Image associated with the task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    image_id: Option<String>,
-
-    /// A JSON object specifying the input parameters to the task. Consult your
-    /// cloud provider’s documentation for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    input: Option<Value>,
-
-    /// Human-readable text, possibly an empty string, usually displayed in an
-    /// error situation to provide more information about what has occurred.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    message: Option<String>,
-
-    /// An identifier for the owner of the task, usually the tenant ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    owner: Option<String>,
-
-    /// Human-readable informative request-id
-    ///
-    #[serde()]
-    #[structable(optional)]
-    request_id: Option<String>,
-
-    /// A JSON object specifying information about the ultimate outcome of the
-    /// task. Consult your cloud provider’s documentation for details.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    result: Option<Value>,
-
-    /// The URI for the schema describing an image task.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    schema: Option<String>,
-
-    /// A URI for this task.
-    ///
-    #[serde(rename = "self")]
-    #[structable(optional, title = "self")]
-    _self: Option<String>,
-
-    /// The current status of this task. The value can be `pending`,
-    /// `processing`, `success` or `failure`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The type of task represented by this content.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
-    /// The date and time when the task was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// User associated with the task
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
 }
 
 impl TaskCommand {
@@ -211,7 +89,7 @@ impl TaskCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<TaskResponse>(data)?;
         Ok(())
     }
 }

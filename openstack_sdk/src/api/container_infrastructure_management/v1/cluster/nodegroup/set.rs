@@ -58,7 +58,6 @@ pub struct Request<'a> {
     pub(crate) value: Option<Cow<'a, str>>,
 
     /// nodegroup_id parameter for /v1/clusters/nodegroups/{nodegroup_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -17,11 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
+
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupRule, NetworkSecurityGroupRuleApiRequest,
-        NetworkSecurityGroupRuleList,
+        NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +35,14 @@ use crate::{
 const TITLE: &str = "SecurityGroupRules";
 const VIEW_CONFIG_KEY: &str = "network.security_group_rule";
 
-impl ResourceKey for NetworkSecurityGroupRule {
+impl ResourceKey for SecurityGroupRuleResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type NetworkSecurityGroupRules<'a> =
-    TableViewComponentBase<'a, NetworkSecurityGroupRule, NetworkSecurityGroupRuleList>;
+    TableViewComponentBase<'a, SecurityGroupRuleResponse, NetworkSecurityGroupRuleList>;
 
 impl NetworkSecurityGroupRules<'_> {
     /// Normalize filters

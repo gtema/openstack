@@ -24,14 +24,14 @@ use structable::{StructTable, StructTableOptions};
 pub struct PoolResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.24**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub alpn_protocols: Option<Vec<String>>,
 
@@ -41,12 +41,12 @@ pub struct PoolResponse {
     /// pools.
     ///
     /// **New in version 2.8**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub ca_tls_container_ref: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
@@ -54,88 +54,89 @@ pub struct PoolResponse {
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
     /// secret containing a PEM format CA revocation list file for
     /// `tls_enabled` pools.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub crl_container_ref: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The associated health monitor ID.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub healthmonitor_id: Option<String>,
 
     /// The ID of the pool.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`,
     /// `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub lb_algorithm: Option<String>,
 
     /// A list of listener IDs.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub listeners: Option<Vec<Listeners>>,
 
     /// A list of load balancer IDs.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub loadbalancers: Option<Vec<Loadbalancers>>,
 
     /// A list of member IDs.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub members: Option<Vec<Members>>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
-    ///
+    #[serde(default)]
     #[structable(optional, status)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`,
     /// `PROXYV2`, `SCTP`, `TCP`, or `UDP`.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub protocol: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub provisioning_status: Option<String>,
 
     /// A JSON object specifying the session persistence for the pool or `null`
     /// for no session persistence. See
     /// [Pool Session Persistence](#session-persistence). Default is `null`.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub session_persistence: Option<SessionPersistence>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
@@ -143,7 +144,7 @@ pub struct PoolResponse {
     /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
     ///
     /// **New in version 2.15**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tls_ciphers: Option<String>,
 
@@ -154,7 +155,7 @@ pub struct PoolResponse {
     /// servers.
     ///
     /// **New in version 2.8**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tls_container_ref: Option<String>,
 
@@ -162,7 +163,7 @@ pub struct PoolResponse {
     /// encryption. Default is `false`.
     ///
     /// **New in version 2.8**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tls_enabled: Option<bool>,
 
@@ -170,12 +171,12 @@ pub struct PoolResponse {
     /// TLSv1.1, TLSv1.2, TLSv1.3
     ///
     /// **New in version 2.17**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tls_versions: Option<Vec<String>>,
 
     /// The UTC date and timestamp when the resource was last updated.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -183,7 +184,6 @@ pub struct PoolResponse {
 /// A JSON object specifying the session persistence for the pool or `null` for
 /// no session persistence. See
 /// [Pool Session Persistence](#session-persistence). Default is `null`.
-///
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionPersistence {
@@ -194,7 +194,6 @@ pub struct SessionPersistence {
 }
 
 /// Base type for complex types
-///
 /// `Loadbalancers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancers {
@@ -202,7 +201,6 @@ pub struct Loadbalancers {
 }
 
 /// Base type for complex types
-///
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
@@ -210,7 +208,6 @@ pub struct Listeners {
 }
 
 /// Base type for complex types
-///
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {

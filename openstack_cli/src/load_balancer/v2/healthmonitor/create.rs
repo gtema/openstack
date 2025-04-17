@@ -20,22 +20,18 @@
 //! Wraps invoking of the `v2/lbaas/healthmonitors` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::create;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::load_balancer::v2::healthmonitor::response::create::HealthmonitorResponse;
 
 /// Creates a health monitor on a pool.
 ///
@@ -70,7 +66,6 @@ use structable_derive::StructTable;
 ///
 /// To create a health monitor, the parent load balancer must have an `ACTIVE`
 /// provisioning status.
-///
 #[derive(Args)]
 #[command(about = "Create Health Monitor")]
 pub struct HealthmonitorCommand {
@@ -83,7 +78,6 @@ pub struct HealthmonitorCommand {
     path: PathParameters,
 
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[command(flatten)]
     healthmonitor: Healthmonitor,
 }
@@ -125,12 +119,10 @@ enum HttpMethod {
 struct Healthmonitor {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// The time, in seconds, between sending probes to members.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     delay: i32,
 
@@ -138,7 +130,6 @@ struct Healthmonitor {
     /// backend server for HTTP health check.
     ///
     /// **New in version 2.10**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     domain_name: Option<String>,
 
@@ -150,49 +141,41 @@ struct Healthmonitor {
     /// - A range, such as `200-204`
     ///
     /// The default is 200.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     expected_codes: Option<String>,
 
     /// The HTTP method that the health monitor uses for requests. One of
     /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
     /// or `TRACE`. The default is `GET`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     http_method: Option<HttpMethod>,
 
     /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
     ///
     /// **New in version 2.10**
-    ///
     #[arg(help_heading = "Body parameters", long)]
     http_version: Option<f32>,
 
     /// The number of successful checks before changing the `operating status`
     /// of the member to `ONLINE`. A valid value is from `1` to `10`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_retries: i32,
 
     /// The number of allowed check failures before changing the
     /// `operating status` of the member to `ERROR`. A valid value is from `1`
     /// to `10`. The default is `3`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of the pool.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     pool_id: String,
 
     /// The ID of the project owning this resource. (deprecated)
-    ///
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
@@ -201,7 +184,6 @@ struct Healthmonitor {
     /// **New in version 2.5**
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -210,171 +192,18 @@ struct Healthmonitor {
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out. This value must be less than the delay value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     timeout: i32,
 
     /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
     /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (`/`). The default URL path is `/`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    url_path: Option<String>,
-}
-
-/// Healthmonitor response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The administrative state of the resource, which is up (`true`) or down
-    /// (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    admin_state_up: Option<bool>,
-
-    /// The UTC date and timestamp when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The time, in seconds, between sending probes to members.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    delay: Option<i32>,
-
-    /// The domain name, which be injected into the HTTP Host Header to the
-    /// backend server for HTTP health check.
-    ///
-    /// **New in version 2.10**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_name: Option<String>,
-
-    /// The list of HTTP status codes expected in response from the member to
-    /// declare it healthy. Specify one of the following values:
-    ///
-    /// - A single value, such as `200`
-    /// - A list, such as `200, 202`
-    /// - A range, such as `200-204`
-    ///
-    #[serde()]
-    #[structable(optional)]
-    expected_codes: Option<String>,
-
-    /// The HTTP method that the health monitor uses for requests. One of
-    /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
-    /// or `TRACE`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    http_method: Option<String>,
-
-    /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
-    ///
-    /// **New in version 2.10**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    http_version: Option<f32>,
-
-    /// The associated health monitor ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The number of successful checks before changing the `operating status`
-    /// of the member to `ONLINE`. A valid value is from `1` to `10`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_retries: Option<i32>,
-
-    /// The number of allowed check failures before changing the
-    /// `operating status` of the member to `ERROR`. A valid value is from `1`
-    /// to `10`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    max_retries_down: Option<i32>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The operating status of the resource. See
-    /// [Operating Status Codes](#op-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    operating_status: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    pools: Option<Value>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The provisioning status of the resource. See
-    /// [Provisioning Status Codes](#prov-status).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    provisioning_status: Option<String>,
-
-    /// A list of simple strings assigned to the resource.
-    ///
-    /// **New in version 2.5**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The maximum time, in seconds, that a monitor waits to connect before it
-    /// times out. This value must be less than the delay value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    timeout: Option<i32>,
-
-    /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
-    /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
-    /// The UTC date and timestamp when the resource was last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The HTTP URL path of the request sent by the monitor to test the health
-    /// of a backend member. Must be a string that begins with a forward slash
-    /// (`/`).
-    ///
-    #[serde()]
-    #[structable(optional)]
     url_path: Option<String>,
 }
 
@@ -479,7 +308,7 @@ impl HealthmonitorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<HealthmonitorResponse>(data)?;
         Ok(())
     }
 }

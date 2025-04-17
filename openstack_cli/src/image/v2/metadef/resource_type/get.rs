@@ -28,13 +28,13 @@ use openstack_sdk::AsyncOpenStack;
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
+use structable::StructTableOptions;
 use crate::StructTable;
 
 use openstack_sdk::api::image::v2::metadef::resource_type::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use structable_derive::StructTable;
+
 
 /// Lists all available resource types.
 ///

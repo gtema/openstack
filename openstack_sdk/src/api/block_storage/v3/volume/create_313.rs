@@ -33,24 +33,20 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// A `volume` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Volume<'a> {
     /// The name of the availability zone.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the consistency group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) consistencygroup_id: Option<Option<Cow<'a, str>>>,
 
     /// The volume description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -80,16 +76,14 @@ pub struct Volume<'a> {
     /// `snapshot_id` contained in the `block_device_mapping` image property to
     /// locate the volume snapshot, and will use that to create the volume
     /// instead.
-    ///
     #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) image_ref: Option<Option<Cow<'a, str>>>,
 
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
+    #[builder(default, private, setter(into, name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,25 +91,21 @@ pub struct Volume<'a> {
     pub(crate) multiattach: Option<Option<bool>>,
 
     /// The volume name.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// The size of the volume, in gibibytes (GiB).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) size: Option<Option<i32>>,
 
     /// The UUID of the consistency group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the consistency group.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) source_volid: Option<Option<Cow<'a, str>>>,
@@ -130,7 +120,6 @@ pub struct Volume<'a> {
     /// on the volume type. Default is `None`. For information about how to use
     /// volume types to create multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) volume_type: Option<Option<Cow<'a, str>>>,
@@ -143,7 +132,6 @@ pub struct Volume<'a> {
 impl<'a> VolumeBuilder<'a> {
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
-    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -175,12 +163,10 @@ impl<'a> VolumeBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The dictionary of data to send to the scheduler.
-    ///
-    #[builder(default, private, setter(name = "_os_sch_hnt_scheduler_hints"))]
+    #[builder(default, private, setter(into, name = "_os_sch_hnt_scheduler_hints"))]
     pub(crate) os_sch_hnt_scheduler_hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// A `volume` object.
-    ///
     #[builder(setter(into))]
     pub(crate) volume: Volume<'a>,
 
@@ -196,7 +182,6 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// The dictionary of data to send to the scheduler.
-    ///
     pub fn os_sch_hnt_scheduler_hints<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

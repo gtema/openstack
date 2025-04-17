@@ -86,40 +86,34 @@ pub enum CompareType {
 }
 
 /// Defines mandatory and optional attributes of a POST request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rule<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,
     /// `EQUAL_TO`, `REGEX`, or `STARTS_WITH`.
-    ///
     #[serde()]
     #[builder()]
     pub(crate) compare_type: CompareType,
 
     /// When `true` the logic of the rule is inverted. For example, with invert
     /// `true`, equal to would become not equal to. Default is `false`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) invert: Option<bool>,
 
     /// The key to use for the comparison. For example, the name of the cookie
     /// to evaluate.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) key: Option<Cow<'a, str>>,
 
     /// The ID of the project owning this resource.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
@@ -127,7 +121,6 @@ pub struct Rule<'a> {
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
@@ -138,14 +131,12 @@ pub struct Rule<'a> {
 
     /// The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`,
     /// `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`.
-    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
 
     /// The value to use for the comparison. For example, the file type to
     /// compare.
-    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) value: Cow<'a, str>,
@@ -155,13 +146,11 @@ pub struct Rule<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines mandatory and optional attributes of a POST request.
-    ///
     #[builder(setter(into))]
     pub(crate) rule: Rule<'a>,
 
     /// l7policy_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
-    ///
     #[builder(default, setter(into))]
     l7policy_id: Cow<'a, str>,
 

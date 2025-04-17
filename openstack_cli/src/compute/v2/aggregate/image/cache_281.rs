@@ -20,22 +20,16 @@
 //! Wraps invoking of the `v2.1/os-aggregates/{id}/images` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::image::cache_281;
-use structable_derive::StructTable;
 
 /// Requests that a set of images be pre-cached on compute nodes within the
 /// referenced aggregate.
@@ -46,7 +40,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
-///
 #[derive(Args)]
 #[command(about = "Request Image Pre-caching for Aggregate (microversion = 2.81)")]
 pub struct ImageCommand {
@@ -61,7 +54,6 @@ pub struct ImageCommand {
     /// A list of image objects to cache.
     ///
     /// Parameter is an array, may be provided multiple times.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     cache: Vec<String>,
 }
@@ -74,7 +66,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,9 +73,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Image response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ImageCommand {
     /// Perform command action
@@ -117,11 +105,7 @@ impl ImageCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

@@ -24,37 +24,38 @@ use structable::{StructTable, StructTableOptions};
 pub struct SecurityGroupRuleResponse {
     /// Indicates if the security group rule belongs to the default security
     /// group of the project or not.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub belongs_to_default_sg: Option<bool>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub ethertype: Option<Ethertype>,
 
     /// The ID of the security group rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub normalized_cidr: Option<String>,
 
@@ -62,7 +63,7 @@ pub struct SecurityGroupRuleResponse {
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be greater than or equal to the `port_range_min` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP code.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub port_range_max: Option<i32>,
 
@@ -70,7 +71,7 @@ pub struct SecurityGroupRuleResponse {
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be less than or equal to the `port_range_max` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP type.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub port_range_min: Option<i32>,
 
@@ -85,45 +86,45 @@ pub struct SecurityGroupRuleResponse {
     /// between [0-255] is also valid. The string `any` (or integer `0`) means
     /// `all` IP protocols. See the constants in `neutron_lib.constants` for
     /// the most up-to-date list of supported strings.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub protocol: Option<String>,
 
     /// The remote address group UUID that is associated with this security
     /// group rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub remote_address_group_id: Option<String>,
 
     /// The remote group UUID to associate with this security group rule. You
     /// can specify either the `remote_group_id` or `remote_ip_prefix`
     /// attribute in the request body.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub remote_group_id: Option<String>,
 
     /// The remote IP prefix that is matched by this security group rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
     /// The revision number of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// The security group ID to associate with this security group rule.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub security_group_id: Option<String>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -139,6 +140,17 @@ pub enum Direction {
     Ingress,
 }
 
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Ethertype {
     // Ipv4
@@ -148,4 +160,15 @@ pub enum Ethertype {
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+}
+
+impl std::str::FromStr for Ethertype {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "IPv4" => Ok(Self::Ipv4),
+            "IPv6" => Ok(Self::Ipv6),
+            _ => Err(()),
+        }
+    }
 }

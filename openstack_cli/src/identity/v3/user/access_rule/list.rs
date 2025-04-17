@@ -20,15 +20,12 @@
 //! Wraps invoking of the `v3/users/{user_id}/access_rules` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
@@ -36,14 +33,13 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::access_rule::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::user::access_rule::response::list::AccessRuleResponse;
 use tracing::warn;
 
 /// List all access rules for a user.
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
-///
 #[derive(Args)]
 #[command(about = "List access rules")]
 pub struct AccessRulesCommand {
@@ -61,18 +57,15 @@ pub struct AccessRulesCommand {
 struct QueryParameters {
     /// The request method that the application credential is permitted to use
     /// for a given API endpoint.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     method: Option<String>,
 
     /// The API path that the application credential is permitted to access.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     path: Option<String>,
 
     /// The service type identifier for the service that the application is
     /// permitted to access.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     service: Option<String>,
 }
@@ -98,36 +91,6 @@ struct UserInput {
     /// Current authenticated user.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
-}
-/// AccessRules response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the access rule
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The request method that the application credential is permitted to use
-    /// for a given API endpoint.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    method: Option<String>,
-
-    /// The API path that the application credential is permitted to access.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    path: Option<String>,
-
-    /// The service type identifier for the service that the application
-    /// credential is permitted to access. Must be a service type that is
-    /// listed in the service catalog and not a code name for a service.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    service: Option<String>,
 }
 
 impl AccessRulesCommand {
@@ -207,8 +170,7 @@ impl AccessRulesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<AccessRuleResponse>(data)?;
         Ok(())
     }
 }

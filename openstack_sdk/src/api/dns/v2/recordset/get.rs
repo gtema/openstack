@@ -28,7 +28,6 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// recordset_id parameter for /v2/recordsets/{recordset_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

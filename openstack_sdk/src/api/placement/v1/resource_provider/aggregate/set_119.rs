@@ -35,11 +35,10 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) aggregates: Vec<Cow<'a, str>>,
 
-    #[builder()]
+    #[builder(setter(into))]
     pub(crate) resource_provider_generation: i32,
 
     /// uuid parameter for /resource_providers/{uuid}/aggregates API
-    ///
     #[builder(default, setter(into))]
     uuid: Cow<'a, str>,
 

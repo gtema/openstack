@@ -165,20 +165,17 @@ pub enum Pfs {
 }
 
 /// An `ikepolicy` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Ikepolicy<'a> {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -189,13 +186,11 @@ pub struct Ikepolicy<'a> {
     /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The IKE version. A valid value is `v1` or `v2`. Default is `v1`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) ike_version: Option<IkeVersion>,
@@ -203,32 +198,27 @@ pub struct Ikepolicy<'a> {
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) lifetime: Option<Cow<'a, str>>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) pfs: Option<Pfs>,
 
     /// The IKE mode. A valid value is `main`, which is the default.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) phase1_negotiation_mode: Option<Phase1NegotiationMode>,
 
     /// The ID of the project.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
@@ -238,7 +228,6 @@ pub struct Ikepolicy<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `ikepolicy` object.
-    ///
     #[builder(setter(into))]
     pub(crate) ikepolicy: Ikepolicy<'a>,
 

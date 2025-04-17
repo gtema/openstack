@@ -23,12 +23,11 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
     /// The export location used to attach the share to the underlying host.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub export_location: Option<String>,
 
     /// The UUID of the attached share.
-    ///
     #[structable()]
     pub share_id: String,
 
@@ -41,19 +40,17 @@ pub struct ShareResponse {
     ///   stopped.
     /// - active: The share is attached, and the VM is running.
     /// - error: The share is in an error state.
-    ///
     #[structable(serialize)]
     pub status: Status,
 
     /// The device tag to be used by users to mount the share within the
     /// instance, if not provided then the share UUID will be used
     /// automatically.
-    ///
     #[structable()]
     pub tag: String,
 
     /// The UUID of the attached share.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
 }
@@ -79,4 +76,18 @@ pub enum Status {
     // Inactive
     #[serde(rename = "inactive")]
     Inactive,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "active" => Ok(Self::Active),
+            "attaching" => Ok(Self::Attaching),
+            "detaching" => Ok(Self::Detaching),
+            "error" => Ok(Self::Error),
+            "inactive" => Ok(Self::Inactive),
+            _ => Err(()),
+        }
+    }
 }

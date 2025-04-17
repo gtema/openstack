@@ -34,7 +34,6 @@ pub enum Coe {
 }
 
 /// A link representation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Links<'a> {
@@ -70,7 +69,7 @@ pub enum ServerType {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) apiserver_port: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -80,7 +79,6 @@ pub struct Request<'a> {
     /// include `kubernetes`. If your environment has additional cluster
     /// drivers installed, refer to the cluster driver documentation for the
     /// new COE names.
-    ///
     #[builder(default)]
     pub(crate) coe: Option<Coe>,
 
@@ -90,13 +88,11 @@ pub struct Request<'a> {
     /// The DNS nameserver for the servers and containers in the cluster to
     /// use. This is configured in the private Neutron network for the cluster.
     /// The default is `8.8.8.8`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) dns_nameserver: Option<Cow<'a, str>>,
 
     /// The name of a driver to manage the storage for the images and the
     /// container’s writable layer. The default is `devicemapper`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) docker_storage_driver: Option<Cow<'a, str>>,
 
@@ -105,8 +101,7 @@ pub struct Request<'a> {
     /// provide the storage. The default is 25 GB. For the `devicemapper`
     /// storage driver, the minimum value is 3GB. For the `overlay` storage
     /// driver, the minimum value is 1GB.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) docker_volume_size: Option<i32>,
 
     #[builder(default, setter(into))]
@@ -122,38 +117,32 @@ pub struct Request<'a> {
     /// etc. In the opposite direction, floating IPs will be allocated from the
     /// external network to provide access from the external internet to
     /// servers and the container services hosted in the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) external_network_id: Option<Cow<'a, str>>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
     /// the internal network for the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) fixed_network: Option<Cow<'a, str>>,
 
     /// Fixed subnet that are using to allocate network address for nodes in
     /// cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) fixed_subnet: Option<Cow<'a, str>>,
 
     /// The nova flavor ID or name for booting the node servers. The default is
     /// `m1.small`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
     /// Whether enable or not using the floating IP of cloud provider. Some
     /// cloud providers used floating IP, some used public IP, thus Magnum
     /// provide this option for specifying the choice of using floating IP.
-    ///
     #[builder(default, setter(into))]
     pub(crate) floating_ip_enabled: Option<Cow<'a, str>>,
 
     /// Indicates whether the ClusterTemplate is hidden or not, the default
     /// value is false.
-    ///
     #[builder(default, setter(into))]
     pub(crate) hidden: Option<Cow<'a, str>>,
 
@@ -162,7 +151,6 @@ pub struct Request<'a> {
     /// in certain countries or enterprises, and the proxy allows the servers
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) http_proxy: Option<Cow<'a, str>>,
 
@@ -171,14 +159,12 @@ pub struct Request<'a> {
     /// in certain countries or enterprises, and the proxy allows the servers
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) https_proxy: Option<Cow<'a, str>>,
 
     /// The name or UUID of the base image in Glance to boot the servers for
     /// the cluster. The image must have the attribute `os_distro` defined as
     /// appropriate for the cluster driver.
-    ///
     #[builder(setter(into))]
     pub(crate) image_id: Cow<'a, str>,
 
@@ -189,7 +175,6 @@ pub struct Request<'a> {
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) keypair_id: Option<Cow<'a, str>>,
 
@@ -197,15 +182,13 @@ pub struct Request<'a> {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
-    #[builder(default, private, setter(name = "_labels"))]
+    #[builder(default, private, setter(into, name = "_labels"))]
     pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[builder(default, setter(into))]
     pub(crate) links: Option<Vec<Links<'a>>>,
 
     /// The flavor of the master node for this cluster template.
-    ///
     #[builder(default, setter(into))]
     pub(crate) master_flavor_id: Option<Cow<'a, str>>,
 
@@ -216,12 +199,10 @@ pub struct Request<'a> {
     /// without the load balancer. In this case, one of the masters will serve
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
-    ///
     #[builder(default, setter(into))]
     pub(crate) master_lb_enabled: Option<Cow<'a, str>>,
 
     /// Name of the resource.
-    ///
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
@@ -229,14 +210,12 @@ pub struct Request<'a> {
     /// containers. Note that this is different and separate from the Neutron
     /// network for the cluster. The operation and networking model are
     /// specific to the particular driver.
-    ///
     #[builder(default, setter(into))]
     pub(crate) network_driver: Option<Cow<'a, str>>,
 
     /// When a proxy server is used, some sites should not go through the proxy
     /// and should be accessed normally. In this case, users can specify these
     /// sites as a comma separated list of IPs. The default is `None`.
-    ///
     #[builder(default, setter(into))]
     pub(crate) no_proxy: Option<Cow<'a, str>>,
 
@@ -247,7 +226,6 @@ pub struct Request<'a> {
     /// users within the same tenant as the owners. Setting this flag makes the
     /// cluster template public and accessible by other users. The default is
     /// not public.
-    ///
     #[builder(default, setter(into))]
     pub(crate) public: Option<Cow<'a, str>>,
 
@@ -256,19 +234,16 @@ pub struct Request<'a> {
     /// option provides an alternative registry based on the Registry V2:
     /// Magnum will create a local registry in the cluster backed by swift to
     /// host the images. The default is to use the public registry.
-    ///
     #[builder(default, setter(into))]
     pub(crate) registry_enabled: Option<Cow<'a, str>>,
 
     /// The servers in the cluster can be `vm` or `baremetal`. This parameter
     /// selects the type of server to create for the cluster. The default is
     /// `vm`.
-    ///
     #[builder(default)]
     pub(crate) server_type: Option<ServerType>,
 
     /// Administrator tags for the cluster template.
-    ///
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Cow<'a, str>>,
 
@@ -277,7 +252,6 @@ pub struct Request<'a> {
     /// for instance during development or to troubleshoot certain problems.
     /// Specifying this parameter will disable TLS so that users can access the
     /// COE endpoints without a certificate. The default is TLS enabled.
-    ///
     #[builder(default, setter(into))]
     pub(crate) tls_disabled: Option<Cow<'a, str>>,
 
@@ -292,7 +266,6 @@ pub struct Request<'a> {
 
     /// The name of a volume driver for managing the persistent storage for the
     /// containers. The functionality supported are specific to the driver.
-    ///
     #[builder(default, setter(into))]
     pub(crate) volume_driver: Option<Cow<'a, str>>,
 
@@ -311,7 +284,6 @@ impl<'a> RequestBuilder<'a> {
     /// and valid values are defined in the cluster drivers. They are used as a
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
-    ///
     pub fn labels<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

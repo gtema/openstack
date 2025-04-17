@@ -20,20 +20,17 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::os_get_rdpconsole;
-use structable_derive::StructTable;
+use openstack_types::compute::v2::server::response::os_get_rdpconsole::ServerResponse;
 
 /// Gets an [RDP](https://technet.microsoft.com/en-us/windowsserver/ee236407)
 /// console for a server.
@@ -47,7 +44,6 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), notImplemented(501)
-///
 #[derive(Args)]
 #[command(about = "Get RDP Console (os-getRDPConsole Action)")]
 pub struct ServerCommand {
@@ -68,28 +64,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// Server response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The type of the remote console
-    ///
-    #[serde(rename = "type")]
-    #[structable(title = "type")]
-    _type: String,
-
-    /// The URL used to connect to the console.
-    ///
-    #[serde()]
-    #[structable()]
-    url: String,
 }
 
 impl ServerCommand {
@@ -116,7 +96,7 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServerResponse>(data)?;
         Ok(())
     }
 }

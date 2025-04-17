@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2.0/qos/alias-minimum-packet-rate-rules/{id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_packet_rate_rule::set;
-use openstack_sdk::types::IntString;
-use structable_derive::StructTable;
+use openstack_types::network::v2::qos::alias_minimum_packet_rate_rule::response::set::AliasMinimumPacketRateRuleResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct AliasMinimumPacketRateRuleCommand {
     /// Request Query parameters
@@ -61,7 +56,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/qos/alias-minimum-packet-rate-rules/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -85,22 +79,6 @@ struct AliasMinimumPacketRateRule {
 
     #[arg(help_heading = "Body parameters", long)]
     min_kpps: Option<i32>,
-}
-
-/// AliasMinimumPacketRateRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    direction: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    min_kpps: Option<IntString>,
 }
 
 impl AliasMinimumPacketRateRuleCommand {
@@ -147,7 +125,7 @@ impl AliasMinimumPacketRateRuleCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<AliasMinimumPacketRateRuleResponse>(data)?;
         Ok(())
     }
 }

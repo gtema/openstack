@@ -49,31 +49,26 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `service_profile` object.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ServiceProfile<'a> {
     /// The human-readable description for the service profile.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// Provider driver to use for this profile.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) driver: Option<Cow<'a, str>>,
 
     /// Indicates whether this service profile is enabled or not. Default is
     /// `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enabled: Option<Option<bool>>,
 
     /// JSON-formatted meta information of the service profile.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) metainfo: Option<Cow<'a, str>>,
@@ -83,7 +78,6 @@ pub struct ServiceProfile<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `service_profile` object.
-    ///
     #[builder(setter(into))]
     pub(crate) service_profile: ServiceProfile<'a>,
 

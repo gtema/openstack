@@ -23,69 +23,67 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The name of the availability zone.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group description.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_snapshot_id: Option<String>,
 
     /// The group type ID.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub group_type: Option<String>,
 
     /// The UUID of the group.
-    ///
     #[structable()]
     pub id: String,
 
     /// The group name.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The UUID of the volume group project.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The group replication status.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub replication_status: Option<String>,
 
     /// The UUID of the source group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub source_group_id: Option<String>,
 
     /// The status of the generic group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of volume types. In an environment with multiple-storage back
     /// ends, the scheduler determines where to send the volume based on the
     /// volume type.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub volume_types: Option<Vec<String>>,
 
     /// A list of volume ids, available only when list_volume set true.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize)]
     pub volumes: Option<Vec<String>>,
 }

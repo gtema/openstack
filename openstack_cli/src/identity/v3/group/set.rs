@@ -20,22 +20,19 @@
 //! Wraps invoking of the `v3/groups/{group_id}` with `PATCH` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::group::find;
 use openstack_sdk::api::identity::v3::group::set;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::group::response::set::GroupResponse;
 
 /// Updates a group.
 ///
@@ -44,7 +41,6 @@ use structable_derive::StructTable;
 ///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/group`
-///
 #[derive(Args)]
 #[command(about = "Update group")]
 pub struct GroupCommand {
@@ -57,7 +53,6 @@ pub struct GroupCommand {
     path: PathParameters,
 
     /// A `group` object
-    ///
     #[command(flatten)]
     group: Group,
 }
@@ -70,7 +65,6 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -82,41 +76,11 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Group {
     /// The new description of the group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The new name of the group.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
-/// Group response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The description of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    domain_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
     name: Option<String>,
 }
 
@@ -168,7 +132,7 @@ impl GroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<GroupResponse>(data)?;
         Ok(())
     }
 }

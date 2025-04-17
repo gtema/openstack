@@ -31,20 +31,17 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `limit` object
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Limit<'a> {
     /// The limit description.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The override limit.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) resource_limit: Option<i32>,
 }
 
@@ -52,12 +49,10 @@ pub struct Limit<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `limit` object
-    ///
     #[builder(setter(into))]
     pub(crate) limit: Limit<'a>,
 
     /// limit_id parameter for /v3/limits/{limit_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

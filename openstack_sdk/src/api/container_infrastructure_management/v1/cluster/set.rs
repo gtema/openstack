@@ -44,22 +44,18 @@ pub struct Request<'a> {
     /// The operation used to modify resource’s attributes. Supported
     /// operations are following: `add`, `replace` and `remove`. In case of
     /// `remove`, users only need to provide `path` for deleting attribute.
-    ///
     #[builder()]
     pub(crate) op: Op,
 
     /// Resource attribute’s name.
-    ///
     #[builder(setter(into))]
     pub(crate) path: Cow<'a, str>,
 
     /// Resource attribute’s value.
-    ///
     #[builder(default, setter(into))]
     pub(crate) value: Option<Cow<'a, str>>,
 
     /// cluster_id parameter for /v1/clusters/{cluster_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

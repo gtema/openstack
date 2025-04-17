@@ -20,23 +20,19 @@
 //! Wraps invoking of the `v1/quotas` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::quota::list;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::quota::response::list::QuotaResponse;
 
 /// List all quotas in Magnum.
-///
 #[derive(Args)]
 #[command(about = "List all quotas")]
 pub struct QuotasCommand {
@@ -56,33 +52,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Quotas response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    hard_limit: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    resource: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl QuotasCommand {
     /// Perform command action
@@ -107,8 +76,7 @@ impl QuotasCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<QuotaResponse>(data)?;
         Ok(())
     }
 }

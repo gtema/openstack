@@ -20,21 +20,18 @@
 //! Wraps invoking of the `v2.0/vpn/ikepolicies` with `POST` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::create;
-use structable_derive::StructTable;
+use openstack_types::network::v2::vpn::ikepolicy::response::create::IkepolicyResponse;
 
 /// Creates an IKE policy.
 ///
@@ -45,7 +42,6 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401
-///
 #[derive(Args)]
 #[command(about = "Create IKE policy")]
 pub struct IkepolicyCommand {
@@ -58,7 +54,6 @@ pub struct IkepolicyCommand {
     path: PathParameters,
 
     /// An `ikepolicy` object.
-    ///
     #[command(flatten)]
     ikepolicy: Ikepolicy,
 }
@@ -151,13 +146,11 @@ enum Pfs {
 struct Ikepolicy {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -167,115 +160,34 @@ struct Ikepolicy {
     /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The IKE version. A valid value is `v1` or `v2`. Default is `v1`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     ike_version: Option<IkeVersion>,
 
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     lifetime: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     pfs: Option<Pfs>,
 
     /// The IKE mode. A valid value is `main`, which is the default.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     phase1_negotiation_mode: Option<Phase1NegotiationMode>,
 
     /// The ID of the project.
-    ///
     #[arg(help_heading = "Body parameters", long)]
-    tenant_id: Option<String>,
-}
-
-/// Ikepolicy response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
-    /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    auth_algorithm: Option<String>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The encryption algorithm. A valid value is `3des`, `aes-128`,
-    /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
-    /// Additional values for AES CCM and GCM modes are defined (e.g.
-    /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
-    /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
-    /// `aes-128`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    encryption_algorithm: Option<String>,
-
-    /// The ID of the IKE policy.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The IKE version. A valid value is `v1` or `v2`. Default is `v1`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ike_version: Option<String>,
-
-    /// The lifetime of the security association. The lifetime consists of a
-    /// unit and integer value. You can omit either the unit or value portion
-    /// of the lifetime. Default unit is seconds and default value is 3600.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    lifetime: Option<String>,
-
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
-    /// `Group14` to `Group31`. Default is `Group5`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    pfs: Option<String>,
-
-    /// The IKE mode. A valid value is `main`, which is the default.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    phase1_negotiation_mode: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
     tenant_id: Option<String>,
 }
 
@@ -407,7 +319,7 @@ impl IkepolicyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<IkepolicyResponse>(data)?;
         Ok(())
     }
 }

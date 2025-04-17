@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v3/group_types/{id}` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::find;
 use openstack_sdk::api::find;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::block_storage::v3::group_type::response::get::GroupTypeResponse;
 
 /// Return a single group type item.
-///
 #[derive(Args)]
 pub struct GroupTypeCommand {
     /// Request Query parameters
@@ -58,47 +53,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/group_types/{id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
         value_name = "ID"
     )]
     id: String,
-}
-/// GroupType response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The group type description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A set of key and value pairs that contains the specifications for a
-    /// group type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    group_specs: Option<Value>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable()]
-    id: String,
-
-    /// Whether the group type is publicly visible.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_public: Option<bool>,
-
-    /// The group type name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl GroupTypeCommand {
@@ -121,7 +81,7 @@ impl GroupTypeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        op.output_single::<GroupTypeResponse>(find_data)?;
         Ok(())
     }
 }

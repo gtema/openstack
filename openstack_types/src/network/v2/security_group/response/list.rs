@@ -16,61 +16,62 @@
 // `openstack-codegenerator`.
 //! Response type for the GET `security-groups` operation
 
-use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use structable::{StructTable, StructTableOptions};
 
 /// SecurityGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the security group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
+    #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// A list of `security_group_rule` objects. Refer to
     /// [Security group rules](#security-group-rules) for details.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub security_group_rules: Option<Vec<SecurityGroupRules>>,
 
     /// Indicates whether this security group is shared to the requester’s
     /// project.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional, wide)]
     pub shared: Option<bool>,
 
     /// Indicates if the security group is stateful or stateless.
-    ///
-    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional, wide)]
     pub stateful: Option<bool>,
 
     /// The list of tags on the resource.
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
+    #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
 }
@@ -86,6 +87,17 @@ pub enum Direction {
     Ingress,
 }
 
+impl std::str::FromStr for Direction {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "egress" => Ok(Self::Egress),
+            "ingress" => Ok(Self::Ingress),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Ethertype {
     // Ipv4
@@ -95,6 +107,17 @@ pub enum Ethertype {
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+}
+
+impl std::str::FromStr for Ethertype {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "IPv4" => Ok(Self::Ipv4),
+            "IPv6" => Ok(Self::Ipv6),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `SecurityGroupRules` type

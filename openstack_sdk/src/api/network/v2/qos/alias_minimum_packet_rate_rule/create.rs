@@ -26,7 +26,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_alias_minimum_packet_rate_rule"))]
+    #[builder(private, setter(into, name = "_alias_minimum_packet_rate_rule"))]
     pub(crate) alias_minimum_packet_rate_rule: BTreeMap<Cow<'a, str>, Value>,
 
     #[builder(setter(name = "_headers"), default, private)]

@@ -29,7 +29,6 @@ pub struct Request<'a> {
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// policy_id parameter for /v2.0/policies/{policy_id}/tags/{id} API
-    ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
 

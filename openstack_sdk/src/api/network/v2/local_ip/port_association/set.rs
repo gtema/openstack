@@ -27,18 +27,16 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(name = "_port_association"))]
+    #[builder(private, setter(into, name = "_port_association"))]
     pub(crate) port_association: BTreeMap<Cow<'a, str>, Value>,
 
     /// id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
     /// API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// local_ip_id parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    ///
     #[builder(default, setter(into))]
     local_ip_id: Cow<'a, str>,
 

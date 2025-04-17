@@ -20,25 +20,20 @@
 //! Wraps invoking of the `v2/zones` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::list;
 use openstack_sdk::api::{Pagination, paged};
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::dns::v2::zone::response::list::ZoneResponse;
 
 /// List all zones
-///
 #[derive(Args)]
 #[command(about = "List Zones")]
 pub struct ZonesCommand {
@@ -59,19 +54,16 @@ pub struct ZonesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filter results to only show zones that have a type matching the filter
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["CATALOG","PRIMARY","SECONDARY"])]
     _type: Option<String>,
 
     /// Filter results to only show zones that have a description matching the
     /// filter
-    ///
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// Filter results to only show zones that have an email matching the
     /// filter
-    ///
     #[arg(help_heading = "Query parameters", long)]
     email: Option<String>,
 
@@ -79,19 +71,16 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     market: Option<String>,
 
     /// Filter results to only show zones that have a name matching the filter
-    ///
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
@@ -100,7 +89,6 @@ struct QueryParameters {
     /// multiple pairs of sort key and sort direction query parameters. If you
     /// omit the sort direction in a pair, the API uses the natural sorting
     /// direction of the server attribute that is provided as the sort_key.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
@@ -109,18 +97,15 @@ struct QueryParameters {
     /// If you omit the sort direction in a pair, the API uses the natural
     /// sorting direction of the server attribute that is provided as the
     /// sort_key.
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["created_at","id","name","serial","status","tenant_id","ttl","updated_at"])]
     sort_key: Option<String>,
 
     /// Filter results to only show zones that have a status matching the
     /// filter
-    ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING","SUCCESS","ZONE"])]
     status: Option<String>,
 
     /// Filter results to only show zones that have a ttl matching the filter
-    ///
     #[arg(help_heading = "Query parameters", long)]
     ttl: Option<i32>,
 }
@@ -128,124 +113,6 @@ struct QueryParameters {
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Zones response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// current action in progress on the resource
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    action: Option<String>,
-
-    /// Key:Value pairs of information about this zone, and the pool the user
-    /// would like to place the zone in. This information can be used by the
-    /// scheduler to place zones on the correct pool.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    attributes: Option<Value>,
-
-    /// Date / Time when resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Description for this zone
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// e-mail for the zone. Used in SOA records for the zone
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    email: Option<String>,
-
-    /// ID for the resource
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Mandatory for secondary zones. The servers to slave from to get DNS
-    /// information
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    masters: Option<Value>,
-
-    /// DNS Name for the zone
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// ID for the pool hosting this zone
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    pool_id: Option<String>,
-
-    /// ID for the project that owns the resource
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    project_id: Option<String>,
-
-    /// current serial number for the zone
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    serial: Option<i32>,
-
-    /// True if the zone is shared with another project.
-    ///
-    /// **New in version 2.1**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    shared: Option<bool>,
-
-    /// The status of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// For secondary zones. The last time an update was retrieved from the
-    /// master servers
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    transferred_at: Option<String>,
-
-    /// TTL (Time to Live) for the zone.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ttl: Option<i32>,
-
-    /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
-    /// slaved from another DNS Server. Defaults to PRIMARY
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// Date / Time when resource last updated.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// Version of the resource
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    version: Option<i32>,
-}
 
 impl ZonesCommand {
     /// Perform command action
@@ -302,8 +169,7 @@ impl ZonesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-
-        op.output_list::<ResponseData>(data)?;
+        op.output_list::<ZoneResponse>(data)?;
         Ok(())
     }
 }

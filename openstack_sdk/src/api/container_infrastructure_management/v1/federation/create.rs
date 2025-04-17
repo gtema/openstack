@@ -53,7 +53,6 @@ pub enum Status {
 }
 
 /// A link representation.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Links<'a> {
@@ -96,7 +95,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    #[builder(default, private, setter(name = "_properties"))]
+    #[builder(default, private, setter(into, name = "_properties"))]
     pub(crate) properties: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
     #[builder(default)]

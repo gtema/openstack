@@ -50,17 +50,14 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// description query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// id query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// is_default query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default)]
     is_default: Option<bool>,
 
@@ -68,71 +65,58 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// not-tags query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// Reverse the page direction
-    ///
     #[builder(default)]
     page_reverse: Option<bool>,
 
     /// revision_number query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// shared query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default)]
     shared: Option<bool>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_dir"))]
     sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
     /// tags query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tenant_id query parameter for /v2.0/qos/policies API
-    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
@@ -148,7 +132,6 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// tags query parameter for /v2.0/qos/policies API
-    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -162,7 +145,6 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/qos/policies API
-    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -176,7 +158,6 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/qos/policies API
-    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -190,7 +171,6 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/qos/policies API
-    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -205,7 +185,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
-    ///
     pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -220,7 +199,6 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
-    ///
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

@@ -20,24 +20,19 @@
 //! Wraps invoking of the `v1` with `GET` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::version::get;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::container_infrastructure_management::v1::version::response::get::VersionResponse;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct VersionCommand {
     /// Request Query parameters
@@ -56,61 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Version response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional, pretty)]
-    certificates: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    clusters: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    clustertemplates: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    federations: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    media_types: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    mservices: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    nodegroups: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    quotas: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    stats: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-}
 
 impl VersionCommand {
     /// Perform command action
@@ -135,7 +75,7 @@ impl VersionCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<VersionResponse>(data)?;
         Ok(())
     }
 }

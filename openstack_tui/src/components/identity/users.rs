@@ -17,11 +17,13 @@ use eyre::{OptionExt, Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::identity::v3::user::response::list::UserResponse;
+
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUser, IdentityUserApiRequest,
-        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
+        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialList,
+        IdentityUserApplicationCredentialListBuilder,
         IdentityUserApplicationCredentialListBuilderError, IdentityUserDelete,
         IdentityUserDeleteBuilder, IdentityUserDeleteBuilderError, IdentityUserList,
         IdentityUserSetBuilder,
@@ -37,15 +39,15 @@ use crate::{
 const TITLE: &str = "Identity Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-impl ResourceKey for IdentityUser {
+impl ResourceKey for UserResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&IdentityUser> for IdentityUserDelete {
+impl TryFrom<&UserResponse> for IdentityUserDelete {
     type Error = IdentityUserDeleteBuilderError;
-    fn try_from(value: &IdentityUser) -> Result<Self, Self::Error> {
+    fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserDeleteBuilder::default();
         if let Some(val) = &value.id {
             builder.id(val.clone());
@@ -57,9 +59,9 @@ impl TryFrom<&IdentityUser> for IdentityUserDelete {
     }
 }
 
-impl TryFrom<&IdentityUser> for IdentityUserApplicationCredentialList {
+impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
     type Error = IdentityUserApplicationCredentialListBuilderError;
-    fn try_from(value: &IdentityUser) -> Result<Self, Self::Error> {
+    fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserApplicationCredentialListBuilder::default();
         if let Some(val) = &value.id {
             builder.user_id(val.clone());
@@ -71,7 +73,7 @@ impl TryFrom<&IdentityUser> for IdentityUserApplicationCredentialList {
     }
 }
 
-pub type IdentityUsers<'a> = TableViewComponentBase<'a, IdentityUser, IdentityUserList>;
+pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserResponse, IdentityUserList>;
 
 impl Component for IdentityUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -184,7 +186,7 @@ impl Component for IdentityUsers<'_> {
                 if let IdentityUserApiRequest::Set(_) = *req {
                     // Since user update only returns some info (i.e. it doesn't contain email) we need
                     // to update record manually
-                    let updated_user: IdentityUser = serde_json::from_value(data.clone())?;
+                    let updated_user: UserResponse = serde_json::from_value(data.clone())?;
                     if let Some(item_row) = self.get_item_row_by_res_id_mut(
                         &updated_user.id.ok_or_eyre("id must be present")?,
                     ) {

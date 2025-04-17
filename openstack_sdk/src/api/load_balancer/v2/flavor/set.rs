@@ -25,7 +25,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// Defines the attributes of a PUT request.
-///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavor<'a> {
@@ -34,7 +33,7 @@ pub struct Flavor<'a> {
     pub(crate) description: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -46,12 +45,10 @@ pub struct Flavor<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Defines the attributes of a PUT request.
-    ///
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 
     /// flavor_id parameter for /v2/lbaas/flavors/{flavor_id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

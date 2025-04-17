@@ -20,25 +20,18 @@
 //! Wraps invoking of the `v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}` with `DELETE` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
-use bytes::Bytes;
-use http::Response;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::resource_type::delete;
-use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
-///
 #[derive(Args)]
 pub struct ResourceTypeCommand {
     /// Request Query parameters
@@ -60,7 +53,6 @@ struct PathParameters {
     /// namespace_name parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_namespace_name",
@@ -71,7 +63,6 @@ struct PathParameters {
     /// resource_type parameter for
     /// /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
     /// API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_resource_type",
@@ -79,9 +70,6 @@ struct PathParameters {
     )]
     resource_type: String,
 }
-/// ResourceType response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
 
 impl ResourceTypeCommand {
     /// Perform command action
@@ -106,8 +94,7 @@ impl ResourceTypeCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

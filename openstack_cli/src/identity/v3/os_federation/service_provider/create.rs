@@ -20,26 +20,21 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{service_provider_id}` with `PUT` method
 
 use clap::Args;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::OutputConfig;
-use crate::StructTable;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::service_provider::create;
-use serde_json::Value;
-use structable_derive::StructTable;
+use openstack_types::identity::v3::os_federation::service_provider::response::create::ServiceProviderResponse;
 
 /// Create a service provider.
 ///
 /// PUT /OS-FEDERATION/service_providers/{service_provider_id}
-///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
@@ -63,7 +58,6 @@ struct QueryParameters {}
 struct PathParameters {
     /// service_provider_id parameter for
     /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
-    ///
     #[arg(
         help_heading = "Path parameters",
         id = "path_param_id",
@@ -75,75 +69,24 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct ServiceProvider {
     /// The URL to authenticate against
-    ///
     #[arg(help_heading = "Body parameters", long)]
     auth_url: String,
 
     /// The description of the service provider
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Whether the service provider is enabled or not
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The prefix of the RelayState SAML attribute
-    ///
     #[arg(help_heading = "Body parameters", long)]
     relay_state_prefix: Option<String>,
 
     /// The service provider's URL
-    ///
     #[arg(help_heading = "Body parameters", long)]
     sp_url: String,
-}
-
-/// ServiceProvider response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The URL to authenticate against
-    ///
-    #[serde()]
-    #[structable(optional)]
-    auth_url: Option<String>,
-
-    /// The description of the service provider
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// Whether the service provider is enabled or not
-    ///
-    #[serde()]
-    #[structable(optional)]
-    enabled: Option<bool>,
-
-    /// The service provider ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The prefix of the RelayState SAML attribute
-    ///
-    #[serde()]
-    #[structable(optional)]
-    relay_state_prefix: Option<String>,
-
-    /// The service provider's URL
-    ///
-    #[serde()]
-    #[structable(optional)]
-    sp_url: Option<String>,
 }
 
 impl ServiceProviderCommand {
@@ -191,7 +134,7 @@ impl ServiceProviderCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ServiceProviderResponse>(data)?;
         Ok(())
     }
 }

@@ -34,25 +34,21 @@ pub struct Request<'a> {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
-    ///
     #[builder(default, setter(into))]
     market: Option<Cow<'a, str>>,
 
     /// Filter results to only show resources that have a matching
     /// target_project_id
-    ///
     #[builder(default, setter(into))]
     target_project_id: Option<Cow<'a, str>>,
 
     /// zone_id parameter for /v2/zones/{zone_id}/shares API
-    ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,
 

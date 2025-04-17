@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The name of the availability zone.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub availability_zone: Option<String>,
 
@@ -41,56 +41,54 @@ pub struct GroupResponse {
     ///
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group description.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub group_snapshot_id: Option<String>,
 
     /// The group type ID.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub group_type: Option<String>,
 
     /// The UUID of the group.
-    ///
     #[structable()]
     pub id: String,
 
     /// The name of the object.
-    ///
     #[structable(optional)]
     pub name: Option<String>,
 
     /// The UUID of the volume group project.
     ///
     /// **New in version 3.58**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The group replication status.
     ///
     /// **New in version 3.38**
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub replication_status: Option<String>,
 
     /// The UUID of the source group.
-    ///
+    #[serde(default)]
     #[structable(optional, wide)]
     pub source_group_id: Option<String>,
 
     /// The status of the generic group.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,
 
@@ -99,14 +97,14 @@ pub struct GroupResponse {
     /// volume type. For information about how to use volume types to create
     /// multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub volume_types: Option<Vec<String>>,
 
     /// A list of `volume` ids, available only when `list_volume` set true.
     ///
     /// **New in version 3.25**
-    ///
+    #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub volumes: Option<Vec<String>>,
 }

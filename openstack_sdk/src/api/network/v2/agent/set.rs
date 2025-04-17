@@ -35,14 +35,12 @@ use std::borrow::Cow;
 pub struct Agent<'a> {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) admin_state_up: Option<bool>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -55,7 +53,6 @@ pub struct Request<'a> {
     pub(crate) agent: Agent<'a>,
 
     /// id parameter for /v2.0/agents/{id} API
-    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
