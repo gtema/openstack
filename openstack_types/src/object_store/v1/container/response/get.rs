@@ -24,34 +24,34 @@ use structable::{StructTable, StructTableOptions};
 pub struct ContainerResponse {
     /// The total number of bytes that are stored in Object Storage for the
     /// container.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub bytes: Option<i64>,
 
     /// The content type of the object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub content_type: Option<String>,
 
     /// The MD5 checksum value of the object content.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub hash: Option<String>,
 
     /// The date and time when the object was last modified. The date and time
     /// stamp format is ISO 8601
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub last_modified: Option<String>,
 
     /// The name of the container.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
     /// This field exists only when the object is symlink. This is the target
     /// path of the symlink object.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub symlink_path: Option<String>,
 }

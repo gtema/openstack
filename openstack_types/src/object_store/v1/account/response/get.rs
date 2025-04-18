@@ -24,22 +24,22 @@ use structable::{StructTable, StructTableOptions};
 pub struct AccountResponse {
     /// The total number of bytes that are stored in Object Storage for the
     /// account.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub bytes: Option<i64>,
 
     /// The number of objects in the container.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub count: Option<i64>,
 
     /// Last modification date of the container
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub last_modified: Option<String>,
 
     /// The name of the container.
-    ///
+    #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 }

@@ -26,8 +26,6 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
 use openstack_sdk::api::identity::v3::user::application_credential::list::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
-use serde_json::Value;
-use structable::{StructTable, StructTableOptions};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -79,60 +77,4 @@ impl ExecuteApiRequest for IdentityUserApplicationCredentialList {
         })?;
         Ok(())
     }
-}
-/// IdentityUserApplicationCredential response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct IdentityUserApplicationCredential {
-    /// A list of access_rules objects
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ACCESS_RULES", wide)]
-    pub access_rules: Option<Value>,
-
-    /// A description of the application credential's purpose.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "DESCRIPTION", wide)]
-    pub description: Option<String>,
-
-    #[serde(default)]
-    #[structable(optional, title = "EXPIRES_AT", wide)]
-    pub expires_at: Option<String>,
-
-    /// The ID of the application credential.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    pub id: Option<String>,
-
-    /// The name of the application credential. Must be unique to a user.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "NAME")]
-    pub name: Option<String>,
-
-    /// The ID of the project the application credential was created for and
-    /// that authentication requests using this application credential will be
-    /// scoped to.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "PROJECT_ID", wide)]
-    pub project_id: Option<String>,
-
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project. If
-    /// not provided, the roles assigned to the application credential will be
-    /// the same as the roles in the current token.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ROLES", wide)]
-    pub roles: Option<Value>,
-
-    /// An optional flag to restrict whether the application credential may be
-    /// used for the creation or destruction of other application credentials
-    /// or trusts. Defaults to false.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "UNRESTRICTED", wide)]
-    pub unrestricted: Option<bool>,
 }

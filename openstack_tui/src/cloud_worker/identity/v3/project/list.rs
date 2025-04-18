@@ -27,8 +27,6 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use openstack_sdk::api::identity::v3::project::list::RequestBuilder;
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
-use serde_json::Value;
-use structable::{StructTable, StructTableOptions};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -146,66 +144,4 @@ impl ExecuteApiRequest for IdentityProjectList {
         })?;
         Ok(())
     }
-}
-/// IdentityProject response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct IdentityProject {
-    /// The description of the project.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "DESCRIPTION", wide)]
-    pub description: Option<String>,
-
-    /// The ID of the domain for the project.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "DOMAIN_ID", wide)]
-    pub domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ENABLED", wide)]
-    pub enabled: Option<bool>,
-
-    /// The ID for the project.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    pub id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "IS_DOMAIN", wide)]
-    pub is_domain: Option<bool>,
-
-    /// The name of the project.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "NAME")]
-    pub name: Option<String>,
-
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "OPTIONS", wide)]
-    pub options: Option<Value>,
-
-    /// The ID of the parent for the project.
-    ///
-    /// **New in version 3.4**
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "PARENT_ID", wide)]
-    pub parent_id: Option<String>,
-
-    /// A list of simple strings assigned to a project.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "TAGS", wide)]
-    pub tags: Option<Value>,
 }

@@ -33,7 +33,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
-    ///
     #[builder(default, setter(into))]
     account: Cow<'a, str>,
 

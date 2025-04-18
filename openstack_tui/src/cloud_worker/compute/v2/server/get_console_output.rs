@@ -35,7 +35,6 @@ pub struct ComputeServerGetConsoleOutput {
     pub name: Option<String>,
 
     /// The action to get console output of the server.
-    ///
     os_get_console_output: OsGetConsoleOutput,
 }
 /// OsGetConsoleOutput data
@@ -49,7 +48,6 @@ pub struct OsGetConsoleOutput {
     ///
     /// This parameter can be specified as not only ‘integer’ but also
     /// ‘string’.
-    ///
     #[builder(default, setter(into))]
     pub length: Option<Option<i32>>,
 }
