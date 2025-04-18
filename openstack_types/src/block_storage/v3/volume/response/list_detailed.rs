@@ -122,8 +122,9 @@ pub struct VolumeResponse {
     pub metadata: Option<BTreeMap<String, String>>,
 
     /// The volume migration status. Admin only.
-    #[structable(wide)]
-    pub migration_status: String,
+    #[serde(default)]
+    #[structable(optional, wide)]
+    pub migration_status: Option<String>,
 
     /// If true, this volume can attach to more than one instance.
     #[serde(default)]
@@ -144,8 +145,8 @@ pub struct VolumeResponse {
     pub provider_id: Option<String>,
 
     /// The volume replication status.
-    #[structable(wide)]
-    pub replication_status: String,
+    #[structable(optional, wide)]
+    pub replication_status: Option<String>,
 
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
