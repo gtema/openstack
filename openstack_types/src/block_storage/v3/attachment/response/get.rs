@@ -64,6 +64,10 @@ pub struct AttachmentResponse {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum AttachMode {
+    // Null
+    #[serde(rename = "null")]
+    Null,
+
     // Ro
     #[serde(rename = "ro")]
     Ro,
@@ -77,6 +81,7 @@ impl std::str::FromStr for AttachMode {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
+            "null" => Ok(Self::Null),
             "ro" => Ok(Self::Ro),
             "rw" => Ok(Self::Rw),
             _ => Err(()),
