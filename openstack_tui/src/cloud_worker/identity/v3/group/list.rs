@@ -27,7 +27,6 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use openstack_sdk::api::identity::v3::group::list::RequestBuilder;
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
-use structable::{StructTable, StructTableOptions};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -108,31 +107,4 @@ impl ExecuteApiRequest for IdentityGroupList {
         })?;
         Ok(())
     }
-}
-/// IdentityGroup response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct IdentityGroup {
-    /// The description of the group.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "DESCRIPTION", wide)]
-    pub description: Option<String>,
-
-    /// The ID of the domain.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "DOMAIN_ID", wide)]
-    pub domain_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    pub id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "NAME")]
-    pub name: Option<String>,
 }

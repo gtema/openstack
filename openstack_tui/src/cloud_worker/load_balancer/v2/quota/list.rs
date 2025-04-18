@@ -26,7 +26,6 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
 use openstack_sdk::api::load_balancer::v2::quota::list::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
-use structable::{StructTable, StructTableOptions};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -64,76 +63,4 @@ impl ExecuteApiRequest for LoadBalancerQuotaList {
         })?;
         Ok(())
     }
-}
-/// LoadBalancerQuota response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct LoadBalancerQuota {
-    #[serde(default)]
-    #[structable(optional, title = "HEALTH_MONITOR")]
-    pub health_monitor: Option<i32>,
-
-    /// The configured health monitor quota limit. A setting of `null` means it
-    /// is using the deployment default quota. A setting of `-1` means
-    /// unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "HEALTHMONITOR")]
-    pub healthmonitor: Option<i32>,
-
-    /// The configured l7policy quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "L7POLICY")]
-    pub l7policy: Option<i32>,
-
-    /// The configured l7rule quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "L7RULE")]
-    pub l7rule: Option<i32>,
-
-    /// The configured listener quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "LISTENER")]
-    pub listener: Option<i32>,
-
-    #[serde(default)]
-    #[structable(optional, title = "LOAD_BALANCER")]
-    pub load_balancer: Option<i32>,
-
-    /// The configured load balancer quota limit. A setting of `null` means it
-    /// is using the deployment default quota. A setting of `-1` means
-    /// unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "LOADBALANCER")]
-    pub loadbalancer: Option<i32>,
-
-    /// The configured member quota limit. A setting of `null` means it is
-    /// using the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "MEMBER")]
-    pub member: Option<i32>,
-
-    /// The configured pool quota limit. A setting of `null` means it is using
-    /// the deployment default quota. A setting of `-1` means unlimited.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "POOL")]
-    pub pool: Option<i32>,
-
-    /// The ID of the project owning this resource.
-    ///
-    #[serde(default)]
-    #[structable(optional, title = "PROJECT_ID", wide)]
-    pub project_id: Option<String>,
-
-    #[serde(default)]
-    #[structable(optional, title = "TENANT_ID")]
-    pub tenant_id: Option<String>,
 }

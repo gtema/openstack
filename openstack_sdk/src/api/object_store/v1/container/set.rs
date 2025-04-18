@@ -29,7 +29,6 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
-    ///
     #[builder(default, setter(into))]
     account: Cow<'a, str>,
 
@@ -40,7 +39,6 @@ pub struct Request<'a> {
     /// character delimits the container and object name. For example, the path
     /// /v1/account/www/pages specifies the www container, not the www/pages
     /// container.
-    ///
     #[builder(default, setter(into))]
     container: Cow<'a, str>,
 

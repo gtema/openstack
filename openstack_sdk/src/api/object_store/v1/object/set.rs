@@ -29,14 +29,12 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
-    ///
     #[builder(default, setter(into))]
     account: Cow<'a, str>,
 
     /// When the bulk-delete query parameter is present in the POST request,
     /// multiple objects or containers can be deleted with a single request.
     /// See Bulk Delete for how this feature is used.
-    ///
     #[builder(default)]
     bulk_delete: Option<bool>,
 
@@ -47,14 +45,12 @@ pub struct Request<'a> {
     /// character delimits the container and object name. For example, the path
     /// /v1/account/www/pages specifies the www container, not the www/pages
     /// container.
-    ///
     #[builder(default, setter(into))]
     container: Cow<'a, str>,
 
     /// When the extract-archive query parameter is present in the POST
     /// request, an archive (tar file) is uploaded and extracted to create
     /// multiple objects. See Extract Archive for how this feature is used.
-    ///
     #[builder(default)]
     extract_archive: Option<bool>,
 
@@ -64,7 +60,6 @@ pub struct Request<'a> {
     /// header. Browsers can interpret this file name value as a file
     /// attachment to save. For more information about temporary URLs, see
     /// Temporary URL middleware.
-    ///
     #[builder(default, setter(into))]
     filename: Option<Cow<'a, str>>,
 
@@ -73,19 +68,16 @@ pub struct Request<'a> {
     /// Instead, the manifest is returned in the X-Object-Manifest response
     /// header for dynamic large objects or in the response body for static
     /// large objects.
-    ///
     #[builder(default, setter(into))]
     multipart_manifest: Option<Cow<'a, str>>,
 
     /// The unique name for the object.
-    ///
     #[builder(default, setter(into))]
     object: Cow<'a, str>,
 
     /// If you include the symlink=get query parameter and the object is a
     /// symlink, then the response will include data and metadata from the
     /// symlink itself rather than from the target.
-    ///
     #[builder(default, setter(into))]
     symlink: Option<Cow<'a, str>>,
 
@@ -94,7 +86,6 @@ pub struct Request<'a> {
     /// 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug
     /// 2015 19:57:28 GMT. For more information about temporary URLs, see
     /// Temporary URL middleware.
-    ///
     #[builder(default)]
     temp_url_expires: Option<i32>,
 
@@ -103,7 +94,6 @@ pub struct Request<'a> {
     /// expiration date, full path to the object, and the secret key for the
     /// temporary URL. For more information about temporary URLs, see Temporary
     /// URL middleware.
-    ///
     #[builder(default, setter(into))]
     temp_url_sig: Option<Cow<'a, str>>,
 

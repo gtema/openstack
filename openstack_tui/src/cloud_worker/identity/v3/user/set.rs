@@ -35,7 +35,6 @@ pub struct IdentityUserSet {
     pub name: Option<String>,
 
     /// A `user` object
-    ///
     user: User,
 }
 /// Protocols data
@@ -110,25 +109,25 @@ impl TryFrom<&Federated> for openstack_sdk::api::identity::v3::user::set::Federa
 #[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub ignore_change_password_upon_first_use: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub ignore_lockout_failure_attempts: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub ignore_password_expiry: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub ignore_user_inactivity: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub lock_password: Option<bool>,
 
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub multi_factor_auth_enabled: Option<bool>,
 
-    #[builder(default, private, setter(name = "_multi_factor_auth_rules"))]
+    #[builder(default, private, setter(into, name = "_multi_factor_auth_rules"))]
     pub multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }
 
@@ -176,12 +175,10 @@ impl TryFrom<&Options> for openstack_sdk::api::identity::v3::user::set::Options<
 #[builder(setter(strip_option))]
 pub struct User {
     /// The new ID of the default project for the user.
-    ///
     #[builder(default, setter(into))]
     pub default_project_id: Option<Option<String>>,
 
     /// The resource description.
-    ///
     #[builder(default, setter(into))]
     pub description: Option<Option<String>>,
 
@@ -191,8 +188,7 @@ pub struct User {
     /// longer valid. If you reenable this user, pre-existing tokens do not
     /// become valid. To enable the user, set to `true`. To disable the user,
     /// set to `false`. Default is `true`.
-    ///
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -211,12 +207,10 @@ pub struct User {
     /// ]
     ///
     /// ```
-    ///
     #[builder(default, setter(into))]
     pub federated: Option<Vec<Federated>>,
 
     /// The new name for the user. Must be unique within the owning domain.
-    ///
     #[builder(default, setter(into))]
     pub name: Option<String>,
 
@@ -225,12 +219,10 @@ pub struct User {
     /// `ignore_lockout_failure_attempts`, `lock_password`,
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
-    ///
     #[builder(default, setter(into))]
     pub options: Option<Options>,
 
     /// The new password for the user.
-    ///
     #[builder(default, setter(into))]
     pub password: Option<Option<String>>,
 }

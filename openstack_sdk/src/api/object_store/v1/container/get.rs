@@ -35,7 +35,6 @@ use crate::api::Pageable;
 pub struct Request<'a> {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
-    ///
     #[builder(default, setter(into))]
     account: Cow<'a, str>,
 
@@ -46,7 +45,6 @@ pub struct Request<'a> {
     /// character delimits the container and object name. For example, the path
     /// /v1/account/www/pages specifies the www container, not the www/pages
     /// container.
-    ///
     #[builder(default, setter(into))]
     container: Cow<'a, str>,
 
@@ -54,13 +52,11 @@ pub struct Request<'a> {
     /// present a pseudo-directory hierarchy of objects. When combined with a
     /// prefix query, this enables API users to simulate and traverse the
     /// objects in a container as if they were in a directory tree.
-    ///
     #[builder(default, setter(into))]
     delimiter: Option<Cow<'a, str>>,
 
     /// For a string value, x, constrains the list to items whose names are
     /// less than x.
-    ///
     #[builder(default, setter(into))]
     end_marker: Option<Cow<'a, str>>,
 
@@ -70,32 +66,27 @@ pub struct Request<'a> {
     /// information serialized in that format. If you append the format=plain
     /// query parameter, the response lists the container names separated by
     /// newlines.
-    ///
     #[builder(default, setter(into))]
     format: Option<Cow<'a, str>>,
 
     /// For an integer value n, limits the number of results to n.
-    ///
     #[builder(default)]
     limit: Option<i32>,
 
     /// For a string value, x, constrains the list to items whose names are
     /// greater than x.
-    ///
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Only objects with this prefix will be returned. When combined with a
     /// delimiter query, this enables API users to simulate and traverse the
     /// objects in a container as if they were in a directory tree.
-    ///
     #[builder(default, setter(into))]
     prefix: Option<Cow<'a, str>>,
 
     /// By default, listings are returned sorted by name, ascending. If you
     /// include the reverse=true query parameter, the listing will be returned
     /// sorted by name, descending.
-    ///
     #[builder(default)]
     reverse: Option<bool>,
 
