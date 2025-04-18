@@ -74,10 +74,11 @@ pub struct InstanceActionResponse {
     pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server action.
-    #[structable()]
-    pub user_id: String,
+    #[structable(optional)]
+    pub user_id: Option<String>,
 }
 
+/// Event
 /// `Events` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Events {
