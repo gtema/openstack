@@ -15,9 +15,9 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable::{StructTable, StructTableOptions};
 use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_types::compute::v2::server::instance_action::response::list::InstanceActionResponse;
 
 use crate::{
     action::Action,
@@ -36,31 +36,14 @@ use crate::{
 const TITLE: &str = "ServerInstanceAction Actions";
 const VIEW_CONFIG_KEY: &str = "compute.server/instance_action";
 
-#[derive(Deserialize, StructTable)]
-pub struct ServerInstanceActionData {
-    #[structable(title = "ID", wide)]
-    #[serde(rename = "request_id")]
-    id: String,
-    #[structable(title = "ACTION")]
-    action: String,
-    #[structable(title = "MESSAGE", optional)]
-    message: Option<String>,
-    #[structable(title = "STARTED")]
-    start_time: String,
-    #[structable(title = "USER")]
-    user_id: String,
-    #[structable(title = "SERVER ID", wide)]
-    instance_uuid: String,
-}
-
-impl ResourceKey for ServerInstanceActionData {
+impl ResourceKey for InstanceActionResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type ComputeServerInstanceActions<'a> =
-    TableViewComponentBase<'a, ServerInstanceActionData, ComputeServerInstanceActionList>;
+    TableViewComponentBase<'a, InstanceActionResponse, ComputeServerInstanceActionList>;
 
 impl Component for ComputeServerInstanceActions<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -130,8 +113,10 @@ impl Component for ComputeServerInstanceActions<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set server instance action filters
                             let mut req = ComputeServerInstanceActionShowBuilder::default();
-                            req.id(selected_entry.id.clone());
-                            req.server_id(selected_entry.instance_uuid.clone());
+                            req.id(selected_entry.request_id.clone());
+                            if let Some(sid) = &selected_entry.instance_uuid {
+                                req.server_id(sid.clone());
+                            }
                             if let Some(name) = &self.get_filters().server_name {
                                 req.server_name(name.clone());
                             }

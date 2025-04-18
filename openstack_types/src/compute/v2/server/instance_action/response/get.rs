@@ -37,6 +37,11 @@ pub struct InstanceActionResponse {
     #[structable(serialize)]
     pub events: Vec<Events>,
 
+    /// The UUID of the server.
+    #[serde(default)]
+    #[structable(optional)]
+    pub instance_uuid: Option<String>,
+
     /// The related error message for when an action fails.
     #[serde(default)]
     #[structable(optional)]
@@ -50,7 +55,17 @@ pub struct InstanceActionResponse {
     #[structable()]
     pub request_id: String,
 
-    /// The date and time when the action was started.
+    /// The date and time when the action was started. The date and time stamp
+    /// format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     #[serde(default)]
     #[structable(optional)]
     pub start_time: Option<String>,
@@ -74,10 +89,11 @@ pub struct InstanceActionResponse {
     pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server action.
-    #[structable()]
-    pub user_id: String,
+    #[structable(optional)]
+    pub user_id: Option<String>,
 }
 
+/// Event
 /// `Events` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Events {
