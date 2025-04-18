@@ -326,9 +326,9 @@ views:
   compute.hypervisor:
     fields: [IP, HOSTNAME, STATUS, STATE]
   compute.server/instance_action/event:
-    fields: [EVENT, RESULT, STARTED, FINISHED, HOST]
+    fields: [EVENT, RESULT, START_TIME, FINISH_TIME, HOST]
   compute.server/instance_action:
-    fields: [ID, ACTION, MESSAGE, STARTED, USER, "SERVER ID"]
+    fields: [ID, ACTION, MESSAGE, START_TIME, USER_ID]
   compute.server:
     fields: [ID, NAME, STATUS, CREATED, UPDATED]
   # DNS

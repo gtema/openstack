@@ -30,25 +30,45 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{ResourceKey, as_string},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "InstanceAction Events";
 const VIEW_CONFIG_KEY: &str = "compute.server/instance_action/event";
 
-#[derive(Deserialize, StructTable)]
+/// Event type
+#[derive(Clone, Debug, Deserialize, StructTable)]
 pub struct ServerInstanceActionEventData {
-    #[structable(title = "EVENT")]
-    event: String,
-    #[structable(title = "RESULT")]
-    #[serde(deserialize_with = "as_string")]
-    result: String,
-    #[structable(title = "STARTED", optional)]
-    start_time: Option<String>,
-    #[structable(title = "FINISHED", optional)]
-    finish_time: Option<String>,
-    #[structable(title = "HOST", optional)]
-    host: Option<String>,
+    /// Even details
+    #[structable(optional)]
+    pub details: Option<String>,
+
+    /// Event summary
+    pub event: String,
+
+    /// Finish time of the event
+    #[structable(optional)]
+    pub finish_time: Option<String>,
+
+    /// Hostname
+    #[structable(optional)]
+    pub host: Option<String>,
+
+    /// Host ID
+    #[structable(optional)]
+    pub host_id: Option<String>,
+
+    /// Result
+    #[structable(optional)]
+    pub result: Option<String>,
+
+    /// Event start time
+    #[structable(optional)]
+    pub start_time: Option<String>,
+
+    /// Traceback
+    #[structable(optional)]
+    pub traceback: Option<String>,
 }
 
 impl ResourceKey for ServerInstanceActionEventData {
