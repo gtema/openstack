@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.11.1...openstack_tui-v0.12.0) - 2025-04-19
+
+### Added
+
+- Add instance_uuid to the instance action schema ([#1160](https://github.com/gtema/openstack/pull/1160))
+- Switch cli to openstack_types ([#1158](https://github.com/gtema/openstack/pull/1158))
+- Switch tui and cli to openstack_types ([#1148](https://github.com/gtema/openstack/pull/1148))
+
+### Other
+
+- Separate structable into separate repository ([#1145](https://github.com/gtema/openstack/pull/1145))
+- *(deps)* Bump crossterm from 0.28.1 to 0.29.0 ([#1128](https://github.com/gtema/openstack/pull/1128))
+
 ## [0.11.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.11.0...openstack_tui-v0.11.1) - 2025-04-05
 
 ### Added
