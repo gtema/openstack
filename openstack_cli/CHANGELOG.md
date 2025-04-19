@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.11.1...openstack_cli-v0.12.0) - 2025-04-19
+
+### Added
+
+- Switch tui and cli to openstack_types ([#1148](https://github.com/gtema/openstack/pull/1148))
+- Use dedicated deser helpers in response types ([#1142](https://github.com/gtema/openstack/pull/1142))
+- Start building openstack_tui crate ([#1132](https://github.com/gtema/openstack/pull/1132))
+- Switch cli to openstack_types ([#1158](https://github.com/gtema/openstack/pull/1158))
+
+### Other
+
+- Separate structable into separate repository ([#1145](https://github.com/gtema/openstack/pull/1145))
+
 ## [0.11.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.11.0...openstack_cli-v0.11.1) - 2025-04-05
 
 ### Added
