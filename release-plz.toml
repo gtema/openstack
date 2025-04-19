@@ -24,13 +24,3 @@ version_group = "bins"
 name = "openstack_types"
 git_release_enable = true
 version_group = "sdks"
-
-[[package]]
-name = "structable_derive"
-git_release_enable = true
-
-# [[package]]
-# name = "xtask"
-# git_release_enable = false
-# publish = false
-# release = false
