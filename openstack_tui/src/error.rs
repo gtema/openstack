@@ -29,6 +29,15 @@ pub enum TuiError {
         source: serde_json::Error,
     },
 
+    /// Json deserialization error.
+    #[error("failed to deserialize data to json. \n\t{}", source)]
+    DeserializeJson {
+        /// The source of the error.
+        source: serde_json::Error,
+        /// Source json data
+        data: String,
+    },
+
     #[error("error sending action: {}", source)]
     SenderError {
         /// The source of the error.
@@ -47,4 +56,14 @@ pub enum TuiError {
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
+}
+
+impl TuiError {
+    /// Build a deserialization error
+    pub fn deserialize(error: serde_json::Error, data: String) -> Self {
+        Self::DeserializeJson {
+            source: error,
+            data,
+        }
+    }
 }

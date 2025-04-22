@@ -15,7 +15,6 @@
 //! Output processing module
 
 use comfy_table::{Cell, Color, ContentArrangement, Table, presets::UTF8_FULL_CONDENSED};
-use eyre::WrapErr;
 use openstack_sdk::types::EntryStatus;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
@@ -75,17 +74,19 @@ impl OutputProcessor {
         match self.target {
             OutputFor::Human => {
                 let table: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))
-                    .wrap_err_with(|| {
-                        format!(
-                            "json: {:?}",
-                            data.iter()
-                                .filter(|&item| serde_json::from_value::<T>(item.clone()).is_err())
-                                .map(|x| x.to_string())
-                                .collect::<Vec<_>>()
+                    .map_err(|err| {
+                        OpenStackCliError::deserialize(
+                            err,
+                            serde_json::to_string(&serde_json::Value::Array(
+                                data.into_iter()
+                                    .filter(|item| {
+                                        serde_json::from_value::<T>(item.clone()).is_err()
+                                    })
+                                    .collect(),
+                            ))
+                            .unwrap_or_else(|v| format!("{:?}", v)),
                         )
-                    })
-                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())
-                ?;
+                    })?;
 
                 let (headers, table_rows) =
                     structable::build_list_table(table.iter(), &self.config);
@@ -134,8 +135,12 @@ impl OutputProcessor {
     {
         match self.target {
             OutputFor::Human => {
-                let table: T = serde_json::from_value(data.clone())
-                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
+                let table: T = serde_json::from_value(data.clone()).map_err(|err| {
+                    OpenStackCliError::deserialize(
+                        err,
+                        serde_json::to_string(&data.clone()).unwrap_or_default(),
+                    )
+                })?;
 
                 self.output_human(&table)
             }

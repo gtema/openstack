@@ -29,6 +29,18 @@ pub enum OpenStackCliError {
         source: serde_json::Error,
     },
 
+    /// Json deserialization error.
+    #[error(
+        "failed to deserialize data to json. Try using `-o json` to still see the data. \n\t{}",
+        data
+    )]
+    DeserializeJson {
+        /// The source of the error.
+        source: serde_json::Error,
+        /// Source json data
+        data: String,
+    },
+
     /// OpenStack Auth error.
     #[error("authentication error")]
     Auth {
@@ -162,4 +174,14 @@ pub enum OpenStackCliError {
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
+}
+
+impl OpenStackCliError {
+    /// Build a deserialization error
+    pub fn deserialize(error: serde_json::Error, data: String) -> Self {
+        Self::DeserializeJson {
+            source: error,
+            data,
+        }
+    }
 }
