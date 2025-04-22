@@ -20,9 +20,11 @@ use std::process::Command;
 
 #[test]
 fn list() -> Result<(), Box<dyn std::error::Error>> {
+    skip_without_extension!("network", "floatingip-pools");
+
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("network").arg("floating-ip-pool").arg("list");
+    cmd.args(["network", "floating-ip-pool", "list"]);
     cmd.assert().success();
 
     Ok(())

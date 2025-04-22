@@ -17,9 +17,11 @@ use std::process::Command;
 
 #[test]
 fn show() -> Result<(), Box<dyn std::error::Error>> {
+    skip_without_service!("object-store");
+
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("object-store").arg("account").arg("show");
+    cmd.args(["object-store", "account", "show"]);
     cmd.assert().success();
 
     Ok(())
