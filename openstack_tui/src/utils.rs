@@ -15,9 +15,6 @@
 use eyre::Result;
 use lazy_static::lazy_static;
 use ratatui::prelude::*;
-use serde::{Deserialize, Deserializer, Serialize, de, de::Visitor};
-use serde_json::Value;
-use std::fmt;
 use std::path::PathBuf;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{
@@ -159,68 +156,6 @@ Config directory: {config_dir_path}
 Data directory: {data_dir_path}"
     )
 }
-
-/// IntString (Integer or Integer as string)
-#[derive(Clone, Debug, Serialize)]
-#[serde(transparent)]
-pub struct IntString(u64);
-impl fmt::Display for IntString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-impl<'de> Deserialize<'de> for IntString {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct MyVisitor;
-
-        impl Visitor<'_> for MyVisitor {
-            type Value = IntString;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-                fmt.write_str("integer or string")
-            }
-
-            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                Ok(IntString(val))
-            }
-
-            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                match val.parse::<u64>() {
-                    Ok(val) => self.visit_u64(val),
-                    Err(_) => Ok(IntString(0)),
-                }
-            }
-        }
-
-        deserializer.deserialize_any(MyVisitor)
-    }
-}
-
-pub(crate) fn as_string<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
-    Ok(match serde::de::Deserialize::deserialize(deserializer)? {
-        Value::Bool(b) => b.to_string(),
-        Value::String(s) => s,
-        Value::Number(num) => num.to_string(),
-        Value::Null => String::from(""),
-        _ => return Err(de::Error::custom("Wrong type, expected boolean")),
-    })
-}
-
-//pub trait StructTable {
-//    /// Build a vector of headers and rows from the data
-//    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
-//    /// Get a status of entry
-//    fn status(&self) -> Vec<Option<String>>;
-//}
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
 pub fn centered_rect_percent(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
