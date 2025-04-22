@@ -29,7 +29,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 
 pub use crate::types::api_version::ApiVersion;
-pub use common::{BoolString, IdAndName, IntString, NameOrId, NumString};
+pub use common::{IdAndName, NameOrId};
 
 /// Supported Service Types
 #[derive(Debug, Clone, Eq, PartialEq)]
