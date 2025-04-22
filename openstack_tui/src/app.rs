@@ -61,6 +61,7 @@ use crate::{
         resource_select_popup::ApiRequestSelect,
     },
     config::Config,
+    error::TuiError,
     mode::Mode,
     tui,
     tui::{Event, Tui},
@@ -484,9 +485,13 @@ impl App {
                 if *mode == self.mode
                     || (action != Action::Refresh && action != Action::DescribeApiResponse)
                 {
-                    if let Some(action) = component.update(action.clone(), self.mode)? {
-                        self.action_tx.send(action)?
-                    };
+                    match component.update(action.clone(), self.mode) {
+                        Ok(Some(action)) => self.action_tx.send(action)?,
+                        Err(err @ TuiError::DeserializeJson { .. }) => {
+                            self.action_tx.send(Action::Error(err.to_string()))?
+                        }
+                        _ => {}
+                    }
                 }
             }
             if let Some(action) = self.header.update(action.clone(), self.mode)? {
