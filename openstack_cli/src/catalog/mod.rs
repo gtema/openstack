@@ -16,19 +16,13 @@
 
 use clap::{Parser, Subcommand};
 
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-
-use std::fmt;
-use tracing::info;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::Cli;
 use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-use structable::StructTable;
-use structable::StructTableOptions;
+
+mod list;
+mod show;
 
 /// Catalog commands args
 #[derive(Parser)]
@@ -42,7 +36,8 @@ pub struct CatalogCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum CatalogCommands {
-    List(ListCommand),
+    List(list::ListCommand),
+    Show(show::ShowCommand),
 }
 
 impl CatalogCommand {
@@ -54,91 +49,7 @@ impl CatalogCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            CatalogCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
-    }
-}
-
-/// Shows current catalog information
-#[derive(Parser)]
-pub struct ListCommand {}
-
-/// Catalog entries
-#[derive(Deserialize, Serialize)]
-pub struct VecCatalogEndpoints(pub Vec<CatalogEndpoint>);
-
-/// Catalog
-#[derive(Deserialize, Serialize, StructTable)]
-pub struct Catalog {
-    /// Service type
-    #[structable(title = "service_type")]
-    #[serde(rename = "type")]
-    service_type: String,
-
-    /// Service name
-    #[structable(title = "service_name")]
-    name: String,
-
-    /// Service endpoints
-    endpoints: VecCatalogEndpoints,
-}
-
-/// Catalog entry representation
-#[derive(Deserialize, Serialize, StructTable)]
-pub struct CatalogEndpoint {
-    /// id
-    id: String,
-    /// Interface
-    interface: String,
-    ///Region
-    region: String,
-    /// URL
-    url: String,
-}
-
-impl fmt::Display for CatalogEndpoint {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "interface: {}, region: {}, url: {}",
-            self.interface, self.region, self.url
-        )
-    }
-}
-
-impl fmt::Display for VecCatalogEndpoints {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-
-impl ListCommand {
-    /// Perform command action
-    pub async fn take_action(
-        &self,
-        parsed_args: &Cli,
-        client: &mut AsyncOpenStack,
-    ) -> Result<(), OpenStackCliError> {
-        info!("Show Catalog");
-
-        let op = OutputProcessor::from_args(parsed_args);
-        op.validate_args(parsed_args)?;
-
-        let data: Vec<Value> = client
-            .get_token_catalog()
-            .unwrap_or_default()
-            .into_iter()
-            .map(|x| serde_json::to_value(x).unwrap())
-            .collect();
-
-        op.output_list::<Catalog>(data).unwrap();
-        Ok(())
     }
 }

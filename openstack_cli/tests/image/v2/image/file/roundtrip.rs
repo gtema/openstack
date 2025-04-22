@@ -47,7 +47,7 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
 
     let img_name = format!(
         "test-rust-{}",
-        Alphanumeric.sample_string(&mut rand::thread_rng(), 16)
+        Alphanumeric.sample_string(&mut rand::rng(), 16)
     );
 
     // Create image

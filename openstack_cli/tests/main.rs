@@ -30,6 +30,8 @@ mod identity;
 mod image;
 #[cfg(feature = "load_balancer")]
 mod load_balancer;
+#[macro_use]
+mod macros;
 #[cfg(feature = "network")]
 mod network;
 #[cfg(feature = "object_store")]

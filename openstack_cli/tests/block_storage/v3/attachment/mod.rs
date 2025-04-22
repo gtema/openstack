@@ -15,6 +15,7 @@
 mod create_327_autogen;
 mod create_354_autogen;
 mod delete_autogen;
+mod list;
 mod list_autogen;
 mod os_complete_autogen;
 mod set_327_autogen;

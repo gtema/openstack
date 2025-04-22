@@ -32,6 +32,8 @@ fn prune_help() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn container_prune_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
+    skip_without_extension!("network", "security-groups-default-rules");
+
     let container_name = "sdk-dummy-container";
     let object_name = "dummy-object";
     let mut file = NamedTempFile::new()?;
