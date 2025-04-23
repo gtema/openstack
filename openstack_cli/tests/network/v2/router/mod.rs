@@ -24,7 +24,7 @@ mod list_autogen;
 mod remove_external_gateways_autogen;
 mod remove_extraroutes_autogen;
 mod remove_router_interface_autogen;
-// mod set_autogen;
+mod set_autogen;
 mod show_autogen;
 mod tag;
 

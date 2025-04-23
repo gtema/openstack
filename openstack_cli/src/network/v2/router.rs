@@ -31,6 +31,7 @@ pub mod list;
 pub mod remove_external_gateways;
 pub mod remove_extraroutes;
 pub mod remove_router_interface;
+pub mod set;
 pub mod show;
 pub mod tag;
 
@@ -57,6 +58,7 @@ pub enum RouterCommands {
     RemoveExternalGateway(Box<remove_external_gateways::RouterCommand>),
     RemoveExtraroute(Box<remove_extraroutes::RouterCommand>),
     RemoveRouterInterface(Box<remove_router_interface::RouterCommand>),
+    Set(set::RouterCommand),
     Show(show::RouterCommand),
     Tag(tag::TagCommand),
 }
@@ -84,6 +86,7 @@ impl RouterCommand {
             RouterCommands::RemoveRouterInterface(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
+            RouterCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
         }
