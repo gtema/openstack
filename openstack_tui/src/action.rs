@@ -34,7 +34,10 @@ pub enum Action {
     },
     /// Switched to previous mode
     PrevMode,
-    Error(String),
+    Error {
+        msg: String,
+        action: Option<Box<Action>>,
+    },
     Help,
     /// Trigger connection to the cloud
     ConnectToCloud(String),
@@ -51,11 +54,6 @@ pub enum Action {
     },
     /// Propagate resources list to components
     ApiResponsesData {
-        request: cloud_types::ApiRequest,
-        data: Vec<serde_json::Value>,
-    },
-    /// Propagate resources list to components
-    ApiResponsesData1 {
         request: cloud_types::ApiRequest,
         data: Vec<serde_json::Value>,
     },

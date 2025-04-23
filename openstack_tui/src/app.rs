@@ -67,7 +67,7 @@ use crate::{
     tui::{Event, Tui},
 };
 
-#[derive(Eq, Hash, PartialEq)]
+#[derive(Debug, Eq, Hash, PartialEq)]
 enum Popup {
     Error,
     SelectApiRequest,
@@ -465,7 +465,7 @@ impl App {
                     self.popups.remove(&Popup::Confirm);
                     self.render(tui)?;
                 }
-                Action::Error(_) => {
+                Action::Error { .. } => {
                     if self.mode != Mode::Home {
                         self.active_popup = Some(Popup::Error);
                         self.render(tui)?;
@@ -476,7 +476,7 @@ impl App {
 
             for popup in self.popups.values_mut() {
                 if let Some(action) = popup.update(action.clone(), self.mode)? {
-                    self.action_tx.send(action)?
+                    self.action_tx.send(action)?;
                 };
             }
             for (mode, component) in self.components.iter_mut() {
@@ -487,8 +487,11 @@ impl App {
                 {
                     match component.update(action.clone(), self.mode) {
                         Ok(Some(action)) => self.action_tx.send(action)?,
-                        Err(err @ TuiError::DeserializeJson { .. }) => {
-                            self.action_tx.send(Action::Error(err.to_string()))?
+                        Err(err @ TuiError::JsonError { .. }) => {
+                            self.action_tx.send(Action::Error {
+                                msg: err.to_string(),
+                                action: Some(Box::new(action.clone())),
+                            })?
                         }
                         _ => {}
                     }
@@ -497,6 +500,7 @@ impl App {
             if let Some(action) = self.header.update(action.clone(), self.mode)? {
                 self.action_tx.send(action)?
             };
+            self.render(tui)?;
         }
         Ok(())
     }
@@ -523,7 +527,10 @@ impl App {
             if draw_header {
                 if let Err(e) = self.header.draw(f, rects[0]) {
                     self.action_tx
-                        .send(Action::Error(format!("Failed to draw: {:?}", e)))
+                        .send(Action::Error {
+                            msg: format!("Failed to draw: {:?}", e),
+                            action: None,
+                        })
                         .unwrap();
                 }
             }
@@ -532,7 +539,10 @@ impl App {
                 if let Err(e) = component.draw(f, rects[1]) {
                     error!("Error {:?}", e);
                     self.action_tx
-                        .send(Action::Error(format!("Failed to draw: {:?}", e)))
+                        .send(Action::Error {
+                            msg: format!("Failed to draw: {:?}", e),
+                            action: None,
+                        })
                         .unwrap();
                 }
             }
@@ -540,7 +550,10 @@ impl App {
                 if let Some(popup) = self.popups.get_mut(popup_type) {
                     if let Err(e) = popup.draw(f, f.area()) {
                         self.action_tx
-                            .send(Action::Error(format!("Failed to draw: {:?}", e)))
+                            .send(Action::Error {
+                                msg: format!("Failed to draw: {:?}", e),
+                                action: None,
+                            })
                             .unwrap();
                     }
                 }

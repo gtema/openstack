@@ -2287,6 +2287,7 @@ dependencies = [
  "itertools 0.14.0",
  "json5",
  "lazy_static",
+ "open",
  "openstack_sdk",
  "openstack_types",
  "pretty_assertions",
@@ -2304,6 +2305,7 @@ dependencies = [
  "tracing",
  "tracing-error",
  "tracing-subscriber",
+ "url",
 ]
 
 [[package]]

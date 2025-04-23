@@ -48,7 +48,6 @@ enum Focus {
 pub struct TableViewComponentBase<'a, T, F>
 where
     T: StructTable,
-    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -79,7 +78,6 @@ impl<T, F> Default for TableViewComponentBase<'_, T, F>
 where
     T: StructTable,
     for<'a> &'a T: StructTable,
-    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -93,8 +91,6 @@ impl<T, F> TableViewComponentBase<'_, T, F>
 where
     T: StructTable,
     for<'a> &'a T: StructTable,
-    //T: Borrow<StructTable>,
-    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -327,18 +323,19 @@ where
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))
-            .map_err(|err| {
-                TuiError::deserialize(
-                    err,
-                    serde_json::to_string(&serde_json::Value::Array(
-                        data.clone()
-                            .into_iter()
-                            .filter(|item| serde_json::from_value::<T>(item.clone()).is_err())
-                            .collect(),
-                    ))
-                    .unwrap_or_else(|v| format!("{:?}", v)),
-                )
-            })?;
+            //.map_err(|err| {
+            //    TuiError::deserialize(
+            //        err,
+            //        serde_json::to_string(&serde_json::Value::Array(
+            //            data.clone()
+            //                .into_iter()
+            //                .filter(|item| serde_json::from_value::<T>(item.clone()).is_err())
+            //                .collect(),
+            //        ))
+            //        .unwrap_or_else(|v| format!("{:?}", v)),
+            //    )
+            //})
+        ?;
         if data != self.raw_items {
             self.items = items;
             self.raw_items = data.clone();

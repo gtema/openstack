@@ -32,6 +32,7 @@ futures = { workspace = true }
 itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"
+open.workspace = true
 openstack_sdk = { path = "../openstack_sdk", version = "^0.20", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
 openstack_types = { path = "../openstack_types", version = "^0.20" }
 pretty_assertions = "^1.4"
@@ -49,3 +50,4 @@ tokio-util = { workspace = true }
 tracing = { workspace = true }
 tracing-error = { workspace = true }
 tracing-subscriber = { workspace = true }
+url.workspace = true

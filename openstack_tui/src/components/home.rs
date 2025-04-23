@@ -193,7 +193,7 @@ impl Component for Home {
                 //}
             }
 
-            Action::Error(_) => {
+            Action::Error { .. } => {
                 if let Mode::Home = current_mode {
                     self.is_error = true;
                     self.set_loading(false);

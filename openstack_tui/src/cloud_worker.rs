@@ -122,22 +122,24 @@ impl Cloud {
         while let Some(action) = action_rx.recv().await {
             debug!("Got action {:?}", action);
             match action {
-                Action::ConnectToCloud(cloud) => match self.connect_to_cloud(cloud).await {
-                    Ok(()) => {
-                        if let Some(auth_info) = self
-                            .cloud
-                            .as_ref()
-                            .expect("Connected to the cloud")
-                            .get_auth_info()
-                        {
-                            app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+                ref ac @ Action::ConnectToCloud(ref cloud) => {
+                    match self.connect_to_cloud(cloud.clone()).await {
+                        Ok(()) => {
+                            if let Some(auth_info) = self
+                                .cloud
+                                .as_ref()
+                                .expect("Connected to the cloud")
+                                .get_auth_info()
+                            {
+                                app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+                            }
                         }
+                        Err(err) => app_tx.send(Action::Error {
+                            msg: format!("Failed to connect to the cloud: {:?}", err),
+                            action: Some(Box::new(ac.clone())),
+                        })?,
                     }
-                    Err(err) => app_tx.send(Action::Error(format!(
-                        "Failed to connect to the cloud: {:?}",
-                        err
-                    )))?,
-                },
+                }
                 Action::ListClouds => {
                     app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
                 }
@@ -147,12 +149,12 @@ impl Cloud {
                             app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
                         }
                     }
-                    Err(err) => app_tx.send(Action::Error(format!(
-                        "Cannot switch session scope: {:?}",
-                        err
-                    )))?,
+                    Err(err) => app_tx.send(Action::Error {
+                        msg: format!("Cannot switch session scope: {:?}", err),
+                        action: Some(Box::new(action.clone())),
+                    })?,
                 },
-                Action::PerformApiRequest(request) => {
+                ref ac @ Action::PerformApiRequest(ref request) => {
                     if let Some(ref mut conn) = self.cloud {
                         // Check if reauth is necessary
                         match &conn.get_auth_state(Some(TimeDelta::seconds(10))) {
@@ -166,10 +168,10 @@ impl Cloud {
                             .execute_request(conn, &request, &app_tx)
                             .await
                             .or_else(|err| {
-                                app_tx.send(Action::Error(format!(
-                                    "Error performing API request\n\n{:?}",
-                                    err
-                                )))
+                                app_tx.send(Action::Error {
+                                    msg: format!("Error performing API request\n\n{:?}", err),
+                                    action: Some(Box::new(ac.clone())),
+                                })
                             })?;
                     }
                 }
