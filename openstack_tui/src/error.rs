@@ -16,26 +16,17 @@ use thiserror::Error;
 
 use crate::action;
 
-#[derive(Error, Debug)]
+#[derive(Debug, Error)]
 pub enum TuiError {
     #[error("ID of entry cannot be determined")]
     EntryIdNotPresent(serde_json::Value),
 
-    /// Json serialization error.
+    /// Json [de]serialization error.
     #[error("json serde error: {}", source)]
     JsonError {
         /// The source of the error.
         #[from]
         source: serde_json::Error,
-    },
-
-    /// Json deserialization error.
-    #[error("failed to deserialize data to json. \n\t{}", source)]
-    DeserializeJson {
-        /// The source of the error.
-        source: serde_json::Error,
-        /// Source json data
-        data: String,
     },
 
     #[error("error sending action: {}", source)]
@@ -53,17 +44,30 @@ pub enum TuiError {
         source: openstack_sdk::OpenStackError,
     },
 
+    #[error(transparent)]
+    CloudWorker {
+        /// The source of the error.
+        #[from]
+        source: crate::cloud_worker::CloudWorkerError,
+    },
+
+    /// IO communication error
+    #[error("`IO` error: {}", source)]
+    IO {
+        /// The error source
+        #[from]
+        source: std::io::Error,
+    },
+
+    /// URL parsing error
+    #[error(transparent)]
+    UrlParse {
+        /// The source of the error.
+        #[from]
+        source: url::ParseError,
+    },
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
-}
-
-impl TuiError {
-    /// Build a deserialization error
-    pub fn deserialize(error: serde_json::Error, data: String) -> Self {
-        Self::DeserializeJson {
-            source: error,
-            data,
-        }
-    }
 }

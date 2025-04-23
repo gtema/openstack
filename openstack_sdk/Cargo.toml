@@ -60,7 +60,7 @@ hyper-util = { version = "^0.1", features = ["full"] }
 itertools = { workspace = true }
 json-patch = { workspace = true }
 lazy_static = { workspace = true }
-open = { version = "^5.3" }
+open.workspace = true
 regex = { workspace = true }
 reqwest = { workspace = true }
 secrecy = { version = "0.10", features = ["serde"] }
