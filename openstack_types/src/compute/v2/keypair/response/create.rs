@@ -22,29 +22,9 @@ use structable::{StructTable, StructTableOptions};
 /// Keypair response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct KeypairResponse {
-    /// The date and time when the resource was created.
-    #[serde(default)]
-    #[structable(optional)]
-    pub created_at: Option<String>,
-
-    /// A boolean indicates whether this keypair is deleted or not. The value
-    /// is always false (not deleted).
-    #[serde(default)]
-    #[structable(optional)]
-    pub deleted: Option<bool>,
-
-    /// It is always null.
-    #[serde(default)]
-    #[structable(optional)]
-    pub deleted_at: Option<String>,
-
     /// The fingerprint for the keypair.
     #[structable()]
     pub fingerprint: String,
-
-    /// The keypair ID.
-    #[structable()]
-    pub id: i32,
 
     /// The name for the keypair.
     #[structable()]
@@ -70,13 +50,4 @@ pub struct KeypairResponse {
     #[serde(rename = "type")]
     #[structable(title = "type")]
     pub _type: String,
-
-    /// It is always null.
-    #[serde(default)]
-    #[structable(optional)]
-    pub updated_at: Option<String>,
-
-    /// The user_id for a keypair.
-    #[structable()]
-    pub user_id: String,
 }

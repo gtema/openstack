@@ -165,7 +165,7 @@ impl Cloud {
                         }
 
                         request
-                            .execute_request(conn, &request, &app_tx)
+                            .execute_request(conn, request, &app_tx)
                             .await
                             .or_else(|err| {
                                 app_tx.send(Action::Error {
