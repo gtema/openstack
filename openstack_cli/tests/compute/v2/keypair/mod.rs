@@ -17,6 +17,8 @@ mod create_210_autogen;
 mod create_21_autogen;
 mod create_22_autogen;
 mod create_292_autogen;
+mod crud_210;
+mod crud_292;
 mod delete_autogen;
 mod list_autogen;
 mod show_autogen;
