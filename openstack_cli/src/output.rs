@@ -25,6 +25,7 @@ use crate::cli::{Cli, OutputFormat};
 use structable::{OutputConfig, StructTable};
 
 /// Output Processor
+#[derive(Clone)]
 pub(crate) struct OutputProcessor {
     /// Output configuration
     pub(crate) config: OutputConfig,
@@ -33,6 +34,7 @@ pub(crate) struct OutputProcessor {
 }
 
 /// Output target (human or machine) enum
+#[derive(Clone)]
 pub(crate) enum OutputFor {
     Human,
     Machine,
@@ -40,7 +42,7 @@ pub(crate) enum OutputFor {
 
 impl OutputProcessor {
     /// Get OutputConfig from passed arguments
-    pub(crate) fn from_args(args: &Cli) -> Self {
+    pub fn from_args(args: &Cli) -> Self {
         let target = match args.global_opts.output {
             None => OutputFor::Human,
             Some(OutputFormat::Wide) => OutputFor::Human,
@@ -56,16 +58,34 @@ impl OutputProcessor {
         }
     }
 
+    /// Get OutputConfig from passed arguments
+    pub fn from_args_with_resource_key<S: AsRef<str>>(args: &Cli, resource_key: S) -> Self {
+        let target = match args.global_opts.output {
+            None => OutputFor::Human,
+            Some(OutputFormat::Wide) => OutputFor::Human,
+            _ => OutputFor::Machine,
+        };
+        let mut config: OutputConfig = OutputConfig {
+            fields: BTreeSet::from_iter(args.global_opts.fields.iter().cloned()),
+            wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
+            pretty: args.global_opts.pretty,
+        };
+        if config.fields.is_empty() && !config.wide {
+            if let Some(cfg) = args.config.views.get(resource_key.as_ref()) {
+                config = cfg.clone();
+            }
+        }
+
+        Self { config, target }
+    }
+
     /// Validate command arguments with respect to the output producing
-    pub(crate) fn validate_args(&self, _args: &Cli) -> Result<(), OpenStackCliError> {
+    pub fn validate_args(&self, _args: &Cli) -> Result<(), OpenStackCliError> {
         Ok(())
     }
 
     /// Output List of resources
-    pub(crate) fn output_list<T>(
-        &self,
-        data: Vec<serde_json::Value>,
-    ) -> Result<(), OpenStackCliError>
+    pub fn output_list<T>(&self, data: Vec<serde_json::Value>) -> Result<(), OpenStackCliError>
     where
         T: StructTable,
         T: DeserializeOwned,
@@ -128,7 +148,7 @@ impl OutputProcessor {
     }
 
     /// Output List of resources
-    pub(crate) fn output_single<T>(&self, data: serde_json::Value) -> Result<(), OpenStackCliError>
+    pub fn output_single<T>(&self, data: serde_json::Value) -> Result<(), OpenStackCliError>
     where
         T: StructTable,
         T: DeserializeOwned,
@@ -149,7 +169,7 @@ impl OutputProcessor {
     }
 
     /// Produce output for humans (table) for a single resource
-    pub(crate) fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
+    pub fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
         let (headers, table_rows) = structable::build_table(data, &self.config);
 
         let mut table = Table::new();
@@ -164,7 +184,7 @@ impl OutputProcessor {
 
     /// Produce output for machine
     /// Return machine readable output with the API side names
-    pub(crate) fn output_machine(&self, data: serde_json::Value) -> Result<(), OpenStackCliError> {
+    pub fn output_machine(&self, data: serde_json::Value) -> Result<(), OpenStackCliError> {
         if self.config.pretty {
             serde_json::to_writer_pretty(io::stdout(), &data)?;
         } else {
