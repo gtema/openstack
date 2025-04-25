@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.20.1...openstack_sdk-v0.21.0) - 2025-04-25
+
+### Added
+
+- Add basic error reporting helper ([#1173](https://github.com/gtema/openstack/pull/1173))
+- Switch cli to openstack_types ([#1158](https://github.com/gtema/openstack/pull/1158))
+- Switch tui and cli to openstack_types ([#1148](https://github.com/gtema/openstack/pull/1148))
+- Use dedicated deser helpers in response types ([#1142](https://github.com/gtema/openstack/pull/1142))
+
+### Fixed
+
+- Fix few nova response schemas ([#1175](https://github.com/gtema/openstack/pull/1175))
+
+### Other
+
+- Cleanup unused code ([#1168](https://github.com/gtema/openstack/pull/1168))
+
 ## [0.20.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.20.0...openstack_sdk-v0.20.1) - 2025-04-05
 
 ### Added
