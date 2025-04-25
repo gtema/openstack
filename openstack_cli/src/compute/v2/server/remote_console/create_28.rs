@@ -118,7 +118,10 @@ impl RemoteConsoleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create RemoteConsole");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "compute.server/remote_console",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_28::Request::builder();

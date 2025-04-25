@@ -92,7 +92,10 @@ impl RegionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Region");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "identity.policy/OS_ENDPOINT_POLICY/service/region",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

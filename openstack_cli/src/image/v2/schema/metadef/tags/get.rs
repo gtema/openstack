@@ -60,7 +60,8 @@ impl TagsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Tags");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "image.schema/metadef/tags");
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

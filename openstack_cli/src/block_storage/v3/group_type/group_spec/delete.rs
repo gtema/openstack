@@ -77,7 +77,10 @@ impl GroupSpecCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete GroupSpec");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "block-storage.group_type/group_spec",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

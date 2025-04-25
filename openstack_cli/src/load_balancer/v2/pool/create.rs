@@ -268,7 +268,7 @@ impl PoolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Pool");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.pool");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

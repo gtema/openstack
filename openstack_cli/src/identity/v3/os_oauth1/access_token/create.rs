@@ -67,7 +67,10 @@ impl AccessTokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create AccessToken");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "identity.OS_OAUTH1/access_token",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

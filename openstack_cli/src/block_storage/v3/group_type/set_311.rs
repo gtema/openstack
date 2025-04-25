@@ -86,7 +86,8 @@ impl GroupTypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set GroupType");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.group_type");
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

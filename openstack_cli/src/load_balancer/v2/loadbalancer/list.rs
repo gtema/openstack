@@ -190,7 +190,8 @@ impl LoadbalancersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Loadbalancers");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.loadbalancer");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

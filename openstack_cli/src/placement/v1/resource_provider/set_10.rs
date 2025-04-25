@@ -81,7 +81,10 @@ impl ResourceProviderCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set ResourceProvider");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "placement.resource_provider",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_10::Request::builder();

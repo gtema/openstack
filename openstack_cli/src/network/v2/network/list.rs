@@ -192,7 +192,7 @@ impl NetworksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Networks");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.network");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

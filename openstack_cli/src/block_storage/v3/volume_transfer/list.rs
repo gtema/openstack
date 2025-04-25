@@ -111,7 +111,10 @@ impl VolumeTransfersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List VolumeTransfers");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "block-storage.volume_transfer",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list_detailed::Request::builder();

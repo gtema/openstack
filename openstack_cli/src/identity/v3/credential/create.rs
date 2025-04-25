@@ -99,7 +99,7 @@ impl CredentialCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Credential");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.credential");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

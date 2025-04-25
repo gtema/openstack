@@ -78,7 +78,8 @@ impl SearchCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Search");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.hypervisor/search");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

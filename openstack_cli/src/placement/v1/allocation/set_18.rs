@@ -87,7 +87,7 @@ impl AllocationCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Allocation");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "placement.allocation");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_18::Request::builder();

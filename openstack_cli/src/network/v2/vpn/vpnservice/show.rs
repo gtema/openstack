@@ -82,7 +82,8 @@ impl VpnserviceCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Vpnservice");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "network.vpn/vpnservice");
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

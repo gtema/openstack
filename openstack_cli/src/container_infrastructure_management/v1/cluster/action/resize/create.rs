@@ -77,7 +77,10 @@ impl ResizeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Resize");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "container-infrastructure-management.cluster/action/resize",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

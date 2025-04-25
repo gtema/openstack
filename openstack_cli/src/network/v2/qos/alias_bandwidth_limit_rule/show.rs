@@ -69,7 +69,10 @@ impl AliasBandwidthLimitRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show AliasBandwidthLimitRule");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "network.qos/alias_bandwidth_limit_rule",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

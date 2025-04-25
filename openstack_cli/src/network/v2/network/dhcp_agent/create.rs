@@ -76,7 +76,8 @@ impl DhcpAgentCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create DhcpAgent");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "network.network/dhcp_agent");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

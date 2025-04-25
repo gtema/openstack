@@ -106,7 +106,8 @@ impl AttachmentCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Attachment");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.attachment");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_327::Request::builder();

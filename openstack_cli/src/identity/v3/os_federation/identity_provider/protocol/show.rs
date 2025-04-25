@@ -83,7 +83,10 @@ impl ProtocolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Protocol");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "identity.OS_FEDERATION/identity_provider/protocol",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

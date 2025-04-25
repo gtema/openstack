@@ -66,7 +66,8 @@ impl FloatingipPoolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create FloatingipPool");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "network.floatingip_pool");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

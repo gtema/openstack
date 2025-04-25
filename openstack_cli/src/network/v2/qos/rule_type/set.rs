@@ -81,7 +81,7 @@ impl RuleTypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set RuleType");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.qos/rule_type");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

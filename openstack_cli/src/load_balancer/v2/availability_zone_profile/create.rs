@@ -77,7 +77,10 @@ impl AvailabilityZoneProfileCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create AvailabilityZoneProfile");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "load-balancer.availability_zone_profile",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

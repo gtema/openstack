@@ -72,7 +72,8 @@ impl L7PolicyCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete L7Policy");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.l7policy");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

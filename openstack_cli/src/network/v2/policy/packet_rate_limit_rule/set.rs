@@ -102,7 +102,10 @@ impl PacketRateLimitRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set PacketRateLimitRule");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "network.policy/packet_rate_limit_rule",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();
