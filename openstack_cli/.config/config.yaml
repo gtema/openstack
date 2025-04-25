@@ -1,0 +1,61 @@
+---
+views:
+  # block storage
+  block_storage.backup:
+    fields: [id, name, az, size, status, created_at]
+  block_storage.snapshots:
+    fields: [id, name, status, created_at]
+  block_storage.volume:
+    fields: [id, name, az, size, status, updated_at]
+  # compute
+  compute.aggregate:
+    fields: [name, uuid, az, updated_at]
+  compute.flavor:
+    fields: [id, name, vcpus, ram, disk]
+  compute.hypervisor:
+    fields: [ip, hostname, status, state]
+  compute.server/instance_action/event:
+    fields: [event, result, start_time, finish_time, host]
+  compute.server/instance_action:
+    fields: [id, action, message, start_time, user_id]
+  compute.server:
+    fields: [id, name, status, created, address, image, flavor, security_groups]
+  # dns
+  dns.recordset:
+    fields: [id, name, status, created, updated]
+  dns.zone:
+    fields: [id, name, status, created, updated]
+  # identity
+  identity.group:
+    fields: [id, name, domain, description]
+  identity.project:
+    fields: [id, name, "parent id", enabled, "domain id"]
+  identity.user/application_credential:
+    fields: [id, name, "expires at", "unrestricted"]
+  identity.user:
+    fields: [name, domain, enabled, email, "pwd expiry"]
+  # image
+  image.image:
+    fields: [id, name, distro, version, arch, visibility]
+  # load balancer
+  load-balancer.healthmonitor:
+    fields: [id, name, status, type]
+  load-balancer.listener:
+    fields: [id, name, status, protocol, port]
+  load-balancer.loadbalancer:
+    fields: [id, name, status, address]
+  load-balancer.pool/member:
+    fields: [id, name, status, port]
+  load-balancer.pool:
+    fields: [id, name, status, protocol]
+  # network
+  network.network:
+    fields: [id, name, status, created_at, updated_at]
+  network.router:
+    fields: [id, name, status, created_at, updated_at]
+  network.subnet:
+    fields: [id, name, cidr, description, created_at]
+  network.security_group_rule:
+    fields: [id, ethertype, direction, protocol, "range min", "range max"]
+  network.security_group:
+    fields: [id, name, created_at, updated_at]

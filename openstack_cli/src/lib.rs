@@ -42,6 +42,7 @@ pub mod block_storage;
 pub mod catalog;
 mod common;
 pub mod compute;
+pub mod config;
 pub mod container_infrastructure_management;
 pub mod dns;
 pub mod identity;
