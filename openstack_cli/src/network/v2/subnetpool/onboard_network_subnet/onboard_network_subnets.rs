@@ -76,7 +76,10 @@ impl OnboardNetworkSubnetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action OnboardNetworkSubnet");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "network.subnetpool/onboard_network_subnet",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = onboard_network_subnets::Request::builder();

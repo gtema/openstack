@@ -68,7 +68,10 @@ impl OsVolumeTransferCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete OsVolumeTransfer");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "block-storage.os_volume_transfer",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

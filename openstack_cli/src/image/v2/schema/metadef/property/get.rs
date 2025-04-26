@@ -60,7 +60,10 @@ impl PropertyCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Property");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "image.schema/metadef/property",
+        );
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

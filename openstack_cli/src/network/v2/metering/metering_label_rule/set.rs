@@ -81,7 +81,10 @@ impl MeteringLabelRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set MeteringLabelRule");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "network.metering/metering_label_rule",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

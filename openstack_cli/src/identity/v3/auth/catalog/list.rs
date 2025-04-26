@@ -72,7 +72,7 @@ impl CatalogsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Catalogs");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.auth/catalog");
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

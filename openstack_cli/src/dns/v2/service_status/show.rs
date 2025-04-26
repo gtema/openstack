@@ -70,7 +70,7 @@ impl ServiceStatusCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show ServiceStatus");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.service_status");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

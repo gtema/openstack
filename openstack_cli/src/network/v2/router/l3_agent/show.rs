@@ -76,7 +76,8 @@ impl L3AgentCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show L3Agent");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "network.router/l3_agent");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

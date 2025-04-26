@@ -83,7 +83,7 @@ impl ServerGroupsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ServerGroups");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server_group");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

@@ -89,7 +89,8 @@ impl LoadbalancerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Loadbalancer");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.loadbalancer");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = status::Request::builder();

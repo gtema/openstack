@@ -72,7 +72,8 @@ impl ListenerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Listener");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.listener");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

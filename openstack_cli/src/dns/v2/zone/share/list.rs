@@ -108,7 +108,7 @@ impl SharesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Shares");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone/share");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

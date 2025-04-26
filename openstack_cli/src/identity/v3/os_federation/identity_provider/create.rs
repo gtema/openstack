@@ -103,7 +103,10 @@ impl IdentityProviderCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create IdentityProvider");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "identity.OS_FEDERATION/identity_provider",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

@@ -66,7 +66,7 @@ impl CachesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Caches");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.cache");
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

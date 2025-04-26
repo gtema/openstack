@@ -74,7 +74,10 @@ impl DefaultSecurityGroupRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set DefaultSecurityGroupRule");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "network.default_security_group_rule",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

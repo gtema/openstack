@@ -68,7 +68,7 @@ impl SystemsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Systems");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.auth/system");
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

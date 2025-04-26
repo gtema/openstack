@@ -86,7 +86,10 @@ impl SimpleTenantUsagesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List SimpleTenantUsages");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "compute.simple_tenant_usage",
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

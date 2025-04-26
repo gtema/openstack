@@ -62,7 +62,10 @@ impl TransferAcceptsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List TransferAccepts");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "dns.zone/task/transfer_accept",
+        );
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

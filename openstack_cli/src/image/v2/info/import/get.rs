@@ -71,7 +71,7 @@ impl ImportCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Import");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.info/import");
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

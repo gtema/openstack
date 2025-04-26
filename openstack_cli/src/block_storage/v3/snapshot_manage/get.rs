@@ -61,7 +61,10 @@ impl SnapshotManageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get SnapshotManage");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(
+            parsed_args,
+            "block-storage.snapshot_manage",
+        );
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

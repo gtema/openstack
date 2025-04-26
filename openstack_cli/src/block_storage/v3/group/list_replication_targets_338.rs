@@ -65,7 +65,7 @@ impl GroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Group");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.group");
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list_replication_targets_338::Request::builder();
