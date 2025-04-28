@@ -45,7 +45,7 @@
 use secrecy::{ExposeSecret, SecretString};
 use std::fmt;
 use std::path::{Path, PathBuf};
-use tracing::{error, warn};
+use tracing::{error, trace, warn};
 
 use serde::Deserialize;
 use std::collections::hash_map::DefaultHasher;
@@ -583,8 +583,11 @@ impl ConfigFile {
             .chain(find_secure_file())
             .chain(secure.map(|path| path.as_ref().to_owned()))
         {
-            builder = match builder.add_source(path) {
-                Ok(builder) => builder,
+            builder = match builder.add_source(&path) {
+                Ok(builder) => {
+                    trace!("Using config file {path:?}");
+                    builder
+                }
                 Err(ConfigFileBuilderError::FileParse { source, .. }) => {
                     return Err(ConfigError::parse(*source));
                 }
