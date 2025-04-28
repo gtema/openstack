@@ -10,8 +10,16 @@
 # Components
 
 - [Rust SDK](./sdk.md)
+
+---
+
 - [OpenStackClient (OSC)](./cli.md)
-- [Text User Interface (TUI)](./tui.md)
+  - [Interface](cli/interface.md)
+  - [Configuration](cli/config.md)
+
+---
+
+- [Text User Interface (TUI)](tui.md)
   - [Connection](./tui/cloud-connect.md)
   - [Resource Selection](./tui/resource-select.md)
   - [Header](./tui/header.md)

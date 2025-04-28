@@ -1,12 +1,12 @@
 ---
 views:
   # block storage
-  block_storage.backup:
-    fields: [id, name, az, size, status, created_at]
-  block_storage.snapshots:
-    fields: [id, name, status, created_at]
-  block_storage.volume:
-    fields: [id, name, az, size, status, updated_at]
+  block-storage.backup:
+    fields: [id, name, availability_zone, description, fail_reason, is_incremental, metadata, object_count, size, snapshot_id, status, volume_id, created_at]
+  block-storage.snapshots:
+    fields: [id, name, description, os-extended-snapshot-attributes:progress, size, status, volume_id, created_at]
+  block-storage.volume:
+    fields: [id, name, availability_zone, bootable, description, encrypted, imetadata, migration_status, multiattach, replication_status, size, status, volume_type]
   # compute
   compute.aggregate:
     fields: [name, uuid, az, updated_at]
@@ -22,40 +22,46 @@ views:
     fields: [id, name, status, created, address, image, flavor, security_groups]
   # dns
   dns.recordset:
-    fields: [id, name, status, created, updated]
+    fields: [id, name, description, records, status, type, zone_id, zone_name, created_at, updated_at]
+  dns.zone/recordset:
+    fields: [id, name, description, records, status, type, zone_name, created_at, updated_at]
   dns.zone:
-    fields: [id, name, status, created, updated]
+    fields: [id, name, descripion, email, shared, status, ttl, type, created_at, updated_at]
   # identity
   identity.group:
-    fields: [id, name, domain, description]
+    fields: [id, name, domain_id, description]
   identity.project:
-    fields: [id, name, "parent id", enabled, "domain id"]
+    fields: [id, name, domain_id, enabled, parent_id]
   identity.user/application_credential:
-    fields: [id, name, "expires at", "unrestricted"]
+    fields: [id, name, expires_at, project_id, roles, unrestricted]
   identity.user:
-    fields: [name, domain, enabled, email, "pwd expiry"]
+    fields: [id, name, domain_id, description, enabled, password_expires_at]
   # image
   image.image:
-    fields: [id, name, distro, version, arch, visibility]
+    fields: [id, name, distro, version, arch, min_disk, min_ram, os_hidden, protected, status, tags, visibility]
   # load balancer
   load-balancer.healthmonitor:
-    fields: [id, name, status, type]
+    fields: [id, name, admin_state_up, delay, http_method, timeout, type, operating_status, provisioning_status, url_path, tags]
   load-balancer.listener:
-    fields: [id, name, status, protocol, port]
+    fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, protocol, port, tags]
   load-balancer.loadbalancer:
-    fields: [id, name, status, address]
+    fields: [id, name, admin_state_up, description, listeners, pools, provisioning_status, status, tags, vip_address]
   load-balancer.pool/member:
-    fields: [id, name, status, port]
+    fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protovcol_port, provisioning_status, subnet_id, weight, tags]
   load-balancer.pool:
-    fields: [id, name, status, protocol]
+    fields: [id, name, admin_state_up, description, healthmonitor_id, lb_algorithm, listeners, loadbalancers, members, operating_status, protocol, provisioning_status, tls_enabled, tags]
   # network
   network.network:
-    fields: [id, name, status, created_at, updated_at]
+    fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
   network.router:
-    fields: [id, name, status, created_at, updated_at]
+    fields: [id, name, admin_stateu_up, description, external_gateway_info, status, created_at, tags]
   network.subnet:
-    fields: [id, name, cidr, description, created_at]
+    fields: [id, name, allocation_pools, cidr, created_at, description, dns_nameservers, gateway_ip, ip_version, tags]
   network.security_group_rule:
-    fields: [id, ethertype, direction, protocol, "range min", "range max"]
+    fields: [id, ethertype, description, direction, protocol, port_range_min, port_range_maxi, remote_group_id, remote_ip_prefix]
   network.security_group:
-    fields: [id, name, created_at, updated_at]
+    fields: [id, name, description, created_at]
+  object-store.container:
+    wide: true
+  object-store.object:
+    wide: true

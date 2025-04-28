@@ -25,6 +25,60 @@ Current focus of the project is at introducing Rust as a programming language
 into the ecosystem of OpenStack user facing tooling and provides SDK as well as
 CLI and TUI.
 
+## Components
+
+- `openstack_sdk` - SDK
+- `openstack_cli` - The new and shiny CLI for OpenStack
+- `openstack_tui` - Text (Terminal) User Interface
+- `openstack_types` - Type definitions for the API responses.
+- `doc` - Project documentation
+
+## OpenStackClient (NG)
+
+New approach for having a CLI for OpenStack using complied language offering
+blazing fast UX (it is the cloud to blame for being slow from now on, not the
+client).
+
+- Advanced authentication caching built-in and enabled by default
+
+- Status based resource coloring (resource list table rows are colored by the
+  resource state)
+
+- Output configuration (using `$XDG_CONFIG_DIR/osc/config.yaml` it is possible
+  to configure which fields should be returned when listing resources to enable
+  customization).
+
+- Strict microversion binding for resource modification requests (instead of
+  `openstack server create ...` which will not work with all microversions you
+  use `osc compute server create290` which will only work if server supports it.
+  It is similar to `openstack --os-compute-api-version X.Y`). It behaves the same
+  on every cloud independent of which microversion this cloud supports (as long
+  as it supports required microversion).
+
+- Can be wonderfully combined with jq for ultimate control of the necessary
+  data (`osc server list -o json | jq -r ".[].flavor.original_name"`)
+
+- Output everything what cloud sent (`osc compute server list -o json` to
+  return fields that we never even knew about, but the cloud sent us).
+
+- `osc api` command as an API wrapper allowing user to perform any direct API
+call specifying service type, url, method and payload. This can be used for
+example when certain resource is not currently implemented natively.
+
+
+## Terminal User Interface (TUI)
+
+Exploring the cloud resources using CLI is not something very comfortable. A
+terminal user interface imroves user experience when a quick look at currently
+present resources is required.
+
+openstack_tui (`ostui` as a binary name) is such TUI built upon
+[Ratatui](https://ratatui.rs) and inspired in functionality by
+[k9s](https://k9scli.io) that provides TUI for Kubernetes.
+
+![](doc/src/images/tui/ostui.gif)
+
+
 ## Design principles
 
 After long time maintaining OpenStack client facing tools it became clear that
@@ -74,16 +128,6 @@ normalization.
 - User is in full control of input and output. Microversion X.Y has a concrete
 body schema and with no faulty merges between different versions.
 
-## Components
-
-- `openstack_sdk` - SDK
-- `openstack_cli` - The new and shiny CLI for OpenStack
-- `openstack_tui` - Text (Terminal) User Interface
-- `structable_derive` - Helper crate for having Output in some way similar to
-  old OpenStackClient
-- `xtask` - Workflow helper
-- `doc` - Project documentation
-
 ## Trying out
 
 Any software is created to be used.
@@ -103,7 +147,6 @@ TUI can be installed similarly:
 ```console
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/latest/download/openstack_tui-installer.sh | sh
 ```
-
 
 ### Build locally
 Alternatively it is possible to compile project from sources. Since the project
@@ -159,18 +202,6 @@ and token caching enabled. Benchmarking is performed using
 **Note:** Performance results depend heavily on the time spent waiting for the
 API response. High amount of long API requests causes smaller performance
 difference.
-
-## Terminal User Interface (TUI)
-
-Exploring the cloud resources using CLI is not something very comfortable. A
-terminal user interface imroves user experience when a quick look at currently
-present resources is required.
-
-openstack_tui (`ostui` as a binary name) is such TUI built upon
-[Ratatui](https://ratatui.rs) and inspired in functionality by
-[k9s](https://k9scli.io) that provides TUI for Kubernetes.
-
-![](doc/src/images/tui/ostui.gif)
 
 ## Software security
 
