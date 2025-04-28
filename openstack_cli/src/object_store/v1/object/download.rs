@@ -107,7 +107,7 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Object with {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.object");
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters

@@ -13,6 +13,21 @@
 // SPDX-License-Identifier: Apache-2.0
 //! OpenStackClient configuration
 //!
+//! It is possible to configure different aspects of the OpenStackClient (not the clouds connection
+//! credentials) using the configuration file (`$XDG_CONFIG_DIR/osc/config.yaml`). This enables
+//! user to configurate which columns should be returned when no corresponding run time arguments
+//! on a resource base.
+//!
+//! ```yaml
+//! views:
+//!   compute.server:
+//!     # Listing compute servers will only return ID, NAME and IMAGE columns unless `-o wide` or
+//!     `-f XXX` parameters are being passed
+//!     fields: [id, name, image]
+//!   dns.zone/recordset:
+//!     # DNS zone recordsets are listed in the wide mode by default.
+//!     wide: true
+//! ```
 
 use eyre::Result;
 use serde::Deserialize;
@@ -77,7 +92,7 @@ pub enum ConfigFileBuilderError {
 /// OpenStackClient configuration
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct Config {
-    /// Map of views with the key being the resource key (<SERVICE_NAME>/<RESOURCE>[/<SUBRESOURCE>)
+    /// Map of views with the key being the resource key `<SERVICE_TYPE>.<RESOURCE>[/<SUBRESOURCE>]`)
     /// and the value being an `[OutputConfig]`
     #[serde(default)]
     pub views: HashMap<String, OutputConfig>,

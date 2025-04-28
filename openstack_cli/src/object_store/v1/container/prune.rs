@@ -53,7 +53,8 @@ impl ContainerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Prune Container with {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.container");
         op.validate_args(parsed_args)?;
 
         let ep = client.get_service_endpoint(

@@ -54,6 +54,23 @@ fn styles() -> Styles {
 ///
 /// As all OpenStack tools it fully supports `clouds.yaml`
 ///
+/// Certain aspects of the CLI itself (not the cloud connection) can be configured using
+/// `$XDG_CONFIG_HOME/osc/config.yaml` file. With it it is possible, for example, to configure
+/// which resource fields are returned when no other output controlling parameters has be passed.
+///
+/// Example:
+///
+/// ```yaml
+/// views:
+///   compute.server:
+///     # Listing compute servers will only return ID, NAME and IMAGE columns unless `-o wide` or
+///     `-f XXX` parameters are being passed
+///     fields: [id, name, image]
+///   dns.zone/recordset:
+///     # DNS zone recordsets are listed in the wide mode by default.
+///     wide: true
+/// ```
+///
 /// ## Features
 ///
 ///  * `osc api` as an API wrapper allowing user to perform any direct API call specifying service

@@ -12,8 +12,38 @@ but also an enforced UX consistency.
 from one tool to another.
 
 Commands implementation code is being produced by
-[codegenerator](https://opendev.org/openstack/codegenerator) what means there
-is no maintenance required for that code.
+[codegenerator](https://opendev.org/openstack/codegenerator) what means only
+low maintenance is required for that code.
+
+## Features
+
+- Advanced authentication caching built-in and enabled by default
+
+- Status based resource coloring (resource list table rows are colored by the
+  resource state)
+
+- Output configuration (using `$XDG_CONFIG_DIR/osc/config.yaml` it is possible
+  to configure which fields should be returned when listing resources to enable
+  customization).
+
+- Strict microversion binding for resource modification requests (instead of
+  `openstack server create ...` which will not work with all microversions you
+  use `osc compute server create290` which will only work if server supports it.
+  It is similar to `openstack --os-compute-api-version X.Y`). It behaves the same
+  on every cloud independent of which microversion this cloud supports (as long
+  as it supports required microversion).
+
+- Can be wonderfully combined with jq for ultimate control of the necessary
+  data (`osc server list -o json | jq -r ".[].flavor.original_name"`)
+
+- Output everything what cloud sent (`osc compute server list -o json` to
+  return fields that we never even knew about, but the cloud sent us).
+
+- `osc` api as an API wrapper allowing user to perform any direct API call
+specifying service type, url, method and payload. This can be used for example
+when certain resource is not currently implemented natively.
+
+- osc auth with subcommands for dealing explicitly with authentication (showing current auth info, renewing auth, MFA/SSO support)
 
 ## Microversions
 
