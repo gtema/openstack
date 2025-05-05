@@ -13,6 +13,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Block Storage API types
-//!
 
 pub mod v3;
+
+/// Get OpenAPI spec for the block-storage service used during the codegeneration.
+#[cfg(feature = "openapi")]
+pub fn get_openapi_spec() -> &'static str {
+    include_str!("../data/block-storage/v3.yaml")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "openapi")]
+    #[test]
+    fn test_get_openapi_spec() {
+        assert!(get_openapi_spec().len() > 0);
+    }
+}

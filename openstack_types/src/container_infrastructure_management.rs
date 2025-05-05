@@ -15,3 +15,21 @@
 //! Container Infra API types
 
 pub mod v1;
+
+/// Get OpenAPI spec for the container-infrastructure-management service used during the
+/// codegeneration.
+#[cfg(feature = "openapi")]
+pub fn get_openapi_spec() -> &'static str {
+    include_str!("../data/container-infrastructure-management/v1.yaml")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "openapi")]
+    #[test]
+    fn test_get_openapi_spec() {
+        assert!(get_openapi_spec().len() > 0);
+    }
+}

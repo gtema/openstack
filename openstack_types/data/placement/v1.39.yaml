@@ -1,0 +1,3143 @@
+openapi: 3.1.0
+info:
+  title: OpenStack Placement API
+  description: |-
+    This is a reference for the OpenStack Placement API. To learn more about
+    OpenStack Placement API concepts, please refer to the
+    [Placement Introduction](https://docs.openstack.org/placement/latest/).
+  version: '1.39'
+paths:
+  /:
+    get:
+      description: |-
+        Fetch information about all known major versions of the placement API,
+        including information about the minimum and maximum microversions.
+
+        Normal Response Codes: 200
+      operationId: :get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootHomeResponse'
+      tags:
+        - version
+      summary: List Versions
+  /resource_classes:
+    get:
+      description: |-
+        Return a list of all resource classes.
+
+        Normal Response Codes: 200
+      operationId: resource_classes:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ClassesList_Resource_ClassesResponse'
+      tags:
+        - resource_classes
+      x-openstack:
+        min-ver: '1.2'
+      summary: List resource classes
+    post:
+      description: |-
+        Create a new resource class. The new class must be a *custom* resource class,
+        prefixed with CUSTOM_ and distinct from the standard resource classes.
+
+        Normal Response Codes: 201
+
+        Error response codes: badRequest(400), conflict(409)
+
+        A 400 BadRequest response code will be returned if the resource class
+        does not have prefix CUSTOM_.
+
+        A 409 Conflict response code will
+        be returned if another resource class exists with the provided name.
+      operationId: resource_classes:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ClassesCreate_Resource_ClassRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ClassesCreate_Resource_ClassResponse'
+      tags:
+        - resource_classes
+      x-openstack:
+        min-ver: '1.2'
+      summary: Create resource class
+  /resource_classes/{name}:
+    parameters:
+      - $ref: '#/components/parameters/resource_classes_name'
+    get:
+      description: |-
+        Return a representation of the resource class identified by {name}.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_classes/name:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ClassGet_Resource_ClassResponse'
+      tags:
+        - resource_classes
+      x-openstack:
+        min-ver: '1.2'
+      summary: Show resource class
+    delete:
+      description: |-
+        Delete the resource class identified by {name}.
+
+        Normal Response Codes: 204
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+
+        A 400 BadRequest response code will be returned if trying
+        to delete a standard resource class.
+
+        A 409 Conflict response code will be returned if there exist
+        inventories for the resource class.
+      operationId: resource_classes/name:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - resource_classes
+      x-openstack:
+        min-ver: '1.2'
+      summary: Delete resource class
+    put:
+      description: |-
+        Create or validate the existence of single resource class identified by {name}.
+
+        Normal Response Codes: 201, 204
+
+        A 201 Created response code will be returned if the new resource class
+        is successfully created.
+        A 204 No Content response code will be returned if the resource class
+        already exists.
+
+        Error response codes: badRequest(400)
+      operationId: resource_classes/name:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ClassUpdate_Resource_ClassRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ClassUpdate_Resource_ClassResponse'
+      tags:
+        - resource_classes
+      x-openstack:
+        min-ver: '1.2'
+      summary: Update resource class
+  /resource_providers:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/uuid'
+        - $ref: '#/components/parameters/resources'
+        - $ref: '#/components/parameters/required'
+        - $ref: '#/components/parameters/member_of'
+        - $ref: '#/components/parameters/in_tree'
+      description: |-
+        List an optionally filtered collection of resource providers.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400)
+
+        A 400 BadRequest response code will be returned
+        if a resource class specified in `resources` request parameter
+        does not exist.
+      operationId: resource_providers:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersList_Resource_ProvidersResponse'
+      tags:
+        - resource_providers
+      summary: List resource providers
+    post:
+      description: |-
+        Create a new resource provider.
+
+        Normal Response Codes: 201 (microversions 1.0 - 1.19), 200 (microversions
+        1.20 - )
+
+        Error response codes: conflict(409)
+
+        A 409 Conflict response code will
+        be returned if another resource provider exists with the provided name
+        or uuid.
+      operationId: resource_providers:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersCreate_Resource_ProviderRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersCreate_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      summary: Create resource provider
+  /resource_providers/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_uuid'
+    get:
+      description: |-
+        Return a representation of the resource provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProviderGet_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      summary: Show resource provider
+    delete:
+      description: |-
+        Delete the resource provider identified by {uuid}.
+        This will also disassociate aggregates and delete inventories.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404), conflict(409)
+
+        A 409 Conflict response code will be returned if there exist
+        allocations records for any of the inventories that would be deleted
+        as a result of removing the resource provider.
+
+        This error code will be also returned if there are existing child resource
+        providers under the parent resource provider being deleted.
+      operationId: resource_providers/uuid:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - resource_providers
+      summary: Delete resource provider
+    put:
+      description: |-
+        Update the name of the resource provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+
+        A 409 Conflict response code will be returned if another resource
+        provider exists with the provided name.
+      operationId: resource_providers/uuid:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProviderUpdate_Resource_ProviderRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProviderUpdate_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      summary: Update resource provider
+  /resource_providers/{uuid}/inventories:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_inventories_uuid'
+    get:
+      description: |-
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid/inventories:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersInventoriesGet_InventoriesResponse'
+      tags:
+        - resource_providers
+      summary: List resource provider inventories
+    post:
+      description: |-
+        POST to create one inventory.
+
+        On success return a 201 response, a location header pointing
+        to the newly created inventory and an application/json representation
+        of the inventory.
+      operationId: resource_providers/uuid/inventories:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersInventoriesCreate_InventoryRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersInventoriesCreate_InventoryResponse'
+      tags:
+        - resource_providers
+    delete:
+      description: |-
+        Deletes all inventory records for the resource provider identified by {uuid}.
+
+        **Troubleshooting**
+
+        The request returns an HTTP 409 when there are allocations against
+        the provider or if the provider’s inventory is updated by another
+        thread while attempting the operation.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/inventories:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.5'
+      summary: Delete resource provider inventories
+    put:
+      description: |-
+        Replaces the set of inventory records for the resource provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/inventories:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersInventoriesSet_InventoriesRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersInventoriesSet_InventoriesResponse'
+      tags:
+        - resource_providers
+      summary: Update resource provider inventories
+  /resource_providers/{uuid}/inventories/{resource_class}:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_inventories_uuid'
+      - $ref: '#/components/parameters/resource_providers_inventories_resource_class'
+    get:
+      description: |-
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid/inventories/resource_class:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersInventoryGet_InventoryResponse'
+      tags:
+        - resource_providers
+      summary: Show resource provider inventory
+    delete:
+      description: |-
+        Delete the inventory record of the {resource_class} for
+        the resource provider identified by {uuid}.
+
+        See [Troubleshooting](?expanded=delete-resource-provider-inventories-detail#delete-resource-provider-inventories) section in `Delete resource provider
+        inventories` for a description. In addition, the request returns
+        HTTP 409 when there are allocations for the specified resource
+        provider and resource class.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/inventories/resource_class:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - resource_providers
+      summary: Delete resource provider inventory
+    put:
+      description: |-
+        Replace the inventory record of the {resource_class} for the resource
+        provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/inventories/resource_class:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersInventoryUpdate_InventoryRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersInventoryUpdate_InventoryResponse'
+      tags:
+        - resource_providers
+      summary: Update resource provider inventory
+  /resource_providers/{uuid}/usages:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_usages_uuid'
+    get:
+      description: |-
+        Return a report of usage information for resources associated with
+        the resource provider identified by {uuid}. The value is a dictionary
+        of resource classes paired with the sum of the allocations of that
+        resource class for this resource provider.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid/usages:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersUsagesList_UsagesResponse'
+      tags:
+        - resource_providers
+      summary: List resource provider usages
+  /resource_providers/{uuid}/aggregates:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_aggregates_uuid'
+    get:
+      description: |-
+        Return a list of aggregates associated with the resource provider
+        identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404) if the provider does not exist. (If the
+        provider has no aggregates, the result is 200 with an empty aggregate list.)
+      operationId: resource_providers/uuid/aggregates:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersAggregatesGet_AggregatesResponse'
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.1'
+      summary: List resource provider aggregates
+    put:
+      description: |-
+        Associate a list of aggregates with the resource provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/aggregates:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersAggregatesSet_AggregatesRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersAggregatesSet_AggregatesResponse'
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.1'
+      summary: Update resource provider aggregates
+  /resource_providers/{uuid}/allocations:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_allocations_uuid'
+    get:
+      description: |-
+        Return a representation of all allocations made against this resource
+        provider, keyed by consumer uuid. Each allocation includes one or more
+        classes of resource and the amount consumed.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid/allocations:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersAllocationsList_For_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      summary: List resource provider allocations
+  /allocations:
+    post:
+      description: |-
+        Create, update or delete allocations for multiple consumers in a single
+        request. This allows a client to atomically set or swap allocations for
+        multiple consumers as may be required during a migration or move type
+        operation.
+
+        The allocations for an individual consumer uuid mentioned in the request
+        can be removed by setting the allocations to an empty object (see the
+        example below).
+
+        **Available as of microversion 1.13.**
+
+        Normal response codes: 204
+
+        Error response codes: badRequest(400), conflict(409)
+      operationId: allocations:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllocationsSet_AllocationsRequest'
+      responses:
+        '201':
+          description: Ok
+      tags:
+        - allocations
+      x-openstack:
+        min-ver: '1.13'
+      summary: Manage allocations
+  /allocations/{consumer_uuid}:
+    parameters:
+      - $ref: '#/components/parameters/allocations_consumer_uuid'
+    get:
+      description: |-
+        List all allocation records for the consumer identified by
+        {consumer_uuid} on all the resource providers it is consuming.
+
+        Normal Response Codes: 200
+      operationId: allocations/consumer_uuid:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationList_For_ConsumerResponse'
+      tags:
+        - allocations
+      summary: List allocations
+    delete:
+      description: |-
+        Delete all allocation records for the consumer identified by
+        {consumer_uuid} on all resource providers it is consuming.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404)
+      operationId: allocations/consumer_uuid:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - allocations
+      summary: Delete allocations
+    put:
+      description: |-
+        Create or update one or more allocation records representing the consumption of
+        one or more classes of resources from one or more resource providers by
+        the consumer identified by {consumer_uuid}.
+        If allocations already exist for this consumer, they are replaced.
+
+        Normal Response Codes: 204
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: allocations/consumer_uuid:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllocationSet_Allocations_For_ConsumerRequest'
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - allocations
+      x-openstack:
+        min-ver: '1.0'
+      summary: Update allocations
+  /allocation_candidates:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/resources'
+        - $ref: '#/components/parameters/required'
+        - $ref: '#/components/parameters/member_of'
+        - $ref: '#/components/parameters/in_tree'
+        - $ref: '#/components/parameters/group_policy'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/root_required'
+        - $ref: '#/components/parameters/same_subtree'
+      description: |-
+        Returns a dictionary representing a collection of allocation requests
+        and resource provider summaries. Each allocation request has
+        information to form a `PUT /allocations/{consumer_uuid}` request to claim
+        resources against a related set of resource providers. Additional parameters
+        might be required, see [Update allocations](#update-allocations). As several allocation
+        requests are available it’s necessary to select one. To make a
+        decision, resource provider summaries are provided with the
+        inventory/capacity information. For example, this information is used by
+        nova-scheduler’s FilterScheduler to make decisions about on which compute host
+        to build a server.
+
+        You can also find additional case studies of the request parameters in the
+        [Modeling with Provider Trees](https://docs.openstack.org/placement/latest/usage/provider-tree.html) document.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400)
+      operationId: allocation_candidates:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Allocation_CandidatesList_Allocation_CandidatesResponse'
+      tags:
+        - allocation_candidates
+      x-openstack:
+        min-ver: '1.10'
+      summary: List allocation candidates
+  /traits:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/associated'
+      description: |-
+        Return a list of valid trait strings according to parameters specified.
+
+        Normal Response Codes: 200
+      operationId: traits:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraitsList_TraitsResponse'
+      tags:
+        - traits
+      x-openstack:
+        min-ver: '1.6'
+      summary: List traits
+  /traits/{name}:
+    parameters:
+      - $ref: '#/components/parameters/traits_name'
+    get:
+      description: |-
+        Check if a trait name exists in this cloud.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404)
+      operationId: traits/name:get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - traits
+      x-openstack:
+        min-ver: '1.6'
+      summary: Show traits
+    delete:
+      description: |-
+        Delete the trait specified be {name}. Note that only custom traits can be
+        deleted.
+
+        Normal Response Codes: 204
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: traits/name:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - traits
+      x-openstack:
+        min-ver: '1.6'
+      summary: Delete traits
+    put:
+      description: |-
+        Insert a new custom trait. If traits already exists 204 will be returned.
+
+        There are two kinds of traits: the standard traits and the custom traits.
+        The standard traits are interoperable across different OpenStack cloud
+        deployments. The definition of standard traits comes from the os-traits
+        library. The standard traits are read-only in the placement API which means
+        that the user can’t modify any standard traits through API.
+        The custom traits are used by admin users to manage the non-standard
+        qualitative information of resource providers.
+
+        Normal Response Codes: 201, 204
+
+        Error response codes: badRequest(400)
+      operationId: traits/name:put
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - traits
+      x-openstack:
+        min-ver: '1.6'
+      summary: Update traits
+  /resource_providers/{uuid}/traits:
+    parameters:
+      - $ref: '#/components/parameters/resource_providers_traits_uuid'
+    get:
+      description: |-
+        Return a list of traits for the resource provider identified by {uuid}.
+
+        Normal Response Codes: 200
+
+        Error response codes: itemNotFound(404)
+      operationId: resource_providers/uuid/traits:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersTraitsList_Traits_For_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.6'
+      summary: List resource provider traits
+    delete:
+      description: |-
+        Dissociate all the traits from the resource provider identified by {uuid}.
+
+        Normal Response Codes: 204
+
+        Error response codes: itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/traits:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.6'
+      summary: Delete resource provider traits
+    put:
+      description: |-
+        Associate traits with the resource provider identified by {uuid}.
+        All the associated traits will be replaced by the traits specified in
+        the request body.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400), itemNotFound(404), conflict(409)
+      operationId: resource_providers/uuid/traits:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource_ProvidersTraitsUpdate_Traits_For_Resource_ProviderRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource_ProvidersTraitsUpdate_Traits_For_Resource_ProviderResponse'
+      tags:
+        - resource_providers
+      x-openstack:
+        min-ver: '1.6'
+      summary: Update resource provider traits
+  /usages:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/project_id'
+        - $ref: '#/components/parameters/user_id'
+        - $ref: '#/components/parameters/consumer_type'
+      description: |-
+        Return a report of usage information for resources associated with the
+        project identified by project_id and user identified by
+        user_id. The value is a dictionary of resource classes paired with
+        the sum of the allocations of that resource class for provided
+        parameters.
+
+        Normal Response Codes: 200
+
+        Error response codes: badRequest(400)
+      operationId: usages:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsagesGet_Total_UsagesResponse'
+      tags:
+        - usages
+      x-openstack:
+        min-ver: '1.9'
+      summary: List usages
+  /reshaper:
+    post:
+      description: |-
+        Atomically migrate resource provider inventories and associated allocations.
+        This is used when some of the inventory needs to move from one resource
+        provider to another, such as when a class of inventory moves from a parent
+        provider to a new child provider.
+
+        Normal Response Codes: 204
+
+        Error Response Codes: badRequest(400), conflict(409)
+      operationId: reshaper:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReshaperReshapeRequest'
+      responses:
+        '201':
+          description: Ok
+      tags:
+        - reshaper
+      x-openstack:
+        min-ver: '1.30'
+      summary: Reshaper
+components:
+  schemas:
+    RootHomeResponse:
+      type: object
+      description: Response of the :get operation
+    Resource_ClassesList_Resource_ClassesResponse:
+      type: object
+      properties:
+        resource_classes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: |-
+                  The name of one resource class.
+              links:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    href:
+                      type: string
+                      format: uri
+                    rel:
+                      type: string
+                readOnly: true
+                description: |-
+                  A list of links associated with one resource class.
+            additionalProperties: false
+          description: |-
+            A list of `resource_class` objects.
+      additionalProperties: false
+    Resource_ClassesCreate_Resource_ClassRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The name of one resource class.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          readOnly: true
+          description: |-
+            A list of links associated with one resource class.
+      additionalProperties: false
+    Resource_ClassesCreate_Resource_ClassResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The name of one resource class.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          readOnly: true
+          description: |-
+            A list of links associated with one resource class.
+      additionalProperties: false
+    Resource_ClassGet_Resource_ClassResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The name of one resource class.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          readOnly: true
+          description: |-
+            A list of links associated with one resource class.
+      additionalProperties: false
+    Resource_ClassUpdate_Resource_ClassRequest:
+      oneOf:
+        - type: 'null'
+          x-openstack:
+            min-ver: '1.7'
+      x-openstack:
+        discriminator: microversion
+    Resource_ClassUpdate_Resource_ClassResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The name of one resource class.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          readOnly: true
+          description: |-
+            A list of links associated with one resource class.
+      additionalProperties: false
+    Resource_ProvidersList_Resource_ProvidersResponse:
+      type: object
+      properties:
+        resource_providers:
+          type: array
+          items:
+            type: object
+            properties:
+              generation:
+                type: integer
+                description: |-
+                  A consistent view marker that assists with the management of concurrent resource provider updates.
+              uuid:
+                type: string
+                format: uuid
+                description: |-
+                  The uuid of a resource provider.
+              links:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    href:
+                      type: string
+                      format: uri
+                    rel:
+                      type: string
+                description: |-
+                  A list of links associated with one resource provider.
+
+                  Note
+
+                  Aggregates relationship link is available starting from version 1.1.
+                  Traits relationship link is available starting from version 1.6.
+                  Allocations relationship link is available starting from version 1.11.
+              name:
+                type: string
+                description: |-
+                  The name of one resource provider.
+              parent_provider_uuid:
+                type: string
+                description: |-
+                  The UUID of the immediate parent of the resource provider.
+
+                  **New in version 1.14**
+                x-openstack:
+                  min-ver: '1.14'
+              root_provider_uuid:
+                type: string
+                description: |-
+                  Read-only UUID of the top-most provider in this provider tree.
+
+                  **New in version 1.14**
+                x-openstack:
+                  min-ver: '1.14'
+            required:
+              - generation
+              - uuid
+              - links
+              - name
+            additionalProperties: false
+          description: |-
+            A list of `resource_provider` objects.
+      additionalProperties: false
+      required:
+        - resource_providers
+    Resource_ProvidersCreate_Resource_ProviderRequest:
+      oneOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              maxLength: 200
+              description: |-
+                The name of one resource provider.
+            uuid:
+              type: string
+              format: uuid
+              description: |-
+                The uuid of a resource provider.
+          required:
+            - name
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.0'
+            max-ver: '1.13'
+        - type: object
+          properties:
+            name:
+              type: string
+              maxLength: 200
+              description: |-
+                The name of one resource provider.
+            uuid:
+              type: string
+              format: uuid
+              description: |-
+                The uuid of a resource provider.
+            parent_provider_uuid:
+              anyOf:
+                - type: string
+                  format: uuid
+                - type: 'null'
+              description: |-
+                The UUID of the immediate parent of the resource provider.
+
+                * Before version `1.37`, once set, the parent of a resource provider
+                  cannot be changed.
+                * Since version `1.37`, it can be set to any existing provider UUID
+                  excepts to providers that would cause a loop. Also it can be set to null
+                  to transform the provider to a new root provider. This operation needs
+                  to be used carefully. Moving providers can mean that the original rules
+                  used to create the existing resource allocations may be invalidated
+                  by that move.
+
+                **New in version 1.14**
+          required:
+            - name
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.14'
+      x-openstack:
+        discriminator: microversion
+    Resource_ProvidersCreate_Resource_ProviderResponse:
+      type: object
+      properties:
+        generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        uuid:
+          type: string
+          format: uuid
+          description: |-
+            The uuid of a resource provider.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          description: |-
+            A list of links associated with one resource provider.
+
+            Note
+
+            Aggregates relationship link is available starting from version 1.1.
+            Traits relationship link is available starting from version 1.6.
+            Allocations relationship link is available starting from version 1.11.
+        name:
+          type: string
+          description: |-
+            The name of one resource provider.
+        parent_provider_uuid:
+          type: string
+          description: |-
+            The UUID of the immediate parent of the resource provider.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+        root_provider_uuid:
+          type: string
+          description: |-
+            Read-only UUID of the top-most provider in this provider tree.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+      additionalProperties: false
+      required:
+        - generation
+        - uuid
+        - links
+        - name
+    Resource_ProviderGet_Resource_ProviderResponse:
+      type: object
+      properties:
+        generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        uuid:
+          type: string
+          format: uuid
+          description: |-
+            The uuid of a resource provider.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          description: |-
+            A list of links associated with one resource provider.
+
+            Note
+
+            Aggregates relationship link is available starting from version 1.1.
+            Traits relationship link is available starting from version 1.6.
+            Allocations relationship link is available starting from version 1.11.
+        name:
+          type: string
+          description: |-
+            The name of one resource provider.
+        parent_provider_uuid:
+          type: string
+          description: |-
+            The UUID of the immediate parent of the resource provider.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+        root_provider_uuid:
+          type: string
+          description: |-
+            Read-only UUID of the top-most provider in this provider tree.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+      additionalProperties: false
+      required:
+        - generation
+        - uuid
+        - links
+        - name
+    Resource_ProviderUpdate_Resource_ProviderRequest:
+      oneOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              maxLength: 200
+              description: |-
+                The name of one resource provider.
+          required:
+            - name
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.0'
+            max-ver: '1.13'
+        - type: object
+          properties:
+            name:
+              type: string
+              maxLength: 200
+              description: |-
+                The name of one resource provider.
+            parent_provider_uuid:
+              anyOf:
+                - type: string
+                  format: uuid
+                - type: 'null'
+              description: |-
+                The UUID of the immediate parent of the resource provider.
+
+                * Before version `1.37`, once set, the parent of a resource provider
+                  cannot be changed.
+                * Since version `1.37`, it can be set to any existing provider UUID
+                  excepts to providers that would cause a loop. Also it can be set to null
+                  to transform the provider to a new root provider. This operation needs
+                  to be used carefully. Moving providers can mean that the original rules
+                  used to create the existing resource allocations may be invalidated
+                  by that move.
+
+                **New in version 1.14**
+          required:
+            - name
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.14'
+      x-openstack:
+        discriminator: microversion
+    Resource_ProviderUpdate_Resource_ProviderResponse:
+      type: object
+      properties:
+        generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        uuid:
+          type: string
+          format: uuid
+          description: |-
+            The uuid of a resource provider.
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: uri
+              rel:
+                type: string
+          description: |-
+            A list of links associated with one resource provider.
+
+            Note
+
+            Aggregates relationship link is available starting from version 1.1.
+            Traits relationship link is available starting from version 1.6.
+            Allocations relationship link is available starting from version 1.11.
+        name:
+          type: string
+          description: |-
+            The name of one resource provider.
+        parent_provider_uuid:
+          type: string
+          description: |-
+            The UUID of the immediate parent of the resource provider.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+        root_provider_uuid:
+          type: string
+          description: |-
+            Read-only UUID of the top-most provider in this provider tree.
+
+            **New in version 1.14**
+          x-openstack:
+            min-ver: '1.14'
+      additionalProperties: false
+      required:
+        - generation
+        - uuid
+        - links
+        - name
+    Resource_ProvidersInventoriesGet_InventoriesResponse:
+      type: object
+      properties:
+        inventories:
+          type: object
+          description: |-
+            A dictionary of inventories keyed by resource classes.
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    The actual amount of the resource that the provider can accommodate.
+                reserved:
+                  type: integer
+                  minimum: 0
+                  description: |-
+                    The amount of the resource a provider has reserved for its own use.
+                min_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A minimum amount any single allocation against an inventory can have.
+                max_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A maximum amount any single allocation against an inventory can have.
+                step_size:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+                allocation_ratio:
+                  type: number
+                  description: |-
+                    It is used in determining whether consumption of the resource of
+                    the provider can exceed physical constraints.
+
+                    For example, for a vCPU resource with:
+
+                    ```
+                    allocation_ratio = 16.0
+                    total = 8
+
+                    ```
+
+                    Overall capacity is equal to 128 vCPUs.
+              required:
+                - total
+              additionalProperties: false
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - inventories
+        - resource_provider_generation
+    Resource_ProvidersInventoriesCreate_InventoryRequest:
+      type: object
+      properties:
+        inventories:
+          type: object
+          description: |-
+            A dictionary of inventories keyed by resource classes.
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    The actual amount of the resource that the provider can accommodate.
+                reserved:
+                  type: integer
+                  minimum: 0
+                  description: |-
+                    The amount of the resource a provider has reserved for its own use.
+                min_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A minimum amount any single allocation against an inventory can have.
+                max_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A maximum amount any single allocation against an inventory can have.
+                step_size:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+                allocation_ratio:
+                  type: number
+                  description: |-
+                    It is used in determining whether consumption of the resource of
+                    the provider can exceed physical constraints.
+
+                    For example, for a vCPU resource with:
+
+                    ```
+                    allocation_ratio = 16.0
+                    total = 8
+
+                    ```
+
+                    Overall capacity is equal to 128 vCPUs.
+              required:
+                - total
+              additionalProperties: false
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - inventories
+        - resource_provider_generation
+    Resource_ProvidersInventoriesCreate_InventoryResponse:
+      type: object
+      properties:
+        inventories:
+          type: object
+          description: |-
+            A dictionary of inventories keyed by resource classes.
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    The actual amount of the resource that the provider can accommodate.
+                reserved:
+                  type: integer
+                  minimum: 0
+                  description: |-
+                    The amount of the resource a provider has reserved for its own use.
+                min_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A minimum amount any single allocation against an inventory can have.
+                max_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A maximum amount any single allocation against an inventory can have.
+                step_size:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+                allocation_ratio:
+                  type: number
+                  description: |-
+                    It is used in determining whether consumption of the resource of
+                    the provider can exceed physical constraints.
+
+                    For example, for a vCPU resource with:
+
+                    ```
+                    allocation_ratio = 16.0
+                    total = 8
+
+                    ```
+
+                    Overall capacity is equal to 128 vCPUs.
+              required:
+                - total
+              additionalProperties: false
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - inventories
+        - resource_provider_generation
+    Resource_ProvidersInventoriesSet_InventoriesRequest:
+      type: object
+      properties:
+        inventories:
+          type: object
+          description: |-
+            A dictionary of inventories keyed by resource classes.
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    The actual amount of the resource that the provider can accommodate.
+                reserved:
+                  type: integer
+                  minimum: 0
+                  description: |-
+                    The amount of the resource a provider has reserved for its own use.
+                min_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A minimum amount any single allocation against an inventory can have.
+                max_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A maximum amount any single allocation against an inventory can have.
+                step_size:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+                allocation_ratio:
+                  type: number
+                  description: |-
+                    It is used in determining whether consumption of the resource of
+                    the provider can exceed physical constraints.
+
+                    For example, for a vCPU resource with:
+
+                    ```
+                    allocation_ratio = 16.0
+                    total = 8
+
+                    ```
+
+                    Overall capacity is equal to 128 vCPUs.
+              required:
+                - total
+              additionalProperties: false
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - inventories
+        - resource_provider_generation
+    Resource_ProvidersInventoriesSet_InventoriesResponse:
+      type: object
+      properties:
+        inventories:
+          type: object
+          description: |-
+            A dictionary of inventories keyed by resource classes.
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    The actual amount of the resource that the provider can accommodate.
+                reserved:
+                  type: integer
+                  minimum: 0
+                  description: |-
+                    The amount of the resource a provider has reserved for its own use.
+                min_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A minimum amount any single allocation against an inventory can have.
+                max_unit:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A maximum amount any single allocation against an inventory can have.
+                step_size:
+                  type: integer
+                  minimum: 1
+                  description: |-
+                    A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+                allocation_ratio:
+                  type: number
+                  description: |-
+                    It is used in determining whether consumption of the resource of
+                    the provider can exceed physical constraints.
+
+                    For example, for a vCPU resource with:
+
+                    ```
+                    allocation_ratio = 16.0
+                    total = 8
+
+                    ```
+
+                    Overall capacity is equal to 128 vCPUs.
+              required:
+                - total
+              additionalProperties: false
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - inventories
+        - resource_provider_generation
+    Resource_ProvidersInventoryGet_InventoryResponse:
+      type: object
+      properties:
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        total:
+          type: integer
+          minimum: 1
+          description: |-
+            The actual amount of the resource that the provider can accommodate.
+        reserved:
+          type: integer
+          minimum: 0
+          description: |-
+            The amount of the resource a provider has reserved for its own use.
+        min_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A minimum amount any single allocation against an inventory can have.
+        max_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A maximum amount any single allocation against an inventory can have.
+        step_size:
+          type: integer
+          minimum: 1
+          description: |-
+            A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+        allocation_ratio:
+          type: number
+          description: |-
+            It is used in determining whether consumption of the resource of
+            the provider can exceed physical constraints.
+
+            For example, for a vCPU resource with:
+
+            ```
+            allocation_ratio = 16.0
+            total = 8
+
+            ```
+
+            Overall capacity is equal to 128 vCPUs.
+      additionalProperties: false
+      required:
+        - total
+        - resource_provider_generation
+    Resource_ProvidersInventoryUpdate_InventoryRequest:
+      type: object
+      properties:
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        total:
+          type: integer
+          minimum: 1
+          description: |-
+            The actual amount of the resource that the provider can accommodate.
+        reserved:
+          type: integer
+          minimum: 0
+          description: |-
+            The amount of the resource a provider has reserved for its own use.
+        min_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A minimum amount any single allocation against an inventory can have.
+        max_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A maximum amount any single allocation against an inventory can have.
+        step_size:
+          type: integer
+          minimum: 1
+          description: |-
+            A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+        allocation_ratio:
+          type: number
+          description: |-
+            It is used in determining whether consumption of the resource of
+            the provider can exceed physical constraints.
+
+            For example, for a vCPU resource with:
+
+            ```
+            allocation_ratio = 16.0
+            total = 8
+
+            ```
+
+            Overall capacity is equal to 128 vCPUs.
+      additionalProperties: false
+      required:
+        - total
+        - resource_provider_generation
+    Resource_ProvidersInventoryUpdate_InventoryResponse:
+      type: object
+      properties:
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+        total:
+          type: integer
+          minimum: 1
+          description: |-
+            The actual amount of the resource that the provider can accommodate.
+        reserved:
+          type: integer
+          minimum: 0
+          description: |-
+            The amount of the resource a provider has reserved for its own use.
+        min_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A minimum amount any single allocation against an inventory can have.
+        max_unit:
+          type: integer
+          minimum: 1
+          description: |-
+            A maximum amount any single allocation against an inventory can have.
+        step_size:
+          type: integer
+          minimum: 1
+          description: |-
+            A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.
+        allocation_ratio:
+          type: number
+          description: |-
+            It is used in determining whether consumption of the resource of
+            the provider can exceed physical constraints.
+
+            For example, for a vCPU resource with:
+
+            ```
+            allocation_ratio = 16.0
+            total = 8
+
+            ```
+
+            Overall capacity is equal to 128 vCPUs.
+      additionalProperties: false
+      required:
+        - total
+        - resource_provider_generation
+    Resource_ProvidersUsagesList_UsagesResponse:
+      type: object
+      description: Response of the resource_providers/uuid/usages:get operation
+    Resource_ProvidersAggregatesGet_AggregatesResponse:
+      type: object
+      properties:
+        aggregates:
+          type: array
+          description: A list of aggregate uuids. Previously nonexistent aggregates
+            are created automatically.
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        resource_provider_generation:
+          type: integer
+          description: A consistent view marker that assists with the management of
+            concurrent resource provider updates.
+          x-openstack:
+            min-ver: '1.19'
+      additionalProperties: false
+      required:
+        - aggregates
+        - resource_provider_generation
+    Resource_ProvidersAggregatesSet_AggregatesRequest:
+      oneOf:
+        - type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+          x-openstack:
+            min-ver: '1.1'
+            max-ver: '1.18'
+        - type: object
+          properties:
+            aggregates:
+              type: array
+              items:
+                type: string
+                format: uuid
+              uniqueItems: true
+            resource_provider_generation:
+              type: integer
+          required:
+            - aggregates
+            - resource_provider_generation
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.19'
+      x-openstack:
+        discriminator: microversion
+    Resource_ProvidersAggregatesSet_AggregatesResponse:
+      type: object
+      properties:
+        aggregates:
+          type: array
+          description: A list of aggregate uuids. Previously nonexistent aggregates
+            are created automatically.
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        resource_provider_generation:
+          type: integer
+          description: A consistent view marker that assists with the management of
+            concurrent resource provider updates.
+          x-openstack:
+            min-ver: '1.19'
+      additionalProperties: false
+      required:
+        - aggregates
+        - resource_provider_generation
+    Resource_ProvidersAllocationsList_For_Resource_ProviderResponse:
+      type: object
+      properties:
+        allocations:
+          type: object
+          minProperties: 0
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              description: A dictionary of allocation records keyed by consumer uuid.
+              properties:
+                resources:
+                  type: object
+                  description: A dictionary of resource records keyed by resource
+                    class name.
+                  minProperties: 1
+                  patternProperties:
+                    ^[A-Z0-9_]+$:
+                      type: integer
+                      minimum: 1
+                  additionalProperties: false
+              required:
+                - resources
+              additionalProperties: false
+          description: |-
+            A dictionary of allocation records keyed by consumer uuid.
+        resource_provider_generation:
+          type: integer
+          description: |-
+            A consistent view marker that assists with the management of concurrent resource provider updates.
+      additionalProperties: false
+      required:
+        - allocations
+        - resource_provider_generation
+    AllocationsSet_AllocationsRequest:
+      oneOf:
+        - type: object
+          minProperties: 1
+          additionalProperties: false
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                allocations:
+                  type: object
+                  minProperties: 0
+                  patternProperties:
+                    ^[0-9a-fA-F-]{36}$:
+                      type: object
+                      properties:
+                        generation:
+                          type: integer
+                        resources:
+                          type: object
+                          minProperties: 1
+                          patternProperties:
+                            ^[A-Z0-9_]+$:
+                              type: integer
+                              minimum: 1
+                          additionalProperties: false
+                      required:
+                        - resources
+                      additionalProperties: false
+                  additionalProperties: false
+                project_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                user_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+              additionalProperties: false
+              required:
+                - allocations
+                - project_id
+                - user_id
+          x-openstack:
+            min-ver: '1.13'
+            max-ver: '1.27'
+        - type: object
+          minProperties: 1
+          additionalProperties: false
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                allocations:
+                  type: object
+                  minProperties: 0
+                  patternProperties:
+                    ^[0-9a-fA-F-]{36}$:
+                      type: object
+                      properties:
+                        generation:
+                          type: integer
+                        resources:
+                          type: object
+                          minProperties: 1
+                          patternProperties:
+                            ^[A-Z0-9_]+$:
+                              type: integer
+                              minimum: 1
+                          additionalProperties: false
+                      required:
+                        - resources
+                      additionalProperties: false
+                  additionalProperties: false
+                project_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                user_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                consumer_generation:
+                  type:
+                    - integer
+                    - 'null'
+                  additionalProperties: false
+              additionalProperties: false
+              required:
+                - allocations
+                - project_id
+                - user_id
+                - consumer_generation
+          x-openstack:
+            min-ver: '1.28'
+            max-ver: '1.33'
+        - type: object
+          minProperties: 1
+          additionalProperties: false
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                allocations:
+                  type: object
+                  minProperties: 0
+                  patternProperties:
+                    ^[0-9a-fA-F-]{36}$:
+                      type: object
+                      properties:
+                        generation:
+                          type: integer
+                        resources:
+                          type: object
+                          minProperties: 1
+                          patternProperties:
+                            ^[A-Z0-9_]+$:
+                              type: integer
+                              minimum: 1
+                          additionalProperties: false
+                      required:
+                        - resources
+                      additionalProperties: false
+                  additionalProperties: false
+                project_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                user_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                consumer_generation:
+                  type:
+                    - integer
+                    - 'null'
+                  additionalProperties: false
+                mappings:
+                  type: object
+                  minProperties: 1
+                  patternProperties:
+                    '[a-zA-Z0-9_-]{1,64}':
+                      type: array
+                      minItems: 1
+                      items:
+                        type: string
+                        format: uuid
+              additionalProperties: false
+              required:
+                - allocations
+                - project_id
+                - user_id
+                - consumer_generation
+          x-openstack:
+            min-ver: '1.34'
+            max-ver: '1.37'
+        - type: object
+          minProperties: 1
+          additionalProperties: false
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                allocations:
+                  type: object
+                  minProperties: 0
+                  patternProperties:
+                    ^[0-9a-fA-F-]{36}$:
+                      type: object
+                      properties:
+                        generation:
+                          type: integer
+                        resources:
+                          type: object
+                          minProperties: 1
+                          patternProperties:
+                            ^[A-Z0-9_]+$:
+                              type: integer
+                              minimum: 1
+                          additionalProperties: false
+                      required:
+                        - resources
+                      additionalProperties: false
+                  additionalProperties: false
+                project_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                user_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                consumer_generation:
+                  type:
+                    - integer
+                    - 'null'
+                  additionalProperties: false
+                mappings:
+                  type: object
+                  minProperties: 1
+                  patternProperties:
+                    '[a-zA-Z0-9_-]{1,64}':
+                      type: array
+                      minItems: 1
+                      items:
+                        type: string
+                        format: uuid
+                consumer_type:
+                  type: string
+                  pattern: ^[A-Z0-9_]+$
+                  minLength: 1
+                  maxLength: 255
+              additionalProperties: false
+              required:
+                - allocations
+                - project_id
+                - user_id
+                - consumer_generation
+                - consumer_type
+          x-openstack:
+            min-ver: '1.38'
+      x-openstack:
+        discriminator: microversion
+    AllocationList_For_ConsumerResponse:
+      type: object
+      properties:
+        allocations:
+          type: object
+          minProperties: 0
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                generation:
+                  type: integer
+                resources:
+                  type: object
+                  minProperties: 1
+                  patternProperties:
+                    ^[A-Z0-9_]+$:
+                      type: integer
+                      minimum: 1
+                  additionalProperties: false
+              required:
+                - resources
+              additionalProperties: false
+          additionalProperties: false
+          description: |-
+            A dictionary of allocations keyed by resource provider uuid.
+        project_id:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: |-
+            The uuid of a project. Will be absent when listing allocations for a consumer uuid that has no allocations.
+
+            **New in version 1.12**
+        user_id:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: |-
+            The uuid of a user. Will be absent when listing allocations for a consumer uuid that has no allocations.
+
+            **New in version 1.12**
+        consumer_generation:
+          type:
+            - integer
+            - 'null'
+          additionalProperties: false
+          description: |-
+            The generation of the consumer. Will be absent when listing allocations for a consumer uuid that has no allocations.
+
+            **New in version 1.28**
+        mappings:
+          type: object
+          minProperties: 1
+          patternProperties:
+            '[a-zA-Z0-9_-]{1,64}':
+              type: array
+              minItems: 1
+              items:
+                type: string
+                format: uuid
+        consumer_type:
+          type: string
+          pattern: ^[A-Z0-9_]+$
+          minLength: 1
+          maxLength: 255
+          description: |-
+            A string that consists of numbers, `A-Z`, and `_` describing what kind of consumer is creating, or has created, allocations using a quantity of inventory. The string is determined by the client when writing allocations and it is up to the client to ensure correct choices amongst collaborating services. For example, the compute service may choose to type some consumers ‘INSTANCE’ and others ‘MIGRATION’.
+
+            **New in version 1.38**
+      additionalProperties: false
+      required:
+        - allocations
+    AllocationSet_Allocations_For_ConsumerRequest:
+      oneOf:
+        - type: object
+          properties:
+            allocations:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                properties:
+                  resource_provider:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                    additionalProperties: false
+                    required:
+                      - uuid
+                  resources:
+                    type: object
+                    minProperties: 1
+                    patternProperties:
+                      ^[A-Z0-9_]+$:
+                        type: integer
+                        minimum: 1
+                    additionalProperties: false
+                required:
+                  - resource_provider
+                  - resources
+                additionalProperties: false
+          required:
+            - allocations
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.0'
+            max-ver: '1.7'
+        - type: object
+          properties:
+            allocations:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                properties:
+                  resource_provider:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                    additionalProperties: false
+                    required:
+                      - uuid
+                  resources:
+                    type: object
+                    minProperties: 1
+                    patternProperties:
+                      ^[A-Z0-9_]+$:
+                        type: integer
+                        minimum: 1
+                    additionalProperties: false
+                required:
+                  - resource_provider
+                  - resources
+                additionalProperties: false
+            project_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            user_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+          required:
+            - allocations
+            - project_id
+            - user_id
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.8'
+            max-ver: '1.11'
+        - type: object
+          properties:
+            allocations:
+              type: object
+              minProperties: 1
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    generation:
+                      type: integer
+                    resources:
+                      type: object
+                      minProperties: 1
+                      patternProperties:
+                        ^[A-Z0-9_]+$:
+                          type: integer
+                          minimum: 1
+                      additionalProperties: false
+                  required:
+                    - resources
+                  additionalProperties: false
+              additionalProperties: false
+            project_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            user_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+          additionalProperties: false
+          required:
+            - allocations
+            - project_id
+            - user_id
+          x-openstack:
+            min-ver: '1.12'
+            max-ver: '1.27'
+        - type: object
+          properties:
+            allocations:
+              type: object
+              minProperties: 0
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    generation:
+                      type: integer
+                    resources:
+                      type: object
+                      minProperties: 1
+                      patternProperties:
+                        ^[A-Z0-9_]+$:
+                          type: integer
+                          minimum: 1
+                      additionalProperties: false
+                  required:
+                    - resources
+                  additionalProperties: false
+              additionalProperties: false
+            project_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            user_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            consumer_generation:
+              type:
+                - integer
+                - 'null'
+              additionalProperties: false
+          additionalProperties: false
+          required:
+            - allocations
+            - project_id
+            - user_id
+            - consumer_generation
+          x-openstack:
+            min-ver: '1.28'
+            max-ver: '1.36'
+        - type: object
+          properties:
+            allocations:
+              type: object
+              minProperties: 0
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    generation:
+                      type: integer
+                    resources:
+                      type: object
+                      minProperties: 1
+                      patternProperties:
+                        ^[A-Z0-9_]+$:
+                          type: integer
+                          minimum: 1
+                      additionalProperties: false
+                  required:
+                    - resources
+                  additionalProperties: false
+              additionalProperties: false
+            project_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            user_id:
+              type: string
+              minLength: 1
+              maxLength: 255
+            consumer_generation:
+              type:
+                - integer
+                - 'null'
+              additionalProperties: false
+            mappings:
+              type: object
+              minProperties: 1
+              patternProperties:
+                '[a-zA-Z0-9_-]{1,64}':
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+            consumer_type:
+              type: string
+              pattern: ^[A-Z0-9_]+$
+              minLength: 1
+              maxLength: 255
+          additionalProperties: false
+          required:
+            - allocations
+            - project_id
+            - user_id
+            - consumer_generation
+            - consumer_type
+          x-openstack:
+            min-ver: '1.38'
+      x-openstack:
+        discriminator: microversion
+    Allocation_CandidatesList_Allocation_CandidatesResponse:
+      type: object
+      properties:
+        allocation_requests:
+          type: array
+          description: A list of objects that contain a serialized HTTP body that
+            a client may subsequently use in a call to PUT /allocations/{consumer_uuid}
+            to claim resources against a related set of resource providers.
+          items:
+            type: object
+            properties:
+              allocations:
+                type: object
+                patternProperties:
+                  ^[0-9a-fA-F-]{36}$:
+                    type: object
+                    properties:
+                      resources:
+                        type: object
+                        patternProperties:
+                          ^[A-Z0-9_]+$:
+                            type: integer
+              mappings:
+                type: object
+                patternProperties:
+                  '[a-zA-Z0-9_-]*':
+                    type: array
+                    items:
+                      type: string
+                x-openstack:
+                  min-ver: '1.34'
+            required:
+              - allocations
+            additionalProperties: false
+        provider_summaries:
+          type: object
+          patternProperties:
+            ^[0-9a-fA-F-]{36}$:
+              type: object
+              properties:
+                resources:
+                  type: object
+                  patternProperties:
+                    ^[A-Z0-9_]+$:
+                      type: object
+                      properties:
+                        capacity:
+                          type: integer
+                          description: The amount of the resource that the provider
+                            can accommodate.
+                        used:
+                          type: integer
+                          description: The amount of the resource that has been already
+                            allocated.
+                traits:
+                  type: array
+                  items:
+                    type: string
+                  x-openstack:
+                    min-ver: '1.17'
+                parent_provider_uuid:
+                  type:
+                    - string
+                    - 'null'
+                  x-openstack:
+                    min-ver: '1.29'
+                root_provider_uuid:
+                  type:
+                    - string
+                    - 'null'
+                  x-openstack:
+                    min-ver: '1.29'
+              required:
+                - resources
+    TraitsList_TraitsResponse:
+      type: object
+      properties:
+        traits:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: |-
+            A list of traits.
+      additionalProperties: false
+      required:
+        - traits
+    Resource_ProvidersTraitsList_Traits_For_Resource_ProviderResponse:
+      type: object
+      properties:
+        traits:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: |-
+            A list of traits.
+      additionalProperties: false
+      required:
+        - traits
+    Resource_ProvidersTraitsUpdate_Traits_For_Resource_ProviderRequest:
+      type: object
+      properties:
+        traits:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: |-
+            A list of traits.
+      additionalProperties: false
+      required:
+        - traits
+    Resource_ProvidersTraitsUpdate_Traits_For_Resource_ProviderResponse:
+      type: object
+      properties:
+        traits:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: |-
+            A list of traits.
+      additionalProperties: false
+      required:
+        - traits
+    UsagesGet_Total_UsagesResponse:
+      type: object
+      properties:
+        usages:
+          type: object
+          patternProperties:
+            ^[A-Z0-9_]+$:
+              type: object
+              properties:
+                consumer_count:
+                  type: integer
+                  description: The number of consumers of a particular consumer_type.
+                  x-openstack:
+                    min-ver: '1.38'
+              patternProperties:
+                ^[A-Z0-9_]+$:
+                  type: integer
+      additionalProperties: false
+      required:
+        - usages
+    ReshaperReshapeRequest:
+      oneOf:
+        - type: object
+          properties:
+            inventories:
+              type: object
+              description: |-
+                A dictionary of multiple inventories, keyed by resource provider uuid. Each inventory describes the desired full inventory for each resource provider. An empty dictionary causes the inventory for that provider to be deleted.
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    resource_provider_generation:
+                      type: integer
+                      description: A consistent view marker that assists with the
+                        management of concurrent resource provider updates.
+                    inventories:
+                      type: object
+                      description: A dictionary of inventories keyed by resource classes.
+                      patternProperties:
+                        ^[A-Z0-9_]+$:
+                          type: object
+                          properties:
+                            resource_provider_generation:
+                              type: integer
+                            total:
+                              type: integer
+                              minimum: 1
+                            reserved:
+                              type: integer
+                              minimum: 0
+                            min_unit:
+                              type: integer
+                              minimum: 1
+                            max_unit:
+                              type: integer
+                              minimum: 1
+                            step_size:
+                              type: integer
+                              minimum: 1
+                            allocation_ratio:
+                              type: number
+                          required:
+                            - total
+                          additionalProperties: false
+                  required:
+                    - resource_provider_generation
+                    - inventories
+                  additionalProperties: false
+              minProperties: 1
+              additionalProperties: false
+            allocations:
+              type: object
+              description: |-
+                A dictionary of multiple allocations, keyed by consumer uuid. Each collection of allocations describes the full set of allocations for each consumer. Each consumer allocations dict is itself a dictionary of resource allocations keyed by resource provider uuid. An empty dictionary indicates no change in existing allocations, whereas an empty `allocations` dictionary **within** a consumer dictionary indicates that all allocations for that consumer should be deleted.
+              minProperties: 0
+              additionalProperties: false
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    allocations:
+                      type: object
+                      description: A dictionary of resource allocations keyed by resource
+                        provider uuid. If this is an empty object, allocations for
+                        this consumer will be removed.
+                      minProperties: 0
+                      patternProperties:
+                        ^[0-9a-fA-F-]{36}$:
+                          type: object
+                          properties:
+                            generation:
+                              type: integer
+                            resources:
+                              type: object
+                              description: A dictionary of resource records keyed
+                                by resource class name.
+                              minProperties: 1
+                              patternProperties:
+                                ^[A-Z0-9_]+$:
+                                  type: integer
+                                  minimum: 1
+                              additionalProperties: false
+                          required:
+                            - resources
+                          additionalProperties: false
+                      additionalProperties: false
+                    project_id:
+                      type: string
+                      description: The uuid of a project.
+                      minLength: 1
+                      maxLength: 255
+                    user_id:
+                      type: string
+                      description: The uuid of a user.
+                      minLength: 1
+                      maxLength: 255
+                    consumer_generation:
+                      type:
+                        - integer
+                        - 'null'
+                      description: The generation of the consumer. Should be set to
+                        null when indicating that the caller expects the consumer
+                        does not yet exist.
+                    mappings:
+                      type: object
+                      description: A dictionary associating request group suffixes
+                        with a list of uuids identifying the resource providers that
+                        satisfied each group. The empty string and [a-zA-Z0-9_-]+
+                        are valid suffixes. This field may be sent when writing allocations
+                        back to the server but will be ignored; this preserves symmetry
+                        between read and write representations.
+                      minProperties: 1
+                      patternProperties:
+                        '[a-zA-Z0-9_-]{1,64}':
+                          type: array
+                          minItems: 1
+                          items:
+                            type: string
+                            format: uuid
+                  additionalProperties: false
+                  required:
+                    - allocations
+                    - project_id
+                    - user_id
+                    - consumer_generation
+          required:
+            - inventories
+            - allocations
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.34'
+            max-ver: '1.37'
+        - type: object
+          properties:
+            inventories:
+              type: object
+              description: |-
+                A dictionary of multiple inventories, keyed by resource provider uuid. Each inventory describes the desired full inventory for each resource provider. An empty dictionary causes the inventory for that provider to be deleted.
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    resource_provider_generation:
+                      type: integer
+                      description: A consistent view marker that assists with the
+                        management of concurrent resource provider updates.
+                    inventories:
+                      type: object
+                      description: A dictionary of inventories keyed by resource classes.
+                      patternProperties:
+                        ^[A-Z0-9_]+$:
+                          type: object
+                          properties:
+                            resource_provider_generation:
+                              type: integer
+                            total:
+                              type: integer
+                              minimum: 1
+                            reserved:
+                              type: integer
+                              minimum: 0
+                            min_unit:
+                              type: integer
+                              minimum: 1
+                            max_unit:
+                              type: integer
+                              minimum: 1
+                            step_size:
+                              type: integer
+                              minimum: 1
+                            allocation_ratio:
+                              type: number
+                          required:
+                            - total
+                          additionalProperties: false
+                  required:
+                    - resource_provider_generation
+                    - inventories
+                  additionalProperties: false
+              minProperties: 1
+              additionalProperties: false
+            allocations:
+              type: object
+              description: |-
+                A dictionary of multiple allocations, keyed by consumer uuid. Each collection of allocations describes the full set of allocations for each consumer. Each consumer allocations dict is itself a dictionary of resource allocations keyed by resource provider uuid. An empty dictionary indicates no change in existing allocations, whereas an empty `allocations` dictionary **within** a consumer dictionary indicates that all allocations for that consumer should be deleted.
+              minProperties: 0
+              additionalProperties: false
+              patternProperties:
+                ^[0-9a-fA-F-]{36}$:
+                  type: object
+                  properties:
+                    allocations:
+                      type: object
+                      description: A dictionary of resource allocations keyed by resource
+                        provider uuid. If this is an empty object, allocations for
+                        this consumer will be removed.
+                      minProperties: 0
+                      patternProperties:
+                        ^[0-9a-fA-F-]{36}$:
+                          type: object
+                          properties:
+                            generation:
+                              type: integer
+                            resources:
+                              type: object
+                              description: A dictionary of resource records keyed
+                                by resource class name.
+                              minProperties: 1
+                              patternProperties:
+                                ^[A-Z0-9_]+$:
+                                  type: integer
+                                  minimum: 1
+                              additionalProperties: false
+                          required:
+                            - resources
+                          additionalProperties: false
+                      additionalProperties: false
+                    project_id:
+                      type: string
+                      description: The uuid of a project.
+                      minLength: 1
+                      maxLength: 255
+                    user_id:
+                      type: string
+                      description: The uuid of a user.
+                      minLength: 1
+                      maxLength: 255
+                    consumer_generation:
+                      type:
+                        - integer
+                        - 'null'
+                      description: The generation of the consumer. Should be set to
+                        null when indicating that the caller expects the consumer
+                        does not yet exist.
+                    mappings:
+                      type: object
+                      description: A dictionary associating request group suffixes
+                        with a list of uuids identifying the resource providers that
+                        satisfied each group. The empty string and [a-zA-Z0-9_-]+
+                        are valid suffixes. This field may be sent when writing allocations
+                        back to the server but will be ignored; this preserves symmetry
+                        between read and write representations.
+                      minProperties: 1
+                      patternProperties:
+                        '[a-zA-Z0-9_-]{1,64}':
+                          type: array
+                          minItems: 1
+                          items:
+                            type: string
+                            format: uuid
+                    consumer_type:
+                      type: string
+                      description: A string that consists of numbers, A-Z, and _ describing
+                        what kind of consumer is creating, or has created, allocations
+                        using a quantity of inventory. The string is determined by
+                        the client when writing allocations and it is up to the client
+                        to ensure correct choices amongst collaborating services.
+                        For example, the compute service may choose to type some consumers
+                        ‘INSTANCE’ and others ‘MIGRATION’.
+                      pattern: ^[A-Z0-9_]+$
+                      minLength: 1
+                      maxLength: 255
+                  additionalProperties: false
+                  required:
+                    - allocations
+                    - project_id
+                    - user_id
+                    - consumer_generation
+                    - consumer_type
+          required:
+            - inventories
+            - allocations
+          additionalProperties: false
+          x-openstack:
+            min-ver: '1.38'
+      x-openstack:
+        discriminator: microversion
+  parameters:
+    resource_classes_name:
+      in: path
+      name: name
+      description: name parameter for /resource_classes/{name} API
+      schema:
+        type: string
+      required: true
+    name:
+      in: query
+      name: name
+      description: The name of a resource provider to filter the list.
+      schema:
+        type: string
+    uuid:
+      in: query
+      name: uuid
+      description: The uuid of a resource provider.
+      schema:
+        type: string
+    resources:
+      in: query
+      name: resources
+      description: 'A comma-separated list of strings indicating an amount of resource
+        of a specified class that providers in each allocation request must collectively
+        have the capacity and availability to serve: ``resources=VCPU:4,DISK_GB:64,MEMORY_MB:2048``
+        These resources may be satisfied by any provider in the same non-sharing tree
+        or associated via aggregate.'
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.4'
+    required:
+      in: query
+      name: required
+      description: "A comma-separated list of traits that a provider must have:\n
+        ``required=HW_CPU_X86_AVX,HW_CPU_X86_SSE``\n Allocation requests in the response
+        will be for resource providers that have capacity for all requested resources
+        and the set of those resource providers will collectively contain all of the
+        required traits. These traits may be satisfied by any provider in the same
+        non-sharing tree or associated via aggregate as far as that provider also
+        contributes resource to the request. Starting from microversion 1.22 traits
+        which are forbidden from any resource provider contributing resources to the
+        request may be expressed by prefixing a trait with a `!`.\nStarting from microversion
+        1.39 the required query parameter can be repeated. The trait lists from the
+        repeated parameters are AND-ed together. So:\n``required=T1,!T2&required=T3``
+        means T1 and not T2 and T3.\n Also starting from microversion 1.39 the required
+        parameter supports the syntax:\n``required=in:T1,T2,T3`` which means T1 or
+        T2 or T3.\nMixing forbidden traits into an in: prefixed value is not supported
+        and rejected. But mixing a normal trait list and an in: prefixed trait list
+        in two query params within the same request is supported. So: ``required=in:T3,T4&required=T1,!T2``
+        is supported and it means T1 and not T2 and (T3 or T4)."
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-openstack:
+        min-ver: '1.18'
+    member_of:
+      in: query
+      name: member_of
+      description: "A string representing an aggregate uuid; or the prefix in: followed
+        by a comma-separated list of strings representing aggregate uuids. The resource
+        providers in the allocation request in the response must directly or via the
+        root provider be associated with the aggregate or aggregates identified by
+        uuid:\n``member_of=5e08ea53-c4c6-448e-9334-ac4953de3cfa``, ``member_of=in:42896e0d-205d-4fe3-bd1e-100924931787,5e08ea53-c4c6-448e-9334-ac4953de3cfa``\n
+        Starting from microversion 1.24 specifying multiple member_of query string
+        parameters is possible. Multiple member_of parameters will result in filtering
+        providers that are directly or via root provider associated with aggregates
+        listed in all of the member_of query string values. For example, to get the
+        providers that are associated with aggregate A as well as associated with
+        any of aggregates B or C, the user could issue the following query: ``member_of=AGGA_UUID&member_of=in:AGGB_UUID,AGGC_UUID``\n
+        Starting from microversion 1.32 specifying forbidden aggregates is supported
+        in the member_of query string parameter. Forbidden aggregates are prefixed
+        with a !. This negative expression can also be used in multiple member_of
+        parameters: ``member_of=AGGA_UUID&member_of=!AGGB_UUID`` would translate logically
+        to “Candidate resource providers must be in AGGA and not in AGGB.” We do NOT
+        support ! on the values within in:, but we support !in:. Both of the following
+        two example queries return candidate resource providers that are NOT in AGGA,
+        AGGB, or AGGC: ``member_of=!in:AGGA_UUID,AGGB_UUID,AGGC_UUID``, ``member_of=!AGGA_UUID&member_of=!AGGB_UUID&member_of=!AGGC_UUID``\n
+        We do not check if the same aggregate uuid is in both positive and negative
+        expression to return 400 BadRequest. We still return 200 for such cases. For
+        example: ``member_of=AGGA_UUID&member_of=!AGGA_UUID`` would return empty allocation_requests
+        and provider_summaries, while: ``member_of=in:AGGA_UUID,AGGB_UUID&member_of=!AGGA_UUID``
+        would return resource providers that are NOT in AGGA but in AGGB."
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+      x-openstack:
+        min-ver: '1.3'
+    in_tree:
+      in: query
+      name: in_tree
+      description: A string representing a resource provider uuid. When supplied,
+        it will filter the returned allocation candidates to only those resource providers
+        that are in the same tree with the given resource provider.
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.14'
+    resource_providers_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid} API
+      schema:
+        type: string
+      required: true
+    resource_providers_inventories_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid}/inventories/{resource_class}
+        API
+      schema:
+        type: string
+      required: true
+    resource_providers_inventories_resource_class:
+      in: path
+      name: resource_class
+      description: resource_class parameter for /resource_providers/{uuid}/inventories/{resource_class}
+        API
+      schema:
+        type: string
+      required: true
+    resource_providers_usages_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid}/usages API
+      schema:
+        type: string
+      required: true
+    resource_providers_aggregates_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid}/aggregates API
+      schema:
+        type: string
+      required: true
+    resource_providers_allocations_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid}/allocations API
+      schema:
+        type: string
+      required: true
+    allocations_consumer_uuid:
+      in: path
+      name: consumer_uuid
+      description: consumer_uuid parameter for /allocations/{consumer_uuid} API
+      schema:
+        type: string
+      required: true
+    group_policy:
+      in: query
+      name: group_policy
+      description: When more than one resourcesN query parameter is supplied, group_policy
+        is required to indicate how the groups should interact. With group_policy=none,
+        separate groupings - with or without a suffix - may or may not be satisfied
+        by the same provider. With group_policy=isolate, suffixed groups are guaranteed
+        to be satisfied by different providers - though there may still be overlap
+        with the suffixless group.
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.25'
+    limit:
+      in: query
+      name: limit
+      description: A positive integer used to limit the maximum number of allocation
+        candidates returned in the response.
+      schema:
+        type: integer
+      x-openstack:
+        min-ver: '1.16'
+    root_required:
+      in: query
+      name: root_required
+      description: 'A comma-separated list of trait requirements that the root provider
+        of the (non-sharing) tree must satisfy: ``root_required=COMPUTE_SUPPORTS_MULTI_ATTACH,!CUSTOM_WINDOWS_LICENSED``
+        Allocation requests in the response will be limited to those whose (non-sharing)
+        tree’s root provider satisfies the specified trait requirements. Traits which
+        are forbidden (must not be present on the root provider) are expressed by
+        prefixing the trait with a !.'
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.35'
+    same_subtree:
+      in: query
+      name: same_subtree
+      description: A comma-separated list of request group suffix strings ($S). Each
+        must exactly match a suffix on a granular group somewhere else in the request.
+        Importantly, the identified request groups need not have a resources[$S].
+        If this is provided, at least one of the resource providers satisfying a specified
+        request group must be an ancestor of the rest. The same_subtree query parameter
+        can be repeated and each repeat group is treated independently.
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.36'
+    associated:
+      in: query
+      name: associated
+      description: If this parameter has a true value, the returned traits will be
+        those that are associated with at least one resource provider. Available values
+        for the parameter are true and false.
+      schema:
+        type:
+          - string
+          - boolean
+        enum:
+          - 'true'
+          - 'false'
+      x-openstack:
+        is-flag: true
+    traits_name:
+      in: path
+      name: name
+      description: name parameter for /traits/{name} API
+      schema:
+        type: string
+      required: true
+    resource_providers_traits_uuid:
+      in: path
+      name: uuid
+      description: uuid parameter for /resource_providers/{uuid}/traits API
+      schema:
+        type: string
+      required: true
+    project_id:
+      in: query
+      name: project_id
+      description: The uuid of a project.
+      schema:
+        type: string
+        format: uuid
+      required: true
+      x-openstack:
+        resource_link: identity/v3/project.id
+    user_id:
+      in: query
+      name: user_id
+      description: The uuid of a user.
+      schema:
+        type: string
+        format: uuid
+      x-openstack:
+        resource_link: identity/v3/user.id
+    consumer_type:
+      in: query
+      name: consumer_type
+      description: A string that consists of numbers, A-Z, and _ describing the consumer
+        type by which to filter usage results. For example, to retrieve only usage
+        information for ‘INSTANCE’ type consumers a parameter of consumer_type=INSTANCE
+        should be provided. The all query parameter may be specified to group all
+        results under one key, all. The unknown query parameter may be specified to
+        group all results under one key, unknown.
+      schema:
+        type: string
+      x-openstack:
+        min-ver: '1.38'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+tags:
+  - name: version
+  - name: resource_classes
+  - name: resource_providers
+  - name: allocations
+    description: |-
+      Allocations are records representing resources that have been assigned
+      and used by some consumer of that resource. They indicate the amount
+      of a particular resource that has been allocated to a given consumer
+      of that resource from a particular resource provider.
+  - name: allocation_candidates
+  - name: traits
+    description: |-
+      Traits are *qualitative* characteristics of resource providers.
+      The classic example for traits can be requesting disk from different
+      providers: a user may request 80GiB of disk space for an instance
+      (quantitative), but may also expect that the disk be SSD instead of
+      spinning disk (qualitative). Traits provide a way to mark that a
+      storage provider is SSD or spinning.
+  - name: usages
+    description: |-
+      Represent the consumption of resources for a project and user.
+  - name: reshaper
+    description: |-
+      Note
+security:
+  - ApiKeyAuth: []
