@@ -35,6 +35,7 @@ use crate::api::AsyncClient;
 #[cfg(feature = "sync")]
 use crate::api::Client;
 use crate::api::{ApiError, RestClient};
+use crate::auth::Auth;
 
 use crate::catalog::{CatalogError, ServiceEndpoint};
 use crate::types::identity::v3::Project;
@@ -96,6 +97,9 @@ use crate::RestError;
 pub struct FakeOpenStackClient {
     /// Known endpoints used by the client
     endpoints: HashMap<String, ServiceEndpoint>,
+
+    /// Optional auth information to be used
+    auth: Option<Auth>,
 }
 
 impl FakeOpenStackClient {
@@ -104,6 +108,7 @@ impl FakeOpenStackClient {
     pub fn new<S: AsRef<str>>(url: S) -> Self {
         let mut slf = Self {
             endpoints: HashMap::new(),
+            auth: None,
         };
         slf.add_endpoint("default", Url::parse(url.as_ref()).unwrap());
         slf
@@ -116,6 +121,12 @@ impl FakeOpenStackClient {
             service_type.as_ref().into(),
             ServiceEndpoint::new(url, ApiVersion::new(0, 0)),
         );
+        self
+    }
+
+    /// Set auth information
+    pub fn set_auth(&mut self, auth: Option<Auth>) -> &mut Self {
+        self.auth = auth;
         self
     }
 }
@@ -145,10 +156,13 @@ impl RestClient for FakeOpenStackClient {
 impl Client for FakeOpenStackClient {
     fn rest(
         &self,
-        request: RequestBuilder,
+        mut request: RequestBuilder,
         body: Vec<u8>,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         let call = || -> Result<_, Self::Error> {
+            if let Some(auth) = &self.auth {
+                auth.set_header(request.headers_mut().unwrap())?;
+            }
             let http_request = request.body(body.clone())?;
             let request = http_request.try_into()?;
 
@@ -175,11 +189,14 @@ impl Client for FakeOpenStackClient {
 impl AsyncClient for FakeOpenStackClient {
     async fn rest_async(
         &self,
-        request: http::request::Builder,
+        mut request: http::request::Builder,
         body: Vec<u8>,
     ) -> Result<HttpResponse<Bytes>, ApiError<Self::Error>> {
         use futures_util::TryFutureExt;
         let call = || async {
+            if let Some(auth) = &self.auth {
+                auth.set_header(request.headers_mut().unwrap())?;
+            }
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
 

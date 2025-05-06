@@ -12,28 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![doc = include_str!("../README.md")]
+use openstack_sdk::api::block_storage::v3::attachment::list::Request;
+use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_types::block_storage::v3::attachment::response::list::AttachmentResponse;
 
-pub mod api;
-pub mod auth;
-pub mod catalog;
-pub mod config;
-mod error;
-#[cfg(feature = "sync")]
-mod openstack;
-#[cfg(feature = "async")]
-mod openstack_async;
-mod state;
-mod utils;
+use crate::get_client;
 
-pub mod types;
+#[tokio::test]
+async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let client = get_client("block-storage");
 
-pub use crate::auth::AuthError;
-pub use crate::error::{OpenStackError, RestError};
-#[cfg(feature = "sync")]
-pub use crate::openstack::OpenStack;
-#[cfg(feature = "async")]
-pub use crate::openstack_async::AsyncOpenStack;
+    let _res: Vec<AttachmentResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
+        .query_async(&client)
+        .await?;
 
-#[allow(dead_code)]
-pub mod test;
+    Ok(())
+}

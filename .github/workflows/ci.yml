@@ -90,3 +90,25 @@ jobs:
 
       - name: Run tests
         run: cargo +nightly fuzz run fuzz_openstack_sdk_config --features=fuzzing -- -max_total_time=60
+
+  mock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
+        with:
+          toolchain: stable
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
+
+      - name: Start prism mock server - BlockStorage
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4010:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/block-storage/v3.yaml -d
+
+      - name: Run tests
+        env:
+          OPENSTACK_BLOCK_STORAGE_ENDPOINT: http://localhost:4010/v3
+        run: cargo test -p openstack_types --test mocked
