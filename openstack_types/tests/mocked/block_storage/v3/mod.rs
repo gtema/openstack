@@ -12,28 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![doc = include_str!("../README.md")]
-
-pub mod api;
-pub mod auth;
-pub mod catalog;
-pub mod config;
-mod error;
-#[cfg(feature = "sync")]
-mod openstack;
-#[cfg(feature = "async")]
-mod openstack_async;
-mod state;
-mod utils;
-
-pub mod types;
-
-pub use crate::auth::AuthError;
-pub use crate::error::{OpenStackError, RestError};
-#[cfg(feature = "sync")]
-pub use crate::openstack::OpenStack;
-#[cfg(feature = "async")]
-pub use crate::openstack_async::AsyncOpenStack;
-
-#[allow(dead_code)]
-pub mod test;
+mod attachment;
+mod backup;
+mod snapshot;
+mod volume;

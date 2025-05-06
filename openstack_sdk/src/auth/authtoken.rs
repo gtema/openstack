@@ -159,6 +159,15 @@ pub struct AuthToken {
     pub(crate) auth_info: Option<AuthResponse>,
 }
 
+impl From<&str> for AuthToken {
+    fn from(value: &str) -> Self {
+        Self {
+            token: value.into(),
+            ..Default::default()
+        }
+    }
+}
+
 impl Debug for AuthToken {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_struct("Auth")

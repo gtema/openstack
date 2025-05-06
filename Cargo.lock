@@ -2316,9 +2316,13 @@ name = "openstack_types"
 version = "0.21.0"
 dependencies = [
  "chrono",
+ "openstack_sdk",
+ "reqwest",
  "serde",
  "serde_json",
  "structable",
+ "tokio",
+ "url",
 ]
 
 [[package]]
