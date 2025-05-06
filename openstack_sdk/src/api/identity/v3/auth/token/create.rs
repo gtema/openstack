@@ -172,10 +172,15 @@ pub struct ApplicationCredentialUser<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ApplicationCredential<'a> {
+    /// The ID of the application credential used for authentication. If not
+    /// provided, the application credential must be identified by its name and
+    /// its owning user.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
+    /// The name of the application credential used for authentication. If
+    /// provided, must be accompanied by a user object.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
