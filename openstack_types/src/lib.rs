@@ -17,14 +17,24 @@
 //! Types used in the OpenStack API communications. This crate defines the types that are reused
 //! between `openstack_sdk`, `openstack_cli` and `openstack_tui` crates.
 
+#[cfg(feature = "block_storage")]
 pub mod block_storage;
 pub mod common;
+#[cfg(feature = "compute")]
 pub mod compute;
+#[cfg(feature = "container_infra")]
 pub mod container_infrastructure_management;
+#[cfg(feature = "dns")]
 pub mod dns;
+#[cfg(feature = "identity")]
 pub mod identity;
+#[cfg(feature = "image")]
 pub mod image;
+#[cfg(feature = "load_balancer")]
 pub mod load_balancer;
+#[cfg(feature = "network")]
 pub mod network;
+#[cfg(feature = "object_store")]
 pub mod object_store;
+#[cfg(feature = "placement")]
 pub mod placement;

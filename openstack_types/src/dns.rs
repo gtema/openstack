@@ -15,3 +15,21 @@
 //! DNS API types
 
 pub mod v2;
+
+/// Get OpenAPI spec for the dns service used during the
+/// codegeneration.
+#[cfg(feature = "openapi")]
+pub fn get_openapi_spec() -> &'static str {
+    include_str!("../data/dns/v2.yaml")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "openapi")]
+    #[test]
+    fn test_get_openapi_spec() {
+        assert!(get_openapi_spec().len() > 0);
+    }
+}

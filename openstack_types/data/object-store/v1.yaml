@@ -1,0 +1,1403 @@
+---
+openapi: 3.1.0
+info:
+  title: Object store API
+  version: "1.0"
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: accounts
+    description: |
+      Lists containers for an account. Creates, updates, shows, and deletes account metadata. For more information and concepts about accounts see Object Storage API overview.
+  - name: containers
+    description: |
+      Lists objects in a container. Creates, shows details for, and deletes containers. Creates, updates, shows, and deletes container metadata. For more information and concepts about containers see Object Storage API overview.
+  - name: objects
+    description: |
+      Creates, replaces, shows details for, and deletes objects. Copies objects from another object with a new or different name. Updates object metadata.  For more information and concepts about objects see Object Storage API overview and Large Objects.
+paths:
+  /v1/{account}:
+    parameters:
+      - $ref: '#/components/parameters/account'
+    get:
+      summary: Show account details and list containers
+      description: Shows details for an account and lists containers, sorted by name, in the account.
+      operationId: account.get
+      tags:
+        - accounts
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/end-marker'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/prefix'
+        - $ref: '#/components/parameters/delimiter'
+        - $ref: '#/components/parameters/reverse'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/accept'
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Account-Meta-*:
+              $ref: '#/components/headers/X-Account-Meta'
+            X-Account-Meta-Temp-URL-Key:
+              $ref: '#/components/headers/X-Account-Meta-Temp-Url-Key'
+            X-Account-Meta-Temp-URL-Key-2:
+              $ref: '#/components/headers/X-Account-Meta-Temp-Url-Key-2'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Account-Bytes-Used:
+              $ref: '#/components/headers/X-Account-Bytes-Used'
+            X-Account-Container-Count:
+              $ref: '#/components/headers/X-Account-Container-Count'
+            X-Account-Object-Count:
+              $ref: '#/components/headers/X-Account-Object-Count'
+            X-Account-Storage-Policy*Bytes-Used:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Bytes-Used'
+            X-Account-Storage-Policy*Container-Count:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Container-Count'
+            X-Account-Storage-Policy*Object-Count:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Object-Count'
+            X-Account-Meta-Quota-Bytes:
+              $ref: '#/components/headers/X-Account-Meta-Quota-Bytes'
+            X-Account-Access-Control:
+              $ref: '#/components/headers/X-Account-Access-Control'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Containers'
+        "204":
+          description: OK, No containers
+        "401":
+          description: Error
+        "416":
+          description: Error
+    post:
+      summary: Create, update, or delete account metadata
+      description: |
+        Creates, updates, or deletes account metadata.
+        To create, update, or delete custom metadata, use the X-Account-Meta-{name} request header, where {name} is the name of the metadata item.
+        Account metadata operations work differently than how object metadata operations work. Depending on the contents of your POST account metadata request, the Object Storage API updates the metadata as shown in the following table:
+        TODO: fill the rest
+        To delete a metadata header, send an empty value for that header, such as for the X-Account-Meta-Book header. If the tool you use to communicate with Object Storage, such as an older version of cURL, does not support empty headers, send the X-Remove-Account- Meta-{name} header with an arbitrary value. For example, X-Remove-Account-Meta-Book: x. The operation ignores the arbitrary value.
+      operationId: account.post
+      tags:
+        - accounts
+      parameters:
+        - $ref: '#/components/parameters/X-Account-Meta-Temp-Url-Key'
+        - $ref: '#/components/parameters/X-Account-Meta-Temp-Url-Key-2'
+        - $ref: '#/components/parameters/X-Account-Meta'
+        - $ref: '#/components/parameters/X-Remove-Account-Meta'
+        - $ref: '#/components/parameters/X-Account-Access-Control'
+      responses:
+        "204":
+          description: OK
+    head:
+      summary: Show account metadata
+      description: |
+        Shows metadata for an account.
+        Because the storage system can store large amounts of data, take care when you represent the total bytes response as an integer; when possible, convert it to a 64-bit unsigned integer if your platform supports that primitive type.
+        Do not include metadata headers in this request.
+      operationId: account.head
+      tags:
+        - accounts
+      responses:
+        "204":
+          description: OK, Metadata
+          headers:
+            X-Account-Meta-*:
+              $ref: '#/components/headers/X-Account-Meta'
+            X-Account-Meta-Temp-URL-Key:
+              $ref: '#/components/headers/X-Account-Meta-Temp-Url-Key'
+            X-Account-Meta-Temp-URL-Key-2:
+              $ref: '#/components/headers/X-Account-Meta-Temp-Url-Key-2'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Account-Bytes-Used:
+              $ref: '#/components/headers/X-Account-Bytes-Used'
+            X-Account-Container-Count:
+              $ref: '#/components/headers/X-Account-Container-Count'
+            X-Account-Object-Count:
+              $ref: '#/components/headers/X-Account-Object-Count'
+            X-Account-Storage-Policy*Bytes-Used:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Bytes-Used'
+            X-Account-Storage-Policy*Container-Count:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Container-Count'
+            X-Account-Storage-Policy*Object-Count:
+              $ref: '#/components/headers/X-Account-Storage-Policy-Object-Count'
+            X-Account-Meta-Quota-Bytes:
+              $ref: '#/components/headers/X-Account-Meta-Quota-Bytes'
+            X-Account-Access-Control:
+              $ref: '#/components/headers/X-Account-Access-Control'
+        "401":
+          description: Error
+    delete:
+      summary: Delete the specified account
+      description: |
+        Deletes the specified account when a reseller admin issues this request. Accounts are only deleted by (1) having a reseller admin level auth token (2) sending a DELETE to a proxy server for the account to be deleted and (3) that proxy server having the allow_account_management” config option set to true.
+        Note that an issuing a DELETE request simply marks the account for deletion later as outlined in the link: https://docs.openstack.org/swift/latest/overview_reaper.html.
+        Take care when performing this operation because deleting an account is a one-way operation that is not trivially recoverable. It''s crucial to note that in an OpenStack context, you should delete an account after the project/tenant has been deleted from Keystone.
+      operationId: account.delete
+      tags:
+        - accounts
+      responses:
+        "204":
+          description: OK
+  /v1/{account}/{container}:
+    parameters:
+      - $ref: '#/components/parameters/account'
+      - $ref: '#/components/parameters/container'
+    get:
+      summary: Show container details and list objects
+      description: |
+        Shows details for a container and lists objects, sorted by name, in the container.
+        Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request.
+      operationId: container.get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/end-marker'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/prefix'
+        - $ref: '#/components/parameters/delimiter'
+        - $ref: '#/components/parameters/reverse'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/accept'
+      tags:
+        - containers
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Container-Meta-*:
+              $ref: '#/components/headers/X-Container-Meta'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Container-Bytes-Used:
+              $ref: '#/components/headers/X-Container-Bytes-Used'
+            X-Container-Object-Count:
+              $ref: '#/components/headers/X-Container-Object-Count'
+            Accept-Ranges:
+              $ref: '#/components/headers/Accept-Ranges'
+            X-Container-Meta-Temp-URL-Key:
+              $ref: '#/components/headers/X-Container-Meta-Temp-URL-Key'
+            X-Container-Meta-Temp-URL-Key-2:
+              $ref: '#/components/headers/X-Container-Meta-Temp-URL-Key-2'
+            X-Container-Meta-Quota-Count:
+              $ref: '#/components/headers/X-Container-Meta-Quota-Count'
+            X-Container-Meta-Quota-Bytes:
+              $ref: '#/components/headers/X-Container-Meta-Quota-Bytes'
+            X-Storage-Policy:
+              $ref: '#/components/headers/X-Storage-Policy'
+            X-Container-Read:
+              $ref: '#/components/headers/X-Container-Read'
+            X-Container-Write:
+              $ref: '#/components/headers/X-Container-Write'
+            X-Container-Sync-Key:
+              $ref: '#/components/headers/X-Container-Sync-Key'
+            X-Container-Sync-To:
+              $ref: '#/components/headers/X-Container-Sync-To'
+            X-Versions-Location:
+              $ref: '#/components/headers/X-Versions-Location'
+            X-History-Location:
+              $ref: '#/components/headers/X-History-Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Objects'
+        "404":
+          description: Not Found
+        "416":
+          description: Error
+    put:
+      summary: Create container
+      description: |
+        Creates a container.
+        You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate.
+      operationId: container.put
+      tags:
+        - containers
+      parameters:
+        - $ref: '#/components/parameters/X-Container-Meta'
+        - $ref: '#/components/parameters/X-Container-Read'
+        - $ref: '#/components/parameters/X-Container-Write'
+        - $ref: '#/components/parameters/X-Container-Sync-To'
+        - $ref: '#/components/parameters/X-Container-Sync-Key'
+        - $ref: '#/components/parameters/X-Versions-Location'
+        - $ref: '#/components/parameters/X-History-Location'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Allow-Origin'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Max-Age'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Expose-Headers'
+        - $ref: '#/components/parameters/X-Container-Meta-Quota-Bytes'
+        - $ref: '#/components/parameters/X-Container-Meta-Quota-Count'
+        - $ref: '#/components/parameters/X-Container-Meta-Temp-Url-Key'
+        - $ref: '#/components/parameters/X-Container-Meta-Temp-Url-Key-2'
+        - $ref: '#/components/parameters/X-Trans-Id-Extra'
+        - $ref: '#/components/parameters/X-Storage-Policy'
+      responses:
+        "201":
+          description: OK
+          headers:
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+        "202":
+          description: OK
+          headers:
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+    post:
+      summary: Create, update, or delete container metadata
+      description: Creates, updates, or deletes custom metadata for a container.
+      operationId: container.post
+      tags:
+        - containers
+      parameters:
+        - $ref: '#/components/parameters/X-Container-Meta'
+        - $ref: '#/components/parameters/X-Remove-Container-Meta'
+        - $ref: '#/components/parameters/X-Container-Read'
+        - $ref: '#/components/parameters/X-Container-Write'
+        - $ref: '#/components/parameters/X-Container-Sync-To'
+        - $ref: '#/components/parameters/X-Container-Sync-Key'
+        - $ref: '#/components/parameters/X-Versions-Location'
+        - $ref: '#/components/parameters/X-History-Location'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Allow-Origin'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Max-Age'
+        - $ref: '#/components/parameters/X-Container-Meta-Access-Control-Expose-Headers'
+        - $ref: '#/components/parameters/X-Container-Meta-Quota-Bytes'
+        - $ref: '#/components/parameters/X-Container-Meta-Quota-Count'
+        - $ref: '#/components/parameters/X-Container-Meta-Temp-Url-Key'
+        - $ref: '#/components/parameters/X-Container-Meta-Temp-Url-Key-2'
+        - $ref: '#/components/parameters/X-Trans-Id-Extra'
+        - $ref: '#/components/parameters/X-Storage-Policy'
+      responses:
+        "204":
+          description: OK
+          headers:
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+        "404":
+          description: Not Found
+        "409":
+          description: Error
+    head:
+      summary: Show container metadata
+      description: |
+        Shows container metadata, including the number of objects and the total bytes of all objects stored in the container.
+      operationId: container.head
+      tags:
+        - containers
+      responses:
+        "204":
+          description: OK
+          headers:
+            X-Container-Meta-*:
+              $ref: '#/components/headers/X-Container-Meta'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Container-Bytes-Used:
+              $ref: '#/components/headers/X-Container-Bytes-Used'
+            X-Container-Object-Count:
+              $ref: '#/components/headers/X-Container-Object-Count'
+            Accept-Ranges:
+              $ref: '#/components/headers/Accept-Ranges'
+            X-Container-Meta-Temp-URL-Key:
+              $ref: '#/components/headers/X-Container-Meta-Temp-URL-Key'
+            X-Container-Meta-Temp-URL-Key-2:
+              $ref: '#/components/headers/X-Container-Meta-Temp-URL-Key-2'
+            X-Container-Meta-Quota-Count:
+              $ref: '#/components/headers/X-Container-Meta-Quota-Count'
+            X-Container-Meta-Quota-Bytes:
+              $ref: '#/components/headers/X-Container-Meta-Quota-Bytes'
+            X-Storage-Policy:
+              $ref: '#/components/headers/X-Storage-Policy'
+            X-Container-Read:
+              $ref: '#/components/headers/X-Container-Read'
+            X-Container-Write:
+              $ref: '#/components/headers/X-Container-Write'
+            X-Container-Sync-Key:
+              $ref: '#/components/headers/X-Container-Sync-Key'
+            X-Container-Sync-To:
+              $ref: '#/components/headers/X-Container-Sync-To'
+            X-Versions-Location:
+              $ref: '#/components/headers/X-Versions-Location'
+            X-History-Location:
+              $ref: '#/components/headers/X-History-Location'
+        "404":
+          description: Not Found
+    delete:
+      summary: Delete container
+      description: |
+        Deletes an empty container.
+        This operation fails unless the container is empty. An empty container has no objects.
+      operationId: container.delete
+      tags:
+        - containers
+      responses:
+        "204":
+          description: OK
+        "404":
+          description: Not Found
+        "409":
+          description: Conflict
+  /v1/{account}/{container}/{object}:
+    parameters:
+      - $ref: '#/components/parameters/account'
+      - $ref: '#/components/parameters/container'
+      - $ref: '#/components/parameters/object'
+    get:
+      summary: Get object content and metadata
+      description: |
+        Downloads the object content and gets the object metadata.
+        This operation returns the object metadata in the response headers and the object content in the response body.
+      operationId: object.get
+      tags:
+        - objects
+      parameters:
+        - $ref: '#/components/parameters/multipart-manifest'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/temp_url_sig'
+        - $ref: '#/components/parameters/temp_url_expires'
+        - $ref: '#/components/parameters/filename'
+        - $ref: '#/components/parameters/symlink'
+        - $ref: '#/components/parameters/range'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              $ref: '#/components/headers/Content-Type'
+            Content-Length:
+              $ref: '#/components/headers/Content-Length'
+            Content-Disposition:
+              $ref: '#/components/headers/Content-Disposition'
+            Content-Encoding:
+              $ref: '#/components/headers/Content-Encoding'
+            Accept-Ranges:
+              $ref: '#/components/headers/Accept-Ranges'
+            Last-Modified:
+              $ref: '#/components/headers/Last-Modified'
+            X-Object-Meta-*:
+              $ref: '#/components/headers/X-Object-Meta'
+            X-Delete-At:
+              $ref: '#/components/headers/X-Delete-At'
+            X-Object-Manifest:
+              $ref: '#/components/headers/X-Object-Manifest'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+            Date:
+              $ref: '#/components/headers/Date'
+            X-Static-Large-Object:
+              $ref: '#/components/headers/X-Static-Large-Object'
+            X-Symlink-Target:
+              $ref: '#/components/headers/X-Symlink-Target'
+            X-Symlink-Target-Account:
+              $ref: '#/components/headers/X-Symlink-Target-Account'
+          content:
+            '*':
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not Found
+        "416":
+          description: Range Not Satisfiable
+    post:
+      summary: Create or update object metadata
+      description: Creates or updates object metadata.
+      operationId: object.post
+      tags:
+        - objects
+      parameters:
+        - $ref: '#/components/parameters/multipart-manifest'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/temp_url_sig'
+        - $ref: '#/components/parameters/temp_url_expires'
+        - $ref: '#/components/parameters/filename'
+        - $ref: '#/components/parameters/symlink'
+        - $ref: '#/components/parameters/range'
+        - in: query
+          name: bulk-delete
+          description: |
+            When the bulk-delete query parameter is present in the POST request, multiple objects or containers can be deleted with a single request. See Bulk Delete for how this feature is used.
+          schema:
+            type: boolean
+        - in: query
+          name: extract-archive
+          description: |
+            When the extract-archive query parameter is present in the POST request, an archive (tar file) is uploaded and extracted to create multiple objects. See Extract Archive for how this feature is used.
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/X-Object-Meta'
+        - $ref: '#/components/parameters/X-Delete-At'
+        - $ref: '#/components/parameters/X-Delete-After'
+        - $ref: '#/components/parameters/Content-Disposition'
+        - $ref: '#/components/parameters/Content-Encoding'
+        - $ref: '#/components/parameters/Content-Type'
+      responses:
+        "202":
+          description: OK
+          headers:
+            Content-Length:
+              $ref: '#/components/headers/Content-Length'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+            Date:
+              $ref: '#/components/headers/Date'
+            X-Symlink-Target:
+              $ref: '#/components/headers/X-Symlink-Target'
+            X-Symlink-Target-Account:
+              $ref: '#/components/headers/X-Symlink-Target-Account'
+          content:
+            '*':
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not Found
+    put:
+      summary: Create or replace object
+      description: |
+        Creates an object with data content and metadata, or replaces an existing object with data content and metadata.
+        The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code.
+        If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB.
+        Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8.
+        To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item.
+      operationId: object.put
+      tags:
+        - objects
+      parameters:
+        - $ref: '#/components/parameters/multipart-manifest'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/temp_url_sig'
+        - $ref: '#/components/parameters/temp_url_expires'
+        - $ref: '#/components/parameters/filename'
+        - $ref: '#/components/parameters/symlink'
+        - $ref: '#/components/parameters/range'
+        - $ref: '#/components/parameters/X-Object-Meta'
+        - $ref: '#/components/parameters/X-Object-Manifest'
+        - $ref: '#/components/parameters/X-Delete-At'
+        - $ref: '#/components/parameters/X-Delete-After'
+        - $ref: '#/components/parameters/X-Detect-Content-Type'
+        - $ref: '#/components/parameters/X-Copy-From'
+        - $ref: '#/components/parameters/X-Copy-From-Account'
+        - $ref: '#/components/parameters/ETag'
+        - $ref: '#/components/parameters/Content-Disposition'
+        - $ref: '#/components/parameters/Content-Encoding'
+        - $ref: '#/components/parameters/Content-Type'
+        - $ref: '#/components/parameters/If-None-Match'
+        - $ref: '#/components/parameters/X-Trans-Id-Extra'
+        - $ref: '#/components/parameters/X-Symlink-Target'
+        - $ref: '#/components/parameters/X-Symlink-Target-Account'
+        - in: header
+          name: access-control-allow-origin
+          description: Alternate CORS header for older environments (like RAX)
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*':
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: OK
+          headers:
+            Content-Length:
+              $ref: '#/components/headers/Content-Length'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+            Date:
+              $ref: '#/components/headers/Date'
+            X-Symlink-Target:
+              $ref: '#/components/headers/X-Symlink-Target'
+            X-Symlink-Target-Account:
+              $ref: '#/components/headers/X-Symlink-Target-Account'
+          content:
+            '*':
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not Found
+        "400":
+          description: Error
+        "500":
+          description: Server Error
+    head:
+      summary: Show object metadata
+      description: Shows object metadata.
+      operationId: object.head
+      tags:
+        - objects
+      parameters:
+        - $ref: '#/components/parameters/multipart-manifest'
+        - $ref: '#/components/parameters/X-Newest'
+        - $ref: '#/components/parameters/temp_url_sig'
+        - $ref: '#/components/parameters/temp_url_expires'
+        - $ref: '#/components/parameters/filename'
+        - $ref: '#/components/parameters/symlink'
+        - $ref: '#/components/parameters/range'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Length:
+              $ref: '#/components/headers/Content-Length'
+            Content-Disposition:
+              $ref: '#/components/headers/Content-Disposition'
+            Content-Type:
+              $ref: '#/components/headers/Content-Type'
+            Content-Encoding:
+              $ref: '#/components/headers/Content-Encoding'
+            Accept-Ranges:
+              $ref: '#/components/headers/Accept-Ranges'
+            Last-Modified:
+              $ref: '#/components/headers/Last-Modified'
+            X-Object-Meta-*:
+              $ref: '#/components/headers/X-Object-Meta'
+            X-Delete-At:
+              $ref: '#/components/headers/X-Delete-At'
+            X-Object-Manifest:
+              $ref: '#/components/headers/X-Object-Manifest'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+            Date:
+              $ref: '#/components/headers/Date'
+            X-Static-Large-Object:
+              $ref: '#/components/headers/X-Static-Large-Object'
+            X-Symlink-Target:
+              $ref: '#/components/headers/X-Symlink-Target'
+            X-Symlink-Target-Account:
+              $ref: '#/components/headers/X-Symlink-Target-Account'
+        "404":
+          description: Not Found
+    delete:
+      summary: Delete object
+      description: |
+        Permanently deletes an object from the object store.
+        Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code.
+        For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object.
+        A DELETE request made to a symlink path will delete the symlink rather than the target object.
+        An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter.
+      operationId: object.delete
+      tags:
+        - objects
+      parameters:
+        - $ref: '#/components/parameters/multipart-manifest'
+      responses:
+        "204":
+          description: OK
+          headers:
+            Content-Length:
+              $ref: '#/components/headers/Content-Length'
+            X-Timestamp:
+              $ref: '#/components/headers/X-Timestamp'
+            X-Trans-Id:
+              $ref: '#/components/headers/X-Trans-Id'
+        "404":
+          description: Not Found
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+  headers:
+    Content-Length:
+      description: |
+        The length of the object content in the response body, in bytes.
+      schema:
+        type: integer
+    Content-Type:
+      description: |
+        If the operation succeeds, this value is the MIME type of the list response. The MIME type is determined by the listing format specified by the request and will be one of text/plain, application/json, application/xml, or text/xml. If the operation fails, this value is the MIME type of the error text in the response body.
+      schema:
+        type: string
+    Content-Disposition:
+      description: |
+        If present, specifies the override behavior for the browser. For example, this header might specify that the browser use a download program to save this file rather than show the file, which is the default. If not set, this header is not returned by this operation.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: content_disposition
+    Content-Encoding:
+      description: |
+        If present, the value of the Content-Encoding metadata. If not set, the operation does not return this header.
+      schema:
+        type: string
+        x-openstacksdk-name: content_encoding
+    Accept-Ranges:
+      description: The type of ranges that the object accepts
+      schema:
+        type: string
+    Last-Modified:
+      description: |
+        The date and time when the object was created or its metadata was changed. The date and time is formatted as shown in this example: Fri, 12 Aug 2016 14:24:16 GMT. The time is always in UTC.
+      schema:
+        type: string
+        format: date
+      x-openstack:
+        sdk-name: last_modified_at
+    X-Trans-Id:
+      description: |
+        A unique transaction ID for this request. Your service provider might need this value if you report a problem.
+      schema:
+        type: string
+    X-Timestamp:
+      description: |
+        The date and time in UNIX Epoch time stamp format when the account, container, or object was initially created as a current version. For example, 1440619048 is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT.
+      schema:
+        type: integer
+    Date:
+      description: |
+        The date and time the system responded to the request, using the preferred format of RFC 7231 as shown in this example Thu, 16 Jun 2016 15:10:38 GMT. The time is always in UTC.
+      schema:
+        type: string
+        format: date
+    X-Account-Meta:
+      description: |
+        The account metadata. The name is the name of metadata item that you want to add, update, or delete. To delete this item, send an empty value in this header. You must specify an X-Account-Meta-name header for each metadata item (for each name) that you want to add, update, or delete.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: metadata
+        style: regex
+    X-Account-Meta-Temp-Url-Key:
+      description: |
+        The secret key value for temporary URLs. If not set, this header is not returned in the response.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key
+    X-Account-Meta-Temp-Url-Key-2:
+      description: |
+        The second secret key value for temporary URLs. If not set, this header is not returned in the response.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key_2
+    X-Account-Bytes-Used:
+      description: |
+        The total number of bytes that are stored in Object Storage for the account.
+      schema:
+        type: integer
+        format: int64
+    X-Account-Container-Count:
+      description: The number of containers.
+      schema:
+        type: integer
+        format: int64
+    X-Account-Object-Count:
+      description: The number of objects in the account.
+      schema:
+        type: integer
+        format: int64
+    X-Account-Storage-Policy-Bytes-Used:
+      description: |
+        The total number of bytes that are stored in in a given storage policy, where name is the name of the storage policy.
+      schema:
+        type: integer
+    X-Account-Storage-Policy-Container-Count:
+      description: |
+        The number of containers in the account that use the given storage policy where name is the name of the storage policy.
+      schema:
+        type: integer
+        format: int64
+    X-Account-Storage-Policy-Object-Count:
+      description: |
+        The number of objects in given storage policy where name is the name of the storage policy.
+      schema:
+        type: integer
+        format: int64
+    X-Account-Meta-Quota-Bytes:
+      description: |
+        If present, this is the limit on the total size in bytes of objects stored in the account. Typically this value is set by an administrator.
+      schema:
+        type: string
+        format: int64
+    X-Account-Access-Control:
+      description: |
+        Note: X-Account-Access-Control is not supported by Keystone auth.
+        The account access control list (ACL) that grants access to containers and objects in the account. If there is no ACL, this header is not returned by this operation. See Account ACLs for more information.
+      schema:
+        type: string
+    X-Container-Meta:
+      description: |
+        The custom container metadata item, where name is the name of the metadata item. One X-Container-Meta-name response header appears for each metadata item (for each name).
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: metadata
+        style: regex
+    X-Container-Bytes-Used:
+      description: |
+        The total number of bytes that are stored in Object Storage for the container.
+      schema:
+        type: integer
+        format: int64
+    X-Container-Object-Count:
+      description: The number of objects.
+      schema:
+        type: integer
+        format: int64
+    acceptRanges:
+      description: The type of ranges that the object accepts.
+      schema:
+        type: string
+    X-Container-Meta-Temp-URL-Key:
+      description: |
+        The secret key value for temporary URLs. If not set, this header is not returned in the response.
+      schema:
+        type: string
+    X-Container-Meta-Temp-URL-Key-2:
+      description: |
+        The second secret key value for temporary URLs. If not set, this header is not returned in the response.
+      schema:
+        type: string
+    X-Container-Meta-Quota-Count:
+      description: |
+        The maximum object count of the container. If not set, this header is not returned by this operation.
+      schema:
+        type: string
+    X-Container-Meta-Quota-Bytes:
+      description: |
+        The maximum size of the container, in bytes. If not set, this header is not returned by this operation.
+      schema:
+        type: string
+    X-Storage-Policy:
+      description: |
+        In requests, specifies the name of the storage policy to use for the container. In responses, is the storage policy name. The storage policy of the container cannot be changed.
+      schema:
+        type: string
+    X-Container-Read:
+      description: |
+        The ACL that grants read access. If there is no ACL, this header is not returned by this operation. See Container ACLs for more information.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: read_ACL
+    X-Container-Write:
+      description: |
+        The ACL that grants write access. If there is no ACL, this header is not returned by this operation. See Container ACLs for more information.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: write_ACL
+    X-Container-Sync-Key:
+      description: |
+        The secret key for container synchronization. If not set, this header is not returned by this operation.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: sync_key
+    X-Container-Sync-To:
+      description: |
+        The destination for container synchronization. If not set, this header is not returned by this operation.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: sync_to
+    X-Versions-Location:
+      description: |
+        If present, this container has versioning enabled and the value is the UTF-8 encoded name of another container. For more information about object versioning, see Object versioning.
+      schema:
+        type: string
+    X-History-Location:
+      description: |
+        If present, this container has versioning enabled and the value is the UTF-8 encoded name of another container. For more information about object versioning, see Object versioning.
+      schema:
+        type: string
+    X-Object-Meta:
+      description: |
+        If present, the custom object metadata item, where name is the name of the metadata item. One``X-Object-Meta-name`` response header appears for each metadata name item.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: metadata
+        style: regex
+    X-Object-Manifest:
+      description: |
+        If present, this is a dynamic large object manifest object. The value is the container and object name prefix of the segment objects in the form container/prefix.
+      schema:
+        type: string
+    ETag:
+      description: |
+        For objects smaller than 5 GB, this value is the MD5 checksum of the object content. The value is not quoted. For manifest objects, this value is the MD5 checksum of the concatenated string of ETag values for each of the segments in the manifest, and not the MD5 checksum of the content that was downloaded. Also the value is enclosed in double-quote characters. You are strongly recommended to compute the MD5 checksum of the response body as it is received and compare this value with the one in the ETag header. If they differ, the content was corrupted, so retry the operation.For objects smaller than 5 GB, this value is the MD5 checksum of the object content. The value is not quoted. For manifest objects, this value is the MD5 checksum of the concatenated string of ETag values for each of the segments in the manifest, and not the MD5 checksum of the content that was downloaded. Also the value is enclosed in double-quote characters. You are strongly recommended to compute the MD5 checksum of the response body as it is received and compare this value with the one in the ETag header. If they differ, the content was corrupted, so retry the operation.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: etag
+    X-Static-Large-Object:
+      description: |
+        Set to true if this object is a static large object manifest object.
+      schema:
+        type: boolean
+      x-openstack:
+        sdk-name: is_static_large_object
+    X-Symlink-Target:
+      description: |
+        If present, this is a symlink object. The value is the relative path of the target object in the format <container>/<object>.
+      schema:
+        type: string
+    X-Symlink-Target-Account:
+      description: |
+        If present, and X-Symlink-Target is present, then this is a cross-account symlink to an object in the account specified in the value.
+      schema:
+        type: string
+    X-Delete-At:
+      description: |
+        If present, specifies date and time in UNIX Epoch time stamp format when the system removes the object. For example, 1440619048 is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT.
+      schema:
+        type: integer
+      x-openstack:
+        sdk-name: delete_at
+  parameters:
+    account:
+      in: path
+      name: account
+      required: true
+      description: The unique name for the account. An account is also known as the project or tenant.
+      schema:
+        type: string
+    container:
+      in: path
+      name: container
+      description: |
+        The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container.
+      required: true
+      schema:
+        type: string
+    object:
+      in: path
+      name: object
+      description: The unique name for the object.
+      required: true
+      schema:
+        type: string
+    X-Account-Meta:
+      in: header
+      name: X-Account-Meta-*
+      description: |
+        The account metadata. The name is the name of metadata item that you want to add, update, or delete. To delete this item, send an empty value in this header. You must specify an X-Account-Meta-name header for each metadata item (for each name) that you want to add, update, or delete.
+      schema:
+        type: string
+      x-openstack:
+        style: regex
+        sdk-name: metadata
+    X-Remove-Account-Meta:
+      in: header
+      name: X-Remove-Account-Meta-*
+      description: Unset <name> property
+      schema:
+        type:
+          - string
+          - "null"
+      x-openstack:
+        style: regex
+        sdk-name: remove_metadata
+    X-Account-Meta-Temp-Url-Key:
+      in: header
+      name: X-Account-Meta-Temp-URL-Key
+      description: The secret key value for temporary URLs.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key
+    X-Account-Meta-Temp-Url-Key-2:
+      in: header
+      name: X-Account-Meta-Temp-URL-Key-2
+      description: |
+        A second secret key value for temporary URLs. The second key enables you to rotate keys by having two active keys at the same time.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key_2
+    X-Account-Access-Control:
+      in: header
+      name: X-Account-Access-Control
+      description: |
+        Note: X-Account-Access-Control is not supported by Keystone auth.
+        Sets an account access control list (ACL) that grants access to containers and objects in the account. See Account ACLs for more information.
+      schema:
+        type: string
+    X-Object-Meta:
+      in: header
+      name: X-Object-Meta-*
+      description: |
+        If present, the custom object metadata item, where name is the name of the metadata item. One``X-Object-Meta-name`` response header appears for each metadata name item.
+      schema:
+        type: string
+      x-openstack:
+        style: regex
+        sdk-name: metadata
+    X-Object-Manifest:
+      in: header
+      name: X-Object-Manifest
+      description: |
+        Set to specify that this is a dynamic large object manifest object. The value is the container and object name prefix of the segment objects in the form container/prefix. You must UTF-8-encode and then URL-encode the names of the container and prefix before you include them in this header.
+      schema:
+        type: string
+    X-Remove-Object-Meta:
+      in: header
+      name: X-Remove-Object-Meta-*
+      description: Unset <name> property
+      schema:
+        type:
+          - string
+          - "null"
+      x-openstack:
+        style: regex
+        sdk-name: remove_metadata
+    X-Container-Meta:
+      in: header
+      name: X-Container-Meta-*
+      description: |
+        If present, the custom container metadata item, where name is the name of the metadata item. One``X-Container-Meta-name`` response header appears for each metadata name item.
+      schema:
+        type:
+          - string
+          - "null"
+      x-openstack:
+        style: regex
+        sdk-name: metadata
+    X-Remove-Container-Meta:
+      in: header
+      name: X-Remove-Container-Meta-*
+      description: Unset <name> property
+      schema:
+        type:
+          - string
+          - "null"
+      x-openstack:
+        style: regex
+        sdk-name: remove_metadata
+    X-Container-Read:
+      in: header
+      name: X-Container-Read
+      description: |
+        Sets a container access control list (ACL) that grants read access. The scope of the access is specific to the container. The ACL grants the ability to perform GET or HEAD operations on objects in the container or to perform a GET or HEAD operation on the container itself.
+        The format and scope of the ACL is dependent on the authorization system used by the Object Storage service. See Container ACLs for more information.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: read_ACL
+    X-Container-Write:
+      in: header
+      name: X-Container-Write
+      description: |
+        Sets a container access control list (ACL) that grants write access. The scope of the access is specific to the container. The ACL grants the ability to perform PUT, POST and DELETE operations on objects in the container. It does not grant write access to the container metadata.
+        The format of the ACL is dependent on the authorization system used by the Object Storage service. See Container ACLs for more information.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: write_ACL
+    X-Container-Sync-To:
+      in: header
+      name: X-Container-Sync-To
+      description: |
+        Sets the destination for container synchronization. Used with the secret key indicated in the X-Container-Sync-Key header. If you want to stop a container from synchronizing, send a blank value for the X-Container-Sync-Key header.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: sync_to
+    X-Container-Sync-Key:
+      in: header
+      name: X-Container-Sync-Key
+      description: |
+        Sets the secret key for container synchronization. If you remove the secret key, synchronization is halted. For more information, see Container to Container Synchronization
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: sync_key
+    X-Versions-Location:
+      in: header
+      name: X-Versions-Location
+      description: |
+        The URL-encoded UTF-8 representation of the container that stores previous versions of objects. If neither this nor X-History-Location is set, versioning is disabled for this container. X-Versions-Location and X-History-Location cannot both be set at the same time. For more information about object versioning, see Object versioning.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: versions_location
+    X-History-Location:
+      in: header
+      name: X-History-Location
+      description: |
+        The URL-encoded UTF-8 representation of the container that stores previous versions of objects. If neither this nor X-Versions-Location is set, versioning is disabled for this container. X-History-Location and X-Versions-Location cannot both be set at the same time. For more information about object versioning, see Object versioning.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: history_location
+    X-Container-Meta-Access-Control-Allow-Origin:
+      in: header
+      name: X-Container-Meta-Access-Control-Allow-Origin
+      description: |
+        Originating URLs allowed to make cross-origin requests (CORS), separated by spaces. This heading applies to the container only, and all objects within the container with this header applied are CORS-enabled for the allowed origin URLs. A browser (user-agent) typically issues a preflighted request , which is an OPTIONS call that verifies the origin is allowed to make the request. The Object Storage service returns 200 if the originating URL is listed in this header parameter, and issues a 401 if the originating URL is not allowed to make a cross-origin request. Once a 200 is returned, the browser makes a second request to the Object Storage service to retrieve the CORS-enabled object.
+      schema:
+        type: string
+    X-Container-Meta-Access-Control-Max-Age:
+      in: header
+      name: X-Container-Meta-Access-Control-Max-Age
+      description: |
+        Maximum time for the origin to hold the preflight results. A browser may make an OPTIONS call to verify the origin is allowed to make the request. Set the value to an integer number of seconds after the time that the request was received.
+      schema:
+        type: string
+    X-Container-Meta-Access-Control-Expose-Headers:
+      in: header
+      name: X-Container-Meta-Access-Control-Expose-Headers
+      description: |
+        Headers the Object Storage service exposes to the browser (technically, through the user-agent setting), in the request response, separated by spaces. By default the Object Storage service returns the following headers:
+          - All "simple response headers" as listed on
+            http://www.w3.org/TR/cors/#simple-response-header.
+          - The headers etag, x-timestamp, x-trans-id,
+            x-openstack-request-id.
+          - All metadata headers (X-Container-Meta-* for containers and
+            X-Object-Meta-* for objects).
+          - headers listed in
+            X-Container-Meta-Access-Control-Expose-Headers.
+      schema:
+        type: string
+    X-Container-Meta-Quota-Bytes:
+      in: header
+      name: X-Container-Meta-Quota-Bytes
+      description: |
+        Sets maximum size of the container, in bytes. Typically these values are set by an administrator. Returns a 413 response (request entity too large) when an object PUT operation exceeds this quota value. This value does not take effect immediately. see Container Quotas for more information.
+      schema:
+        type: string
+    X-Container-Meta-Quota-Count:
+      in: header
+      name: X-Container-Meta-Quota-Count
+      description: |
+        Sets maximum object count of the container. Typically these values are set by an administrator. Returns a 413 response (request entity too large) when an object PUT operation exceeds this quota value. This value does not take effect immediately. see Container Quotas for more information.
+      schema:
+        type: string
+    X-Container-Meta-Temp-Url-Key:
+      in: header
+      name: X-Container-Meta-Temp-URL-Key
+      description: The secret key value for temporary URLs.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key
+    X-Container-Meta-Temp-Url-Key-2:
+      in: header
+      name: X-Container-Meta-Temp-URL-Key-2
+      description: |
+        A second secret key value for temporary URLs. The second key enables you to rotate keys by having two active keys at the same time.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: meta_temp_url_key_2
+    X-Trans-Id-Extra:
+      in: header
+      name: X-Trans-Id-Extra
+      description: |
+        Extra transaction information. Use the X-Trans-Id-Extra request header to include extra information to help you debug any errors that might occur with large object upload and other Object Storage transactions. The server appends the first 32 characters of the X-Trans-Id-Extra request header value to the transaction ID value in the generated X-Trans-Id response header. You must UTF-8-encode and then URL-encode the extra transaction information before you include it in the X-Trans-Id-Extra request header. For example, you can include extra transaction information when you upload large objects such as images. When you upload each segment and the manifest, include the same value in the X-Trans-Id-Extra request header. If an error occurs, you can find all requests that are related to the large object upload in the Object Storage logs. You can also use X-Trans-Id-Extra strings to help operators debug requests that fail to receive responses. The operator can search for the extra information in the logs.
+      schema:
+        type: string
+    X-Storage-Policy:
+      in: header
+      name: X-Storage-Policy
+      description: |
+        In requests, specifies the name of the storage policy to use for the container. In responses, is the storage policy name. The storage policy of the container cannot be changed.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: storage_policy
+    limit:
+      in: query
+      name: limit
+      description: For an integer value n, limits the number of results to n.
+      schema:
+        type: integer
+    marker:
+      in: query
+      name: marker
+      description: |
+        For a string value, x, constrains the list to items whose names are greater than x.
+      schema:
+        type: string
+    end-marker:
+      in: query
+      name: end_marker
+      description: |
+        For a string value, x, constrains the list to items whose names are less than x.
+      schema:
+        type: string
+    format:
+      in: query
+      name: format
+      description: |
+        The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines.
+      schema:
+        type: string
+        enum:
+          - json
+          - xml
+          - plain
+    prefix:
+      in: query
+      name: prefix
+      description: |
+        Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree.
+      schema:
+        type: string
+    delimiter:
+      in: query
+      name: delimiter
+      description: |
+        The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree.
+      schema:
+        type: string
+    reverse:
+      in: query
+      name: reverse
+      description: |
+        By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending.
+      schema:
+        type: boolean
+    X-Newest:
+      in: header
+      name: X-Newest
+      description: |
+        If set to true, Object Storage queries all replicas to return the most recent one. If you omit this header, Object Storage responds faster after it finds one valid replica. Because setting this header to true is more expensive for the back end, use it only when it is absolutely needed.
+      schema:
+        type: boolean
+    accept:
+      in: header
+      name: accept
+      description: |
+        Instead of using the format query parameter, set this header to application/json, application/xml, or text/xml.
+      schema:
+        type: string
+        enum:
+          - application/json
+          - application/xml
+          - text/xml
+    multipart-manifest:
+      in: query
+      name: multipart-manifest
+      description: |
+        If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects.
+      schema:
+        type: string
+    temp_url_sig:
+      in: query
+      name: temp_url_sig
+      description: |
+        Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware.
+      schema:
+        type: string
+    temp_url_expires:
+      in: query
+      name: temp_url_expires
+      description: |
+        The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware.
+      schema:
+        type: integer
+    filename:
+      in: query
+      name: filename
+      description: |
+        Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware.
+      schema:
+        type: string
+    symlink:
+      in: query
+      name: symlink
+      description: |
+        If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target.
+      schema:
+        type: string
+    range:
+      in: header
+      name: range
+      description: |
+        The ranges of content to get. You can use the Range header to get portions of data by using one or more range specifications. To specify many ranges, separate the range specifications with a comma. The types of range specifications are:
+
+          - Byte range specification.
+            Use FIRST_BYTE_OFFSET to specify the start of the data range, and
+            LAST_BYTE_OFFSET to specify the end. You can omit the
+            LAST_BYTE_OFFSET and if you do, the value defaults to the offset of
+            the last byte of data.
+          - Suffix byte range specification.
+            Use LENGTH bytes to specify the length of the data range.
+
+        The following forms of the header specify the following ranges of data:
+        Range: bytes=-5. The last five bytes.
+        Range: bytes=10-15. The six bytes of data after a 10-byte offset.
+        Range: bytes=10-15,-5. A multi-part response that contains the last
+               five bytes and the six bytes of data after a 10-byte offset. The
+               Content-Type response header contains multipart/byteranges.
+
+        Range: bytes=4-6. Bytes 4 to 6 inclusive.
+        Range: bytes=2-2. Byte 2, the third byte of the data.
+        Range: bytes=6-. Byte 6 and after.
+        Range: bytes=1-3,2-5. A multi-part response that contains bytes 1 to
+               3 inclusive, and bytes 2 to 5 inclusive. The Content-Type
+               response header contains multipart/byteranges.
+      schema:
+        type: string
+    X-Delete-At:
+      in: header
+      name: X-Delete-At
+      description: |
+        The date and time in UNIX Epoch time stamp format when the system removes the object. For example, 1440619048 is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. The value should be a positive integer corresponding to a time in the future. If both X-Delete-After and X-Delete-At are set then X-Delete-After takes precedence.
+      schema:
+        type: integer
+      x-openstack:
+        sdk-name: delete_at
+    X-Delete-After:
+      in: header
+      name: X-Delete-After
+      description: |
+        The number of seconds after which the system removes the object. The value should be a positive integer. Internally, the Object Storage system uses this value to generate an X-Delete-At metadata item. If both X-Delete-After and X-Delete-At are set then X-Delete-After takes precedence.
+      schema:
+        type: integer
+      x-openstack:
+        sdk-name: delete_after
+    X-Detect-Content-Type:
+      in: header
+      name: X-Detect-Content-Type
+      description: |
+        If set to true, Object Storage guesses the content type based on the file extension and ignores the value sent in the Content-Type header, if present.
+      schema:
+        type: boolean
+      x-openstack:
+        sdk-name: is_content_type_detected
+    X-Copy-From:
+      in: header
+      name: X-Copy-From
+      description: |
+        If set, this is the name of an object used to create the new object by copying the X-Copy-From object. The value is in form {container}/{object}. You must UTF-8-encode and then URL-encode the names of the container and object before you include them in the header. Using PUT with X-Copy-From has the same effect as using the COPY operation to copy an object. Using Range header with X-Copy-From will create a new partial copied object with bytes set by Range.
+      schema:
+        type: string
+    X-Copy-From-Account:
+      in: header
+      name: X-Copy-From-Account
+      description: |
+        Specifies the account name where the object is copied from. If not specified, the object is copied from the account which owns the new object (i.e., the account in the path).
+      schema:
+        type: string
+    Content-Disposition:
+      in: header
+      name: Content-Disposition
+      description: |
+        If set, specifies the override behavior for the browser. For example, this header might specify that the browser use a download program to save this file rather than show the file, which is the default.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: content_disposition
+    ETag:
+      in: header
+      name: ETag
+      description: |
+        The MD5 checksum value of the request body. For example, the MD5 checksum value of the object content. For manifest objects, this value is the MD5 checksum of the concatenated string of ETag values for each of the segments in the manifest. You are strongly recommended to compute the MD5 checksum value and include it in the request. This enables the Object Storage API to check the integrity of the upload. The value is not quoted.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: etag
+    If-None-Match:
+      in: header
+      name: If-None-Match
+      description: |
+        In combination with Expect: 100-Continue, specify an "If-None-Match: *" header to query whether the server already has a copy of the object before any data is sent.
+      schema:
+        type: string
+    X-Symlink-Target:
+      in: header
+      name: X-Symlink-Target
+      description: |
+        Set to specify that this is a symlink object. The value is the relative path of the target object in the format <container>/<object>. The target object does not need to exist at the time of symlink creation. You must UTF-8-encode and then URL-encode the names of the container and object before you include them in this header.
+      schema:
+        type: string
+    X-Symlink-Target-Account:
+      in: header
+      name: X-Symlink-Target-Account
+      description: |
+        Set to specify that this is a cross-account symlink to an object in the account specified in the value. The X-Symlink-Target must also be set for this to be effective. You must UTF-8-encode and then URL-encode the account name before you include it in this header.
+      schema:
+        type: string
+    Content-Encoding:
+      in: header
+      name: Content-Encoding
+      description: If set, the value of the Content-Encoding metadata.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: content_encoding
+    Content-Type:
+      in: header
+      name: Content-Type
+      description: Sets the MIME type for the object.
+      schema:
+        type: string
+      x-openstack:
+        sdk-name: content_type
+  schemas:
+    Container:
+      type: object
+      properties:
+        count:
+          description: The number of objects in the container.
+          type: integer
+          format: int64
+        bytes:
+          description: |
+            The total number of bytes that are stored in Object Storage for the account.
+          type: integer
+          format: int64
+        name:
+          description: The name of the container.
+          type: string
+        last_modified:
+          description: Last modification date of the container
+          type: string
+          format: date-time
+    Containers:
+      type: array
+      items:
+        $ref: '#/components/schemas/Container'
+    Object:
+      type: object
+      properties:
+        name:
+          description: The name of the container.
+          type: string
+        content_type:
+          description: The content type of the object.
+          type: string
+        bytes:
+          description: |
+            The total number of bytes that are stored in Object Storage for the container.
+          type: integer
+          format: int64
+        hash:
+          description: The MD5 checksum value of the object content.
+          type: string
+        last_modified:
+          description: |
+            The date and time when the object was last modified. The date and time stamp format is ISO 8601
+          type: string
+          format: date-time
+        symlink_path:
+          description: |
+            This field exists only when the object is symlink. This is the target path of the symlink object.
+          type: string
+    Objects:
+      type: array
+      items:
+        $ref: '#/components/schemas/Object'

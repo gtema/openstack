@@ -22,7 +22,7 @@ default = [
   "load_balancer",
   "network",
   "object_store",
-  "placement"
+  "placement",
 ]
 block_storage = []
 compute = []
@@ -34,6 +34,8 @@ load_balancer = []
 network = []
 object_store = []
 placement = []
+# include openapi specs
+openapi = []
 
 [dependencies]
 chrono = { workspace= true }

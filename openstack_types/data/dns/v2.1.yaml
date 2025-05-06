@@ -1,0 +1,3908 @@
+openapi: 3.1.0
+info:
+  title: OpenStack DNS API
+  description: |-
+    DNS API provided by Designate service
+  version: '2.1'
+paths:
+  /v2/limits:
+    get:
+      description: |-
+        List project limits
+      operationId: limits:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitsListResponse'
+      tags:
+        - limits
+      summary: Get Project Limits
+  /v2/reverse/floatingips:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/x-auth-all-projects'
+        - $ref: '#/components/parameters/x-auth-sudo-project-id'
+      description: |-
+        List FloatingIP PTR records
+      operationId: reverse/floatingips:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReverseFloatingipsListResponse'
+      tags:
+        - floatingips
+      summary: List FloatingIP’s PTR record
+  /v2/reverse/floatingips/{fip_key}:
+    parameters:
+      - $ref: '#/components/parameters/reverse_floatingips_fip_key'
+    get:
+      description: |-
+        Shows a particular FloatingIP PTR
+      operationId: reverse/floatingips/fip_key:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReverseFloatingipShowResponse'
+      tags:
+        - floatingips
+      summary: Show FloatingIP’s PTR record
+    patch:
+      description: |-
+        Set a PTR record for the given FloatingIP. The domain if it does not exist
+        will be provisioned automatically.
+      operationId: reverse/floatingips/fip_key:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReverseFloatingipUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReverseFloatingipUpdateResponse'
+      tags:
+        - floatingips
+      summary: Set  FloatingIP’s PTR record
+  /v2/tlds/{tld_id}:
+    parameters:
+      - $ref: '#/components/parameters/tlds_tld_id'
+    get:
+      description: |-
+        Show a tld
+      operationId: tlds/tld_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TldShowResponse'
+      tags:
+        - tld
+      summary: Show Tld
+    delete:
+      description: |-
+        Delete a tld
+      operationId: tlds/tld_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - tld
+      summary: Delete Tld
+    patch:
+      description: |-
+        Update a tld
+      operationId: tlds/tld_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TldUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TldUpdateResponse'
+      tags:
+        - tld
+      summary: Update Tld
+  /v2/tlds:
+    get:
+      description: |-
+        List the tlds associated with the Project
+      operationId: tlds:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TldsListResponse'
+      tags:
+        - tld
+      summary: List Tlds
+    post:
+      description: |-
+        Create a tld
+      operationId: tlds:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TldsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TldsCreateResponse'
+      tags:
+        - tld
+      summary: Create Tld
+  /v2/zones/{zone_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_zone_id'
+    get:
+      description: |-
+        Show a zone
+      operationId: zones/zone_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoneShowResponse'
+      tags:
+        - zones
+      summary: Show a Zone
+    delete:
+      description: |-
+        Delete a zone
+      operationId: zones/zone_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - zones
+      summary: Delete a Zone
+    patch:
+      description: |-
+        Update the attribute(s) for an existing zone.
+      operationId: zones/zone_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoneUpdateResponse'
+      tags:
+        - zones
+      summary: Update a Zone
+  /v2/zones:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/x-auth-all-projects'
+        - $ref: '#/components/parameters/x-auth-sudo-project-id'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/sort_dir'
+        - $ref: '#/components/parameters/sort_key'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/description'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/email'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/ttl'
+      description: |-
+        List all zones
+      operationId: zones:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesListResponse'
+      tags:
+        - zones
+      summary: List Zones
+    post:
+      description: |-
+        Create a zone
+      operationId: zones:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesCreateResponse'
+      tags:
+        - zones
+      summary: Create Zone
+  /v2/zones/{zone_id}/recordsets/{recordset_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_recordsets_zone_id'
+      - $ref: '#/components/parameters/zones_recordsets_recordset_id'
+    get:
+      description: |-
+        Show an single recordset
+      operationId: zones/zone_id/recordsets/recordset_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesRecordsetShowResponse'
+      tags:
+        - recordsets
+      summary: Show a Recordset
+    delete:
+      description: |-
+        Delete a recordset
+      operationId: zones/zone_id/recordsets/recordset_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - recordsets
+      summary: Delete a Recordset
+    put:
+      description: |-
+        Update a recordset
+      operationId: zones/zone_id/recordsets/recordset_id:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesRecordsetUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesRecordsetUpdateResponse'
+      tags:
+        - recordsets
+      summary: Update a Recordset
+  /v2/zones/{zone_id}/recordsets:
+    parameters:
+      - $ref: '#/components/parameters/zones_recordsets_zone_id'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/x-auth-all-projects'
+        - $ref: '#/components/parameters/x-auth-sudo-project-id'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/sort_dir'
+        - $ref: '#/components/parameters/sort_key'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/description'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/ttl'
+        - $ref: '#/components/parameters/data'
+      description: |-
+        This lists all recordsets in a zone
+      operationId: zones/zone_id/recordsets:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesRecordsetsListResponse'
+      tags:
+        - recordsets
+      summary: List Recordsets in a Zone
+    post:
+      description: |-
+        Create a recordset in a zone
+      operationId: zones/zone_id/recordsets:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesRecordsetsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesRecordsetsCreateResponse'
+      tags:
+        - recordsets
+      summary: Create Recordset
+  /v2/zones/tasks/transfer_accepts:
+    get:
+      description: |-
+        This will list all your accepted ownership transfer.
+      operationId: zones/tasks/transfer_accepts:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsListResponse'
+      tags:
+        - zone-ownership-transfers-accepts
+      summary: List Zone Transfer Accepts
+    post:
+      description: |-
+        This accepts an offer of a ownership transfer
+      operationId: zones/tasks/transfer_accepts:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsCreateResponse'
+      tags:
+        - zone-ownership-transfers-accepts
+      summary: Create Zone Transfer Accept
+  /v2/zones/tasks/transfer_accepts/{transfer_accept_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_transfer_accepts_transfer_accept_id'
+    get:
+      description: |-
+        Get transfer_accepts
+      operationId: zones/tasks/transfer_accepts/transfer_accept_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptShowResponse'
+      tags:
+        - zone-ownership-transfers-accepts
+  /v2/zones/tasks/transfer_requests/{zone_transfer_request_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_transfer_requests_zone_transfer_request_id'
+    get:
+      description: |
+      operationId: zones/tasks/transfer_requests/zone_transfer_request_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_RequestShowResponse'
+      tags:
+        - zone-ownership-transfers-requests
+      summary: Show a Zone Transfer Request
+    delete:
+      description: |
+      operationId: zones/tasks/transfer_requests/zone_transfer_request_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - zone-ownership-transfers-requests
+      summary: Delete a Zone Transfer Request
+    patch:
+      description: |
+      operationId: zones/tasks/transfer_requests/zone_transfer_request_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksTransfer_RequestUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_RequestUpdateResponse'
+      tags:
+        - zone-ownership-transfers-requests
+      summary: Update a Zone Transfer Request
+  /v2/zones/tasks/transfer_requests:
+    get:
+      description: |-
+        This will list all your outgoing requests, and any incoming requests that
+        have been scoped to your project.
+      operationId: zones/tasks/transfer_requests:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_RequestsListResponse'
+      tags:
+        - zone-ownership-transfers-requests
+      summary: List Zone Transfer Requests
+  /v2/zones/{zone_id}/tasks/transfer_requests:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_transfer_requests_zone_id'
+    post:
+      description: |-
+        This creates an offer to transfer the zone to a different project.
+        The request can be scoped to single project if the `project_id` parameter is
+        supplied.
+      operationId: zones/zone_id/tasks/transfer_requests:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksTransfer_RequestsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksTransfer_RequestsCreateResponse'
+      tags:
+        - zone-ownership-transfers-requests
+      summary: Create Zone Transfer Request
+  /v2/zones/{zone_id}/tasks/abandon:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_abandon_zone_id'
+    post:
+      description: |-
+        Abandon a zone.
+
+        This removes a zone from the designate database without removing it
+        from the backends.
+      operationId: zones/zone_id/tasks/abandon:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksAbandonCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksAbandonCreateResponse'
+      tags:
+        - zone-tasks
+      summary: Abandon Zone
+  /v2/zones/{zone_id}/tasks/xfr:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_xfr_zone_id'
+    post:
+      description: |-
+        Trigger a new XFR from the upstream DNS servers
+
+        This will cause designate to query the name servers and if the version in
+        Designate is out of date, import the new version.
+
+        This is useful if an upstream server failed to send a notify to Designate
+      operationId: zones/zone_id/tasks/xfr:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksXfrCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksXfrCreateResponse'
+      tags:
+        - zone-tasks
+      summary: Manually Trigger an Update of a Secondary Zone
+  /v2/zones/{zone_id}/tasks/pool_move:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_pool_move_zone_id'
+    post:
+      description: |-
+        Move a zone to another pool.
+
+        This moves a zone from the existing designate pool to specified target pool. If
+        pool is not specified by admin, designate will determine suitable pool by
+        itself and move zone to that pool.
+      operationId: zones/zone_id/tasks/pool_move:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksPool_MoveCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksPool_MoveCreateResponse'
+      tags:
+        - zone-tasks
+      summary: Pool Move Zone
+  /v2/zones/tasks/imports/{zone_import_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_imports_zone_import_id'
+    get:
+      description: |
+      summary: Show a Zone Import
+    delete:
+      description: |-
+        This will just delete the record of the zone import, not the imported zone.
+
+        The zone will have to be deleted from the zone delete API
+      operationId: zones/tasks/imports/zone_import_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - zone-imports
+      summary: Delete a Zone Import
+  /v2/zones/tasks/imports:
+    get:
+      description: |
+      operationId: zones/tasks/imports:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksImportsListResponse'
+      tags:
+        - zone-imports
+      summary: List all Zone Imports
+    post:
+      description: |-
+        Import a zone.
+      operationId: zones/tasks/imports:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksImportsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksImportsCreateResponse'
+      tags:
+        - zone-imports
+      summary: Create a Zone Import
+  /v2/zones/tasks/imports/{import_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_imports_import_id'
+    get:
+      description: |-
+        Get Zone Imports
+      operationId: zones/tasks/imports/import_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksImportShowResponse'
+      tags:
+        - zone-imports
+  /v2/zones/tasks/exports/{zone_export_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_exports_zone_export_id'
+    delete:
+      description: |-
+        This will just delete the record of the zone export, not the exported zone.
+
+        The zone will have to be deleted from the zone delete API
+      operationId: zones/tasks/exports/zone_export_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - zone-exports
+      summary: Delete a Zone Export
+  /v2/zones/tasks/exports:
+    get:
+      description: |
+      operationId: zones/tasks/exports:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksExportsListResponse'
+      tags:
+        - zone-exports
+      summary: List all Zone Exports
+  /v2/zones/tasks/exports/{export_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_exports_export_id'
+    get:
+      description: |-
+        Get Zone Exports
+      operationId: zones/tasks/exports/export_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksExportShowResponse'
+      tags:
+        - zone-exports
+  /v2/zones/tasks/exports/{export_id}/export:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_exports_export_export_id'
+    get:
+      description: |
+      operationId: zones/tasks/exports/export_id/export:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksExportsExportListResponse'
+      tags:
+        - zone-exports
+      summary: Retrieve a Zone Export from the Designate Datastore
+  /v2/zones/{zone_id}/tasks/export:
+    parameters:
+      - $ref: '#/components/parameters/zones_tasks_export_zone_id'
+    post:
+      description: |-
+        Export a zone.
+      operationId: zones/zone_id/tasks/export:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesTasksExportCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesTasksExportCreateResponse'
+      tags:
+        - zone-exports
+      summary: Create a Zone Export
+  /v2/zones/{zone_id}/nameservers:
+    parameters:
+      - $ref: '#/components/parameters/zones_nameservers_zone_id'
+    get:
+      description: |-
+        Show the nameservers for a zone
+      operationId: zones/zone_id/nameservers:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesNameserversListResponse'
+      tags:
+        - zones
+      summary: Get the Name Servers for a Zone
+  /v2/zones/{zone_id}/shares/{zone_share_id}:
+    parameters:
+      - $ref: '#/components/parameters/zones_shares_zone_id'
+      - $ref: '#/components/parameters/zones_shares_zone_share_id'
+    get:
+      description: |-
+        Show a single zone share.
+
+        **New in version 2.1**
+      operationId: zones/zone_id/shares/zone_share_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesShareShowResponse'
+      tags:
+        - shared-zones
+      summary: Show a Zone Share
+    delete:
+      description: |-
+        Delete a zone share.
+
+        **New in version 2.1**
+      operationId: zones/zone_id/shares/zone_share_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - shared-zones
+      summary: Delete a Zone Share
+  /v2/zones/{zone_id}/shares:
+    parameters:
+      - $ref: '#/components/parameters/zones_shares_zone_id'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/x-auth-all-projects'
+        - $ref: '#/components/parameters/x-auth-sudo-project-id'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/target_project_id'
+      description: |-
+        List all zone shares.
+
+        **New in version 2.1**
+      operationId: zones/zone_id/shares:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesSharesListResponse'
+      tags:
+        - shared-zones
+      summary: Get All Shared Zones
+    post:
+      description: |-
+        Share a zone with another project.
+
+        **New in version 2.1**
+      operationId: zones/zone_id/shares:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZonesSharesCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZonesSharesCreateResponse'
+      tags:
+        - shared-zones
+      summary: Create Shared Zone
+  /v2/blacklists/{blacklist_id}:
+    parameters:
+      - $ref: '#/components/parameters/blacklists_blacklist_id'
+    get:
+      description: |-
+        Show a blacklist
+      operationId: blacklists/blacklist_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlacklistShowResponse'
+      tags:
+        - blacklists
+      summary: Show Blacklist
+    delete:
+      description: |-
+        Delete a blacklist
+      operationId: blacklists/blacklist_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - blacklists
+      summary: Delete a Blacklist
+    patch:
+      description: |-
+        Update a Blacklist
+
+        Normal response codes: 200
+
+        Error response codes: 405,404,403,401,400,503
+      operationId: blacklists/blacklist_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlacklistUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlacklistUpdateResponse'
+      tags:
+        - blacklists
+      summary: Update Blacklist
+  /v2/blacklists:
+    get:
+      description: |-
+        List all blacklists
+      operationId: blacklists:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlacklistsListResponse'
+      tags:
+        - blacklists
+      summary: List Blacklists
+    post:
+      description: |-
+        Create a Blacklist
+      operationId: blacklists:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlacklistsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlacklistsCreateResponse'
+      tags:
+        - blacklists
+      summary: Create Blacklist
+  /v2/pools/{pool_id}:
+    parameters:
+      - $ref: '#/components/parameters/pools_pool_id'
+    get:
+      description: |-
+        Get a specific Pool
+
+        Normal response codes: 200
+
+        Error response codes: 405,404,403,401,400,503
+      operationId: pools/pool_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolShowResponse'
+      tags:
+        - pools
+      summary: Show a Pool
+    delete:
+      description: |-
+        Delete the specific pool
+      operationId: pools/pool_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - pools
+    patch:
+      description: |-
+        Update the specific pool
+      operationId: pools/pool_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoolUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolUpdateResponse'
+      tags:
+        - pools
+  /v2/pools:
+    get:
+      description: |-
+        Get the list of Pools.
+      operationId: pools:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsListResponse'
+      tags:
+        - pools
+      summary: List all Pools
+    post:
+      description: |-
+        Create a Pool
+      operationId: pools:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoolsCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsCreateResponse'
+      tags:
+        - pools
+  /v2/service_statuses:
+    get:
+      description: |-
+        List all Services and statuses.
+      operationId: service_statuses:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service_StatusesListResponse'
+      tags:
+        - service-statuses
+      summary: List Statuses
+  /v2/service_statuses/{service_id}:
+    parameters:
+      - $ref: '#/components/parameters/service_statuses_service_id'
+    get:
+      description: |-
+        Show the status of a service.
+      operationId: service_statuses/service_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service_StatusShowResponse'
+      tags:
+        - service-statuses
+      summary: Show a Service Status
+  /v2/tsigkeys/{tsigkey_id}:
+    parameters:
+      - $ref: '#/components/parameters/tsigkeys_tsigkey_id'
+    get:
+      description: |-
+        Show a tsigkey
+      operationId: tsigkeys/tsigkey_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TsigkeyShowResponse'
+      tags:
+        - tsigkey
+      summary: Show a Tsigkey
+    delete:
+      description: |-
+        Delete a tsigkey
+      operationId: tsigkeys/tsigkey_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - tsigkey
+      summary: Delete a Tsigkey
+    patch:
+      description: |-
+        Update the attribute(s) of an existing tsigkey
+      operationId: tsigkeys/tsigkey_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TsigkeyUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TsigkeyUpdateResponse'
+      tags:
+        - tsigkey
+      summary: Update Tsigkey
+  /v2/tsigkeys:
+    get:
+      description: |-
+        List all tsigkeys
+      operationId: tsigkeys:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TsigkeysListResponse'
+      tags:
+        - tsigkey
+      summary: List Tsigkeys
+    post:
+      description: |-
+        Create a new Tsigkey
+      operationId: tsigkeys:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TsigkeysCreateRequest'
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TsigkeysCreateResponse'
+      tags:
+        - tsigkey
+      summary: Create Tsigkeys
+  /v2/recordsets:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/zone_id'
+        - $ref: '#/components/parameters/x-auth-all-projects'
+        - $ref: '#/components/parameters/x-auth-sudo-project-id'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/sort_dir'
+        - $ref: '#/components/parameters/sort_key'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/description'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/ttl'
+        - $ref: '#/components/parameters/data'
+      description: |-
+        This lists all recordsets owned by a project in Designate
+      operationId: recordsets:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordsetsListResponse'
+      tags:
+        - recordsets
+      summary: List all Recordsets owned by project
+  /v2/recordsets/{recordset_id}:
+    parameters:
+      - $ref: '#/components/parameters/recordsets_recordset_id'
+    get:
+      description: |-
+        Get RecordSet
+      operationId: recordsets/recordset_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordsetShowResponse'
+      tags:
+        - recordsets
+  /v2/quotas/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/quotas_project_id'
+    get:
+      description: |-
+        View a projects quotas
+
+        This returns a key:value set of quotas on the system.
+      operationId: quotas/project_id:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaShowResponse'
+      tags:
+        - quotas
+      summary: View Quotas
+    delete:
+      description: |-
+        Reset all quotas for a project to default
+      operationId: quotas/project_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - quotas
+      summary: Reset Quotas
+    patch:
+      description: |-
+        Set a projects quotas
+
+        The request should be a key:value set of quotas to be set
+
+        This returns a key:value set of quotas on the system.
+      operationId: quotas/project_id:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotaUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaUpdateResponse'
+      tags:
+        - quotas
+      summary: Set Quotas
+  /v2/quotas:
+    get:
+      operationId: quotas:get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotasListResponse'
+      tags:
+        - quotas
+components:
+  schemas:
+    LimitsListResponse:
+      type: object
+      properties:
+        max_page_limit:
+          type: integer
+          description: |-
+            The max amount of items allowed per page
+        max_recordset_name_length:
+          type: integer
+          description: |-
+            The max length of a recordset name
+        max_recordset_records:
+          type: integer
+          description: |-
+            The max amount of records contained in a recordset
+        max_zone_name_length:
+          type: integer
+          description: |-
+            The max length of a zone name
+        max_zone_records:
+          type: integer
+          description: |-
+            The max amount of records in a zone
+        max_zone_recordsets:
+          type: integer
+          description: |-
+            The max amount of recordsets per zone
+        max_zones:
+          type: integer
+          description: |-
+            The max amount of zones for this project
+        min_ttl:
+          type: integer
+          description: |-
+            The lowest ttl allowed on this system
+    ReverseFloatingipsListResponse:
+      type: object
+      properties:
+        floatingips:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for PTR record in the format of <region>:<floatingip_id>
+              ptrdname:
+                type:
+                  - string
+                  - 'null'
+                description: |-
+                  Domain name for this PTR record
+              description:
+                type: string
+                description: |-
+                  Description for this PTR record
+              ttl:
+                type: integer
+                description: |-
+                  Time to live for this PTR record
+              address:
+                type: string
+                description: |-
+                  The floatingip address for this PTR record.
+              status:
+                type: string
+                enum:
+                  - ACTIVE
+                  - PENDING
+                  - DELETED
+                  - ERROR
+                  - SUCCESS
+                readOnly: true
+                description: |-
+                  The status of the resource.
+              action:
+                type: string
+                enum:
+                  - UPDATE
+                  - DELETE
+                  - NONE
+                readOnly: true
+                description: |-
+                  current action in progress on the resource
+              links:
+                type: object
+                readOnly: true
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                description: |-
+                  Links to the resource, and other related resources.
+                  When a response has been broken into pages, we will include
+                  a `next` link that should be followed to retrieve all results
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    ReverseFloatingipShowResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for PTR record in the format of <region>:<floatingip_id>
+        ptrdname:
+          type:
+            - string
+            - 'null'
+          description: |-
+            Domain name for this PTR record
+        description:
+          type: string
+          description: |-
+            Description for this PTR record
+        ttl:
+          type: integer
+          description: |-
+            Time to live for this PTR record
+        address:
+          type: string
+          description: |-
+            The floatingip address for this PTR record.
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type: string
+          enum:
+            - UPDATE
+            - DELETE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+    ReverseFloatingipUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for PTR record in the format of <region>:<floatingip_id>
+        ptrdname:
+          type:
+            - string
+            - 'null'
+          description: |-
+            Domain name for this PTR record
+        description:
+          type: string
+          description: |-
+            Description for this PTR record
+        ttl:
+          type: integer
+          description: |-
+            Time to live for this PTR record
+        address:
+          type: string
+          description: |-
+            The floatingip address for this PTR record.
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type: string
+          enum:
+            - UPDATE
+            - DELETE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+    ReverseFloatingipUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for PTR record in the format of <region>:<floatingip_id>
+        ptrdname:
+          type:
+            - string
+            - 'null'
+          description: |-
+            Domain name for this PTR record
+        description:
+          type: string
+          description: |-
+            Description for this PTR record
+        ttl:
+          type: integer
+          description: |-
+            Time to live for this PTR record
+        address:
+          type: string
+          description: |-
+            The floatingip address for this PTR record.
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type: string
+          enum:
+            - UPDATE
+            - DELETE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+    TldsListResponse:
+      type: object
+      description: Response of the tlds:get operation
+    TldShowResponse:
+      type: object
+      description: Response of the tlds/tld_id:get operation
+    TldUpdateRequest:
+      type: object
+      description: Request of the tlds/tld_id:patch operation
+      x-openstack:
+        action-name: update
+    TldUpdateResponse:
+      type: object
+      description: Response of the tlds/tld_id:patch operation
+    TldsCreateRequest:
+      type: object
+      description: Request of the tlds:post operation
+      x-openstack:
+        action-name: create
+    TldsCreateResponse:
+      type: object
+      description: Response of the tlds:post operation
+    ZonesListResponse:
+      type: object
+      properties:
+        zones:
+          type: array
+          items:
+            type: object
+            description: DNS Zone
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the resource
+              pool_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the pool hosting this zone
+              project_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the project that owns the resource
+              name:
+                type: string
+                format: uuid
+                description: |-
+                  DNS Name for the zone
+              email:
+                type: string
+                format: uuid
+                description: |-
+                  e-mail for the zone. Used in SOA records for the zone
+              ttl:
+                type: integer
+                description: |-
+                  TTL (Time to Live) for the zone.
+              serial:
+                type: integer
+                readOnly: true
+                description: |-
+                  current serial number for the zone
+              status:
+                type:
+                  - string
+                  - 'null'
+                enum:
+                  - ACTIVE
+                  - PENDING
+                  - DELETED
+                  - ERROR
+                  - SUCCESS
+                  - ZONE
+                readOnly: true
+                description: |-
+                  The status of the resource.
+              action:
+                type:
+                  - string
+                  - 'null'
+                enum:
+                  - CREATE
+                  - DELETE
+                  - UPDATE
+                  - NONE
+                readOnly: true
+                description: |-
+                  current action in progress on the resource
+              description:
+                type: string
+                description: |-
+                  Description for this zone
+              masters:
+                type: array
+                items:
+                  type: string
+                description: |-
+                  Mandatory for secondary zones. The servers to slave from to get DNS information
+              type:
+                type: string
+                enum:
+                  - PRIMARY
+                  - SECONDARY
+                  - CATALOG
+                default: PRIMARY
+                description: |-
+                  Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY
+              transferred_at:
+                type:
+                  - 'null'
+                  - string
+                format: date-time
+                readOnly: true
+                description: For secondary zones. The last time an update was retrieved
+                  from the master servers
+              version:
+                type: integer
+                readOnly: true
+                description: |-
+                  Version of the resource
+              created_at:
+                type: string
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource was created.
+              updated_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource last updated.
+              attributes:
+                type: object
+                additionalProperties:
+                  type: string
+                description: |-
+                  Key:Value pairs of information about this zone, and the pool the user
+                  would like to place the zone in. This information can be used by the
+                  scheduler to place zones on the correct pool.
+              shared:
+                type: boolean
+                readOnly: true
+                description: |-
+                  True if the zone is shared with another project.
+
+                  **New in version 2.1**
+                x-openstack:
+                  min-ver: '2.1'
+              links:
+                type: object
+                readOnly: true
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                description: |-
+                  Links to the resource, and other related resources.
+                  When a response has been broken into pages, we will include
+                  a `next` link that should be followed to retrieve all results
+            additionalProperties: false
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    ZoneShowResponse:
+      type: object
+      description: DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        pool_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the pool hosting this zone
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          format: uuid
+          description: |-
+            DNS Name for the zone
+        email:
+          type: string
+          format: uuid
+          description: |-
+            e-mail for the zone. Used in SOA records for the zone
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the zone.
+        serial:
+          type: integer
+          readOnly: true
+          description: |-
+            current serial number for the zone
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+            - ZONE
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this zone
+        masters:
+          type: array
+          items:
+            type: string
+          description: |-
+            Mandatory for secondary zones. The servers to slave from to get DNS information
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - SECONDARY
+            - CATALOG
+          default: PRIMARY
+          description: |-
+            Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY
+        transferred_at:
+          type:
+            - 'null'
+            - string
+          format: date-time
+          readOnly: true
+          description: For secondary zones. The last time an update was retrieved
+            from the master servers
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+          description: |-
+            Key:Value pairs of information about this zone, and the pool the user
+            would like to place the zone in. This information can be used by the
+            scheduler to place zones on the correct pool.
+        shared:
+          type: boolean
+          readOnly: true
+          description: |-
+            True if the zone is shared with another project.
+
+            **New in version 2.1**
+          x-openstack:
+            min-ver: '2.1'
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZoneUpdateRequest:
+      type: object
+      description: DNS Zone
+      properties:
+        email:
+          type: string
+          format: uuid
+          description: |-
+            e-mail for the zone. Used in SOA records for the zone
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the zone.
+        description:
+          type: string
+          description: |-
+            Description for this zone
+      additionalProperties: false
+      x-openstack:
+        action-name: update
+    ZoneUpdateResponse:
+      type: object
+      description: DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        pool_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the pool hosting this zone
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          format: uuid
+          description: |-
+            DNS Name for the zone
+        email:
+          type: string
+          format: uuid
+          description: |-
+            e-mail for the zone. Used in SOA records for the zone
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the zone.
+        serial:
+          type: integer
+          readOnly: true
+          description: |-
+            current serial number for the zone
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+            - ZONE
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this zone
+        masters:
+          type: array
+          items:
+            type: string
+          description: |-
+            Mandatory for secondary zones. The servers to slave from to get DNS information
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - SECONDARY
+            - CATALOG
+          default: PRIMARY
+          description: |-
+            Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY
+        transferred_at:
+          type:
+            - 'null'
+            - string
+          format: date-time
+          readOnly: true
+          description: For secondary zones. The last time an update was retrieved
+            from the master servers
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+          description: |-
+            Key:Value pairs of information about this zone, and the pool the user
+            would like to place the zone in. This information can be used by the
+            scheduler to place zones on the correct pool.
+        shared:
+          type: boolean
+          readOnly: true
+          description: |-
+            True if the zone is shared with another project.
+
+            **New in version 2.1**
+          x-openstack:
+            min-ver: '2.1'
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesCreateRequest:
+      type: object
+      description: DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        pool_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the pool hosting this zone
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          format: uuid
+          description: |-
+            DNS Name for the zone
+        email:
+          type: string
+          format: uuid
+          description: |-
+            e-mail for the zone. Used in SOA records for the zone
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the zone.
+        serial:
+          type: integer
+          readOnly: true
+          description: |-
+            current serial number for the zone
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+            - ZONE
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this zone
+        masters:
+          type: array
+          items:
+            type: string
+          description: |-
+            Mandatory for secondary zones. The servers to slave from to get DNS information
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - SECONDARY
+            - CATALOG
+          default: PRIMARY
+          description: |-
+            Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY
+        transferred_at:
+          type:
+            - 'null'
+            - string
+          format: date-time
+          readOnly: true
+          description: For secondary zones. The last time an update was retrieved
+            from the master servers
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+          description: |-
+            Key:Value pairs of information about this zone, and the pool the user
+            would like to place the zone in. This information can be used by the
+            scheduler to place zones on the correct pool.
+        shared:
+          type: boolean
+          readOnly: true
+          description: |-
+            True if the zone is shared with another project.
+
+            **New in version 2.1**
+          x-openstack:
+            min-ver: '2.1'
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+      x-openstack:
+        action-name: create
+    ZonesCreateResponse:
+      type: object
+      description: DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        pool_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the pool hosting this zone
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          format: uuid
+          description: |-
+            DNS Name for the zone
+        email:
+          type: string
+          format: uuid
+          description: |-
+            e-mail for the zone. Used in SOA records for the zone
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the zone.
+        serial:
+          type: integer
+          readOnly: true
+          description: |-
+            current serial number for the zone
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+            - ZONE
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          readOnly: true
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this zone
+        masters:
+          type: array
+          items:
+            type: string
+          description: |-
+            Mandatory for secondary zones. The servers to slave from to get DNS information
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - SECONDARY
+            - CATALOG
+          default: PRIMARY
+          description: |-
+            Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY
+        transferred_at:
+          type:
+            - 'null'
+            - string
+          format: date-time
+          readOnly: true
+          description: For secondary zones. The last time an update was retrieved
+            from the master servers
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+          description: |-
+            Key:Value pairs of information about this zone, and the pool the user
+            would like to place the zone in. This information can be used by the
+            scheduler to place zones on the correct pool.
+        shared:
+          type: boolean
+          readOnly: true
+          description: |-
+            True if the zone is shared with another project.
+
+            **New in version 2.1**
+          x-openstack:
+            min-ver: '2.1'
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesRecordsetsListResponse:
+      type: object
+      properties:
+        recordsets:
+          type: array
+          items:
+            type: object
+            description: Zone Record object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the resource
+              project_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the project that owns the resource
+              name:
+                type: string
+                description: |-
+                  DNS Name for the recordset
+              ttl:
+                type: integer
+                description: |-
+                  TTL (Time to Live) for the recordset.
+              status:
+                type:
+                  - string
+                  - 'null'
+                enum:
+                  - ACTIVE
+                  - PENDING
+                  - DELETED
+                  - ERROR
+                  - SUCCESS
+                readOnly: true
+                description: |-
+                  The status of the resource.
+              action:
+                type:
+                  - string
+                  - 'null'
+                readOnly: true
+                enum:
+                  - CREATE
+                  - DELETE
+                  - UPDATE
+                  - NONE
+                description: |-
+                  current action in progress on the resource
+              description:
+                type: string
+                description: |-
+                  Description for this recordset
+              zone_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the zone that contains this recordset
+              zone_name:
+                type: string
+                readOnly: true
+                description: |-
+                  The name of the zone that contains this recordset
+              type:
+                type: string
+                enum:
+                  - A
+                  - AAAA
+                  - CNAME
+                  - MX
+                  - SRV
+                  - TXT
+                  - SPF
+                  - NS
+                  - PTR
+                  - SSHFP
+                  - SOA
+                  - NAPTR
+                  - CAA
+                  - CERT
+                description: |-
+                  They RRTYPE of the recordset.
+              records:
+                type: array
+                items:
+                  type: string
+                description: |-
+                  A list of data for this recordset. Each item will be a separate record in Designate
+                  These items should conform to the DNS spec for the record type - e.g. A records
+                  must be IPv4 addresses, CNAME records must be a hostname.
+              version:
+                type: integer
+                readOnly: true
+                description: |-
+                  Version of the resource
+              created_at:
+                type: string
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource was created.
+              updated_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource last updated.
+              links:
+                type: object
+                readOnly: true
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                description: |-
+                  Links to the resource, and other related resources.
+                  When a response has been broken into pages, we will include
+                  a `next` link that should be followed to retrieve all results
+            additionalProperties: false
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    ZonesRecordsetShowResponse:
+      type: object
+      description: Zone Record object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          description: |-
+            DNS Name for the recordset
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the recordset.
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this recordset
+        zone_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the zone that contains this recordset
+        zone_name:
+          type: string
+          readOnly: true
+          description: |-
+            The name of the zone that contains this recordset
+        type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - SRV
+            - TXT
+            - SPF
+            - NS
+            - PTR
+            - SSHFP
+            - SOA
+            - NAPTR
+            - CAA
+            - CERT
+          description: |-
+            They RRTYPE of the recordset.
+        records:
+          type: array
+          items:
+            type: string
+          description: |-
+            A list of data for this recordset. Each item will be a separate record in Designate
+            These items should conform to the DNS spec for the record type - e.g. A records
+            must be IPv4 addresses, CNAME records must be a hostname.
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesRecordsetsCreateRequest:
+      type: object
+      description: Zone Record object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          description: |-
+            DNS Name for the recordset
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the recordset.
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this recordset
+        zone_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the zone that contains this recordset
+        zone_name:
+          type: string
+          readOnly: true
+          description: |-
+            The name of the zone that contains this recordset
+        type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - SRV
+            - TXT
+            - SPF
+            - NS
+            - PTR
+            - SSHFP
+            - SOA
+            - NAPTR
+            - CAA
+            - CERT
+          description: |-
+            They RRTYPE of the recordset.
+        records:
+          type: array
+          items:
+            type: string
+          description: |-
+            A list of data for this recordset. Each item will be a separate record in Designate
+            These items should conform to the DNS spec for the record type - e.g. A records
+            must be IPv4 addresses, CNAME records must be a hostname.
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+      x-openstack:
+        action-name: create
+    ZonesRecordsetsCreateResponse:
+      type: object
+      description: Zone Record object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          description: |-
+            DNS Name for the recordset
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the recordset.
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this recordset
+        zone_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the zone that contains this recordset
+        zone_name:
+          type: string
+          readOnly: true
+          description: |-
+            The name of the zone that contains this recordset
+        type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - SRV
+            - TXT
+            - SPF
+            - NS
+            - PTR
+            - SSHFP
+            - SOA
+            - NAPTR
+            - CAA
+            - CERT
+          description: |-
+            They RRTYPE of the recordset.
+        records:
+          type: array
+          items:
+            type: string
+          description: |-
+            A list of data for this recordset. Each item will be a separate record in Designate
+            These items should conform to the DNS spec for the record type - e.g. A records
+            must be IPv4 addresses, CNAME records must be a hostname.
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesRecordsetUpdateRequest:
+      type: object
+      description: Zone Record object
+      properties:
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the recordset.
+        description:
+          type: string
+          description: |-
+            Description for this recordset
+        records:
+          type: array
+          items:
+            type: string
+          description: |-
+            A list of data for this recordset. Each item will be a separate record in Designate
+            These items should conform to the DNS spec for the record type - e.g. A records
+            must be IPv4 addresses, CNAME records must be a hostname.
+      additionalProperties: false
+      x-openstack:
+        action-name: update
+    ZonesRecordsetUpdateResponse:
+      type: object
+      description: Zone Record object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        name:
+          type: string
+          description: |-
+            DNS Name for the recordset
+        ttl:
+          type: integer
+          description: |-
+            TTL (Time to Live) for the recordset.
+        status:
+          type:
+            - string
+            - 'null'
+          enum:
+            - ACTIVE
+            - PENDING
+            - DELETED
+            - ERROR
+            - SUCCESS
+          readOnly: true
+          description: |-
+            The status of the resource.
+        action:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+          enum:
+            - CREATE
+            - DELETE
+            - UPDATE
+            - NONE
+          description: |-
+            current action in progress on the resource
+        description:
+          type: string
+          description: |-
+            Description for this recordset
+        zone_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the zone that contains this recordset
+        zone_name:
+          type: string
+          readOnly: true
+          description: |-
+            The name of the zone that contains this recordset
+        type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - SRV
+            - TXT
+            - SPF
+            - NS
+            - PTR
+            - SSHFP
+            - SOA
+            - NAPTR
+            - CAA
+            - CERT
+          description: |-
+            They RRTYPE of the recordset.
+        records:
+          type: array
+          items:
+            type: string
+          description: |-
+            A list of data for this recordset. Each item will be a separate record in Designate
+            These items should conform to the DNS spec for the record type - e.g. A records
+            must be IPv4 addresses, CNAME records must be a hostname.
+        version:
+          type: integer
+          readOnly: true
+          description: |-
+            Version of the resource
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesTasksTransfer_AcceptsListResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_accepts:get operation
+    ZonesTasksTransfer_AcceptShowResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_accepts/transfer_accept_id:get
+        operation
+    ZonesTasksTransfer_AcceptsCreateRequest:
+      type: object
+      description: Request of the zones/tasks/transfer_accepts:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksTransfer_AcceptsCreateResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_accepts:post operation
+    ZonesTasksTransfer_RequestsListResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_requests:get operation
+    ZonesTasksTransfer_RequestShowResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_requests/zone_transfer_request_id:get
+        operation
+    ZonesTasksTransfer_RequestUpdateRequest:
+      type: object
+      description: Request of the zones/tasks/transfer_requests/zone_transfer_request_id:patch
+        operation
+      x-openstack:
+        action-name: update
+    ZonesTasksTransfer_RequestUpdateResponse:
+      type: object
+      description: Response of the zones/tasks/transfer_requests/zone_transfer_request_id:patch
+        operation
+    ZonesTasksTransfer_RequestsCreateRequest:
+      type: object
+      description: Request of the zones/zone_id/tasks/transfer_requests:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksTransfer_RequestsCreateResponse:
+      type: object
+      description: Response of the zones/zone_id/tasks/transfer_requests:post operation
+    ZonesTasksAbandonCreateRequest:
+      type: object
+      description: Request of the zones/zone_id/tasks/abandon:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksAbandonCreateResponse:
+      type: object
+      description: Response of the zones/zone_id/tasks/abandon:post operation
+    ZonesTasksXfrCreateRequest:
+      type: object
+      description: Request of the zones/zone_id/tasks/xfr:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksXfrCreateResponse:
+      type: object
+      description: Response of the zones/zone_id/tasks/xfr:post operation
+    ZonesTasksPool_MoveCreateRequest:
+      type: object
+      description: Request of the zones/zone_id/tasks/pool_move:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksPool_MoveCreateResponse:
+      type: object
+      description: Response of the zones/zone_id/tasks/pool_move:post operation
+    ZonesTasksImportsListResponse:
+      type: object
+      description: Response of the zones/tasks/imports:get operation
+    ZonesTasksImportShowResponse:
+      type: object
+      description: Response of the zones/tasks/imports/import_id:get operation
+    ZonesTasksImportsCreateRequest:
+      type: object
+      description: Request of the zones/tasks/imports:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksImportsCreateResponse:
+      type: object
+      description: Response of the zones/tasks/imports:post operation
+    ZonesTasksExportsListResponse:
+      type: object
+      description: Response of the zones/tasks/exports:get operation
+    ZonesTasksExportShowResponse:
+      type: object
+      description: Response of the zones/tasks/exports/export_id:get operation
+    ZonesTasksExportsExportListResponse:
+      type: object
+      description: Response of the zones/tasks/exports/export_id/export:get operation
+    ZonesTasksExportCreateRequest:
+      type: object
+      description: Request of the zones/zone_id/tasks/export:post operation
+      x-openstack:
+        action-name: create
+    ZonesTasksExportCreateResponse:
+      type: object
+      description: Response of the zones/zone_id/tasks/export:post operation
+    ZonesNameserversListResponse:
+      type: object
+      properties:
+        nameservers:
+          type: array
+          items:
+            type: object
+            description: DNS NAmeserver object
+            properties:
+              hostname:
+                type: string
+                format: hostname
+                readOnly: true
+                description: |-
+                  The hostname of the nameserver that the zone should be delegated to
+              priority:
+                type: integer
+                readOnly: true
+                description: |-
+                  The priority of the nameserver. This is used to determine the order of the
+                  the nameserver listings, and which server is used in the SOA record for the
+                  zone.
+              links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    format: uri
+            additionalProperties: false
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    ZonesSharesListResponse:
+      type: object
+      properties:
+        shared_zones:
+          type: array
+          items:
+            type: object
+            description: Shared DNS Zone
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the resource
+              project_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the project that owns the resource
+              target_project_id:
+                type: string
+                format: uuid
+                description: |-
+                  The project ID the zone will be shared with.
+
+                  **New in version 2.1**
+              created_at:
+                type: string
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource was created.
+              updated_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource last updated.
+              links:
+                type: object
+                readOnly: true
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                  zone:
+                    type: string
+                    format: uri
+                description: |-
+                  Links to the resource, and other related resources.
+                  When a response has been broken into pages, we will include
+                  a `next` link that should be followed to retrieve all results
+            additionalProperties: false
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    ZonesShareShowResponse:
+      type: object
+      description: Shared DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        target_project_id:
+          type: string
+          format: uuid
+          description: |-
+            The project ID the zone will be shared with.
+
+            **New in version 2.1**
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+            zone:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesSharesCreateRequest:
+      type: object
+      description: Shared DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        target_project_id:
+          type: string
+          format: uuid
+          description: |-
+            The project ID the zone will be shared with.
+
+            **New in version 2.1**
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+            zone:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    ZonesSharesCreateResponse:
+      type: object
+      description: Shared DNS Zone
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the resource
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: |-
+            ID for the project that owns the resource
+        target_project_id:
+          type: string
+          format: uuid
+          description: |-
+            The project ID the zone will be shared with.
+
+            **New in version 2.1**
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource was created.
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+          description: |-
+            Date / Time when resource last updated.
+        links:
+          type: object
+          readOnly: true
+          properties:
+            self:
+              type: string
+              format: uri
+            zone:
+              type: string
+              format: uri
+          description: |-
+            Links to the resource, and other related resources.
+            When a response has been broken into pages, we will include
+            a `next` link that should be followed to retrieve all results
+      additionalProperties: false
+    BlacklistsListResponse:
+      type: object
+      description: Response of the blacklists:get operation
+    BlacklistShowResponse:
+      type: object
+      description: Response of the blacklists/blacklist_id:get operation
+    BlacklistUpdateRequest:
+      type: object
+      description: Request of the blacklists/blacklist_id:patch operation
+      x-openstack:
+        action-name: update
+    BlacklistUpdateResponse:
+      type: object
+      description: Response of the blacklists/blacklist_id:patch operation
+    BlacklistsCreateRequest:
+      type: object
+      description: Request of the blacklists:post operation
+      x-openstack:
+        action-name: create
+    BlacklistsCreateResponse:
+      type: object
+      description: Response of the blacklists:post operation
+    PoolsListResponse:
+      type: object
+      description: Response of the pools:get operation
+    PoolShowResponse:
+      type: object
+      description: Response of the pools/pool_id:get operation
+    PoolUpdateRequest:
+      type: object
+      description: Request of the pools/pool_id:patch operation
+      x-openstack:
+        action-name: update
+    PoolUpdateResponse:
+      type: object
+      description: Response of the pools/pool_id:patch operation
+    PoolsCreateRequest:
+      type: object
+      description: Request of the pools:post operation
+      x-openstack:
+        action-name: create
+    PoolsCreateResponse:
+      type: object
+      description: Response of the pools:post operation
+    Service_StatusesListResponse:
+      type: object
+      description: Response of the service_statuses:get operation
+    Service_StatusShowResponse:
+      type: object
+      description: Response of the service_statuses/service_id:get operation
+    TsigkeysListResponse:
+      type: object
+      description: Response of the tsigkeys:get operation
+    TsigkeyShowResponse:
+      type: object
+      description: Response of the tsigkeys/tsigkey_id:get operation
+    TsigkeyUpdateRequest:
+      type: object
+      description: Request of the tsigkeys/tsigkey_id:patch operation
+      x-openstack:
+        action-name: update
+    TsigkeyUpdateResponse:
+      type: object
+      description: Response of the tsigkeys/tsigkey_id:patch operation
+    TsigkeysCreateRequest:
+      type: object
+      description: Request of the tsigkeys:post operation
+      x-openstack:
+        action-name: create
+    TsigkeysCreateResponse:
+      type: object
+      description: Response of the tsigkeys:post operation
+    RecordsetsListResponse:
+      type: object
+      properties:
+        recordsets:
+          type: array
+          items:
+            type: object
+            description: Zone Record object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the resource
+              project_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the project that owns the resource
+              name:
+                type: string
+                description: |-
+                  DNS Name for the recordset
+              ttl:
+                type: integer
+                description: |-
+                  TTL (Time to Live) for the recordset.
+              status:
+                type:
+                  - string
+                  - 'null'
+                enum:
+                  - ACTIVE
+                  - PENDING
+                  - DELETED
+                  - ERROR
+                  - SUCCESS
+                readOnly: true
+                description: |-
+                  The status of the resource.
+              action:
+                type:
+                  - string
+                  - 'null'
+                readOnly: true
+                enum:
+                  - CREATE
+                  - DELETE
+                  - UPDATE
+                  - NONE
+                description: |-
+                  current action in progress on the resource
+              description:
+                type: string
+                description: |-
+                  Description for this recordset
+              zone_id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: |-
+                  ID for the zone that contains this recordset
+              zone_name:
+                type: string
+                readOnly: true
+                description: |-
+                  The name of the zone that contains this recordset
+              type:
+                type: string
+                enum:
+                  - A
+                  - AAAA
+                  - CNAME
+                  - MX
+                  - SRV
+                  - TXT
+                  - SPF
+                  - NS
+                  - PTR
+                  - SSHFP
+                  - SOA
+                  - NAPTR
+                  - CAA
+                  - CERT
+                description: |-
+                  They RRTYPE of the recordset.
+              records:
+                type: array
+                items:
+                  type: string
+                description: |-
+                  A list of data for this recordset. Each item will be a separate record in Designate
+                  These items should conform to the DNS spec for the record type - e.g. A records
+                  must be IPv4 addresses, CNAME records must be a hostname.
+              version:
+                type: integer
+                readOnly: true
+                description: |-
+                  Version of the resource
+              created_at:
+                type: string
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource was created.
+              updated_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                readOnly: true
+                description: |-
+                  Date / Time when resource last updated.
+              links:
+                type: object
+                readOnly: true
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                description: |-
+                  Links to the resource, and other related resources.
+                  When a response has been broken into pages, we will include
+                  a `next` link that should be followed to retrieve all results
+            additionalProperties: false
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+      additionalProperties: false
+    RecordsetShowResponse:
+      type: object
+      description: Response of the recordsets/recordset_id:get operation
+    QuotasListResponse:
+      type: object
+      properties:
+        api_export_size:
+          type: integer
+        recordset_records:
+          type: integer
+        zone_records:
+          type: integer
+        zone_recorsets:
+          type: integer
+        zones:
+          type: integer
+    QuotaShowResponse:
+      type: object
+      properties:
+        api_export_size:
+          type: integer
+        recordset_records:
+          type: integer
+        zone_records:
+          type: integer
+        zone_recorsets:
+          type: integer
+        zones:
+          type: integer
+    QuotaUpdateRequest:
+      type: object
+      properties:
+        api_export_size:
+          type: integer
+        recordset_records:
+          type: integer
+        zone_records:
+          type: integer
+        zone_recorsets:
+          type: integer
+        zones:
+          type: integer
+    QuotaUpdateResponse:
+      type: object
+      properties:
+        api_export_size:
+          type: integer
+        recordset_records:
+          type: integer
+        zone_records:
+          type: integer
+        zone_recorsets:
+          type: integer
+        zones:
+          type: integer
+  parameters:
+    x-auth-all-projects:
+      in: header
+      name: x-auth-all-projects
+      description: If enabled this will show results from all projects in Designate
+      schema:
+        type: boolean
+    x-auth-sudo-project-id:
+      in: header
+      name: x-auth-sudo-project-id
+      description: This allows a user to impersonate another project
+      schema:
+        type: string
+        format: uuid
+    reverse_floatingips_fip_key:
+      in: path
+      name: fip_key
+      description: fip_key parameter for /v2/reverse/floatingips/{fip_key} API
+      schema:
+        type: string
+      required: true
+    tlds_tld_id:
+      in: path
+      name: tld_id
+      description: tld_id parameter for /v2/tlds/{tld_id} API
+      schema:
+        type: string
+      required: true
+    zones_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id} API
+      schema:
+        type: string
+      required: true
+    limit:
+      in: query
+      name: limit
+      description: Requests a page size of items. Returns a number of items up to
+        a limit value. Use the limit parameter to make an initial limited request
+        and use the ID of the last-seen item from the response as the marker parameter
+        value in a subsequent limited request.
+      schema:
+        type: integer
+    marker:
+      in: query
+      name: market
+      description: The ID of the last-seen item. Use the limit parameter to make an
+        initial limited request and use the ID of the last-seen item from the response
+        as the marker parameter value in a subsequent limited request.
+      schema:
+        type: string
+        format: uuid
+    sort_dir:
+      in: query
+      name: sort_dir
+      description: Sorts the response by the requested sort direction. A valid value
+        is asc (ascending) or desc (descending). Default is asc. You can specify multiple
+        pairs of sort key and sort direction query parameters. If you omit the sort
+        direction in a pair, the API uses the natural sorting direction of the server
+        attribute that is provided as the sort_key.
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+    sort_key:
+      in: query
+      name: sort_key
+      description: Sorts the response by the this attribute value. Default is id.
+        You can specify multiple pairs of sort key and sort direction query parameters.
+        If you omit the sort direction in a pair, the API uses the natural sorting
+        direction of the server attribute that is provided as the sort_key.
+      schema:
+        type: string
+        enum:
+          - created_at
+          - id
+          - updated_at
+          - name
+          - tenant_id
+          - serial
+          - ttl
+          - status
+    name:
+      in: query
+      name: name
+      description: Filter results to only show zones that have a name matching the
+        filter
+      schema:
+        type: string
+    description:
+      in: query
+      name: description
+      description: Filter results to only show zones that have a description matching
+        the filter
+      schema:
+        type: string
+    type:
+      in: query
+      name: type
+      description: Filter results to only show zones that have a type matching the
+        filter
+      schema:
+        type: string
+        enum:
+          - PRIMARY
+          - SECONDARY
+          - CATALOG
+    email:
+      in: query
+      name: email
+      description: Filter results to only show zones that have an email matching the
+        filter
+      schema:
+        type: string
+        format: email
+    status:
+      in: query
+      name: status
+      description: Filter results to only show zones that have a status matching the
+        filter
+      schema:
+        type: string
+        enum:
+          - ACTIVE
+          - PENDING
+          - DELETED
+          - ERROR
+          - SUCCESS
+          - ZONE
+    ttl:
+      in: query
+      name: ttl
+      description: Filter results to only show zones that have a ttl matching the
+        filter
+      schema:
+        type: integer
+    zones_recordsets_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id}
+        API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_recordsets_recordset_id:
+      in: path
+      name: recordset_id
+      description: recordset_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id}
+        API
+      schema:
+        type: string
+      required: true
+    data:
+      in: query
+      name: data
+      description: Filter results to only show recordsets that have a record with
+        data matching the filter
+      schema:
+        type: string
+    zones_tasks_transfer_accepts_transfer_accept_id:
+      in: path
+      name: transfer_accept_id
+      description: transfer_accept_id parameter for /v2/zones/tasks/transfer_accepts/{transfer_accept_id}
+        API
+      schema:
+        type: string
+      required: true
+    zones_tasks_transfer_requests_zone_transfer_request_id:
+      in: path
+      name: zone_transfer_request_id
+      description: zone_transfer_request_id parameter for /v2/zones/tasks/transfer_requests/{zone_transfer_request_id}
+        API
+      schema:
+        type: string
+      required: true
+    zones_tasks_transfer_requests_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/tasks/transfer_requests
+        API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_tasks_abandon_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/tasks/abandon API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_tasks_xfr_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/tasks/xfr API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_tasks_pool_move_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/tasks/pool_move API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_tasks_imports_zone_import_id:
+      in: path
+      name: zone_import_id
+      description: zone_import_id parameter for /v2/zones/tasks/imports/{zone_import_id}
+        API
+      schema:
+        type: string
+      required: true
+    zones_tasks_imports_import_id:
+      in: path
+      name: import_id
+      description: import_id parameter for /v2/zones/tasks/imports/{import_id} API
+      schema:
+        type: string
+      required: true
+    zones_tasks_exports_zone_export_id:
+      in: path
+      name: zone_export_id
+      description: zone_export_id parameter for /v2/zones/tasks/exports/{zone_export_id}
+        API
+      schema:
+        type: string
+      required: true
+    zones_tasks_exports_export_id:
+      in: path
+      name: export_id
+      description: export_id parameter for /v2/zones/tasks/exports/{export_id} API
+      schema:
+        type: string
+      required: true
+    zones_tasks_exports_export_export_id:
+      in: path
+      name: export_id
+      description: export_id parameter for /v2/zones/tasks/exports/{export_id}/export
+        API
+      schema:
+        type: string
+      required: true
+    zones_tasks_export_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/tasks/export API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_nameservers_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/nameservers API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_shares_zone_id:
+      in: path
+      name: zone_id
+      description: zone_id parameter for /v2/zones/{zone_id}/shares API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: dns/v2/zone.id
+    zones_shares_zone_share_id:
+      in: path
+      name: zone_share_id
+      description: zone_share_id parameter for /v2/zones/{zone_id}/shares/{zone_share_id}
+        API
+      schema:
+        type: string
+      required: true
+    target_project_id:
+      in: query
+      name: target_project_id
+      description: Filter results to only show resources that have a matching target_project_id
+      schema:
+        type: string
+        format: uuid
+      x-openstack:
+        min-ver: '2.1'
+    blacklists_blacklist_id:
+      in: path
+      name: blacklist_id
+      description: blacklist_id parameter for /v2/blacklists/{blacklist_id} API
+      schema:
+        type: string
+      required: true
+    pools_pool_id:
+      in: path
+      name: pool_id
+      description: pool_id parameter for /v2/pools/{pool_id} API
+      schema:
+        type: string
+      required: true
+    service_statuses_service_id:
+      in: path
+      name: service_id
+      description: service_id parameter for /v2/service_statuses/{service_id} API
+      schema:
+        type: string
+      required: true
+    tsigkeys_tsigkey_id:
+      in: path
+      name: tsigkey_id
+      description: tsigkey_id parameter for /v2/tsigkeys/{tsigkey_id} API
+      schema:
+        type: string
+      required: true
+    zone_id:
+      in: query
+      name: zone_id
+      description: ID for the zone
+      schema:
+        type: string
+        format: uuid
+    recordsets_recordset_id:
+      in: path
+      name: recordset_id
+      description: recordset_id parameter for /v2/recordsets/{recordset_id} API
+      schema:
+        type: string
+      required: true
+    quotas_project_id:
+      in: path
+      name: project_id
+      description: project_id parameter for /v2/quotas/{project_id} API
+      schema:
+        type: string
+      required: true
+      x-openstack:
+        resource_link: identity/v3/project.id
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+tags:
+  - name: limits
+    description: |-
+      Show the limits for the current project
+  - name: floatingips
+    description: |-
+      In order to use the FloatingIPs functionality you will need to have a FloatingIP
+      associated to your project in Neutron.
+  - name: tld
+    description: |-
+      Tld operations.
+  - name: zones
+  - name: recordsets
+    description: |-
+      Recordsets operations.
+  - name: zone-ownership-transfers-accepts
+    description: |-
+      Designate allows users to transfer ownership of a zone between projects.
+  - name: zone-ownership-transfers-requests
+    description: |-
+      Designate allows users to transfer ownership of a zone between projects.
+  - name: zone-tasks
+    description: |-
+      Zone tasks.
+  - name: zone-imports
+  - name: zone-exports
+    description: |-
+      Zone exports can be an asynchronous operation,
+      and there are different endpoints to view the status and progress of an export
+  - name: shared-zones
+    description: |-
+      Shared zones operations.
+  - name: blacklists
+    description: |-
+      The blacklist entries are used to manage blacklisted zones. If a zone
+      is blacklisted, then it cannot be used to create a zone. By default,
+      only an admin can manage these entries. Blacklisted zones are stored
+      as a regular expression (regex) pattern in the Database/Storage in
+      the blacklists table.
+  - name: pools
+    description: |-
+      Get information about the pools in a designate install
+  - name: service-statuses
+    description: |-
+      The Service Status entries are used to track the health state of the services
+      in the Designate system. Each service will report in it’s health via RPC or
+      using HTTP.
+  - name: tsigkey
+    description: |-
+      Transaction signatures (TSIG) is a mechanism used to secure DNS messages and
+      to provide secure server-to-server communication (usually between master and
+      slave server, but can be extended for dynamic updates as well).
+  - name: quotas
+    description: |-
+      Quota operations.
+security:
+  - ApiKeyAuth: []
