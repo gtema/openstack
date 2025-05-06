@@ -24,7 +24,6 @@ pub fn get_openapi_spec() -> &'static str {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[cfg(feature = "openapi")]
     #[test]

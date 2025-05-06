@@ -150,9 +150,14 @@ struct Totp {
 #[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct ApplicationCredential {
+    /// The ID of the application credential used for authentication. If not
+    /// provided, the application credential must be identified by its name and
+    /// its owning user.
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
+    /// The name of the application credential used for authentication. If
+    /// provided, must be accompanied by a user object.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
