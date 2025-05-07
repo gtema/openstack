@@ -32,6 +32,8 @@ use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
 pub struct LoadBalancerLoadbalancerDelete {
+    #[builder(default)]
+    pub cascade: Option<bool>,
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
@@ -53,6 +55,9 @@ impl TryFrom<&LoadBalancerLoadbalancerDelete> for RequestBuilder<'_> {
     fn try_from(value: &LoadBalancerLoadbalancerDelete) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
         ep_builder.id(value.id.clone());
+        if let Some(val) = &value.cascade {
+            ep_builder.cascade(*val);
+        }
 
         Ok(ep_builder)
     }

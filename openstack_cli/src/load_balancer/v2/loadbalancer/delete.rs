@@ -52,7 +52,11 @@ pub struct LoadbalancerCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// If true will delete all child objects of the load balancer.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    cascade: Option<bool>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -85,6 +89,9 @@ impl LoadbalancerCommand {
         // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
+        if let Some(val) = &self.query.cascade {
+            ep_builder.cascade(*val);
+        }
         // Set body parameters
 
         let ep = ep_builder
