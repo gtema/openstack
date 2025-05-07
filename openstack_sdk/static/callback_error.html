@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Authentication failed!</title>
+    <style>
+        html {{
+                background-color: #f8f8f8;
+        }}
+        body {{
+                background-color: white;
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 5em;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                max-width: max-content;
+                margin: 5em auto;
+        }}
+
+        h1 {{
+                color: red;
+                font-size: 36px;
+                margin-bottom: 20px;
+        }}
+
+        p {{
+                color: #666;
+                font-size: 18px;
+        }}
+
+        a {{
+                color: #333;
+                text-decoration: none;
+        }}
+
+        .error_description {{
+                color: red;
+                font-style: italic;
+        }}
+        .error {{
+                font-weight: bold;
+        }}
+    </style>
+  </head>
+  <body>
+    <h1>Authentication has failed!</h1>
+    <p><span class="error">{error}:</span> <span class="error_description">{error_description}</span>.</p>
+    <p>This may be caused by the identity provider configuration or the authentication payload.</p>
+    <p>Please consult your cloud provider to figure out how to deal with it.</p>
+  </body>
+</html>
