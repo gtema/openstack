@@ -33,6 +33,10 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// If true will delete all child objects of the load balancer.
+    #[builder(default)]
+    cascade: Option<bool>,
+
     /// loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}
     /// API
     #[builder(default, setter(into))]
@@ -83,7 +87,10 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("cascade", self.cascade);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
