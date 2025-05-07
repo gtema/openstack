@@ -40,6 +40,7 @@ sync = []
 async = []
 client_der = []
 client_pem = []
+keystone_ng = []
 
 [dependencies]
 async-trait = {workspace = true}

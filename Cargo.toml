@@ -50,7 +50,7 @@ thiserror = { version = "^2.0" }
 tracing = "^0.1"
 tracing-error = { version = "^0.2" }
 tracing-subscriber = { version = "^0.3", features = ["env-filter", "serde"] }
-url = "^2.5"
+url = { version = "^2.5", features = ["serde"] }
 
 [profile.dev]
 debug = 0
