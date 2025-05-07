@@ -26,6 +26,8 @@ use tracing::{debug, error, trace};
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
+#[cfg(feature = "keystone_ng")]
+use crate::auth::v3federation;
 use crate::auth::{
     authtoken_scope, v3applicationcredential, v3password, v3token, v3totp, v3websso, AuthState,
 };
@@ -146,6 +148,15 @@ pub enum AuthTokenError {
         #[from]
         source: v3websso::WebSsoError,
     },
+
+    /// Federation Identity error
+    #[cfg(feature = "keystone_ng")]
+    #[error("Federation based authentication error: {}", source)]
+    Federation {
+        /// The error source
+        #[from]
+        source: v3federation::FederationError,
+    },
 }
 
 type AuthResult<T> = Result<T, AuthTokenError>;
@@ -229,6 +240,9 @@ impl AuthToken {
 pub enum AuthType {
     /// v3 Application Credentials
     V3ApplicationCredential,
+    #[cfg(feature = "keystone_ng")]
+    /// Federation
+    V3Federation,
     /// v3 Password
     V3Password,
     /// v3 Token
@@ -250,6 +264,8 @@ impl FromStr for AuthType {
                 Ok(Self::V3ApplicationCredential)
             }
             "v3password" | "password" => Ok(Self::V3Password),
+            #[cfg(feature = "keystone_ng")]
+            "v3federation" | "federation" => Ok(Self::V3Federation),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
             "v3multifactor" => Ok(Self::V3Multifactor),
@@ -276,6 +292,8 @@ impl AuthType {
         match self {
             Self::V3ApplicationCredential => "v3applicationcredential",
             Self::V3Password => "v3password",
+            #[cfg(feature = "keystone_ng")]
+            Self::V3Federation => "v3federation",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
             Self::V3Totp => "v3totp",
