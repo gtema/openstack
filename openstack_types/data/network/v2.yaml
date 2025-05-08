@@ -11390,42 +11390,39 @@ components:
               description: |-
                 A valid DNS domain.
             port_details:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: Human-readable name of the resource.
-                  network_id:
-                    type: string
-                    format: uuid
-                    description: The ID of the attached network.
-                  admin_state_up:
-                    type:
-                      - string
-                      - boolean
-                    description: The administrative state of the resource, which is
-                      up (`true`) or down (`false`).
-                  mac_address:
-                    type: string
-                    description: The MAC address of the port. If the port uses the
-                      `direct-physical` `vnic_type` then the value of this field is
-                      overwritten with the MAC address provided in the active binding:profile
-                      if any.
-                  device_id:
-                    type: string
-                    description: The ID of the device that uses this port. For example,
-                      a server instance or a logical router.
-                  device_owner:
-                    type: string
-                    description: The entity type that uses this port. For example,
-                      `compute:nova` (server instance), `network:dhcp` (DHCP agent)
-                      or `network:router_interface` (router interface).
-                  status:
-                    type: string
-                    description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
-                      and `ERROR`.
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Human-readable name of the resource.
+                network_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the attached network.
+                admin_state_up:
+                  type:
+                    - string
+                    - boolean
+                  description: The administrative state of the resource, which is
+                    up (`true`) or down (`false`).
+                mac_address:
+                  type: string
+                  description: The MAC address of the port. If the port uses the `direct-physical`
+                    `vnic_type` then the value of this field is overwritten with the
+                    MAC address provided in the active binding:profile if any.
+                device_id:
+                  type: string
+                  description: The ID of the device that uses this port. For example,
+                    a server instance or a logical router.
+                device_owner:
+                  type: string
+                  description: The entity type that uses this port. For example, `compute:nova`
+                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
+                    (router interface).
+                status:
+                  type: string
+                  description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
+                    and `ERROR`.
               description: |-
                 The information of the port that this floating IP associates with.
                 In particular, if the floating IP is associated with a port, this field
@@ -11585,42 +11582,40 @@ components:
                 description: |-
                   A valid DNS domain.
               port_details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      description: Human-readable name of the resource.
-                    network_id:
-                      type: string
-                      format: uuid
-                      description: The ID of the attached network.
-                    admin_state_up:
-                      type:
-                        - string
-                        - boolean
-                      description: The administrative state of the resource, which
-                        is up (`true`) or down (`false`).
-                    mac_address:
-                      type: string
-                      description: The MAC address of the port. If the port uses the
-                        `direct-physical` `vnic_type` then the value of this field
-                        is overwritten with the MAC address provided in the active
-                        binding:profile if any.
-                    device_id:
-                      type: string
-                      description: The ID of the device that uses this port. For example,
-                        a server instance or a logical router.
-                    device_owner:
-                      type: string
-                      description: The entity type that uses this port. For example,
-                        `compute:nova` (server instance), `network:dhcp` (DHCP agent)
-                        or `network:router_interface` (router interface).
-                    status:
-                      type: string
-                      description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
-                        and `ERROR`.
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Human-readable name of the resource.
+                  network_id:
+                    type: string
+                    format: uuid
+                    description: The ID of the attached network.
+                  admin_state_up:
+                    type:
+#                      - string
+                      - boolean
+                    description: The administrative state of the resource, which is
+                      up (`true`) or down (`false`).
+                  mac_address:
+                    type: string
+                    description: The MAC address of the port. If the port uses the
+                      `direct-physical` `vnic_type` then the value of this field is
+                      overwritten with the MAC address provided in the active binding:profile
+                      if any.
+                  device_id:
+                    type: string
+                    description: The ID of the device that uses this port. For example,
+                      a server instance or a logical router.
+                  device_owner:
+                    type: string
+                    description: The entity type that uses this port. For example,
+                      `compute:nova` (server instance), `network:dhcp` (DHCP agent)
+                      or `network:router_interface` (router interface).
+                  status:
+                    type: string
+                    description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
+                      and `ERROR`.
                 description: |-
                   The information of the port that this floating IP associates with.
                   In particular, if the floating IP is associated with a port, this field
@@ -11815,42 +11810,39 @@ components:
               description: |-
                 A valid DNS domain.
             port_details:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: Human-readable name of the resource.
-                  network_id:
-                    type: string
-                    format: uuid
-                    description: The ID of the attached network.
-                  admin_state_up:
-                    type:
-                      - string
-                      - boolean
-                    description: The administrative state of the resource, which is
-                      up (`true`) or down (`false`).
-                  mac_address:
-                    type: string
-                    description: The MAC address of the port. If the port uses the
-                      `direct-physical` `vnic_type` then the value of this field is
-                      overwritten with the MAC address provided in the active binding:profile
-                      if any.
-                  device_id:
-                    type: string
-                    description: The ID of the device that uses this port. For example,
-                      a server instance or a logical router.
-                  device_owner:
-                    type: string
-                    description: The entity type that uses this port. For example,
-                      `compute:nova` (server instance), `network:dhcp` (DHCP agent)
-                      or `network:router_interface` (router interface).
-                  status:
-                    type: string
-                    description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
-                      and `ERROR`.
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Human-readable name of the resource.
+                network_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the attached network.
+                admin_state_up:
+                  type:
+                    - string
+                    - boolean
+                  description: The administrative state of the resource, which is
+                    up (`true`) or down (`false`).
+                mac_address:
+                  type: string
+                  description: The MAC address of the port. If the port uses the `direct-physical`
+                    `vnic_type` then the value of this field is overwritten with the
+                    MAC address provided in the active binding:profile if any.
+                device_id:
+                  type: string
+                  description: The ID of the device that uses this port. For example,
+                    a server instance or a logical router.
+                device_owner:
+                  type: string
+                  description: The entity type that uses this port. For example, `compute:nova`
+                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
+                    (router interface).
+                status:
+                  type: string
+                  description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
+                    and `ERROR`.
               description: |-
                 The information of the port that this floating IP associates with.
                 In particular, if the floating IP is associated with a port, this field
@@ -12008,42 +12000,39 @@ components:
               description: |-
                 A valid DNS domain.
             port_details:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: Human-readable name of the resource.
-                  network_id:
-                    type: string
-                    format: uuid
-                    description: The ID of the attached network.
-                  admin_state_up:
-                    type:
-                      - string
-                      - boolean
-                    description: The administrative state of the resource, which is
-                      up (`true`) or down (`false`).
-                  mac_address:
-                    type: string
-                    description: The MAC address of the port. If the port uses the
-                      `direct-physical` `vnic_type` then the value of this field is
-                      overwritten with the MAC address provided in the active binding:profile
-                      if any.
-                  device_id:
-                    type: string
-                    description: The ID of the device that uses this port. For example,
-                      a server instance or a logical router.
-                  device_owner:
-                    type: string
-                    description: The entity type that uses this port. For example,
-                      `compute:nova` (server instance), `network:dhcp` (DHCP agent)
-                      or `network:router_interface` (router interface).
-                  status:
-                    type: string
-                    description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
-                      and `ERROR`.
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Human-readable name of the resource.
+                network_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the attached network.
+                admin_state_up:
+                  type:
+                    - string
+                    - boolean
+                  description: The administrative state of the resource, which is
+                    up (`true`) or down (`false`).
+                mac_address:
+                  type: string
+                  description: The MAC address of the port. If the port uses the `direct-physical`
+                    `vnic_type` then the value of this field is overwritten with the
+                    MAC address provided in the active binding:profile if any.
+                device_id:
+                  type: string
+                  description: The ID of the device that uses this port. For example,
+                    a server instance or a logical router.
+                device_owner:
+                  type: string
+                  description: The entity type that uses this port. For example, `compute:nova`
+                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
+                    (router interface).
+                status:
+                  type: string
+                  description: The port status. Values are `ACTIVE`, `DOWN`, `BUILD`
+                    and `ERROR`.
               description: |-
                 The information of the port that this floating IP associates with.
                 In particular, if the floating IP is associated with a port, this field

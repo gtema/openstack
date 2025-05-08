@@ -53,6 +53,16 @@ pub fn get_client<S: AsRef<str>>(service: S) -> FakeOpenStackClient {
                 .expect("url must be valid uri"),
             );
         }
+        "network" => {
+            client.add_endpoint(
+                service.as_ref(),
+                Url::parse(
+                    &env::var("OPENSTACK_NETWORK_ENDPOINT")
+                        .expect("OPENSTACK_NETWORK_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
         _ => {}
     };
     client.set_auth(Some(Auth::AuthToken(Box::new(AuthToken::from("fake")))));

@@ -69,7 +69,7 @@ pub struct FloatingipResponse {
     /// this field is `null`.
     #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub port_details: Option<Vec<PortDetails>>,
+    pub port_details: Option<PortDetails>,
 
     /// The associated port forwarding resources for the floating IP. If the
     /// floating IP has multiple port forwarding resources, this field has
@@ -124,6 +124,12 @@ pub struct FloatingipResponse {
     pub updated_at: Option<String>,
 }
 
+/// The information of the port that this floating IP associates with. In
+/// particular, if the floating IP is associated with a port, this field
+/// contains some attributes of the associated port, including `name`,
+/// `network_id`, `mac_address`, `admin_state_up`, `status`, `device_id` and
+/// `device_owner`. If the floating IP is not associated with a port, this
+/// field is `null`.
 /// `PortDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortDetails {

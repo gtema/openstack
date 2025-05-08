@@ -12,4 +12,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod v2;
+mod response;
