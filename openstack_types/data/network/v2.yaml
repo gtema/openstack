@@ -11400,9 +11400,7 @@ components:
                   format: uuid
                   description: The ID of the attached network.
                 admin_state_up:
-                  type:
-                    - string
-                    - boolean
+                  type: boolean
                   description: The administrative state of the resource, which is
                     up (`true`) or down (`false`).
                 mac_address:
@@ -11592,9 +11590,7 @@ components:
                     format: uuid
                     description: The ID of the attached network.
                   admin_state_up:
-                    type:
-#                      - string
-                      - boolean
+                    type: boolean
                     description: The administrative state of the resource, which is
                       up (`true`) or down (`false`).
                   mac_address:
@@ -11820,9 +11816,7 @@ components:
                   format: uuid
                   description: The ID of the attached network.
                 admin_state_up:
-                  type:
-                    - string
-                    - boolean
+                  type: boolean
                   description: The administrative state of the resource, which is
                     up (`true`) or down (`false`).
                 mac_address:
@@ -12010,9 +12004,7 @@ components:
                   format: uuid
                   description: The ID of the attached network.
                 admin_state_up:
-                  type:
-                    - string
-                    - boolean
+                  type: boolean
                   description: The administrative state of the resource, which is
                     up (`true`) or down (`false`).
                 mac_address:
