@@ -33376,33 +33376,44 @@ components:
                 description: Id of the server
                 readOnly: true
               image:
-                type: object
+                oneOf:
+                  - type: object
+                    description: The image property as returned from server.
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: The image ID
+                      links:
+                        description: Links to the resources in question. See [API
+                          Guide / Links and 
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
+                        type: array
+                        items:
+                          type: object
+                          description: Links to the resources in question. See [API
+                            Guide / Links and 
+                            References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                            for more info.
+                          properties:
+                            href:
+                              type: string
+                              format: uri
+                            rel:
+                              type: string
+                      properties:
+                        type: object
+                        x-openstack:
+                          min-ver: '2.98'
+                    required:
+                      - id
+                  - type: string
+                    enum:
+                      - ''
                 description: |-
                   The UUID and links for the image for your server instance. The `image` object
                   will be an empty string when you boot the server from a volume.
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                    description: The image ID
-                  links:
-                    description: Links to the resources in question. See [API Guide
-                      / Links and 
-                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                      for more info.
-                    type: array
-                    items:
-                      type: object
-                      description: Links to the resources in question. See [API Guide
-                        / Links and 
-                        References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                        for more info.
-                      properties:
-                        href:
-                          type: string
-                          format: uri
-                        rel:
-                          type: string
               OS-EXT-SRV-ATTR:instance_name:
                 type: string
                 description: |-
@@ -33977,33 +33988,44 @@ components:
               description: Id of the server
               readOnly: true
             image:
-              type: object
+              oneOf:
+                - type: object
+                  description: The image property as returned from server.
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: The image ID
+                    links:
+                      description: Links to the resources in question. See [API Guide
+                        / Links and 
+                        References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                        for more info.
+                      type: array
+                      items:
+                        type: object
+                        description: Links to the resources in question. See [API
+                          Guide / Links and 
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
+                        properties:
+                          href:
+                            type: string
+                            format: uri
+                          rel:
+                            type: string
+                    properties:
+                      type: object
+                      x-openstack:
+                        min-ver: '2.98'
+                  required:
+                    - id
+                - type: string
+                  enum:
+                    - ''
               description: |-
                 The UUID and links for the image for your server instance. The `image` object
                 will be an empty string when you boot the server from a volume.
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  description: The image ID
-                links:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
-                    References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                    for more info.
-                  type: array
-                  items:
-                    type: object
-                    description: Links to the resources in question. See [API Guide
-                      / Links and 
-                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                      for more info.
-                    properties:
-                      href:
-                        type: string
-                        format: uri
-                      rel:
-                        type: string
             OS-EXT-SRV-ATTR:instance_name:
               type: string
               description: |-
@@ -34926,33 +34948,44 @@ components:
               description: Id of the server
               readOnly: true
             image:
-              type: object
+              oneOf:
+                - type: object
+                  description: The image property as returned from server.
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: The image ID
+                    links:
+                      description: Links to the resources in question. See [API Guide
+                        / Links and 
+                        References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                        for more info.
+                      type: array
+                      items:
+                        type: object
+                        description: Links to the resources in question. See [API
+                          Guide / Links and 
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
+                        properties:
+                          href:
+                            type: string
+                            format: uri
+                          rel:
+                            type: string
+                    properties:
+                      type: object
+                      x-openstack:
+                        min-ver: '2.98'
+                  required:
+                    - id
+                - type: string
+                  enum:
+                    - ''
               description: |-
                 The UUID and links for the image for your server instance. The `image` object
                 will be an empty string when you boot the server from a volume.
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  description: The image ID
-                links:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
-                    References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                    for more info.
-                  type: array
-                  items:
-                    type: object
-                    description: Links to the resources in question. See [API Guide
-                      / Links and 
-                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-                      for more info.
-                    properties:
-                      href:
-                        type: string
-                        format: uri
-                      rel:
-                        type: string
             OS-EXT-SRV-ATTR:instance_name:
               type: string
               description: |-
@@ -42929,36 +42962,36 @@ components:
       schema:
         type: string
         enum:
-          - created_at
-          - launched_at
           - availability_zone
-          - image_ref
-          - display_description
-          - auto_disk_config
-          - ramdisk_id
-          - vm_state
-          - display_name
+          - task_state
           - access_ip_v4
-          - terminated_at
+          - config_drive
           - kernel_id
-          - node
-          - root_device_name
+          - instance_type_id
           - access_ip_v6
-          - hostname
-          - locked
+          - uuid
+          - root_device_name
           - key_name
+          - display_description
+          - launched_at
+          - locked_by
+          - display_name
+          - progress
+          - ramdisk_id
+          - created_at
+          - auto_disk_config
+          - vm_state
+          - image_ref
+          - launch_index
+          - terminated_at
+          - project_id
+          - hostname
+          - node
+          - host
           - updated_at
           - power_state
-          - progress
-          - host
-          - launch_index
-          - uuid
-          - config_drive
           - user_id
-          - instance_type_id
-          - task_state
-          - project_id
-          - locked_by
+          - locked
     os_volumes_boot_sort_dir:
       in: query
       name: sort_dir
@@ -43297,36 +43330,36 @@ components:
       schema:
         type: string
         enum:
-          - created_at
-          - launched_at
           - availability_zone
-          - image_ref
-          - display_description
-          - auto_disk_config
-          - ramdisk_id
-          - vm_state
-          - display_name
+          - task_state
           - access_ip_v4
-          - terminated_at
+          - config_drive
           - kernel_id
-          - node
-          - root_device_name
+          - instance_type_id
           - access_ip_v6
-          - hostname
-          - locked
+          - uuid
+          - root_device_name
           - key_name
+          - display_description
+          - launched_at
+          - locked_by
+          - display_name
+          - progress
+          - ramdisk_id
+          - created_at
+          - auto_disk_config
+          - vm_state
+          - image_ref
+          - launch_index
+          - terminated_at
+          - project_id
+          - hostname
+          - node
+          - host
           - updated_at
           - power_state
-          - progress
-          - host
-          - launch_index
-          - uuid
-          - config_drive
           - user_id
-          - instance_type_id
-          - task_state
-          - project_id
-          - locked_by
+          - locked
     os_volumes_boot_detail_sort_dir:
       in: query
       name: sort_dir
@@ -43679,36 +43712,36 @@ components:
       schema:
         type: string
         enum:
-          - created_at
-          - launched_at
           - availability_zone
-          - image_ref
-          - display_description
-          - auto_disk_config
-          - ramdisk_id
-          - vm_state
-          - display_name
+          - task_state
           - access_ip_v4
-          - terminated_at
+          - config_drive
           - kernel_id
-          - node
-          - root_device_name
+          - instance_type_id
           - access_ip_v6
-          - hostname
-          - locked
+          - uuid
+          - root_device_name
           - key_name
+          - display_description
+          - launched_at
+          - locked_by
+          - display_name
+          - progress
+          - ramdisk_id
+          - created_at
+          - auto_disk_config
+          - vm_state
+          - image_ref
+          - launch_index
+          - terminated_at
+          - project_id
+          - hostname
+          - node
+          - host
           - updated_at
           - power_state
-          - progress
-          - host
-          - launch_index
-          - uuid
-          - config_drive
           - user_id
-          - instance_type_id
-          - task_state
-          - project_id
-          - locked_by
+          - locked
     servers_sort_dir:
       in: query
       name: sort_dir
@@ -44047,36 +44080,36 @@ components:
       schema:
         type: string
         enum:
-          - created_at
-          - launched_at
           - availability_zone
-          - image_ref
-          - display_description
-          - auto_disk_config
-          - ramdisk_id
-          - vm_state
-          - display_name
+          - task_state
           - access_ip_v4
-          - terminated_at
+          - config_drive
           - kernel_id
-          - node
-          - root_device_name
+          - instance_type_id
           - access_ip_v6
-          - hostname
-          - locked
+          - uuid
+          - root_device_name
           - key_name
+          - display_description
+          - launched_at
+          - locked_by
+          - display_name
+          - progress
+          - ramdisk_id
+          - created_at
+          - auto_disk_config
+          - vm_state
+          - image_ref
+          - launch_index
+          - terminated_at
+          - project_id
+          - hostname
+          - node
+          - host
           - updated_at
           - power_state
-          - progress
-          - host
-          - launch_index
-          - uuid
-          - config_drive
           - user_id
-          - instance_type_id
-          - task_state
-          - project_id
-          - locked_by
+          - locked
     servers_detail_sort_dir:
       in: query
       name: sort_dir
