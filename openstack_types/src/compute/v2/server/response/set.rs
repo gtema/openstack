@@ -125,7 +125,7 @@ pub struct ServerResponse {
     /// The UUID and links for the image for your server instance. The `image`
     /// object will be an empty string when you boot the server from a volume.
     #[structable(serialize)]
-    pub image: Image,
+    pub image: ImageEnum,
 
     /// The name of associated key pair, if any.
     ///
@@ -531,13 +531,39 @@ impl std::str::FromStr for HostStatus {
     }
 }
 
-/// The UUID and links for the image for your server instance. The `image`
-/// object will be an empty string when you boot the server from a volume.
+/// The image property as returned from server.
 /// `Image` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Image {
-    pub id: Option<String>,
+    pub id: String,
     pub links: Option<Vec<Links>>,
+    pub properties: Option<BTreeMap<String, Value>>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum ImageStringEnum {
+    // Empty
+    #[serde(rename = "")]
+    Empty,
+}
+
+impl std::str::FromStr for ImageStringEnum {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "" => Ok(Self::Empty),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum ImageEnum {
+    // F1
+    F1(Image),
+    // F2
+    F2(ImageStringEnum),
 }
 
 /// `SecurityGroups` type
