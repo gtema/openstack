@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.0...openstack_cli-v0.12.1) - 2025-05-12
+
+### Added
+
+- Adapt default attributes for network.port listing ([#1217](https://github.com/gtema/openstack/pull/1217))
+- Add cascade QP for delete octavia loadbalancer ([#1204](https://github.com/gtema/openstack/pull/1204))
+
+### Other
+
+- Fix typos in parameter names ([#1203](https://github.com/gtema/openstack/pull/1203))
+- Initialize mock testing ([#1202](https://github.com/gtema/openstack/pull/1202))
+
 ## [0.12.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.11.1...openstack_cli-v0.12.0) - 2025-05-05
 
 ### Added
