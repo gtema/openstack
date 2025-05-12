@@ -53,6 +53,8 @@ views:
   # network
   network.network:
     fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
+  network.port:
+    fields: [id, name, admin_state_up, device_id, device_owner, dns_assignment, fixed_ips, network_id, security_groups, status, tags]
   network.router:
     fields: [id, name, admin_stateu_up, description, external_gateway_info, status, created_at, tags]
   network.subnet:
