@@ -21,7 +21,7 @@ use std::collections::BTreeSet;
 use std::io::{self, Write};
 
 use crate::OpenStackCliError;
-use crate::cli::{Cli, OutputFormat};
+use crate::cli::{Cli, OutputFormat, TableArrangement};
 use structable::{OutputConfig, StructTable};
 
 /// Output Processor
@@ -31,6 +31,8 @@ pub(crate) struct OutputProcessor {
     pub(crate) config: OutputConfig,
     /// Whether output is for human or for machine
     pub(crate) target: OutputFor,
+    /// Table arrangement
+    pub(crate) table_arrangement: TableArrangement,
 }
 
 /// Output target (human or machine) enum
@@ -38,6 +40,16 @@ pub(crate) struct OutputProcessor {
 pub(crate) enum OutputFor {
     Human,
     Machine,
+}
+
+impl From<TableArrangement> for ContentArrangement {
+    fn from(value: TableArrangement) -> Self {
+        match value {
+            TableArrangement::Dynamic => Self::Dynamic,
+            TableArrangement::DynamicFullWidth => Self::DynamicFullWidth,
+            TableArrangement::Disabled => Self::Disabled,
+        }
+    }
 }
 
 impl OutputProcessor {
@@ -55,6 +67,7 @@ impl OutputProcessor {
                 pretty: args.global_opts.pretty,
             },
             target,
+            table_arrangement: args.global_opts.table_arrangement,
         }
     }
 
@@ -73,10 +86,16 @@ impl OutputProcessor {
         if config.fields.is_empty() && !config.wide {
             if let Some(cfg) = args.config.views.get(resource_key.as_ref()) {
                 config = cfg.clone();
+                config.wide = matches!(args.global_opts.output, Some(OutputFormat::Wide));
+                config.pretty = args.global_opts.pretty;
             }
         }
 
-        Self { config, target }
+        Self {
+            config,
+            target,
+            table_arrangement: args.global_opts.table_arrangement,
+        }
     }
 
     /// Validate command arguments with respect to the output producing
@@ -137,7 +156,7 @@ impl OutputProcessor {
                 let mut table = Table::new();
                 table
                     .load_preset(UTF8_FULL_CONDENSED)
-                    .set_content_arrangement(ContentArrangement::Dynamic)
+                    .set_content_arrangement(ContentArrangement::from(self.table_arrangement))
                     .set_header(headers)
                     .add_rows(rows);
                 println!("{table}");
@@ -175,7 +194,7 @@ impl OutputProcessor {
         let mut table = Table::new();
         table
             .load_preset(UTF8_FULL_CONDENSED)
-            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_content_arrangement(ContentArrangement::from(self.table_arrangement))
             .set_header(headers)
             .add_rows(table_rows);
         println!("{table}");

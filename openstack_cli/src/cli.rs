@@ -182,8 +182,12 @@ pub struct GlobalOpts {
     #[arg(short, long, global=true, action = clap::ArgAction::Count, display_order = 920)]
     pub verbose: u8,
 
+    /// Output Table arrangement
+    #[arg(long, global=true, default_value_t = TableArrangement::Dynamic, value_enum, display_order = 930)]
+    pub table_arrangement: TableArrangement,
+
     /// Record HTTP request timings
-    #[arg(long, global=true, action = clap::ArgAction::SetTrue, display_order = 920)]
+    #[arg(long, global=true, action = clap::ArgAction::SetTrue, display_order = 950)]
     pub timing: bool,
 }
 
@@ -195,6 +199,22 @@ pub enum OutputFormat {
     /// Wide (Human readable table with extra attributes). Note: this has
     /// effect only in list operations
     Wide,
+}
+
+/// Table arrangement
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+pub enum TableArrangement {
+    /// Dynamically determine the width of columns in regard to terminal width and content length.
+    /// With this mode, the content in cells will wrap dynamically to get the the best column
+    /// layout for the given content.
+    #[default]
+    Dynamic,
+    /// This is mode is the same as the `Dynamic` arrangement, but it will always use as much space
+    /// as it’s given. Any surplus space will be distributed between all columns.
+    DynamicFullWidth,
+    /// Don’t do any content arrangement. Tables with this mode might become wider than your output
+    /// and look ugly.
+    Disabled,
 }
 
 /// Supported Top Level commands (services)
