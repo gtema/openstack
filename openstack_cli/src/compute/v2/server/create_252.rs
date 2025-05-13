@@ -215,6 +215,10 @@ struct Server {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The flavor reference, as an ID (including a UUID) or full URL, for the
     /// flavor for your server instance.
     #[arg(help_heading = "Body parameters", long)]
@@ -614,6 +618,8 @@ impl ServerCommand {
 
         if let Some(val) = &args.description {
             server_builder.description(Some(val.into()));
+        } else if args.no_description {
+            server_builder.description(None);
         }
 
         if let Some(val) = &args.tags {

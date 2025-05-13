@@ -85,6 +85,10 @@ struct ServiceProfile {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Provider driver to use for this profile.
     #[arg(help_heading = "Body parameters", long)]
     driver: Option<String>,
@@ -122,6 +126,8 @@ impl ServiceProfileCommand {
         let mut service_profile_builder = create::ServiceProfileBuilder::default();
         if let Some(val) = &args.description {
             service_profile_builder.description(Some(val.into()));
+        } else if args.no_description {
+            service_profile_builder.description(None);
         }
 
         if let Some(val) = &args.driver {

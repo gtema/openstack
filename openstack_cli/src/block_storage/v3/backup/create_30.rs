@@ -62,9 +62,17 @@ struct Backup {
     #[arg(help_heading = "Body parameters", long)]
     container: Option<String>,
 
+    /// Set explicit NULL for the container
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "container")]
+    no_container: bool,
+
     /// The backup description or null.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
 
     /// Indicates whether to backup, even if the volume is attached. Default is
     /// `false`. See [valid boolean values](#valid-boolean-values)
@@ -80,9 +88,17 @@ struct Backup {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     /// The UUID of the source snapshot that you want to back up.
     #[arg(help_heading = "Body parameters", long)]
     snapshot_id: Option<String>,
+
+    /// Set explicit NULL for the snapshot_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "snapshot_id")]
+    no_snapshot_id: bool,
 
     /// The UUID of the volume that you want to back up.
     #[arg(help_heading = "Body parameters", long)]
@@ -115,10 +131,14 @@ impl BackupCommand {
 
         if let Some(val) = &args.container {
             backup_builder.container(Some(val.into()));
+        } else if args.no_container {
+            backup_builder.container(None);
         }
 
         if let Some(val) = &args.description {
             backup_builder.description(Some(val.into()));
+        } else if args.no_description {
+            backup_builder.description(None);
         }
 
         if let Some(val) = &args.incremental {
@@ -131,10 +151,14 @@ impl BackupCommand {
 
         if let Some(val) = &args.name {
             backup_builder.name(Some(val.into()));
+        } else if args.no_name {
+            backup_builder.name(None);
         }
 
         if let Some(val) = &args.snapshot_id {
             backup_builder.snapshot_id(Some(val.into()));
+        } else if args.no_snapshot_id {
+            backup_builder.snapshot_id(None);
         }
 
         ep_builder.backup(backup_builder.build().unwrap());

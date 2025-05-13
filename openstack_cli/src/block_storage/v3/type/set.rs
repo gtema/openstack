@@ -70,11 +70,19 @@ struct VolumeType {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     is_public: Option<bool>,
 
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 }
 
 impl TypeCommand {
@@ -112,10 +120,14 @@ impl TypeCommand {
         let mut volume_type_builder = set::VolumeTypeBuilder::default();
         if let Some(val) = &args.name {
             volume_type_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_type_builder.name(None);
         }
 
         if let Some(val) = &args.description {
             volume_type_builder.description(Some(val.into()));
+        } else if args.no_description {
+            volume_type_builder.description(None);
         }
 
         if let Some(val) = &args.is_public {

@@ -71,6 +71,10 @@ struct Segment {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     /// The ID of the attached network.
     #[arg(help_heading = "Body parameters", long)]
     network_id: Option<String>,
@@ -138,6 +142,8 @@ impl SegmentCommand {
 
         if let Some(val) = &args.name {
             segment_builder.name(Some(val.into()));
+        } else if args.no_name {
+            segment_builder.name(None);
         }
 
         if let Some(val) = &args.description {

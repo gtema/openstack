@@ -123,6 +123,10 @@ struct Network {
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
+    /// Set explicit NULL for the qos_policy_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
+    no_qos_policy_id: bool,
+
     /// Indicates whether the network has an external routing facility that’s
     /// not managed by the networking service.
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -224,6 +228,8 @@ impl NetworkCommand {
 
         if let Some(val) = &args.qos_policy_id {
             network_builder.qos_policy_id(Some(val.into()));
+        } else if args.no_qos_policy_id {
+            network_builder.qos_policy_id(None);
         }
 
         if let Some(val) = &args.is_default {

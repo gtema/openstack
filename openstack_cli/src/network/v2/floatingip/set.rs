@@ -97,14 +97,26 @@ struct Floatingip {
     #[arg(help_heading = "Body parameters", long)]
     fixed_ip_address: Option<String>,
 
+    /// Set explicit NULL for the fixed_ip_address
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "fixed_ip_address")]
+    no_fixed_ip_address: bool,
+
     /// The ID of a port associated with the floating IP. To associate the
     /// floating IP with a fixed IP, you must specify the ID of the internal
     /// port. To disassociate the floating IP, `null` should be specified.
     #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
+    /// Set explicit NULL for the port_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "port_id")]
+    no_port_id: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
+
+    /// Set explicit NULL for the qos_policy_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
+    no_qos_policy_id: bool,
 }
 
 impl FloatingipCommand {
@@ -130,14 +142,20 @@ impl FloatingipCommand {
         let mut floatingip_builder = set::FloatingipBuilder::default();
         if let Some(val) = &args.port_id {
             floatingip_builder.port_id(Some(val.into()));
+        } else if args.no_port_id {
+            floatingip_builder.port_id(None);
         }
 
         if let Some(val) = &args.fixed_ip_address {
             floatingip_builder.fixed_ip_address(Some(val.into()));
+        } else if args.no_fixed_ip_address {
+            floatingip_builder.fixed_ip_address(None);
         }
 
         if let Some(val) = &args.qos_policy_id {
             floatingip_builder.qos_policy_id(Some(val.into()));
+        } else if args.no_qos_policy_id {
+            floatingip_builder.qos_policy_id(None);
         }
 
         if let Some(val) = &args.description {

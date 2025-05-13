@@ -99,6 +99,10 @@ struct EndpointGroup {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Describes the filtering performed by the endpoint group. The filter
     /// used must be an endpoint property, such as interface, service_id,
     /// region, and enabled. Note that if using interface as a filter, the only
@@ -136,6 +140,8 @@ impl EndpointGroupCommand {
         let mut endpoint_group_builder = create::EndpointGroupBuilder::default();
         if let Some(val) = &args.description {
             endpoint_group_builder.description(Some(val.into()));
+        } else if args.no_description {
+            endpoint_group_builder.description(None);
         }
 
         let mut filters_builder = create::FiltersBuilder::default();

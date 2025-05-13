@@ -62,9 +62,17 @@ struct Group {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Set explicit NULL for the availability_zone
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "availability_zone")]
+    no_availability_zone: bool,
+
     /// The group description.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
 
     /// The group type ID.
     #[arg(help_heading = "Body parameters", long)]
@@ -73,6 +81,10 @@ struct Group {
     /// The group name.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 
     /// The list of volume types. In an environment with multiple-storage back
     /// ends, the scheduler determines where to send the volume based on the
@@ -108,18 +120,24 @@ impl GroupCommand {
         let mut group_builder = create_313::GroupBuilder::default();
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_builder.description(None);
         }
 
         group_builder.group_type(&args.group_type);
 
         if let Some(val) = &args.name {
             group_builder.name(Some(val.into()));
+        } else if args.no_name {
+            group_builder.name(None);
         }
 
         group_builder.volume_types(args.volume_types.iter().map(Into::into).collect::<Vec<_>>());
 
         if let Some(val) = &args.availability_zone {
             group_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            group_builder.availability_zone(None);
         }
 
         ep_builder.group(group_builder.build().unwrap());

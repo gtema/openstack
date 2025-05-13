@@ -106,11 +106,19 @@ struct Snapshot {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     _ref: Option<Value>,
@@ -144,6 +152,8 @@ impl SnapshotManageCommand {
         let mut snapshot_builder = create::SnapshotBuilder::default();
         if let Some(val) = &args.description {
             snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            snapshot_builder.description(None);
         }
 
         if let Some(val) = &args.metadata {
@@ -152,6 +162,8 @@ impl SnapshotManageCommand {
 
         if let Some(val) = &args.name {
             snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            snapshot_builder.name(None);
         }
 
         snapshot_builder.volume_id(&args.volume_id);

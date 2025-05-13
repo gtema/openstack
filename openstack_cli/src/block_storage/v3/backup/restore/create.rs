@@ -68,8 +68,16 @@ struct Restore {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     volume_id: Option<String>,
+
+    /// Set explicit NULL for the volume_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "volume_id")]
+    no_volume_id: bool,
 }
 
 impl RestoreCommand {

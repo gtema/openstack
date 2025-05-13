@@ -125,6 +125,10 @@ struct Subnet {
     #[arg(help_heading = "Body parameters", long)]
     cidr: Option<String>,
 
+    /// Set explicit NULL for the cidr
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "cidr")]
+    no_cidr: bool,
+
     /// A human-readable description for the resource. Default is an empty
     /// string.
     #[arg(help_heading = "Body parameters", long)]
@@ -153,6 +157,10 @@ struct Subnet {
     /// the gateway for the subnet by default.
     #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
+
+    /// Set explicit NULL for the gateway_ip
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "gateway_ip")]
+    no_gateway_ip: bool,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
@@ -195,6 +203,10 @@ struct Subnet {
     #[arg(help_heading = "Body parameters", long)]
     segment_id: Option<String>,
 
+    /// Set explicit NULL for the segment_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "segment_id")]
+    no_segment_id: bool,
+
     /// The service types associated with the subnet.
     ///
     /// Parameter is an array, may be provided multiple times.
@@ -204,6 +216,10 @@ struct Subnet {
     /// The ID of the subnet pool associated with the subnet.
     #[arg(help_heading = "Body parameters", long)]
     subnetpool_id: Option<String>,
+
+    /// Set explicit NULL for the subnetpool_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "subnetpool_id")]
+    no_subnetpool_id: bool,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
@@ -246,6 +262,8 @@ impl SubnetCommand {
 
         if let Some(val) = &args.subnetpool_id {
             subnet_builder.subnetpool_id(Some(val.into()));
+        } else if args.no_subnetpool_id {
+            subnet_builder.subnetpool_id(None);
         }
 
         if let Some(val) = &args.prefixlen {
@@ -254,10 +272,14 @@ impl SubnetCommand {
 
         if let Some(val) = &args.cidr {
             subnet_builder.cidr(Some(val.into()));
+        } else if args.no_cidr {
+            subnet_builder.cidr(None);
         }
 
         if let Some(val) = &args.gateway_ip {
             subnet_builder.gateway_ip(Some(val.into()));
+        } else if args.no_gateway_ip {
+            subnet_builder.gateway_ip(None);
         }
 
         if let Some(val) = &args.allocation_pools {
@@ -324,6 +346,8 @@ impl SubnetCommand {
 
         if let Some(val) = &args.segment_id {
             subnet_builder.segment_id(Some(val.into()));
+        } else if args.no_segment_id {
+            subnet_builder.segment_id(None);
         }
 
         ep_builder.subnet(subnet_builder.build().unwrap());

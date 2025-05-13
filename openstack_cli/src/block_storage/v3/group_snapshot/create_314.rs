@@ -62,6 +62,10 @@ struct GroupSnapshot {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of the group.
     #[arg(help_heading = "Body parameters", long)]
     group_id: String,
@@ -69,6 +73,10 @@ struct GroupSnapshot {
     /// The group snapshot name.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 }
 
 impl GroupSnapshotCommand {
@@ -100,10 +108,14 @@ impl GroupSnapshotCommand {
 
         if let Some(val) = &args.name {
             group_snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            group_snapshot_builder.name(None);
         }
 
         if let Some(val) = &args.description {
             group_snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_snapshot_builder.description(None);
         }
 
         ep_builder.group_snapshot(group_snapshot_builder.build().unwrap());

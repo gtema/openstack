@@ -71,17 +71,33 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     display_description: Option<String>,
 
+    /// Set explicit NULL for the display_description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_description")]
+    no_display_description: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     display_name: Option<String>,
+
+    /// Set explicit NULL for the display_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_name")]
+    no_display_name: bool,
 
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 }
 
 impl VolumeCommand {
@@ -121,18 +137,26 @@ impl VolumeCommand {
         let mut volume_builder = set_30::VolumeBuilder::default();
         if let Some(val) = &args.name {
             volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
         }
 
         if let Some(val) = &args.description {
             volume_builder.description(Some(val.into()));
+        } else if args.no_description {
+            volume_builder.description(None);
         }
 
         if let Some(val) = &args.display_name {
             volume_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            volume_builder.display_name(None);
         }
 
         if let Some(val) = &args.display_description {
             volume_builder.display_description(Some(val.into()));
+        } else if args.no_display_description {
+            volume_builder.display_description(None);
         }
 
         if let Some(val) = &args.metadata {

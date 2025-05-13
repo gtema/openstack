@@ -69,6 +69,10 @@ struct Unshelve {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Set explicit NULL for the availability_zone
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "availability_zone")]
+    no_availability_zone: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
 }

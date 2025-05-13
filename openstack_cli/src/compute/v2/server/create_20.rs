@@ -330,6 +330,10 @@ struct Server {
     /// input validation, it isn’t allowed in Nova v2.1 API.
     #[arg(help_heading = "Body parameters", long)]
     user_data: Option<String>,
+
+    /// Set explicit NULL for the user_data
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "user_data")]
+    no_user_data: bool,
 }
 
 /// OsSchedulerHints Body data
@@ -564,6 +568,8 @@ impl ServerCommand {
 
         if let Some(val) = &args.user_data {
             server_builder.user_data(Some(val.into()));
+        } else if args.no_user_data {
+            server_builder.user_data(None);
         }
 
         ep_builder.server(server_builder.build().unwrap());

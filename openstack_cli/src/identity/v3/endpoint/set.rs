@@ -83,6 +83,10 @@ struct Endpoint {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Indicates whether the endpoint appears in the service catalog -false.
     /// The endpoint does not appear in the service catalog. -true. The
     /// endpoint appears in the service catalog.
@@ -105,9 +109,17 @@ struct Endpoint {
     #[arg(help_heading = "Body parameters", long)]
     region: Option<String>,
 
+    /// Set explicit NULL for the region
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "region")]
+    no_region: bool,
+
     /// (Since v3.2) The ID of the region that contains the service endpoint.
     #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
+
+    /// Set explicit NULL for the region_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "region_id")]
+    no_region_id: bool,
 
     /// The UUID of the service to which the endpoint belongs.
     #[arg(help_heading = "Body parameters", long)]
@@ -154,10 +166,14 @@ impl EndpointCommand {
 
         if let Some(val) = &args.region_id {
             endpoint_builder.region_id(Some(val.into()));
+        } else if args.no_region_id {
+            endpoint_builder.region_id(None);
         }
 
         if let Some(val) = &args.region {
             endpoint_builder.region(Some(val.into()));
+        } else if args.no_region {
+            endpoint_builder.region(None);
         }
 
         if let Some(val) = &args.service_id {
@@ -174,6 +190,8 @@ impl EndpointCommand {
 
         if let Some(val) = &args.description {
             endpoint_builder.description(Some(val.into()));
+        } else if args.no_description {
+            endpoint_builder.description(None);
         }
 
         ep_builder.endpoint(endpoint_builder.build().unwrap());

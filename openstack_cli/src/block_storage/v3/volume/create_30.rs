@@ -72,22 +72,46 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Set explicit NULL for the availability_zone
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "availability_zone")]
+    no_availability_zone: bool,
+
     /// The UUID of the consistency group.
     #[arg(help_heading = "Body parameters", long)]
     consistencygroup_id: Option<String>,
+
+    /// Set explicit NULL for the consistencygroup_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "consistencygroup_id")]
+    no_consistencygroup_id: bool,
 
     /// The volume description.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     display_description: Option<String>,
+
+    /// Set explicit NULL for the display_description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_description")]
+    no_display_description: bool,
 
     #[arg(help_heading = "Body parameters", long)]
     display_name: Option<String>,
 
+    /// Set explicit NULL for the display_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_name")]
+    no_display_name: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     image_id: Option<String>,
+
+    /// Set explicit NULL for the image_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "image_id")]
+    no_image_id: bool,
 
     /// The UUID of the image from which you want to create the volume.
     /// Required to create a bootable volume.
@@ -101,6 +125,10 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     image_ref: Option<String>,
 
+    /// Set explicit NULL for the image_ref
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "image_ref")]
+    no_image_ref: bool,
+
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
@@ -113,6 +141,10 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     /// The size of the volume, in gibibytes (GiB).
     #[arg(help_heading = "Body parameters", long)]
     size: Option<Option<i32>>,
@@ -121,9 +153,17 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     snapshot_id: Option<String>,
 
+    /// Set explicit NULL for the snapshot_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "snapshot_id")]
+    no_snapshot_id: bool,
+
     /// The UUID of the consistency group.
     #[arg(help_heading = "Body parameters", long)]
     source_volid: Option<String>,
+
+    /// Set explicit NULL for the source_volid
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "source_volid")]
+    no_source_volid: bool,
 
     /// The volume type (either name or ID). To create an environment with
     /// multiple-storage back ends, you must specify a volume type. Block
@@ -137,6 +177,10 @@ struct Volume {
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
     #[arg(help_heading = "Body parameters", long)]
     volume_type: Option<String>,
+
+    /// Set explicit NULL for the volume_type
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "volume_type")]
+    no_volume_type: bool,
 }
 
 impl VolumeCommand {
@@ -167,22 +211,32 @@ impl VolumeCommand {
         let mut volume_builder = create_30::VolumeBuilder::default();
         if let Some(val) = &args.name {
             volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
         }
 
         if let Some(val) = &args.description {
             volume_builder.description(Some(val.into()));
+        } else if args.no_description {
+            volume_builder.description(None);
         }
 
         if let Some(val) = &args.display_name {
             volume_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            volume_builder.display_name(None);
         }
 
         if let Some(val) = &args.display_description {
             volume_builder.display_description(Some(val.into()));
+        } else if args.no_display_description {
+            volume_builder.display_description(None);
         }
 
         if let Some(val) = &args.volume_type {
             volume_builder.volume_type(Some(val.into()));
+        } else if args.no_volume_type {
+            volume_builder.volume_type(None);
         }
 
         if let Some(val) = &args.metadata {
@@ -191,14 +245,20 @@ impl VolumeCommand {
 
         if let Some(val) = &args.snapshot_id {
             volume_builder.snapshot_id(Some(val.into()));
+        } else if args.no_snapshot_id {
+            volume_builder.snapshot_id(None);
         }
 
         if let Some(val) = &args.source_volid {
             volume_builder.source_volid(Some(val.into()));
+        } else if args.no_source_volid {
+            volume_builder.source_volid(None);
         }
 
         if let Some(val) = &args.consistencygroup_id {
             volume_builder.consistencygroup_id(Some(val.into()));
+        } else if args.no_consistencygroup_id {
+            volume_builder.consistencygroup_id(None);
         }
 
         if let Some(val) = &args.size {
@@ -207,6 +267,8 @@ impl VolumeCommand {
 
         if let Some(val) = &args.availability_zone {
             volume_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            volume_builder.availability_zone(None);
         }
 
         if let Some(val) = &args.multiattach {
@@ -215,10 +277,14 @@ impl VolumeCommand {
 
         if let Some(val) = &args.image_id {
             volume_builder.image_id(Some(val.into()));
+        } else if args.no_image_id {
+            volume_builder.image_id(None);
         }
 
         if let Some(val) = &args.image_ref {
             volume_builder.image_ref(Some(val.into()));
+        } else if args.no_image_ref {
+            volume_builder.image_ref(None);
         }
 
         ep_builder.volume(volume_builder.build().unwrap());

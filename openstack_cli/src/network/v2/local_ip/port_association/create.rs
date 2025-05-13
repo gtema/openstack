@@ -79,6 +79,10 @@ struct PortAssociation {
     #[arg(help_heading = "Body parameters", long)]
     fixed_ip: Option<String>,
 
+    /// Set explicit NULL for the fixed_ip
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "fixed_ip")]
+    no_fixed_ip: bool,
+
     /// The requested ID of the port associated with the Local IP.
     #[arg(help_heading = "Body parameters", long)]
     fixed_port_id: Option<String>,
@@ -117,6 +121,8 @@ impl PortAssociationCommand {
 
         if let Some(val) = &args.fixed_ip {
             port_association_builder.fixed_ip(Some(val.into()));
+        } else if args.no_fixed_ip {
+            port_association_builder.fixed_ip(None);
         }
 
         if let Some(val) = &args.project_id {

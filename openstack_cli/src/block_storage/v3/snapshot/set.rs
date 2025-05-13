@@ -70,14 +70,30 @@ struct Snapshot {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     display_description: Option<String>,
+
+    /// Set explicit NULL for the display_description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_description")]
+    no_display_description: bool,
 
     #[arg(help_heading = "Body parameters", long)]
     display_name: Option<String>,
 
+    /// Set explicit NULL for the display_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_name")]
+    no_display_name: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 }
 
 impl SnapshotCommand {
@@ -116,18 +132,26 @@ impl SnapshotCommand {
         let mut snapshot_builder = set::SnapshotBuilder::default();
         if let Some(val) = &args.name {
             snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            snapshot_builder.name(None);
         }
 
         if let Some(val) = &args.description {
             snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            snapshot_builder.description(None);
         }
 
         if let Some(val) = &args.display_name {
             snapshot_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            snapshot_builder.display_name(None);
         }
 
         if let Some(val) = &args.display_description {
             snapshot_builder.display_description(Some(val.into()));
+        } else if args.no_display_description {
+            snapshot_builder.display_description(None);
         }
 
         ep_builder.snapshot(snapshot_builder.build().unwrap());

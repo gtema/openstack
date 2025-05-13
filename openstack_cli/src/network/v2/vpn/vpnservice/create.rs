@@ -86,6 +86,10 @@ struct Vpnservice {
     #[arg(help_heading = "Body parameters", long)]
     flavor_id: Option<String>,
 
+    /// Set explicit NULL for the flavor_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "flavor_id")]
+    no_flavor_id: bool,
+
     /// Human-readable name of the resource. Default is an empty string.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -99,6 +103,10 @@ struct Vpnservice {
     /// address to the port.
     #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
+
+    /// Set explicit NULL for the subnet_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "subnet_id")]
+    no_subnet_id: bool,
 
     /// The ID of the project.
     #[arg(help_heading = "Body parameters", long)]
@@ -140,6 +148,8 @@ impl VpnserviceCommand {
 
         if let Some(val) = &args.subnet_id {
             vpnservice_builder.subnet_id(Some(val.into()));
+        } else if args.no_subnet_id {
+            vpnservice_builder.subnet_id(None);
         }
 
         if let Some(val) = &args.router_id {
@@ -152,6 +162,8 @@ impl VpnserviceCommand {
 
         if let Some(val) = &args.flavor_id {
             vpnservice_builder.flavor_id(Some(val.into()));
+        } else if args.no_flavor_id {
+            vpnservice_builder.flavor_id(None);
         }
 
         ep_builder.vpnservice(vpnservice_builder.build().unwrap());

@@ -118,6 +118,10 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Set explicit NULL for the availability_zone
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "availability_zone")]
+    no_availability_zone: bool,
+
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume. See
     /// [valid boolean values](#valid-boolean-values)
@@ -128,10 +132,18 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The OpenStack Block Storage host where the existing resource resides.
     /// Optional only if cluster field is provided.
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
+
+    /// Set explicit NULL for the host
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "host")]
+    no_host: bool,
 
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
@@ -141,6 +153,10 @@ struct Volume {
     /// The volume name.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 
     /// A reference to the existing volume. The internal structure of this
     /// reference depends on the volume driver implementation. For details
@@ -152,6 +168,10 @@ struct Volume {
     /// The volume name.
     #[arg(help_heading = "Body parameters", long)]
     volume_type: Option<String>,
+
+    /// Set explicit NULL for the volume_type
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "volume_type")]
+    no_volume_type: bool,
 }
 
 impl ManageableVolumeCommand {
@@ -179,10 +199,14 @@ impl ManageableVolumeCommand {
         let mut volume_builder = create::VolumeBuilder::default();
         if let Some(val) = &args.description {
             volume_builder.description(Some(val.into()));
+        } else if args.no_description {
+            volume_builder.description(None);
         }
 
         if let Some(val) = &args.availability_zone {
             volume_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            volume_builder.availability_zone(None);
         }
 
         if let Some(val) = &args.bootable {
@@ -191,14 +215,20 @@ impl ManageableVolumeCommand {
 
         if let Some(val) = &args.volume_type {
             volume_builder.volume_type(Some(val.into()));
+        } else if args.no_volume_type {
+            volume_builder.volume_type(None);
         }
 
         if let Some(val) = &args.name {
             volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
         }
 
         if let Some(val) = &args.host {
             volume_builder.host(Some(val.into()));
+        } else if args.no_host {
+            volume_builder.host(None);
         }
 
         volume_builder._ref(args._ref.clone());

@@ -74,6 +74,10 @@ struct Project {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of the domain for the project.
     ///
     /// For projects acting as a domain, the `domain_id` must not be specified,
@@ -88,6 +92,10 @@ struct Project {
     /// `Bad Request (400)` will be returned.
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
+
+    /// Set explicit NULL for the domain_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "domain_id")]
+    no_domain_id: bool,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled. The default is `true`.
@@ -126,6 +134,10 @@ struct Project {
     #[arg(help_heading = "Body parameters", long)]
     parent_id: Option<String>,
 
+    /// Set explicit NULL for the parent_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "parent_id")]
+    no_parent_id: bool,
+
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.
     ///
@@ -156,10 +168,14 @@ impl ProjectCommand {
         let mut project_builder = create::ProjectBuilder::default();
         if let Some(val) = &args.description {
             project_builder.description(Some(val.into()));
+        } else if args.no_description {
+            project_builder.description(None);
         }
 
         if let Some(val) = &args.domain_id {
             project_builder.domain_id(Some(val.into()));
+        } else if args.no_domain_id {
+            project_builder.domain_id(None);
         }
 
         if let Some(val) = &args.enabled {
@@ -172,6 +188,8 @@ impl ProjectCommand {
 
         if let Some(val) = &args.parent_id {
             project_builder.parent_id(Some(val.into()));
+        } else if args.no_parent_id {
+            project_builder.parent_id(None);
         }
 
         project_builder.name(&args.name);

@@ -83,6 +83,10 @@ struct VolumeAttachment {
     #[arg(help_heading = "Body parameters", long)]
     device: Option<String>,
 
+    /// Set explicit NULL for the device
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "device")]
+    no_device: bool,
+
     /// A device role tag that can be applied to a volume when attaching it to
     /// the VM. The guest OS of a server that has devices tagged in this manner
     /// can access hardware metadata about the tagged devices from the metadata
@@ -132,6 +136,8 @@ impl VolumeAttachmentCommand {
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
+        } else if args.no_device {
+            volume_attachment_builder.device(None);
         }
 
         if let Some(val) = &args.tag {

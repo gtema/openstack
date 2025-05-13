@@ -62,6 +62,10 @@ struct Transfer {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     /// The UUID of the volume.
     #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
@@ -95,6 +99,8 @@ impl OsVolumeTransferCommand {
 
         if let Some(val) = &args.name {
             transfer_builder.name(Some(val.into()));
+        } else if args.no_name {
+            transfer_builder.name(None);
         }
 
         ep_builder.transfer(transfer_builder.build().unwrap());

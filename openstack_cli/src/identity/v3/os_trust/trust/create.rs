@@ -78,6 +78,10 @@ struct Trust {
     #[arg(help_heading = "Body parameters", long)]
     expires_at: Option<String>,
 
+    /// Set explicit NULL for the expires_at
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "expires_at")]
+    no_expires_at: bool,
+
     /// If set to true, then the user attribute of tokens generated based on
     /// the trust will represent that of the trustor rather than the trustee,
     /// thus allowing the trustee to impersonate the trustor. If impersonation
@@ -91,10 +95,18 @@ struct Trust {
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
+    /// Set explicit NULL for the project_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "project_id")]
+    no_project_id: bool,
+
     /// Returned with redelegated trust provides information about the
     /// predecessor in the trust chain.
     #[arg(help_heading = "Body parameters", long)]
     redelegated_trust_id: Option<String>,
+
+    /// Set explicit NULL for the redelegated_trust_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "redelegated_trust_id")]
+    no_redelegated_trust_id: bool,
 
     /// Specifies the maximum remaining depth of the redelegated trust chain.
     /// Each subsequent trust has this field decremented by 1 automatically.
@@ -170,6 +182,8 @@ impl TrustCommand {
 
         if let Some(val) = &args.project_id {
             trust_builder.project_id(Some(val.into()));
+        } else if args.no_project_id {
+            trust_builder.project_id(None);
         }
 
         if let Some(val) = &args.remaining_uses {
@@ -178,6 +192,8 @@ impl TrustCommand {
 
         if let Some(val) = &args.expires_at {
             trust_builder.expires_at(Some(val.into()));
+        } else if args.no_expires_at {
+            trust_builder.expires_at(None);
         }
 
         if let Some(val) = &args.allow_redelegation {
@@ -190,6 +206,8 @@ impl TrustCommand {
 
         if let Some(val) = &args.redelegated_trust_id {
             trust_builder.redelegated_trust_id(Some(val.into()));
+        } else if args.no_redelegated_trust_id {
+            trust_builder.redelegated_trust_id(None);
         }
 
         if let Some(val) = &args.roles {

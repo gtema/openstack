@@ -88,6 +88,10 @@ struct OsVolumeUploadImage {
     #[arg(help_heading = "Body parameters", long)]
     container_format: Option<String>,
 
+    /// Set explicit NULL for the container_format
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "container_format")]
+    no_container_format: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     disk_format: Option<DiskFormat>,
 
@@ -149,6 +153,8 @@ impl VolumeCommand {
 
         if let Some(val) = &args.container_format {
             os_volume_upload_image_builder.container_format(Some(val.into()));
+        } else if args.no_container_format {
+            os_volume_upload_image_builder.container_format(None);
         }
 
         if let Some(val) = &args.visibility {

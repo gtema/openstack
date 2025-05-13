@@ -79,6 +79,10 @@ struct Group {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The new name of the group.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -119,6 +123,8 @@ impl GroupCommand {
         let mut group_builder = set::GroupBuilder::default();
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_builder.description(None);
         }
 
         if let Some(val) = &args.name {

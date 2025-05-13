@@ -97,6 +97,10 @@ struct Server {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The hostname to configure for the instance in the metadata service.
     ///
     /// Starting with microversion 2.94, this can be a Fully Qualified Domain
@@ -193,6 +197,8 @@ impl ServerCommand {
 
         if let Some(val) = &args.description {
             server_builder.description(Some(val.into()));
+        } else if args.no_description {
+            server_builder.description(None);
         }
 
         if let Some(val) = &args.hostname {

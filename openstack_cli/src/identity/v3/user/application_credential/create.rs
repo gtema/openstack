@@ -97,10 +97,18 @@ struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// An optional expiry time for the application credential. If unset, the
     /// application credential does not expire.
     #[arg(help_heading = "Body parameters", long)]
     expires_at: Option<String>,
+
+    /// Set explicit NULL for the expires_at
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "expires_at")]
+    no_expires_at: bool,
 
     /// The UUID for the credential.
     #[arg(help_heading = "Body parameters", long)]
@@ -130,8 +138,16 @@ struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
     secret: Option<String>,
 
+    /// Set explicit NULL for the secret
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "secret")]
+    no_secret: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     system: Option<String>,
+
+    /// Set explicit NULL for the system
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "system")]
+    no_system: bool,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
@@ -214,16 +230,22 @@ impl ApplicationCredentialCommand {
 
         if let Some(val) = &args.secret {
             application_credential_builder.secret(Some(val.into()));
+        } else if args.no_secret {
+            application_credential_builder.secret(None);
         }
 
         application_credential_builder.name(&args.name);
 
         if let Some(val) = &args.description {
             application_credential_builder.description(Some(val.into()));
+        } else if args.no_description {
+            application_credential_builder.description(None);
         }
 
         if let Some(val) = &args.expires_at {
             application_credential_builder.expires_at(Some(val.into()));
+        } else if args.no_expires_at {
+            application_credential_builder.expires_at(None);
         }
 
         if let Some(val) = &args.project_id {
@@ -244,6 +266,8 @@ impl ApplicationCredentialCommand {
 
         if let Some(val) = &args.system {
             application_credential_builder.system(Some(val.into()));
+        } else if args.no_system {
+            application_credential_builder.system(None);
         }
 
         if let Some(val) = &args.roles {

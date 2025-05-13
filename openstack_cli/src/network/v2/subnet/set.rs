@@ -115,6 +115,10 @@ struct Subnet {
     #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
 
+    /// Set explicit NULL for the gateway_ip
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "gateway_ip")]
+    no_gateway_ip: bool,
+
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
@@ -130,6 +134,10 @@ struct Subnet {
     /// available when `segment` extension is enabled.
     #[arg(help_heading = "Body parameters", long)]
     segment_id: Option<String>,
+
+    /// Set explicit NULL for the segment_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "segment_id")]
+    no_segment_id: bool,
 
     /// The service types associated with the subnet.
     ///
@@ -177,6 +185,8 @@ impl SubnetCommand {
 
         if let Some(val) = &args.gateway_ip {
             subnet_builder.gateway_ip(Some(val.into()));
+        } else if args.no_gateway_ip {
+            subnet_builder.gateway_ip(None);
         }
 
         if let Some(val) = &args.allocation_pools {
@@ -217,6 +227,8 @@ impl SubnetCommand {
 
         if let Some(val) = &args.segment_id {
             subnet_builder.segment_id(Some(val.into()));
+        } else if args.no_segment_id {
+            subnet_builder.segment_id(None);
         }
 
         ep_builder.subnet(subnet_builder.build().unwrap());

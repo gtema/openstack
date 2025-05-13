@@ -63,6 +63,10 @@ struct NdpProxy {
     #[arg(help_heading = "Body parameters", long)]
     ip_address: Option<String>,
 
+    /// Set explicit NULL for the ip_address
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "ip_address")]
+    no_ip_address: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
@@ -114,6 +118,8 @@ impl NdpProxyCommand {
 
         if let Some(val) = &args.ip_address {
             ndp_proxy_builder.ip_address(Some(val.into()));
+        } else if args.no_ip_address {
+            ndp_proxy_builder.ip_address(None);
         }
 
         if let Some(val) = &args.description {

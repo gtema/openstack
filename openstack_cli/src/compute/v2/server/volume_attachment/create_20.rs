@@ -83,6 +83,10 @@ struct VolumeAttachment {
     #[arg(help_heading = "Body parameters", long)]
     device: Option<String>,
 
+    /// Set explicit NULL for the device
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "device")]
+    no_device: bool,
+
     /// The UUID of the volume to attach.
     #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
@@ -118,6 +122,8 @@ impl VolumeAttachmentCommand {
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
+        } else if args.no_device {
+            volume_attachment_builder.device(None);
         }
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());

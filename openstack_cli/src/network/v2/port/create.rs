@@ -162,6 +162,10 @@ struct Port {
     #[arg(help_heading = "Body parameters", long)]
     device_profile: Option<String>,
 
+    /// Set explicit NULL for the device_profile
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "device_profile")]
+    no_device_profile: bool,
+
     /// A valid DNS domain.
     #[arg(help_heading = "Body parameters", long)]
     dns_domain: Option<String>,
@@ -240,6 +244,10 @@ struct Port {
     /// QoS policy associated with the port.
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
+
+    /// Set explicit NULL for the qos_policy_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
+    no_qos_policy_id: bool,
 
     /// The IDs of security groups applied to the port.
     ///
@@ -339,6 +347,8 @@ impl PortCommand {
 
         if let Some(val) = &args.device_profile {
             port_builder.device_profile(Some(val.into()));
+        } else if args.no_device_profile {
+            port_builder.device_profile(None);
         }
 
         if let Some(val) = &args.hints {
@@ -388,6 +398,8 @@ impl PortCommand {
 
         if let Some(val) = &args.qos_policy_id {
             port_builder.qos_policy_id(Some(val.into()));
+        } else if args.no_qos_policy_id {
+            port_builder.qos_policy_id(None);
         }
 
         if let Some(val) = &args.tags {

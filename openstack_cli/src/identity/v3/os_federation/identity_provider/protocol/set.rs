@@ -83,6 +83,10 @@ struct Protocol {
 
     #[arg(help_heading = "Body parameters", long)]
     remote_id_attribute: Option<String>,
+
+    /// Set explicit NULL for the remote_id_attribute
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "remote_id_attribute")]
+    no_remote_id_attribute: bool,
 }
 
 impl ProtocolCommand {
@@ -115,6 +119,8 @@ impl ProtocolCommand {
 
         if let Some(val) = &args.remote_id_attribute {
             protocol_builder.remote_id_attribute(Some(val.into()));
+        } else if args.no_remote_id_attribute {
+            protocol_builder.remote_id_attribute(None);
         }
 
         ep_builder.protocol(protocol_builder.build().unwrap());

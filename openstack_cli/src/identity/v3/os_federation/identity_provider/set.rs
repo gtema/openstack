@@ -75,6 +75,10 @@ struct IdentityProvider {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Whether the identity provider is enabled or not
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
@@ -116,6 +120,8 @@ impl IdentityProviderCommand {
 
         if let Some(val) = &args.description {
             identity_provider_builder.description(Some(val.into()));
+        } else if args.no_description {
+            identity_provider_builder.description(None);
         }
 
         if let Some(val) = &args.authorization_ttl {

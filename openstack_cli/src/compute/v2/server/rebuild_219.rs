@@ -96,6 +96,10 @@ struct Rebuild {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
     /// server with a new image, at least microversion 2.93 needs to be
@@ -225,6 +229,8 @@ impl ServerCommand {
 
         if let Some(val) = &args.description {
             rebuild_builder.description(Some(val.into()));
+        } else if args.no_description {
+            rebuild_builder.description(None);
         }
 
         ep_builder.rebuild(rebuild_builder.build().unwrap());
