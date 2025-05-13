@@ -33,7 +33,7 @@ pub struct NdpProxy<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) ip_address: Option<Cow<'a, str>>,
+    pub(crate) ip_address: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

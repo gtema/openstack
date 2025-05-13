@@ -167,7 +167,7 @@ impl FloatingipCommand {
         let args = &self.floatingip;
         let mut floatingip_builder = create::FloatingipBuilder::default();
         if let Some(val) = &args.floating_ip_address {
-            floatingip_builder.floating_ip_address(val);
+            floatingip_builder.floating_ip_address(Some(val.into()));
         }
 
         if let Some(val) = &args.subnet_id {
@@ -181,7 +181,7 @@ impl FloatingipCommand {
         }
 
         if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(val);
+            floatingip_builder.fixed_ip_address(Some(val.into()));
         }
 
         if let Some(val) = &args.tenant_id {

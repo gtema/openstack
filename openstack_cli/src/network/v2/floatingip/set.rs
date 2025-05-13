@@ -133,7 +133,7 @@ impl FloatingipCommand {
         }
 
         if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(val);
+            floatingip_builder.fixed_ip_address(Some(val.into()));
         }
 
         if let Some(val) = &args.qos_policy_id {

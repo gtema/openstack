@@ -40,7 +40,7 @@ pub struct PortAssociation<'a> {
     /// The requested IP of the port associated with the Local IP.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) fixed_ip: Option<Cow<'a, str>>,
+    pub(crate) fixed_ip: Option<Option<Cow<'a, str>>>,
 
     /// The requested ID of the port associated with the Local IP.
     #[serde(skip_serializing_if = "Option::is_none")]

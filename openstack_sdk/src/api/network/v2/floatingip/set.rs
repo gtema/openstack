@@ -60,7 +60,7 @@ pub struct Floatingip<'a> {
     /// the `fixed_ip_address` parameter.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
+    pub(crate) fixed_ip_address: Option<Option<Cow<'a, str>>>,
 
     /// The ID of a port associated with the floating IP. To associate the
     /// floating IP with a fixed IP, you must specify the ID of the internal

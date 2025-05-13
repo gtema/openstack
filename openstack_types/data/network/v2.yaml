@@ -11234,7 +11234,9 @@ components:
           type: object
           properties:
             floating_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The floating IP address.
             subnet_id:
@@ -11260,7 +11262,9 @@ components:
                 To associate the floating IP with a fixed IP at creation time,
                 you must specify the identifier of the internal port.
             fixed_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The fixed IP address that is associated with the floating IP.
                 If an internal port has multiple associated IP addresses,
@@ -11315,7 +11319,9 @@ components:
               description: |-
                 The ID of the floating IP address.
             floating_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The floating IP address.
             floating_network_id:
@@ -11339,7 +11345,9 @@ components:
               description: |-
                 The ID of a port associated with the floating IP.
             fixed_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The fixed IP address that is associated with the
                 floating IP address.
@@ -11505,7 +11513,9 @@ components:
                 description: |-
                   The ID of the floating IP address.
               floating_ip_address:
-                type: string
+                type:
+                  - string
+                  - 'null'
                 description: |-
                   The floating IP address.
               floating_network_id:
@@ -11529,7 +11539,9 @@ components:
                 description: |-
                   The ID of a port associated with the floating IP.
               fixed_ip_address:
-                type: string
+                type:
+                  - string
+                  - 'null'
                 description: |-
                   The fixed IP address that is associated with the
                   floating IP address.
@@ -11696,7 +11708,9 @@ components:
                 you must specify the ID of the internal port.
                 To disassociate the floating IP, `null` should be specified.
             fixed_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The fixed IP address that is associated with the floating IP.
                 If an internal port has multiple associated IP addresses,
@@ -11731,7 +11745,9 @@ components:
               description: |-
                 The ID of the floating IP address.
             floating_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The floating IP address.
             floating_network_id:
@@ -11755,7 +11771,9 @@ components:
               description: |-
                 The ID of a port associated with the floating IP.
             fixed_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The fixed IP address that is associated with the
                 floating IP address.
@@ -11919,7 +11937,9 @@ components:
               description: |-
                 The ID of the floating IP address.
             floating_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The floating IP address.
             floating_network_id:
@@ -11943,7 +11963,9 @@ components:
               description: |-
                 The ID of a port associated with the floating IP.
             fixed_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The fixed IP address that is associated with the
                 floating IP address.
@@ -12335,7 +12357,9 @@ components:
               type: string
               format: uuid
             ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             description:
               type: string
               maxLength: 255
@@ -12362,7 +12386,9 @@ components:
               type: string
               format: uuid
             ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             description:
               type: string
               maxLength: 255
@@ -12397,7 +12423,9 @@ components:
                 type: string
                 format: uuid
               ip_address:
-                type: string
+                type:
+                  - string
+                  - 'null'
               description:
                 type: string
                 maxLength: 255
@@ -12443,7 +12471,9 @@ components:
               type: string
               format: uuid
             ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             description:
               type: string
               maxLength: 255
@@ -12476,7 +12506,9 @@ components:
               type: string
               format: uuid
             ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             description:
               type: string
               maxLength: 255
@@ -12670,7 +12702,9 @@ components:
               type: string
               format: uuid
             local_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             ip_mode:
               type: string
               enum:
@@ -12702,7 +12736,9 @@ components:
               type: string
               format: uuid
             local_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             ip_mode:
               type: string
               enum:
@@ -12742,7 +12778,9 @@ components:
                 type: string
                 format: uuid
               local_ip_address:
-                type: string
+                type:
+                  - string
+                  - 'null'
               ip_mode:
                 type: string
                 enum:
@@ -12793,7 +12831,9 @@ components:
               type: string
               format: uuid
             local_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             ip_mode:
               type: string
               enum:
@@ -12831,7 +12871,9 @@ components:
               type: string
               format: uuid
             local_ip_address:
-              type: string
+              type:
+                - string
+                - 'null'
             ip_mode:
               type: string
               enum:
@@ -12856,7 +12898,9 @@ components:
               description: |-
                 The requested ID of the port associated with the Local IP.
             fixed_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The requested IP of the port associated with the Local IP.
             project_id:
@@ -12881,7 +12925,9 @@ components:
               description: |-
                 The ID of the port associated with the Local IP.
             fixed_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 The IP of the port associated with the Local IP.
             host:
@@ -12911,7 +12957,9 @@ components:
                 description: |-
                   The ID of the port associated with the Local IP.
               fixed_ip:
-                type: string
+                type:
+                  - string
+                  - 'null'
                 description: |-
                   The IP of the port associated with the Local IP.
               host:
@@ -12941,7 +12989,9 @@ components:
               type: string
               format: uuid
             fixed_ip:
-              type: string
+              type:
+                - string
+                - 'null'
             host:
               type: string
     Local_IpsPort_AssociationShowResponse:
@@ -12960,7 +13010,9 @@ components:
               type: string
               format: uuid
             fixed_ip:
-              type: string
+              type:
+                - string
+                - 'null'
             host:
               type: string
     LogLogsCreateRequest:
@@ -20801,7 +20853,9 @@ components:
                 description: |-
                   The CIDR of the subnet.
               gateway_ip:
-                type: string
+                type:
+                  - string
+                  - 'null'
                 description: |-
                   Gateway IP of this subnet. If the value is `null` that implies no
                   gateway is associated with the subnet.
@@ -20963,7 +21017,9 @@ components:
               description: |-
                 The CIDR of the subnet.
             gateway_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
                 gateway is associated with the subnet. If the gateway_ip is not
@@ -21120,7 +21176,9 @@ components:
               description: |-
                 The CIDR of the subnet.
             gateway_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
                 gateway is associated with the subnet.
@@ -21336,7 +21394,9 @@ components:
                 description: |-
                   Status of the underlying data plane of a port.
               extra_dhcp_opts:
-                type: array
+                type:
+                  - array
+                  - 'null'
                 items:
                   type: object
                   extraProperties: true
@@ -21638,7 +21698,9 @@ components:
                 A server connected to the port can send a packet with source address which
                 matches one of the specified allowed address pairs.
             extra_dhcp_opts:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: object
                 extraProperties: true
@@ -21881,7 +21943,9 @@ components:
               description: |-
                 Status of the underlying data plane of a port.
             extra_dhcp_opts:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: object
                 extraProperties: true
@@ -22608,7 +22672,9 @@ components:
               description: |-
                 The CIDR of the subnet.
             gateway_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
                 gateway is associated with the subnet.
@@ -22735,7 +22801,9 @@ components:
               description: |-
                 Human-readable name of the resource.
             gateway_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
                 gateway is associated with the subnet. If the gateway_ip is not
@@ -22854,7 +22922,9 @@ components:
               description: |-
                 The CIDR of the subnet.
             gateway_ip:
-              type: string
+              type:
+                - string
+                - 'null'
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
                 gateway is associated with the subnet.
@@ -23068,7 +23138,9 @@ components:
               description: |-
                 Status of the underlying data plane of a port.
             extra_dhcp_opts:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: object
                 extraProperties: true
@@ -23366,7 +23438,9 @@ components:
               description: |-
                 Status of the underlying data plane of a port.
             extra_dhcp_opts:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: object
                 extraProperties: true
@@ -23592,7 +23666,9 @@ components:
               description: |-
                 Status of the underlying data plane of a port.
             extra_dhcp_opts:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: object
                 extraProperties: true
@@ -26050,7 +26126,9 @@ components:
                 ID, or FQDN. Typically, this value matches the `peer_address`
                 value.
             peer_cidrs:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: string
               description: |-
@@ -26181,7 +26259,9 @@ components:
                 ID, or FQDN. Typically, this value matches the `peer_address`
                 value.
             peer_cidrs:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: string
               description: |-
@@ -26333,7 +26413,9 @@ components:
                   ID, or FQDN. Typically, this value matches the `peer_address`
                   value.
               peer_cidrs:
-                type: array
+                type:
+                  - array
+                  - 'null'
                 items:
                   type: string
                 description: |-
@@ -26471,7 +26553,9 @@ components:
                 ID, or FQDN. Typically, this value matches the `peer_address`
                 value.
             peer_cidrs:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: string
               description: |-
@@ -26587,7 +26671,9 @@ components:
                 ID, or FQDN. Typically, this value matches the `peer_address`
                 value.
             peer_cidrs:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: string
               description: |-
@@ -26737,7 +26823,9 @@ components:
                 ID, or FQDN. Typically, this value matches the `peer_address`
                 value.
             peer_cidrs:
-              type: array
+              type:
+                - array
+                - 'null'
               items:
                 type: string
               description: |-
@@ -27404,7 +27492,9 @@ components:
       name: floating_ip_address
       description: floating_ip_address query parameter for /v2.0/floatingips API
       schema:
-        type: string
+        type:
+          - string
+          - 'null'
     floatingips_floating_network_id:
       in: query
       name: floating_network_id
@@ -27435,7 +27525,9 @@ components:
       name: fixed_ip_address
       description: fixed_ip_address query parameter for /v2.0/floatingips API
       schema:
-        type: string
+        type:
+          - string
+          - 'null'
     floatingips_tenant_id:
       in: query
       name: tenant_id
@@ -27670,7 +27762,9 @@ components:
       name: local_ip_address
       description: local_ip_address query parameter for /v2.0/local-ips API
       schema:
-        type: string
+        type:
+          - string
+          - 'null'
     local_ips_ip_mode:
       in: query
       name: ip_mode
@@ -27722,7 +27816,9 @@ components:
       description: fixed_ip query parameter for /v2.0/local_ips/{local_ip_id}/port_associations
         API
       schema:
-        type: string
+        type:
+          - string
+          - 'null'
     port_associations_host:
       in: query
       name: host
@@ -29613,7 +29709,9 @@ components:
       name: gateway_ip
       description: gateway_ip query parameter for /v2.0/subnets API
       schema:
-        type: string
+        type:
+          - string
+          - 'null'
     subnets_tenant_id:
       in: query
       name: tenant_id

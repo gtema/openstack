@@ -113,7 +113,7 @@ impl NdpProxyCommand {
         }
 
         if let Some(val) = &args.ip_address {
-            ndp_proxy_builder.ip_address(val);
+            ndp_proxy_builder.ip_address(Some(val.into()));
         }
 
         if let Some(val) = &args.description {

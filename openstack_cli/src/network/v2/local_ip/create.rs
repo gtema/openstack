@@ -128,7 +128,7 @@ impl LocalIpCommand {
         }
 
         if let Some(val) = &args.local_ip_address {
-            local_ip_builder.local_ip_address(val);
+            local_ip_builder.local_ip_address(Some(val.into()));
         }
 
         if let Some(val) = &args.ip_mode {
