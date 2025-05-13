@@ -257,7 +257,7 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(val);
+            subnet_builder.gateway_ip(Some(val.into()));
         }
 
         if let Some(val) = &args.allocation_pools {

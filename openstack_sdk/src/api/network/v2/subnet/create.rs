@@ -153,7 +153,7 @@ pub struct Subnet<'a> {
     /// the gateway for the subnet by default.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) gateway_ip: Option<Cow<'a, str>>,
+    pub(crate) gateway_ip: Option<Option<Cow<'a, str>>>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.

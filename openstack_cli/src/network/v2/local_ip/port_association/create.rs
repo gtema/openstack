@@ -116,7 +116,7 @@ impl PortAssociationCommand {
         }
 
         if let Some(val) = &args.fixed_ip {
-            port_association_builder.fixed_ip(val);
+            port_association_builder.fixed_ip(Some(val.into()));
         }
 
         if let Some(val) = &args.project_id {

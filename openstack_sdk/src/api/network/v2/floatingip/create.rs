@@ -92,12 +92,12 @@ pub struct Floatingip<'a> {
     /// the `fixed_ip_address` parameter.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
+    pub(crate) fixed_ip_address: Option<Option<Cow<'a, str>>>,
 
     /// The floating IP address.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) floating_ip_address: Option<Cow<'a, str>>,
+    pub(crate) floating_ip_address: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the network associated with the floating IP.
     #[serde()]

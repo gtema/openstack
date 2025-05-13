@@ -45,7 +45,7 @@ pub struct LocalIp<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) local_ip_address: Option<Cow<'a, str>>,
+    pub(crate) local_ip_address: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
