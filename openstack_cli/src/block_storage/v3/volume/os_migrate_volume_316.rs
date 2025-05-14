@@ -67,11 +67,19 @@ struct OsMigrateVolume {
     #[arg(help_heading = "Body parameters", long)]
     cluster: Option<String>,
 
+    /// Set explicit NULL for the cluster
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "cluster")]
+    no_cluster: bool,
+
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     force_host_copy: Option<bool>,
 
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
+
+    /// Set explicit NULL for the host
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "host")]
+    no_host: bool,
 
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     lock_volume: Option<bool>,
@@ -102,6 +110,8 @@ impl VolumeCommand {
             os_migrate_volume_316::OsMigrateVolumeBuilder::default();
         if let Some(val) = &args.host {
             os_migrate_volume_builder.host(Some(val.into()));
+        } else if args.no_host {
+            os_migrate_volume_builder.host(None);
         }
 
         if let Some(val) = &args.force_host_copy {
@@ -114,6 +124,8 @@ impl VolumeCommand {
 
         if let Some(val) = &args.cluster {
             os_migrate_volume_builder.cluster(Some(val.into()));
+        } else if args.no_cluster {
+            os_migrate_volume_builder.cluster(None);
         }
 
         ep_builder.os_migrate_volume(os_migrate_volume_builder.build().unwrap());

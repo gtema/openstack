@@ -101,9 +101,17 @@ struct User {
     #[arg(help_heading = "Body parameters", long)]
     default_project_id: Option<String>,
 
+    /// Set explicit NULL for the default_project_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "default_project_id")]
+    no_default_project_id: bool,
+
     /// The resource description.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
 
     /// The ID of the domain of the user. If the domain ID is not provided in
     /// the request, the Identity service will attempt to pull the domain ID
@@ -153,6 +161,10 @@ struct User {
     /// The password for the user.
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
+
+    /// Set explicit NULL for the password
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "password")]
+    no_password: bool,
 }
 
 impl UserCommand {
@@ -177,14 +189,20 @@ impl UserCommand {
         let mut user_builder = create::UserBuilder::default();
         if let Some(val) = &args.password {
             user_builder.password(Some(val.into()));
+        } else if args.no_password {
+            user_builder.password(None);
         }
 
         if let Some(val) = &args.default_project_id {
             user_builder.default_project_id(Some(val.into()));
+        } else if args.no_default_project_id {
+            user_builder.default_project_id(None);
         }
 
         if let Some(val) = &args.description {
             user_builder.description(Some(val.into()));
+        } else if args.no_description {
+            user_builder.description(None);
         }
 
         if let Some(val) = &args.domain_id {

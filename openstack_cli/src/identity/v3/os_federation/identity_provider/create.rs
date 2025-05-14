@@ -77,11 +77,19 @@ struct IdentityProvider {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of a domain that is associated with the identity provider.
     /// Federated users that authenticate with the identity provider will be
     /// created under the domain specified.
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
+
+    /// Set explicit NULL for the domain_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "domain_id")]
+    no_domain_id: bool,
 
     /// Whether the identity provider is enabled or not
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -124,6 +132,8 @@ impl IdentityProviderCommand {
 
         if let Some(val) = &args.description {
             identity_provider_builder.description(Some(val.into()));
+        } else if args.no_description {
+            identity_provider_builder.description(None);
         }
 
         if let Some(val) = &args.authorization_ttl {
@@ -136,6 +146,8 @@ impl IdentityProviderCommand {
 
         if let Some(val) = &args.domain_id {
             identity_provider_builder.domain_id(Some(val.into()));
+        } else if args.no_domain_id {
+            identity_provider_builder.domain_id(None);
         }
 
         ep_builder.identity_provider(identity_provider_builder.build().unwrap());

@@ -274,6 +274,10 @@ struct Port {
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
+    /// Set explicit NULL for the qos_policy_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
+    no_qos_policy_id: bool,
+
     /// The IDs of security groups applied to the port.
     ///
     /// Parameter is an array, may be provided multiple times.
@@ -420,6 +424,8 @@ impl PortCommand {
 
         if let Some(val) = &args.qos_policy_id {
             port_builder.qos_policy_id(Some(val.into()));
+        } else if args.no_qos_policy_id {
+            port_builder.qos_policy_id(None);
         }
 
         if let Some(val) = &args.dns_name {

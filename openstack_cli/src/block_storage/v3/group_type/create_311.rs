@@ -63,6 +63,10 @@ struct GroupType {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
@@ -105,6 +109,8 @@ impl GroupTypeCommand {
 
         if let Some(val) = &args.description {
             group_type_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_type_builder.description(None);
         }
 
         if let Some(val) = &args.is_public {

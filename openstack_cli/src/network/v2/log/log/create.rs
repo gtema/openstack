@@ -111,6 +111,10 @@ struct Log {
     #[arg(help_heading = "Body parameters", long)]
     resource_id: Option<String>,
 
+    /// Set explicit NULL for the resource_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "resource_id")]
+    no_resource_id: bool,
+
     /// The resource log type such as ‘security_group’.
     #[arg(help_heading = "Body parameters", long)]
     resource_type: Option<String>,
@@ -118,6 +122,10 @@ struct Log {
     /// The ID of resource target log such as port ID.
     #[arg(help_heading = "Body parameters", long)]
     target_id: Option<String>,
+
+    /// Set explicit NULL for the target_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "target_id")]
+    no_target_id: bool,
 }
 
 impl LogCommand {
@@ -154,6 +162,8 @@ impl LogCommand {
 
         if let Some(val) = &args.resource_id {
             log_builder.resource_id(Some(val.into()));
+        } else if args.no_resource_id {
+            log_builder.resource_id(None);
         }
 
         if let Some(val) = &args.event {
@@ -167,6 +177,8 @@ impl LogCommand {
 
         if let Some(val) = &args.target_id {
             log_builder.target_id(Some(val.into()));
+        } else if args.no_target_id {
+            log_builder.target_id(None);
         }
 
         if let Some(val) = &args.enabled {

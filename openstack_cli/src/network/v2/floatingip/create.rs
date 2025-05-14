@@ -119,9 +119,17 @@ struct Floatingip {
     #[arg(help_heading = "Body parameters", long)]
     fixed_ip_address: Option<String>,
 
+    /// Set explicit NULL for the fixed_ip_address
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "fixed_ip_address")]
+    no_fixed_ip_address: bool,
+
     /// The floating IP address.
     #[arg(help_heading = "Body parameters", long)]
     floating_ip_address: Option<String>,
+
+    /// Set explicit NULL for the floating_ip_address
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "floating_ip_address")]
+    no_floating_ip_address: bool,
 
     /// The ID of the network associated with the floating IP.
     #[arg(help_heading = "Body parameters", long)]
@@ -133,13 +141,25 @@ struct Floatingip {
     #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
+    /// Set explicit NULL for the port_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "port_id")]
+    no_port_id: bool,
+
     /// The ID of the QoS policy associated with the floating IP.
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
+    /// Set explicit NULL for the qos_policy_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
+    no_qos_policy_id: bool,
+
     /// The subnet ID on which you want to create the floating IP.
     #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
+
+    /// Set explicit NULL for the subnet_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "subnet_id")]
+    no_subnet_id: bool,
 
     /// The ID of the project.
     #[arg(help_heading = "Body parameters", long)]
@@ -168,20 +188,28 @@ impl FloatingipCommand {
         let mut floatingip_builder = create::FloatingipBuilder::default();
         if let Some(val) = &args.floating_ip_address {
             floatingip_builder.floating_ip_address(Some(val.into()));
+        } else if args.no_floating_ip_address {
+            floatingip_builder.floating_ip_address(None);
         }
 
         if let Some(val) = &args.subnet_id {
             floatingip_builder.subnet_id(Some(val.into()));
+        } else if args.no_subnet_id {
+            floatingip_builder.subnet_id(None);
         }
 
         floatingip_builder.floating_network_id(&args.floating_network_id);
 
         if let Some(val) = &args.port_id {
             floatingip_builder.port_id(Some(val.into()));
+        } else if args.no_port_id {
+            floatingip_builder.port_id(None);
         }
 
         if let Some(val) = &args.fixed_ip_address {
             floatingip_builder.fixed_ip_address(Some(val.into()));
+        } else if args.no_fixed_ip_address {
+            floatingip_builder.fixed_ip_address(None);
         }
 
         if let Some(val) = &args.tenant_id {
@@ -190,6 +218,8 @@ impl FloatingipCommand {
 
         if let Some(val) = &args.qos_policy_id {
             floatingip_builder.qos_policy_id(Some(val.into()));
+        } else if args.no_qos_policy_id {
+            floatingip_builder.qos_policy_id(None);
         }
 
         if let Some(val) = &args.dns_name {

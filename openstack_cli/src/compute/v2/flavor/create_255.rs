@@ -75,6 +75,10 @@ struct Flavor {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
     #[arg(help_heading = "Body parameters", long)]
@@ -85,6 +89,10 @@ struct Flavor {
     /// UUID will be assigned.
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
+
+    /// Set explicit NULL for the id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "id")]
+    no_id: bool,
 
     /// The display name of a flavor.
     #[arg(help_heading = "Body parameters", long)]
@@ -146,6 +154,8 @@ impl FlavorCommand {
 
         if let Some(val) = &args.id {
             flavor_builder.id(Some(val.into()));
+        } else if args.no_id {
+            flavor_builder.id(None);
         }
 
         flavor_builder.ram(args.ram);
@@ -172,6 +182,8 @@ impl FlavorCommand {
 
         if let Some(val) = &args.description {
             flavor_builder.description(Some(val.into()));
+        } else if args.no_description {
+            flavor_builder.description(None);
         }
 
         ep_builder.flavor(flavor_builder.build().unwrap());

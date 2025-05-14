@@ -76,6 +76,10 @@ struct ServiceProvider {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Whether the service provider is enabled or not
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
@@ -83,6 +87,10 @@ struct ServiceProvider {
     /// The prefix of the RelayState SAML attribute
     #[arg(help_heading = "Body parameters", long)]
     relay_state_prefix: Option<String>,
+
+    /// Set explicit NULL for the relay_state_prefix
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "relay_state_prefix")]
+    no_relay_state_prefix: bool,
 
     /// The service provider's URL
     #[arg(help_heading = "Body parameters", long)]
@@ -120,6 +128,8 @@ impl ServiceProviderCommand {
 
         if let Some(val) = &args.description {
             service_provider_builder.description(Some(val.into()));
+        } else if args.no_description {
+            service_provider_builder.description(None);
         }
 
         if let Some(val) = &args.enabled {
@@ -128,6 +138,8 @@ impl ServiceProviderCommand {
 
         if let Some(val) = &args.relay_state_prefix {
             service_provider_builder.relay_state_prefix(Some(val.into()));
+        } else if args.no_relay_state_prefix {
+            service_provider_builder.relay_state_prefix(None);
         }
 
         ep_builder.service_provider(service_provider_builder.build().unwrap());

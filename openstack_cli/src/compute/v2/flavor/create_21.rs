@@ -79,6 +79,10 @@ struct Flavor {
     #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
+    /// Set explicit NULL for the id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "id")]
+    no_id: bool,
+
     /// The display name of a flavor.
     #[arg(help_heading = "Body parameters", long)]
     name: String,
@@ -139,6 +143,8 @@ impl FlavorCommand {
 
         if let Some(val) = &args.id {
             flavor_builder.id(Some(val.into()));
+        } else if args.no_id {
+            flavor_builder.id(None);
         }
 
         flavor_builder.ram(args.ram);

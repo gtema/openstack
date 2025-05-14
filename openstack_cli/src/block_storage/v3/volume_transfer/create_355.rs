@@ -62,6 +62,10 @@ struct Transfer {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
     /// Transfer volume without snapshots. Defaults to False if not specified.
     ///
     /// **New in version 3.55**
@@ -102,6 +106,8 @@ impl VolumeTransferCommand {
 
         if let Some(val) = &args.name {
             transfer_builder.name(Some(val.into()));
+        } else if args.no_name {
+            transfer_builder.name(None);
         }
 
         if let Some(val) = &args.no_snapshots {

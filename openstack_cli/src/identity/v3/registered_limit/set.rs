@@ -79,11 +79,19 @@ struct RegisteredLimit {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of the region that contains the service endpoint. Either
     /// service_id, resource_name, or region_id must be different than existing
     /// value otherwise it will raise 409.
     #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
+
+    /// Set explicit NULL for the region_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "region_id")]
+    no_region_id: bool,
 
     /// The resource name. Either service_id, resource_name or region_id must
     /// be different than existing value otherwise it will raise 409.
@@ -125,6 +133,8 @@ impl RegisteredLimitCommand {
 
         if let Some(val) = &args.region_id {
             registered_limit_builder.region_id(Some(val.into()));
+        } else if args.no_region_id {
+            registered_limit_builder.region_id(None);
         }
 
         if let Some(val) = &args.resource_name {
@@ -137,6 +147,8 @@ impl RegisteredLimitCommand {
 
         if let Some(val) = &args.description {
             registered_limit_builder.description(Some(val.into()));
+        } else if args.no_description {
+            registered_limit_builder.description(None);
         }
 
         ep_builder.registered_limit(registered_limit_builder.build().unwrap());

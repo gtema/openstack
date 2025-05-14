@@ -78,6 +78,10 @@ struct Credential {
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
 
+    /// Set explicit NULL for the project_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "project_id")]
+    no_project_id: bool,
+
     /// The credential type, such as `ec2` or `cert`. The implementation
     /// determines the list of supported types.
     #[arg(help_heading = "Body parameters", long)]
@@ -115,6 +119,8 @@ impl CredentialCommand {
 
         if let Some(val) = &args.project_id {
             credential_builder.project_id(Some(val.into()));
+        } else if args.no_project_id {
+            credential_builder.project_id(None);
         }
 
         if let Some(val) = &args._type {

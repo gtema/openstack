@@ -108,6 +108,10 @@ struct IpsecSiteConnection {
     #[arg(help_heading = "Body parameters", long)]
     local_ep_group_id: Option<String>,
 
+    /// Set explicit NULL for the local_ep_group_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "local_ep_group_id")]
+    no_local_ep_group_id: bool,
+
     /// An ID to be used instead of the external IP address for a virtual
     /// router used in traffic between instances on different networks in
     /// east-west traffic. Most often, local ID would be domain name, email
@@ -143,6 +147,10 @@ struct IpsecSiteConnection {
     /// a `subnet_id` for the VPN service.
     #[arg(help_heading = "Body parameters", long)]
     peer_ep_group_id: Option<String>,
+
+    /// Set explicit NULL for the peer_ep_group_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "peer_ep_group_id")]
+    no_peer_ep_group_id: bool,
 
     /// The peer router identity for authentication. A valid value is an IPv4
     /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
@@ -218,10 +226,14 @@ impl IpsecSiteConnectionCommand {
 
         if let Some(val) = &args.local_ep_group_id {
             ipsec_site_connection_builder.local_ep_group_id(Some(val.into()));
+        } else if args.no_local_ep_group_id {
+            ipsec_site_connection_builder.local_ep_group_id(None);
         }
 
         if let Some(val) = &args.peer_ep_group_id {
             ipsec_site_connection_builder.peer_ep_group_id(Some(val.into()));
+        } else if args.no_peer_ep_group_id {
+            ipsec_site_connection_builder.peer_ep_group_id(None);
         }
 
         if let Some(val) = &args.mtu {

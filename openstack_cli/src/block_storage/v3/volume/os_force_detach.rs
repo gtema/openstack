@@ -68,6 +68,10 @@ struct OsForceDetach {
     #[arg(help_heading = "Body parameters", long)]
     attachment_id: Option<String>,
 
+    /// Set explicit NULL for the attachment_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "attachment_id")]
+    no_attachment_id: bool,
+
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     connector: Option<Option<Value>>,
 }
@@ -101,6 +105,8 @@ impl VolumeCommand {
 
         if let Some(val) = &args.attachment_id {
             os_force_detach_builder.attachment_id(Some(val.into()));
+        } else if args.no_attachment_id {
+            os_force_detach_builder.attachment_id(None);
         }
 
         ep_builder.os_force_detach(os_force_detach_builder.build().unwrap());

@@ -84,6 +84,10 @@ struct Encryption {
     #[arg(help_heading = "Body parameters", long)]
     cipher: Option<String>,
 
+    /// Set explicit NULL for the cipher
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "cipher")]
+    no_cipher: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     control_location: Option<ControlLocation>,
 
@@ -137,6 +141,8 @@ impl EncryptionCommand {
 
         if let Some(val) = &args.cipher {
             encryption_builder.cipher(Some(val.into()));
+        } else if args.no_cipher {
+            encryption_builder.cipher(None);
         }
 
         ep_builder.encryption(encryption_builder.build().unwrap());

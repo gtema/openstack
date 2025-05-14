@@ -97,6 +97,10 @@ struct Server {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The server name.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -178,6 +182,8 @@ impl ServerCommand {
 
         if let Some(val) = &args.description {
             server_builder.description(Some(val.into()));
+        } else if args.no_description {
+            server_builder.description(None);
         }
 
         ep_builder.server(server_builder.build().unwrap());

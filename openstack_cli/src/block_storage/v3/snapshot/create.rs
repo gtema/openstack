@@ -63,9 +63,17 @@ struct Snapshot {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The name of the snapshot.
     #[arg(help_heading = "Body parameters", long)]
     display_name: Option<String>,
+
+    /// Set explicit NULL for the display_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "display_name")]
+    no_display_name: bool,
 
     /// Indicates whether to snapshot, even if the volume is attached. Default
     /// is `false`. See [valid boolean values](#valid-boolean-values)
@@ -79,6 +87,10 @@ struct Snapshot {
     /// The name of the snapshot.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 
     /// The UUID of the volume.
     #[arg(help_heading = "Body parameters", long)]
@@ -108,14 +120,20 @@ impl SnapshotCommand {
         let mut snapshot_builder = create::SnapshotBuilder::default();
         if let Some(val) = &args.name {
             snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            snapshot_builder.name(None);
         }
 
         if let Some(val) = &args.display_name {
             snapshot_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            snapshot_builder.display_name(None);
         }
 
         if let Some(val) = &args.description {
             snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            snapshot_builder.description(None);
         }
 
         snapshot_builder.volume_id(args.volume_id.clone());

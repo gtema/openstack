@@ -66,6 +66,10 @@ struct Group {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of the domain of the group. If the domain ID is not provided in
     /// the request, the Identity service will attempt to pull the domain ID
     /// from the token used in the request. Note that this requires the use of
@@ -100,6 +104,8 @@ impl GroupCommand {
         let mut group_builder = create::GroupBuilder::default();
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_builder.description(None);
         }
 
         if let Some(val) = &args.domain_id {

@@ -89,6 +89,10 @@ struct Aggregate {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Set explicit NULL for the availability_zone
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "availability_zone")]
+    no_availability_zone: bool,
+
     /// The name of the host aggregate.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -135,6 +139,8 @@ impl AggregateCommand {
 
         if let Some(val) = &args.availability_zone {
             aggregate_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            aggregate_builder.availability_zone(None);
         }
 
         ep_builder.aggregate(aggregate_builder.build().unwrap());

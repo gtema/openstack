@@ -74,9 +74,17 @@ struct Role {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The ID of the domain of the role.
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
+
+    /// Set explicit NULL for the domain_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "domain_id")]
+    no_domain_id: bool,
 
     /// The role name.
     #[arg(help_heading = "Body parameters", long)]
@@ -113,10 +121,14 @@ impl RoleCommand {
 
         if let Some(val) = &args.description {
             role_builder.description(Some(val.into()));
+        } else if args.no_description {
+            role_builder.description(None);
         }
 
         if let Some(val) = &args.domain_id {
             role_builder.domain_id(Some(val.into()));
+        } else if args.no_domain_id {
+            role_builder.domain_id(None);
         }
 
         if let Some(val) = &args.options {

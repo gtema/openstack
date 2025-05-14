@@ -94,6 +94,10 @@ struct PathParameters {
 struct Migrate {
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
+
+    /// Set explicit NULL for the host
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "host")]
+    no_host: bool,
 }
 
 impl ServerCommand {

@@ -61,6 +61,10 @@ struct FailoverReplication {
 
     #[arg(help_heading = "Body parameters", long)]
     secondary_backend_id: Option<String>,
+
+    /// Set explicit NULL for the secondary_backend_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "secondary_backend_id")]
+    no_secondary_backend_id: bool,
 }
 
 impl GroupCommand {
@@ -91,6 +95,8 @@ impl GroupCommand {
 
         if let Some(val) = &args.secondary_backend_id {
             failover_replication_builder.secondary_backend_id(Some(val.into()));
+        } else if args.no_secondary_backend_id {
+            failover_replication_builder.secondary_backend_id(None);
         }
 
         ep_builder.failover_replication(failover_replication_builder.build().unwrap());

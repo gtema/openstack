@@ -108,6 +108,10 @@ struct Snapshot {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// One or more metadata key and value pairs for the snapshot.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
@@ -115,6 +119,10 @@ struct Snapshot {
     /// The name of the snapshot. Default is `None`.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
 
     /// A reference to the existing volume. The internal structure of this
     /// reference depends on the volume driver implementation. For details
@@ -153,6 +161,8 @@ impl ManageableSnapshotCommand {
         let mut snapshot_builder = create::SnapshotBuilder::default();
         if let Some(val) = &args.description {
             snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            snapshot_builder.description(None);
         }
 
         if let Some(val) = &args.metadata {
@@ -161,6 +171,8 @@ impl ManageableSnapshotCommand {
 
         if let Some(val) = &args.name {
             snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            snapshot_builder.name(None);
         }
 
         snapshot_builder.volume_id(&args.volume_id);

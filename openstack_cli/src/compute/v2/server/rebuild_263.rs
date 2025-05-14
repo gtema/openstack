@@ -95,6 +95,10 @@ struct Rebuild {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
     /// server with a new image, at least microversion 2.93 needs to be
@@ -121,6 +125,10 @@ struct Rebuild {
     /// **New in version 2.54**
     #[arg(help_heading = "Body parameters", long)]
     key_name: Option<String>,
+
+    /// Set explicit NULL for the key_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "key_name")]
+    no_key_name: bool,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
@@ -183,6 +191,10 @@ struct Rebuild {
     /// **New in version 2.57**
     #[arg(help_heading = "Body parameters", long)]
     user_data: Option<String>,
+
+    /// Set explicit NULL for the user_data
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "user_data")]
+    no_user_data: bool,
 }
 
 impl ServerCommand {
@@ -243,14 +255,20 @@ impl ServerCommand {
 
         if let Some(val) = &args.description {
             rebuild_builder.description(Some(val.into()));
+        } else if args.no_description {
+            rebuild_builder.description(None);
         }
 
         if let Some(val) = &args.key_name {
             rebuild_builder.key_name(Some(val.into()));
+        } else if args.no_key_name {
+            rebuild_builder.key_name(None);
         }
 
         if let Some(val) = &args.user_data {
             rebuild_builder.user_data(Some(val.into()));
+        } else if args.no_user_data {
+            rebuild_builder.user_data(None);
         }
 
         if let Some(val) = &args.trusted_image_certificates {

@@ -74,6 +74,10 @@ struct LocalIp {
     #[arg(help_heading = "Body parameters", long)]
     local_ip_address: Option<String>,
 
+    /// Set explicit NULL for the local_ip_address
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "local_ip_address")]
+    no_local_ip_address: bool,
+
     #[arg(help_heading = "Body parameters", long)]
     local_port_id: Option<String>,
 
@@ -129,6 +133,8 @@ impl LocalIpCommand {
 
         if let Some(val) = &args.local_ip_address {
             local_ip_builder.local_ip_address(Some(val.into()));
+        } else if args.no_local_ip_address {
+            local_ip_builder.local_ip_address(None);
         }
 
         if let Some(val) = &args.ip_mode {

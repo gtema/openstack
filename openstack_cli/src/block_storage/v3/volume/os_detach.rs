@@ -66,6 +66,10 @@ struct PathParameters {
 struct OsDetach {
     #[arg(help_heading = "Body parameters", long)]
     attachment_id: Option<String>,
+
+    /// Set explicit NULL for the attachment_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "attachment_id")]
+    no_attachment_id: bool,
 }
 
 impl VolumeCommand {

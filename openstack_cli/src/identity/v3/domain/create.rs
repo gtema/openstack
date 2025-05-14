@@ -74,6 +74,10 @@ struct Domain {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// If set to `true`, domain is created enabled. If set to `false`, domain
     /// is created disabled. The default is `true`.
     ///
@@ -131,6 +135,8 @@ impl DomainCommand {
 
         if let Some(val) = &args.description {
             domain_builder.description(Some(val.into()));
+        } else if args.no_description {
+            domain_builder.description(None);
         }
 
         if let Some(val) = &args.enabled {

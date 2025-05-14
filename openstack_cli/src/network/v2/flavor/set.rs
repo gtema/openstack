@@ -80,6 +80,10 @@ struct Flavor {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
     /// Indicates whether the flavor is enabled or not. Default is true.
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<Option<bool>>,
@@ -132,6 +136,8 @@ impl FlavorCommand {
 
         if let Some(val) = &args.description {
             flavor_builder.description(Some(val.into()));
+        } else if args.no_description {
+            flavor_builder.description(None);
         }
 
         if let Some(val) = &args.service_profiles {

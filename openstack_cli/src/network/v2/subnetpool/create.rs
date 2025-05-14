@@ -67,6 +67,10 @@ struct Subnetpool {
     #[arg(help_heading = "Body parameters", long)]
     address_scope_id: Option<String>,
 
+    /// Set explicit NULL for the address_scope_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "address_scope_id")]
+    no_address_scope_id: bool,
+
     /// The size of the prefix to allocate when the `cidr` or `prefixlen`
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
@@ -183,6 +187,8 @@ impl SubnetpoolCommand {
 
         if let Some(val) = &args.address_scope_id {
             subnetpool_builder.address_scope_id(Some(val.into()));
+        } else if args.no_address_scope_id {
+            subnetpool_builder.address_scope_id(None);
         }
 
         if let Some(val) = &args.description {
