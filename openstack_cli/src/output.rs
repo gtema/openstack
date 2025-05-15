@@ -189,7 +189,7 @@ impl OutputProcessor {
 
     /// Produce output for humans (table) for a single resource
     pub fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
-        let (headers, table_rows) = structable::build_table(data, &self.config);
+        let (headers, table_rows) = structable::build_table(data, &OutputConfig::default());
 
         let mut table = Table::new();
         table
