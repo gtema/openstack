@@ -13,12 +13,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // mod add_allowed_address_pairs_autogen;
-// mod binding;
+mod binding;
 mod create_autogen;
 mod delete_autogen;
 mod list;
 mod list_autogen;
-// mod set_autogen;
+mod set_autogen;
 mod show_autogen;
 mod tag;
 
@@ -29,7 +29,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("network").arg("port").arg("--help");
+    cmd.args(["network", "port", "--help"]);
     cmd.assert().success();
 
     Ok(())
