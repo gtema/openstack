@@ -45,7 +45,7 @@ views:
   load-balancer.listener:
     fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, protocol, port, tags]
   load-balancer.loadbalancer:
-    fields: [id, name, admin_state_up, description, listeners, pools, provisioning_status, status, tags, vip_address]
+    fields: [id, name, admin_state_up, description, listeners, operating_status, pools, provisioning_status, status, tags, vip_address]
   load-balancer.pool/member:
     fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protovcol_port, provisioning_status, subnet_id, weight, tags]
   load-balancer.pool:
