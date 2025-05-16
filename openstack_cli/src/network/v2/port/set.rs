@@ -30,14 +30,12 @@ use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use clap::ValueEnum;
-use eyre::WrapErr;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;
 use openstack_types::network::v2::port::response::set::PortResponse;
 use serde_json::Value;
-use std::collections::BTreeMap;
 
 /// Updates a port.
 ///
@@ -370,7 +368,7 @@ impl PortCommand {
                         v.as_object()
                             .expect("Is a valid Json object")
                             .into_iter()
-                            .map(|(k, v)| (k.into(), v.clone().into()))
+                            .map(|(k, v)| (k.into(), v.clone()))
                             .collect::<BTreeMap<_, Value>>()
                     })
                     .collect::<Vec<_>>(),

@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Port commands
+//! Binding binding commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,36 +20,34 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-pub mod binding;
+pub mod activate;
 pub mod create;
 pub mod delete;
 pub mod list;
-pub mod set;
-pub mod show;
-pub mod tag;
+//pub mod set;
+//pub mod show;
 
-/// Port commands
+/// Binding commands
 #[derive(Parser)]
-pub struct PortCommand {
+pub struct BindingCommand {
     /// subcommand
     #[command(subcommand)]
-    command: PortCommands,
+    command: BindingCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum PortCommands {
-    Binding(Box<binding::BindingCommand>),
-    Create(Box<create::PortCommand>),
-    Delete(delete::PortCommand),
-    List(Box<list::PortsCommand>),
-    Set(Box<set::PortCommand>),
-    Show(Box<show::PortCommand>),
-    Tag(Box<tag::TagCommand>),
+pub enum BindingCommands {
+    Activate(Box<activate::BindingCommand>),
+    Create(Box<create::BindingCommand>),
+    Delete(delete::BindingCommand),
+    List(Box<list::BindingsCommand>),
+    // Set(Box<set::BindingCommand>),
+    // Show(Box<show::BindingCommand>),
 }
 
-impl PortCommand {
+impl BindingCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -57,13 +55,12 @@ impl PortCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            PortCommands::Binding(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            PortCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
+            BindingCommands::Activate(cmd) => cmd.take_action(parsed_args, session).await,
+            BindingCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            BindingCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            BindingCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            // BindingCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            // BindingCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
