@@ -93,7 +93,7 @@ pub enum LbAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
+pub enum SessionPersistenceType {
     #[serde(rename = "APP_COOKIE")]
     AppCookie,
     #[serde(rename = "HTTP_COOKIE")]
@@ -122,7 +122,7 @@ pub struct SessionPersistence<'a> {
 
     #[serde(rename = "type")]
     #[builder()]
-    pub(crate) _type: Type,
+    pub(crate) _type: SessionPersistenceType,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
