@@ -262,9 +262,9 @@ pub struct Members {
 }
 
 /// Base type for complex types
-/// `Pools` type
+/// `HealthmonitorPools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Pools {
+pub struct HealthmonitorPools {
     pub id: String,
 }
 
@@ -284,7 +284,7 @@ pub struct Healthmonitor {
     pub max_retries_down: Option<i32>,
     pub name: Option<String>,
     pub operating_status: Option<String>,
-    pub pools: Option<Vec<Pools>>,
+    pub pools: Option<Vec<HealthmonitorPools>>,
     pub project_id: Option<String>,
     pub provisioning_status: Option<String>,
     pub tags: Option<Vec<String>>,

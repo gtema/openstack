@@ -8291,6 +8291,9 @@ components:
             type: string
           description: A list of authentication rules that may be used with the auth
             receipt to complete the authentication process.
+    AuthOs_FederationSaml2GetResponse:
+      type: object
+      description: Response of the auth/OS-FEDERATION/saml2:get operation
     AuthOs_FederationSaml2PostRequest:
       type: object
       properties:
@@ -8505,9 +8508,9 @@ components:
       type: string
       format: xml
       description: SAML assertion in XML format
-    AuthOs_FederationSaml2GetResponse:
+    AuthOs_FederationSaml2EcpGetResponse:
       type: object
-      description: Response of the auth/OS-FEDERATION/saml2:get operation
+      description: Response of the auth/OS-FEDERATION/saml2/ecp:get operation
     AuthOs_FederationSaml2EcpPostRequest:
       type: object
       properties:
@@ -8722,123 +8725,6 @@ components:
       type: string
       format: xml
       description: SAML assertion in XML format
-    AuthOs_FederationSaml2EcpGetResponse:
-      type: object
-      description: Response of the auth/OS-FEDERATION/saml2/ecp:get operation
-    AuthOs_FederationWebssoPostResponse:
-      type: object
-      properties:
-        token:
-          type: object
-          properties:
-            audit_ids:
-              type: array
-              description: A list of one or two audit IDs. An audit ID is a unique,
-                randomly generated, URL-safe string that you can use to track a token.
-                The first audit ID is the current audit ID for the token. The second
-                audit ID is present for only re-scoped tokens and is the audit ID
-                from the token before it was re-scoped. A re- scoped token is one
-                that was exchanged for another token of the same or different scope.
-                You can use these audit IDs to track the use of a token or chain of
-                tokens across multiple requests and endpoints without exposing the
-                token ID to non-privileged users.
-              items:
-                type: string
-            catalog:
-              description: A catalog object.
-              type: array
-              items:
-                type: object
-                properties:
-                  endpoints:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                          description: |-
-                            The UUID of the service to which the endpoint
-                            belongs.
-                        interface:
-                          type: string
-                          enum:
-                            - public
-                            - internal
-                            - admin
-                        region:
-                          type: string
-                          description: Region name of the endpoint
-                        url:
-                          type: string
-                          format: uri
-                          description: The endpoint url
-                    description: |-
-                      A list of `endpoint` objects.
-                  id:
-                    type: string
-                    format: uuid
-                    description: The UUID of the service to which the endpoint belongs.
-                  type:
-                    type: string
-                    description: |-
-                      The service type, which describes the API
-                      implemented by the service. Value is `compute`, `ec2`,
-                      `identity`, `image`, `network`, or `volume`.
-                  name:
-                    type: string
-                    description: |-
-                      The service name.
-            expires_at:
-              type: string
-              format: date-time
-              description: The date and time when the token expires.
-            issues_at:
-              type: string
-              format: date-time
-              description: The date and time when the token was issued.
-            methods:
-              type: array
-              description: The authentication methods, which are commonly password,
-                token, or other methods. Indicates the accumulated set of authentication
-                methods that were used to obtain the token. For example, if the token
-                was obtained by password authentication, it contains password. Later,
-                if the token is exchanged by using the token authentication method
-                one or more times, the subsequently created tokens contain both password
-                and token in their methods attribute. Unlike multi-factor authentication,
-                the methods attribute merely indicates the methods that were used
-                to authenticate the user in exchange for a token. The client is responsible
-                for determining the total number of authentication factors.
-              items:
-                type: string
-            user:
-              type: object
-              description: A user object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  description: A user UUID
-                name:
-                  type: string
-                  description: A user name
-                domain:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      format: uuid
-                      description: A user domain UUID
-                    name:
-                      type: string
-                      description: A user domain name
-                password_expires_at:
-                  type: string
-                  format: date-time
-                  description: DateTime of the user password expiration
-                OS-FEDERATION:
-                  type: object
     AuthOs_FederationWebssoGetResponse:
       type: object
       properties:
@@ -8953,7 +8839,7 @@ components:
                   description: DateTime of the user password expiration
                 OS-FEDERATION:
                   type: object
-    AuthOs_FederationIdentity_ProvidersProtocolsWebssoPostResponse:
+    AuthOs_FederationWebssoPostResponse:
       type: object
       properties:
         token:
@@ -9181,102 +9067,120 @@ components:
                   description: DateTime of the user password expiration
                 OS-FEDERATION:
                   type: object
-    CredentialsPost:
+    AuthOs_FederationIdentity_ProvidersProtocolsWebssoPostResponse:
       type: object
-      description: A credential object.
       properties:
-        credential:
+        token:
           type: object
-          description: |-
-            A `credential` object.
           properties:
-            id:
+            audit_ids:
+              type: array
+              description: A list of one or two audit IDs. An audit ID is a unique,
+                randomly generated, URL-safe string that you can use to track a token.
+                The first audit ID is the current audit ID for the token. The second
+                audit ID is present for only re-scoped tokens and is the audit ID
+                from the token before it was re-scoped. A re- scoped token is one
+                that was exchanged for another token of the same or different scope.
+                You can use these audit IDs to track the use of a token or chain of
+                tokens across multiple requests and endpoints without exposing the
+                token ID to non-privileged users.
+              items:
+                type: string
+            catalog:
+              description: A catalog object.
+              type: array
+              items:
+                type: object
+                properties:
+                  endpoints:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: |-
+                            The UUID of the service to which the endpoint
+                            belongs.
+                        interface:
+                          type: string
+                          enum:
+                            - public
+                            - internal
+                            - admin
+                        region:
+                          type: string
+                          description: Region name of the endpoint
+                        url:
+                          type: string
+                          format: uri
+                          description: The endpoint url
+                    description: |-
+                      A list of `endpoint` objects.
+                  id:
+                    type: string
+                    format: uuid
+                    description: The UUID of the service to which the endpoint belongs.
+                  type:
+                    type: string
+                    description: |-
+                      The service type, which describes the API
+                      implemented by the service. Value is `compute`, `ec2`,
+                      `identity`, `image`, `network`, or `volume`.
+                  name:
+                    type: string
+                    description: |-
+                      The service name.
+            expires_at:
               type: string
-              description: The UUID for the credential.
-            blob:
+              format: date-time
+              description: The date and time when the token expires.
+            issues_at:
               type: string
-              description: |-
-                The credential itself, as a serialized blob.
-            project_id:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The ID for the project.
-            type:
-              type: string
-              description: |-
-                The credential type, such as `ec2` or `cert`.
-                The implementation determines the list of supported types.
-            user_id:
-              type: string
-              format: uuid
-              description: |-
-                The ID of the user who owns the credential.
-          additionalProperties: true
-          required:
-            - blob
-            - type
-            - user_id
-          if:
-            properties:
-              type:
-                const: ec2
-          then:
-            title: ec2 credential requires project_id
-            required:
-              - blob
-              - type
-              - user_id
-              - project_id
-      required:
-        - credential
-    CredentialsPostResponse:
-      type: object
-      description: A credential object.
-      properties:
-        credential:
-          type: object
-          description: |-
-            A `credential` object.
-          properties:
-            id:
-              type: string
-              readOnly: true
-              description: |-
-                The UUID for the credential.
-            links:
+              format: date-time
+              description: The date and time when the token was issued.
+            methods:
+              type: array
+              description: The authentication methods, which are commonly password,
+                token, or other methods. Indicates the accumulated set of authentication
+                methods that were used to obtain the token. For example, if the token
+                was obtained by password authentication, it contains password. Later,
+                if the token is exchanged by using the token authentication method
+                one or more times, the subsequently created tokens contain both password
+                and token in their methods attribute. Unlike multi-factor authentication,
+                the methods attribute merely indicates the methods that were used
+                to authenticate the user in exchange for a token. The client is responsible
+                for determining the total number of authentication factors.
+              items:
+                type: string
+            user:
               type: object
-              description: |-
-                The link to the resources in question.
+              description: A user object
               properties:
-                self:
+                id:
                   type: string
-                  format: uri
-              additionalProperties: false
-              readOnly: true
-            blob:
-              type: string
-              description: |-
-                The credential itself, as a serialized blob.
-            project_id:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The ID for the project.
-            type:
-              type: string
-              description: |-
-                The credential type, such as `ec2` or `cert`.
-                The implementation determines the list of supported types.
-            user_id:
-              type: string
-              format: uuid
-              description: |-
-                The ID of the user who owns the credential.
-          additionalProperties: true
-      additionalProperties: false
+                  format: uuid
+                  description: A user UUID
+                name:
+                  type: string
+                  description: A user name
+                domain:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: A user domain UUID
+                    name:
+                      type: string
+                      description: A user domain name
+                password_expires_at:
+                  type: string
+                  format: date-time
+                  description: DateTime of the user password expiration
+                OS-FEDERATION:
+                  type: object
     CredentialsGetResponse:
       type: object
       properties:
@@ -9352,7 +9256,57 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    CredentialGetResponse:
+    CredentialsPost:
+      type: object
+      description: A credential object.
+      properties:
+        credential:
+          type: object
+          description: |-
+            A `credential` object.
+          properties:
+            id:
+              type: string
+              description: The UUID for the credential.
+            blob:
+              type: string
+              description: |-
+                The credential itself, as a serialized blob.
+            project_id:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The ID for the project.
+            type:
+              type: string
+              description: |-
+                The credential type, such as `ec2` or `cert`.
+                The implementation determines the list of supported types.
+            user_id:
+              type: string
+              format: uuid
+              description: |-
+                The ID of the user who owns the credential.
+          additionalProperties: true
+          required:
+            - blob
+            - type
+            - user_id
+          if:
+            properties:
+              type:
+                const: ec2
+          then:
+            title: ec2 credential requires project_id
+            required:
+              - blob
+              - type
+              - user_id
+              - project_id
+      required:
+        - credential
+    CredentialsPostResponse:
       type: object
       description: A credential object.
       properties:
@@ -9477,112 +9431,20 @@ components:
                 The ID of the user who owns the credential.
           additionalProperties: true
       additionalProperties: false
-    DomainsPost:
+    CredentialGetResponse:
       type: object
+      description: A credential object.
       properties:
-        domain:
+        credential:
           type: object
           description: |-
-            A `domain` object
-          properties:
-            explicit_domain_id:
-              description: |-
-                The ID of the domain. A domain created this way will not use an
-                auto-generated ID, but will use the ID passed in instead. Identifiers passed
-                in this way must conform to the existing ID generation scheme: UUID4 without
-                dashes.
-              type: string
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The description of the domain.
-            enabled:
-              description: |-
-                If set to `true`, domain is created enabled. If set to
-                `false`, domain is created disabled. The default is `true`.
-
-                Users can only authorize against an enabled domain (and any of its
-                projects). In addition, users can only authenticate if the domain that owns
-                them is also enabled. Disabling a domain prevents both of these things.
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-            name:
-              type: string
-              description: |-
-                The name of the domain.
-              minLength: 1
-              maxLength: 64
-              pattern: '[\S]+'
-            options:
-              type: object
-              description: |-
-                The resource options for the domain. Available resource options are
-                `immutable`.
-              properties:
-                immutable:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-              additionalProperties: false
-            tags:
-              type: array
-              items:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: ^[^,/]*$
-              required: []
-              maxItems: 80
-              uniqueItems: true
-          required:
-            - name
-      additionalProperties: false
-      required:
-        - domain
-    DomainsPostResponse:
-      type: object
-      properties:
-        domain:
-          type: object
+            A `credential` object.
           properties:
             id:
               type: string
               readOnly: true
               description: |-
-                The ID of the domain.
+                The UUID for the credential.
             links:
               type: object
               description: |-
@@ -9593,82 +9455,28 @@ components:
                   format: uri
               additionalProperties: false
               readOnly: true
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The description of the domain.
-            enabled:
-              description: |-
-                If set to `true`, domain is enabled. If set to
-                `false`, domain is disabled.
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-            name:
+            blob:
               type: string
               description: |-
-                The name of the project.
-              minLength: 1
-              maxLength: 64
-              pattern: '[\S]+'
-            options:
-              type: object
-              properties:
-                immutable:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-              additionalProperties: false
+                The credential itself, as a serialized blob.
+            project_id:
+              type:
+                - string
+                - 'null'
               description: |-
-                The resource options for the role. Available resource options are
-                `immutable`.
-            tags:
-              type: array
-              items:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: ^[^,/]*$
-              required: []
-              maxItems: 80
-              uniqueItems: true
+                The ID for the project.
+            type:
+              type: string
               description: |-
-                A list of simple strings assigned to a project.
-          additionalProperties: false
-          description: |-
-            A `domain` object
+                The credential type, such as `ec2` or `cert`.
+                The implementation determines the list of supported types.
+            user_id:
+              type: string
+              format: uuid
+              description: |-
+                The ID of the user who owns the credential.
+          additionalProperties: true
       additionalProperties: false
-      required:
-        - domain
     DomainsGetResponse:
       type: object
       properties:
@@ -9794,7 +9602,102 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    DomainGetResponse:
+    DomainsPost:
+      type: object
+      properties:
+        domain:
+          type: object
+          description: |-
+            A `domain` object
+          properties:
+            explicit_domain_id:
+              description: |-
+                The ID of the domain. A domain created this way will not use an
+                auto-generated ID, but will use the ID passed in instead. Identifiers passed
+                in this way must conform to the existing ID generation scheme: UUID4 without
+                dashes.
+              type: string
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The description of the domain.
+            enabled:
+              description: |-
+                If set to `true`, domain is created enabled. If set to
+                `false`, domain is created disabled. The default is `true`.
+
+                Users can only authorize against an enabled domain (and any of its
+                projects). In addition, users can only authenticate if the domain that owns
+                them is also enabled. Disabling a domain prevents both of these things.
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+            name:
+              type: string
+              description: |-
+                The name of the domain.
+              minLength: 1
+              maxLength: 64
+              pattern: '[\S]+'
+            options:
+              type: object
+              description: |-
+                The resource options for the domain. Available resource options are
+                `immutable`.
+              properties:
+                immutable:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+              additionalProperties: false
+            tags:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: ^[^,/]*$
+              required: []
+              maxItems: 80
+              uniqueItems: true
+          required:
+            - name
+      additionalProperties: false
+      required:
+        - domain
+    DomainsPostResponse:
       type: object
       properties:
         domain:
@@ -10075,6 +9978,103 @@ components:
       additionalProperties: false
       required:
         - domain
+    DomainGetResponse:
+      type: object
+      properties:
+        domain:
+          type: object
+          properties:
+            id:
+              type: string
+              readOnly: true
+              description: |-
+                The ID of the domain.
+            links:
+              type: object
+              description: |-
+                The link to the resources in question.
+              properties:
+                self:
+                  type: string
+                  format: uri
+              additionalProperties: false
+              readOnly: true
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The description of the domain.
+            enabled:
+              description: |-
+                If set to `true`, domain is enabled. If set to
+                `false`, domain is disabled.
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+            name:
+              type: string
+              description: |-
+                The name of the project.
+              minLength: 1
+              maxLength: 64
+              pattern: '[\S]+'
+            options:
+              type: object
+              properties:
+                immutable:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+              additionalProperties: false
+              description: |-
+                The resource options for the role. Available resource options are
+                `immutable`.
+            tags:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: ^[^,/]*$
+              required: []
+              maxItems: 80
+              uniqueItems: true
+              description: |-
+                A list of simple strings assigned to a project.
+          additionalProperties: false
+          description: |-
+            A `domain` object
+      additionalProperties: false
+      required:
+        - domain
     DomainConfig:
       type: object
       properties:
@@ -10146,6 +10146,9 @@ components:
               - string
               - 'null'
             format: uri
+    Ec2TokensGetResponse:
+      type: object
+      description: Response of the ec2tokens:get operation
     Ec2TokensPostRequest:
       type: object
       description: Request of the ec2tokens:post operation
@@ -10154,9 +10157,70 @@ components:
     Ec2TokensPostResponse:
       type: object
       description: Response of the ec2tokens:post operation
-    Ec2TokensGetResponse:
+    EndpointsGetResponse:
       type: object
-      description: Response of the ec2tokens:get operation
+      properties:
+        endpoints:
+          type: array
+          items:
+            type: object
+            properties:
+              enabled:
+                type: boolean
+                description: |-
+                  Indicates whether the endpoint appears in the
+                  service catalog: - `false`. The endpoint does not appear in the
+                  service catalog. - `true`. The endpoint appears in the service
+                  catalog.
+              id:
+                type: string
+                format: uuid
+                description: |-
+                  The endpoint ID.
+                readOnly: true
+              interface:
+                type: string
+                enum:
+                  - internal
+                  - admin
+                  - public
+                description: |-
+                  The interface type, which describes the
+                  visibility of the endpoint. Value is: - `public`. Visible by
+                  end users on a publicly available network interface. -
+                  `internal`. Visible by end users on an unmetered internal
+                  network interface. - `admin`. Visible by administrative users
+                  on a secure network interface.
+              region:
+                type: string
+                description: |-
+                  (Deprecated in v3.2) The geographic location of
+                  the service endpoint.
+                x-openstack:
+                  max-ver: '3.2'
+              region_id:
+                type: string
+                format: uuid
+                description: |-
+                  (Since v3.2) The ID of the region that contains
+                  the service endpoint.
+                x-openstack:
+                  min-ver: '3.2'
+              service_id:
+                type: string
+                format: uuid
+                description: |-
+                  The UUID of the service to which the endpoint
+                  belongs.
+              url:
+                type: string
+                format: uri
+                description: |-
+                  The endpoint URL.
+            description: |-
+              An `endpoint` object.
+          description: |-
+            A list of `endpoint` objects.
     EndpointsPost:
       type: object
       description: An endpoint object
@@ -10292,70 +10356,6 @@ components:
                 The endpoint URL.
           description: |-
             An `endpoint` object.
-    EndpointsGetResponse:
-      type: object
-      properties:
-        endpoints:
-          type: array
-          items:
-            type: object
-            properties:
-              enabled:
-                type: boolean
-                description: |-
-                  Indicates whether the endpoint appears in the
-                  service catalog: - `false`. The endpoint does not appear in the
-                  service catalog. - `true`. The endpoint appears in the service
-                  catalog.
-              id:
-                type: string
-                format: uuid
-                description: |-
-                  The endpoint ID.
-                readOnly: true
-              interface:
-                type: string
-                enum:
-                  - internal
-                  - admin
-                  - public
-                description: |-
-                  The interface type, which describes the
-                  visibility of the endpoint. Value is: - `public`. Visible by
-                  end users on a publicly available network interface. -
-                  `internal`. Visible by end users on an unmetered internal
-                  network interface. - `admin`. Visible by administrative users
-                  on a secure network interface.
-              region:
-                type: string
-                description: |-
-                  (Deprecated in v3.2) The geographic location of
-                  the service endpoint.
-                x-openstack:
-                  max-ver: '3.2'
-              region_id:
-                type: string
-                format: uuid
-                description: |-
-                  (Since v3.2) The ID of the region that contains
-                  the service endpoint.
-                x-openstack:
-                  min-ver: '3.2'
-              service_id:
-                type: string
-                format: uuid
-                description: |-
-                  The UUID of the service to which the endpoint
-                  belongs.
-              url:
-                type: string
-                format: uri
-                description: |-
-                  The endpoint URL.
-            description: |-
-              An `endpoint` object.
-          description: |-
-            A list of `endpoint` objects.
     EndpointPatch:
       type: object
       description: An endpoint object
@@ -10429,6 +10429,43 @@ components:
       type: object
       description: Response of the endpoints/endpoint_id/OS-ENDPOINT-POLICY/policy:get
         operation
+    GroupsGetResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: |-
+                  The ID of the group.
+                readOnly: true
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: |-
+                  The description of the group.
+              domain_id:
+                type: string
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID of the domain.
+              name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '[\S]+'
+                description: |-
+                  The user name. Must be unique within the owning domain.
+            description: |-
+              A `group` object
+          description: |-
+            A list of `group` objects
     GroupsPost:
       type: object
       properties:
@@ -10509,43 +10546,6 @@ components:
                 The user name. Must be unique within the owning domain.
           description: |-
             A `group` object
-    GroupsGetResponse:
-      type: object
-      properties:
-        groups:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: |-
-                  The ID of the group.
-                readOnly: true
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: |-
-                  The description of the group.
-              domain_id:
-                type: string
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID of the domain.
-              name:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: '[\S]+'
-                description: |-
-                  The user name. Must be unique within the owning domain.
-            description: |-
-              A `group` object
-          description: |-
-            A list of `group` objects
     GroupPatch:
       type: object
       properties:
@@ -10802,6 +10802,113 @@ components:
               A `user` object
           description: |-
             A list of `user` objects
+    LimitsGetResponse:
+      type: object
+      properties:
+        links:
+          type: object
+          description: |-
+            The links for the `user` resource.
+          properties:
+            next:
+              type:
+                - string
+                - 'null'
+              format: uri
+            previous:
+              type:
+                - string
+                - 'null'
+              format: uri
+            self:
+              type: string
+              format: uri
+          required:
+            - self
+          additionalProperties: false
+          readOnly: true
+        limits:
+          type: array
+          items:
+            type: object
+            description: |-
+              A `limit` object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: |-
+                  The limit ID.
+                readOnly: true
+              project_id:
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID for the project.
+              domain_id:
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID of the domain.
+              links:
+                type: object
+                description: |-
+                  The link to the resources in question.
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                additionalProperties: false
+                readOnly: true
+              resource_name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '[\S]+'
+                description: |-
+                  The resource name.
+              region_id:
+                description: |-
+                  The ID of the region that contains the service endpoint.
+                  The value can be None.
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 255
+              service_id:
+                type: string
+                format: uuid
+                description: |-
+                  The UUID of the service to which the limit belongs.
+              resource_limit:
+                description: |-
+                  The override limit.
+                type: integer
+                minimum: -1
+                maximum: 2147483647
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: |-
+                  The limit description.
+            additionalProperties: false
+          description: |-
+            A list of `limits` objects
+        truncated:
+          type: boolean
+          description: Flag indicating that the amount of entities exceeds global
+            response limit
+      additionalProperties: false
     LimitsPost:
       type: object
       properties:
@@ -10963,190 +11070,6 @@ components:
           description: |-
             A list of `limits` objects
       additionalProperties: false
-    LimitsGetResponse:
-      type: object
-      properties:
-        links:
-          type: object
-          description: |-
-            The links for the `user` resource.
-          properties:
-            next:
-              type:
-                - string
-                - 'null'
-              format: uri
-            previous:
-              type:
-                - string
-                - 'null'
-              format: uri
-            self:
-              type: string
-              format: uri
-          required:
-            - self
-          additionalProperties: false
-          readOnly: true
-        limits:
-          type: array
-          items:
-            type: object
-            description: |-
-              A `limit` object
-            properties:
-              id:
-                type: string
-                format: uuid
-                description: |-
-                  The limit ID.
-                readOnly: true
-              project_id:
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID for the project.
-              domain_id:
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID of the domain.
-              links:
-                type: object
-                description: |-
-                  The link to the resources in question.
-                properties:
-                  self:
-                    type: string
-                    format: uri
-                additionalProperties: false
-                readOnly: true
-              resource_name:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: '[\S]+'
-                description: |-
-                  The resource name.
-              region_id:
-                description: |-
-                  The ID of the region that contains the service endpoint.
-                  The value can be None.
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 255
-              service_id:
-                type: string
-                format: uuid
-                description: |-
-                  The UUID of the service to which the limit belongs.
-              resource_limit:
-                description: |-
-                  The override limit.
-                type: integer
-                minimum: -1
-                maximum: 2147483647
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: |-
-                  The limit description.
-            additionalProperties: false
-          description: |-
-            A list of `limits` objects
-        truncated:
-          type: boolean
-          description: Flag indicating that the amount of entities exceeds global
-            response limit
-      additionalProperties: false
-    LimitGetResponse:
-      type: object
-      properties:
-        limit:
-          type: object
-          description: |-
-            A `limit` object
-          properties:
-            id:
-              type: string
-              format: uuid
-              description: |-
-                The limit ID.
-              readOnly: true
-            project_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID for the project.
-            domain_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the domain.
-            links:
-              type: object
-              description: |-
-                The link to the resources in question.
-              properties:
-                self:
-                  type: string
-                  format: uri
-              additionalProperties: false
-              readOnly: true
-            resource_name:
-              type: string
-              minLength: 1
-              maxLength: 255
-              pattern: '[\S]+'
-              description: |-
-                The resource name.
-            region_id:
-              description: |-
-                The ID of the region that contains the service endpoint.
-                The value can be None.
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 255
-            service_id:
-              type: string
-              format: uuid
-              description: |-
-                The UUID of the service to which the limit belongs.
-            resource_limit:
-              description: |-
-                The override limit.
-              type: integer
-              minimum: -1
-              maximum: 2147483647
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The limit description.
-          additionalProperties: false
-      additionalProperties: false
     LimitPatch:
       type: object
       properties:
@@ -11248,6 +11171,83 @@ components:
                 The limit description.
           additionalProperties: false
       additionalProperties: false
+    LimitGetResponse:
+      type: object
+      properties:
+        limit:
+          type: object
+          description: |-
+            A `limit` object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: |-
+                The limit ID.
+              readOnly: true
+            project_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID for the project.
+            domain_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the domain.
+            links:
+              type: object
+              description: |-
+                The link to the resources in question.
+              properties:
+                self:
+                  type: string
+                  format: uri
+              additionalProperties: false
+              readOnly: true
+            resource_name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              pattern: '[\S]+'
+              description: |-
+                The resource name.
+            region_id:
+              description: |-
+                The ID of the region that contains the service endpoint.
+                The value can be None.
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 255
+            service_id:
+              type: string
+              format: uuid
+              description: |-
+                The UUID of the service to which the limit belongs.
+            resource_limit:
+              description: |-
+                The override limit.
+              type: integer
+              minimum: -1
+              maximum: 2147483647
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The limit description.
+          additionalProperties: false
+      additionalProperties: false
     LimitsModelGetResponse:
       type: object
       properties:
@@ -11267,132 +11267,6 @@ components:
               pattern: '[\S]+'
               description: |-
                 The name of the enforcement model
-        additionalProperties: false
-      additionalProperties: false
-    Os_Ep_FilterEndpoint_GroupsPost:
-      type: object
-      description: An endpoint group object
-      properties:
-        endpoint_group:
-          type: object
-          properties:
-            description:
-              type:
-                - string
-                - 'null'
-              description: The endpoint group description.
-            filters:
-              type: object
-              description: Describes the filtering performed by the endpoint group.
-                The filter used must be an endpoint property, such as interface, service_id,
-                region, and enabled. Note that if using interface as a filter, the
-                only available values are public, internal, and admin.
-              properties:
-                interface:
-                  type: string
-                  enum:
-                    - admin
-                    - internal
-                    - public
-                  description: 'The interface type, which describes the visibility
-                    of the endpoint. Value is: -public. Visible by end users on a
-                    publicly available network interface. -internal. Visible by end
-                    users on an unmetered internal network interface. -admin. Visible
-                    by administrative users on a secure network interface.'
-                service_id:
-                  type: string
-                  description: The UUID of the service to which the endpoint belongs
-                region_id:
-                  type:
-                    - string
-                    - 'null'
-                  description: (Since v3.2) The ID of the region that contains the
-                    service endpoint.
-                  x-openstack:
-                    min-ver: 3.2
-                enabled:
-                  type: boolean
-                  description: Indicates whether the endpoint appears in the service
-                    catalog -false. The endpoint does not appear in the service catalog.
-                    -true. The endpoint appears in the service catalog.
-            name:
-              type: string
-              minLength: 1
-              maxLength: 255
-              pattern: '[\S]+'
-              description: The name of the endpoint group.
-          additionalProperties: false
-          required:
-            - name
-            - filters
-      additionalProperties: false
-    Os_Ep_FilterEndpoint_GroupsPostResponse:
-      type: object
-      description: An endpoint group object
-      properties:
-        endpoint_group:
-          type: object
-          description: An endpoint group object.
-          properties:
-            id:
-              type: string
-              readOnly: true
-              description: The endpoint group ID
-            links:
-              type: object
-              description: |-
-                The link to the resources in question.
-              properties:
-                self:
-                  type: string
-                  format: uri
-              additionalProperties: false
-              readOnly: true
-            description:
-              type:
-                - string
-                - 'null'
-              description: The endpoint group description.
-            filters:
-              type: object
-              description: Describes the filtering performed by the endpoint group.
-                The filter used must be an endpoint property, such as interface, service_id,
-                region, and enabled. Note that if using interface as a filter, the
-                only available values are public, internal, and admin.
-              properties:
-                interface:
-                  type: string
-                  enum:
-                    - admin
-                    - internal
-                    - public
-                  description: 'The interface type, which describes the visibility
-                    of the endpoint. Value is: -public. Visible by end users on a
-                    publicly available network interface. -internal. Visible by end
-                    users on an unmetered internal network interface. -admin. Visible
-                    by administrative users on a secure network interface.'
-                service_id:
-                  type: string
-                  description: The UUID of the service to which the endpoint belongs
-                region_id:
-                  type:
-                    - string
-                    - 'null'
-                  description: (Since v3.2) The ID of the region that contains the
-                    service endpoint.
-                  x-openstack:
-                    min-ver: 3.2
-                enabled:
-                  type: boolean
-                  description: Indicates whether the endpoint appears in the service
-                    catalog -false. The endpoint does not appear in the service catalog.
-                    -true. The endpoint appears in the service catalog.
-            name:
-              type: string
-              minLength: 1
-              maxLength: 255
-              pattern: '[\S]+'
-              description: The name of the endpoint group.
           additionalProperties: false
       additionalProperties: false
     Os_Ep_FilterEndpoint_GroupsGetResponse:
@@ -11492,7 +11366,64 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    Os_Ep_FilterEndpoint_GroupGetResponse:
+    Os_Ep_FilterEndpoint_GroupsPost:
+      type: object
+      description: An endpoint group object
+      properties:
+        endpoint_group:
+          type: object
+          properties:
+            description:
+              type:
+                - string
+                - 'null'
+              description: The endpoint group description.
+            filters:
+              type: object
+              description: Describes the filtering performed by the endpoint group.
+                The filter used must be an endpoint property, such as interface, service_id,
+                region, and enabled. Note that if using interface as a filter, the
+                only available values are public, internal, and admin.
+              properties:
+                interface:
+                  type: string
+                  enum:
+                    - admin
+                    - internal
+                    - public
+                  description: 'The interface type, which describes the visibility
+                    of the endpoint. Value is: -public. Visible by end users on a
+                    publicly available network interface. -internal. Visible by end
+                    users on an unmetered internal network interface. -admin. Visible
+                    by administrative users on a secure network interface.'
+                service_id:
+                  type: string
+                  description: The UUID of the service to which the endpoint belongs
+                region_id:
+                  type:
+                    - string
+                    - 'null'
+                  description: (Since v3.2) The ID of the region that contains the
+                    service endpoint.
+                  x-openstack:
+                    min-ver: 3.2
+                enabled:
+                  type: boolean
+                  description: Indicates whether the endpoint appears in the service
+                    catalog -false. The endpoint does not appear in the service catalog.
+                    -true. The endpoint appears in the service catalog.
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              pattern: '[\S]+'
+              description: The name of the endpoint group.
+          additionalProperties: false
+          required:
+            - name
+            - filters
+      additionalProperties: false
+    Os_Ep_FilterEndpoint_GroupsPostResponse:
       type: object
       description: An endpoint group object
       properties:
@@ -11687,13 +11618,78 @@ components:
               description: The name of the endpoint group.
           additionalProperties: false
       additionalProperties: false
+    Os_Ep_FilterEndpoint_GroupGetResponse:
+      type: object
+      description: An endpoint group object
+      properties:
+        endpoint_group:
+          type: object
+          description: An endpoint group object.
+          properties:
+            id:
+              type: string
+              readOnly: true
+              description: The endpoint group ID
+            links:
+              type: object
+              description: |-
+                The link to the resources in question.
+              properties:
+                self:
+                  type: string
+                  format: uri
+              additionalProperties: false
+              readOnly: true
+            description:
+              type:
+                - string
+                - 'null'
+              description: The endpoint group description.
+            filters:
+              type: object
+              description: Describes the filtering performed by the endpoint group.
+                The filter used must be an endpoint property, such as interface, service_id,
+                region, and enabled. Note that if using interface as a filter, the
+                only available values are public, internal, and admin.
+              properties:
+                interface:
+                  type: string
+                  enum:
+                    - admin
+                    - internal
+                    - public
+                  description: 'The interface type, which describes the visibility
+                    of the endpoint. Value is: -public. Visible by end users on a
+                    publicly available network interface. -internal. Visible by end
+                    users on an unmetered internal network interface. -admin. Visible
+                    by administrative users on a secure network interface.'
+                service_id:
+                  type: string
+                  description: The UUID of the service to which the endpoint belongs
+                region_id:
+                  type:
+                    - string
+                    - 'null'
+                  description: (Since v3.2) The ID of the region that contains the
+                    service endpoint.
+                  x-openstack:
+                    min-ver: 3.2
+                enabled:
+                  type: boolean
+                  description: Indicates whether the endpoint appears in the service
+                    catalog -false. The endpoint does not appear in the service catalog.
+                    -true. The endpoint appears in the service catalog.
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              pattern: '[\S]+'
+              description: The name of the endpoint group.
+          additionalProperties: false
+      additionalProperties: false
     Os_Ep_FilterEndpointsProjectsGetResponse:
       type: object
       description: Response of the OS-EP-FILTER/endpoints/endpoint_id/projects:get
-        operation
-    Os_Ep_FilterProjectsEndpointGetResponse:
-      type: object
-      description: Response of the OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:get
         operation
     Os_Ep_FilterProjectsEndpointPutRequest:
       type: object
@@ -11704,6 +11700,10 @@ components:
     Os_Ep_FilterProjectsEndpointPutResponse:
       type: object
       description: Response of the OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:put
+        operation
+    Os_Ep_FilterProjectsEndpointGetResponse:
+      type: object
+      description: Response of the OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:get
         operation
     Os_Ep_FilterProjectsEndpointsGetResponse:
       type: object
@@ -11721,10 +11721,6 @@ components:
       type: object
       description: Response of the OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects:get
         operation
-    Os_Ep_FilterEndpoint_GroupsProjectGetResponse:
-      type: object
-      description: Response of the OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:get
-        operation
     Os_Ep_FilterEndpoint_GroupsProjectPutRequest:
       type: object
       description: Request of the OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:put
@@ -11735,17 +11731,15 @@ components:
       type: object
       description: Response of the OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:put
         operation
+    Os_Ep_FilterEndpoint_GroupsProjectGetResponse:
+      type: object
+      description: Response of the OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:get
+        operation
     Os_FederationSaml2MetadataGetResponse:
       type: string
       format: xml
       description: Identity Provider metadata information in XML format
-    Os_FederationIdentity_ProvidersProtocolsAuthPostRequest:
-      type: object
-      description: Request of the OS-FEDERATION/identity_providers/idp_id/protocols/protocol_id/auth:post
-        operation
-      x-openstack:
-        action-name: POST
-    Os_FederationIdentity_ProvidersProtocolsAuthPostResponse:
+    Os_FederationIdentity_ProvidersProtocolsAuthGetResponse:
       type: object
       properties:
         token:
@@ -11859,7 +11853,13 @@ components:
                   description: DateTime of the user password expiration
                 OS-FEDERATION:
                   type: object
-    Os_FederationIdentity_ProvidersProtocolsAuthGetResponse:
+    Os_FederationIdentity_ProvidersProtocolsAuthPostRequest:
+      type: object
+      description: Request of the OS-FEDERATION/identity_providers/idp_id/protocols/protocol_id/auth:post
+        operation
+      x-openstack:
+        action-name: POST
+    Os_FederationIdentity_ProvidersProtocolsAuthPostResponse:
       type: object
       properties:
         token:
@@ -12004,35 +12004,6 @@ components:
                 description: List of the unique Identity Provider’s remote IDs
                 items:
                   type: string
-    Os_FederationIdentity_ProviderGetResponse:
-      type: object
-      properties:
-        identity_provider:
-          type: object
-          properties:
-            id:
-              type: string
-              description: The Identity Provider unique ID
-            description:
-              type: string
-              description: The Identity Provider description
-            domain_id:
-              type: string
-              format: uuid
-              description: The ID of a domain that is associated with the Identity
-                Provider.
-            authorization_ttl:
-              type: integer
-              description: The length of validity in minutes for group memberships
-                carried over through mapping and persisted in the database.
-            enabled:
-              type: boolean
-              description: Whether the Identity Provider is enabled or not
-            remote_ids:
-              type: array
-              description: List of the unique Identity Provider’s remote IDs
-              items:
-                type: string
     Os_FederationIdentity_ProviderPatch:
       type: object
       description: An identity provider object
@@ -12219,21 +12190,35 @@ components:
               description: List of the unique Identity Provider’s remote IDs
               items:
                 type: string
-    Os_FederationIdentity_ProvidersProtocolGetResponse:
+    Os_FederationIdentity_ProviderGetResponse:
       type: object
       properties:
-        protocol:
+        identity_provider:
           type: object
           properties:
             id:
               type: string
+              description: The Identity Provider unique ID
+            description:
+              type: string
+              description: The Identity Provider description
+            domain_id:
+              type: string
               format: uuid
-              description: The federation protocol ID
-            mapping_id:
-              type: string
-            remote_id_attribute:
-              type: string
-              maxLength: 64
+              description: The ID of a domain that is associated with the Identity
+                Provider.
+            authorization_ttl:
+              type: integer
+              description: The length of validity in minutes for group memberships
+                carried over through mapping and persisted in the database.
+            enabled:
+              type: boolean
+              description: Whether the Identity Provider is enabled or not
+            remote_ids:
+              type: array
+              description: List of the unique Identity Provider’s remote IDs
+              items:
+                type: string
     Os_FederationIdentity_ProvidersProtocolPatchRequest:
       type: object
       properties:
@@ -12306,6 +12291,21 @@ components:
             remote_id_attribute:
               type: string
               maxLength: 64
+    Os_FederationIdentity_ProvidersProtocolGetResponse:
+      type: object
+      properties:
+        protocol:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: The federation protocol ID
+            mapping_id:
+              type: string
+            remote_id_attribute:
+              type: string
+              maxLength: 64
     Os_FederationIdentity_ProvidersProtocolsGetResponse:
       type: object
       properties:
@@ -12323,185 +12323,6 @@ components:
               remote_id_attribute:
                 type: string
                 maxLength: 64
-    Os_FederationMappingGetResponse:
-      type: object
-      properties:
-        mapping:
-          type: object
-          properties:
-            id:
-              type: string
-              description: The Federation Mapping unique ID
-            rules:
-              minItems: 1
-              type: array
-              items:
-                type: object
-                required:
-                  - local
-                  - remote
-                additionalProperties: false
-                properties:
-                  local:
-                    type: array
-                    items:
-                      type: object
-                      additionalProperties: false
-                      properties:
-                        user:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            name:
-                              type: string
-                            email:
-                              type: string
-                            domain:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                name:
-                                  type: string
-                              additionalProperties: false
-                            type:
-                              type: string
-                              enum:
-                                - ephemeral
-                                - local
-                          additionalProperties: false
-                        projects:
-                          type: array
-                          items:
-                            type: object
-                            required:
-                              - name
-                              - roles
-                            additionalProperties: false
-                            properties:
-                              name:
-                                type: string
-                              roles:
-                                type: array
-                                items:
-                                  type: object
-                                  required:
-                                    - name
-                                  properties:
-                                    name:
-                                      type: string
-                                  additionalProperties: false
-                              domain:
-                                type: object
-                                properties:
-                                  id:
-                                    type: string
-                                  name:
-                                    type: string
-                                additionalProperties: false
-                        group:
-                          type: object
-                          oneOf:
-                            - type: object
-                              properties:
-                                id:
-                                  type: string
-                              additionalProperties: false
-                              required:
-                                - id
-                            - type: object
-                              properties:
-                                name:
-                                  type: string
-                                domain:
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: string
-                                    name:
-                                      type: string
-                                  additionalProperties: false
-                              additionalProperties: false
-                              required:
-                                - name
-                                - domain
-                        groups:
-                          type: string
-                        group_ids:
-                          type: string
-                        domain:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            name:
-                              type: string
-                          additionalProperties: false
-                  remote:
-                    minItems: 1
-                    type: array
-                    items:
-                      type: object
-                      oneOf:
-                        - type: object
-                          required:
-                            - type
-                          properties:
-                            type:
-                              type: string
-                          additionalProperties: false
-                        - type: object
-                          additionalProperties: false
-                          required:
-                            - type
-                            - any_one_of
-                          properties:
-                            type:
-                              type: string
-                            any_one_of:
-                              type: array
-                            regex:
-                              type: boolean
-                        - type: object
-                          additionalProperties: false
-                          required:
-                            - type
-                            - not_any_of
-                          properties:
-                            type:
-                              type: string
-                            not_any_of:
-                              type: array
-                            regex:
-                              type: boolean
-                        - type: object
-                          additionalProperties: false
-                          required:
-                            - type
-                            - blacklist
-                          properties:
-                            type:
-                              type: string
-                            blacklist:
-                              type: array
-                            regex:
-                              type: boolean
-                        - type: object
-                          additionalProperties: false
-                          required:
-                            - type
-                            - whitelist
-                          properties:
-                            type:
-                              type: string
-                            whitelist:
-                              type: array
-                            regex:
-                              type: boolean
-            schema_version:
-              type: string
-              description: Mapping schema version
     Os_FederationMappingPatchRequest:
       type: object
       properties:
@@ -13216,6 +13037,185 @@ components:
             schema_version:
               type: string
               description: Mapping schema version
+    Os_FederationMappingGetResponse:
+      type: object
+      properties:
+        mapping:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The Federation Mapping unique ID
+            rules:
+              minItems: 1
+              type: array
+              items:
+                type: object
+                required:
+                  - local
+                  - remote
+                additionalProperties: false
+                properties:
+                  local:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            email:
+                              type: string
+                            domain:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                              additionalProperties: false
+                            type:
+                              type: string
+                              enum:
+                                - ephemeral
+                                - local
+                          additionalProperties: false
+                        projects:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - name
+                              - roles
+                            additionalProperties: false
+                            properties:
+                              name:
+                                type: string
+                              roles:
+                                type: array
+                                items:
+                                  type: object
+                                  required:
+                                    - name
+                                  properties:
+                                    name:
+                                      type: string
+                                  additionalProperties: false
+                              domain:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                  name:
+                                    type: string
+                                additionalProperties: false
+                        group:
+                          type: object
+                          oneOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: string
+                              additionalProperties: false
+                              required:
+                                - id
+                            - type: object
+                              properties:
+                                name:
+                                  type: string
+                                domain:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    name:
+                                      type: string
+                                  additionalProperties: false
+                              additionalProperties: false
+                              required:
+                                - name
+                                - domain
+                        groups:
+                          type: string
+                        group_ids:
+                          type: string
+                        domain:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                          additionalProperties: false
+                  remote:
+                    minItems: 1
+                    type: array
+                    items:
+                      type: object
+                      oneOf:
+                        - type: object
+                          required:
+                            - type
+                          properties:
+                            type:
+                              type: string
+                          additionalProperties: false
+                        - type: object
+                          additionalProperties: false
+                          required:
+                            - type
+                            - any_one_of
+                          properties:
+                            type:
+                              type: string
+                            any_one_of:
+                              type: array
+                            regex:
+                              type: boolean
+                        - type: object
+                          additionalProperties: false
+                          required:
+                            - type
+                            - not_any_of
+                          properties:
+                            type:
+                              type: string
+                            not_any_of:
+                              type: array
+                            regex:
+                              type: boolean
+                        - type: object
+                          additionalProperties: false
+                          required:
+                            - type
+                            - blacklist
+                          properties:
+                            type:
+                              type: string
+                            blacklist:
+                              type: array
+                            regex:
+                              type: boolean
+                        - type: object
+                          additionalProperties: false
+                          required:
+                            - type
+                            - whitelist
+                          properties:
+                            type:
+                              type: string
+                            whitelist:
+                              type: array
+                            regex:
+                              type: boolean
+            schema_version:
+              type: string
+              description: Mapping schema version
     Os_FederationMappingsGetResponse:
       type: object
       properties:
@@ -13499,80 +13499,6 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    Os_FederationService_ProviderGetResponse:
-      type: object
-      description: A service provider object
-      properties:
-        service_provider:
-          type: object
-          description: A service provider object
-          properties:
-            id:
-              type: string
-              readOnly: true
-              description: The service provider ID
-            links:
-              type: object
-              description: |-
-                The link to the resources in question.
-              properties:
-                self:
-                  type: string
-                  format: uri
-              additionalProperties: false
-              readOnly: true
-            auth_url:
-              type: string
-              minLength: 0
-              maxLength: 225
-              pattern: ^[a-zA-Z0-9+.-]+:.+
-              description: The URL to authenticate against
-            sp_url:
-              type: string
-              minLength: 0
-              maxLength: 225
-              pattern: ^[a-zA-Z0-9+.-]+:.+
-              description: The service provider's URL
-            description:
-              type:
-                - string
-                - 'null'
-              description: The description of the service provider
-            enabled:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: Whether the service provider is enabled or not
-            relay_state_prefix:
-              type:
-                - string
-                - 'null'
-              description: The prefix of the RelayState SAML attribute
-          additionalProperties: true
-      additionalProperties: false
     Os_FederationService_ProviderPatch:
       type: object
       description: A service provider object
@@ -13847,11 +13773,80 @@ components:
               description: The prefix of the RelayState SAML attribute
           additionalProperties: true
       additionalProperties: false
-    Os_InheritDomainsGroupsRolesInherited_To_ProjectsGetResponse:
+    Os_FederationService_ProviderGetResponse:
       type: object
-      description: Response of the 
-        OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:get
-        operation
+      description: A service provider object
+      properties:
+        service_provider:
+          type: object
+          description: A service provider object
+          properties:
+            id:
+              type: string
+              readOnly: true
+              description: The service provider ID
+            links:
+              type: object
+              description: |-
+                The link to the resources in question.
+              properties:
+                self:
+                  type: string
+                  format: uri
+              additionalProperties: false
+              readOnly: true
+            auth_url:
+              type: string
+              minLength: 0
+              maxLength: 225
+              pattern: ^[a-zA-Z0-9+.-]+:.+
+              description: The URL to authenticate against
+            sp_url:
+              type: string
+              minLength: 0
+              maxLength: 225
+              pattern: ^[a-zA-Z0-9+.-]+:.+
+              description: The service provider's URL
+            description:
+              type:
+                - string
+                - 'null'
+              description: The description of the service provider
+            enabled:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: Whether the service provider is enabled or not
+            relay_state_prefix:
+              type:
+                - string
+                - 'null'
+              description: The prefix of the RelayState SAML attribute
+          additionalProperties: true
+      additionalProperties: false
     Os_InheritDomainsGroupsRolesInherited_To_ProjectsPutRequest:
       type: object
       description: Request of the 
@@ -13864,10 +13859,10 @@ components:
       description: Response of the 
         OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:put
         operation
-    Os_InheritDomainsUsersRolesInherited_To_ProjectsGetResponse:
+    Os_InheritDomainsGroupsRolesInherited_To_ProjectsGetResponse:
       type: object
       description: Response of the 
-        OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:get
+        OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:get
         operation
     Os_InheritDomainsUsersRolesInherited_To_ProjectsPutRequest:
       type: object
@@ -13881,10 +13876,10 @@ components:
       description: Response of the 
         OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:put
         operation
-    Os_InheritProjectsUsersRolesInherited_To_ProjectsGetResponse:
+    Os_InheritDomainsUsersRolesInherited_To_ProjectsGetResponse:
       type: object
       description: Response of the 
-        OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:get
+        OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:get
         operation
     Os_InheritProjectsUsersRolesInherited_To_ProjectsPutRequest:
       type: object
@@ -13898,10 +13893,10 @@ components:
       description: Response of the 
         OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:put
         operation
-    Os_InheritProjectsGroupsRolesInherited_To_ProjectsGetResponse:
+    Os_InheritProjectsUsersRolesInherited_To_ProjectsGetResponse:
       type: object
       description: Response of the 
-        OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:get
+        OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:get
         operation
     Os_InheritProjectsGroupsRolesInherited_To_ProjectsPutRequest:
       type: object
@@ -13915,9 +13910,11 @@ components:
       description: Response of the 
         OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:put
         operation
-    Os_Oauth1ConsumerGetResponse:
+    Os_InheritProjectsGroupsRolesInherited_To_ProjectsGetResponse:
       type: object
-      description: Response of the OS-OAUTH1/consumers/consumer_id:get operation
+      description: Response of the 
+        OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:get
+        operation
     Os_Oauth1ConsumerPatchRequest:
       type: object
       description: Request of the OS-OAUTH1/consumers/consumer_id:patch operation
@@ -13926,6 +13923,9 @@ components:
     Os_Oauth1ConsumerPatchResponse:
       type: object
       description: Response of the OS-OAUTH1/consumers/consumer_id:patch operation
+    Os_Oauth1ConsumerGetResponse:
+      type: object
+      description: Response of the OS-OAUTH1/consumers/consumer_id:get operation
     Os_Oauth1ConsumersGetResponse:
       type: object
       description: Response of the OS-OAUTH1/consumers:get operation
@@ -13937,6 +13937,9 @@ components:
     Os_Oauth1ConsumersPostResponse:
       type: object
       description: Response of the OS-OAUTH1/consumers:post operation
+    Os_Oauth1Request_TokenGetResponse:
+      type: object
+      description: Response of the OS-OAUTH1/request_token:get operation
     Os_Oauth1Request_TokenPostRequest:
       type: object
       description: Request of the OS-OAUTH1/request_token:post operation
@@ -13945,9 +13948,9 @@ components:
     Os_Oauth1Request_TokenPostResponse:
       type: object
       description: Response of the OS-OAUTH1/request_token:post operation
-    Os_Oauth1Request_TokenGetResponse:
+    Os_Oauth1Access_TokenGetResponse:
       type: object
-      description: Response of the OS-OAUTH1/request_token:get operation
+      description: Response of the OS-OAUTH1/access_token:get operation
     Os_Oauth1Access_TokenPostRequest:
       type: object
       description: Request of the OS-OAUTH1/access_token:post operation
@@ -13956,9 +13959,6 @@ components:
     Os_Oauth1Access_TokenPostResponse:
       type: object
       description: Response of the OS-OAUTH1/access_token:post operation
-    Os_Oauth1Access_TokenGetResponse:
-      type: object
-      description: Response of the OS-OAUTH1/access_token:get operation
     Os_Oauth1AuthorizePutRequest:
       type: object
       description: Request of the OS-OAUTH1/authorize/request_token_id:put operation
@@ -13967,17 +13967,6 @@ components:
     Os_Oauth1AuthorizePutResponse:
       type: object
       description: Response of the OS-OAUTH1/authorize/request_token_id:put operation
-    Os_Oauth2TokenGetResponse:
-      type: object
-      description: Response of the OS-OAUTH2/token:get operation
-    Os_Oauth2TokenPostRequest:
-      type: object
-      description: Request of the OS-OAUTH2/token:post operation
-      x-openstack:
-        action-name: POST
-    Os_Oauth2TokenPostResponse:
-      type: object
-      description: Response of the OS-OAUTH2/token:post operation
     Os_Oauth2TokenPatchRequest:
       type: object
       description: Request of the OS-OAUTH2/token:patch operation
@@ -13994,6 +13983,17 @@ components:
     Os_Oauth2TokenPutResponse:
       type: object
       description: Response of the OS-OAUTH2/token:put operation
+    Os_Oauth2TokenGetResponse:
+      type: object
+      description: Response of the OS-OAUTH2/token:get operation
+    Os_Oauth2TokenPostRequest:
+      type: object
+      description: Request of the OS-OAUTH2/token:post operation
+      x-openstack:
+        action-name: POST
+    Os_Oauth2TokenPostResponse:
+      type: object
+      description: Response of the OS-OAUTH2/token:post operation
     Os_RevokeEventsGetResponse:
       type: object
       description: Response of the OS-REVOKE/events:get operation
@@ -14003,9 +14003,6 @@ components:
     Os_Simple_CertCertificatesGetResponse:
       type: object
       description: Response of the OS-SIMPLE-CERT/certificates:get operation
-    PolicyGetResponse:
-      type: object
-      description: Response of the policies/policy_id:get operation
     PolicyPatchRequest:
       type: object
       description: Request of the policies/policy_id:patch operation
@@ -14014,6 +14011,9 @@ components:
     PolicyPatchResponse:
       type: object
       description: Response of the policies/policy_id:patch operation
+    PolicyGetResponse:
+      type: object
+      description: Response of the policies/policy_id:get operation
     PoliciesGetResponse:
       type: object
       description: Response of the policies:get operation
@@ -14029,10 +14029,6 @@ components:
       type: object
       description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/endpoints:get
         operation
-    PoliciesOs_Endpoint_PolicyEndpointGetResponse:
-      type: object
-      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:get
-        operation
     PoliciesOs_Endpoint_PolicyEndpointPutRequest:
       type: object
       description: Request of the policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:put
@@ -14043,9 +14039,9 @@ components:
       type: object
       description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:put
         operation
-    PoliciesOs_Endpoint_PolicyServiceGetResponse:
+    PoliciesOs_Endpoint_PolicyEndpointGetResponse:
       type: object
-      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:get
+      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:get
         operation
     PoliciesOs_Endpoint_PolicyServicePutRequest:
       type: object
@@ -14057,9 +14053,9 @@ components:
       type: object
       description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:put
         operation
-    PoliciesOs_Endpoint_PolicyServicesRegionGetResponse:
+    PoliciesOs_Endpoint_PolicyServiceGetResponse:
       type: object
-      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:get
+      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:get
         operation
     PoliciesOs_Endpoint_PolicyServicesRegionPutRequest:
       type: object
@@ -14071,306 +14067,10 @@ components:
       type: object
       description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:put
         operation
-    ProjectsPost:
+    PoliciesOs_Endpoint_PolicyServicesRegionGetResponse:
       type: object
-      properties:
-        project:
-          type: object
-          description: |-
-            A `project` object
-          properties:
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The description of the project.
-            domain_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the domain for the project.
-
-                For projects acting as a domain, the `domain_id` must not be specified,
-                it will be generated by the Identity service implementation.
-
-                For regular projects (i.e. those not acing as a domain), if `domain_id`
-                is not specified, but `parent_id` is specified, then the domain ID of the
-                parent will be used. If neither `domain_id` or `parent_id` is
-                specified, the Identity service implementation will default to the domain
-                to which the client’s token is scoped. If both `domain_id` and
-                `parent_id` are specified, and they do not indicate the same domain, an
-                `Bad Request (400)` will be returned.
-            enabled:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: |-
-                If set to `true`, project is enabled. If set to
-                `false`, project is disabled. The default is `true`.
-            is_domain:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: |-
-                If set to `true`, project is enabled. If set to
-                `false`, project is disabled. The default is `true`.
-            parent_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the parent of the project.
-
-                If specified on project creation, this places the project within a
-                hierarchy and implicitly defines the owning domain, which will be the
-                same domain as the parent specified. If `parent_id` is
-                not specified and `is_domain` is `false`, then the project will use its
-                owning domain as its parent. If `is_domain` is `true` (i.e. the project
-                is acting as a domain), then `parent_id` must not specified (or if it is,
-                it must be `null`) since domains have no parents.
-
-                `parent_id` is immutable, and can’t be updated after the project is
-                created - hence a project cannot be moved within the hierarchy.
-
-                **New in version 3.4**
-            name:
-              type: string
-              description: |-
-                The name of the project, which must be unique within the
-                owning domain. A project can have the same name as its domain.
-              minLength: 1
-              maxLength: 64
-              pattern: '[\S]+'
-            tags:
-              type: array
-              items:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: ^[^,/]*$
-              required: []
-              maxItems: 80
-              uniqueItems: true
-              description: |-
-                A list of simple strings assigned to a project.
-                Tags can be used to classify projects into groups.
-            options:
-              type: object
-              description: |-
-                The resource options for the project. Available resource options are
-                `immutable`.
-              properties:
-                immutable:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-              additionalProperties: false
-          required:
-            - name
-      additionalProperties: false
-    ProjectsPostResponse:
-      type: object
-      properties:
-        project:
-          type: object
-          properties:
-            id:
-              type: string
-              readOnly: true
-              description: |-
-                The ID for the project.
-            links:
-              type: object
-              description: |-
-                The link to the resources in question.
-              properties:
-                self:
-                  type: string
-                  format: uri
-              additionalProperties: false
-              readOnly: true
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The description of the project.
-            domain_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the domain for the project.
-            enabled:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
-            is_domain:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
-            parent_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the parent for the project.
-
-                **New in version 3.4**
-            name:
-              type: string
-              description: |-
-                The name of the project.
-              minLength: 1
-              maxLength: 64
-              pattern: '[\S]+'
-            tags:
-              type: array
-              items:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: ^[^,/]*$
-              required: []
-              maxItems: 80
-              uniqueItems: true
-              description: |-
-                A list of simple strings assigned to a project.
-            options:
-              type: object
-              properties:
-                immutable:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-              additionalProperties: false
-              description: |-
-                The resource options for the project. Available resource options are
-                `immutable`.
-          additionalProperties: true
-          description: |-
-            A `project` object
-      additionalProperties: false
+      description: Response of the policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:get
+        operation
     ProjectsGetResponse:
       type: object
       properties:
@@ -14546,7 +14246,162 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    ProjectGetResponse:
+    ProjectsPost:
+      type: object
+      properties:
+        project:
+          type: object
+          description: |-
+            A `project` object
+          properties:
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The description of the project.
+            domain_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the domain for the project.
+
+                For projects acting as a domain, the `domain_id` must not be specified,
+                it will be generated by the Identity service implementation.
+
+                For regular projects (i.e. those not acing as a domain), if `domain_id`
+                is not specified, but `parent_id` is specified, then the domain ID of the
+                parent will be used. If neither `domain_id` or `parent_id` is
+                specified, the Identity service implementation will default to the domain
+                to which the client’s token is scoped. If both `domain_id` and
+                `parent_id` are specified, and they do not indicate the same domain, an
+                `Bad Request (400)` will be returned.
+            enabled:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: |-
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled. The default is `true`.
+            is_domain:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: |-
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled. The default is `true`.
+            parent_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the parent of the project.
+
+                If specified on project creation, this places the project within a
+                hierarchy and implicitly defines the owning domain, which will be the
+                same domain as the parent specified. If `parent_id` is
+                not specified and `is_domain` is `false`, then the project will use its
+                owning domain as its parent. If `is_domain` is `true` (i.e. the project
+                is acting as a domain), then `parent_id` must not specified (or if it is,
+                it must be `null`) since domains have no parents.
+
+                `parent_id` is immutable, and can’t be updated after the project is
+                created - hence a project cannot be moved within the hierarchy.
+
+                **New in version 3.4**
+            name:
+              type: string
+              description: |-
+                The name of the project, which must be unique within the
+                owning domain. A project can have the same name as its domain.
+              minLength: 1
+              maxLength: 64
+              pattern: '[\S]+'
+            tags:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: ^[^,/]*$
+              required: []
+              maxItems: 80
+              uniqueItems: true
+              description: |-
+                A list of simple strings assigned to a project.
+                Tags can be used to classify projects into groups.
+            options:
+              type: object
+              description: |-
+                The resource options for the project. Available resource options are
+                `immutable`.
+              properties:
+                immutable:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+              additionalProperties: false
+          required:
+            - name
+      additionalProperties: false
+    ProjectsPostResponse:
       type: object
       properties:
         project:
@@ -14917,7 +14772,165 @@ components:
           description: |-
             A `project` object
       additionalProperties: false
-    ProjectsTagsGetResponse:
+    ProjectGetResponse:
+      type: object
+      properties:
+        project:
+          type: object
+          properties:
+            id:
+              type: string
+              readOnly: true
+              description: |-
+                The ID for the project.
+            links:
+              type: object
+              description: |-
+                The link to the resources in question.
+              properties:
+                self:
+                  type: string
+                  format: uri
+              additionalProperties: false
+              readOnly: true
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The description of the project.
+            domain_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the domain for the project.
+            enabled:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: |-
+                If the user is enabled, this value is `true`.
+                If the user is disabled, this value is `false`.
+            is_domain:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: |-
+                If the user is enabled, this value is `true`.
+                If the user is disabled, this value is `false`.
+            parent_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the parent for the project.
+
+                **New in version 3.4**
+            name:
+              type: string
+              description: |-
+                The name of the project.
+              minLength: 1
+              maxLength: 64
+              pattern: '[\S]+'
+            tags:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: ^[^,/]*$
+              required: []
+              maxItems: 80
+              uniqueItems: true
+              description: |-
+                A list of simple strings assigned to a project.
+            options:
+              type: object
+              properties:
+                immutable:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+              additionalProperties: false
+              description: |-
+                The resource options for the project. Available resource options are
+                `immutable`.
+          additionalProperties: true
+          description: |-
+            A `project` object
+      additionalProperties: false
+    ProjectsTagsPut:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+            pattern: ^[^,/]*$
+          description: |-
+            A list of simple strings assigned to a project.
+      additionalProperties: false
+    ProjectsTagsPutResponse:
       type: object
       properties:
         tags:
@@ -14949,20 +14962,7 @@ components:
           additionalProperties: false
           readOnly: true
       additionalProperties: false
-    ProjectsTagsPut:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-            minLength: 1
-            maxLength: 255
-            pattern: ^[^,/]*$
-          description: |-
-            A list of simple strings assigned to a project.
-      additionalProperties: false
-    ProjectsTagsPutResponse:
+    ProjectsTagsGetResponse:
       type: object
       properties:
         tags:
@@ -15052,6 +15052,96 @@ components:
               A `region` object
           description: |-
             A list of `region` object
+    Registered_LimitsGetResponse:
+      type: object
+      properties:
+        links:
+          type: object
+          description: |-
+            The links for the `user` resource.
+          properties:
+            next:
+              type:
+                - string
+                - 'null'
+              format: uri
+            previous:
+              type:
+                - string
+                - 'null'
+              format: uri
+            self:
+              type: string
+              format: uri
+          required:
+            - self
+          additionalProperties: false
+          readOnly: true
+        registered_limits:
+          type: array
+          items:
+            type: object
+            description: |-
+              A `registered_limit` objects
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: |-
+                  The registered limit ID.
+                readOnly: true
+              links:
+                type: object
+                description: |-
+                  The link to the resources in question.
+                properties:
+                  self:
+                    type: string
+                    format: uri
+                additionalProperties: false
+                readOnly: true
+              service_id:
+                type: string
+                format: uuid
+                description: |-
+                  The UUID of the service to which the registered limit
+                  belongs.
+              region_id:
+                description: |-
+                  The ID of the region that contains the service endpoint.
+                  The value can be None.
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 255
+              resource_name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '[\S]+'
+                description: |-
+                  The resource name.
+              default_limit:
+                description: |-
+                  The default limit for the registered limit.
+                type: integer
+                minimum: -1
+                maximum: 2147483647
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: |-
+                  The registered limit description.
+            additionalProperties: false
+          description: |-
+            A list of `registered_limits` objects
+        truncated:
+          type: boolean
+          description: Flag indicating that the amount of entities exceeds global
+            response limit
+      additionalProperties: false
     Registered_LimitsPost:
       type: object
       properties:
@@ -15172,97 +15262,58 @@ components:
           description: Flag indicating that the amount of entities exceeds global
             response limit
       additionalProperties: false
-    Registered_LimitsGetResponse:
+    Registered_LimitPatch:
       type: object
       properties:
-        links:
+        registered_limit:
           type: object
           description: |-
-            The links for the `user` resource.
+            A `registered_limit` objects
           properties:
-            next:
-              type:
-                - string
-                - 'null'
-              format: uri
-            previous:
-              type:
-                - string
-                - 'null'
-              format: uri
-            self:
+            service_id:
               type: string
-              format: uri
-          required:
-            - self
+              format: uuid
+              description: |-
+                The UUID of the service to update to which the registered
+                limit belongs. Either service_id, resource_name, or region_id
+                must be different than existing value otherwise it will
+                raise 409.
+            region_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 255
+              description: |-
+                The ID of the region that contains the service endpoint.
+                Either service_id, resource_name, or region_id must be
+                different than existing value otherwise it will raise 409.
+            resource_name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              pattern: '[\S]+'
+              description: |-
+                The resource name. Either service_id, resource_name or
+                region_id must be different than existing value otherwise
+                it will raise 409.
+            default_limit:
+              type: integer
+              minimum: -1
+              maximum: 2147483647
+              description: |-
+                The default limit for the registered limit.
+            description:
+              type:
+                - string
+                - 'null'
+              description: |-
+                The registered limit description.
           additionalProperties: false
-          readOnly: true
-        registered_limits:
-          type: array
-          items:
-            type: object
-            description: |-
-              A `registered_limit` objects
-            properties:
-              id:
-                type: string
-                format: uuid
-                description: |-
-                  The registered limit ID.
-                readOnly: true
-              links:
-                type: object
-                description: |-
-                  The link to the resources in question.
-                properties:
-                  self:
-                    type: string
-                    format: uri
-                additionalProperties: false
-                readOnly: true
-              service_id:
-                type: string
-                format: uuid
-                description: |-
-                  The UUID of the service to which the registered limit
-                  belongs.
-              region_id:
-                description: |-
-                  The ID of the region that contains the service endpoint.
-                  The value can be None.
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 255
-              resource_name:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: '[\S]+'
-                description: |-
-                  The resource name.
-              default_limit:
-                description: |-
-                  The default limit for the registered limit.
-                type: integer
-                minimum: -1
-                maximum: 2147483647
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: |-
-                  The registered limit description.
-            additionalProperties: false
-          description: |-
-            A list of `registered_limits` objects
-        truncated:
-          type: boolean
-          description: Flag indicating that the amount of entities exceeds global
-            response limit
       additionalProperties: false
-    Registered_LimitGetResponse:
+      required:
+        - registered_limit
+    Registered_LimitPatchResponse:
       type: object
       properties:
         registered_limit:
@@ -15322,58 +15373,7 @@ components:
                 The registered limit description.
           additionalProperties: false
       additionalProperties: false
-    Registered_LimitPatch:
-      type: object
-      properties:
-        registered_limit:
-          type: object
-          description: |-
-            A `registered_limit` objects
-          properties:
-            service_id:
-              type: string
-              format: uuid
-              description: |-
-                The UUID of the service to update to which the registered
-                limit belongs. Either service_id, resource_name, or region_id
-                must be different than existing value otherwise it will
-                raise 409.
-            region_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 255
-              description: |-
-                The ID of the region that contains the service endpoint.
-                Either service_id, resource_name, or region_id must be
-                different than existing value otherwise it will raise 409.
-            resource_name:
-              type: string
-              minLength: 1
-              maxLength: 255
-              pattern: '[\S]+'
-              description: |-
-                The resource name. Either service_id, resource_name or
-                region_id must be different than existing value otherwise
-                it will raise 409.
-            default_limit:
-              type: integer
-              minimum: -1
-              maximum: 2147483647
-              description: |-
-                The default limit for the registered limit.
-            description:
-              type:
-                - string
-                - 'null'
-              description: |-
-                The registered limit description.
-          additionalProperties: false
-      additionalProperties: false
-      required:
-        - registered_limit
-    Registered_LimitPatchResponse:
+    Registered_LimitGetResponse:
       type: object
       properties:
         registered_limit:
@@ -15759,6 +15759,78 @@ components:
                   An implied role object.
           description: |-
             An array of `role_inference` object.
+    RolesGetResponse:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            type: object
+            description: |-
+              A `role` object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: |-
+                  The role ID.
+                readOnly: true
+              links:
+                type: object
+                additionalProperties:
+                  type:
+                    - string
+                    - 'null'
+                  format: uri
+                readOnly: true
+                description: |-
+                  The link to the resources in question.
+              name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '[\S]+'
+                description: |-
+                  The resource name.
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: |-
+                  The role description.
+              domain_id:
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID of the domain.
+              options:
+                type: object
+                properties:
+                  immutable:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                additionalProperties: false
+                description: |-
+                  The resource options for the role. Available resource options are
+                  `immutable`.
+          description: |-
+            A list of `role` objects
+        links:
+          type: object
+          additionalProperties:
+            type:
+              - string
+              - 'null'
+            format: uri
     RolesPost:
       type: object
       properties:
@@ -15871,78 +15943,6 @@ components:
               description: |-
                 The resource options for the role. Available resource options are
                 `immutable`.
-    RolesGetResponse:
-      type: object
-      properties:
-        roles:
-          type: array
-          items:
-            type: object
-            description: |-
-              A `role` object
-            properties:
-              id:
-                type: string
-                format: uuid
-                description: |-
-                  The role ID.
-                readOnly: true
-              links:
-                type: object
-                additionalProperties:
-                  type:
-                    - string
-                    - 'null'
-                  format: uri
-                readOnly: true
-                description: |-
-                  The link to the resources in question.
-              name:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: '[\S]+'
-                description: |-
-                  The resource name.
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: |-
-                  The role description.
-              domain_id:
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID of the domain.
-              options:
-                type: object
-                properties:
-                  immutable:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                additionalProperties: false
-                description: |-
-                  The resource options for the role. Available resource options are
-                  `immutable`.
-          description: |-
-            A list of `role` objects
-        links:
-          type: object
-          additionalProperties:
-            type:
-              - string
-              - 'null'
-            format: uri
     RolePatch:
       type: object
       properties:
@@ -16057,67 +16057,6 @@ components:
           description: |-
             Role inference object that contains `prior_role` object
             and `implies` object.
-    RolesImplyGetResponse:
-      type: object
-      properties:
-        role_inference:
-          type: object
-          properties:
-            prior_role:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  description: |-
-                    The role ID.
-                name:
-                  type: string
-                  description: |-
-                    The role name.
-                description:
-                  type: string
-                  description: The role description.
-                links:
-                  type: object
-                  properties:
-                    self:
-                      type: string
-                      format: uri
-                      description: The link to the resource in question.
-                  description: |-
-                    The link to the resources in question.
-              description: |-
-                A prior role object.
-            implies:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                  description: |-
-                    The role ID.
-                name:
-                  type: string
-                  description: |-
-                    The role name.
-                description:
-                  type: string
-                  description: The role description.
-                links:
-                  type: object
-                  properties:
-                    self:
-                      type: string
-                      format: uri
-                      description: The link to the resource in question.
-                  description: |-
-                    The link to the resources in question.
-              description: |-
-                A prior role object.
-          description: |-
-            Role inference object that contains `prior_role` object
-            and `implies` object.
     RolesImplyPutResponse:
       type: object
       properties:
@@ -16179,6 +16118,70 @@ components:
           description: |-
             Role inference object that contains `prior_role` object
             and `implies` object.
+    RolesImplyGetResponse:
+      type: object
+      properties:
+        role_inference:
+          type: object
+          properties:
+            prior_role:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: |-
+                    The role ID.
+                name:
+                  type: string
+                  description: |-
+                    The role name.
+                description:
+                  type: string
+                  description: The role description.
+                links:
+                  type: object
+                  properties:
+                    self:
+                      type: string
+                      format: uri
+                      description: The link to the resource in question.
+                  description: |-
+                    The link to the resources in question.
+              description: |-
+                A prior role object.
+            implies:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: |-
+                    The role ID.
+                name:
+                  type: string
+                  description: |-
+                    The role name.
+                description:
+                  type: string
+                  description: The role description.
+                links:
+                  type: object
+                  properties:
+                    self:
+                      type: string
+                      format: uri
+                      description: The link to the resource in question.
+                  description: |-
+                    The link to the resources in question.
+              description: |-
+                A prior role object.
+          description: |-
+            Role inference object that contains `prior_role` object
+            and `implies` object.
+    S3TokensGetResponse:
+      type: object
+      description: Response of the s3tokens:get operation
     S3TokensPostRequest:
       type: object
       description: Request of the s3tokens:post operation
@@ -16187,9 +16190,46 @@ components:
     S3TokensPostResponse:
       type: object
       description: Response of the s3tokens:post operation
-    S3TokensGetResponse:
+    ServicesGetResponse:
       type: object
-      description: Response of the s3tokens:get operation
+      properties:
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+                description: |-
+                  The service description.
+              enabled:
+                type: boolean
+                description: |-
+                  Defines whether the service and its endpoints
+                  appear in the service catalog: - `false`. The service and its
+                  endpoints do not appear in the service catalog. - `true`. The
+                  service and its endpoints appear in the service catalog.
+              id:
+                type: string
+                format: uuid
+                description: |-
+                  The UUID of the service to which the endpoint
+                  belongs.
+                readOnly: true
+              name:
+                type: string
+                description: |-
+                  The service name.
+              type:
+                type: string
+                description: |-
+                  The service type, which describes the API
+                  implemented by the service. Value is `compute`, `ec2`,
+                  `identity`, `image`, `network`, or `volume`.
+            description: |-
+              A `service` object.
+          description: |-
+            A list of `service` object.
     ServicesPost:
       type: object
       description: A service object.
@@ -16259,46 +16299,6 @@ components:
                 `identity`, `image`, `network`, or `volume`.
           description: |-
             A `service` object.
-    ServicesGetResponse:
-      type: object
-      properties:
-        services:
-          type: array
-          items:
-            type: object
-            properties:
-              description:
-                type: string
-                description: |-
-                  The service description.
-              enabled:
-                type: boolean
-                description: |-
-                  Defines whether the service and its endpoints
-                  appear in the service catalog: - `false`. The service and its
-                  endpoints do not appear in the service catalog. - `true`. The
-                  service and its endpoints appear in the service catalog.
-              id:
-                type: string
-                format: uuid
-                description: |-
-                  The UUID of the service to which the endpoint
-                  belongs.
-                readOnly: true
-              name:
-                type: string
-                description: |-
-                  The service name.
-              type:
-                type: string
-                description: |-
-                  The service type, which describes the API
-                  implemented by the service. Value is `compute`, `ec2`,
-                  `identity`, `image`, `network`, or `volume`.
-            description: |-
-              A `service` object.
-          description: |-
-            A list of `service` object.
     ServicePatch:
       type: object
       description: A service object.
@@ -16513,6 +16513,242 @@ components:
           description: |-
             A list of `role` objects containing `domain_id`, `id`, `links`,
             and `name` attributes.
+        truncated:
+          type: boolean
+          description: Flag indicating that the amount of entities exceeds global
+            response limit
+      additionalProperties: false
+    Os_TrustTrustsGetResponse:
+      type: object
+      properties:
+        trusts:
+          type: array
+          items:
+            type: object
+            description: A trust object.
+            properties:
+              deleted_at:
+                type:
+                  - string
+                  - 'null'
+              id:
+                type: string
+                readOnly: true
+                description: The ID of the trust.
+              links:
+                type: object
+                description: |-
+                  The links for the `user` resource.
+                properties:
+                  next:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  previous:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  self:
+                    type: string
+                    format: uri
+                required:
+                  - self
+                additionalProperties: false
+                readOnly: true
+              roles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type:
+                        - string
+                        - 'null'
+                      description: The resource description.
+                    domain_id:
+                      type:
+                        - string
+                        - 'null'
+                      minLength: 1
+                      maxLength: 64
+                      pattern: ^[a-zA-Z0-9-]+$
+                      description: The ID of the domain.
+                    id:
+                      type: string
+                      minLength: 1
+                      maxLength: 64
+                      pattern: ^[a-zA-Z0-9-]+$
+                      description: |-
+                        The ID of the domain.
+                    name:
+                      type: string
+                      minLength: 1
+                      maxLength: 255
+                      pattern: '[\S]+'
+                      description: |-
+                        The resource name.
+                    options:
+                      type: object
+                      properties:
+                        immutable:
+                          type:
+                            - boolean
+                            - 'null'
+                          enum:
+                            - true
+                            - false
+                            - 
+                      additionalProperties: false
+                    links:
+                      type: object
+                      description: |-
+                        The links for the `user` resource.
+                      properties:
+                        next:
+                          type:
+                            - string
+                            - 'null'
+                          format: uri
+                        previous:
+                          type:
+                            - string
+                            - 'null'
+                          format: uri
+                        self:
+                          type: string
+                          format: uri
+                      required:
+                        - self
+                      additionalProperties: false
+                      readOnly: true
+                  additionalProperties: false
+              roles_links:
+                type: object
+                description: |-
+                  The links for the `user` resource.
+                properties:
+                  next:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  previous:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  self:
+                    type: string
+                    format: uri
+                required:
+                  - self
+                additionalProperties: false
+                readOnly: true
+              trustor_user_id:
+                type: string
+                description: Represents the user who created the trust, and who's
+                  authorization is being delegated.
+              trustee_user_id:
+                type: string
+                description: Represents the user who is capable of consuming the trust.
+              impersonation:
+                type: boolean
+                description: If set to true, then the user attribute of tokens generated
+                  based on the trust will represent that of the trustor rather than
+                  the trustee, thus allowing the trustee to impersonate the trustor.
+                  If impersonation if set to false, then the token's user attribute
+                  will represent that of the trustee.
+              project_id:
+                type:
+                  - string
+                  - 'null'
+                format: uuid
+                description: Identifies the project upon which the trustor is delegating
+                  authorization.
+              remaining_uses:
+                type:
+                  - integer
+                  - 'null'
+                minimum: 1
+                description: Specifies how many times the trust can be used to obtain
+                  a token. This value is decreased each time a token is issued through
+                  the trust. Once it reaches 0, no further tokens will be issued through
+                  the trust. The default value is null, meaning there is no limit
+                  on the number of tokens issued through the trust. If redelegation
+                  is enabled it must not be set.
+              expires_at:
+                type:
+                  - 'null'
+                  - string
+                description: Specifies the expiration time of the trust. A trust may
+                  be revoked ahead of expiration. If the value represents a time in
+                  the past, the trust is deactivated. In the redelegation case it
+                  must not exceed the value of the corresponding expires_at field
+                  of the redelegated trust or it may be omitted, then the expires_at
+                  value is copied from the redelegated trust.
+              allow_redelegation:
+                type:
+                  - boolean
+                  - 'null'
+                description: If set to true then a trust between a trustor and any
+                  third-party user may be issued by the trustee just like a regular
+                  trust. If set to false, stops further redelegation. False by default.
+              redelegation_count:
+                type:
+                  - integer
+                  - 'null'
+                minimum: 0
+                description: Specifies the maximum remaining depth of the redelegated
+                  trust chain. Each subsequent trust has this field decremented by
+                  1 automatically. The initial trustor issuing new trust that can
+                  be redelegated, must set allow_redelegation to true and may set
+                  redelegation_count to an integer value less than or equal to max_redelegation_count
+                  configuration parameter in order to limit the possible length of
+                  derived trust chains. The trust issued by the trustor using a
+                  project-scoped token (not redelegating), in which allow_redelegation
+                  is set to true (the new trust is redelegatable), will be populated
+                  with the value specified in the max_redelegation_count configuration
+                  parameter if redelegation_count is not set or set to null. If allow_redelegation
+                  is set to false then redelegation_count will be set to 0 in the
+                  trust. If the trust is being issued by the trustee of a redelegatable
+                  trust-scoped token (redelegation case) then redelegation_count should
+                  not be set, as it will automatically be set to the value in the
+                  redelegatable trust-scoped token decremented by 1. Note, if the
+                  resulting value is 0, this means that the new trust will not be
+                  redelegatable, regardless of the value of allow_redelegation.
+              redelegated_trust_id:
+                type:
+                  - string
+                  - 'null'
+                description:
+                  - Returned with redelegated trust provides information about the
+                    predecessor in the trust chain.
+            additionalProperties: false
+          description: A list of trust objects.
+        links:
+          type: object
+          description: |-
+            The links for the `user` resource.
+          properties:
+            next:
+              type:
+                - string
+                - 'null'
+              format: uri
+            previous:
+              type:
+                - string
+                - 'null'
+              format: uri
+            self:
+              type: string
+              format: uri
+          required:
+            - self
+          additionalProperties: false
+          readOnly: true
         truncated:
           type: boolean
           description: Flag indicating that the amount of entities exceeds global
@@ -16839,242 +17075,6 @@ components:
                   in the trust chain.
           additionalProperties: false
       additionalProperties: false
-    Os_TrustTrustsGetResponse:
-      type: object
-      properties:
-        trusts:
-          type: array
-          items:
-            type: object
-            description: A trust object.
-            properties:
-              deleted_at:
-                type:
-                  - string
-                  - 'null'
-              id:
-                type: string
-                readOnly: true
-                description: The ID of the trust.
-              links:
-                type: object
-                description: |-
-                  The links for the `user` resource.
-                properties:
-                  next:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  previous:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  self:
-                    type: string
-                    format: uri
-                required:
-                  - self
-                additionalProperties: false
-                readOnly: true
-              roles:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    description:
-                      type:
-                        - string
-                        - 'null'
-                      description: The resource description.
-                    domain_id:
-                      type:
-                        - string
-                        - 'null'
-                      minLength: 1
-                      maxLength: 64
-                      pattern: ^[a-zA-Z0-9-]+$
-                      description: The ID of the domain.
-                    id:
-                      type: string
-                      minLength: 1
-                      maxLength: 64
-                      pattern: ^[a-zA-Z0-9-]+$
-                      description: |-
-                        The ID of the domain.
-                    name:
-                      type: string
-                      minLength: 1
-                      maxLength: 255
-                      pattern: '[\S]+'
-                      description: |-
-                        The resource name.
-                    options:
-                      type: object
-                      properties:
-                        immutable:
-                          type:
-                            - boolean
-                            - 'null'
-                          enum:
-                            - true
-                            - false
-                            - 
-                      additionalProperties: false
-                    links:
-                      type: object
-                      description: |-
-                        The links for the `user` resource.
-                      properties:
-                        next:
-                          type:
-                            - string
-                            - 'null'
-                          format: uri
-                        previous:
-                          type:
-                            - string
-                            - 'null'
-                          format: uri
-                        self:
-                          type: string
-                          format: uri
-                      required:
-                        - self
-                      additionalProperties: false
-                      readOnly: true
-                  additionalProperties: false
-              roles_links:
-                type: object
-                description: |-
-                  The links for the `user` resource.
-                properties:
-                  next:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  previous:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  self:
-                    type: string
-                    format: uri
-                required:
-                  - self
-                additionalProperties: false
-                readOnly: true
-              trustor_user_id:
-                type: string
-                description: Represents the user who created the trust, and who's
-                  authorization is being delegated.
-              trustee_user_id:
-                type: string
-                description: Represents the user who is capable of consuming the trust.
-              impersonation:
-                type: boolean
-                description: If set to true, then the user attribute of tokens generated
-                  based on the trust will represent that of the trustor rather than
-                  the trustee, thus allowing the trustee to impersonate the trustor.
-                  If impersonation if set to false, then the token's user attribute
-                  will represent that of the trustee.
-              project_id:
-                type:
-                  - string
-                  - 'null'
-                format: uuid
-                description: Identifies the project upon which the trustor is delegating
-                  authorization.
-              remaining_uses:
-                type:
-                  - integer
-                  - 'null'
-                minimum: 1
-                description: Specifies how many times the trust can be used to obtain
-                  a token. This value is decreased each time a token is issued through
-                  the trust. Once it reaches 0, no further tokens will be issued through
-                  the trust. The default value is null, meaning there is no limit
-                  on the number of tokens issued through the trust. If redelegation
-                  is enabled it must not be set.
-              expires_at:
-                type:
-                  - 'null'
-                  - string
-                description: Specifies the expiration time of the trust. A trust may
-                  be revoked ahead of expiration. If the value represents a time in
-                  the past, the trust is deactivated. In the redelegation case it
-                  must not exceed the value of the corresponding expires_at field
-                  of the redelegated trust or it may be omitted, then the expires_at
-                  value is copied from the redelegated trust.
-              allow_redelegation:
-                type:
-                  - boolean
-                  - 'null'
-                description: If set to true then a trust between a trustor and any
-                  third-party user may be issued by the trustee just like a regular
-                  trust. If set to false, stops further redelegation. False by default.
-              redelegation_count:
-                type:
-                  - integer
-                  - 'null'
-                minimum: 0
-                description: Specifies the maximum remaining depth of the redelegated
-                  trust chain. Each subsequent trust has this field decremented by
-                  1 automatically. The initial trustor issuing new trust that can
-                  be redelegated, must set allow_redelegation to true and may set
-                  redelegation_count to an integer value less than or equal to max_redelegation_count
-                  configuration parameter in order to limit the possible length of
-                  derived trust chains. The trust issued by the trustor using a
-                  project-scoped token (not redelegating), in which allow_redelegation
-                  is set to true (the new trust is redelegatable), will be populated
-                  with the value specified in the max_redelegation_count configuration
-                  parameter if redelegation_count is not set or set to null. If allow_redelegation
-                  is set to false then redelegation_count will be set to 0 in the
-                  trust. If the trust is being issued by the trustee of a redelegatable
-                  trust-scoped token (redelegation case) then redelegation_count should
-                  not be set, as it will automatically be set to the value in the
-                  redelegatable trust-scoped token decremented by 1. Note, if the
-                  resulting value is 0, this means that the new trust will not be
-                  redelegatable, regardless of the value of allow_redelegation.
-              redelegated_trust_id:
-                type:
-                  - string
-                  - 'null'
-                description:
-                  - Returned with redelegated trust provides information about the
-                    predecessor in the trust chain.
-            additionalProperties: false
-          description: A list of trust objects.
-        links:
-          type: object
-          description: |-
-            The links for the `user` resource.
-          properties:
-            next:
-              type:
-                - string
-                - 'null'
-              format: uri
-            previous:
-              type:
-                - string
-                - 'null'
-              format: uri
-            self:
-              type: string
-              format: uri
-          required:
-            - self
-          additionalProperties: false
-          readOnly: true
-        truncated:
-          type: boolean
-          description: Flag indicating that the amount of entities exceeds global
-            response limit
-      additionalProperties: false
     Os_TrustTrustGetResponse:
       type: object
       description: A trust object
@@ -17289,6 +17289,226 @@ components:
     Os_TrustTrustsRoleGetResponse:
       type: object
       description: Response of the OS-TRUST/trusts/trust_id/roles/role_id:get operation
+    UsersGetResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: |-
+                  The user ID.
+                readOnly: true
+              default_project_id:
+                type:
+                  - string
+                  - 'null'
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID of the default project for the user.
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: The resource description.
+              domain_id:
+                type: string
+                minLength: 1
+                maxLength: 64
+                pattern: ^[a-zA-Z0-9-]+$
+                description: |-
+                  The ID of the domain.
+              enabled:
+                type:
+                  - boolean
+                  - string
+                  - 'null'
+                enum:
+                  - true
+                  - 'True'
+                  - 'TRUE'
+                  - 'true'
+                  - false
+                  - 'False'
+                  - 'FALSE'
+                  - 'false'
+                  - ''
+                  - '1'
+                  - '0'
+                  - y
+                  - Y
+                  - n
+                  - N
+                  - on
+                  - ON
+                  - off
+                  - OFF
+                  - yes
+                  - no
+                description: |-
+                  If the user is enabled, this value is `true`.
+                  If the user is disabled, this value is `false`.
+              federated:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    idp_id:
+                      type: string
+                    protocols:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          protocol_id:
+                            type: string
+                          unique_id:
+                            type: string
+                        required:
+                          - protocol_id
+                          - unique_id
+                      minItems: 1
+                  required:
+                    - idp_id
+                    - protocols
+                description: |-
+                  List of federated objects associated with a user. Each object in the list
+                  contains the `idp_id` and `protocols`. `protocols` is a list of
+                  objects, each of which contains `protocol_id` and `unique_id` of
+                  the protocol and user respectively. For example:
+
+                  ```
+                  "federated": [
+                    {
+                      "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
+                      "protocols": [
+                        {"protocol_id": "mapped", "unique_id": "test@example.com"}
+                      ]
+                    }
+                  ]
+
+                  ```
+              links:
+                type: object
+                description: |-
+                  The links for the `user` resource.
+                properties:
+                  next:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  previous:
+                    type:
+                      - string
+                      - 'null'
+                    format: uri
+                  self:
+                    type: string
+                    format: uri
+                required:
+                  - self
+                additionalProperties: false
+                readOnly: true
+              name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                pattern: '[\S]+'
+                description: |-
+                  The user name. Must be unique within the owning domain.
+              password_expires_at:
+                type:
+                  - string
+                  - 'null'
+                format: date-time
+                description: |-
+                  The date and time when the password expires. The time zone
+                  is UTC.
+
+                  This is a response object attribute; not valid for requests.
+                  A `null` value indicates that the password never expires.
+
+                  **New in version 3.7**
+                readOnly: true
+              options:
+                type: object
+                properties:
+                  ignore_change_password_upon_first_use:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                  ignore_password_expiry:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                  ignore_lockout_failure_attempts:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                  lock_password:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                  ignore_user_inactivity:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                  multi_factor_auth_rules:
+                    type:
+                      - array
+                      - 'null'
+                    items:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                      uniqueItems: true
+                    uniqueItems: true
+                  multi_factor_auth_enabled:
+                    type:
+                      - boolean
+                      - 'null'
+                    enum:
+                      - true
+                      - false
+                      - 
+                additionalProperties: false
+                description: |-
+                  The resource options for the user. Available resource options are
+                  `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+                  `ignore_lockout_failure_attempts`, `lock_password`,
+                  `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+                  `ignore_user_inactivity`.
+            description: |-
+              A `user` object
+          description: |-
+            A list of `user` objects
     UsersPost:
       type: object
       properties:
@@ -17753,442 +17973,6 @@ components:
       additionalProperties: false
       required:
         - user
-    UsersGetResponse:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: |-
-                  The user ID.
-                readOnly: true
-              default_project_id:
-                type:
-                  - string
-                  - 'null'
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID of the default project for the user.
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: The resource description.
-              domain_id:
-                type: string
-                minLength: 1
-                maxLength: 64
-                pattern: ^[a-zA-Z0-9-]+$
-                description: |-
-                  The ID of the domain.
-              enabled:
-                type:
-                  - boolean
-                  - string
-                  - 'null'
-                enum:
-                  - true
-                  - 'True'
-                  - 'TRUE'
-                  - 'true'
-                  - false
-                  - 'False'
-                  - 'FALSE'
-                  - 'false'
-                  - ''
-                  - '1'
-                  - '0'
-                  - y
-                  - Y
-                  - n
-                  - N
-                  - on
-                  - ON
-                  - off
-                  - OFF
-                  - yes
-                  - no
-                description: |-
-                  If the user is enabled, this value is `true`.
-                  If the user is disabled, this value is `false`.
-              federated:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    idp_id:
-                      type: string
-                    protocols:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          protocol_id:
-                            type: string
-                          unique_id:
-                            type: string
-                        required:
-                          - protocol_id
-                          - unique_id
-                      minItems: 1
-                  required:
-                    - idp_id
-                    - protocols
-                description: |-
-                  List of federated objects associated with a user. Each object in the list
-                  contains the `idp_id` and `protocols`. `protocols` is a list of
-                  objects, each of which contains `protocol_id` and `unique_id` of
-                  the protocol and user respectively. For example:
-
-                  ```
-                  "federated": [
-                    {
-                      "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-                      "protocols": [
-                        {"protocol_id": "mapped", "unique_id": "test@example.com"}
-                      ]
-                    }
-                  ]
-
-                  ```
-              links:
-                type: object
-                description: |-
-                  The links for the `user` resource.
-                properties:
-                  next:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  previous:
-                    type:
-                      - string
-                      - 'null'
-                    format: uri
-                  self:
-                    type: string
-                    format: uri
-                required:
-                  - self
-                additionalProperties: false
-                readOnly: true
-              name:
-                type: string
-                minLength: 1
-                maxLength: 255
-                pattern: '[\S]+'
-                description: |-
-                  The user name. Must be unique within the owning domain.
-              password_expires_at:
-                type:
-                  - string
-                  - 'null'
-                format: date-time
-                description: |-
-                  The date and time when the password expires. The time zone
-                  is UTC.
-
-                  This is a response object attribute; not valid for requests.
-                  A `null` value indicates that the password never expires.
-
-                  **New in version 3.7**
-                readOnly: true
-              options:
-                type: object
-                properties:
-                  ignore_change_password_upon_first_use:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                  ignore_password_expiry:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                  ignore_lockout_failure_attempts:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                  lock_password:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                  ignore_user_inactivity:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                  multi_factor_auth_rules:
-                    type:
-                      - array
-                      - 'null'
-                    items:
-                      type: array
-                      items:
-                        type: string
-                      minItems: 1
-                      uniqueItems: true
-                    uniqueItems: true
-                  multi_factor_auth_enabled:
-                    type:
-                      - boolean
-                      - 'null'
-                    enum:
-                      - true
-                      - false
-                      - 
-                additionalProperties: false
-                description: |-
-                  The resource options for the user. Available resource options are
-                  `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-                  `ignore_lockout_failure_attempts`, `lock_password`,
-                  `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-                  `ignore_user_inactivity`.
-            description: |-
-              A `user` object
-          description: |-
-            A list of `user` objects
-    UserGetResponse:
-      type: object
-      properties:
-        user:
-          type: object
-          properties:
-            id:
-              type: string
-              description: |-
-                The user ID.
-              readOnly: true
-            default_project_id:
-              type:
-                - string
-                - 'null'
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the default project for the user.
-            description:
-              type:
-                - string
-                - 'null'
-              description: The resource description.
-            domain_id:
-              type: string
-              minLength: 1
-              maxLength: 64
-              pattern: ^[a-zA-Z0-9-]+$
-              description: |-
-                The ID of the domain.
-            enabled:
-              type:
-                - boolean
-                - string
-                - 'null'
-              enum:
-                - true
-                - 'True'
-                - 'TRUE'
-                - 'true'
-                - false
-                - 'False'
-                - 'FALSE'
-                - 'false'
-                - ''
-                - '1'
-                - '0'
-                - y
-                - Y
-                - n
-                - N
-                - on
-                - ON
-                - off
-                - OFF
-                - yes
-                - no
-              description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
-            federated:
-              type: array
-              items:
-                type: object
-                properties:
-                  idp_id:
-                    type: string
-                  protocols:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        protocol_id:
-                          type: string
-                        unique_id:
-                          type: string
-                      required:
-                        - protocol_id
-                        - unique_id
-                    minItems: 1
-                required:
-                  - idp_id
-                  - protocols
-              description: |-
-                List of federated objects associated with a user. Each object in the list
-                contains the `idp_id` and `protocols`. `protocols` is a list of
-                objects, each of which contains `protocol_id` and `unique_id` of
-                the protocol and user respectively. For example:
-
-                ```
-                "federated": [
-                  {
-                    "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-                    "protocols": [
-                      {"protocol_id": "mapped", "unique_id": "test@example.com"}
-                    ]
-                  }
-                ]
-
-                ```
-            links:
-              type: object
-              description: |-
-                The links for the `user` resource.
-              properties:
-                next:
-                  type:
-                    - string
-                    - 'null'
-                  format: uri
-                previous:
-                  type:
-                    - string
-                    - 'null'
-                  format: uri
-                self:
-                  type: string
-                  format: uri
-              required:
-                - self
-              additionalProperties: false
-              readOnly: true
-            name:
-              type: string
-              minLength: 1
-              maxLength: 255
-              pattern: '[\S]+'
-              description: |-
-                The user name. Must be unique within the owning domain.
-            password_expires_at:
-              type:
-                - string
-                - 'null'
-              format: date-time
-              description: |-
-                The date and time when the password expires. The time zone
-                is UTC.
-
-                This is a response object attribute; not valid for requests.
-                A `null` value indicates that the password never expires.
-
-                **New in version 3.7**
-              readOnly: true
-            options:
-              type: object
-              properties:
-                ignore_change_password_upon_first_use:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-                ignore_password_expiry:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-                ignore_lockout_failure_attempts:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-                lock_password:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-                ignore_user_inactivity:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-                multi_factor_auth_rules:
-                  type:
-                    - array
-                    - 'null'
-                  items:
-                    type: array
-                    items:
-                      type: string
-                    minItems: 1
-                    uniqueItems: true
-                  uniqueItems: true
-                multi_factor_auth_enabled:
-                  type:
-                    - boolean
-                    - 'null'
-                  enum:
-                    - true
-                    - false
-                    - 
-              additionalProperties: false
-              description: |-
-                The resource options for the user. Available resource options are
-                `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-                `ignore_lockout_failure_attempts`, `lock_password`,
-                `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-                `ignore_user_inactivity`.
-          description: |-
-            A `user` object
     UserPatch:
       type: object
       properties:
@@ -18629,6 +18413,222 @@ components:
                 `ignore_user_inactivity`.
           description: |-
             A `user` object
+    UserGetResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              description: |-
+                The user ID.
+              readOnly: true
+            default_project_id:
+              type:
+                - string
+                - 'null'
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the default project for the user.
+            description:
+              type:
+                - string
+                - 'null'
+              description: The resource description.
+            domain_id:
+              type: string
+              minLength: 1
+              maxLength: 64
+              pattern: ^[a-zA-Z0-9-]+$
+              description: |-
+                The ID of the domain.
+            enabled:
+              type:
+                - boolean
+                - string
+                - 'null'
+              enum:
+                - true
+                - 'True'
+                - 'TRUE'
+                - 'true'
+                - false
+                - 'False'
+                - 'FALSE'
+                - 'false'
+                - ''
+                - '1'
+                - '0'
+                - y
+                - Y
+                - n
+                - N
+                - on
+                - ON
+                - off
+                - OFF
+                - yes
+                - no
+              description: |-
+                If the user is enabled, this value is `true`.
+                If the user is disabled, this value is `false`.
+            federated:
+              type: array
+              items:
+                type: object
+                properties:
+                  idp_id:
+                    type: string
+                  protocols:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        protocol_id:
+                          type: string
+                        unique_id:
+                          type: string
+                      required:
+                        - protocol_id
+                        - unique_id
+                    minItems: 1
+                required:
+                  - idp_id
+                  - protocols
+              description: |-
+                List of federated objects associated with a user. Each object in the list
+                contains the `idp_id` and `protocols`. `protocols` is a list of
+                objects, each of which contains `protocol_id` and `unique_id` of
+                the protocol and user respectively. For example:
+
+                ```
+                "federated": [
+                  {
+                    "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
+                    "protocols": [
+                      {"protocol_id": "mapped", "unique_id": "test@example.com"}
+                    ]
+                  }
+                ]
+
+                ```
+            links:
+              type: object
+              description: |-
+                The links for the `user` resource.
+              properties:
+                next:
+                  type:
+                    - string
+                    - 'null'
+                  format: uri
+                previous:
+                  type:
+                    - string
+                    - 'null'
+                  format: uri
+                self:
+                  type: string
+                  format: uri
+              required:
+                - self
+              additionalProperties: false
+              readOnly: true
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              pattern: '[\S]+'
+              description: |-
+                The user name. Must be unique within the owning domain.
+            password_expires_at:
+              type:
+                - string
+                - 'null'
+              format: date-time
+              description: |-
+                The date and time when the password expires. The time zone
+                is UTC.
+
+                This is a response object attribute; not valid for requests.
+                A `null` value indicates that the password never expires.
+
+                **New in version 3.7**
+              readOnly: true
+            options:
+              type: object
+              properties:
+                ignore_change_password_upon_first_use:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+                ignore_password_expiry:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+                ignore_lockout_failure_attempts:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+                lock_password:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+                ignore_user_inactivity:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+                multi_factor_auth_rules:
+                  type:
+                    - array
+                    - 'null'
+                  items:
+                    type: array
+                    items:
+                      type: string
+                    minItems: 1
+                    uniqueItems: true
+                  uniqueItems: true
+                multi_factor_auth_enabled:
+                  type:
+                    - boolean
+                    - 'null'
+                  enum:
+                    - true
+                    - false
+                    - 
+              additionalProperties: false
+              description: |-
+                The resource options for the user. Available resource options are
+                `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+                `ignore_lockout_failure_attempts`, `lock_password`,
+                `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+                `ignore_user_inactivity`.
+          description: |-
+            A `user` object
     UsersPasswordPostRequest:
       type: object
       properties:
@@ -18716,6 +18716,9 @@ components:
               name:
                 type: string
                 description: The name of the project.
+    UsersCredentialsOs_Ec2GetResponse:
+      type: object
+      description: Response of the users/user_id/credentials/OS-EC2:get operation
     UsersCredentialsOs_Ec2PostRequest:
       type: object
       description: Request of the users/user_id/credentials/OS-EC2:post operation
@@ -18724,9 +18727,6 @@ components:
     UsersCredentialsOs_Ec2PostResponse:
       type: object
       description: Response of the users/user_id/credentials/OS-EC2:post operation
-    UsersCredentialsOs_Ec2GetResponse:
-      type: object
-      description: Response of the users/user_id/credentials/OS-EC2:get operation
     UsersOs_Oauth1Access_TokensGetResponse:
       type: object
       description: Response of the users/user_id/OS-OAUTH1/access_tokens:get operation
@@ -18742,6 +18742,72 @@ components:
       type: object
       description: Response of the users/user_id/OS-OAUTH1/access_tokens/access_token_id/roles/role_id:get
         operation
+    UsersApplication_CredentialsGetResponse:
+      type: object
+      properties:
+        application_credentials:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+                description: The ID of the application credential.
+              project_id:
+                type: string
+                format: uuid
+                description: The ID of the project the application credential was
+                  created for and that authentication requests using this application
+                  credential will be scoped to.
+              name:
+                type: string
+                description: The name of the application credential. Must be unique
+                  to a user.
+              description:
+                type:
+                  - string
+                  - 'null'
+                description: A description of the application credential's purpose.
+              expires_at:
+                type:
+                  - 'null'
+                  - string
+              roles:
+                type: array
+                description: An optional list of role objects, identified by ID or
+                  name. The list may only contain roles that the user has assigned
+                  on the project. If not provided, the roles assigned to the application
+                  credential will be the same as the roles in the current token.
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    id:
+                      type: string
+              unrestricted:
+                type: boolean
+                description: An optional flag to restrict whether the application
+                  credential may be used for the creation or destruction of other
+                  application credentials or trusts. Defaults to false.
+              access_rules:
+                type: array
+                description: A list of access_rules objects
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    path:
+                      type: string
+                    method:
+                      type: string
+                    service:
+                      type: string
+      required:
+        - application_credentials
     UsersApplication_CredentialsPost:
       type: object
       description: An application credential object.
@@ -18939,72 +19005,6 @@ components:
       additionalProperties: false
       required:
         - application_credential
-    UsersApplication_CredentialsGetResponse:
-      type: object
-      properties:
-        application_credentials:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uuid
-                readOnly: true
-                description: The ID of the application credential.
-              project_id:
-                type: string
-                format: uuid
-                description: The ID of the project the application credential was
-                  created for and that authentication requests using this application
-                  credential will be scoped to.
-              name:
-                type: string
-                description: The name of the application credential. Must be unique
-                  to a user.
-              description:
-                type:
-                  - string
-                  - 'null'
-                description: A description of the application credential's purpose.
-              expires_at:
-                type:
-                  - 'null'
-                  - string
-              roles:
-                type: array
-                description: An optional list of role objects, identified by ID or
-                  name. The list may only contain roles that the user has assigned
-                  on the project. If not provided, the roles assigned to the application
-                  credential will be the same as the roles in the current token.
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    id:
-                      type: string
-              unrestricted:
-                type: boolean
-                description: An optional flag to restrict whether the application
-                  credential may be used for the creation or destruction of other
-                  application credentials or trusts. Defaults to false.
-              access_rules:
-                type: array
-                description: A list of access_rules objects
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    path:
-                      type: string
-                    method:
-                      type: string
-                    service:
-                      type: string
-      required:
-        - application_credentials
     UsersApplication_CredentialGet:
       type: object
       properties:

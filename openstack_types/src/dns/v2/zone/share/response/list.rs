@@ -30,9 +30,9 @@ pub struct ShareResponse {
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
-/// `Links` type
+/// `SharedZonesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
+pub struct SharedZonesLinks {
     pub _self: Option<String>,
     pub zone: Option<String>,
 }
@@ -43,7 +43,7 @@ pub struct Links {
 pub struct SharedZones {
     pub created_at: Option<String>,
     pub id: Option<String>,
-    pub links: Option<Links>,
+    pub links: Option<SharedZonesLinks>,
     pub project_id: Option<String>,
     pub target_project_id: Option<String>,
     pub updated_at: Option<String>,

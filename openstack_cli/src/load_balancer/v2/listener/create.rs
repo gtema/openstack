@@ -93,31 +93,6 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Protocol {
-    Http,
-    Https,
-    Prometheus,
-    Sctp,
-    Tcp,
-    TerminatedHttps,
-    Udp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Type {
-    AppCookie,
-    HttpCookie,
-    SourceIp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum ClientAuthentication {
-    Mandatory,
-    None,
-    Optional,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum ListenerProtocol {
     Http,
     Https,
@@ -126,6 +101,13 @@ enum ListenerProtocol {
     Tcp,
     TerminatedHttps,
     Udp,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum ClientAuthentication {
+    Mandatory,
+    None,
+    Optional,
 }
 
 /// Listener Body data
