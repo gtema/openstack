@@ -856,32 +856,32 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         health_status:
           type: string
           enum:
+            - HEALTHY
             - UNKNOWN
             - UNHEALTHY
-            - HEALTHY
         health_status_reason:
           type: object
           additionalProperties:
@@ -1021,8 +1021,8 @@ components:
         description: |-
           A complex type that represents a single json-patch operation.
         required:
-          - path
           - op
+          - path
     ClusterPatchResponse:
       type: object
       description: "API representation of a cluster ID\n\nThis class enforces type
@@ -1131,24 +1131,24 @@ components:
               status:
                 type: string
                 enum:
-                  - ROLLBACK_COMPLETE
-                  - RESUME_COMPLETE
                   - CREATE_COMPLETE
-                  - CHECK_COMPLETE
-                  - DELETE_COMPLETE
-                  - CREATE_IN_PROGRESS
-                  - UPDATE_COMPLETE
-                  - ROLLBACK_IN_PROGRESS
-                  - DELETE_IN_PROGRESS
-                  - ADOPT_COMPLETE
-                  - UPDATE_IN_PROGRESS
                   - DELETE_FAILED
+                  - UPDATE_IN_PROGRESS
+                  - RESUME_FAILED
+                  - ADOPT_COMPLETE
+                  - ROLLBACK_COMPLETE
+                  - DELETE_COMPLETE
+                  - UPDATE_COMPLETE
+                  - UPDATE_FAILED
+                  - CREATE_IN_PROGRESS
+                  - RESUME_COMPLETE
                   - ROLLBACK_FAILED
                   - SNAPSHOT_COMPLETE
-                  - RESUME_FAILED
-                  - UPDATE_FAILED
-                  - RESTORE_COMPLETE
+                  - CHECK_COMPLETE
+                  - ROLLBACK_IN_PROGRESS
                   - CREATE_FAILED
+                  - DELETE_IN_PROGRESS
+                  - RESTORE_COMPLETE
                 description: |-
                   The current state of the cluster.
               status_reason:
@@ -1156,9 +1156,9 @@ components:
               health_status:
                 type: string
                 enum:
+                  - HEALTHY
                   - UNKNOWN
                   - UNHEALTHY
-                  - HEALTHY
               health_status_reason:
                 type: object
                 additionalProperties:
@@ -1367,24 +1367,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
           description: |-
             The current state of the cluster.
         status_reason:
@@ -1394,9 +1394,9 @@ components:
         health_status:
           type: string
           enum:
+            - HEALTHY
             - UNKNOWN
             - UNHEALTHY
-            - HEALTHY
         health_status_reason:
           type: object
           additionalProperties:
@@ -1663,24 +1663,24 @@ components:
               status:
                 type: string
                 enum:
-                  - ROLLBACK_COMPLETE
-                  - RESUME_COMPLETE
                   - CREATE_COMPLETE
-                  - CHECK_COMPLETE
-                  - DELETE_COMPLETE
-                  - CREATE_IN_PROGRESS
-                  - UPDATE_COMPLETE
-                  - ROLLBACK_IN_PROGRESS
-                  - DELETE_IN_PROGRESS
-                  - ADOPT_COMPLETE
-                  - UPDATE_IN_PROGRESS
                   - DELETE_FAILED
+                  - UPDATE_IN_PROGRESS
+                  - RESUME_FAILED
+                  - ADOPT_COMPLETE
+                  - ROLLBACK_COMPLETE
+                  - DELETE_COMPLETE
+                  - UPDATE_COMPLETE
+                  - UPDATE_FAILED
+                  - CREATE_IN_PROGRESS
+                  - RESUME_COMPLETE
                   - ROLLBACK_FAILED
                   - SNAPSHOT_COMPLETE
-                  - RESUME_FAILED
-                  - UPDATE_FAILED
-                  - RESTORE_COMPLETE
+                  - CHECK_COMPLETE
+                  - ROLLBACK_IN_PROGRESS
                   - CREATE_FAILED
+                  - DELETE_IN_PROGRESS
+                  - RESTORE_COMPLETE
               status_reason:
                 type: string
               version:
@@ -1805,24 +1805,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -1929,24 +1929,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -2053,24 +2053,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -2118,8 +2118,8 @@ components:
         description: |-
           A complex type that represents a single json-patch operation.
         required:
-          - path
           - op
+          - path
     ClustersNodegroupPatchResponse:
       type: object
       description: "API representation of a Node group.\n\nThis class enforces type
@@ -2198,24 +2198,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -2325,24 +2325,24 @@ components:
               status:
                 type: string
                 enum:
-                  - ROLLBACK_COMPLETE
-                  - RESUME_COMPLETE
                   - CREATE_COMPLETE
-                  - CHECK_COMPLETE
-                  - DELETE_COMPLETE
-                  - CREATE_IN_PROGRESS
-                  - UPDATE_COMPLETE
-                  - ROLLBACK_IN_PROGRESS
-                  - DELETE_IN_PROGRESS
-                  - ADOPT_COMPLETE
-                  - UPDATE_IN_PROGRESS
                   - DELETE_FAILED
+                  - UPDATE_IN_PROGRESS
+                  - RESUME_FAILED
+                  - ADOPT_COMPLETE
+                  - ROLLBACK_COMPLETE
+                  - DELETE_COMPLETE
+                  - UPDATE_COMPLETE
+                  - UPDATE_FAILED
+                  - CREATE_IN_PROGRESS
+                  - RESUME_COMPLETE
                   - ROLLBACK_FAILED
                   - SNAPSHOT_COMPLETE
-                  - RESUME_FAILED
-                  - UPDATE_FAILED
-                  - RESTORE_COMPLETE
+                  - CHECK_COMPLETE
+                  - ROLLBACK_IN_PROGRESS
                   - CREATE_FAILED
+                  - DELETE_IN_PROGRESS
+                  - RESTORE_COMPLETE
               status_reason:
                 type: string
               version:
@@ -2462,24 +2462,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -2586,24 +2586,24 @@ components:
         status:
           type: string
           enum:
-            - ROLLBACK_COMPLETE
-            - RESUME_COMPLETE
             - CREATE_COMPLETE
-            - CHECK_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - ROLLBACK_IN_PROGRESS
-            - DELETE_IN_PROGRESS
-            - ADOPT_COMPLETE
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - RESUME_FAILED
+            - ADOPT_COMPLETE
+            - ROLLBACK_COMPLETE
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
+            - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
+            - RESUME_COMPLETE
             - ROLLBACK_FAILED
             - SNAPSHOT_COMPLETE
-            - RESUME_FAILED
-            - UPDATE_FAILED
-            - RESTORE_COMPLETE
+            - CHECK_COMPLETE
+            - ROLLBACK_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
+            - RESTORE_COMPLETE
         status_reason:
           type: string
         version:
@@ -2881,8 +2881,8 @@ components:
               server_type:
                 type: string
                 enum:
-                  - vm
                   - bm
+                  - vm
                 description: |-
                   The servers in the cluster can be `vm` or `baremetal`. This
                   parameter selects the type of server to create for the cluster.
@@ -3207,8 +3207,8 @@ components:
         server_type:
           type: string
           enum:
-            - vm
             - bm
+            - vm
           description: |-
             The servers in the cluster can be `vm` or `baremetal`. This
             parameter selects the type of server to create for the cluster.
@@ -3477,8 +3477,8 @@ components:
         server_type:
           type: string
           enum:
-            - vm
             - bm
+            - vm
           description: |-
             The servers in the cluster can be `vm` or `baremetal`. This
             parameter selects the type of server to create for the cluster.
@@ -3784,8 +3784,8 @@ components:
         server_type:
           type: string
           enum:
-            - vm
             - bm
+            - vm
           description: |-
             The servers in the cluster can be `vm` or `baremetal`. This
             parameter selects the type of server to create for the cluster.
@@ -4114,8 +4114,8 @@ components:
               state:
                 type: string
                 enum:
-                  - up
                   - down
+                  - up
                 description: |-
                   The current state of Magnum services.
               id:
@@ -4229,14 +4229,14 @@ components:
                 type: string
                 enum:
                   - CREATE_COMPLETE
-                  - DELETE_COMPLETE
-                  - CREATE_IN_PROGRESS
-                  - UPDATE_COMPLETE
-                  - DELETE_IN_PROGRESS
-                  - UPDATE_IN_PROGRESS
                   - DELETE_FAILED
+                  - UPDATE_IN_PROGRESS
+                  - DELETE_COMPLETE
+                  - UPDATE_COMPLETE
                   - UPDATE_FAILED
+                  - CREATE_IN_PROGRESS
                   - CREATE_FAILED
+                  - DELETE_IN_PROGRESS
               status_reason:
                 type: string
               properties:
@@ -4305,14 +4305,14 @@ components:
           type: string
           enum:
             - CREATE_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - DELETE_IN_PROGRESS
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
             - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
         status_reason:
           type: string
         properties:
@@ -4367,14 +4367,14 @@ components:
           type: string
           enum:
             - CREATE_COMPLETE
-            - DELETE_COMPLETE
-            - CREATE_IN_PROGRESS
-            - UPDATE_COMPLETE
-            - DELETE_IN_PROGRESS
-            - UPDATE_IN_PROGRESS
             - DELETE_FAILED
+            - UPDATE_IN_PROGRESS
+            - DELETE_COMPLETE
+            - UPDATE_COMPLETE
             - UPDATE_FAILED
+            - CREATE_IN_PROGRESS
             - CREATE_FAILED
+            - DELETE_IN_PROGRESS
         status_reason:
           type: string
         properties:

@@ -95,7 +95,7 @@ pub struct AdditionalVips<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Protocol {
+pub enum ListenersProtocol {
     #[serde(rename = "HTTP")]
     Http,
     #[serde(rename = "HTTPS")]
@@ -143,7 +143,7 @@ pub enum LbAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
+pub enum SessionPersistenceType {
     #[serde(rename = "APP_COOKIE")]
     AppCookie,
     #[serde(rename = "HTTP_COOKIE")]
@@ -170,7 +170,7 @@ pub struct SessionPersistence<'a> {
 
     #[serde(rename = "type")]
     #[builder()]
-    pub(crate) _type: Type,
+    pub(crate) _type: SessionPersistenceType,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -696,24 +696,6 @@ pub enum ClientAuthentication {
     Optional,
 }
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum ListenersProtocol {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PROMETHEUS")]
-    Prometheus,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "TERMINATED_HTTPS")]
-    TerminatedHttps,
-    #[serde(rename = "UDP")]
-    Udp,
-}
-
 /// Defines mandatory and optional attributes of a POST request.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -1129,7 +1111,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Loadbalancer.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

@@ -60,7 +60,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Loadbalancer.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

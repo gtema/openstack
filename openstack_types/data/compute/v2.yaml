@@ -42962,36 +42962,36 @@ components:
       schema:
         type: string
         enum:
-          - availability_zone
-          - task_state
-          - access_ip_v4
-          - config_drive
-          - kernel_id
-          - instance_type_id
-          - access_ip_v6
           - uuid
-          - root_device_name
-          - key_name
-          - display_description
-          - launched_at
-          - locked_by
-          - display_name
-          - progress
-          - ramdisk_id
-          - created_at
           - auto_disk_config
-          - vm_state
-          - image_ref
-          - launch_index
           - terminated_at
-          - project_id
+          - kernel_id
+          - locked
+          - instance_type_id
+          - launch_index
+          - task_state
+          - display_name
           - hostname
-          - node
+          - access_ip_v4
           - host
+          - progress
+          - access_ip_v6
           - updated_at
           - power_state
+          - created_at
+          - root_device_name
+          - config_drive
+          - image_ref
+          - vm_state
+          - node
           - user_id
-          - locked
+          - display_description
+          - availability_zone
+          - locked_by
+          - key_name
+          - launched_at
+          - ramdisk_id
+          - project_id
     os_volumes_boot_sort_dir:
       in: query
       name: sort_dir
@@ -43330,36 +43330,36 @@ components:
       schema:
         type: string
         enum:
-          - availability_zone
-          - task_state
-          - access_ip_v4
-          - config_drive
-          - kernel_id
-          - instance_type_id
-          - access_ip_v6
           - uuid
-          - root_device_name
-          - key_name
-          - display_description
-          - launched_at
-          - locked_by
-          - display_name
-          - progress
-          - ramdisk_id
-          - created_at
           - auto_disk_config
-          - vm_state
-          - image_ref
-          - launch_index
           - terminated_at
-          - project_id
+          - kernel_id
+          - locked
+          - instance_type_id
+          - launch_index
+          - task_state
+          - display_name
           - hostname
-          - node
+          - access_ip_v4
           - host
+          - progress
+          - access_ip_v6
           - updated_at
           - power_state
+          - created_at
+          - root_device_name
+          - config_drive
+          - image_ref
+          - vm_state
+          - node
           - user_id
-          - locked
+          - display_description
+          - availability_zone
+          - locked_by
+          - key_name
+          - launched_at
+          - ramdisk_id
+          - project_id
     os_volumes_boot_detail_sort_dir:
       in: query
       name: sort_dir
@@ -43712,36 +43712,36 @@ components:
       schema:
         type: string
         enum:
-          - availability_zone
-          - task_state
-          - access_ip_v4
-          - config_drive
-          - kernel_id
-          - instance_type_id
-          - access_ip_v6
           - uuid
-          - root_device_name
-          - key_name
-          - display_description
-          - launched_at
-          - locked_by
-          - display_name
-          - progress
-          - ramdisk_id
-          - created_at
           - auto_disk_config
-          - vm_state
-          - image_ref
-          - launch_index
           - terminated_at
-          - project_id
+          - kernel_id
+          - locked
+          - instance_type_id
+          - launch_index
+          - task_state
+          - display_name
           - hostname
-          - node
+          - access_ip_v4
           - host
+          - progress
+          - access_ip_v6
           - updated_at
           - power_state
+          - created_at
+          - root_device_name
+          - config_drive
+          - image_ref
+          - vm_state
+          - node
           - user_id
-          - locked
+          - display_description
+          - availability_zone
+          - locked_by
+          - key_name
+          - launched_at
+          - ramdisk_id
+          - project_id
     servers_sort_dir:
       in: query
       name: sort_dir
@@ -44080,36 +44080,36 @@ components:
       schema:
         type: string
         enum:
-          - availability_zone
-          - task_state
-          - access_ip_v4
-          - config_drive
-          - kernel_id
-          - instance_type_id
-          - access_ip_v6
           - uuid
-          - root_device_name
-          - key_name
-          - display_description
-          - launched_at
-          - locked_by
-          - display_name
-          - progress
-          - ramdisk_id
-          - created_at
           - auto_disk_config
-          - vm_state
-          - image_ref
-          - launch_index
           - terminated_at
-          - project_id
+          - kernel_id
+          - locked
+          - instance_type_id
+          - launch_index
+          - task_state
+          - display_name
           - hostname
-          - node
+          - access_ip_v4
           - host
+          - progress
+          - access_ip_v6
           - updated_at
           - power_state
+          - created_at
+          - root_device_name
+          - config_drive
+          - image_ref
+          - vm_state
+          - node
           - user_id
-          - locked
+          - display_description
+          - availability_zone
+          - locked_by
+          - key_name
+          - launched_at
+          - ramdisk_id
+          - project_id
     servers_detail_sort_dir:
       in: query
       name: sort_dir

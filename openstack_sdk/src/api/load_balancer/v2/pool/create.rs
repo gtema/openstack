@@ -93,7 +93,7 @@ pub enum LbAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
+pub enum SessionPersistenceType {
     #[serde(rename = "APP_COOKIE")]
     AppCookie,
     #[serde(rename = "HTTP_COOKIE")]
@@ -122,7 +122,7 @@ pub struct SessionPersistence<'a> {
 
     #[serde(rename = "type")]
     #[builder()]
-    pub(crate) _type: Type,
+    pub(crate) _type: SessionPersistenceType,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -427,7 +427,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Pool.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
