@@ -228,8 +228,8 @@ impl LimitsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LimitResponse>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        op.output_list::<LimitResponse>(data)?;
         Ok(())
     }
 }
