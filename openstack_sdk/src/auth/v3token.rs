@@ -30,7 +30,7 @@
 
 use thiserror::Error;
 
-use crate::api::identity::v3::auth::token::create as token_v3;
+use crate::auth::auth_token_endpoint as token_v3;
 use crate::auth::AuthToken;
 use crate::config;
 
@@ -96,7 +96,6 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
-    use crate::api::identity::v3::auth::token::create as token_v3;
     use crate::config;
 
     #[test]

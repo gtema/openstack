@@ -139,7 +139,7 @@
 #![allow(clippy::module_inception)]
 
 mod client;
-mod common;
+pub(crate) mod common;
 mod error;
 mod find;
 mod ignore;

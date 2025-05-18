@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::error;
 
-use crate::api::identity::v3::auth::token::create as token_v3;
+use crate::auth::auth_token_endpoint as token_v3;
 use crate::auth::authtoken::AuthTokenError;
 use crate::config;
 use crate::types::identity::v3::{self as types_v3, AuthResponse, Domain, Project, System};
@@ -51,26 +51,12 @@ pub enum AuthTokenScopeError {
         source: token_v3::ProjectBuilderError,
     },
 
-    /// Domain of the project scope cannot be build
-    #[error(
-        "Cannot construct project scope domain information from config: {}",
-        source
-    )]
-    ProjectDomainBuild {
-        /// The error source
-        #[from]
-        source: token_v3::ProjectDomainBuilderError,
-    },
-
     /// Scope Domain cannot be build
-    #[error(
-        "Cannot construct project scope domain information from config: {}",
-        source
-    )]
-    ScopeDomainBuild {
+    #[error("Cannot construct domain information from config: {}", source)]
+    DomainBuild {
         /// The error source
         #[from]
-        source: token_v3::ScopeDomainBuilderError,
+        source: token_v3::DomainBuilderError,
     },
 
     /// Scope System cannot be build
@@ -99,16 +85,8 @@ impl From<token_v3::ProjectBuilderError> for AuthTokenError {
     }
 }
 
-impl From<token_v3::ProjectDomainBuilderError> for AuthTokenError {
-    fn from(source: token_v3::ProjectDomainBuilderError) -> Self {
-        Self::Scope {
-            source: source.into(),
-        }
-    }
-}
-
-impl From<token_v3::ScopeDomainBuilderError> for AuthTokenError {
-    fn from(source: token_v3::ScopeDomainBuilderError) -> Self {
+impl From<token_v3::DomainBuilderError> for AuthTokenError {
+    fn from(source: token_v3::DomainBuilderError) -> Self {
         Self::Scope {
             source: source.into(),
         }
@@ -209,7 +187,7 @@ impl TryFrom<&AuthTokenScope> for token_v3::Scope<'_> {
                     project_builder.name(val.clone());
                 }
                 if let Some(domain) = &project.domain {
-                    let mut domain_builder = token_v3::ProjectDomainBuilder::default();
+                    let mut domain_builder = token_v3::DomainBuilder::default();
                     if let Some(val) = &domain.id {
                         domain_builder.id(val.clone());
                     }
@@ -221,7 +199,7 @@ impl TryFrom<&AuthTokenScope> for token_v3::Scope<'_> {
                 scope_builder.project(project_builder.build()?);
             }
             AuthTokenScope::Domain(domain) => {
-                let mut domain_builder = token_v3::ScopeDomainBuilder::default();
+                let mut domain_builder = token_v3::DomainBuilder::default();
                 if let Some(val) = &domain.id {
                     domain_builder.id(val.clone());
                 }
@@ -253,7 +231,7 @@ impl TryFrom<&config::CloudConfig> for token_v3::Scope<'_> {
             // Project scope
             let mut project_scope = token_v3::ProjectBuilder::default();
             if auth.project_domain_name.is_some() || auth.project_domain_id.is_some() {
-                let mut project_domain = token_v3::ProjectDomainBuilder::default();
+                let mut project_domain = token_v3::DomainBuilder::default();
                 if let Some(val) = auth.project_domain_id {
                     project_domain.id(val);
                 }
@@ -271,7 +249,7 @@ impl TryFrom<&config::CloudConfig> for token_v3::Scope<'_> {
             scope.project(project_scope.build()?);
         } else if auth.domain_id.is_some() || auth.domain_name.is_some() {
             // Domain scope
-            let mut domain_scope = token_v3::ScopeDomainBuilder::default();
+            let mut domain_scope = token_v3::DomainBuilder::default();
             if let Some(val) = auth.domain_id {
                 domain_scope.id(val);
             }

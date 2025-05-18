@@ -39,7 +39,7 @@ use thiserror::Error;
 
 use dialoguer::{Input, Password};
 
-use crate::api::identity::v3::auth::token::create as token_v3;
+use crate::auth::auth_token_endpoint as token_v3;
 use crate::config;
 
 /// User name/pass related errors
@@ -67,7 +67,7 @@ pub enum PasswordError {
     UserBuilder {
         /// The error source
         #[from]
-        source: token_v3::UserBuilderError,
+        source: token_v3::PasswordUserBuilderError,
     },
 
     /// `user.domain` part build error
@@ -86,7 +86,7 @@ pub fn fill_identity(
     interactive: bool,
 ) -> Result<(), PasswordError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Password]));
-    let mut user = token_v3::UserBuilder::default();
+    let mut user = token_v3::PasswordUserBuilder::default();
     // Set user_id or name
     if let Some(val) = &auth_data.user_id {
         user.id(val.clone());
@@ -147,7 +147,6 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
-    use crate::api::identity::v3::auth::token::create as token_v3;
     use crate::config;
 
     #[test]
