@@ -115,7 +115,7 @@ enum LbAlgorithm {
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Type {
+enum SessionPersistenceType {
     AppCookie,
     HttpCookie,
     SourceIp,
@@ -135,7 +135,7 @@ struct SessionPersistence {
     persistence_timeout: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long, required = false)]
-    _type: Type,
+    _type: SessionPersistenceType,
 }
 
 /// Pool Body data
@@ -322,9 +322,9 @@ impl PoolCommand {
             let mut session_persistence_builder = create::SessionPersistenceBuilder::default();
 
             let tmp = match &val._type {
-                Type::AppCookie => create::Type::AppCookie,
-                Type::HttpCookie => create::Type::HttpCookie,
-                Type::SourceIp => create::Type::SourceIp,
+                SessionPersistenceType::AppCookie => create::SessionPersistenceType::AppCookie,
+                SessionPersistenceType::HttpCookie => create::SessionPersistenceType::HttpCookie,
+                SessionPersistenceType::SourceIp => create::SessionPersistenceType::SourceIp,
             };
             session_persistence_builder._type(tmp);
             if let Some(val) = &val.cookie_name {

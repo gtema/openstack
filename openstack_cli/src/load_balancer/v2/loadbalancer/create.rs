@@ -28,7 +28,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::create;
 use openstack_types::load_balancer::v2::loadbalancer::response::create::LoadbalancerResponse;
@@ -112,25 +111,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Protocol {
-    Http,
-    Https,
-    Prometheus,
-    Sctp,
-    Tcp,
-    TerminatedHttps,
-    Udp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Type {
-    AppCookie,
-    HttpCookie,
-    SourceIp,
-}
-
 /// Loadbalancer Body data
 #[derive(Args, Clone)]
 struct Loadbalancer {
