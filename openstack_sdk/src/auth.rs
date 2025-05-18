@@ -26,6 +26,7 @@ use tracing::error;
 
 use thiserror::Error;
 
+mod auth_token_endpoint;
 pub mod authtoken;
 pub mod authtoken_scope;
 mod authtoken_utils;

@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::{debug, error, trace};
 
-use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
+use crate::auth::auth_token_endpoint as token_v3;
 use crate::auth::{
     authtoken_scope, v3applicationcredential, v3password, v3token, v3totp, v3websso, AuthState,
 };
