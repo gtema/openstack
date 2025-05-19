@@ -93,6 +93,13 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum ClientAuthentication {
+    Mandatory,
+    None,
+    Optional,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum ListenerProtocol {
     Http,
     Https,
@@ -101,13 +108,6 @@ enum ListenerProtocol {
     Tcp,
     TerminatedHttps,
     Udp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum ClientAuthentication {
-    Mandatory,
-    None,
-    Optional,
 }
 
 /// Listener Body data
@@ -315,16 +315,89 @@ impl ListenerCommand {
         // Set Request.listener data
         let args = &self.listener;
         let mut listener_builder = create::ListenerBuilder::default();
-        if let Some(val) = &args.name {
-            listener_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            listener_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.allowed_cidrs {
+            listener_builder.allowed_cidrs(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.alpn_protocols {
+            listener_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.client_authentication {
+            let tmp = match val {
+                ClientAuthentication::Mandatory => create::ClientAuthentication::Mandatory,
+                ClientAuthentication::None => create::ClientAuthentication::None,
+                ClientAuthentication::Optional => create::ClientAuthentication::Optional,
+            };
+            listener_builder.client_authentication(tmp);
+        }
+
+        if let Some(val) = &args.client_ca_tls_container_ref {
+            listener_builder.client_ca_tls_container_ref(val);
+        }
+
+        if let Some(val) = &args.client_crl_container_ref {
+            listener_builder.client_crl_container_ref(val);
+        }
+
+        if let Some(val) = &args.connection_limit {
+            listener_builder.connection_limit(*val);
+        }
+
+        if let Some(val) = &args.default_pool {
+            listener_builder.default_pool(serde_json::from_value::<create::DefaultPool>(
+                val.to_owned(),
+            )?);
+        }
+
+        if let Some(val) = &args.default_pool_id {
+            listener_builder.default_pool_id(val);
+        }
+
+        if let Some(val) = &args.default_tls_container_ref {
+            listener_builder.default_tls_container_ref(val);
         }
 
         if let Some(val) = &args.description {
             listener_builder.description(val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            listener_builder.admin_state_up(*val);
+        if let Some(val) = &args.hsts_include_subdomains {
+            listener_builder.hsts_include_subdomains(*val);
+        }
+
+        if let Some(val) = &args.hsts_max_age {
+            listener_builder.hsts_max_age(*val);
+        }
+
+        if let Some(val) = &args.hsts_preload {
+            listener_builder.hsts_preload(*val);
+        }
+
+        if let Some(val) = &args.insert_headers {
+            listener_builder.insert_headers(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.l7policies {
+            let l7policies_builder: Vec<create::L7policies> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::L7policies>(v.to_owned()))
+                .collect::<Vec<create::L7policies>>();
+            listener_builder.l7policies(l7policies_builder);
+        }
+
+        listener_builder.loadbalancer_id(&args.loadbalancer_id);
+
+        if let Some(val) = &args.name {
+            listener_builder.name(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            listener_builder.project_id(val);
         }
 
         let tmp = match &args.protocol {
@@ -340,45 +413,17 @@ impl ListenerCommand {
 
         listener_builder.protocol_port(args.protocol_port);
 
-        if let Some(val) = &args.connection_limit {
-            listener_builder.connection_limit(*val);
-        }
-
-        if let Some(val) = &args.default_tls_container_ref {
-            listener_builder.default_tls_container_ref(val);
-        }
-
         if let Some(val) = &args.sni_container_refs {
             listener_builder.sni_container_refs(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.project_id {
-            listener_builder.project_id(val);
+        if let Some(val) = &args.tags {
+            listener_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.default_pool_id {
-            listener_builder.default_pool_id(val);
+        if let Some(val) = &args.tenant_id {
+            listener_builder.tenant_id(val);
         }
-
-        if let Some(val) = &args.default_pool {
-            listener_builder.default_pool(serde_json::from_value::<create::DefaultPool>(
-                val.to_owned(),
-            )?);
-        }
-
-        if let Some(val) = &args.l7policies {
-            let l7policies_builder: Vec<create::L7policies> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create::L7policies>(v.to_owned()))
-                .collect::<Vec<create::L7policies>>();
-            listener_builder.l7policies(l7policies_builder);
-        }
-
-        if let Some(val) = &args.insert_headers {
-            listener_builder.insert_headers(val.iter().cloned());
-        }
-
-        listener_builder.loadbalancer_id(&args.loadbalancer_id);
 
         if let Some(val) = &args.timeout_client_data {
             listener_builder.timeout_client_data(*val);
@@ -396,57 +441,12 @@ impl ListenerCommand {
             listener_builder.timeout_tcp_inspect(*val);
         }
 
-        if let Some(val) = &args.tags {
-            listener_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.client_ca_tls_container_ref {
-            listener_builder.client_ca_tls_container_ref(val);
-        }
-
-        if let Some(val) = &args.client_authentication {
-            let tmp = match val {
-                ClientAuthentication::Mandatory => create::ClientAuthentication::Mandatory,
-                ClientAuthentication::None => create::ClientAuthentication::None,
-                ClientAuthentication::Optional => create::ClientAuthentication::Optional,
-            };
-            listener_builder.client_authentication(tmp);
-        }
-
-        if let Some(val) = &args.client_crl_container_ref {
-            listener_builder.client_crl_container_ref(val);
-        }
-
-        if let Some(val) = &args.allowed_cidrs {
-            listener_builder.allowed_cidrs(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
         if let Some(val) = &args.tls_ciphers {
             listener_builder.tls_ciphers(val);
         }
 
         if let Some(val) = &args.tls_versions {
             listener_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.alpn_protocols {
-            listener_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.hsts_max_age {
-            listener_builder.hsts_max_age(*val);
-        }
-
-        if let Some(val) = &args.hsts_include_subdomains {
-            listener_builder.hsts_include_subdomains(*val);
-        }
-
-        if let Some(val) = &args.hsts_preload {
-            listener_builder.hsts_preload(*val);
-        }
-
-        if let Some(val) = &args.tenant_id {
-            listener_builder.tenant_id(val);
         }
 
         ep_builder.listener(listener_builder.build().unwrap());

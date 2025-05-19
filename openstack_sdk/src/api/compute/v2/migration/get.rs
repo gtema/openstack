@@ -85,7 +85,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Migration.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -121,18 +121,18 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("changes-before", self.changes_before.as_ref());
+        params.push_opt("changes-since", self.changes_since.as_ref());
         params.push_opt("hidden", self.hidden.as_ref());
         params.push_opt("host", self.host.as_ref());
         params.push_opt("instance_uuid", self.instance_uuid.as_ref());
-        params.push_opt("source_compute", self.source_compute.as_ref());
-        params.push_opt("status", self.status.as_ref());
-        params.push_opt("migration_type", self.migration_type.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("changes-since", self.changes_since.as_ref());
-        params.push_opt("changes-before", self.changes_before.as_ref());
-        params.push_opt("user_id", self.user_id.as_ref());
+        params.push_opt("migration_type", self.migration_type.as_ref());
         params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("source_compute", self.source_compute.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("user_id", self.user_id.as_ref());
 
         params
     }

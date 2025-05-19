@@ -169,28 +169,30 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// tags query parameter for /v2.0/subnets API
-    pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.tags
+        self.sort_dir
             .get_or_insert(None)
-            .get_or_insert_with(CommaSeparatedList::new)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
 
-    /// tags-any query parameter for /v2.0/subnets API
-    pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.tags_any
+        self.sort_key
             .get_or_insert(None)
-            .get_or_insert_with(CommaSeparatedList::new)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -221,30 +223,28 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
-    /// Sort results by the attribute. This is an optional feature and may be
-    /// silently ignored by the server.
-    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    /// tags query parameter for /v2.0/subnets API
+    pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.sort_key
+        self.tags
             .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
+            .get_or_insert_with(CommaSeparatedList::new)
             .extend(iter.map(Into::into));
         self
     }
 
-    /// Sort direction. This is an optional feature and may be silently ignored
-    /// by the server.
-    pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
+    /// tags-any query parameter for /v2.0/subnets API
+    pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.sort_dir
+        self.tags_any
             .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
+            .get_or_insert_with(CommaSeparatedList::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -284,35 +284,35 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("ip_version", self.ip_version);
-        params.push_opt("network_id", self.network_id.as_ref());
-        params.push_opt("subnetpool_id", self.subnetpool_id.as_ref());
-        params.push_opt("cidr", self.cidr.as_ref());
-        params.push_opt("gateway_ip", self.gateway_ip.as_ref());
-        params.push_opt("tenant_id", self.tenant_id.as_ref());
-        params.push_opt("enable_dhcp", self.enable_dhcp);
-        params.push_opt("ipv6_ra_mode", self.ipv6_ra_mode.as_ref());
-        params.push_opt("ipv6_address_mode", self.ipv6_address_mode.as_ref());
-        params.push_opt("shared", self.shared);
-        params.push_opt("revision_number", self.revision_number.as_ref());
-        params.push_opt("router:external", self.router_external);
-        params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
-        params.push_opt("not-tags", self.not_tags.as_ref());
-        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
-        params.push_opt("description", self.description.as_ref());
-        params.push_opt("segment_id", self.segment_id.as_ref());
-        if let Some(val) = &self.sort_key {
-            params.extend(val.iter().map(|value| ("sort_key", value)));
-        }
-        if let Some(val) = &self.sort_dir {
-            params.extend(val.iter().map(|value| ("sort_dir", value)));
-        }
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
+        if let Some(val) = &self.sort_dir {
+            params.extend(val.iter().map(|value| ("sort_dir", value)));
+        }
+        if let Some(val) = &self.sort_key {
+            params.extend(val.iter().map(|value| ("sort_key", value)));
+        }
+        params.push_opt("cidr", self.cidr.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("enable_dhcp", self.enable_dhcp);
+        params.push_opt("gateway_ip", self.gateway_ip.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("ip_version", self.ip_version);
+        params.push_opt("ipv6_address_mode", self.ipv6_address_mode.as_ref());
+        params.push_opt("ipv6_ra_mode", self.ipv6_ra_mode.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("network_id", self.network_id.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("router:external", self.router_external);
+        params.push_opt("segment_id", self.segment_id.as_ref());
+        params.push_opt("shared", self.shared);
+        params.push_opt("subnetpool_id", self.subnetpool_id.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
 
         params
     }

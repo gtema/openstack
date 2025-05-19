@@ -110,12 +110,24 @@ struct Network {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     port_security_enabled: Option<bool>,
 
+    /// The type of physical network that this network should be mapped to. For
+    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
+    /// networking back-end.
     #[arg(help_heading = "Body parameters", long)]
     provider_network_type: Option<String>,
 
+    /// The physical network where this network should be implemented. The
+    /// Networking API v2.0 does not provide a way to list available physical
+    /// networks. For example, the Open vSwitch plug-in configuration file
+    /// defines a symbolic name that maps to specific bridges on each compute
+    /// host.
     #[arg(help_heading = "Body parameters", long)]
     provider_physical_network: Option<String>,
 
+    /// The ID of the isolated segment on the physical network. The
+    /// `network_type` attribute defines the segmentation model. For example,
+    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
+    /// the `network_type` value is gre, this ID is a gre key.
     #[arg(help_heading = "Body parameters", long)]
     provider_segmentation_id: Option<String>,
 
@@ -170,44 +182,36 @@ impl NetworkCommand {
         // Set Request.network data
         let args = &self.network;
         let mut network_builder = create::NetworkBuilder::default();
-        if let Some(val) = &args.name {
-            network_builder.name(val);
-        }
-
         if let Some(val) = &args.admin_state_up {
             network_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.tenant_id {
-            network_builder.tenant_id(val);
-        }
-
-        if let Some(val) = &args.shared {
-            network_builder.shared(*val);
-        }
-
-        if let Some(val) = &args.router_external {
-            network_builder.router_external(*val);
-        }
-
-        if let Some(val) = &args.segments {
-            let segments_builder: Vec<create::Segments> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create::Segments>(v.to_owned()))
-                .collect::<Vec<create::Segments>>();
-            network_builder.segments(segments_builder);
-        }
-
-        if let Some(val) = &args.mtu {
-            network_builder.mtu(*val);
         }
 
         if let Some(val) = &args.availability_zone_hints {
             network_builder.availability_zone_hints(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
+        if let Some(val) = &args.description {
+            network_builder.description(val);
+        }
+
+        if let Some(val) = &args.dns_domain {
+            network_builder.dns_domain(val);
+        }
+
         if let Some(val) = &args.ha {
             network_builder.ha(*val);
+        }
+
+        if let Some(val) = &args.is_default {
+            network_builder.is_default(*val);
+        }
+
+        if let Some(val) = &args.mtu {
+            network_builder.mtu(*val);
+        }
+
+        if let Some(val) = &args.name {
+            network_builder.name(val);
         }
 
         if let Some(val) = &args.port_security_enabled {
@@ -232,16 +236,24 @@ impl NetworkCommand {
             network_builder.qos_policy_id(None);
         }
 
-        if let Some(val) = &args.is_default {
-            network_builder.is_default(*val);
+        if let Some(val) = &args.router_external {
+            network_builder.router_external(*val);
         }
 
-        if let Some(val) = &args.dns_domain {
-            network_builder.dns_domain(val);
+        if let Some(val) = &args.segments {
+            let segments_builder: Vec<create::Segments> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::Segments>(v.to_owned()))
+                .collect::<Vec<create::Segments>>();
+            network_builder.segments(segments_builder);
         }
 
-        if let Some(val) = &args.description {
-            network_builder.description(val);
+        if let Some(val) = &args.shared {
+            network_builder.shared(*val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            network_builder.tenant_id(val);
         }
 
         ep_builder.network(network_builder.build().unwrap());

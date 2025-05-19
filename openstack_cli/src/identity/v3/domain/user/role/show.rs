@@ -62,10 +62,6 @@ struct PathParameters {
     #[command(flatten)]
     domain: DomainInput,
 
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// role_id parameter for
     /// /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
     #[arg(
@@ -74,6 +70,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// Domain input select group
@@ -176,6 +176,7 @@ impl RoleCommand {
                 return Err(eyre!("Current domain information can not be identified").into());
             }
         }
+        ep_builder.id(&self.path.id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -221,7 +222,6 @@ impl RoleCommand {
                     .id,
             );
         }
-        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

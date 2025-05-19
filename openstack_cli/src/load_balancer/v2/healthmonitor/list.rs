@@ -250,6 +250,15 @@ impl HealthmonitorsCommand {
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
         }
@@ -299,6 +308,15 @@ impl HealthmonitorsCommand {
                     .id,
             );
         }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
         if let Some(val) = &self.query.timeout {
             ep_builder.timeout(*val);
         }
@@ -310,24 +328,6 @@ impl HealthmonitorsCommand {
         }
         if let Some(val) = &self.query.url_path {
             ep_builder.url_path(val);
-        }
-        if let Some(val) = &self.query.provisioning_status {
-            ep_builder.provisioning_status(val);
-        }
-        if let Some(val) = &self.query.operating_status {
-            ep_builder.operating_status(val);
-        }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val);
-        }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val);
-        }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val);
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val);
         }
         // Set body parameters
 

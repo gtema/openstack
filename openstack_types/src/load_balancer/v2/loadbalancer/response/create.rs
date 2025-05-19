@@ -145,6 +145,14 @@ pub struct LoadbalancerResponse {
     pub vip_vnic_type: Option<String>,
 }
 
+/// Type for additional vips
+/// `AdditionalVips` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct AdditionalVips {
+    pub ip_address: Option<String>,
+    pub subnet_id: String,
+}
+
 /// Defines which attributes are to be shown on any response.
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -237,30 +245,6 @@ pub struct Listeners {
     pub updated_at: Option<String>,
 }
 
-/// Defines which attributes are to be shown on any response.
-/// `Members` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Members {
-    pub address: Option<String>,
-    pub admin_state_up: Option<bool>,
-    pub backup: Option<bool>,
-    pub created_at: Option<String>,
-    pub id: Option<String>,
-    pub monitor_address: Option<String>,
-    pub monitor_port: Option<i32>,
-    pub name: Option<String>,
-    pub operating_status: Option<String>,
-    pub project_id: Option<String>,
-    pub protocol_port: Option<i32>,
-    pub provisioning_status: Option<String>,
-    pub subnet_id: Option<String>,
-    pub tags: Option<Vec<String>>,
-    pub tenant_id: Option<String>,
-    pub updated_at: Option<String>,
-    pub vnic_type: Option<String>,
-    pub weight: Option<i32>,
-}
-
 /// Base type for complex types
 /// `HealthmonitorPools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -295,6 +279,37 @@ pub struct Healthmonitor {
     pub url_path: Option<String>,
 }
 
+/// Base type for complex types
+/// `PoolsListeners` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PoolsListeners {
+    pub id: String,
+}
+
+/// Defines which attributes are to be shown on any response.
+/// `Members` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Members {
+    pub address: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub backup: Option<bool>,
+    pub created_at: Option<String>,
+    pub id: Option<String>,
+    pub monitor_address: Option<String>,
+    pub monitor_port: Option<i32>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub project_id: Option<String>,
+    pub protocol_port: Option<i32>,
+    pub provisioning_status: Option<String>,
+    pub subnet_id: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub updated_at: Option<String>,
+    pub vnic_type: Option<String>,
+    pub weight: Option<i32>,
+}
+
 /// Defines which attributes are to be shown on any response.
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -303,13 +318,6 @@ pub struct SessionPersistence {
     pub persistence_granularity: Option<String>,
     pub persistence_timeout: Option<i32>,
     pub _type: Option<String>,
-}
-
-/// Base type for complex types
-/// `PoolsListeners` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct PoolsListeners {
-    pub id: String,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -342,12 +350,4 @@ pub struct PoolsStructResponse {
     pub tls_enabled: Option<bool>,
     pub tls_versions: Option<Vec<String>>,
     pub updated_at: Option<String>,
-}
-
-/// Type for additional vips
-/// `AdditionalVips` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct AdditionalVips {
-    pub ip_address: Option<String>,
-    pub subnet_id: String,
 }

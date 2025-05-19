@@ -50,14 +50,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_router_id",
-        value_name = "ROUTER_ID"
-    )]
-    router_id: String,
-
     /// id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -65,6 +57,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_router_id",
+        value_name = "ROUTER_ID"
+    )]
+    router_id: String,
 }
 
 impl L3AgentCommand {
@@ -83,8 +83,8 @@ impl L3AgentCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.router_id(&self.path.router_id);
         ep_builder.id(&self.path.id);
+        ep_builder.router_id(&self.path.router_id);
         // Set query parameters
         // Set body parameters
 

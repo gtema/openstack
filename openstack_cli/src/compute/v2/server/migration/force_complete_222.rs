@@ -85,6 +85,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
+    /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
+
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/migrations/{id}/action API
     #[arg(
@@ -93,14 +101,6 @@ struct PathParameters {
         value_name = "SERVER_ID"
     )]
     server_id: String,
-
-    /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
 }
 
 impl MigrationCommand {
@@ -120,8 +120,8 @@ impl MigrationCommand {
         ep_builder.header("OpenStack-API-Version", "compute 2.22");
 
         // Set path parameters
-        ep_builder.server_id(&self.path.server_id);
         ep_builder.id(&self.path.id);
+        ep_builder.server_id(&self.path.server_id);
         // Set query parameters
         // Set body parameters
 

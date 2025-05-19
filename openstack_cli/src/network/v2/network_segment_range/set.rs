@@ -116,20 +116,20 @@ impl NetworkSegmentRangeCommand {
         // Set Request.network_segment_range data
         let args = &self.network_segment_range;
         let mut network_segment_range_builder = set::NetworkSegmentRangeBuilder::default();
-        if let Some(val) = &args.name {
-            network_segment_range_builder.name(val);
-        }
-
-        if let Some(val) = &args.minimum {
-            network_segment_range_builder.minimum(*val);
+        if let Some(val) = &args.description {
+            network_segment_range_builder.description(val);
         }
 
         if let Some(val) = &args.maximum {
             network_segment_range_builder.maximum(*val);
         }
 
-        if let Some(val) = &args.description {
-            network_segment_range_builder.description(val);
+        if let Some(val) = &args.minimum {
+            network_segment_range_builder.minimum(*val);
+        }
+
+        if let Some(val) = &args.name {
+            network_segment_range_builder.name(val);
         }
 
         ep_builder.network_segment_range(network_segment_range_builder.build().unwrap());

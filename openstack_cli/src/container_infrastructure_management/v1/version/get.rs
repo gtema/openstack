@@ -77,8 +77,8 @@ impl VersionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VersionResponse>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        op.output_list::<VersionResponse>(data)?;
         Ok(())
     }
 }

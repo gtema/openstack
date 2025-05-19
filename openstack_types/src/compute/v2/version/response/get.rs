@@ -67,6 +67,21 @@ pub struct VersionResponse {
     pub version: Option<String>,
 }
 
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub href: String,
+    pub rel: String,
+    pub _type: Option<String>,
+}
+
+/// `MediaTypes` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MediaTypes {
+    pub base: String,
+    pub _type: String,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Current
@@ -92,19 +107,4 @@ impl std::str::FromStr for Status {
             _ => Err(()),
         }
     }
-}
-
-/// `Links` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    pub href: String,
-    pub rel: String,
-    pub _type: Option<String>,
-}
-
-/// `MediaTypes` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct MediaTypes {
-    pub base: String,
-    pub _type: String,
 }

@@ -106,20 +106,20 @@ impl MeteringLabelCommand {
         // Set Request.metering_label data
         let args = &self.metering_label;
         let mut metering_label_builder = create::MeteringLabelBuilder::default();
-        if let Some(val) = &args.name {
-            metering_label_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             metering_label_builder.description(val);
         }
 
-        if let Some(val) = &args.tenant_id {
-            metering_label_builder.tenant_id(val);
+        if let Some(val) = &args.name {
+            metering_label_builder.name(val);
         }
 
         if let Some(val) = &args.shared {
             metering_label_builder.shared(*val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            metering_label_builder.tenant_id(val);
         }
 
         ep_builder.metering_label(metering_label_builder.build().unwrap());

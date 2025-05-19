@@ -92,8 +92,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "volumes/{volume_id}/metadata/{id}",
-            volume_id = self.volume_id.as_ref(),
             id = self.id.as_ref(),
+            volume_id = self.volume_id.as_ref(),
         )
         .into()
     }
@@ -173,8 +173,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/volumes/{volume_id}/metadata/{id}",
-                volume_id = "volume_id",
                 id = "id",
+                volume_id = "volume_id",
             ));
 
             then.status(200)
@@ -183,8 +183,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .volume_id("volume_id")
             .id("id")
+            .volume_id("volume_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .build()
             .unwrap();
@@ -201,8 +201,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/volumes/{volume_id}/metadata/{id}",
-                    volume_id = "volume_id",
                     id = "id",
+                    volume_id = "volume_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -212,8 +212,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .volume_id("volume_id")
             .id("id")
+            .volume_id("volume_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .headers(
                 [(

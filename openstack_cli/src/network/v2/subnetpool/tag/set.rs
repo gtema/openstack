@@ -50,6 +50,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
+    /// id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
+
     /// subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id}
     /// API
     #[arg(
@@ -58,14 +66,6 @@ struct PathParameters {
         value_name = "SUBNETPOOL_ID"
     )]
     subnetpool_id: String,
-
-    /// id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
 }
 
 impl TagCommand {
@@ -84,8 +84,8 @@ impl TagCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.subnetpool_id(&self.path.subnetpool_id);
         ep_builder.id(&self.path.id);
+        ep_builder.subnetpool_id(&self.path.subnetpool_id);
         // Set query parameters
         // Set body parameters
 

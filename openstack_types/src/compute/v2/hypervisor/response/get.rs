@@ -190,6 +190,13 @@ pub struct HypervisorResponse {
     pub vcpus_used: Option<i32>,
 }
 
+/// `Servers` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Servers {
+    pub name: String,
+    pub uuid: String,
+}
+
 /// The hypervisor service object.
 /// `Service` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -241,11 +248,4 @@ impl std::str::FromStr for Status {
             _ => Err(()),
         }
     }
-}
-
-/// `Servers` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Servers {
-    pub name: String,
-    pub uuid: String,
 }

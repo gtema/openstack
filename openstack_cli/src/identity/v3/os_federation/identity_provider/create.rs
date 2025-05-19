@@ -126,8 +126,8 @@ impl IdentityProviderCommand {
         // Set Request.identity_provider data
         let args = &self.identity_provider;
         let mut identity_provider_builder = create::IdentityProviderBuilder::default();
-        if let Some(val) = &args.enabled {
-            identity_provider_builder.enabled(*val);
+        if let Some(val) = &args.authorization_ttl {
+            identity_provider_builder.authorization_ttl(*val);
         }
 
         if let Some(val) = &args.description {
@@ -136,18 +136,18 @@ impl IdentityProviderCommand {
             identity_provider_builder.description(None);
         }
 
-        if let Some(val) = &args.authorization_ttl {
-            identity_provider_builder.authorization_ttl(*val);
-        }
-
-        if let Some(val) = &args.remote_ids {
-            identity_provider_builder.remote_ids(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
         if let Some(val) = &args.domain_id {
             identity_provider_builder.domain_id(Some(val.into()));
         } else if args.no_domain_id {
             identity_provider_builder.domain_id(None);
+        }
+
+        if let Some(val) = &args.enabled {
+            identity_provider_builder.enabled(*val);
+        }
+
+        if let Some(val) = &args.remote_ids {
+            identity_provider_builder.remote_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.identity_provider(identity_provider_builder.build().unwrap());

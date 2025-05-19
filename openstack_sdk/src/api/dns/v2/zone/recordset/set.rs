@@ -61,7 +61,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Recordset.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -94,8 +94,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "zones/{zone_id}/recordsets/{id}",
-            zone_id = self.zone_id.as_ref(),
             id = self.id.as_ref(),
+            zone_id = self.zone_id.as_ref(),
         )
         .into()
     }
@@ -107,14 +107,14 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.ttl {
-            params.push("ttl", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.records {
             params.push("records", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.ttl {
+            params.push("ttl", serde_json::to_value(val)?);
         }
 
         params.into_body()
@@ -171,8 +171,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/zones/{zone_id}/recordsets/{id}",
-                zone_id = "zone_id",
                 id = "id",
+                zone_id = "zone_id",
             ));
 
             then.status(200)
@@ -181,8 +181,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .zone_id("zone_id")
             .id("id")
+            .zone_id("zone_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -198,8 +198,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/zones/{zone_id}/recordsets/{id}",
-                    zone_id = "zone_id",
                     id = "id",
+                    zone_id = "zone_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -209,8 +209,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .zone_id("zone_id")
             .id("id")
+            .zone_id("zone_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

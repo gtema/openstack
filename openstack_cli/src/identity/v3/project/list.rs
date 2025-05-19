@@ -178,20 +178,17 @@ impl ProjectsCommand {
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
         }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.parent_id {
-            ep_builder.parent_id(val);
-        }
         if let Some(val) = &self.query.is_domain {
             ep_builder.is_domain(*val);
         }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val);
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
         }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val);
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.not_tags {
             ep_builder.not_tags(val);
@@ -199,11 +196,14 @@ impl ProjectsCommand {
         if let Some(val) = &self.query.not_tags_any {
             ep_builder.not_tags_any(val);
         }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
+        if let Some(val) = &self.query.parent_id {
+            ep_builder.parent_id(val);
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
         }
         // Set body parameters
 

@@ -57,8 +57,8 @@ impl TryFrom<&ComputeServerInstanceActionShow> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &ComputeServerInstanceActionShow) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        ep_builder.server_id(value.server_id.clone());
         ep_builder.id(value.id.clone());
+        ep_builder.server_id(value.server_id.clone());
 
         Ok(ep_builder)
     }

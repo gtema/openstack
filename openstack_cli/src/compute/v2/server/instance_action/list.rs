@@ -111,17 +111,17 @@ impl InstanceActionsCommand {
         // Set path parameters
         ep_builder.server_id(&self.path.server_id);
         // Set query parameters
+        if let Some(val) = &self.query.changes_before {
+            ep_builder.changes_before(val);
+        }
+        if let Some(val) = &self.query.changes_since {
+            ep_builder.changes_since(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.changes_since {
-            ep_builder.changes_since(val);
-        }
-        if let Some(val) = &self.query.changes_before {
-            ep_builder.changes_before(val);
         }
         // Set body parameters
 

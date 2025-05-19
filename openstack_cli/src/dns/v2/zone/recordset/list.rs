@@ -185,11 +185,20 @@ impl RecordsetsCommand {
             };
         }
         // Set query parameters
+        if let Some(val) = &self.query.data {
+            ep_builder.data(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.market {
             ep_builder.market(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val);
@@ -197,23 +206,14 @@ impl RecordsetsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val);
         }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query._type {
-            ep_builder._type(val);
-        }
         if let Some(val) = &self.query.status {
             ep_builder.status(val);
         }
         if let Some(val) = &self.query.ttl {
             ep_builder.ttl(*val);
         }
-        if let Some(val) = &self.query.data {
-            ep_builder.data(val);
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
         }
         // Set body parameters
 

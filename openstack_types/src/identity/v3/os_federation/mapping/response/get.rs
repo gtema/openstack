@@ -44,6 +44,42 @@ pub struct Domain {
     pub name: Option<String>,
 }
 
+/// `Group` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Group {
+    pub id: String,
+}
+
+/// `GroupStructResponse` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GroupStructResponse {
+    pub domain: Domain,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum LocalGroup {
+    // F1
+    F1(Group),
+    // F2
+    F2(GroupStructResponse),
+}
+
+/// `Roles` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Roles {
+    pub name: String,
+}
+
+/// `Projects` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Projects {
+    pub domain: Option<Domain>,
+    pub name: String,
+    pub roles: Vec<Roles>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     // Ephemeral
@@ -76,42 +112,6 @@ pub struct User {
     pub _type: Option<Type>,
 }
 
-/// `Roles` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Roles {
-    pub name: String,
-}
-
-/// `Projects` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Projects {
-    pub domain: Option<Domain>,
-    pub name: String,
-    pub roles: Vec<Roles>,
-}
-
-/// `Group` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Group {
-    pub id: String,
-}
-
-/// `GroupStructResponse` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct GroupStructResponse {
-    pub domain: Domain,
-    pub name: String,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
-pub enum LocalGroup {
-    // F1
-    F1(Group),
-    // F2
-    F2(GroupStructResponse),
-}
-
 /// `Local` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Local {
@@ -123,57 +123,57 @@ pub struct Local {
     pub user: Option<User>,
 }
 
+/// `RemoteAnyOneOfRegexType` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RemoteAnyOneOfRegexType {
+    pub any_one_of: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
+}
+
+/// `RemoteBlacklistRegexType` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RemoteBlacklistRegexType {
+    pub blacklist: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
+}
+
+/// `RemoteNotAnyOfRegexType` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RemoteNotAnyOfRegexType {
+    pub not_any_of: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
+}
+
+/// `RemoteRegexTypeWhitelist` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RemoteRegexTypeWhitelist {
+    pub regex: Option<bool>,
+    pub _type: String,
+    pub whitelist: Vec<String>,
+}
+
 /// `RemoteType` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteType {
     pub _type: String,
 }
 
-/// `RemoteTypeAnyOneOfRegex` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct RemoteTypeAnyOneOfRegex {
-    pub any_one_of: Vec<String>,
-    pub regex: Option<bool>,
-    pub _type: String,
-}
-
-/// `RemoteTypeNotAnyOfRegex` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct RemoteTypeNotAnyOfRegex {
-    pub not_any_of: Vec<String>,
-    pub regex: Option<bool>,
-    pub _type: String,
-}
-
-/// `RemoteTypeBlacklistRegex` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct RemoteTypeBlacklistRegex {
-    pub blacklist: Vec<String>,
-    pub regex: Option<bool>,
-    pub _type: String,
-}
-
-/// `RemoteTypeWhitelistRegex` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct RemoteTypeWhitelistRegex {
-    pub regex: Option<bool>,
-    pub _type: String,
-    pub whitelist: Vec<String>,
-}
-
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum RulesRemote {
     // F1
-    F1(RemoteType),
+    F1(RemoteAnyOneOfRegexType),
     // F2
-    F2(RemoteTypeAnyOneOfRegex),
+    F2(RemoteBlacklistRegexType),
     // F3
-    F3(RemoteTypeNotAnyOfRegex),
+    F3(RemoteNotAnyOfRegexType),
     // F4
-    F4(RemoteTypeBlacklistRegex),
+    F4(RemoteRegexTypeWhitelist),
     // F5
-    F5(RemoteTypeWhitelistRegex),
+    F5(RemoteType),
 }
 
 /// `Rules` type

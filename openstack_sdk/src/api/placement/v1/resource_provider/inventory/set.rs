@@ -94,7 +94,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Inventory.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -127,8 +127,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "resource_providers/{uuid}/inventories/{resource_class}",
-            uuid = self.uuid.as_ref(),
             resource_class = self.resource_class.as_ref(),
+            uuid = self.uuid.as_ref(),
         )
         .into()
     }
@@ -140,26 +140,26 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push(
-            "resource_provider_generation",
-            serde_json::to_value(self.resource_provider_generation)?,
-        );
-        params.push("total", serde_json::to_value(self.total)?);
-        if let Some(val) = &self.reserved {
-            params.push("reserved", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.min_unit {
-            params.push("min_unit", serde_json::to_value(val)?);
+        if let Some(val) = &self.allocation_ratio {
+            params.push("allocation_ratio", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.max_unit {
             params.push("max_unit", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.min_unit {
+            params.push("min_unit", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.reserved {
+            params.push("reserved", serde_json::to_value(val)?);
+        }
+        params.push(
+            "resource_provider_generation",
+            serde_json::to_value(self.resource_provider_generation)?,
+        );
         if let Some(val) = &self.step_size {
             params.push("step_size", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.allocation_ratio {
-            params.push("allocation_ratio", serde_json::to_value(val)?);
-        }
+        params.push("total", serde_json::to_value(self.total)?);
 
         params.into_body()
     }
@@ -221,8 +221,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/resource_providers/{uuid}/inventories/{resource_class}",
-                uuid = "uuid",
                 resource_class = "resource_class",
+                uuid = "uuid",
             ));
 
             then.status(200)
@@ -231,8 +231,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .uuid("uuid")
             .resource_class("resource_class")
+            .uuid("uuid")
             .resource_provider_generation(123)
             .total(123)
             .build()
@@ -250,8 +250,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/resource_providers/{uuid}/inventories/{resource_class}",
-                    uuid = "uuid",
                     resource_class = "resource_class",
+                    uuid = "uuid",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -261,8 +261,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .uuid("uuid")
             .resource_class("resource_class")
+            .uuid("uuid")
             .resource_provider_generation(123)
             .total(123)
             .headers(

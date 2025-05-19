@@ -103,6 +103,9 @@ impl CredentialsCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
+        }
         if let Some(id) = &self.query.user.user_id {
             // user_id is passed. No need to lookup
             ep_builder.user_id(id);
@@ -145,9 +148,6 @@ impl CredentialsCommand {
                     .user
                     .id,
             );
-        }
-        if let Some(val) = &self.query._type {
-            ep_builder._type(val);
         }
         // Set body parameters
 

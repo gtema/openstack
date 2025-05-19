@@ -63,87 +63,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Protocol {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PROXY")]
-    Proxy,
-    #[serde(rename = "PROXYV2")]
-    Proxyv2,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "UDP")]
-    Udp,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum LbAlgorithm {
-    #[serde(rename = "LEAST_CONNECTIONS")]
-    LeastConnections,
-    #[serde(rename = "ROUND_ROBIN")]
-    RoundRobin,
-    #[serde(rename = "SOURCE_IP")]
-    SourceIp,
-    #[serde(rename = "SOURCE_IP_PORT")]
-    SourceIpPort,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum SessionPersistenceType {
-    #[serde(rename = "APP_COOKIE")]
-    AppCookie,
-    #[serde(rename = "HTTP_COOKIE")]
-    HttpCookie,
-    #[serde(rename = "SOURCE_IP")]
-    SourceIp,
-}
-
-/// A JSON object specifying the session persistence for the pool or `null` for
-/// no session persistence. See
-/// [Pool Session Persistence](#session-persistence). Default is `null`.
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct SessionPersistence<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) cookie_name: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) persistence_granularity: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) persistence_timeout: Option<i32>,
-
-    #[serde(rename = "type")]
-    #[builder()]
-    pub(crate) _type: SessionPersistenceType,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum HealthmonitorType {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PING")]
-    Ping,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "TLS-HELLO")]
-    TlsHello,
-    #[serde(rename = "UDP-CONNECT")]
-    UdpConnect,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum HttpMethod {
     #[serde(rename = "CONNECT")]
     Connect,
@@ -163,6 +82,24 @@ pub enum HttpMethod {
     Put,
     #[serde(rename = "TRACE")]
     Trace,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HealthmonitorType {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PING")]
+    Ping,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "TLS-HELLO")]
+    TlsHello,
+    #[serde(rename = "UDP-CONNECT")]
+    UdpConnect,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -225,6 +162,18 @@ pub struct Healthmonitor<'a> {
     pub(crate) url_path: Option<Cow<'a, str>>,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum LbAlgorithm {
+    #[serde(rename = "LEAST_CONNECTIONS")]
+    LeastConnections,
+    #[serde(rename = "ROUND_ROBIN")]
+    RoundRobin,
+    #[serde(rename = "SOURCE_IP")]
+    SourceIp,
+    #[serde(rename = "SOURCE_IP_PORT")]
+    SourceIpPort,
+}
+
 /// Defines mandatory and optional attributes of a POST request.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -272,6 +221,57 @@ pub struct Members<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Protocol {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PROXY")]
+    Proxy,
+    #[serde(rename = "PROXYV2")]
+    Proxyv2,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "UDP")]
+    Udp,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum SessionPersistenceType {
+    #[serde(rename = "APP_COOKIE")]
+    AppCookie,
+    #[serde(rename = "HTTP_COOKIE")]
+    HttpCookie,
+    #[serde(rename = "SOURCE_IP")]
+    SourceIp,
+}
+
+/// A JSON object specifying the session persistence for the pool or `null` for
+/// no session persistence. See
+/// [Pool Session Persistence](#session-persistence). Default is `null`.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct SessionPersistence<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) cookie_name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) persistence_granularity: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) persistence_timeout: Option<i32>,
+
+    #[serde(rename = "type")]
+    #[builder()]
+    pub(crate) _type: SessionPersistenceType,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -427,7 +427,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Pool.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

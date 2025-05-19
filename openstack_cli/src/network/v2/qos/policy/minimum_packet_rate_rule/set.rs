@@ -55,15 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// policy_id parameter for
-    /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_policy_id",
-        value_name = "POLICY_ID"
-    )]
-    policy_id: String,
-
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
     #[arg(
@@ -72,6 +63,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// policy_id parameter for
+    /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_policy_id",
+        value_name = "POLICY_ID"
+    )]
+    policy_id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -109,17 +109,13 @@ impl MinimumPacketRateRuleCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
+        ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         // Set body parameters
         // Set Request.minimum_packet_rate_rule data
         let args = &self.minimum_packet_rate_rule;
         let mut minimum_packet_rate_rule_builder = set::MinimumPacketRateRuleBuilder::default();
-        if let Some(val) = &args.min_kpps {
-            minimum_packet_rate_rule_builder.min_kpps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Any => set::Direction::Any,
@@ -127,6 +123,10 @@ impl MinimumPacketRateRuleCommand {
                 Direction::Ingress => set::Direction::Ingress,
             };
             minimum_packet_rate_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kpps {
+            minimum_packet_rate_rule_builder.min_kpps(*val);
         }
 
         ep_builder.minimum_packet_rate_rule(minimum_packet_rate_rule_builder.build().unwrap());

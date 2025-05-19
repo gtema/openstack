@@ -51,15 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// local_ip_id parameter for
-    /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_local_ip_id",
-        value_name = "LOCAL_IP_ID"
-    )]
-    local_ip_id: String,
-
     /// id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
     /// API
     #[arg(
@@ -68,6 +59,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// local_ip_id parameter for
+    /// /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_local_ip_id",
+        value_name = "LOCAL_IP_ID"
+    )]
+    local_ip_id: String,
 }
 
 impl PortAssociationCommand {
@@ -88,8 +88,8 @@ impl PortAssociationCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.local_ip_id(&self.path.local_ip_id);
         ep_builder.id(&self.path.id);
+        ep_builder.local_ip_id(&self.path.local_ip_id);
         // Set query parameters
         // Set body parameters
 

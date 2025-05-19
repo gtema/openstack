@@ -145,32 +145,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// tags query parameter for /v2.0/floatingips API
-    pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.tags
-            .get_or_insert(None)
-            .get_or_insert_with(CommaSeparatedList::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
-    /// tags-any query parameter for /v2.0/floatingips API
-    pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.tags_any
-            .get_or_insert(None)
-            .get_or_insert_with(CommaSeparatedList::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
     /// not-tags query parameter for /v2.0/floatingips API
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
@@ -197,16 +171,28 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
-    /// Sort results by the attribute. This is an optional feature and may be
-    /// silently ignored by the server.
-    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    /// tags query parameter for /v2.0/floatingips API
+    pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.sort_key
+        self.tags
             .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
+            .get_or_insert_with(CommaSeparatedList::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// tags-any query parameter for /v2.0/floatingips API
+    pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.tags_any
+            .get_or_insert(None)
+            .get_or_insert_with(CommaSeparatedList::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -219,6 +205,20 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.sort_dir
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.sort_key
             .get_or_insert(None)
             .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
@@ -260,29 +260,29 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("fixed_ip_address", self.fixed_ip_address.as_ref());
         params.push_opt("floating_ip_address", self.floating_ip_address.as_ref());
         params.push_opt("floating_network_id", self.floating_network_id.as_ref());
-        params.push_opt("router_id", self.router_id.as_ref());
-        params.push_opt("port_id", self.port_id.as_ref());
-        params.push_opt("fixed_ip_address", self.fixed_ip_address.as_ref());
-        params.push_opt("tenant_id", self.tenant_id.as_ref());
-        params.push_opt("status", self.status.as_ref());
-        params.push_opt("revision_number", self.revision_number.as_ref());
-        params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("id", self.id.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
-        params.push_opt("description", self.description.as_ref());
-        if let Some(val) = &self.sort_key {
-            params.extend(val.iter().map(|value| ("sort_key", value)));
-        }
-        if let Some(val) = &self.sort_dir {
-            params.extend(val.iter().map(|value| ("sort_dir", value)));
-        }
+        params.push_opt("port_id", self.port_id.as_ref());
+        params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("router_id", self.router_id.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
+        if let Some(val) = &self.sort_dir {
+            params.extend(val.iter().map(|value| ("sort_dir", value)));
+        }
+        if let Some(val) = &self.sort_key {
+            params.extend(val.iter().map(|value| ("sort_key", value)));
+        }
 
         params
     }

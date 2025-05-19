@@ -99,9 +99,6 @@ impl RolesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
         if let Some(id) = &self.query.domain.domain_id {
             // domain_id is passed. No need to lookup
             ep_builder.domain_id(id);
@@ -144,6 +141,9 @@ impl RolesCommand {
                     .user
                     .id,
             );
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         // Set body parameters
 

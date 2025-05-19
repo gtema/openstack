@@ -59,7 +59,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Inherited_To_Project.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -92,8 +92,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
       "OS-INHERIT/projects/{project_id}/groups/{group_id}/roles/{role_id}/inherited_to_projects",
-          project_id = self.project_id.as_ref(),
           group_id = self.group_id.as_ref(),
+          project_id = self.project_id.as_ref(),
           role_id = self.role_id.as_ref(),
       )
         .into()
@@ -153,8 +153,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::HEAD).path(format!(
       "/OS-INHERIT/projects/{project_id}/groups/{group_id}/roles/{role_id}/inherited_to_projects",
-          project_id = "project_id",
           group_id = "group_id",
+          project_id = "project_id",
           role_id = "role_id",
       ));
 
@@ -162,8 +162,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .project_id("project_id")
             .group_id("group_id")
+            .project_id("project_id")
             .role_id("role_id")
             .build()
             .unwrap();
@@ -180,8 +180,8 @@ mod tests {
             when.method(httpmock::Method::HEAD)
                 .path(format!(
       "/OS-INHERIT/projects/{project_id}/groups/{group_id}/roles/{role_id}/inherited_to_projects",
-          project_id = "project_id",
           group_id = "group_id",
+          project_id = "project_id",
           role_id = "role_id",
       ))
                 .header("foo", "bar")
@@ -190,8 +190,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .project_id("project_id")
             .group_id("group_id")
+            .project_id("project_id")
             .role_id("role_id")
             .headers(
                 [(

@@ -27,6 +27,16 @@ use serde::Serialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HealthStatus {
+    #[serde(rename = "HEALTHY")]
+    Healthy,
+    #[serde(rename = "UNHEALTHY")]
+    Unhealthy,
+    #[serde(rename = "UNKNOWN")]
+    Unknown,
+}
+
 /// A link representation.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -90,16 +100,6 @@ pub enum Status {
     UpdateFailed,
     #[serde(rename = "UPDATE_IN_PROGRESS")]
     UpdateInProgress,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum HealthStatus {
-    #[serde(rename = "HEALTHY")]
-    Healthy,
-    #[serde(rename = "UNHEALTHY")]
-    Unhealthy,
-    #[serde(rename = "UNKNOWN")]
-    Unknown,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -277,17 +277,13 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Arbitrary labels in the form of `key=value` pairs. The accepted keys
-    /// and valid values are defined in the cluster drivers. They are used as a
-    /// way to pass additional parameters that are specific to a cluster
-    /// driver.
-    pub fn labels<I, K, V>(&mut self, iter: I) -> &mut Self
+    pub fn faults<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
         V: Into<Cow<'a, str>>,
     {
-        self.labels
+        self.faults
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
@@ -307,26 +303,17 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
-    pub fn faults<I, K, V>(&mut self, iter: I) -> &mut Self
+    /// Arbitrary labels in the form of `key=value` pairs. The accepted keys
+    /// and valid values are defined in the cluster drivers. They are used as a
+    /// way to pass additional parameters that are specific to a cluster
+    /// driver.
+    pub fn labels<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
         V: Into<Cow<'a, str>>,
     {
-        self.faults
-            .get_or_insert(None)
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-
-    pub fn labels_overridden<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
-    {
-        self.labels_overridden
+        self.labels
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
@@ -340,6 +327,19 @@ impl<'a> RequestBuilder<'a> {
         V: Into<Cow<'a, str>>,
     {
         self.labels_added
+            .get_or_insert(None)
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
+    pub fn labels_overridden<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.labels_overridden
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
@@ -399,81 +399,30 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.uuid {
-            params.push("uuid", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.name {
-            params.push("name", serde_json::to_value(val)?);
+        if let Some(val) = &self.api_address {
+            params.push("api_address", serde_json::to_value(val)?);
         }
         params.push(
             "cluster_template_id",
             serde_json::to_value(&self.cluster_template_id)?,
         );
-        if let Some(val) = &self.keypair {
-            params.push("keypair", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.node_count {
-            params.push("node_count", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.master_count {
-            params.push("master_count", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.docker_volume_size {
-            params.push("docker_volume_size", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.labels {
-            params.push("labels", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.master_flavor_id {
-            params.push("master_flavor_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.flavor_id {
-            params.push("flavor_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.create_timeout {
-            params.push("create_timeout", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.links {
-            params.push("links", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.stack_id {
-            params.push("stack_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.status {
-            params.push("status", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.status_reason {
-            params.push("status_reason", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.health_status {
-            params.push("health_status", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.health_status_reason {
-            params.push("health_status_reason", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.discovery_url {
-            params.push("discovery_url", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.api_address {
-            params.push("api_address", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.coe_version {
             params.push("coe_version", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.container_version {
             params.push("container_version", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.project_id {
-            params.push("project_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.create_timeout {
+            params.push("create_timeout", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.user_id {
-            params.push("user_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.node_addresses {
-            params.push("node_addresses", serde_json::to_value(val)?);
+        if let Some(val) = &self.discovery_url {
+            params.push("discovery_url", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.master_addresses {
-            params.push("master_addresses", serde_json::to_value(val)?);
+        if let Some(val) = &self.docker_volume_size {
+            params.push("docker_volume_size", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.faults {
             params.push("faults", serde_json::to_value(val)?);
@@ -484,29 +433,80 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.fixed_subnet {
             params.push("fixed_subnet", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.flavor_id {
+            params.push("flavor_id", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.floating_ip_enabled {
             params.push("floating_ip_enabled", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.merge_labels {
-            params.push("merge_labels", serde_json::to_value(val)?);
+        if let Some(val) = &self.health_status {
+            params.push("health_status", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.labels_overridden {
-            params.push("labels_overridden", serde_json::to_value(val)?);
+        if let Some(val) = &self.health_status_reason {
+            params.push("health_status_reason", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.keypair {
+            params.push("keypair", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.labels {
+            params.push("labels", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.labels_added {
             params.push("labels_added", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.labels_overridden {
+            params.push("labels_overridden", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.labels_skipped {
             params.push("labels_skipped", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.links {
+            params.push("links", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.master_addresses {
+            params.push("master_addresses", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.master_count {
+            params.push("master_count", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.master_flavor_id {
+            params.push("master_flavor_id", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.master_lb_enabled {
             params.push("master_lb_enabled", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
+        if let Some(val) = &self.merge_labels {
+            params.push("merge_labels", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.name {
+            params.push("name", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.node_addresses {
+            params.push("node_addresses", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.node_count {
+            params.push("node_count", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.project_id {
+            params.push("project_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.stack_id {
+            params.push("stack_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.status {
+            params.push("status", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.status_reason {
+            params.push("status_reason", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.user_id {
+            params.push("user_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.uuid {
+            params.push("uuid", serde_json::to_value(val)?);
         }
 
         params.into_body()

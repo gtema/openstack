@@ -203,24 +203,20 @@ impl HealthmonitorCommand {
         // Set Request.healthmonitor data
         let args = &self.healthmonitor;
         let mut healthmonitor_builder = set::HealthmonitorBuilder::default();
-        if let Some(val) = &args.name {
-            healthmonitor_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            healthmonitor_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.delay {
             healthmonitor_builder.delay(*val);
         }
 
-        if let Some(val) = &args.timeout {
-            healthmonitor_builder.timeout(*val);
+        if let Some(val) = &args.domain_name {
+            healthmonitor_builder.domain_name(val);
         }
 
-        if let Some(val) = &args.max_retries_down {
-            healthmonitor_builder.max_retries_down(*val);
-        }
-
-        if let Some(val) = &args.max_retries {
-            healthmonitor_builder.max_retries(*val);
+        if let Some(val) = &args.expected_codes {
+            healthmonitor_builder.expected_codes(val);
         }
 
         if let Some(val) = &args.http_method {
@@ -238,28 +234,32 @@ impl HealthmonitorCommand {
             healthmonitor_builder.http_method(tmp);
         }
 
-        if let Some(val) = &args.url_path {
-            healthmonitor_builder.url_path(val);
+        if let Some(val) = &args.http_version {
+            healthmonitor_builder.http_version(*val);
         }
 
-        if let Some(val) = &args.expected_codes {
-            healthmonitor_builder.expected_codes(val);
+        if let Some(val) = &args.max_retries {
+            healthmonitor_builder.max_retries(*val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            healthmonitor_builder.admin_state_up(*val);
+        if let Some(val) = &args.max_retries_down {
+            healthmonitor_builder.max_retries_down(*val);
+        }
+
+        if let Some(val) = &args.name {
+            healthmonitor_builder.name(val);
         }
 
         if let Some(val) = &args.tags {
             healthmonitor_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.http_version {
-            healthmonitor_builder.http_version(*val);
+        if let Some(val) = &args.timeout {
+            healthmonitor_builder.timeout(*val);
         }
 
-        if let Some(val) = &args.domain_name {
-            healthmonitor_builder.domain_name(val);
+        if let Some(val) = &args.url_path {
+            healthmonitor_builder.url_path(val);
         }
 
         ep_builder.healthmonitor(healthmonitor_builder.build().unwrap());

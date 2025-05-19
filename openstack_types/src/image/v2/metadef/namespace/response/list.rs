@@ -84,38 +84,8 @@ pub struct NamespaceResponse {
 
     /// Scope of namespace accessibility.
     #[serde(default)]
-    #[structable(optional, serialize, wide)]
+    #[structable(optional, serialize)]
     pub visibility: Option<Visibility>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Visibility {
-    // Private
-    #[serde(rename = "private")]
-    Private,
-
-    // Public
-    #[serde(rename = "public")]
-    Public,
-}
-
-impl std::str::FromStr for Visibility {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "private" => Ok(Self::Private),
-            "public" => Ok(Self::Public),
-            _ => Err(()),
-        }
-    }
-}
-
-/// `ResourceTypeAssociations` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ResourceTypeAssociations {
-    pub name: Option<String>,
-    pub prefix: Option<String>,
-    pub properties_target: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -200,8 +170,38 @@ pub struct Objects {
     pub required: Option<Vec<String>>,
 }
 
+/// `ResourceTypeAssociations` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ResourceTypeAssociations {
+    pub name: Option<String>,
+    pub prefix: Option<String>,
+    pub properties_target: Option<String>,
+}
+
 /// `Tags` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Tags {
     pub name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Visibility {
+    // Private
+    #[serde(rename = "private")]
+    Private,
+
+    // Public
+    #[serde(rename = "public")]
+    Public,
+}
+
+impl std::str::FromStr for Visibility {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "private" => Ok(Self::Private),
+            "public" => Ok(Self::Public),
+            _ => Err(()),
+        }
+    }
 }

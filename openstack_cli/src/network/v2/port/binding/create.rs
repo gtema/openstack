@@ -122,6 +122,14 @@ impl BindingCommand {
             binding_builder.host(val);
         }
 
+        if let Some(val) = &args.profile {
+            binding_builder.profile(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.project_id {
+            binding_builder.project_id(val);
+        }
+
         if let Some(val) = &args.vnic_type {
             let tmp = match val {
                 VnicType::AcceleratorDirect => create::VnicType::AcceleratorDirect,
@@ -137,14 +145,6 @@ impl BindingCommand {
                 VnicType::VirtioForwarder => create::VnicType::VirtioForwarder,
             };
             binding_builder.vnic_type(tmp);
-        }
-
-        if let Some(val) = &args.profile {
-            binding_builder.profile(val.iter().cloned());
-        }
-
-        if let Some(val) = &args.project_id {
-            binding_builder.project_id(val);
         }
 
         ep_builder.binding(binding_builder.build().unwrap());

@@ -63,7 +63,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Flavor.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -99,13 +99,13 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("is_public", self.is_public.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("is_public", self.is_public.as_ref());
-        params.push_opt("minRam", self.min_ram.as_ref());
         params.push_opt("minDisk", self.min_disk.as_ref());
-        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("minRam", self.min_ram.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
 
         params
     }

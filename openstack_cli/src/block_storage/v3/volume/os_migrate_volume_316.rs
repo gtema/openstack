@@ -108,24 +108,24 @@ impl VolumeCommand {
         let args = &self.os_migrate_volume;
         let mut os_migrate_volume_builder =
             os_migrate_volume_316::OsMigrateVolumeBuilder::default();
-        if let Some(val) = &args.host {
-            os_migrate_volume_builder.host(Some(val.into()));
-        } else if args.no_host {
-            os_migrate_volume_builder.host(None);
+        if let Some(val) = &args.cluster {
+            os_migrate_volume_builder.cluster(Some(val.into()));
+        } else if args.no_cluster {
+            os_migrate_volume_builder.cluster(None);
         }
 
         if let Some(val) = &args.force_host_copy {
             os_migrate_volume_builder.force_host_copy(*val);
         }
 
-        if let Some(val) = &args.lock_volume {
-            os_migrate_volume_builder.lock_volume(*val);
+        if let Some(val) = &args.host {
+            os_migrate_volume_builder.host(Some(val.into()));
+        } else if args.no_host {
+            os_migrate_volume_builder.host(None);
         }
 
-        if let Some(val) = &args.cluster {
-            os_migrate_volume_builder.cluster(Some(val.into()));
-        } else if args.no_cluster {
-            os_migrate_volume_builder.cluster(None);
+        if let Some(val) = &args.lock_volume {
+            os_migrate_volume_builder.lock_volume(*val);
         }
 
         ep_builder.os_migrate_volume(os_migrate_volume_builder.build().unwrap());

@@ -51,6 +51,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
+    /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
+
     /// network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id}
     /// API
     #[arg(
@@ -59,14 +67,6 @@ struct PathParameters {
         value_name = "NETWORK_ID"
     )]
     network_id: String,
-
-    /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
 }
 
 impl DhcpAgentCommand {
@@ -85,8 +85,8 @@ impl DhcpAgentCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.network_id(&self.path.network_id);
         ep_builder.id(&self.path.id);
+        ep_builder.network_id(&self.path.network_id);
         // Set query parameters
         // Set body parameters
 

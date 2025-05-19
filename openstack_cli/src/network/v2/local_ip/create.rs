@@ -111,30 +111,8 @@ impl LocalIpCommand {
         // Set Request.local_ip data
         let args = &self.local_ip;
         let mut local_ip_builder = create::LocalIpBuilder::default();
-        if let Some(val) = &args.name {
-            local_ip_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             local_ip_builder.description(val);
-        }
-
-        if let Some(val) = &args.project_id {
-            local_ip_builder.project_id(val);
-        }
-
-        if let Some(val) = &args.local_port_id {
-            local_ip_builder.local_port_id(val);
-        }
-
-        if let Some(val) = &args.network_id {
-            local_ip_builder.network_id(val);
-        }
-
-        if let Some(val) = &args.local_ip_address {
-            local_ip_builder.local_ip_address(Some(val.into()));
-        } else if args.no_local_ip_address {
-            local_ip_builder.local_ip_address(None);
         }
 
         if let Some(val) = &args.ip_mode {
@@ -143,6 +121,28 @@ impl LocalIpCommand {
                 IpMode::Translate => create::IpMode::Translate,
             };
             local_ip_builder.ip_mode(tmp);
+        }
+
+        if let Some(val) = &args.local_ip_address {
+            local_ip_builder.local_ip_address(Some(val.into()));
+        } else if args.no_local_ip_address {
+            local_ip_builder.local_ip_address(None);
+        }
+
+        if let Some(val) = &args.local_port_id {
+            local_ip_builder.local_port_id(val);
+        }
+
+        if let Some(val) = &args.name {
+            local_ip_builder.name(val);
+        }
+
+        if let Some(val) = &args.network_id {
+            local_ip_builder.network_id(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            local_ip_builder.project_id(val);
         }
 
         ep_builder.local_ip(local_ip_builder.build().unwrap());

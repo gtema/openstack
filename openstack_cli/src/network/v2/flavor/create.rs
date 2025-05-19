@@ -130,26 +130,26 @@ impl FlavorCommand {
         // Set Request.flavor data
         let args = &self.flavor;
         let mut flavor_builder = create::FlavorBuilder::default();
-        if let Some(val) = &args.name {
-            flavor_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             flavor_builder.description(Some(val.into()));
         } else if args.no_description {
             flavor_builder.description(None);
         }
 
-        if let Some(val) = &args.service_type {
-            flavor_builder.service_type(val);
+        if let Some(val) = &args.enabled {
+            flavor_builder.enabled(*val);
+        }
+
+        if let Some(val) = &args.name {
+            flavor_builder.name(val);
         }
 
         if let Some(val) = &args.service_profiles {
             flavor_builder.service_profiles(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.enabled {
-            flavor_builder.enabled(*val);
+        if let Some(val) = &args.service_type {
+            flavor_builder.service_type(val);
         }
 
         ep_builder.flavor(flavor_builder.build().unwrap());

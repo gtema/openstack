@@ -94,14 +94,14 @@ impl HypervisorsCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.hypervisor_hostname_pattern {
+            ep_builder.hypervisor_hostname_pattern(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.hypervisor_hostname_pattern {
-            ep_builder.hypervisor_hostname_pattern(val);
         }
         if let Some(val) = &self.query.with_servers {
             ep_builder.with_servers(*val);

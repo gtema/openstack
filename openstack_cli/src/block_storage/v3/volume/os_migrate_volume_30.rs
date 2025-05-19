@@ -96,12 +96,11 @@ impl VolumeCommand {
         // Set Request.os_migrate_volume data
         let args = &self.os_migrate_volume;
         let mut os_migrate_volume_builder = os_migrate_volume_30::OsMigrateVolumeBuilder::default();
-
-        os_migrate_volume_builder.host(&args.host);
-
         if let Some(val) = &args.force_host_copy {
             os_migrate_volume_builder.force_host_copy(*val);
         }
+
+        os_migrate_volume_builder.host(&args.host);
 
         if let Some(val) = &args.lock_volume {
             os_migrate_volume_builder.lock_volume(*val);

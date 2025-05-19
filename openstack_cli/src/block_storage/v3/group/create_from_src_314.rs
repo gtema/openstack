@@ -104,6 +104,10 @@ impl GroupCommand {
             create_from_src_builder.description(None);
         }
 
+        if let Some(val) = &args.group_snapshot_id {
+            create_from_src_builder.group_snapshot_id(val);
+        }
+
         if let Some(val) = &args.name {
             create_from_src_builder.name(Some(val.into()));
         } else if args.no_name {
@@ -112,10 +116,6 @@ impl GroupCommand {
 
         if let Some(val) = &args.source_group_id {
             create_from_src_builder.source_group_id(val);
-        }
-
-        if let Some(val) = &args.group_snapshot_id {
-            create_from_src_builder.group_snapshot_id(val);
         }
 
         ep_builder.create_from_src(create_from_src_builder.build().unwrap());

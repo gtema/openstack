@@ -116,9 +116,6 @@ impl RoleCommand {
         // Set Request.role data
         let args = &self.role;
         let mut role_builder = create::RoleBuilder::default();
-
-        role_builder.name(&args.name);
-
         if let Some(val) = &args.description {
             role_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -130,6 +127,8 @@ impl RoleCommand {
         } else if args.no_domain_id {
             role_builder.domain_id(None);
         }
+
+        role_builder.name(&args.name);
 
         if let Some(val) = &args.options {
             let mut options_builder = create::OptionsBuilder::default();

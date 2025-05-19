@@ -150,6 +150,23 @@ pub struct IpsecSiteConnectionResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthMode {
+    // Psk
+    #[serde(rename = "psk")]
+    Psk,
+}
+
+impl std::str::FromStr for AuthMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "psk" => Ok(Self::Psk),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Initiator {
     // BiDirectional
     #[serde(rename = "bi-directional")]
@@ -166,23 +183,6 @@ impl std::str::FromStr for Initiator {
         match input {
             "bi-directional" => Ok(Self::BiDirectional),
             "response-only" => Ok(Self::ResponseOnly),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthMode {
-    // Psk
-    #[serde(rename = "psk")]
-    Psk,
-}
-
-impl std::str::FromStr for AuthMode {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "psk" => Ok(Self::Psk),
             _ => Err(()),
         }
     }

@@ -64,11 +64,11 @@ pub struct ClusterResponse {
     pub faults: Option<BTreeMap<String, String>>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub fixed_network: Option<String>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub fixed_subnet: Option<String>,
 
     #[serde(default)]
@@ -76,7 +76,7 @@ pub struct ClusterResponse {
     pub flavor_id: Option<String>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub floating_ip_enabled: Option<String>,
 
     #[serde(default)]
@@ -100,15 +100,15 @@ pub struct ClusterResponse {
     pub labels: Option<BTreeMap<String, String>>,
 
     #[serde(default)]
-    #[structable(optional, serialize)]
+    #[structable(optional, serialize, wide)]
     pub labels_added: Option<BTreeMap<String, String>>,
 
     #[serde(default)]
-    #[structable(optional, serialize)]
+    #[structable(optional, serialize, wide)]
     pub labels_overridden: Option<BTreeMap<String, String>>,
 
     #[serde(default)]
-    #[structable(optional, serialize)]
+    #[structable(optional, serialize, wide)]
     pub labels_skipped: Option<BTreeMap<String, String>>,
 
     #[serde(default)]
@@ -128,11 +128,11 @@ pub struct ClusterResponse {
     pub master_flavor_id: Option<String>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub master_lb_enabled: Option<String>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub merge_labels: Option<String>,
 
     /// Name of the resource.
@@ -141,23 +141,23 @@ pub struct ClusterResponse {
     pub name: Option<String>,
 
     #[serde(default)]
-    #[structable(optional, serialize, wide)]
+    #[structable(optional, serialize)]
     pub node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub node_count: Option<i32>,
 
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The reference UUID of orchestration stack from Heat orchestration
     /// service.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub stack_id: Option<String>,
 
     /// The current state of the cluster.
@@ -166,7 +166,7 @@ pub struct ClusterResponse {
     pub status: Option<Status>,
 
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub status_reason: Option<String>,
 
     #[serde(default)]
@@ -174,13 +174,40 @@ pub struct ClusterResponse {
     pub updated_at: Option<String>,
 
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster.
     #[serde(default)]
     #[structable(optional)]
     pub uuid: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HealthStatus {
+    // Healthy
+    #[serde(rename = "HEALTHY")]
+    Healthy,
+
+    // Unhealthy
+    #[serde(rename = "UNHEALTHY")]
+    Unhealthy,
+
+    // Unknown
+    #[serde(rename = "UNKNOWN")]
+    Unknown,
+}
+
+impl std::str::FromStr for HealthStatus {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "HEALTHY" => Ok(Self::Healthy),
+            "UNHEALTHY" => Ok(Self::Unhealthy),
+            "UNKNOWN" => Ok(Self::Unknown),
+            _ => Err(()),
+        }
+    }
 }
 
 /// A link representation.
@@ -291,33 +318,6 @@ impl std::str::FromStr for Status {
             "UPDATE_COMPLETE" => Ok(Self::UpdateComplete),
             "UPDATE_FAILED" => Ok(Self::UpdateFailed),
             "UPDATE_IN_PROGRESS" => Ok(Self::UpdateInProgress),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum HealthStatus {
-    // Healthy
-    #[serde(rename = "HEALTHY")]
-    Healthy,
-
-    // Unhealthy
-    #[serde(rename = "UNHEALTHY")]
-    Unhealthy,
-
-    // Unknown
-    #[serde(rename = "UNKNOWN")]
-    Unknown,
-}
-
-impl std::str::FromStr for HealthStatus {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "HEALTHY" => Ok(Self::Healthy),
-            "UNHEALTHY" => Ok(Self::Unhealthy),
-            "UNKNOWN" => Ok(Self::Unknown),
             _ => Err(()),
         }
     }

@@ -125,12 +125,12 @@ impl ServiceProfileCommand {
             service_profile_builder.driver(val);
         }
 
-        if let Some(val) = &args.metainfo {
-            service_profile_builder.metainfo(val);
-        }
-
         if let Some(val) = &args.enabled {
             service_profile_builder.enabled(*val);
+        }
+
+        if let Some(val) = &args.metainfo {
+            service_profile_builder.metainfo(val);
         }
 
         ep_builder.service_profile(service_profile_builder.build().unwrap());

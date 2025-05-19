@@ -261,44 +261,20 @@ impl QuotaSetCommand {
         // Set Request.quota_set data
         let args = &self.quota_set;
         let mut quota_set_builder = set_21::QuotaSetBuilder::default();
-        if let Some(val) = &args.instances {
-            quota_set_builder.instances(*val);
-        }
-
         if let Some(val) = &args.cores {
             quota_set_builder.cores(*val);
-        }
-
-        if let Some(val) = &args.ram {
-            quota_set_builder.ram(*val);
-        }
-
-        if let Some(val) = &args.floating_ips {
-            quota_set_builder.floating_ips(*val);
         }
 
         if let Some(val) = &args.fixed_ips {
             quota_set_builder.fixed_ips(*val);
         }
 
-        if let Some(val) = &args.metadata_items {
-            quota_set_builder.metadata_items(*val);
+        if let Some(val) = &args.floating_ips {
+            quota_set_builder.floating_ips(*val);
         }
 
-        if let Some(val) = &args.key_pairs {
-            quota_set_builder.key_pairs(*val);
-        }
-
-        if let Some(val) = &args.security_groups {
-            quota_set_builder.security_groups(*val);
-        }
-
-        if let Some(val) = &args.security_group_rules {
-            quota_set_builder.security_group_rules(*val);
-        }
-
-        if let Some(val) = &args.injected_files {
-            quota_set_builder.injected_files(*val);
+        if let Some(val) = &args.force {
+            quota_set_builder.force(*val);
         }
 
         if let Some(val) = &args.injected_file_content_bytes {
@@ -309,20 +285,44 @@ impl QuotaSetCommand {
             quota_set_builder.injected_file_path_bytes(*val);
         }
 
-        if let Some(val) = &args.server_groups {
-            quota_set_builder.server_groups(*val);
+        if let Some(val) = &args.injected_files {
+            quota_set_builder.injected_files(*val);
         }
 
-        if let Some(val) = &args.server_group_members {
-            quota_set_builder.server_group_members(*val);
+        if let Some(val) = &args.instances {
+            quota_set_builder.instances(*val);
+        }
+
+        if let Some(val) = &args.key_pairs {
+            quota_set_builder.key_pairs(*val);
+        }
+
+        if let Some(val) = &args.metadata_items {
+            quota_set_builder.metadata_items(*val);
         }
 
         if let Some(val) = &args.networks {
             quota_set_builder.networks(*val);
         }
 
-        if let Some(val) = &args.force {
-            quota_set_builder.force(*val);
+        if let Some(val) = &args.ram {
+            quota_set_builder.ram(*val);
+        }
+
+        if let Some(val) = &args.security_group_rules {
+            quota_set_builder.security_group_rules(*val);
+        }
+
+        if let Some(val) = &args.security_groups {
+            quota_set_builder.security_groups(*val);
+        }
+
+        if let Some(val) = &args.server_group_members {
+            quota_set_builder.server_group_members(*val);
+        }
+
+        if let Some(val) = &args.server_groups {
+            quota_set_builder.server_groups(*val);
         }
 
         ep_builder.quota_set(quota_set_builder.build().unwrap());

@@ -55,14 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_type_id",
-        value_name = "TYPE_ID"
-    )]
-    type_id: String,
-
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -70,6 +62,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_type_id",
+        value_name = "TYPE_ID"
+    )]
+    type_id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -116,19 +116,17 @@ impl EncryptionCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.type_id(&self.path.type_id);
         ep_builder.id(&self.path.id);
+        ep_builder.type_id(&self.path.type_id);
         // Set query parameters
         // Set body parameters
         // Set Request.encryption data
         let args = &self.encryption;
         let mut encryption_builder = set::EncryptionBuilder::default();
-        if let Some(val) = &args.key_size {
-            encryption_builder.key_size(*val);
-        }
-
-        if let Some(val) = &args.provider {
-            encryption_builder.provider(val);
+        if let Some(val) = &args.cipher {
+            encryption_builder.cipher(Some(val.into()));
+        } else if args.no_cipher {
+            encryption_builder.cipher(None);
         }
 
         if let Some(val) = &args.control_location {
@@ -139,10 +137,12 @@ impl EncryptionCommand {
             encryption_builder.control_location(tmp);
         }
 
-        if let Some(val) = &args.cipher {
-            encryption_builder.cipher(Some(val.into()));
-        } else if args.no_cipher {
-            encryption_builder.cipher(None);
+        if let Some(val) = &args.key_size {
+            encryption_builder.key_size(*val);
+        }
+
+        if let Some(val) = &args.provider {
+            encryption_builder.provider(val);
         }
 
         ep_builder.encryption(encryption_builder.build().unwrap());

@@ -57,14 +57,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_port_id",
-        value_name = "PORT_ID"
-    )]
-    port_id: String,
-
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -72,6 +64,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_port_id",
+        value_name = "PORT_ID"
+    )]
+    port_id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -117,8 +117,8 @@ impl BindingCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.port_id(&self.path.port_id);
         ep_builder.id(&self.path.id);
+        ep_builder.port_id(&self.path.port_id);
         // Set query parameters
         // Set body parameters
         // Set Request.binding data
@@ -126,6 +126,10 @@ impl BindingCommand {
         let mut binding_builder = set::BindingBuilder::default();
         if let Some(val) = &args.host {
             binding_builder.host(val);
+        }
+
+        if let Some(val) = &args.profile {
+            binding_builder.profile(val.iter().cloned());
         }
 
         if let Some(val) = &args.vnic_type {
@@ -143,10 +147,6 @@ impl BindingCommand {
                 VnicType::VirtioForwarder => set::VnicType::VirtioForwarder,
             };
             binding_builder.vnic_type(tmp);
-        }
-
-        if let Some(val) = &args.profile {
-            binding_builder.profile(val.iter().cloned());
         }
 
         ep_builder.binding(binding_builder.build().unwrap());

@@ -179,16 +179,6 @@ impl SubnetCommand {
         // Set Request.subnet data
         let args = &self.subnet;
         let mut subnet_builder = set::SubnetBuilder::default();
-        if let Some(val) = &args.name {
-            subnet_builder.name(val);
-        }
-
-        if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(Some(val.into()));
-        } else if args.no_gateway_ip {
-            subnet_builder.gateway_ip(None);
-        }
-
         if let Some(val) = &args.allocation_pools {
             let allocation_pools_builder: Vec<set::AllocationPools> = val
                 .iter()
@@ -197,8 +187,26 @@ impl SubnetCommand {
             subnet_builder.allocation_pools(allocation_pools_builder);
         }
 
+        if let Some(val) = &args.description {
+            subnet_builder.description(val);
+        }
+
         if let Some(val) = &args.dns_nameservers {
             subnet_builder.dns_nameservers(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.dns_publish_fixed_ip {
+            subnet_builder.dns_publish_fixed_ip(*val);
+        }
+
+        if let Some(val) = &args.enable_dhcp {
+            subnet_builder.enable_dhcp(*val);
+        }
+
+        if let Some(val) = &args.gateway_ip {
+            subnet_builder.gateway_ip(Some(val.into()));
+        } else if args.no_gateway_ip {
+            subnet_builder.gateway_ip(None);
         }
 
         if let Some(val) = &args.host_routes {
@@ -209,26 +217,18 @@ impl SubnetCommand {
             subnet_builder.host_routes(host_routes_builder);
         }
 
-        if let Some(val) = &args.enable_dhcp {
-            subnet_builder.enable_dhcp(*val);
-        }
-
-        if let Some(val) = &args.service_types {
-            subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.dns_publish_fixed_ip {
-            subnet_builder.dns_publish_fixed_ip(*val);
-        }
-
-        if let Some(val) = &args.description {
-            subnet_builder.description(val);
+        if let Some(val) = &args.name {
+            subnet_builder.name(val);
         }
 
         if let Some(val) = &args.segment_id {
             subnet_builder.segment_id(Some(val.into()));
         } else if args.no_segment_id {
             subnet_builder.segment_id(None);
+        }
+
+        if let Some(val) = &args.service_types {
+            subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.subnet(subnet_builder.build().unwrap());

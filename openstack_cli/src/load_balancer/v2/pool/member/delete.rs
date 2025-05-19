@@ -54,14 +54,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_pool_id",
-        value_name = "POOL_ID"
-    )]
-    pool_id: String,
-
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
     #[arg(
@@ -70,6 +62,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_pool_id",
+        value_name = "POOL_ID"
+    )]
+    pool_id: String,
 }
 
 impl MemberCommand {
@@ -88,8 +88,8 @@ impl MemberCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.pool_id(&self.path.pool_id);
         ep_builder.id(&self.path.id);
+        ep_builder.pool_id(&self.path.pool_id);
         // Set query parameters
         // Set body parameters
 

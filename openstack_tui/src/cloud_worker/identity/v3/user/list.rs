@@ -123,6 +123,12 @@ impl TryFrom<&IdentityUserList> for RequestBuilder<'_> {
         if let Some(val) = &value.idp_id {
             ep_builder.idp_id(val.clone());
         }
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
+        }
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
         }
@@ -132,20 +138,14 @@ impl TryFrom<&IdentityUserList> for RequestBuilder<'_> {
         if let Some(val) = &value.protocol_id {
             ep_builder.protocol_id(val.clone());
         }
-        if let Some(val) = &value.unique_id {
-            ep_builder.unique_id(val.clone());
-        }
-        if let Some(val) = &value.marker {
-            ep_builder.marker(val.clone());
-        }
-        if let Some(val) = &value.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.clone());
         }
         if let Some(val) = &value.sort_key {
             ep_builder.sort_key(val.clone());
         }
-        if let Some(val) = &value.sort_dir {
-            ep_builder.sort_dir(val.clone());
+        if let Some(val) = &value.unique_id {
+            ep_builder.unique_id(val.clone());
         }
 
         Ok(ep_builder)

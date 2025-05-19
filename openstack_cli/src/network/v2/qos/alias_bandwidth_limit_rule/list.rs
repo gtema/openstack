@@ -120,23 +120,17 @@ impl AliasBandwidthLimitRulesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.max_kbps {
-            ep_builder.max_kbps(*val);
-        }
         if let Some(val) = &self.query.direction {
             ep_builder.direction(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.max_burst_kbps {
             ep_builder.max_burst_kbps(*val);
         }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
+        if let Some(val) = &self.query.max_kbps {
+            ep_builder.max_kbps(*val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -146,6 +140,12 @@ impl AliasBandwidthLimitRulesCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

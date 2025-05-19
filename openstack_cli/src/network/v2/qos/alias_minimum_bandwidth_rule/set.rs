@@ -105,16 +105,16 @@ impl AliasMinimumBandwidthRuleCommand {
         let args = &self.alias_minimum_bandwidth_rule;
         let mut alias_minimum_bandwidth_rule_builder =
             set::AliasMinimumBandwidthRuleBuilder::default();
-        if let Some(val) = &args.min_kbps {
-            alias_minimum_bandwidth_rule_builder.min_kbps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => set::Direction::Egress,
                 Direction::Ingress => set::Direction::Ingress,
             };
             alias_minimum_bandwidth_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kbps {
+            alias_minimum_bandwidth_rule_builder.min_kbps(*val);
         }
 
         ep_builder

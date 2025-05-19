@@ -152,72 +152,6 @@ impl TryFrom<&NetworkSubnetList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &NetworkSubnetList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        if let Some(val) = &value.id {
-            ep_builder.id(val.clone());
-        }
-        if let Some(val) = &value.name {
-            ep_builder.name(val.clone());
-        }
-        if let Some(val) = &value.ip_version {
-            ep_builder.ip_version(*val);
-        }
-        if let Some(val) = &value.network_id {
-            ep_builder.network_id(val.clone());
-        }
-        if let Some(val) = &value.subnetpool_id {
-            ep_builder.subnetpool_id(val.clone());
-        }
-        if let Some(val) = &value.cidr {
-            ep_builder.cidr(val.clone());
-        }
-        if let Some(val) = &value.gateway_ip {
-            ep_builder.gateway_ip(val.clone());
-        }
-        if let Some(val) = &value.tenant_id {
-            ep_builder.tenant_id(val.clone());
-        }
-        if let Some(val) = &value.enable_dhcp {
-            ep_builder.enable_dhcp(*val);
-        }
-        if let Some(val) = &value.ipv6_ra_mode {
-            ep_builder.ipv6_ra_mode(val.clone());
-        }
-        if let Some(val) = &value.ipv6_address_mode {
-            ep_builder.ipv6_address_mode(val.clone());
-        }
-        if let Some(val) = &value.shared {
-            ep_builder.shared(*val);
-        }
-        if let Some(val) = &value.revision_number {
-            ep_builder.revision_number(val.clone());
-        }
-        if let Some(val) = &value.router_external {
-            ep_builder.router_external(*val);
-        }
-        if let Some(val) = &value.tags {
-            ep_builder.tags(val.iter().cloned());
-        }
-        if let Some(val) = &value.tags_any {
-            ep_builder.tags_any(val.iter().cloned());
-        }
-        if let Some(val) = &value.not_tags {
-            ep_builder.not_tags(val.iter().cloned());
-        }
-        if let Some(val) = &value.not_tags_any {
-            ep_builder.not_tags_any(val.iter().cloned());
-        }
-        if let Some(val) = &value.description {
-            ep_builder.description(val.clone());
-        }
-        if let Some(val) = &value.segment_id {
-            ep_builder.segment_id(val.clone());
-        }
-        if let Some(val) = &value.sort_key {
-            ep_builder.sort_key(val.iter().cloned());
-        }
-        if let Some(val) = &value.sort_dir {
-            ep_builder.sort_dir(val.iter().cloned());
-        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
@@ -226,6 +160,72 @@ impl TryFrom<&NetworkSubnetList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.iter().cloned());
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.iter().cloned());
+        }
+        if let Some(val) = &value.cidr {
+            ep_builder.cidr(val.clone());
+        }
+        if let Some(val) = &value.description {
+            ep_builder.description(val.clone());
+        }
+        if let Some(val) = &value.enable_dhcp {
+            ep_builder.enable_dhcp(*val);
+        }
+        if let Some(val) = &value.gateway_ip {
+            ep_builder.gateway_ip(val.clone());
+        }
+        if let Some(val) = &value.id {
+            ep_builder.id(val.clone());
+        }
+        if let Some(val) = &value.ip_version {
+            ep_builder.ip_version(*val);
+        }
+        if let Some(val) = &value.ipv6_address_mode {
+            ep_builder.ipv6_address_mode(val.clone());
+        }
+        if let Some(val) = &value.ipv6_ra_mode {
+            ep_builder.ipv6_ra_mode(val.clone());
+        }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
+        }
+        if let Some(val) = &value.network_id {
+            ep_builder.network_id(val.clone());
+        }
+        if let Some(val) = &value.not_tags {
+            ep_builder.not_tags(val.iter().cloned());
+        }
+        if let Some(val) = &value.not_tags_any {
+            ep_builder.not_tags_any(val.iter().cloned());
+        }
+        if let Some(val) = &value.revision_number {
+            ep_builder.revision_number(val.clone());
+        }
+        if let Some(val) = &value.router_external {
+            ep_builder.router_external(*val);
+        }
+        if let Some(val) = &value.segment_id {
+            ep_builder.segment_id(val.clone());
+        }
+        if let Some(val) = &value.shared {
+            ep_builder.shared(*val);
+        }
+        if let Some(val) = &value.subnetpool_id {
+            ep_builder.subnetpool_id(val.clone());
+        }
+        if let Some(val) = &value.tags {
+            ep_builder.tags(val.iter().cloned());
+        }
+        if let Some(val) = &value.tags_any {
+            ep_builder.tags_any(val.iter().cloned());
+        }
+        if let Some(val) = &value.tenant_id {
+            ep_builder.tenant_id(val.clone());
         }
 
         Ok(ep_builder)

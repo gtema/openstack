@@ -92,11 +92,11 @@ impl FlavorProfileCommand {
         let args = &self.flavorprofile;
         let mut flavorprofile_builder = create::FlavorprofileBuilder::default();
 
+        flavorprofile_builder.flavor_data(&args.flavor_data);
+
         flavorprofile_builder.name(&args.name);
 
         flavorprofile_builder.provider_name(&args.provider_name);
-
-        flavorprofile_builder.flavor_data(&args.flavor_data);
 
         ep_builder.flavorprofile(flavorprofile_builder.build().unwrap());
 

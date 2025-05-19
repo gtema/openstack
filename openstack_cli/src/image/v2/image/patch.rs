@@ -227,8 +227,35 @@ impl ImageCommand {
 
         let data: ImageResponse = serde_json::from_value(find_data)?;
         let mut new = data.clone();
+        if let Some(val) = &self.container_format {
+            new.container_format = Some(val.into());
+        }
+        if let Some(val) = &self.disk_format {
+            new.disk_format = Some(val.into());
+        }
+        if let Some(val) = &self.locations {
+            new.locations = Some(serde_json::from_value(val.to_owned().into())?);
+        }
+        if let Some(val) = &self.min_disk {
+            new.min_disk = Some(*val);
+        }
+        if let Some(val) = &self.min_ram {
+            new.min_ram = Some(*val);
+        }
         if let Some(val) = &self.name {
             new.name = Some(val.into());
+        }
+        if let Some(val) = &self.os_hidden {
+            new.os_hidden = Some(*val);
+        }
+        if let Some(val) = &self.owner {
+            new.owner = Some(val.into());
+        }
+        if let Some(val) = &self.protected {
+            new.protected = Some(*val);
+        }
+        if let Some(val) = &self.tags {
+            new.tags = Some(serde_json::from_value(val.to_owned().into())?);
         }
         if let Some(val) = &self.visibility {
             // StringEnum
@@ -242,33 +269,6 @@ impl ImageCommand {
                 tmp.parse()
                     .map_err(|_| eyre::eyre!("unsupported value for visibility"))?,
             );
-        }
-        if let Some(val) = &self.protected {
-            new.protected = Some(*val);
-        }
-        if let Some(val) = &self.os_hidden {
-            new.os_hidden = Some(*val);
-        }
-        if let Some(val) = &self.owner {
-            new.owner = Some(val.into());
-        }
-        if let Some(val) = &self.container_format {
-            new.container_format = Some(val.into());
-        }
-        if let Some(val) = &self.disk_format {
-            new.disk_format = Some(val.into());
-        }
-        if let Some(val) = &self.tags {
-            new.tags = Some(serde_json::from_value(val.to_owned().into())?);
-        }
-        if let Some(val) = &self.min_ram {
-            new.min_ram = Some(*val);
-        }
-        if let Some(val) = &self.min_disk {
-            new.min_disk = Some(*val);
-        }
-        if let Some(val) = &self.locations {
-            new.locations = Some(serde_json::from_value(val.to_owned().into())?);
         }
 
         let curr_json = serde_json::to_value(&data).unwrap();

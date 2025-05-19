@@ -60,7 +60,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Limit.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -96,11 +96,11 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("service_id", self.service_id.as_ref());
+        params.push_opt("domain_id", self.domain_id.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
         params.push_opt("region_id", self.region_id.as_ref());
         params.push_opt("resource_name", self.resource_name.as_ref());
-        params.push_opt("project_id", self.project_id.as_ref());
-        params.push_opt("domain_id", self.domain_id.as_ref());
+        params.push_opt("service_id", self.service_id.as_ref());
 
         params
     }

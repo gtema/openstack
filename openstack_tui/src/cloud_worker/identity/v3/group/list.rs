@@ -71,20 +71,20 @@ impl TryFrom<&IdentityGroupList> for RequestBuilder<'_> {
         if let Some(val) = &value.domain_id {
             ep_builder.domain_id(val.clone());
         }
-        if let Some(val) = &value.name {
-            ep_builder.name(val.clone());
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
         }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
         }
-        if let Some(val) = &value.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &value.sort_key {
-            ep_builder.sort_key(val.clone());
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &value.sort_dir {
             ep_builder.sort_dir(val.clone());
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.clone());
         }
 
         Ok(ep_builder)

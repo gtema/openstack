@@ -101,9 +101,6 @@ impl VolumeTransferCommand {
         // Set Request.transfer data
         let args = &self.transfer;
         let mut transfer_builder = create_355::TransferBuilder::default();
-
-        transfer_builder.volume_id(&args.volume_id);
-
         if let Some(val) = &args.name {
             transfer_builder.name(Some(val.into()));
         } else if args.no_name {
@@ -113,6 +110,8 @@ impl VolumeTransferCommand {
         if let Some(val) = &args.no_snapshots {
             transfer_builder.no_snapshots(*val);
         }
+
+        transfer_builder.volume_id(&args.volume_id);
 
         ep_builder.transfer(transfer_builder.build().unwrap());
 

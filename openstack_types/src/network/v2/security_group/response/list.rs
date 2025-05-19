@@ -22,10 +22,12 @@ use structable::{StructTable, StructTableOptions};
 /// SecurityGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
+    /// Time at which the resource has been created (in UTC ISO8601 format).
     #[serde(default)]
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    /// A human-readable description for the resource.
     #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
@@ -40,6 +42,7 @@ pub struct SecurityGroupResponse {
     #[structable(optional)]
     pub name: Option<String>,
 
+    /// The revision number of the resource.
     #[serde(default)]
     #[structable(optional, wide)]
     pub revision_number: Option<i32>,
@@ -66,7 +69,6 @@ pub struct SecurityGroupResponse {
     #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
-    /// The ID of the project.
     #[serde(default)]
     #[structable(optional, wide)]
     pub tenant_id: Option<String>,

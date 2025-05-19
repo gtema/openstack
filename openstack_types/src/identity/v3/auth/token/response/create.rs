@@ -47,7 +47,7 @@ pub struct TokenResponse {
     /// a domain.
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub domain: Option<DomainStructResponse>,
+    pub domain: Option<Domain>,
 
     /// The date and time when the token expires.
     ///
@@ -161,32 +161,11 @@ pub struct Catalog {
     pub _type: Option<String>,
 }
 
-/// A `domain` object including the `id` and `name` representing the domain the
-/// token is scoped to. This is only included in tokens that are scoped to a
-/// domain.
-/// `UserDomain` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct UserDomain {
-    pub id: Option<String>,
-    pub name: Option<String>,
-}
-
-/// A `user` object.
-/// `User` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct User {
-    pub domain: Option<UserDomain>,
-    pub id: Option<String>,
-    pub name: Option<String>,
-    pub os_federation: Option<BTreeMap<String, Value>>,
-    pub password_expires_at: Option<String>,
-}
-
 /// A domain object including the id and name representing the domain the token
 /// is scoped to. This is only included in tokens that are scoped to a domain.
-/// `DomainStructResponse` type
+/// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct DomainStructResponse {
+pub struct Domain {
     pub id: Option<String>,
     pub name: Option<String>,
 }
@@ -206,4 +185,25 @@ pub struct Project {
 pub struct Roles {
     pub id: Option<String>,
     pub name: Option<String>,
+}
+
+/// A `domain` object including the `id` and `name` representing the domain the
+/// token is scoped to. This is only included in tokens that are scoped to a
+/// domain.
+/// `UserDomain` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct UserDomain {
+    pub id: Option<String>,
+    pub name: Option<String>,
+}
+
+/// A `user` object.
+/// `User` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct User {
+    pub domain: Option<UserDomain>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub os_federation: Option<BTreeMap<String, Value>>,
+    pub password_expires_at: Option<String>,
 }

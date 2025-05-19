@@ -124,6 +124,14 @@ impl ConntrackHelperCommand {
         // Set Request.conntrack_helper data
         let args = &self.conntrack_helper;
         let mut conntrack_helper_builder = create::ConntrackHelperBuilder::default();
+        if let Some(val) = &args.helper {
+            conntrack_helper_builder.helper(val);
+        }
+
+        if let Some(val) = &args.port {
+            conntrack_helper_builder.port(*val);
+        }
+
         if let Some(val) = &args.project_id {
             conntrack_helper_builder.project_id(val);
         }
@@ -138,14 +146,6 @@ impl ConntrackHelperCommand {
                 Protocol::Udp => create::Protocol::Udp,
             };
             conntrack_helper_builder.protocol(tmp);
-        }
-
-        if let Some(val) = &args.port {
-            conntrack_helper_builder.port(*val);
-        }
-
-        if let Some(val) = &args.helper {
-            conntrack_helper_builder.helper(val);
         }
 
         ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());

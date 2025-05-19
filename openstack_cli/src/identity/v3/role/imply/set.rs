@@ -55,15 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// prior_role_id parameter for
-    /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_prior_role_id",
-        value_name = "PRIOR_ROLE_ID"
-    )]
-    prior_role_id: String,
-
     /// implied_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
     #[arg(
@@ -72,6 +63,15 @@ struct PathParameters {
         value_name = "IMPLIED_ROLE_ID"
     )]
     implied_role_id: String,
+
+    /// prior_role_id parameter for
+    /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_prior_role_id",
+        value_name = "PRIOR_ROLE_ID"
+    )]
+    prior_role_id: String,
 }
 
 impl ImplyCommand {
@@ -89,8 +89,8 @@ impl ImplyCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.prior_role_id(&self.path.prior_role_id);
         ep_builder.implied_role_id(&self.path.implied_role_id);
+        ep_builder.prior_role_id(&self.path.prior_role_id);
         // Set query parameters
         // Set body parameters
 

@@ -126,9 +126,12 @@ impl AssistedVolumeSnapshotCommand {
         let args = &self.snapshot;
         let mut snapshot_builder = create::SnapshotBuilder::default();
 
-        snapshot_builder.volume_id(&args.volume_id);
-
         let mut create_info_builder = create::CreateInfoBuilder::default();
+        if let Some(val) = &&args.create_info.id {
+            create_info_builder.id(val);
+        }
+
+        create_info_builder.new_file(&args.create_info.new_file);
 
         create_info_builder.snapshot_id(&args.create_info.snapshot_id);
 
@@ -136,12 +139,9 @@ impl AssistedVolumeSnapshotCommand {
             Type::Qcow2 => create::Type::Qcow2,
         };
         create_info_builder._type(tmp);
-
-        create_info_builder.new_file(&args.create_info.new_file);
-        if let Some(val) = &&args.create_info.id {
-            create_info_builder.id(val);
-        }
         snapshot_builder.create_info(create_info_builder.build().expect("A valid object"));
+
+        snapshot_builder.volume_id(&args.volume_id);
 
         ep_builder.snapshot(snapshot_builder.build().unwrap());
 

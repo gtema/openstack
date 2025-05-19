@@ -167,22 +167,31 @@ impl RouterCommand {
         // Set Request.router data
         let args = &self.router;
         let mut router_builder = create::RouterBuilder::default();
-        if let Some(val) = &args.name {
-            router_builder.name(val);
-        }
-
         if let Some(val) = &args.admin_state_up {
             router_builder.admin_state_up(*val);
         }
 
-        if let Some(val) = &args.tenant_id {
-            router_builder.tenant_id(val);
+        if let Some(val) = &args.availability_zone_hints {
+            router_builder.availability_zone_hints(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.description {
+            router_builder.description(val);
+        }
+
+        if let Some(val) = &args.distributed {
+            router_builder.distributed(*val);
+        }
+
+        if let Some(val) = &args.enable_ndp_proxy {
+            router_builder.enable_ndp_proxy(*val);
         }
 
         if let Some(val) = &args.external_gateway_info {
             let mut external_gateway_info_builder = create::ExternalGatewayInfoBuilder::default();
-
-            external_gateway_info_builder.network_id(&val.network_id);
+            if let Some(val) = &val.enable_snat {
+                external_gateway_info_builder.enable_snat(*val);
+            }
             if let Some(val) = &val.external_fixed_ips {
                 let external_fixed_ips_builder: Vec<create::ExternalFixedIps> = val
                     .iter()
@@ -190,9 +199,8 @@ impl RouterCommand {
                     .collect::<Vec<create::ExternalFixedIps>>();
                 external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
             }
-            if let Some(val) = &val.enable_snat {
-                external_gateway_info_builder.enable_snat(*val);
-            }
+
+            external_gateway_info_builder.network_id(&val.network_id);
             if let Some(val) = &val.qos_policy_id {
                 external_gateway_info_builder.qos_policy_id(Some(val.into()));
             }
@@ -203,28 +211,20 @@ impl RouterCommand {
             );
         }
 
-        if let Some(val) = &args.ha {
-            router_builder.ha(*val);
-        }
-
-        if let Some(val) = &args.enable_ndp_proxy {
-            router_builder.enable_ndp_proxy(*val);
-        }
-
         if let Some(val) = &args.flavor_id {
             router_builder.flavor_id(val);
         }
 
-        if let Some(val) = &args.availability_zone_hints {
-            router_builder.availability_zone_hints(val.iter().map(Into::into).collect::<Vec<_>>());
+        if let Some(val) = &args.ha {
+            router_builder.ha(*val);
         }
 
-        if let Some(val) = &args.distributed {
-            router_builder.distributed(*val);
+        if let Some(val) = &args.name {
+            router_builder.name(val);
         }
 
-        if let Some(val) = &args.description {
-            router_builder.description(val);
+        if let Some(val) = &args.tenant_id {
+            router_builder.tenant_id(val);
         }
 
         ep_builder.router(router_builder.build().unwrap());

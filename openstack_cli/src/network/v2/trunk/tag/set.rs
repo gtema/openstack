@@ -50,14 +50,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// trunk_id parameter for /v2.0/trunks/{trunk_id}/tags/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_trunk_id",
-        value_name = "TRUNK_ID"
-    )]
-    trunk_id: String,
-
     /// id parameter for /v2.0/trunks/{trunk_id}/tags/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -65,6 +57,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// trunk_id parameter for /v2.0/trunks/{trunk_id}/tags/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_trunk_id",
+        value_name = "TRUNK_ID"
+    )]
+    trunk_id: String,
 }
 
 impl TagCommand {
@@ -82,8 +82,8 @@ impl TagCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.trunk_id(&self.path.trunk_id);
         ep_builder.id(&self.path.id);
+        ep_builder.trunk_id(&self.path.trunk_id);
         // Set query parameters
         // Set body parameters
 

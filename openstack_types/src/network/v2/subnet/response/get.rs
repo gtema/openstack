@@ -162,33 +162,6 @@ pub struct HostRoutes {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Ipv6RaMode {
-    // Dhcpv6Stateful
-    #[serde(rename = "dhcpv6-stateful")]
-    Dhcpv6Stateful,
-
-    // Dhcpv6Stateless
-    #[serde(rename = "dhcpv6-stateless")]
-    Dhcpv6Stateless,
-
-    // Slaac
-    #[serde(rename = "slaac")]
-    Slaac,
-}
-
-impl std::str::FromStr for Ipv6RaMode {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "dhcpv6-stateful" => Ok(Self::Dhcpv6Stateful),
-            "dhcpv6-stateless" => Ok(Self::Dhcpv6Stateless),
-            "slaac" => Ok(Self::Slaac),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Ipv6AddressMode {
     // Dhcpv6Stateful
     #[serde(rename = "dhcpv6-stateful")]
@@ -204,6 +177,33 @@ pub enum Ipv6AddressMode {
 }
 
 impl std::str::FromStr for Ipv6AddressMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "dhcpv6-stateful" => Ok(Self::Dhcpv6Stateful),
+            "dhcpv6-stateless" => Ok(Self::Dhcpv6Stateless),
+            "slaac" => Ok(Self::Slaac),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Ipv6RaMode {
+    // Dhcpv6Stateful
+    #[serde(rename = "dhcpv6-stateful")]
+    Dhcpv6Stateful,
+
+    // Dhcpv6Stateless
+    #[serde(rename = "dhcpv6-stateless")]
+    Dhcpv6Stateless,
+
+    // Slaac
+    #[serde(rename = "slaac")]
+    Slaac,
+}
+
+impl std::str::FromStr for Ipv6RaMode {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {

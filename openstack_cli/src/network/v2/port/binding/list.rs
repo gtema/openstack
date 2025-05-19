@@ -134,20 +134,14 @@ impl BindingsCommand {
         if let Some(val) = &self.query.host {
             ep_builder.host(val);
         }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
         if let Some(val) = &self.query.vif_type {
             ep_builder.vif_type(val);
         }
         if let Some(val) = &self.query.vnic_type {
             ep_builder.vnic_type(val);
-        }
-        if let Some(val) = &self.query.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -157,6 +151,12 @@ impl BindingsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

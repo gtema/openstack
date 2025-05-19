@@ -154,6 +154,10 @@ impl QuotaCommand {
             quota_builder.port(*val);
         }
 
+        if let Some(val) = &args.project_id {
+            quota_builder.project_id(val);
+        }
+
         if let Some(val) = &args.rbac_policy {
             quota_builder.rbac_policy(*val);
         }
@@ -176,10 +180,6 @@ impl QuotaCommand {
 
         if let Some(val) = &args.subnetpool {
             quota_builder.subnetpool(*val);
-        }
-
-        if let Some(val) = &args.project_id {
-            quota_builder.project_id(val);
         }
 
         ep_builder.quota(quota_builder.build().unwrap());

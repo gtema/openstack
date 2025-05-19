@@ -58,7 +58,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Floatingip.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -103,17 +103,17 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.ptrdname {
-            params.push("ptrdname", serde_json::to_value(val)?);
+        if let Some(val) = &self.address {
+            params.push("address", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.ptrdname {
+            params.push("ptrdname", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.ttl {
             params.push("ttl", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.address {
-            params.push("address", serde_json::to_value(val)?);
         }
 
         params.into_body()

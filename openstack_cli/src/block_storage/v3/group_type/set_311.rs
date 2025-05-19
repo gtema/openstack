@@ -121,12 +121,6 @@ impl GroupTypeCommand {
         // Set Request.group_type data
         let args = &self.group_type;
         let mut group_type_builder = set_311::GroupTypeBuilder::default();
-        if let Some(val) = &args.name {
-            group_type_builder.name(Some(val.into()));
-        } else if args.no_name {
-            group_type_builder.name(None);
-        }
-
         if let Some(val) = &args.description {
             group_type_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -135,6 +129,12 @@ impl GroupTypeCommand {
 
         if let Some(val) = &args.is_public {
             group_type_builder.is_public(*val);
+        }
+
+        if let Some(val) = &args.name {
+            group_type_builder.name(Some(val.into()));
+        } else if args.no_name {
+            group_type_builder.name(None);
         }
 
         ep_builder.group_type(group_type_builder.build().unwrap());

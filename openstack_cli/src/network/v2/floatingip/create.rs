@@ -186,16 +186,28 @@ impl FloatingipCommand {
         // Set Request.floatingip data
         let args = &self.floatingip;
         let mut floatingip_builder = create::FloatingipBuilder::default();
+        if let Some(val) = &args.description {
+            floatingip_builder.description(val);
+        }
+
+        if let Some(val) = &args.dns_domain {
+            floatingip_builder.dns_domain(val);
+        }
+
+        if let Some(val) = &args.dns_name {
+            floatingip_builder.dns_name(val);
+        }
+
+        if let Some(val) = &args.fixed_ip_address {
+            floatingip_builder.fixed_ip_address(Some(val.into()));
+        } else if args.no_fixed_ip_address {
+            floatingip_builder.fixed_ip_address(None);
+        }
+
         if let Some(val) = &args.floating_ip_address {
             floatingip_builder.floating_ip_address(Some(val.into()));
         } else if args.no_floating_ip_address {
             floatingip_builder.floating_ip_address(None);
-        }
-
-        if let Some(val) = &args.subnet_id {
-            floatingip_builder.subnet_id(Some(val.into()));
-        } else if args.no_subnet_id {
-            floatingip_builder.subnet_id(None);
         }
 
         floatingip_builder.floating_network_id(&args.floating_network_id);
@@ -206,32 +218,20 @@ impl FloatingipCommand {
             floatingip_builder.port_id(None);
         }
 
-        if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(Some(val.into()));
-        } else if args.no_fixed_ip_address {
-            floatingip_builder.fixed_ip_address(None);
-        }
-
-        if let Some(val) = &args.tenant_id {
-            floatingip_builder.tenant_id(val);
-        }
-
         if let Some(val) = &args.qos_policy_id {
             floatingip_builder.qos_policy_id(Some(val.into()));
         } else if args.no_qos_policy_id {
             floatingip_builder.qos_policy_id(None);
         }
 
-        if let Some(val) = &args.dns_name {
-            floatingip_builder.dns_name(val);
+        if let Some(val) = &args.subnet_id {
+            floatingip_builder.subnet_id(Some(val.into()));
+        } else if args.no_subnet_id {
+            floatingip_builder.subnet_id(None);
         }
 
-        if let Some(val) = &args.dns_domain {
-            floatingip_builder.dns_domain(val);
-        }
-
-        if let Some(val) = &args.description {
-            floatingip_builder.description(val);
+        if let Some(val) = &args.tenant_id {
+            floatingip_builder.tenant_id(val);
         }
 
         ep_builder.floatingip(floatingip_builder.build().unwrap());

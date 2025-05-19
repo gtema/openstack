@@ -56,14 +56,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// store_id parameter for /v2/stores/{store_id}/{image_id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
-
     /// image_id parameter for /v2/stores/{store_id}/{image_id} API
     #[arg(
         help_heading = "Path parameters",
@@ -71,6 +63,14 @@ struct PathParameters {
         value_name = "IMAGE_ID"
     )]
     image_id: String,
+
+    /// store_id parameter for /v2/stores/{store_id}/{image_id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
 }
 
 impl StoreCommand {
@@ -88,8 +88,8 @@ impl StoreCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.id(&self.path.id);
         ep_builder.image_id(&self.path.image_id);
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

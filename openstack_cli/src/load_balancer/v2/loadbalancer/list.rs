@@ -222,11 +222,17 @@ impl LoadbalancersCommand {
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
-        }
-        if let Some(val) = &self.query.provider {
-            ep_builder.provider(val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -271,6 +277,18 @@ impl LoadbalancersCommand {
                     .id,
             );
         }
+        if let Some(val) = &self.query.provider {
+            ep_builder.provider(val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
         }
@@ -283,29 +301,11 @@ impl LoadbalancersCommand {
         if let Some(val) = &self.query.vip_port_id {
             ep_builder.vip_port_id(val);
         }
-        if let Some(val) = &self.query.vip_subnet_id {
-            ep_builder.vip_subnet_id(val);
-        }
         if let Some(val) = &self.query.vip_qos_policy_id {
             ep_builder.vip_qos_policy_id(val);
         }
-        if let Some(val) = &self.query.provisioning_status {
-            ep_builder.provisioning_status(val);
-        }
-        if let Some(val) = &self.query.operating_status {
-            ep_builder.operating_status(val);
-        }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val);
-        }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val);
-        }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val);
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val);
+        if let Some(val) = &self.query.vip_subnet_id {
+            ep_builder.vip_subnet_id(val);
         }
         // Set body parameters
 

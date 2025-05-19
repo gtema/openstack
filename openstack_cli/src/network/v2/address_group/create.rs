@@ -101,20 +101,20 @@ impl AddressGroupCommand {
         // Set Request.address_group data
         let args = &self.address_group;
         let mut address_group_builder = create::AddressGroupBuilder::default();
-        if let Some(val) = &args.name {
-            address_group_builder.name(val);
+        if let Some(val) = &args.addresses {
+            address_group_builder.addresses(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.description {
             address_group_builder.description(val);
         }
 
-        if let Some(val) = &args.project_id {
-            address_group_builder.project_id(val);
+        if let Some(val) = &args.name {
+            address_group_builder.name(val);
         }
 
-        if let Some(val) = &args.addresses {
-            address_group_builder.addresses(val.iter().map(Into::into).collect::<Vec<_>>());
+        if let Some(val) = &args.project_id {
+            address_group_builder.project_id(val);
         }
 
         ep_builder.address_group(address_group_builder.build().unwrap());

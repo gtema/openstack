@@ -62,15 +62,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// uuid parameter for
-    /// /resource_providers/{uuid}/inventories/{resource_class} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_uuid",
-        value_name = "UUID"
-    )]
-    uuid: String,
-
     /// resource_class parameter for
     /// /resource_providers/{uuid}/inventories/{resource_class} API
     #[arg(
@@ -79,6 +70,15 @@ struct PathParameters {
         value_name = "RESOURCE_CLASS"
     )]
     resource_class: String,
+
+    /// uuid parameter for
+    /// /resource_providers/{uuid}/inventories/{resource_class} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_uuid",
+        value_name = "UUID"
+    )]
+    uuid: String,
 }
 
 impl InventoryCommand {
@@ -99,8 +99,8 @@ impl InventoryCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.uuid(&self.path.uuid);
         ep_builder.resource_class(&self.path.resource_class);
+        ep_builder.uuid(&self.path.uuid);
         // Set query parameters
         // Set body parameters
 

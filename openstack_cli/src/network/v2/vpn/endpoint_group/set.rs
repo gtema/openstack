@@ -116,12 +116,12 @@ impl EndpointGroupCommand {
         // Set Request.endpoint_group data
         let args = &self.endpoint_group;
         let mut endpoint_group_builder = set::EndpointGroupBuilder::default();
-        if let Some(val) = &args.name {
-            endpoint_group_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             endpoint_group_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            endpoint_group_builder.name(val);
         }
 
         ep_builder.endpoint_group(endpoint_group_builder.build().unwrap());

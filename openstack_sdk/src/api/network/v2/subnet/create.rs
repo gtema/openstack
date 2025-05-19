@@ -87,7 +87,7 @@ pub struct HostRoutes<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Ipv6RaMode {
+pub enum Ipv6AddressMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
     #[serde(rename = "dhcpv6-stateless")]
@@ -97,7 +97,7 @@ pub enum Ipv6RaMode {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Ipv6AddressMode {
+pub enum Ipv6RaMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
     #[serde(rename = "dhcpv6-stateless")]
@@ -242,7 +242,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Subnet.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

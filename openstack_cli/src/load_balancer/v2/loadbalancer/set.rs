@@ -142,28 +142,28 @@ impl LoadbalancerCommand {
         // Set Request.loadbalancer data
         let args = &self.loadbalancer;
         let mut loadbalancer_builder = set::LoadbalancerBuilder::default();
-        if let Some(val) = &args.name {
-            loadbalancer_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            loadbalancer_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.description {
             loadbalancer_builder.description(val);
         }
 
-        if let Some(val) = &args.vip_qos_policy_id {
-            loadbalancer_builder.vip_qos_policy_id(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            loadbalancer_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.vip_sg_ids {
-            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
+        if let Some(val) = &args.name {
+            loadbalancer_builder.name(val);
         }
 
         if let Some(val) = &args.tags {
             loadbalancer_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.vip_qos_policy_id {
+            loadbalancer_builder.vip_qos_policy_id(val);
+        }
+
+        if let Some(val) = &args.vip_sg_ids {
+            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.loadbalancer(loadbalancer_builder.build().unwrap());

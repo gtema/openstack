@@ -51,14 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_type_id",
-        value_name = "TYPE_ID"
-    )]
-    type_id: String,
-
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -66,6 +58,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_type_id",
+        value_name = "TYPE_ID"
+    )]
+    type_id: String,
 }
 
 impl EncryptionCommand {
@@ -86,8 +86,8 @@ impl EncryptionCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.type_id(&self.path.type_id);
         ep_builder.id(&self.path.id);
+        ep_builder.type_id(&self.path.type_id);
         // Set query parameters
         // Set body parameters
 

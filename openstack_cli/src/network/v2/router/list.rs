@@ -166,20 +166,35 @@ impl RoutersCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.enable_ndp_proxy {
+            ep_builder.enable_ndp_proxy(*val);
+        }
         if let Some(val) = &self.query.id {
             ep_builder.id(val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val.iter());
         }
-        if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val);
-        }
-        if let Some(val) = &self.query.enable_ndp_proxy {
-            ep_builder.enable_ndp_proxy(*val);
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
@@ -190,29 +205,14 @@ impl RoutersCommand {
         if let Some(val) = &self.query.tags_any {
             ep_builder.tags_any(val.iter());
         }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val.iter());
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.page_reverse {
-            ep_builder.page_reverse(*val);
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

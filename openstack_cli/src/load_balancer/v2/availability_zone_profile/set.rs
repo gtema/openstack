@@ -115,16 +115,16 @@ impl AvailabilityZoneProfileCommand {
         // Set Request.availability_zone_profile data
         let args = &self.availability_zone_profile;
         let mut availability_zone_profile_builder = set::AvailabilityZoneProfileBuilder::default();
+        if let Some(val) = &args.availability_zone_data {
+            availability_zone_profile_builder.availability_zone_data(val);
+        }
+
         if let Some(val) = &args.name {
             availability_zone_profile_builder.name(val);
         }
 
         if let Some(val) = &args.provider_name {
             availability_zone_profile_builder.provider_name(val);
-        }
-
-        if let Some(val) = &args.availability_zone_data {
-            availability_zone_profile_builder.availability_zone_data(val);
         }
 
         ep_builder.availability_zone_profile(availability_zone_profile_builder.build().unwrap());

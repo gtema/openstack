@@ -60,10 +60,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
@@ -73,6 +69,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// User input select group
@@ -106,6 +106,8 @@ impl ApplicationCredentialCommand {
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();
+
+        find_builder.id(&self.path.id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -151,7 +153,6 @@ impl ApplicationCredentialCommand {
                     .id,
             );
         }
-        find_builder.id(&self.path.id);
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

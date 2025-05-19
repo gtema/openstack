@@ -105,20 +105,20 @@ impl SecurityGroupCommand {
         // Set Request.security_group data
         let args = &self.security_group;
         let mut security_group_builder = create::SecurityGroupBuilder::default();
-        if let Some(val) = &args.name {
-            security_group_builder.name(val);
-        }
-
-        if let Some(val) = &args.tenant_id {
-            security_group_builder.tenant_id(val);
-        }
-
         if let Some(val) = &args.description {
             security_group_builder.description(val);
         }
 
+        if let Some(val) = &args.name {
+            security_group_builder.name(val);
+        }
+
         if let Some(val) = &args.stateful {
             security_group_builder.stateful(*val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            security_group_builder.tenant_id(val);
         }
 
         ep_builder.security_group(security_group_builder.build().unwrap());

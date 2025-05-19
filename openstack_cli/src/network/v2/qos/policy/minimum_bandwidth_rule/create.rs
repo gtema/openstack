@@ -116,16 +116,16 @@ impl MinimumBandwidthRuleCommand {
         // Set Request.minimum_bandwidth_rule data
         let args = &self.minimum_bandwidth_rule;
         let mut minimum_bandwidth_rule_builder = create::MinimumBandwidthRuleBuilder::default();
-        if let Some(val) = &args.min_kbps {
-            minimum_bandwidth_rule_builder.min_kbps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => create::Direction::Egress,
                 Direction::Ingress => create::Direction::Ingress,
             };
             minimum_bandwidth_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kbps {
+            minimum_bandwidth_rule_builder.min_kbps(*val);
         }
 
         ep_builder.minimum_bandwidth_rule(minimum_bandwidth_rule_builder.build().unwrap());

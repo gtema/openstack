@@ -144,57 +144,6 @@ impl TryFrom<&NetworkSecurityGroupRuleList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &NetworkSecurityGroupRuleList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        if let Some(val) = &value.id {
-            ep_builder.id(val.clone());
-        }
-        if let Some(val) = &value.security_group_id {
-            ep_builder.security_group_id(val.clone());
-        }
-        if let Some(val) = &value.remote_group_id {
-            ep_builder.remote_group_id(val.clone());
-        }
-        if let Some(val) = &value.direction {
-            ep_builder.direction(val.clone());
-        }
-        if let Some(val) = &value.protocol {
-            ep_builder.protocol(val.clone());
-        }
-        if let Some(val) = &value.port_range_min {
-            ep_builder.port_range_min(*val);
-        }
-        if let Some(val) = &value.port_range_max {
-            ep_builder.port_range_max(*val);
-        }
-        if let Some(val) = &value.ethertype {
-            ep_builder.ethertype(val.clone());
-        }
-        if let Some(val) = &value.remote_ip_prefix {
-            ep_builder.remote_ip_prefix(val.clone());
-        }
-        if let Some(val) = &value.tenant_id {
-            ep_builder.tenant_id(val.clone());
-        }
-        if let Some(val) = &value.revision_number {
-            ep_builder.revision_number(val.clone());
-        }
-        if let Some(val) = &value.description {
-            ep_builder.description(val.clone());
-        }
-        if let Some(val) = &value.normalized_cidr {
-            ep_builder.normalized_cidr(val.clone());
-        }
-        if let Some(val) = &value.remote_address_group_id {
-            ep_builder.remote_address_group_id(val.clone());
-        }
-        if let Some(val) = &value.belongs_to_default_sg {
-            ep_builder.belongs_to_default_sg(*val);
-        }
-        if let Some(val) = &value.sort_key {
-            ep_builder.sort_key(val.iter().cloned());
-        }
-        if let Some(val) = &value.sort_dir {
-            ep_builder.sort_dir(val.iter().cloned());
-        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
@@ -203,6 +152,57 @@ impl TryFrom<&NetworkSecurityGroupRuleList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &value.belongs_to_default_sg {
+            ep_builder.belongs_to_default_sg(*val);
+        }
+        if let Some(val) = &value.description {
+            ep_builder.description(val.clone());
+        }
+        if let Some(val) = &value.direction {
+            ep_builder.direction(val.clone());
+        }
+        if let Some(val) = &value.ethertype {
+            ep_builder.ethertype(val.clone());
+        }
+        if let Some(val) = &value.id {
+            ep_builder.id(val.clone());
+        }
+        if let Some(val) = &value.normalized_cidr {
+            ep_builder.normalized_cidr(val.clone());
+        }
+        if let Some(val) = &value.port_range_max {
+            ep_builder.port_range_max(*val);
+        }
+        if let Some(val) = &value.port_range_min {
+            ep_builder.port_range_min(*val);
+        }
+        if let Some(val) = &value.protocol {
+            ep_builder.protocol(val.clone());
+        }
+        if let Some(val) = &value.remote_address_group_id {
+            ep_builder.remote_address_group_id(val.clone());
+        }
+        if let Some(val) = &value.remote_group_id {
+            ep_builder.remote_group_id(val.clone());
+        }
+        if let Some(val) = &value.remote_ip_prefix {
+            ep_builder.remote_ip_prefix(val.clone());
+        }
+        if let Some(val) = &value.revision_number {
+            ep_builder.revision_number(val.clone());
+        }
+        if let Some(val) = &value.security_group_id {
+            ep_builder.security_group_id(val.clone());
+        }
+        if let Some(val) = &value.tenant_id {
+            ep_builder.tenant_id(val.clone());
+        }
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.iter().cloned());
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.iter().cloned());
         }
 
         Ok(ep_builder)

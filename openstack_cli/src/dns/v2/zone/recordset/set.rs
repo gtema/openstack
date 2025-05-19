@@ -74,10 +74,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// Zone resource for which the operation should be performed.
-    #[command(flatten)]
-    zone: ZoneInput,
-
     /// recordset_id parameter for
     /// /v2/zones/{zone_id}/recordsets/{recordset_id} API
     #[arg(
@@ -86,6 +82,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// Zone resource for which the operation should be performed.
+    #[command(flatten)]
+    zone: ZoneInput,
 }
 
 /// Zone input select group
@@ -113,6 +113,8 @@ impl RecordsetCommand {
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();
+
+        find_builder.id(&self.path.id);
 
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
@@ -149,7 +151,6 @@ impl RecordsetCommand {
                 }
             };
         }
-        find_builder.id(&self.path.id);
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -158,6 +159,11 @@ impl RecordsetCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
+        let resource_id = find_data["id"]
+            .as_str()
+            .expect("Resource ID is a string")
+            .to_string();
+        ep_builder.id(resource_id.clone());
 
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
@@ -194,11 +200,6 @@ impl RecordsetCommand {
                 }
             };
         }
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.id(resource_id.clone());
         // Set query parameters
         // Set body parameters
         // Set Request.description data

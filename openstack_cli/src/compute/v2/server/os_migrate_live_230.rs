@@ -134,11 +134,11 @@ impl ServerCommand {
 
         os_migrate_live_builder.block_migration(args.block_migration);
 
-        os_migrate_live_builder.host(args.host.clone());
-
         if let Some(val) = &args.force {
             os_migrate_live_builder.force(*val);
         }
+
+        os_migrate_live_builder.host(args.host.clone());
 
         ep_builder.os_migrate_live(os_migrate_live_builder.build().unwrap());
 

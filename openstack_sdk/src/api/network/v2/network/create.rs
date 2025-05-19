@@ -37,9 +37,6 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Segments<'a> {
-    /// The type of physical network that this network should be mapped to. For
-    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
-    /// networking back-end.
     #[serde(
         rename = "provider:network_type",
         skip_serializing_if = "Option::is_none"
@@ -47,11 +44,6 @@ pub struct Segments<'a> {
     #[builder(default, setter(into))]
     pub(crate) provider_network_type: Option<Cow<'a, str>>,
 
-    /// The physical network where this network should be implemented. The
-    /// Networking API v2.0 does not provide a way to list available physical
-    /// networks. For example, the Open vSwitch plug-in configuration file
-    /// defines a symbolic name that maps to specific bridges on each compute
-    /// host.
     #[serde(
         rename = "provider:physical_network",
         skip_serializing_if = "Option::is_none"
@@ -59,10 +51,6 @@ pub struct Segments<'a> {
     #[builder(default, setter(into))]
     pub(crate) provider_physical_network: Option<Cow<'a, str>>,
 
-    /// The ID of the isolated segment on the physical network. The
-    /// `network_type` attribute defines the segmentation model. For example,
-    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
-    /// the `network_type` value is gre, this ID is a gre key.
     #[serde(
         rename = "provider:segmentation_id",
         skip_serializing_if = "Option::is_none"
@@ -124,6 +112,9 @@ pub struct Network<'a> {
     #[builder(default, setter(into))]
     pub(crate) port_security_enabled: Option<bool>,
 
+    /// The type of physical network that this network should be mapped to. For
+    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
+    /// networking back-end.
     #[serde(
         rename = "provider:network_type",
         skip_serializing_if = "Option::is_none"
@@ -131,6 +122,11 @@ pub struct Network<'a> {
     #[builder(default, setter(into))]
     pub(crate) provider_network_type: Option<Cow<'a, str>>,
 
+    /// The physical network where this network should be implemented. The
+    /// Networking API v2.0 does not provide a way to list available physical
+    /// networks. For example, the Open vSwitch plug-in configuration file
+    /// defines a symbolic name that maps to specific bridges on each compute
+    /// host.
     #[serde(
         rename = "provider:physical_network",
         skip_serializing_if = "Option::is_none"
@@ -138,6 +134,10 @@ pub struct Network<'a> {
     #[builder(default, setter(into))]
     pub(crate) provider_physical_network: Option<Cow<'a, str>>,
 
+    /// The ID of the isolated segment on the physical network. The
+    /// `network_type` attribute defines the segmentation model. For example,
+    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
+    /// the `network_type` value is gre, this ID is a gre key.
     #[serde(
         rename = "provider:segmentation_id",
         skip_serializing_if = "Option::is_none"
@@ -192,7 +192,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Network.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

@@ -70,10 +70,6 @@ struct PathParameters {
     #[command(flatten)]
     domain: DomainInput,
 
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// role_id parameter for
     /// /v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/{role_id}/inherited_to_projects
     /// API
@@ -83,6 +79,10 @@ struct PathParameters {
         value_name = "ROLE_ID"
     )]
     role_id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// Domain input select group
@@ -187,6 +187,7 @@ impl InheritedToProjectCommand {
                 return Err(eyre!("Current domain information can not be identified").into());
             }
         }
+        ep_builder.role_id(&self.path.role_id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -232,7 +233,6 @@ impl InheritedToProjectCommand {
                     .id,
             );
         }
-        ep_builder.role_id(&self.path.role_id);
         // Set query parameters
         // Set body parameters
         if let Some(properties) = &self.properties {

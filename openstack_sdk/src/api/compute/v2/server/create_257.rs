@@ -63,37 +63,199 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Networks<'a> {
+pub struct OsSchHntSchedulerHints<'a> {
+    /// Schedule the server on a host in the network specified with this
+    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) fixed_ip: Option<Cow<'a, str>>,
+    pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
 
+    /// Schedule the server on a host in the network specified with an IP
+    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
+    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
+    /// parameter is omitted, `/24` is used. It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) port: Option<Option<Cow<'a, str>>>,
+    pub(crate) cidr: Option<Cow<'a, str>>,
 
+    /// A list of cell routes or a cell route (string). Schedule the server in
+    /// a cell that is not specified. It is available when
+    /// `DifferentCellFilter` is available on cloud side that is cell v1
+    /// environment.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) tag: Option<Cow<'a, str>>,
+    pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
 
+    /// A list of server UUIDs or a server UUID. Schedule the server on a
+    /// different host from a set of servers. It is available when
+    /// `DifferentHostFilter` is available on cloud side.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) uuid: Option<Cow<'a, str>>,
+    pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
+
+    /// The server group UUID. Schedule the server according to a policy of the
+    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
+    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
+    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
+    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) group: Option<Cow<'a, str>>,
+
+    /// Schedule the server by using a custom filter in JSON format. For
+    /// example:
+    ///
+    /// ```text
+    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
+    ///
+    /// ```
+    ///
+    /// It is available when `JsonFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) query: Option<Value>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on the
+    /// same host as another server in a set of servers. It is available when
+    /// `SameHostFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
+
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) target_cell: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum NetworksStringEnum {
-    #[serde(rename = "auto")]
-    Auto,
-    #[serde(rename = "none")]
-    None,
+impl<'a> OsSchHntSchedulerHintsBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
-pub enum ServerNetworks<'a> {
-    F1(Vec<Networks<'a>>),
-    F2(NetworksStringEnum),
+/// The dictionary of data to send to the scheduler. Alternatively, you can
+/// specify `OS-SCH-HNT:scheduler_hints` as the key in the request body.
+///
+/// Note
+///
+/// This is a top-level key in the request body, not part of the server portion
+/// of the request body.
+///
+/// There are a few caveats with scheduler hints:
+///
+/// - The request validation schema is per hint. For example, some require a
+///   single string value, and some accept a list of values.
+/// - Hints are only used based on the cloud scheduler configuration, which
+///   varies per deployment.
+/// - Hints are pluggable per deployment, meaning that a cloud can have custom
+///   hints which may not be available in another cloud.
+///
+/// For these reasons, it is important to consult each cloud’s user
+/// documentation to know what is available for scheduler hints.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct OsSchedulerHints<'a> {
+    /// Schedule the server on a host in the network specified with this
+    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
+
+    /// Schedule the server on a host in the network specified with an IP
+    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
+    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
+    /// parameter is omitted, `/24` is used. It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) cidr: Option<Cow<'a, str>>,
+
+    /// A list of cell routes or a cell route (string). Schedule the server in
+    /// a cell that is not specified. It is available when
+    /// `DifferentCellFilter` is available on cloud side that is cell v1
+    /// environment.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on a
+    /// different host from a set of servers. It is available when
+    /// `DifferentHostFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
+
+    /// The server group UUID. Schedule the server according to a policy of the
+    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
+    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
+    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
+    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) group: Option<Cow<'a, str>>,
+
+    /// Schedule the server by using a custom filter in JSON format. For
+    /// example:
+    ///
+    /// ```text
+    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
+    ///
+    /// ```
+    ///
+    /// It is available when `JsonFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) query: Option<Value>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on the
+    /// same host as another server in a set of servers. It is available when
+    /// `SameHostFilter` is available on cloud side.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
+
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) target_cell: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> OsSchedulerHintsBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -148,6 +310,14 @@ pub struct BlockDeviceMapping<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum DestinationType {
+    #[serde(rename = "local")]
+    Local,
+    #[serde(rename = "volume")]
+    Volume,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum SourceType {
     #[serde(rename = "blank")]
     Blank,
@@ -155,14 +325,6 @@ pub enum SourceType {
     Image,
     #[serde(rename = "snapshot")]
     Snapshot,
-    #[serde(rename = "volume")]
-    Volume,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum DestinationType {
-    #[serde(rename = "local")]
-    Local,
     #[serde(rename = "volume")]
     Volume,
 }
@@ -237,6 +399,41 @@ pub struct BlockDeviceMappingV2<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) volume_size: Option<i32>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Networks<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) fixed_ip: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) port: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) tag: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) uuid: Option<Cow<'a, str>>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum NetworksStringEnum {
+    #[serde(rename = "auto")]
+    Auto,
+    #[serde(rename = "none")]
+    None,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum ServerNetworks<'a> {
+    F1(Vec<Networks<'a>>),
+    F2(NetworksStringEnum),
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -494,203 +691,6 @@ impl<'a> ServerBuilder<'a> {
     }
 }
 
-/// The dictionary of data to send to the scheduler. Alternatively, you can
-/// specify `OS-SCH-HNT:scheduler_hints` as the key in the request body.
-///
-/// Note
-///
-/// This is a top-level key in the request body, not part of the server portion
-/// of the request body.
-///
-/// There are a few caveats with scheduler hints:
-///
-/// - The request validation schema is per hint. For example, some require a
-///   single string value, and some accept a list of values.
-/// - Hints are only used based on the cloud scheduler configuration, which
-///   varies per deployment.
-/// - Hints are pluggable per deployment, meaning that a cloud can have custom
-///   hints which may not be available in another cloud.
-///
-/// For these reasons, it is important to consult each cloud’s user
-/// documentation to know what is available for scheduler hints.
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct OsSchedulerHints<'a> {
-    /// Schedule the server on a host in the network specified with this
-    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
-
-    /// Schedule the server on a host in the network specified with an IP
-    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
-    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
-    /// parameter is omitted, `/24` is used. It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) cidr: Option<Cow<'a, str>>,
-
-    /// A list of cell routes or a cell route (string). Schedule the server in
-    /// a cell that is not specified. It is available when
-    /// `DifferentCellFilter` is available on cloud side that is cell v1
-    /// environment.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on a
-    /// different host from a set of servers. It is available when
-    /// `DifferentHostFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
-
-    /// The server group UUID. Schedule the server according to a policy of the
-    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
-    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
-    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
-    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) group: Option<Cow<'a, str>>,
-
-    /// Schedule the server by using a custom filter in JSON format. For
-    /// example:
-    ///
-    /// ```text
-    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
-    /// ```
-    ///
-    /// It is available when `JsonFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) query: Option<Value>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on the
-    /// same host as another server in a set of servers. It is available when
-    /// `SameHostFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) target_cell: Option<Cow<'a, str>>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    #[serde(flatten)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
-}
-
-impl<'a> OsSchedulerHintsBuilder<'a> {
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct OsSchHntSchedulerHints<'a> {
-    /// Schedule the server on a host in the network specified with this
-    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) build_near_host_ip: Option<Cow<'a, str>>,
-
-    /// Schedule the server on a host in the network specified with an IP
-    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
-    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
-    /// parameter is omitted, `/24` is used. It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) cidr: Option<Cow<'a, str>>,
-
-    /// A list of cell routes or a cell route (string). Schedule the server in
-    /// a cell that is not specified. It is available when
-    /// `DifferentCellFilter` is available on cloud side that is cell v1
-    /// environment.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) different_cell: Option<Vec<Cow<'a, str>>>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on a
-    /// different host from a set of servers. It is available when
-    /// `DifferentHostFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) different_host: Option<Vec<Cow<'a, str>>>,
-
-    /// The server group UUID. Schedule the server according to a policy of the
-    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
-    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
-    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
-    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) group: Option<Cow<'a, str>>,
-
-    /// Schedule the server by using a custom filter in JSON format. For
-    /// example:
-    ///
-    /// ```text
-    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
-    /// ```
-    ///
-    /// It is available when `JsonFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) query: Option<Value>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on the
-    /// same host as another server in a set of servers. It is available when
-    /// `SameHostFilter` is available on cloud side.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) same_host: Option<Vec<Cow<'a, str>>>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) target_cell: Option<Cow<'a, str>>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    #[serde(flatten)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
-}
-
-impl<'a> OsSchHntSchedulerHintsBuilder<'a> {
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-}
-
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -733,7 +733,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Server.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -774,13 +774,13 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("server", serde_json::to_value(&self.server)?);
-        if let Some(val) = &self.os_scheduler_hints {
-            params.push("os:scheduler_hints", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.os_sch_hnt_scheduler_hints {
             params.push("OS-SCH-HNT:scheduler_hints", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.os_scheduler_hints {
+            params.push("os:scheduler_hints", serde_json::to_value(val)?);
+        }
+        params.push("server", serde_json::to_value(&self.server)?);
 
         params.into_body()
     }

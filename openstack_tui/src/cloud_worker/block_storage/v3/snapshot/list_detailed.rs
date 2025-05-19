@@ -65,29 +65,29 @@ impl TryFrom<&BlockStorageSnapshotList> for RequestBuilder<'_> {
         if let Some(val) = &value.all_tenants {
             ep_builder.all_tenants(*val);
         }
-        if let Some(val) = &value.sort {
-            ep_builder.sort(val.clone());
-        }
-        if let Some(val) = &value.sort_key {
-            ep_builder.sort_key(val.clone());
-        }
-        if let Some(val) = &value.sort_dir {
-            ep_builder.sort_dir(val.clone());
+        if let Some(val) = &value.consumes_quota {
+            ep_builder.consumes_quota(*val);
         }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
-        if let Some(val) = &value.offset {
-            ep_builder.offset(*val);
-        }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
         }
+        if let Some(val) = &value.offset {
+            ep_builder.offset(*val);
+        }
+        if let Some(val) = &value.sort {
+            ep_builder.sort(val.clone());
+        }
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.clone());
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.clone());
+        }
         if let Some(val) = &value.with_count {
             ep_builder.with_count(*val);
-        }
-        if let Some(val) = &value.consumes_quota {
-            ep_builder.consumes_quota(*val);
         }
 
         Ok(ep_builder)

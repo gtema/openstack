@@ -71,7 +71,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Role_Assignment.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -108,18 +108,18 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("effective", self.effective.as_ref());
+        params.push_opt("group.id", self.group_id.as_ref());
         params.push_opt("include_names", self.include_names.as_ref());
         params.push_opt("include_subtree", self.include_subtree.as_ref());
-        params.push_opt("group.id", self.group_id.as_ref());
         params.push_opt("role.id", self.role_id.as_ref());
-        params.push_opt("scope.system", self.scope_system.as_ref());
-        params.push_opt("scope.domain.id", self.scope_domain_id.as_ref());
-        params.push_opt("scope.project.id", self.scope_project_id.as_ref());
-        params.push_opt("user.id", self.user_id.as_ref());
         params.push_opt(
             "scope.OS-INHERIT:inherited_to",
             self.scope_os_inherit_inherited_to.as_ref(),
         );
+        params.push_opt("scope.domain.id", self.scope_domain_id.as_ref());
+        params.push_opt("scope.project.id", self.scope_project_id.as_ref());
+        params.push_opt("scope.system", self.scope_system.as_ref());
+        params.push_opt("user.id", self.user_id.as_ref());
 
         params
     }

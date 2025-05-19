@@ -154,38 +154,32 @@ impl AgentsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.query.agent_type {
             ep_builder.agent_type(val);
         }
-        if let Some(val) = &self.query.binary {
-            ep_builder.binary(val);
-        }
-        if let Some(val) = &self.query.topic {
-            ep_builder.topic(val);
-        }
-        if let Some(val) = &self.query.host {
-            ep_builder.host(val);
-        }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
-        }
         if let Some(val) = &self.query.alive {
             ep_builder.alive(val);
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
         }
         if let Some(val) = &self.query.availability_zone {
             ep_builder.availability_zone(val);
         }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
+        if let Some(val) = &self.query.binary {
+            ep_builder.binary(val);
         }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.host {
+            ep_builder.host(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.topic {
+            ep_builder.topic(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -195,6 +189,12 @@ impl AgentsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

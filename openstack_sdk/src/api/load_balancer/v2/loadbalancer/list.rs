@@ -142,7 +142,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Loadbalancer.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -186,21 +186,21 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
-        params.push_opt("provider", self.provider.as_ref());
         params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("provider", self.provider.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
         params.push_opt("updated_at", self.updated_at.as_ref());
         params.push_opt("vip_address", self.vip_address.as_ref());
         params.push_opt("vip_network_id", self.vip_network_id.as_ref());
         params.push_opt("vip_port_id", self.vip_port_id.as_ref());
-        params.push_opt("vip_subnet_id", self.vip_subnet_id.as_ref());
         params.push_opt("vip_qos_policy_id", self.vip_qos_policy_id.as_ref());
-        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
-        params.push_opt("operating_status", self.operating_status.as_ref());
-        params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
-        params.push_opt("not-tags", self.not_tags.as_ref());
-        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("vip_subnet_id", self.vip_subnet_id.as_ref());
 
         params
     }

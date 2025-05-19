@@ -134,43 +134,11 @@ pub struct QuotaSetResponse {
     pub server_groups: Option<ServerGroups>,
 }
 
-/// The object of detailed servers quota, including in_use, limit and reserved
-/// number of instances.
-/// `Instances` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Instances {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
 /// The object of detailed cores quota, including in_use, limit and reserved
 /// number of cores.
 /// `Cores` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Cores {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed key ram quota, including in_use, limit and reserved
-/// number of ram.
-/// `Ram` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Ram {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed floating ips quota, including in_use, limit and
-/// reserved number of floating ips.
-///
-/// **Available until version 2.35**
-/// `FloatingIps` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FloatingIps {
     pub in_use: Option<i32>,
     pub limit: Option<i32>,
     pub reserved: Option<i32>,
@@ -188,51 +156,13 @@ pub struct FixedIps {
     pub reserved: Option<i32>,
 }
 
-/// The object of detailed key metadata items quota, including in_use, limit
-/// and reserved number of metadata items.
-/// `MetadataItems` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct MetadataItems {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed key pairs quota, including in_use, limit and
-/// reserved number of key pairs.
-///
-/// Note
-///
-/// `in_use` field value for keypair quota details is always zero. In Nova,
-/// key_pairs are a user-level resource, not a project- level resource, so for
-/// legacy reasons, the keypair in-use information is not counted.
-/// `KeyPairs` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct KeyPairs {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed security groups, including in_use, limit and
-/// reserved number of security groups.
+/// The object of detailed floating ips quota, including in_use, limit and
+/// reserved number of floating ips.
 ///
 /// **Available until version 2.35**
-/// `SecurityGroups` type
+/// `FloatingIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SecurityGroups {
-    pub in_use: Option<i32>,
-    pub limit: Option<i32>,
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed security group rules quota, including in_use, limit
-/// and reserved number of security group rules.
-///
-/// **Available until version 2.35**
-/// `SecurityGroupRules` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SecurityGroupRules {
+pub struct FloatingIps {
     pub in_use: Option<i32>,
     pub limit: Option<i32>,
     pub reserved: Option<i32>,
@@ -270,11 +200,82 @@ pub struct InjectedFilesPathBytes {
     pub reserved: Option<i32>,
 }
 
-/// The object of detailed server groups, including in_use, limit and reserved
-/// number of server groups.
-/// `ServerGroups` type
+/// The object of detailed servers quota, including in_use, limit and reserved
+/// number of instances.
+/// `Instances` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ServerGroups {
+pub struct Instances {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The object of detailed key pairs quota, including in_use, limit and
+/// reserved number of key pairs.
+///
+/// Note
+///
+/// `in_use` field value for keypair quota details is always zero. In Nova,
+/// key_pairs are a user-level resource, not a project- level resource, so for
+/// legacy reasons, the keypair in-use information is not counted.
+/// `KeyPairs` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct KeyPairs {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The object of detailed key metadata items quota, including in_use, limit
+/// and reserved number of metadata items.
+/// `MetadataItems` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MetadataItems {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The number of private networks that can be created per project.
+///
+/// **Available until version 2.35**
+/// `Networks` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Networks {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The object of detailed key ram quota, including in_use, limit and reserved
+/// number of ram.
+/// `Ram` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Ram {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The object of detailed security group rules quota, including in_use, limit
+/// and reserved number of security group rules.
+///
+/// **Available until version 2.35**
+/// `SecurityGroupRules` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SecurityGroupRules {
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+}
+
+/// The object of detailed security groups, including in_use, limit and
+/// reserved number of security groups.
+///
+/// **Available until version 2.35**
+/// `SecurityGroups` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SecurityGroups {
     pub in_use: Option<i32>,
     pub limit: Option<i32>,
     pub reserved: Option<i32>,
@@ -290,12 +291,11 @@ pub struct ServerGroupMembers {
     pub reserved: Option<i32>,
 }
 
-/// The number of private networks that can be created per project.
-///
-/// **Available until version 2.35**
-/// `Networks` type
+/// The object of detailed server groups, including in_use, limit and reserved
+/// number of server groups.
+/// `ServerGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Networks {
+pub struct ServerGroups {
     pub in_use: Option<i32>,
     pub limit: Option<i32>,
     pub reserved: Option<i32>,

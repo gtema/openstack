@@ -210,32 +210,12 @@ impl QuotaCommand {
         // Set Request.quota data
         let args = &self.quota;
         let mut quota_builder = set::QuotaBuilder::default();
-        if let Some(val) = &args.loadbalancer {
-            quota_builder.loadbalancer(*val);
-        }
-
-        if let Some(val) = &args.load_balancer {
-            quota_builder.load_balancer(*val);
-        }
-
-        if let Some(val) = &args.listener {
-            quota_builder.listener(*val);
-        }
-
-        if let Some(val) = &args.member {
-            quota_builder.member(*val);
-        }
-
-        if let Some(val) = &args.pool {
-            quota_builder.pool(*val);
+        if let Some(val) = &args.health_monitor {
+            quota_builder.health_monitor(*val);
         }
 
         if let Some(val) = &args.healthmonitor {
             quota_builder.healthmonitor(*val);
-        }
-
-        if let Some(val) = &args.health_monitor {
-            quota_builder.health_monitor(*val);
         }
 
         if let Some(val) = &args.l7policy {
@@ -244,6 +224,26 @@ impl QuotaCommand {
 
         if let Some(val) = &args.l7rule {
             quota_builder.l7rule(*val);
+        }
+
+        if let Some(val) = &args.listener {
+            quota_builder.listener(*val);
+        }
+
+        if let Some(val) = &args.load_balancer {
+            quota_builder.load_balancer(*val);
+        }
+
+        if let Some(val) = &args.loadbalancer {
+            quota_builder.loadbalancer(*val);
+        }
+
+        if let Some(val) = &args.member {
+            quota_builder.member(*val);
+        }
+
+        if let Some(val) = &args.pool {
+            quota_builder.pool(*val);
         }
 
         ep_builder.quota(quota_builder.build().unwrap());

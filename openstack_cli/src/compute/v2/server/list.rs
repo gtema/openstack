@@ -245,21 +245,6 @@ struct QueryParameters {
     vm_state: Option<String>,
 }
 
-/// User input select group
-#[derive(Args)]
-#[group(required = false, multiple = false)]
-struct UserInput {
-    /// User Name.
-    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
-    user_name: Option<String>,
-    /// User ID.
-    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
-    user_id: Option<String>,
-    /// Current authenticated user.
-    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
-    current_user: bool,
-}
-
 /// Project input select group
 #[derive(Args)]
 #[group(required = false, multiple = false)]
@@ -273,6 +258,21 @@ struct ProjectInput {
     /// Current project.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
+    user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 
 /// Path parameters
@@ -295,48 +295,119 @@ impl ServersCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(id) = &self.query.user.user_id {
-            // user_id is passed. No need to lookup
-            ep_builder.user_id(id);
-        } else if let Some(name) = &self.query.user.user_name {
-            // user_name is passed. Need to lookup resource
-            let mut sub_find_builder = find_user::Request::builder();
-            warn!(
-                "Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead."
-            );
-
-            sub_find_builder.id(name);
-            let find_ep = sub_find_builder
-                .build()
-                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
-            // Try to extract resource id
-            match find_data.get("id") {
-                Some(val) => match val.as_str() {
-                    Some(id_str) => {
-                        ep_builder.user_id(id_str.to_owned());
-                    }
-                    None => {
-                        return Err(OpenStackCliError::ResourceAttributeNotString(
-                            serde_json::to_string(&val)?,
-                        ));
-                    }
-                },
-                None => {
-                    return Err(OpenStackCliError::ResourceAttributeMissing(
-                        "id".to_string(),
-                    ));
-                }
-            };
-        } else if self.query.user.current_user {
-            ep_builder.user_id(
-                client
-                    .get_auth_info()
-                    .ok_or_eyre("Cannot determine current authentication information")?
-                    .token
-                    .user
-                    .id,
-            );
+        if let Some(val) = &self.query.access_ip_v4 {
+            ep_builder.access_ip_v4(val);
+        }
+        if let Some(val) = &self.query.access_ip_v6 {
+            ep_builder.access_ip_v6(val);
+        }
+        if let Some(val) = &self.query.all_tenants {
+            ep_builder.all_tenants(val);
+        }
+        if let Some(val) = &self.query.auto_disk_config {
+            ep_builder.auto_disk_config(val);
+        }
+        if let Some(val) = &self.query.availability_zone {
+            ep_builder.availability_zone(val);
+        }
+        if let Some(val) = &self.query.block_device_mapping {
+            ep_builder.block_device_mapping(val);
+        }
+        if let Some(val) = &self.query.changes_before {
+            ep_builder.changes_before(val);
+        }
+        if let Some(val) = &self.query.changes_since {
+            ep_builder.changes_since(val);
+        }
+        if let Some(val) = &self.query.config_drive {
+            ep_builder.config_drive(val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.deleted {
+            ep_builder.deleted(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.display_description {
+            ep_builder.display_description(val);
+        }
+        if let Some(val) = &self.query.display_name {
+            ep_builder.display_name(val);
+        }
+        if let Some(val) = &self.query.flavor {
+            ep_builder.flavor(val);
+        }
+        if let Some(val) = &self.query.host {
+            ep_builder.host(val);
+        }
+        if let Some(val) = &self.query.hostname {
+            ep_builder.hostname(val);
+        }
+        if let Some(val) = &self.query.image {
+            ep_builder.image(val);
+        }
+        if let Some(val) = &self.query.image_ref {
+            ep_builder.image_ref(val);
+        }
+        if let Some(val) = &self.query.info_cache {
+            ep_builder.info_cache(val);
+        }
+        if let Some(val) = &self.query.ip {
+            ep_builder.ip(val);
+        }
+        if let Some(val) = &self.query.ip6 {
+            ep_builder.ip6(val);
+        }
+        if let Some(val) = &self.query.kernel_id {
+            ep_builder.kernel_id(val);
+        }
+        if let Some(val) = &self.query.key_name {
+            ep_builder.key_name(val);
+        }
+        if let Some(val) = &self.query.launch_index {
+            ep_builder.launch_index(val);
+        }
+        if let Some(val) = &self.query.launched_at {
+            ep_builder.launched_at(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.locked {
+            ep_builder.locked(val);
+        }
+        if let Some(val) = &self.query.locked_by {
+            ep_builder.locked_by(val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.metadata {
+            ep_builder.metadata(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.node {
+            ep_builder.node(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
+        if let Some(val) = &self.query.pci_devices {
+            ep_builder.pci_devices(val);
+        }
+        if let Some(val) = &self.query.power_state {
+            ep_builder.power_state(val);
+        }
+        if let Some(val) = &self.query.progress {
+            ep_builder.progress(val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -381,152 +452,35 @@ impl ServersCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val);
-        }
-        if let Some(val) = &self.query.launch_index {
-            ep_builder.launch_index(val);
-        }
-        if let Some(val) = &self.query.image_ref {
-            ep_builder.image_ref(val);
-        }
-        if let Some(val) = &self.query.image {
-            ep_builder.image(val);
-        }
-        if let Some(val) = &self.query.kernel_id {
-            ep_builder.kernel_id(val);
-        }
         if let Some(val) = &self.query.ramdisk_id {
             ep_builder.ramdisk_id(val);
-        }
-        if let Some(val) = &self.query.hostname {
-            ep_builder.hostname(val);
-        }
-        if let Some(val) = &self.query.key_name {
-            ep_builder.key_name(val);
-        }
-        if let Some(val) = &self.query.power_state {
-            ep_builder.power_state(val);
-        }
-        if let Some(val) = &self.query.vm_state {
-            ep_builder.vm_state(val);
-        }
-        if let Some(val) = &self.query.task_state {
-            ep_builder.task_state(val);
-        }
-        if let Some(val) = &self.query.host {
-            ep_builder.host(val);
-        }
-        if let Some(val) = &self.query.node {
-            ep_builder.node(val);
-        }
-        if let Some(val) = &self.query.flavor {
-            ep_builder.flavor(val);
         }
         if let Some(val) = &self.query.reservation_id {
             ep_builder.reservation_id(val);
         }
-        if let Some(val) = &self.query.launched_at {
-            ep_builder.launched_at(val);
-        }
-        if let Some(val) = &self.query.terminated_at {
-            ep_builder.terminated_at(val);
-        }
-        if let Some(val) = &self.query.availability_zone {
-            ep_builder.availability_zone(val);
-        }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.display_name {
-            ep_builder.display_name(val);
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.display_description {
-            ep_builder.display_description(val);
-        }
-        if let Some(val) = &self.query.locked_by {
-            ep_builder.locked_by(val);
-        }
-        if let Some(val) = &self.query.uuid {
-            ep_builder.uuid(val);
-        }
         if let Some(val) = &self.query.root_device_name {
             ep_builder.root_device_name(val);
-        }
-        if let Some(val) = &self.query.config_drive {
-            ep_builder.config_drive(val);
-        }
-        if let Some(val) = &self.query.access_ip_v4 {
-            ep_builder.access_ip_v4(val);
-        }
-        if let Some(val) = &self.query.access_ip_v6 {
-            ep_builder.access_ip_v6(val);
-        }
-        if let Some(val) = &self.query.auto_disk_config {
-            ep_builder.auto_disk_config(val);
-        }
-        if let Some(val) = &self.query.progress {
-            ep_builder.progress(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
-        }
-        if let Some(val) = &self.query.all_tenants {
-            ep_builder.all_tenants(val);
-        }
-        if let Some(val) = &self.query.soft_deleted {
-            ep_builder.soft_deleted(val);
-        }
-        if let Some(val) = &self.query.deleted {
-            ep_builder.deleted(val);
-        }
-        if let Some(val) = &self.query.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.query.changes_since {
-            ep_builder.changes_since(val);
-        }
-        if let Some(val) = &self.query.ip {
-            ep_builder.ip(val);
-        }
-        if let Some(val) = &self.query.ip6 {
-            ep_builder.ip6(val);
-        }
-        if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val);
-        }
-        if let Some(val) = &self.query.block_device_mapping {
-            ep_builder.block_device_mapping(val);
-        }
-        if let Some(val) = &self.query.services {
-            ep_builder.services(val);
-        }
-        if let Some(val) = &self.query.metadata {
-            ep_builder.metadata(val);
-        }
-        if let Some(val) = &self.query.system_metadata {
-            ep_builder.system_metadata(val);
-        }
-        if let Some(val) = &self.query.info_cache {
-            ep_builder.info_cache(val);
         }
         if let Some(val) = &self.query.security_groups {
             ep_builder.security_groups(val);
         }
-        if let Some(val) = &self.query.pci_devices {
-            ep_builder.pci_devices(val);
+        if let Some(val) = &self.query.services {
+            ep_builder.services(val);
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &self.query.soft_deleted {
+            ep_builder.soft_deleted(val);
         }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.system_metadata {
+            ep_builder.system_metadata(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val);
@@ -534,17 +488,63 @@ impl ServersCommand {
         if let Some(val) = &self.query.tags_any {
             ep_builder.tags_any(val);
         }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val);
+        if let Some(val) = &self.query.task_state {
+            ep_builder.task_state(val);
         }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val);
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
         }
-        if let Some(val) = &self.query.changes_before {
-            ep_builder.changes_before(val);
+        if let Some(val) = &self.query.terminated_at {
+            ep_builder.terminated_at(val);
         }
-        if let Some(val) = &self.query.locked {
-            ep_builder.locked(val);
+        if let Some(id) = &self.query.user.user_id {
+            // user_id is passed. No need to lookup
+            ep_builder.user_id(id);
+        } else if let Some(name) = &self.query.user.user_name {
+            // user_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_user::Request::builder();
+            warn!(
+                "Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead."
+            );
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.user_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ));
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ));
+                }
+            };
+        } else if self.query.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.uuid {
+            ep_builder.uuid(val);
+        }
+        if let Some(val) = &self.query.vm_state {
+            ep_builder.vm_state(val);
         }
         // Set body parameters
 

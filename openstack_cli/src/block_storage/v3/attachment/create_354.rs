@@ -172,15 +172,13 @@ impl AttachmentCommand {
         // Set Request.attachment data
         let args = &self.attachment;
         let mut attachment_builder = create_354::AttachmentBuilder::default();
-        if let Some(val) = &args.instance_uuid {
-            attachment_builder.instance_uuid(val);
-        }
-
         if let Some(val) = &args.connector {
             attachment_builder.connector(val.iter().cloned());
         }
 
-        attachment_builder.volume_uuid(&args.volume_uuid);
+        if let Some(val) = &args.instance_uuid {
+            attachment_builder.instance_uuid(val);
+        }
 
         if let Some(val) = &args.mode {
             let tmp = match val {
@@ -189,6 +187,8 @@ impl AttachmentCommand {
             };
             attachment_builder.mode(tmp);
         }
+
+        attachment_builder.volume_uuid(&args.volume_uuid);
 
         ep_builder.attachment(attachment_builder.build().unwrap());
 

@@ -78,8 +78,11 @@ impl TryFrom<&DnsRecordsetList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &DnsRecordsetList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        if let Some(val) = &value.zone_id {
-            ep_builder.zone_id(val.clone());
+        if let Some(val) = &value.data {
+            ep_builder.data(val.clone());
+        }
+        if let Some(val) = &value.description {
+            ep_builder.description(val.clone());
         }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
@@ -87,20 +90,14 @@ impl TryFrom<&DnsRecordsetList> for RequestBuilder<'_> {
         if let Some(val) = &value.market {
             ep_builder.market(val.clone());
         }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
+        }
         if let Some(val) = &value.sort_dir {
             ep_builder.sort_dir(val.clone());
         }
         if let Some(val) = &value.sort_key {
             ep_builder.sort_key(val.clone());
-        }
-        if let Some(val) = &value.name {
-            ep_builder.name(val.clone());
-        }
-        if let Some(val) = &value.description {
-            ep_builder.description(val.clone());
-        }
-        if let Some(val) = &value._type {
-            ep_builder._type(val.clone());
         }
         if let Some(val) = &value.status {
             ep_builder.status(val.clone());
@@ -108,8 +105,11 @@ impl TryFrom<&DnsRecordsetList> for RequestBuilder<'_> {
         if let Some(val) = &value.ttl {
             ep_builder.ttl(*val);
         }
-        if let Some(val) = &value.data {
-            ep_builder.data(val.clone());
+        if let Some(val) = &value._type {
+            ep_builder._type(val.clone());
+        }
+        if let Some(val) = &value.zone_id {
+            ep_builder.zone_id(val.clone());
         }
 
         Ok(ep_builder)

@@ -96,20 +96,20 @@ impl SimpleTenantUsagesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.start {
-            ep_builder.start(val);
+        if let Some(val) = &self.query.detailed {
+            ep_builder.detailed(val);
         }
         if let Some(val) = &self.query.end {
             ep_builder.end(val);
-        }
-        if let Some(val) = &self.query.detailed {
-            ep_builder.detailed(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.start {
+            ep_builder.start(val);
         }
         // Set body parameters
 

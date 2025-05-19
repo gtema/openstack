@@ -195,21 +195,6 @@ impl L7PolicyCommand {
         // Set Request.l7policy data
         let args = &self.l7policy;
         let mut l7policy_builder = create::L7policyBuilder::default();
-        if let Some(val) = &args.name {
-            l7policy_builder.name(val);
-        }
-
-        if let Some(val) = &args.description {
-            l7policy_builder.description(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            l7policy_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.project_id {
-            l7policy_builder.project_id(val);
-        }
 
         let tmp = match &args.action {
             Action::RedirectPrefix => create::Action::RedirectPrefix,
@@ -219,23 +204,43 @@ impl L7PolicyCommand {
         };
         l7policy_builder.action(tmp);
 
-        if let Some(val) = &args.redirect_pool_id {
-            l7policy_builder.redirect_pool_id(val);
+        if let Some(val) = &args.admin_state_up {
+            l7policy_builder.admin_state_up(*val);
         }
 
-        if let Some(val) = &args.redirect_url {
-            l7policy_builder.redirect_url(val);
+        if let Some(val) = &args.description {
+            l7policy_builder.description(val);
         }
 
-        if let Some(val) = &args.redirect_prefix {
-            l7policy_builder.redirect_prefix(val);
+        l7policy_builder.listener_id(&args.listener_id);
+
+        if let Some(val) = &args.name {
+            l7policy_builder.name(val);
         }
 
         if let Some(val) = &args.position {
             l7policy_builder.position(*val);
         }
 
-        l7policy_builder.listener_id(&args.listener_id);
+        if let Some(val) = &args.project_id {
+            l7policy_builder.project_id(val);
+        }
+
+        if let Some(val) = &args.redirect_http_code {
+            l7policy_builder.redirect_http_code(*val);
+        }
+
+        if let Some(val) = &args.redirect_pool_id {
+            l7policy_builder.redirect_pool_id(val);
+        }
+
+        if let Some(val) = &args.redirect_prefix {
+            l7policy_builder.redirect_prefix(val);
+        }
+
+        if let Some(val) = &args.redirect_url {
+            l7policy_builder.redirect_url(val);
+        }
 
         if let Some(val) = &args.rules {
             let rules_builder: Vec<create::Rules> = val
@@ -247,10 +252,6 @@ impl L7PolicyCommand {
 
         if let Some(val) = &args.tags {
             l7policy_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.redirect_http_code {
-            l7policy_builder.redirect_http_code(*val);
         }
 
         if let Some(val) = &args.tenant_id {

@@ -133,7 +133,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Property.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -179,41 +179,17 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("name", serde_json::to_value(&self.name)?);
-        params.push("title", serde_json::to_value(&self.title)?);
-        if let Some(val) = &self.description {
-            params.push("description", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.operators {
-            params.push("operators", serde_json::to_value(val)?);
-        }
-        params.push("type", serde_json::to_value(&self._type)?);
-        if let Some(val) = &self.required {
-            params.push("required", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.minimum {
-            params.push("minimum", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.maximum {
-            params.push("maximum", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.max_length {
-            params.push("maxLength", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.min_length {
-            params.push("minLength", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.pattern {
-            params.push("pattern", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self._enum {
-            params.push("enum", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.readonly {
-            params.push("readonly", serde_json::to_value(val)?);
+        if let Some(val) = &self.additional_items {
+            params.push("additionalItems", serde_json::to_value(val)?);
         }
         if let Some(val) = &self._default {
             params.push("default", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.description {
+            params.push("description", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self._enum {
+            params.push("enum", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.items {
             params.push("items", serde_json::to_value(val)?);
@@ -221,14 +197,38 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.max_items {
             params.push("maxItems", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.max_length {
+            params.push("maxLength", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.maximum {
+            params.push("maximum", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.min_items {
             params.push("minItems", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.min_length {
+            params.push("minLength", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.minimum {
+            params.push("minimum", serde_json::to_value(val)?);
+        }
+        params.push("name", serde_json::to_value(&self.name)?);
+        if let Some(val) = &self.operators {
+            params.push("operators", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.pattern {
+            params.push("pattern", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.readonly {
+            params.push("readonly", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.required {
+            params.push("required", serde_json::to_value(val)?);
+        }
+        params.push("title", serde_json::to_value(&self.title)?);
+        params.push("type", serde_json::to_value(&self._type)?);
         if let Some(val) = &self.unique_items {
             params.push("uniqueItems", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.additional_items {
-            params.push("additionalItems", serde_json::to_value(val)?);
         }
 
         params.into_body()

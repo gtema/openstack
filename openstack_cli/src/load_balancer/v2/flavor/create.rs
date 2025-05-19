@@ -91,9 +91,6 @@ impl FlavorCommand {
         // Set Request.flavor data
         let args = &self.flavor;
         let mut flavor_builder = create::FlavorBuilder::default();
-
-        flavor_builder.name(&args.name);
-
         if let Some(val) = &args.description {
             flavor_builder.description(val);
         }
@@ -103,6 +100,8 @@ impl FlavorCommand {
         }
 
         flavor_builder.flavor_profile_id(&args.flavor_profile_id);
+
+        flavor_builder.name(&args.name);
 
         ep_builder.flavor(flavor_builder.build().unwrap());
 

@@ -108,29 +108,29 @@ impl ClustersCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.frozen {
-            ep_builder.frozen(*val);
-        }
         if let Some(val) = &self.query.active_backend_id {
             ep_builder.active_backend_id(val);
-        }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
         }
         if let Some(val) = &self.query.binary {
             ep_builder.binary(val);
         }
-        if let Some(val) = &self.query.is_up {
-            ep_builder.is_up(*val);
-        }
         if let Some(val) = &self.query.disabled {
             ep_builder.disabled(*val);
         }
-        if let Some(val) = &self.query.num_hosts {
-            ep_builder.num_hosts(*val);
+        if let Some(val) = &self.query.frozen {
+            ep_builder.frozen(*val);
+        }
+        if let Some(val) = &self.query.is_up {
+            ep_builder.is_up(*val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.num_down_hosts {
             ep_builder.num_down_hosts(*val);
+        }
+        if let Some(val) = &self.query.num_hosts {
+            ep_builder.num_hosts(*val);
         }
         if let Some(val) = &self.query.replication_stats {
             ep_builder.replication_stats(val);

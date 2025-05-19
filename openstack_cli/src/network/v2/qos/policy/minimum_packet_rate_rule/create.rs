@@ -106,10 +106,6 @@ impl MinimumPacketRateRuleCommand {
         // Set Request.minimum_packet_rate_rule data
         let args = &self.minimum_packet_rate_rule;
         let mut minimum_packet_rate_rule_builder = create::MinimumPacketRateRuleBuilder::default();
-        if let Some(val) = &args.min_kpps {
-            minimum_packet_rate_rule_builder.min_kpps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Any => create::Direction::Any,
@@ -117,6 +113,10 @@ impl MinimumPacketRateRuleCommand {
                 Direction::Ingress => create::Direction::Ingress,
             };
             minimum_packet_rate_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kpps {
+            minimum_packet_rate_rule_builder.min_kpps(*val);
         }
 
         ep_builder.minimum_packet_rate_rule(minimum_packet_rate_rule_builder.build().unwrap());

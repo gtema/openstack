@@ -93,11 +93,11 @@ impl AvailabilityZoneProfileCommand {
         let mut availability_zone_profile_builder =
             create::AvailabilityZoneProfileBuilder::default();
 
+        availability_zone_profile_builder.availability_zone_data(&args.availability_zone_data);
+
         availability_zone_profile_builder.name(&args.name);
 
         availability_zone_profile_builder.provider_name(&args.provider_name);
-
-        availability_zone_profile_builder.availability_zone_data(&args.availability_zone_data);
 
         ep_builder.availability_zone_profile(availability_zone_profile_builder.build().unwrap());
 

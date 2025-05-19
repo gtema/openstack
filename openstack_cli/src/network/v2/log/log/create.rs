@@ -148,22 +148,12 @@ impl LogCommand {
         // Set Request.log data
         let args = &self.log;
         let mut log_builder = create::LogBuilder::default();
-        if let Some(val) = &args.project_id {
-            log_builder.project_id(val);
+        if let Some(val) = &args.description {
+            log_builder.description(val);
         }
 
-        if let Some(val) = &args.name {
-            log_builder.name(val);
-        }
-
-        if let Some(val) = &args.resource_type {
-            log_builder.resource_type(val);
-        }
-
-        if let Some(val) = &args.resource_id {
-            log_builder.resource_id(Some(val.into()));
-        } else if args.no_resource_id {
-            log_builder.resource_id(None);
+        if let Some(val) = &args.enabled {
+            log_builder.enabled(*val);
         }
 
         if let Some(val) = &args.event {
@@ -175,18 +165,28 @@ impl LogCommand {
             log_builder.event(tmp);
         }
 
+        if let Some(val) = &args.name {
+            log_builder.name(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            log_builder.project_id(val);
+        }
+
+        if let Some(val) = &args.resource_id {
+            log_builder.resource_id(Some(val.into()));
+        } else if args.no_resource_id {
+            log_builder.resource_id(None);
+        }
+
+        if let Some(val) = &args.resource_type {
+            log_builder.resource_type(val);
+        }
+
         if let Some(val) = &args.target_id {
             log_builder.target_id(Some(val.into()));
         } else if args.no_target_id {
             log_builder.target_id(None);
-        }
-
-        if let Some(val) = &args.enabled {
-            log_builder.enabled(*val);
-        }
-
-        if let Some(val) = &args.description {
-            log_builder.description(val);
         }
 
         ep_builder.log(log_builder.build().unwrap());

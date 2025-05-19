@@ -76,7 +76,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Service.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -117,7 +117,6 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("host", serde_json::to_value(&self.host)?);
         params.push("binary", serde_json::to_value(&self.binary)?);
         if let Some(val) = &self.disabled_reason {
             params.push("disabled_reason", serde_json::to_value(val)?);
@@ -125,6 +124,7 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.forced_down {
             params.push("forced_down", serde_json::to_value(val)?);
         }
+        params.push("host", serde_json::to_value(&self.host)?);
 
         params.into_body()
     }
@@ -163,8 +163,8 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .host("foo")
                 .binary("foo")
+                .host("foo")
                 .build()
                 .unwrap()
                 .service_type(),
@@ -176,8 +176,8 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .host("foo")
                 .binary("foo")
+                .host("foo")
                 .build()
                 .unwrap()
                 .response_key()
@@ -202,8 +202,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .host("foo")
             .binary("foo")
+            .host("foo")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -227,8 +227,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .host("foo")
             .binary("foo")
+            .host("foo")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

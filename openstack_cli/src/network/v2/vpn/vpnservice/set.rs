@@ -125,16 +125,16 @@ impl VpnserviceCommand {
         // Set Request.vpnservice data
         let args = &self.vpnservice;
         let mut vpnservice_builder = set::VpnserviceBuilder::default();
-        if let Some(val) = &args.name {
-            vpnservice_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            vpnservice_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.description {
             vpnservice_builder.description(val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            vpnservice_builder.admin_state_up(*val);
+        if let Some(val) = &args.name {
+            vpnservice_builder.name(val);
         }
 
         ep_builder.vpnservice(vpnservice_builder.build().unwrap());

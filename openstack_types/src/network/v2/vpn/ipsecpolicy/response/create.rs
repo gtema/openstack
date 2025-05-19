@@ -86,6 +86,70 @@ pub struct IpsecpolicyResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthAlgorithm {
+    // AesCmac
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
+
+    // AesXcbc
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
+
+    // Sha1
+    #[serde(rename = "sha1")]
+    Sha1,
+
+    // Sha256
+    #[serde(rename = "sha256")]
+    Sha256,
+
+    // Sha384
+    #[serde(rename = "sha384")]
+    Sha384,
+
+    // Sha512
+    #[serde(rename = "sha512")]
+    Sha512,
+}
+
+impl std::str::FromStr for AuthAlgorithm {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aes-cmac" => Ok(Self::AesCmac),
+            "aes-xcbc" => Ok(Self::AesXcbc),
+            "sha1" => Ok(Self::Sha1),
+            "sha256" => Ok(Self::Sha256),
+            "sha384" => Ok(Self::Sha384),
+            "sha512" => Ok(Self::Sha512),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum EncapsulationMode {
+    // Transport
+    #[serde(rename = "transport")]
+    Transport,
+
+    // Tunnel
+    #[serde(rename = "tunnel")]
+    Tunnel,
+}
+
+impl std::str::FromStr for EncapsulationMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "transport" => Ok(Self::Transport),
+            "tunnel" => Ok(Self::Tunnel),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
     // _3des
     #[serde(rename = "3des")]
@@ -223,97 +287,6 @@ impl std::str::FromStr for EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum TransformProtocol {
-    // Ah
-    #[serde(rename = "ah")]
-    Ah,
-
-    // AhEsp
-    #[serde(rename = "ah-esp")]
-    AhEsp,
-
-    // Esp
-    #[serde(rename = "esp")]
-    Esp,
-}
-
-impl std::str::FromStr for TransformProtocol {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "ah" => Ok(Self::Ah),
-            "ah-esp" => Ok(Self::AhEsp),
-            "esp" => Ok(Self::Esp),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthAlgorithm {
-    // AesCmac
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-
-    // AesXcbc
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
-
-    // Sha1
-    #[serde(rename = "sha1")]
-    Sha1,
-
-    // Sha256
-    #[serde(rename = "sha256")]
-    Sha256,
-
-    // Sha384
-    #[serde(rename = "sha384")]
-    Sha384,
-
-    // Sha512
-    #[serde(rename = "sha512")]
-    Sha512,
-}
-
-impl std::str::FromStr for AuthAlgorithm {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "aes-cmac" => Ok(Self::AesCmac),
-            "aes-xcbc" => Ok(Self::AesXcbc),
-            "sha1" => Ok(Self::Sha1),
-            "sha256" => Ok(Self::Sha256),
-            "sha384" => Ok(Self::Sha384),
-            "sha512" => Ok(Self::Sha512),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum EncapsulationMode {
-    // Transport
-    #[serde(rename = "transport")]
-    Transport,
-
-    // Tunnel
-    #[serde(rename = "tunnel")]
-    Tunnel,
-}
-
-impl std::str::FromStr for EncapsulationMode {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "transport" => Ok(Self::Transport),
-            "tunnel" => Ok(Self::Tunnel),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Pfs {
     // Group14
     #[serde(rename = "group14")]
@@ -420,6 +393,33 @@ impl std::str::FromStr for Pfs {
             "group30" => Ok(Self::Group30),
             "group31" => Ok(Self::Group31),
             "group5" => Ok(Self::Group5),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum TransformProtocol {
+    // Ah
+    #[serde(rename = "ah")]
+    Ah,
+
+    // AhEsp
+    #[serde(rename = "ah-esp")]
+    AhEsp,
+
+    // Esp
+    #[serde(rename = "esp")]
+    Esp,
+}
+
+impl std::str::FromStr for TransformProtocol {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ah" => Ok(Self::Ah),
+            "ah-esp" => Ok(Self::AhEsp),
+            "esp" => Ok(Self::Esp),
             _ => Err(()),
         }
     }

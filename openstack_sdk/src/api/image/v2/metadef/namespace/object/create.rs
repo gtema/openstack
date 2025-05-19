@@ -222,15 +222,15 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("name", serde_json::to_value(&self.name)?);
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.required {
-            params.push("required", serde_json::to_value(val)?);
-        }
+        params.push("name", serde_json::to_value(&self.name)?);
         if let Some(val) = &self.properties {
             params.push("properties", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.required {
+            params.push("required", serde_json::to_value(val)?);
         }
 
         params.into_body()

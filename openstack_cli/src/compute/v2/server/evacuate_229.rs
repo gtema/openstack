@@ -132,16 +132,16 @@ impl ServerCommand {
         // Set Request.evacuate data
         let args = &self.evacuate;
         let mut evacuate_builder = evacuate_229::EvacuateBuilder::default();
-        if let Some(val) = &args.host {
-            evacuate_builder.host(val);
-        }
-
         if let Some(val) = &args.admin_pass {
             evacuate_builder.admin_pass(val);
         }
 
         if let Some(val) = &args.force {
             evacuate_builder.force(*val);
+        }
+
+        if let Some(val) = &args.host {
+            evacuate_builder.host(val);
         }
 
         ep_builder.evacuate(evacuate_builder.build().unwrap());

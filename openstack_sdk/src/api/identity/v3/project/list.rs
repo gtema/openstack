@@ -77,7 +77,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Project.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -115,15 +115,15 @@ impl RestEndpoint for Request<'_> {
         let mut params = QueryParams::default();
         params.push_opt("domain_id", self.domain_id.as_ref());
         params.push_opt("enabled", self.enabled);
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("parent_id", self.parent_id.as_ref());
         params.push_opt("is_domain", self.is_domain);
-        params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("name", self.name.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
-        params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("limit", self.limit);
+        params.push_opt("parent_id", self.parent_id.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
 
         params
     }

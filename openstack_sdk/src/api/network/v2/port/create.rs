@@ -37,20 +37,6 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct FixedIps<'a> {
-    /// IP Address
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) ip_address: Option<Cow<'a, str>>,
-
-    /// The subnet ID from which the IP address is assigned
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) subnet_id: Option<Cow<'a, str>>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
 pub struct AllowedAddressPairs<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -59,18 +45,6 @@ pub struct AllowedAddressPairs<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) max_address: Option<Cow<'a, str>>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum NumaAffinityPolicy {
-    #[serde(rename = "legacy")]
-    Legacy,
-    #[serde(rename = "preferred")]
-    Preferred,
-    #[serde(rename = "required")]
-    Required,
-    #[serde(rename = "socket")]
-    Socket,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -97,6 +71,32 @@ pub enum BindingVnicType {
     Vdpa,
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct FixedIps<'a> {
+    /// IP Address
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) ip_address: Option<Cow<'a, str>>,
+
+    /// The subnet ID from which the IP address is assigned
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) subnet_id: Option<Cow<'a, str>>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum NumaAffinityPolicy {
+    #[serde(rename = "legacy")]
+    Legacy,
+    #[serde(rename = "preferred")]
+    Preferred,
+    #[serde(rename = "required")]
+    Required,
+    #[serde(rename = "socket")]
+    Socket,
 }
 
 /// A `port` object.
@@ -355,7 +355,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Port.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

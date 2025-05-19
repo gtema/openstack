@@ -106,10 +106,6 @@ impl AliasMinimumPacketRateRuleCommand {
         let args = &self.alias_minimum_packet_rate_rule;
         let mut alias_minimum_packet_rate_rule_builder =
             set::AliasMinimumPacketRateRuleBuilder::default();
-        if let Some(val) = &args.min_kpps {
-            alias_minimum_packet_rate_rule_builder.min_kpps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Any => set::Direction::Any,
@@ -117,6 +113,10 @@ impl AliasMinimumPacketRateRuleCommand {
                 Direction::Ingress => set::Direction::Ingress,
             };
             alias_minimum_packet_rate_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kpps {
+            alias_minimum_packet_rate_rule_builder.min_kpps(*val);
         }
 
         ep_builder.alias_minimum_packet_rate_rule(

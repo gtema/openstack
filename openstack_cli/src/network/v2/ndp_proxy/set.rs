@@ -107,12 +107,12 @@ impl NdpProxyCommand {
         // Set Request.ndp_proxy data
         let args = &self.ndp_proxy;
         let mut ndp_proxy_builder = set::NdpProxyBuilder::default();
-        if let Some(val) = &args.name {
-            ndp_proxy_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             ndp_proxy_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            ndp_proxy_builder.name(val);
         }
 
         ep_builder.ndp_proxy(ndp_proxy_builder.build().unwrap());

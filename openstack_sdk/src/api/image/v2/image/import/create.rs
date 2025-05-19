@@ -159,7 +159,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Import.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -204,17 +204,17 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.method {
-            params.push("method", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.stores {
-            params.push("stores", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.all_stores {
             params.push("all_stores", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.all_stores_must_success {
             params.push("all_stores_must_success", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.method {
+            params.push("method", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.stores {
+            params.push("stores", serde_json::to_value(val)?);
         }
 
         params.into_body()

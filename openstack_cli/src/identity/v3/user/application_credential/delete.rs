@@ -58,10 +58,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
@@ -71,6 +67,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// User input select group
@@ -106,6 +106,7 @@ impl ApplicationCredentialCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
+        ep_builder.id(&self.path.id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -151,7 +152,6 @@ impl ApplicationCredentialCommand {
                     .id,
             );
         }
-        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

@@ -181,16 +181,11 @@ pub struct PoolResponse {
     pub updated_at: Option<String>,
 }
 
-/// A JSON object specifying the session persistence for the pool or `null` for
-/// no session persistence. See
-/// [Pool Session Persistence](#session-persistence). Default is `null`.
-/// `SessionPersistence` type
+/// Base type for complex types
+/// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SessionPersistence {
-    pub cookie_name: Option<String>,
-    pub persistence_granularity: Option<String>,
-    pub persistence_timeout: Option<i32>,
-    pub _type: Option<String>,
+pub struct Listeners {
+    pub id: String,
 }
 
 /// Base type for complex types
@@ -201,15 +196,20 @@ pub struct Loadbalancers {
 }
 
 /// Base type for complex types
-/// `Listeners` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Listeners {
-    pub id: String,
-}
-
-/// Base type for complex types
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
     pub id: String,
+}
+
+/// A JSON object specifying the session persistence for the pool or `null` for
+/// no session persistence. See
+/// [Pool Session Persistence](#session-persistence). Default is `null`.
+/// `SessionPersistence` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SessionPersistence {
+    pub cookie_name: Option<String>,
+    pub persistence_granularity: Option<String>,
+    pub persistence_timeout: Option<i32>,
+    pub _type: Option<String>,
 }

@@ -71,7 +71,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Nodegroup.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -112,8 +112,8 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("path", serde_json::to_value(&self.path)?);
         params.push("op", serde_json::to_value(&self.op)?);
+        params.push("path", serde_json::to_value(&self.path)?);
         if let Some(val) = &self.value {
             params.push("value", serde_json::to_value(val)?);
         }
@@ -155,8 +155,8 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .path("foo")
                 .op(Op::Add)
+                .path("foo")
                 .build()
                 .unwrap()
                 .service_type(),
@@ -167,8 +167,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .path("foo")
             .op(Op::Add)
+            .path("foo")
             .build()
             .unwrap()
             .response_key()
@@ -191,8 +191,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .path("foo")
             .op(Op::Add)
+            .path("foo")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -216,8 +216,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .path("foo")
             .op(Op::Add)
+            .path("foo")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

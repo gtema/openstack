@@ -278,6 +278,15 @@ impl ListenersCommand {
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
         }
@@ -330,6 +339,15 @@ impl ListenersCommand {
         if let Some(val) = &self.query.protocol_port {
             ep_builder.protocol_port(*val);
         }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
         if let Some(val) = &self.query.timeout_client_data {
             ep_builder.timeout_client_data(*val);
         }
@@ -350,24 +368,6 @@ impl ListenersCommand {
         }
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
-        }
-        if let Some(val) = &self.query.provisioning_status {
-            ep_builder.provisioning_status(val);
-        }
-        if let Some(val) = &self.query.operating_status {
-            ep_builder.operating_status(val);
-        }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val);
-        }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val);
-        }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val);
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val);
         }
         // Set body parameters
 

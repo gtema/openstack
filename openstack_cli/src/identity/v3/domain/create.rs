@@ -129,10 +129,6 @@ impl DomainCommand {
         // Set Request.domain data
         let args = &self.domain;
         let mut domain_builder = create::DomainBuilder::default();
-        if let Some(val) = &args.explicit_domain_id {
-            domain_builder.explicit_domain_id(val);
-        }
-
         if let Some(val) = &args.description {
             domain_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -141,6 +137,10 @@ impl DomainCommand {
 
         if let Some(val) = &args.enabled {
             domain_builder.enabled(*val);
+        }
+
+        if let Some(val) = &args.explicit_domain_id {
+            domain_builder.explicit_domain_id(val);
         }
 
         domain_builder.name(&args.name);

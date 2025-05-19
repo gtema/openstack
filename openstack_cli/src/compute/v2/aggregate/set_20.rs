@@ -133,14 +133,14 @@ impl AggregateCommand {
         // Set Request.aggregate data
         let args = &self.aggregate;
         let mut aggregate_builder = set_20::AggregateBuilder::default();
-        if let Some(val) = &args.name {
-            aggregate_builder.name(val);
-        }
-
         if let Some(val) = &args.availability_zone {
             aggregate_builder.availability_zone(Some(val.into()));
         } else if args.no_availability_zone {
             aggregate_builder.availability_zone(None);
+        }
+
+        if let Some(val) = &args.name {
+            aggregate_builder.name(val);
         }
 
         ep_builder.aggregate(aggregate_builder.build().unwrap());

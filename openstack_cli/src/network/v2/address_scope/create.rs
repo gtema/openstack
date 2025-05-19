@@ -103,20 +103,20 @@ impl AddressScopeCommand {
         // Set Request.address_scope data
         let args = &self.address_scope;
         let mut address_scope_builder = create::AddressScopeBuilder::default();
-        if let Some(val) = &args.name {
-            address_scope_builder.name(val);
+        if let Some(val) = &args.ip_version {
+            address_scope_builder.ip_version(*val);
         }
 
-        if let Some(val) = &args.tenant_id {
-            address_scope_builder.tenant_id(val);
+        if let Some(val) = &args.name {
+            address_scope_builder.name(val);
         }
 
         if let Some(val) = &args.shared {
             address_scope_builder.shared(*val);
         }
 
-        if let Some(val) = &args.ip_version {
-            address_scope_builder.ip_version(*val);
+        if let Some(val) = &args.tenant_id {
+            address_scope_builder.tenant_id(val);
         }
 
         ep_builder.address_scope(address_scope_builder.build().unwrap());

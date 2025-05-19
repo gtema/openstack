@@ -105,14 +105,14 @@ impl LimitCommand {
         // Set Request.limit data
         let args = &self.limit;
         let mut limit_builder = set::LimitBuilder::default();
-        if let Some(val) = &args.resource_limit {
-            limit_builder.resource_limit(*val);
-        }
-
         if let Some(val) = &args.description {
             limit_builder.description(Some(val.into()));
         } else if args.no_description {
             limit_builder.description(None);
+        }
+
+        if let Some(val) = &args.resource_limit {
+            limit_builder.resource_limit(*val);
         }
 
         ep_builder.limit(limit_builder.build().unwrap());

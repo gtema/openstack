@@ -129,12 +129,12 @@ impl ServiceCommand {
             service_builder.enabled(*val);
         }
 
-        if let Some(val) = &args._type {
-            service_builder._type(val);
-        }
-
         if let Some(val) = &args.name {
             service_builder.name(val);
+        }
+
+        if let Some(val) = &args._type {
+            service_builder._type(val);
         }
 
         ep_builder.service(service_builder.build().unwrap());

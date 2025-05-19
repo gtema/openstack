@@ -138,23 +138,23 @@ impl TryFrom<&Options> for openstack_sdk::api::identity::v3::user::set::OptionsB
         if let Some(val) = &value.ignore_change_password_upon_first_use {
             ep_builder.ignore_change_password_upon_first_use(*val);
         }
-        if let Some(val) = &value.ignore_password_expiry {
-            ep_builder.ignore_password_expiry(*val);
-        }
         if let Some(val) = &value.ignore_lockout_failure_attempts {
             ep_builder.ignore_lockout_failure_attempts(*val);
         }
-        if let Some(val) = &value.lock_password {
-            ep_builder.lock_password(*val);
+        if let Some(val) = &value.ignore_password_expiry {
+            ep_builder.ignore_password_expiry(*val);
         }
         if let Some(val) = &value.ignore_user_inactivity {
             ep_builder.ignore_user_inactivity(*val);
         }
-        if let Some(val) = &value.multi_factor_auth_rules {
-            ep_builder.multi_factor_auth_rules(val.iter().cloned());
+        if let Some(val) = &value.lock_password {
+            ep_builder.lock_password(*val);
         }
         if let Some(val) = &value.multi_factor_auth_enabled {
             ep_builder.multi_factor_auth_enabled(*val);
+        }
+        if let Some(val) = &value.multi_factor_auth_rules {
+            ep_builder.multi_factor_auth_rules(val.iter().cloned());
         }
         Ok(ep_builder)
     }
@@ -231,9 +231,6 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
     type Error = Report;
     fn try_from(value: &User) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        if let Some(val) = &value.password {
-            ep_builder.password(val.clone().map(Into::into));
-        }
         if let Some(val) = &value.default_project_id {
             ep_builder.default_project_id(val.clone().map(Into::into));
         }
@@ -257,6 +254,9 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
             ep_builder.options(TryInto::<
                 openstack_sdk::api::identity::v3::user::set::Options,
             >::try_into(val)?);
+        }
+        if let Some(val) = &value.password {
+            ep_builder.password(val.clone().map(Into::into));
         }
         Ok(ep_builder)
     }

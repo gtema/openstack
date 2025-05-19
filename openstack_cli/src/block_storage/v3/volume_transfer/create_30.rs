@@ -95,14 +95,13 @@ impl VolumeTransferCommand {
         // Set Request.transfer data
         let args = &self.transfer;
         let mut transfer_builder = create_30::TransferBuilder::default();
-
-        transfer_builder.volume_id(&args.volume_id);
-
         if let Some(val) = &args.name {
             transfer_builder.name(Some(val.into()));
         } else if args.no_name {
             transfer_builder.name(None);
         }
+
+        transfer_builder.volume_id(&args.volume_id);
 
         ep_builder.transfer(transfer_builder.build().unwrap());
 

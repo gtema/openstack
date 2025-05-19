@@ -120,7 +120,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Amphorae.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -159,8 +159,8 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("cached_zone", self.cached_zone.as_ref());
         params.push_opt("cert_busy", self.cert_busy.as_ref());
         params.push_opt("cert_expiration", self.cert_expiration.as_ref());
-        params.push_opt("compute_id", self.compute_id.as_ref());
         params.push_opt("compute_flavor", self.compute_flavor.as_ref());
+        params.push_opt("compute_id", self.compute_id.as_ref());
         params.push_opt("created_at", self.created_at.as_ref());
         params.push_opt("ha_ip", self.ha_ip.as_ref());
         params.push_opt("ha_port_id", self.ha_port_id.as_ref());
@@ -174,10 +174,10 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("role", self.role.as_ref());
         params.push_opt("status", self.status.as_ref());
         params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("vrrp_id", self.vrrp_id.as_ref());
+        params.push_opt("vrrp_interface", self.vrrp_interface.as_ref());
         params.push_opt("vrrp_ip", self.vrrp_ip.as_ref());
         params.push_opt("vrrp_port_id", self.vrrp_port_id.as_ref());
-        params.push_opt("vrrp_interface", self.vrrp_interface.as_ref());
-        params.push_opt("vrrp_id", self.vrrp_id.as_ref());
         params.push_opt("vrrp_priority", self.vrrp_priority.as_ref());
 
         params

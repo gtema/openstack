@@ -51,6 +51,13 @@ pub struct HypervisorResponse {
     pub status: Option<Status>,
 }
 
+/// `Servers` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Servers {
+    pub name: String,
+    pub uuid: String,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum State {
     // Down
@@ -93,11 +100,4 @@ impl std::str::FromStr for Status {
             _ => Err(()),
         }
     }
-}
-
-/// `Servers` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Servers {
-    pub name: String,
-    pub uuid: String,
 }

@@ -151,6 +151,12 @@ impl EndpointCommand {
         // Set Request.endpoint data
         let args = &self.endpoint;
         let mut endpoint_builder = set::EndpointBuilder::default();
+        if let Some(val) = &args.description {
+            endpoint_builder.description(Some(val.into()));
+        } else if args.no_description {
+            endpoint_builder.description(None);
+        }
+
         if let Some(val) = &args.enabled {
             endpoint_builder.enabled(*val);
         }
@@ -164,10 +170,8 @@ impl EndpointCommand {
             endpoint_builder.interface(tmp);
         }
 
-        if let Some(val) = &args.region_id {
-            endpoint_builder.region_id(Some(val.into()));
-        } else if args.no_region_id {
-            endpoint_builder.region_id(None);
+        if let Some(val) = &args.name {
+            endpoint_builder.name(val);
         }
 
         if let Some(val) = &args.region {
@@ -176,22 +180,18 @@ impl EndpointCommand {
             endpoint_builder.region(None);
         }
 
+        if let Some(val) = &args.region_id {
+            endpoint_builder.region_id(Some(val.into()));
+        } else if args.no_region_id {
+            endpoint_builder.region_id(None);
+        }
+
         if let Some(val) = &args.service_id {
             endpoint_builder.service_id(val);
         }
 
         if let Some(val) = &args.url {
             endpoint_builder.url(val);
-        }
-
-        if let Some(val) = &args.name {
-            endpoint_builder.name(val);
-        }
-
-        if let Some(val) = &args.description {
-            endpoint_builder.description(Some(val.into()));
-        } else if args.no_description {
-            endpoint_builder.description(None);
         }
 
         ep_builder.endpoint(endpoint_builder.build().unwrap());

@@ -37,19 +37,27 @@ pub struct RoleAssignmentResponse {
     pub user: Option<User>,
 }
 
+/// `Domain` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Domain {
+    pub id: String,
+    pub name: Option<String>,
+}
+
+/// `Group` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Group {
+    pub domain: Option<Domain>,
+    pub id: String,
+    pub name: Option<String>,
+}
+
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
     pub assignment: String,
     pub membership: Option<String>,
     pub prior_role: Option<String>,
-}
-
-/// `Domain` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Domain {
-    pub id: String,
-    pub name: Option<String>,
 }
 
 /// `Role` type
@@ -60,17 +68,17 @@ pub struct Role {
     pub name: Option<String>,
 }
 
-/// `Project` type
+/// `ScopeDomain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Project {
-    pub domain: Option<Domain>,
+pub struct ScopeDomain {
     pub id: String,
     pub name: Option<String>,
 }
 
-/// `ScopeDomain` type
+/// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ScopeDomain {
+pub struct Project {
+    pub domain: Option<Domain>,
     pub id: String,
     pub name: Option<String>,
 }
@@ -93,14 +101,6 @@ pub struct Scope {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    pub domain: Option<Domain>,
-    pub id: String,
-    pub name: Option<String>,
-}
-
-/// `Group` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Group {
     pub domain: Option<Domain>,
     pub id: String,
     pub name: Option<String>,

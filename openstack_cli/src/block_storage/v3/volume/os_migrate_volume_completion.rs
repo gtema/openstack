@@ -93,12 +93,11 @@ impl VolumeCommand {
         let args = &self.os_migrate_volume_completion;
         let mut os_migrate_volume_completion_builder =
             os_migrate_volume_completion::OsMigrateVolumeCompletionBuilder::default();
-
-        os_migrate_volume_completion_builder.new_volume(&args.new_volume);
-
         if let Some(val) = &args.error {
             os_migrate_volume_completion_builder.error(*val);
         }
+
+        os_migrate_volume_completion_builder.new_volume(&args.new_volume);
 
         ep_builder
             .os_migrate_volume_completion(os_migrate_volume_completion_builder.build().unwrap());

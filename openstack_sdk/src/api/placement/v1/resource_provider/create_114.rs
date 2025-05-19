@@ -68,7 +68,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Resource_Provider.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -110,11 +110,11 @@ impl RestEndpoint for Request<'_> {
         let mut params = JsonBodyParams::default();
 
         params.push("name", serde_json::to_value(&self.name)?);
-        if let Some(val) = &self.uuid {
-            params.push("uuid", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.parent_provider_uuid {
             params.push("parent_provider_uuid", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.uuid {
+            params.push("uuid", serde_json::to_value(val)?);
         }
 
         params.into_body()

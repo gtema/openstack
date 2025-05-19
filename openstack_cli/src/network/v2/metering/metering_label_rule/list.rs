@@ -166,11 +166,14 @@ impl MeteringLabelRulesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
         }
-        if let Some(val) = &self.query.metering_label_id {
-            ep_builder.metering_label_id(val);
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.destination_ip_prefix {
+            ep_builder.destination_ip_prefix(val);
         }
         if let Some(val) = &self.query.direction {
             ep_builder.direction(val);
@@ -178,29 +181,26 @@ impl MeteringLabelRulesCommand {
         if let Some(val) = &self.query.excluded {
             ep_builder.excluded(*val);
         }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.metering_label_id {
+            ep_builder.metering_label_id(val);
+        }
         if let Some(val) = &self.query.remote_ip_prefix {
             ep_builder.remote_ip_prefix(val);
         }
         if let Some(val) = &self.query.source_ip_prefix {
             ep_builder.source_ip_prefix(val);
         }
-        if let Some(val) = &self.query.destination_ip_prefix {
-            ep_builder.destination_ip_prefix(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.page_reverse {
-            ep_builder.page_reverse(*val);
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

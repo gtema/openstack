@@ -196,14 +196,32 @@ impl TryFrom<&LoadBalancerLoadbalancerList> for RequestBuilder<'_> {
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
         }
+        if let Some(val) = &value.not_tags {
+            ep_builder.not_tags(val.clone());
+        }
+        if let Some(val) = &value.not_tags_any {
+            ep_builder.not_tags_any(val.clone());
+        }
+        if let Some(val) = &value.operating_status {
+            ep_builder.operating_status(val.clone());
+        }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &value.project_id {
+            ep_builder.project_id(val.clone());
         }
         if let Some(val) = &value.provider {
             ep_builder.provider(val.clone());
         }
-        if let Some(val) = &value.project_id {
-            ep_builder.project_id(val.clone());
+        if let Some(val) = &value.provisioning_status {
+            ep_builder.provisioning_status(val.clone());
+        }
+        if let Some(val) = &value.tags {
+            ep_builder.tags(val.clone());
+        }
+        if let Some(val) = &value.tags_any {
+            ep_builder.tags_any(val.clone());
         }
         if let Some(val) = &value.updated_at {
             ep_builder.updated_at(val.clone());
@@ -217,29 +235,11 @@ impl TryFrom<&LoadBalancerLoadbalancerList> for RequestBuilder<'_> {
         if let Some(val) = &value.vip_port_id {
             ep_builder.vip_port_id(val.clone());
         }
-        if let Some(val) = &value.vip_subnet_id {
-            ep_builder.vip_subnet_id(val.clone());
-        }
         if let Some(val) = &value.vip_qos_policy_id {
             ep_builder.vip_qos_policy_id(val.clone());
         }
-        if let Some(val) = &value.provisioning_status {
-            ep_builder.provisioning_status(val.clone());
-        }
-        if let Some(val) = &value.operating_status {
-            ep_builder.operating_status(val.clone());
-        }
-        if let Some(val) = &value.tags {
-            ep_builder.tags(val.clone());
-        }
-        if let Some(val) = &value.tags_any {
-            ep_builder.tags_any(val.clone());
-        }
-        if let Some(val) = &value.not_tags {
-            ep_builder.not_tags(val.clone());
-        }
-        if let Some(val) = &value.not_tags_any {
-            ep_builder.not_tags_any(val.clone());
+        if let Some(val) = &value.vip_subnet_id {
+            ep_builder.vip_subnet_id(val.clone());
         }
 
         Ok(ep_builder)

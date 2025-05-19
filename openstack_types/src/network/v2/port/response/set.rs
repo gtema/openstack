@@ -264,72 +264,11 @@ pub struct PortResponse {
     pub updated_at: Option<String>,
 }
 
-/// `FixedIps` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FixedIps {
-    pub ip_address: Option<String>,
-    pub subnet_id: Option<String>,
-}
-
 /// `AllowedAddressPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllowedAddressPairs {
     pub ip_address: Option<String>,
     pub max_address: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum DataPlaneStatus {
-    // Active
-    #[serde(rename = "ACTIVE")]
-    Active,
-
-    // Down
-    #[serde(rename = "DOWN")]
-    Down,
-}
-
-impl std::str::FromStr for DataPlaneStatus {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "ACTIVE" => Ok(Self::Active),
-            "DOWN" => Ok(Self::Down),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum NumaAffinityPolicy {
-    // Legacy
-    #[serde(rename = "legacy")]
-    Legacy,
-
-    // Preferred
-    #[serde(rename = "preferred")]
-    Preferred,
-
-    // Required
-    #[serde(rename = "required")]
-    Required,
-
-    // Socket
-    #[serde(rename = "socket")]
-    Socket,
-}
-
-impl std::str::FromStr for NumaAffinityPolicy {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "legacy" => Ok(Self::Legacy),
-            "preferred" => Ok(Self::Preferred),
-            "required" => Ok(Self::Required),
-            "socket" => Ok(Self::Socket),
-            _ => Err(()),
-        }
-    }
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -399,10 +338,71 @@ impl std::str::FromStr for BindingVnicType {
     }
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum DataPlaneStatus {
+    // Active
+    #[serde(rename = "ACTIVE")]
+    Active,
+
+    // Down
+    #[serde(rename = "DOWN")]
+    Down,
+}
+
+impl std::str::FromStr for DataPlaneStatus {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "ACTIVE" => Ok(Self::Active),
+            "DOWN" => Ok(Self::Down),
+            _ => Err(()),
+        }
+    }
+}
+
 /// `DnsAssignment` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DnsAssignment {
     pub fqdn: Option<String>,
     pub hostname: Option<String>,
     pub ip_address: Option<String>,
+}
+
+/// `FixedIps` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct FixedIps {
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum NumaAffinityPolicy {
+    // Legacy
+    #[serde(rename = "legacy")]
+    Legacy,
+
+    // Preferred
+    #[serde(rename = "preferred")]
+    Preferred,
+
+    // Required
+    #[serde(rename = "required")]
+    Required,
+
+    // Socket
+    #[serde(rename = "socket")]
+    Socket,
+}
+
+impl std::str::FromStr for NumaAffinityPolicy {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "legacy" => Ok(Self::Legacy),
+            "preferred" => Ok(Self::Preferred),
+            "required" => Ok(Self::Required),
+            "socket" => Ok(Self::Socket),
+            _ => Err(()),
+        }
+    }
 }

@@ -199,45 +199,16 @@ impl IpsecSiteConnectionCommand {
         // Set Request.ipsec_site_connection data
         let args = &self.ipsec_site_connection;
         let mut ipsec_site_connection_builder = set::IpsecSiteConnectionBuilder::default();
-        if let Some(val) = &args.name {
-            ipsec_site_connection_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            ipsec_site_connection_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.description {
             ipsec_site_connection_builder.description(val);
         }
 
-        if let Some(val) = &args.local_id {
-            ipsec_site_connection_builder.local_id(val);
-        }
-
-        if let Some(val) = &args.peer_address {
-            ipsec_site_connection_builder.peer_address(val);
-        }
-
-        if let Some(val) = &args.peer_id {
-            ipsec_site_connection_builder.peer_id(val);
-        }
-
-        if let Some(val) = &args.peer_cidrs {
-            ipsec_site_connection_builder
-                .peer_cidrs(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.local_ep_group_id {
-            ipsec_site_connection_builder.local_ep_group_id(Some(val.into()));
-        } else if args.no_local_ep_group_id {
-            ipsec_site_connection_builder.local_ep_group_id(None);
-        }
-
-        if let Some(val) = &args.peer_ep_group_id {
-            ipsec_site_connection_builder.peer_ep_group_id(Some(val.into()));
-        } else if args.no_peer_ep_group_id {
-            ipsec_site_connection_builder.peer_ep_group_id(None);
-        }
-
-        if let Some(val) = &args.mtu {
-            ipsec_site_connection_builder.mtu(*val);
+        if let Some(val) = &args.dpd {
+            ipsec_site_connection_builder.dpd(val);
         }
 
         if let Some(val) = &args.initiator {
@@ -248,16 +219,45 @@ impl IpsecSiteConnectionCommand {
             ipsec_site_connection_builder.initiator(tmp);
         }
 
+        if let Some(val) = &args.local_ep_group_id {
+            ipsec_site_connection_builder.local_ep_group_id(Some(val.into()));
+        } else if args.no_local_ep_group_id {
+            ipsec_site_connection_builder.local_ep_group_id(None);
+        }
+
+        if let Some(val) = &args.local_id {
+            ipsec_site_connection_builder.local_id(val);
+        }
+
+        if let Some(val) = &args.mtu {
+            ipsec_site_connection_builder.mtu(*val);
+        }
+
+        if let Some(val) = &args.name {
+            ipsec_site_connection_builder.name(val);
+        }
+
+        if let Some(val) = &args.peer_address {
+            ipsec_site_connection_builder.peer_address(val);
+        }
+
+        if let Some(val) = &args.peer_cidrs {
+            ipsec_site_connection_builder
+                .peer_cidrs(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.peer_ep_group_id {
+            ipsec_site_connection_builder.peer_ep_group_id(Some(val.into()));
+        } else if args.no_peer_ep_group_id {
+            ipsec_site_connection_builder.peer_ep_group_id(None);
+        }
+
+        if let Some(val) = &args.peer_id {
+            ipsec_site_connection_builder.peer_id(val);
+        }
+
         if let Some(val) = &args.psk {
             ipsec_site_connection_builder.psk(val);
-        }
-
-        if let Some(val) = &args.dpd {
-            ipsec_site_connection_builder.dpd(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            ipsec_site_connection_builder.admin_state_up(*val);
         }
 
         ep_builder.ipsec_site_connection(ipsec_site_connection_builder.build().unwrap());

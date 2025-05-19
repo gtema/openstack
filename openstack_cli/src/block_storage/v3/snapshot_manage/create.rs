@@ -166,11 +166,11 @@ impl SnapshotManageCommand {
             snapshot_builder.name(None);
         }
 
-        snapshot_builder.volume_id(&args.volume_id);
-
         if let Some(val) = &args._ref {
             snapshot_builder._ref(val.clone());
         }
+
+        snapshot_builder.volume_id(&args.volume_id);
 
         ep_builder.snapshot(snapshot_builder.build().unwrap());
 

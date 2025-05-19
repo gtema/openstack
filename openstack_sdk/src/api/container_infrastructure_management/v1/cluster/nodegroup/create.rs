@@ -204,19 +204,6 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
-    pub fn labels_overridden<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
-    {
-        self.labels_overridden
-            .get_or_insert(None)
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-
     pub fn labels_added<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -224,6 +211,19 @@ impl<'a> RequestBuilder<'a> {
         V: Into<Cow<'a, str>>,
     {
         self.labels_added
+            .get_or_insert(None)
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
+    pub fn labels_overridden<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.labels_overridden
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
@@ -283,35 +283,53 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.id {
-            params.push("id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.uuid {
-            params.push("uuid", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.name {
-            params.push("name", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.cluster_id {
             params.push("cluster_id", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.project_id {
-            params.push("project_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.docker_volume_size {
             params.push("docker_volume_size", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.flavor_id {
+            params.push("flavor_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.id {
+            params.push("id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.image_id {
+            params.push("image_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.is_default {
+            params.push("is_default", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.labels {
             params.push("labels", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.labels_added {
+            params.push("labels_added", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.labels_overridden {
+            params.push("labels_overridden", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.labels_skipped {
+            params.push("labels_skipped", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.links {
             params.push("links", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.flavor_id {
-            params.push("flavor_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.max_node_count {
+            params.push("max_node_count", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.image_id {
-            params.push("image_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.merge_labels {
+            params.push("merge_labels", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.min_node_count {
+            params.push("min_node_count", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.name {
+            params.push("name", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.node_addresses {
             params.push("node_addresses", serde_json::to_value(val)?);
@@ -319,17 +337,11 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.node_count {
             params.push("node_count", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.project_id {
+            params.push("project_id", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.role {
             params.push("role", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.min_node_count {
-            params.push("min_node_count", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.max_node_count {
-            params.push("max_node_count", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.is_default {
-            params.push("is_default", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.stack_id {
             params.push("stack_id", serde_json::to_value(val)?);
@@ -340,26 +352,14 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.status_reason {
             params.push("status_reason", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.version {
-            params.push("version", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.merge_labels {
-            params.push("merge_labels", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.labels_overridden {
-            params.push("labels_overridden", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.labels_added {
-            params.push("labels_added", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.labels_skipped {
-            params.push("labels_skipped", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.uuid {
+            params.push("uuid", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.version {
+            params.push("version", serde_json::to_value(val)?);
         }
 
         params.into_body()

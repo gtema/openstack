@@ -127,8 +127,14 @@ impl RegisteredLimitCommand {
         // Set Request.registered_limit data
         let args = &self.registered_limit;
         let mut registered_limit_builder = set::RegisteredLimitBuilder::default();
-        if let Some(val) = &args.service_id {
-            registered_limit_builder.service_id(val);
+        if let Some(val) = &args.default_limit {
+            registered_limit_builder.default_limit(*val);
+        }
+
+        if let Some(val) = &args.description {
+            registered_limit_builder.description(Some(val.into()));
+        } else if args.no_description {
+            registered_limit_builder.description(None);
         }
 
         if let Some(val) = &args.region_id {
@@ -141,14 +147,8 @@ impl RegisteredLimitCommand {
             registered_limit_builder.resource_name(val);
         }
 
-        if let Some(val) = &args.default_limit {
-            registered_limit_builder.default_limit(*val);
-        }
-
-        if let Some(val) = &args.description {
-            registered_limit_builder.description(Some(val.into()));
-        } else if args.no_description {
-            registered_limit_builder.description(None);
+        if let Some(val) = &args.service_id {
+            registered_limit_builder.service_id(val);
         }
 
         ep_builder.registered_limit(registered_limit_builder.build().unwrap());

@@ -197,12 +197,6 @@ impl ManageableVolumeCommand {
         // Set Request.volume data
         let args = &self.volume;
         let mut volume_builder = create::VolumeBuilder::default();
-        if let Some(val) = &args.description {
-            volume_builder.description(Some(val.into()));
-        } else if args.no_description {
-            volume_builder.description(None);
-        }
-
         if let Some(val) = &args.availability_zone {
             volume_builder.availability_zone(Some(val.into()));
         } else if args.no_availability_zone {
@@ -213,16 +207,10 @@ impl ManageableVolumeCommand {
             volume_builder.bootable(*val);
         }
 
-        if let Some(val) = &args.volume_type {
-            volume_builder.volume_type(Some(val.into()));
-        } else if args.no_volume_type {
-            volume_builder.volume_type(None);
-        }
-
-        if let Some(val) = &args.name {
-            volume_builder.name(Some(val.into()));
-        } else if args.no_name {
-            volume_builder.name(None);
+        if let Some(val) = &args.description {
+            volume_builder.description(Some(val.into()));
+        } else if args.no_description {
+            volume_builder.description(None);
         }
 
         if let Some(val) = &args.host {
@@ -231,10 +219,22 @@ impl ManageableVolumeCommand {
             volume_builder.host(None);
         }
 
-        volume_builder._ref(args._ref.clone());
-
         if let Some(val) = &args.metadata {
             volume_builder.metadata(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.name {
+            volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
+        }
+
+        volume_builder._ref(args._ref.clone());
+
+        if let Some(val) = &args.volume_type {
+            volume_builder.volume_type(Some(val.into()));
+        } else if args.no_volume_type {
+            volume_builder.volume_type(None);
         }
 
         ep_builder.volume(volume_builder.build().unwrap());

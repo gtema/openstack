@@ -88,7 +88,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Certificate.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -129,23 +129,23 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
+        if let Some(val) = &self.ca_cert_type {
+            params.push("ca_cert_type", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.cluster_uuid {
             params.push("cluster_uuid", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.links {
-            params.push("links", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.csr {
             params.push("csr", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.links {
+            params.push("links", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.pem {
             params.push("pem", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.ca_cert_type {
-            params.push("ca_cert_type", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);

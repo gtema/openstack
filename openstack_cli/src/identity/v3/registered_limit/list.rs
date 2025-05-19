@@ -85,14 +85,14 @@ impl RegisteredLimitsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.service_id {
-            ep_builder.service_id(val);
-        }
         if let Some(val) = &self.query.region_id {
             ep_builder.region_id(val);
         }
         if let Some(val) = &self.query.resource_name {
             ep_builder.resource_name(val);
+        }
+        if let Some(val) = &self.query.service_id {
+            ep_builder.service_id(val);
         }
         // Set body parameters
 

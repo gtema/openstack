@@ -118,6 +118,12 @@ impl GroupCommand {
         // Set Request.group data
         let args = &self.group;
         let mut group_builder = create_313::GroupBuilder::default();
+        if let Some(val) = &args.availability_zone {
+            group_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            group_builder.availability_zone(None);
+        }
+
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -133,12 +139,6 @@ impl GroupCommand {
         }
 
         group_builder.volume_types(args.volume_types.iter().map(Into::into).collect::<Vec<_>>());
-
-        if let Some(val) = &args.availability_zone {
-            group_builder.availability_zone(Some(val.into()));
-        } else if args.no_availability_zone {
-            group_builder.availability_zone(None);
-        }
 
         ep_builder.group(group_builder.build().unwrap());
 

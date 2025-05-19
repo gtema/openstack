@@ -120,12 +120,12 @@ impl SecurityGroupCommand {
         // Set Request.security_group data
         let args = &self.security_group;
         let mut security_group_builder = set::SecurityGroupBuilder::default();
-        if let Some(val) = &args.name {
-            security_group_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             security_group_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            security_group_builder.name(val);
         }
 
         if let Some(val) = &args.stateful {

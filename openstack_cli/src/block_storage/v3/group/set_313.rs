@@ -147,6 +147,12 @@ impl GroupCommand {
         // Set Request.group data
         let args = &self.group;
         let mut group_builder = set_313::GroupBuilder::default();
+        if let Some(val) = &args.add_volumes {
+            group_builder.add_volumes(Some(val.into()));
+        } else if args.no_add_volumes {
+            group_builder.add_volumes(None);
+        }
+
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -157,12 +163,6 @@ impl GroupCommand {
             group_builder.name(Some(val.into()));
         } else if args.no_name {
             group_builder.name(None);
-        }
-
-        if let Some(val) = &args.add_volumes {
-            group_builder.add_volumes(Some(val.into()));
-        } else if args.no_add_volumes {
-            group_builder.add_volumes(None);
         }
 
         if let Some(val) = &args.remove_volumes {

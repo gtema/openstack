@@ -224,17 +224,13 @@ impl ApplicationCredentialCommand {
         // Set Request.application_credential data
         let args = &self.application_credential;
         let mut application_credential_builder = create::ApplicationCredentialBuilder::default();
-        if let Some(val) = &args.id {
-            application_credential_builder.id(val);
+        if let Some(val) = &args.access_rules {
+            let access_rules_builder: Vec<create::AccessRules> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.to_owned()))
+                .collect::<Vec<create::AccessRules>>();
+            application_credential_builder.access_rules(access_rules_builder);
         }
-
-        if let Some(val) = &args.secret {
-            application_credential_builder.secret(Some(val.into()));
-        } else if args.no_secret {
-            application_credential_builder.secret(None);
-        }
-
-        application_credential_builder.name(&args.name);
 
         if let Some(val) = &args.description {
             application_credential_builder.description(Some(val.into()));
@@ -248,26 +244,14 @@ impl ApplicationCredentialCommand {
             application_credential_builder.expires_at(None);
         }
 
+        if let Some(val) = &args.id {
+            application_credential_builder.id(val);
+        }
+
+        application_credential_builder.name(&args.name);
+
         if let Some(val) = &args.project_id {
             application_credential_builder.project_id(val);
-        }
-
-        if let Some(val) = &args.access_rules {
-            let access_rules_builder: Vec<create::AccessRules> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.to_owned()))
-                .collect::<Vec<create::AccessRules>>();
-            application_credential_builder.access_rules(access_rules_builder);
-        }
-
-        if let Some(val) = &args.unrestricted {
-            application_credential_builder.unrestricted(*val);
-        }
-
-        if let Some(val) = &args.system {
-            application_credential_builder.system(Some(val.into()));
-        } else if args.no_system {
-            application_credential_builder.system(None);
         }
 
         if let Some(val) = &args.roles {
@@ -276,6 +260,22 @@ impl ApplicationCredentialCommand {
                 .flat_map(|v| serde_json::from_value::<create::Roles>(v.to_owned()))
                 .collect::<Vec<create::Roles>>();
             application_credential_builder.roles(roles_builder);
+        }
+
+        if let Some(val) = &args.secret {
+            application_credential_builder.secret(Some(val.into()));
+        } else if args.no_secret {
+            application_credential_builder.secret(None);
+        }
+
+        if let Some(val) = &args.system {
+            application_credential_builder.system(Some(val.into()));
+        } else if args.no_system {
+            application_credential_builder.system(None);
+        }
+
+        if let Some(val) = &args.unrestricted {
+            application_credential_builder.unrestricted(*val);
         }
 
         ep_builder.application_credential(application_credential_builder.build().unwrap());

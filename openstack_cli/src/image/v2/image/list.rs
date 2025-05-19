@@ -271,17 +271,26 @@ impl ImagesCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
+        if let Some(val) = &self.query.member_status {
+            ep_builder.member_status(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.os_hidden {
+            ep_builder.os_hidden(*val);
         }
         if let Some(val) = &self.query.owner {
             ep_builder.owner(val);
@@ -289,32 +298,14 @@ impl ImagesCommand {
         if let Some(val) = &self.query.protected {
             ep_builder.protected(*val);
         }
-        if let Some(val) = &self.query.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.query.tag {
-            ep_builder.tag(val.iter());
-        }
-        if let Some(val) = &self.query.visibility {
-            ep_builder.visibility(val);
-        }
-        if let Some(val) = &self.query.os_hidden {
-            ep_builder.os_hidden(*val);
-        }
-        if let Some(val) = &self.query.member_status {
-            ep_builder.member_status(val);
-        }
         if let Some(val) = &self.query.size_max {
             ep_builder.size_max(val);
         }
         if let Some(val) = &self.query.size_min {
             ep_builder.size_min(val);
         }
-        if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val);
-        }
-        if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val);
+        if let Some(val) = &self.query.sort {
+            ep_builder.sort(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val);
@@ -322,8 +313,17 @@ impl ImagesCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val);
         }
-        if let Some(val) = &self.query.sort {
-            ep_builder.sort(val);
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.tag {
+            ep_builder.tag(val.iter());
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.visibility {
+            ep_builder.visibility(val);
         }
         // Set body parameters
 

@@ -64,6 +64,17 @@ pub struct FederationResponse {
     pub uuid: Option<String>,
 }
 
+/// A link representation.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // CreateComplete
@@ -119,15 +130,4 @@ impl std::str::FromStr for Status {
             _ => Err(()),
         }
     }
-}
-
-/// A link representation.
-/// `Links` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    pub created_at: Option<String>,
-    pub href: Option<String>,
-    pub rel: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
 }

@@ -166,10 +166,8 @@ impl SharesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
-            .query_async(client)
-            .await?;
-        op.output_list::<ShareResponse>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ShareResponse>(data)?;
         Ok(())
     }
 }

@@ -55,15 +55,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// policy_id parameter for
-    /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_policy_id",
-        value_name = "POLICY_ID"
-    )]
-    policy_id: String,
-
     /// id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
     #[arg(
@@ -72,6 +63,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// policy_id parameter for
+    /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_policy_id",
+        value_name = "POLICY_ID"
+    )]
+    policy_id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -111,27 +111,27 @@ impl PacketRateLimitRuleCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
+        ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         // Set body parameters
         // Set Request.packet_rate_limit_rule data
         let args = &self.packet_rate_limit_rule;
         let mut packet_rate_limit_rule_builder = set::PacketRateLimitRuleBuilder::default();
-        if let Some(val) = &args.max_kpps {
-            packet_rate_limit_rule_builder.max_kpps(*val);
-        }
-
-        if let Some(val) = &args.max_burst_kpps {
-            packet_rate_limit_rule_builder.max_burst_kpps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => set::Direction::Egress,
                 Direction::Ingress => set::Direction::Ingress,
             };
             packet_rate_limit_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.max_burst_kpps {
+            packet_rate_limit_rule_builder.max_burst_kpps(*val);
+        }
+
+        if let Some(val) = &args.max_kpps {
+            packet_rate_limit_rule_builder.max_kpps(*val);
         }
 
         ep_builder.packet_rate_limit_rule(packet_rate_limit_rule_builder.build().unwrap());

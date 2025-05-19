@@ -67,6 +67,16 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum AuthAlgorithm {
+    AesCmac,
+    AesXcbc,
+    Sha1,
+    Sha256,
+    Sha384,
+    Sha512,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum EncryptionAlgorithm {
     _3des,
     Aes128,
@@ -93,22 +103,6 @@ enum EncryptionAlgorithm {
     Aes256Gcm12,
     Aes256Gcm16,
     Aes256Gcm8,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum AuthAlgorithm {
-    AesCmac,
-    AesXcbc,
-    Sha1,
-    Sha256,
-    Sha384,
-    Sha512,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Phase1NegotiationMode {
-    Aggressive,
-    Main,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -139,6 +133,12 @@ enum Pfs {
     Group30,
     Group31,
     Group5,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Phase1NegotiationMode {
+    Aggressive,
+    Main,
 }
 
 /// Ikepolicy Body data
@@ -211,6 +211,22 @@ impl IkepolicyCommand {
         // Set Request.ikepolicy data
         let args = &self.ikepolicy;
         let mut ikepolicy_builder = create::IkepolicyBuilder::default();
+        if let Some(val) = &args.auth_algorithm {
+            let tmp = match val {
+                AuthAlgorithm::AesCmac => create::AuthAlgorithm::AesCmac,
+                AuthAlgorithm::AesXcbc => create::AuthAlgorithm::AesXcbc,
+                AuthAlgorithm::Sha1 => create::AuthAlgorithm::Sha1,
+                AuthAlgorithm::Sha256 => create::AuthAlgorithm::Sha256,
+                AuthAlgorithm::Sha384 => create::AuthAlgorithm::Sha384,
+                AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
+            };
+            ikepolicy_builder.auth_algorithm(tmp);
+        }
+
+        if let Some(val) = &args.description {
+            ikepolicy_builder.description(val);
+        }
+
         if let Some(val) = &args.encryption_algorithm {
             let tmp = match val {
                 EncryptionAlgorithm::_3des => create::EncryptionAlgorithm::_3des,
@@ -242,48 +258,20 @@ impl IkepolicyCommand {
             ikepolicy_builder.encryption_algorithm(tmp);
         }
 
-        if let Some(val) = &args.tenant_id {
-            ikepolicy_builder.tenant_id(val);
-        }
-
-        if let Some(val) = &args.name {
-            ikepolicy_builder.name(val);
-        }
-
-        if let Some(val) = &args.description {
-            ikepolicy_builder.description(val);
-        }
-
-        if let Some(val) = &args.auth_algorithm {
-            let tmp = match val {
-                AuthAlgorithm::AesCmac => create::AuthAlgorithm::AesCmac,
-                AuthAlgorithm::AesXcbc => create::AuthAlgorithm::AesXcbc,
-                AuthAlgorithm::Sha1 => create::AuthAlgorithm::Sha1,
-                AuthAlgorithm::Sha256 => create::AuthAlgorithm::Sha256,
-                AuthAlgorithm::Sha384 => create::AuthAlgorithm::Sha384,
-                AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
-            };
-            ikepolicy_builder.auth_algorithm(tmp);
-        }
-
-        if let Some(val) = &args.phase1_negotiation_mode {
-            let tmp = match val {
-                Phase1NegotiationMode::Aggressive => create::Phase1NegotiationMode::Aggressive,
-                Phase1NegotiationMode::Main => create::Phase1NegotiationMode::Main,
-            };
-            ikepolicy_builder.phase1_negotiation_mode(tmp);
-        }
-
-        if let Some(val) = &args.lifetime {
-            ikepolicy_builder.lifetime(val);
-        }
-
         if let Some(val) = &args.ike_version {
             let tmp = match val {
                 IkeVersion::V1 => create::IkeVersion::V1,
                 IkeVersion::V2 => create::IkeVersion::V2,
             };
             ikepolicy_builder.ike_version(tmp);
+        }
+
+        if let Some(val) = &args.lifetime {
+            ikepolicy_builder.lifetime(val);
+        }
+
+        if let Some(val) = &args.name {
+            ikepolicy_builder.name(val);
         }
 
         if let Some(val) = &args.pfs {
@@ -310,6 +298,18 @@ impl IkepolicyCommand {
                 Pfs::Group5 => create::Pfs::Group5,
             };
             ikepolicy_builder.pfs(tmp);
+        }
+
+        if let Some(val) = &args.phase1_negotiation_mode {
+            let tmp = match val {
+                Phase1NegotiationMode::Aggressive => create::Phase1NegotiationMode::Aggressive,
+                Phase1NegotiationMode::Main => create::Phase1NegotiationMode::Main,
+            };
+            ikepolicy_builder.phase1_negotiation_mode(tmp);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            ikepolicy_builder.tenant_id(val);
         }
 
         ep_builder.ikepolicy(ikepolicy_builder.build().unwrap());

@@ -98,7 +98,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the User.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -137,14 +137,14 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("domain_id", self.domain_id.as_ref());
         params.push_opt("enabled", self.enabled);
         params.push_opt("idp_id", self.idp_id.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("name", self.name.as_ref());
         params.push_opt("password_expires_at", self.password_expires_at.as_ref());
         params.push_opt("protocol_id", self.protocol_id.as_ref());
-        params.push_opt("unique_id", self.unique_id.as_ref());
-        params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("limit", self.limit);
-        params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("unique_id", self.unique_id.as_ref());
 
         params
     }

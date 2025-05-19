@@ -49,7 +49,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Os_Ec2.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -82,8 +82,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "users/{user_id}/credentials/OS-EC2/{credential_id}",
-            user_id = self.user_id.as_ref(),
             credential_id = self.credential_id.as_ref(),
+            user_id = self.user_id.as_ref(),
         )
         .into()
     }
@@ -143,8 +143,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::DELETE).path(format!(
                 "/users/{user_id}/credentials/OS-EC2/{credential_id}",
-                user_id = "user_id",
                 credential_id = "credential_id",
+                user_id = "user_id",
             ));
 
             then.status(200)
@@ -153,8 +153,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .user_id("user_id")
             .credential_id("credential_id")
+            .user_id("user_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -170,8 +170,8 @@ mod tests {
             when.method(httpmock::Method::DELETE)
                 .path(format!(
                     "/users/{user_id}/credentials/OS-EC2/{credential_id}",
-                    user_id = "user_id",
                     credential_id = "credential_id",
+                    user_id = "user_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -181,8 +181,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .user_id("user_id")
             .credential_id("credential_id")
+            .user_id("user_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

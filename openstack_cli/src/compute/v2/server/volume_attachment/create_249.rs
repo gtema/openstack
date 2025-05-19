@@ -131,9 +131,6 @@ impl VolumeAttachmentCommand {
         // Set Request.volume_attachment data
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = create_249::VolumeAttachmentBuilder::default();
-
-        volume_attachment_builder.volume_id(&args.volume_id);
-
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
         } else if args.no_device {
@@ -143,6 +140,8 @@ impl VolumeAttachmentCommand {
         if let Some(val) = &args.tag {
             volume_attachment_builder.tag(val);
         }
+
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());
 

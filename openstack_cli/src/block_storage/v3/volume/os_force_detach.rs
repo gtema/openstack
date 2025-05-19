@@ -97,16 +97,16 @@ impl VolumeCommand {
         // Set Request.os_force_detach data
         let args = &self.os_force_detach;
         let mut os_force_detach_builder = os_force_detach::OsForceDetachBuilder::default();
-        if let Some(val) = &args.connector {
-            if let Some(val) = val {
-                os_force_detach_builder.connector(val.clone());
-            }
-        }
-
         if let Some(val) = &args.attachment_id {
             os_force_detach_builder.attachment_id(Some(val.into()));
         } else if args.no_attachment_id {
             os_force_detach_builder.attachment_id(None);
+        }
+
+        if let Some(val) = &args.connector {
+            if let Some(val) = val {
+                os_force_detach_builder.connector(val.clone());
+            }
         }
 
         ep_builder.os_force_detach(os_force_detach_builder.build().unwrap());

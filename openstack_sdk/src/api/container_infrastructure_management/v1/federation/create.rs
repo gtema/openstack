@@ -30,28 +30,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Status {
-    #[serde(rename = "CREATE_COMPLETE")]
-    CreateComplete,
-    #[serde(rename = "CREATE_FAILED")]
-    CreateFailed,
-    #[serde(rename = "CREATE_IN_PROGRESS")]
-    CreateInProgress,
-    #[serde(rename = "DELETE_COMPLETE")]
-    DeleteComplete,
-    #[serde(rename = "DELETE_FAILED")]
-    DeleteFailed,
-    #[serde(rename = "DELETE_IN_PROGRESS")]
-    DeleteInProgress,
-    #[serde(rename = "UPDATE_COMPLETE")]
-    UpdateComplete,
-    #[serde(rename = "UPDATE_FAILED")]
-    UpdateFailed,
-    #[serde(rename = "UPDATE_IN_PROGRESS")]
-    UpdateInProgress,
-}
-
 /// A link representation.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -75,6 +53,28 @@ pub struct Links<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) updated_at: Option<Cow<'a, str>>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Status {
+    #[serde(rename = "CREATE_COMPLETE")]
+    CreateComplete,
+    #[serde(rename = "CREATE_FAILED")]
+    CreateFailed,
+    #[serde(rename = "CREATE_IN_PROGRESS")]
+    CreateInProgress,
+    #[serde(rename = "DELETE_COMPLETE")]
+    DeleteComplete,
+    #[serde(rename = "DELETE_FAILED")]
+    DeleteFailed,
+    #[serde(rename = "DELETE_IN_PROGRESS")]
+    DeleteInProgress,
+    #[serde(rename = "UPDATE_COMPLETE")]
+    UpdateComplete,
+    #[serde(rename = "UPDATE_FAILED")]
+    UpdateFailed,
+    #[serde(rename = "UPDATE_IN_PROGRESS")]
+    UpdateInProgress,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -174,17 +174,23 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.uuid {
-            params.push("uuid", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.name {
-            params.push("name", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.hostcluster_id {
             params.push("hostcluster_id", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.links {
+            params.push("links", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.member_ids {
             params.push("member_ids", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.name {
+            params.push("name", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.properties {
+            params.push("properties", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.status {
             params.push("status", serde_json::to_value(val)?);
@@ -192,17 +198,11 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.status_reason {
             params.push("status_reason", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.properties {
-            params.push("properties", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.links {
-            params.push("links", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.uuid {
+            params.push("uuid", serde_json::to_value(val)?);
         }
 
         params.into_body()

@@ -101,12 +101,11 @@ impl ServerCommand {
         // Set Request.create_image data
         let args = &self.create_image;
         let mut create_image_builder = create_image_20::CreateImageBuilder::default();
-
-        create_image_builder.name(&args.name);
-
         if let Some(val) = &args.metadata {
             create_image_builder.metadata(val.iter().cloned());
         }
+
+        create_image_builder.name(&args.name);
 
         ep_builder.create_image(create_image_builder.build().unwrap());
 

@@ -82,12 +82,6 @@ impl std::str::FromStr for OsDcfDiskConfig {
     }
 }
 
-/// `SecurityGroups` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SecurityGroups {
-    pub name: Option<String>,
-}
-
 /// Links to the resources in question. See
 /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
 /// for more info.
@@ -96,4 +90,10 @@ pub struct SecurityGroups {
 pub struct Links {
     pub href: Option<String>,
     pub rel: Option<String>,
+}
+
+/// `SecurityGroups` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SecurityGroups {
+    pub name: Option<String>,
 }

@@ -59,8 +59,8 @@ impl TryFrom<&DnsZoneRecordsetDelete> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &DnsZoneRecordsetDelete) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        ep_builder.zone_id(value.zone_id.clone());
         ep_builder.id(value.id.clone());
+        ep_builder.zone_id(value.zone_id.clone());
 
         Ok(ep_builder)
     }

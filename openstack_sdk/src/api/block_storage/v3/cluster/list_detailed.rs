@@ -77,7 +77,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Cluster.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -113,14 +113,14 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("frozen", self.frozen);
         params.push_opt("active_backend_id", self.active_backend_id.as_ref());
-        params.push_opt("name", self.name.as_ref());
         params.push_opt("binary", self.binary.as_ref());
-        params.push_opt("is_up", self.is_up);
         params.push_opt("disabled", self.disabled);
-        params.push_opt("num_hosts", self.num_hosts);
+        params.push_opt("frozen", self.frozen);
+        params.push_opt("is_up", self.is_up);
+        params.push_opt("name", self.name.as_ref());
         params.push_opt("num_down_hosts", self.num_down_hosts);
+        params.push_opt("num_hosts", self.num_hosts);
         params.push_opt("replication_stats", self.replication_stats.as_ref());
 
         params

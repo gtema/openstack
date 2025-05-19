@@ -95,8 +95,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "local_ips/{local_ip_id}/port_associations/{id}",
-            local_ip_id = self.local_ip_id.as_ref(),
             id = self.id.as_ref(),
+            local_ip_id = self.local_ip_id.as_ref(),
         )
         .into()
     }
@@ -179,8 +179,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/local_ips/{local_ip_id}/port_associations/{id}",
-                local_ip_id = "local_ip_id",
                 id = "id",
+                local_ip_id = "local_ip_id",
             ));
 
             then.status(200)
@@ -189,8 +189,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .local_ip_id("local_ip_id")
             .id("id")
+            .local_ip_id("local_ip_id")
             .port_association(BTreeMap::<String, Value>::new().into_iter())
             .build()
             .unwrap();
@@ -207,8 +207,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/local_ips/{local_ip_id}/port_associations/{id}",
-                    local_ip_id = "local_ip_id",
                     id = "id",
+                    local_ip_id = "local_ip_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -218,8 +218,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .local_ip_id("local_ip_id")
             .id("id")
+            .local_ip_id("local_ip_id")
             .port_association(BTreeMap::<String, Value>::new().into_iter())
             .headers(
                 [(

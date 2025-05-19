@@ -55,6 +55,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
+    /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
+
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     #[arg(
@@ -63,14 +71,6 @@ struct PathParameters {
         value_name = "ROUTER_ID"
     )]
     router_id: String,
-
-    /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
 }
 
 impl ConntrackHelperCommand {
@@ -91,8 +91,8 @@ impl ConntrackHelperCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.router_id(&self.path.router_id);
         ep_builder.id(&self.path.id);
+        ep_builder.router_id(&self.path.router_id);
         // Set query parameters
         // Set body parameters
 

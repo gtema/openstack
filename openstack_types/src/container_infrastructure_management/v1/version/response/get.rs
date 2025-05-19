@@ -75,31 +75,10 @@ pub struct VersionResponse {
     pub updated_at: Option<String>,
 }
 
-/// A media type representation.
-/// `MediaTypes` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct MediaTypes {
-    pub base: Option<String>,
-    pub created_at: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
-}
-
 /// A link representation.
-/// `Links` type
+/// `Certificates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    pub created_at: Option<String>,
-    pub href: Option<String>,
-    pub rel: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
-}
-
-/// A link representation.
-/// `Clustertemplates` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Clustertemplates {
+pub struct Certificates {
     pub created_at: Option<String>,
     pub href: Option<String>,
     pub rel: Option<String>,
@@ -119,42 +98,9 @@ pub struct Clusters {
 }
 
 /// A link representation.
-/// `Quotas` type
+/// `Clustertemplates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Quotas {
-    pub created_at: Option<String>,
-    pub href: Option<String>,
-    pub rel: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
-}
-
-/// A link representation.
-/// `Certificates` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Certificates {
-    pub created_at: Option<String>,
-    pub href: Option<String>,
-    pub rel: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
-}
-
-/// A link representation.
-/// `Mservices` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Mservices {
-    pub created_at: Option<String>,
-    pub href: Option<String>,
-    pub rel: Option<String>,
-    pub _type: Option<String>,
-    pub updated_at: Option<String>,
-}
-
-/// A link representation.
-/// `Stats` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Stats {
+pub struct Clustertemplates {
     pub created_at: Option<String>,
     pub href: Option<String>,
     pub rel: Option<String>,
@@ -174,9 +120,63 @@ pub struct Federations {
 }
 
 /// A link representation.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
+/// A media type representation.
+/// `MediaTypes` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MediaTypes {
+    pub base: Option<String>,
+    pub created_at: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
+/// A link representation.
+/// `Mservices` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Mservices {
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
+/// A link representation.
 /// `Nodegroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Nodegroups {
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
+/// A link representation.
+/// `Quotas` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Quotas {
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+}
+
+/// A link representation.
+/// `Stats` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Stats {
     pub created_at: Option<String>,
     pub href: Option<String>,
     pub rel: Option<String>,

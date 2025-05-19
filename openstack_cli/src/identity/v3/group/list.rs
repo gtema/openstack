@@ -162,20 +162,20 @@ impl GroupsCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
         }
         // Set body parameters
 

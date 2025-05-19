@@ -232,10 +232,10 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("volume", serde_json::to_value(&self.volume)?);
         if let Some(val) = &self.os_sch_hnt_scheduler_hints {
             params.push("OS-SCH-HNT:scheduler_hints", serde_json::to_value(val)?);
         }
+        params.push("volume", serde_json::to_value(&self.volume)?);
 
         params.into_body()
     }

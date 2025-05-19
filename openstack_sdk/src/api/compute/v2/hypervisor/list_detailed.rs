@@ -58,7 +58,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Hypervisor.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -94,12 +94,12 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("limit", self.limit);
-        params.push_opt("marker", self.marker.as_ref());
         params.push_opt(
             "hypervisor_hostname_pattern",
             self.hypervisor_hostname_pattern.as_ref(),
         );
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("with_servers", self.with_servers);
 
         params

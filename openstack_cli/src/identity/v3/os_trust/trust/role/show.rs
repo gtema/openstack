@@ -51,15 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
-    /// API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_trust_id",
-        value_name = "TRUST_ID"
-    )]
-    trust_id: String,
-
     /// role_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
     /// API
     #[arg(
@@ -68,6 +59,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
+    /// API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_trust_id",
+        value_name = "TRUST_ID"
+    )]
+    trust_id: String,
 }
 
 impl RoleCommand {
@@ -88,8 +88,8 @@ impl RoleCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.trust_id(&self.path.trust_id);
         ep_builder.id(&self.path.id);
+        ep_builder.trust_id(&self.path.trust_id);
         // Set query parameters
         // Set body parameters
 

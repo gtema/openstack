@@ -115,12 +115,12 @@ impl AddressGroupCommand {
         // Set Request.address_group data
         let args = &self.address_group;
         let mut address_group_builder = set::AddressGroupBuilder::default();
-        if let Some(val) = &args.name {
-            address_group_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             address_group_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            address_group_builder.name(val);
         }
 
         ep_builder.address_group(address_group_builder.build().unwrap());

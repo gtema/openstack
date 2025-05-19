@@ -115,12 +115,16 @@ impl RbacPolicyCommand {
         // Set Request.rbac_policy data
         let args = &self.rbac_policy;
         let mut rbac_policy_builder = create::RbacPolicyBuilder::default();
-        if let Some(val) = &args.object_type {
-            rbac_policy_builder.object_type(val);
+        if let Some(val) = &args.action {
+            rbac_policy_builder.action(val);
         }
 
         if let Some(val) = &args.object_id {
             rbac_policy_builder.object_id(val);
+        }
+
+        if let Some(val) = &args.object_type {
+            rbac_policy_builder.object_type(val);
         }
 
         if let Some(val) = &args.target_tenant {
@@ -129,10 +133,6 @@ impl RbacPolicyCommand {
 
         if let Some(val) = &args.tenant_id {
             rbac_policy_builder.tenant_id(val);
-        }
-
-        if let Some(val) = &args.action {
-            rbac_policy_builder.action(val);
         }
 
         ep_builder.rbac_policy(rbac_policy_builder.build().unwrap());

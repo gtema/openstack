@@ -162,38 +162,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// A comma-separated list of traits that a provider must have:
-    /// `required=HW_CPU_X86_AVX,HW_CPU_X86_SSE` Allocation requests in the
-    /// response will be for resource providers that have capacity for all
-    /// requested resources and the set of those resource providers will
-    /// collectively contain all of the required traits. These traits may be
-    /// satisfied by any provider in the same non-sharing tree or associated
-    /// via aggregate as far as that provider also contributes resource to the
-    /// request. Starting from microversion 1.22 traits which are forbidden
-    /// from any resource provider contributing resources to the request may be
-    /// expressed by prefixing a trait with a `!`. Starting from microversion
-    /// 1.39 the required query parameter can be repeated. The trait lists from
-    /// the repeated parameters are AND-ed together. So:
-    /// `required=T1,!T2&required=T3` means T1 and not T2 and T3. Also starting
-    /// from microversion 1.39 the required parameter supports the syntax:
-    /// `required=in:T1,T2,T3` which means T1 or T2 or T3. Mixing forbidden
-    /// traits into an in: prefixed value is not supported and rejected. But
-    /// mixing a normal trait list and an in: prefixed trait list in two query
-    /// params within the same request is supported. So:
-    /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
-    /// not T2 and (T3 or T4).
-    pub fn required<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.required
-            .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
     /// A string representing an aggregate uuid; or the prefix in: followed by
     /// a comma-separated list of strings representing aggregate uuids. The
     /// resource providers in the allocation request in the response must
@@ -237,6 +205,38 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
+    /// A comma-separated list of traits that a provider must have:
+    /// `required=HW_CPU_X86_AVX,HW_CPU_X86_SSE` Allocation requests in the
+    /// response will be for resource providers that have capacity for all
+    /// requested resources and the set of those resource providers will
+    /// collectively contain all of the required traits. These traits may be
+    /// satisfied by any provider in the same non-sharing tree or associated
+    /// via aggregate as far as that provider also contributes resource to the
+    /// request. Starting from microversion 1.22 traits which are forbidden
+    /// from any resource provider contributing resources to the request may be
+    /// expressed by prefixing a trait with a `!`. Starting from microversion
+    /// 1.39 the required query parameter can be repeated. The trait lists from
+    /// the repeated parameters are AND-ed together. So:
+    /// `required=T1,!T2&required=T3` means T1 and not T2 and T3. Also starting
+    /// from microversion 1.39 the required parameter supports the syntax:
+    /// `required=in:T1,T2,T3` which means T1 or T2 or T3. Mixing forbidden
+    /// traits into an in: prefixed value is not supported and rejected. But
+    /// mixing a normal trait list and an in: prefixed trait list in two query
+    /// params within the same request is supported. So:
+    /// `required=in:T3,T4&required=T1,!T2` is supported and it means T1 and
+    /// not T2 and (T3 or T4).
+    pub fn required<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.required
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
     /// Add a single header to the Allocation_Candidate.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -272,16 +272,16 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("resources", self.resources.as_ref());
-        if let Some(val) = &self.required {
-            params.extend(val.iter().map(|value| ("required", value)));
-        }
+        params.push_opt("group_policy", self.group_policy.as_ref());
+        params.push_opt("in_tree", self.in_tree.as_ref());
+        params.push_opt("limit", self.limit);
         if let Some(val) = &self.member_of {
             params.extend(val.iter().map(|value| ("member_of", value)));
         }
-        params.push_opt("in_tree", self.in_tree.as_ref());
-        params.push_opt("group_policy", self.group_policy.as_ref());
-        params.push_opt("limit", self.limit);
+        if let Some(val) = &self.required {
+            params.extend(val.iter().map(|value| ("required", value)));
+        }
+        params.push_opt("resources", self.resources.as_ref());
         params.push_opt("root_required", self.root_required.as_ref());
         params.push_opt("same_subtree", self.same_subtree.as_ref());
 

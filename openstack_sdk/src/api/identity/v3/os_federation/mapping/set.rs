@@ -40,6 +40,57 @@ pub struct Domain<'a> {
     pub(crate) name: Option<Cow<'a, str>>,
 }
 
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Group<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) id: Cow<'a, str>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct GroupStruct<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) domain: Domain<'a>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum LocalGroup<'a> {
+    F1(Group<'a>),
+    F2(GroupStruct<'a>),
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Roles<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Projects<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain: Option<Domain<'a>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) roles: Vec<Roles<'a>>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     #[serde(rename = "ephemeral")]
@@ -74,57 +125,6 @@ pub struct User<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Roles<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct Projects<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) domain: Option<Domain<'a>>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) roles: Vec<Roles<'a>>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct Group<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) id: Cow<'a, str>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct GroupStruct<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) domain: Domain<'a>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
-pub enum LocalGroup<'a> {
-    F1(Group<'a>),
-    F2(GroupStruct<'a>),
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
 pub struct Local<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -153,15 +153,7 @@ pub struct Local<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct RemoteType<'a> {
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct RemoteTypeAnyOneOfRegex<'a> {
+pub struct RemoteAnyOneOfRegexType<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) any_one_of: Vec<Cow<'a, str>>,
@@ -177,23 +169,7 @@ pub struct RemoteTypeAnyOneOfRegex<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct RemoteTypeNotAnyOfRegex<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) not_any_of: Vec<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) regex: Option<bool>,
-
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct RemoteTypeBlacklistRegex<'a> {
+pub struct RemoteBlacklistRegexType<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) blacklist: Vec<Cow<'a, str>>,
@@ -209,7 +185,23 @@ pub struct RemoteTypeBlacklistRegex<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct RemoteTypeWhitelistRegex<'a> {
+pub struct RemoteNotAnyOfRegexType<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) not_any_of: Vec<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) regex: Option<bool>,
+
+    #[serde(rename = "type")]
+    #[builder(setter(into))]
+    pub(crate) _type: Cow<'a, str>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct RemoteRegexTypeWhitelist<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) regex: Option<bool>,
@@ -223,14 +215,22 @@ pub struct RemoteTypeWhitelistRegex<'a> {
     pub(crate) whitelist: Vec<Cow<'a, str>>,
 }
 
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct RemoteType<'a> {
+    #[serde(rename = "type")]
+    #[builder(setter(into))]
+    pub(crate) _type: Cow<'a, str>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum RulesRemote<'a> {
-    F1(RemoteType<'a>),
-    F2(RemoteTypeAnyOneOfRegex<'a>),
-    F3(RemoteTypeNotAnyOfRegex<'a>),
-    F4(RemoteTypeBlacklistRegex<'a>),
-    F5(RemoteTypeWhitelistRegex<'a>),
+    F1(RemoteAnyOneOfRegexType<'a>),
+    F2(RemoteBlacklistRegexType<'a>),
+    F3(RemoteNotAnyOfRegexType<'a>),
+    F4(RemoteRegexTypeWhitelist<'a>),
+    F5(RemoteType<'a>),
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -278,7 +278,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Mapping.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -363,7 +363,11 @@ mod tests {
                         .rules(Vec::from([RulesBuilder::default()
                             .local(Vec::from([LocalBuilder::default().build().unwrap()]))
                             .remote(Vec::from([RulesRemote::F1(
-                                RemoteTypeBuilder::default()._type("foo").build().unwrap()
+                                RemoteAnyOneOfRegexTypeBuilder::default()
+                                    ._type("foo")
+                                    .any_one_of(Vec::from(["foo".into()]))
+                                    .build()
+                                    .unwrap()
                             )]))
                             .build()
                             .unwrap()]))
@@ -386,7 +390,11 @@ mod tests {
                         .rules(Vec::from([RulesBuilder::default()
                             .local(Vec::from([LocalBuilder::default().build().unwrap()]))
                             .remote(Vec::from([RulesRemote::F1(
-                                RemoteTypeBuilder::default()._type("foo").build().unwrap()
+                                RemoteAnyOneOfRegexTypeBuilder::default()
+                                    ._type("foo")
+                                    .any_one_of(Vec::from(["foo".into()]))
+                                    .build()
+                                    .unwrap()
                             )]))
                             .build()
                             .unwrap()]))
@@ -422,7 +430,11 @@ mod tests {
                     .rules(Vec::from([RulesBuilder::default()
                         .local(Vec::from([LocalBuilder::default().build().unwrap()]))
                         .remote(Vec::from([RulesRemote::F1(
-                            RemoteTypeBuilder::default()._type("foo").build().unwrap(),
+                            RemoteAnyOneOfRegexTypeBuilder::default()
+                                ._type("foo")
+                                .any_one_of(Vec::from(["foo".into()]))
+                                .build()
+                                .unwrap(),
                         )]))
                         .build()
                         .unwrap()]))
@@ -457,7 +469,11 @@ mod tests {
                     .rules(Vec::from([RulesBuilder::default()
                         .local(Vec::from([LocalBuilder::default().build().unwrap()]))
                         .remote(Vec::from([RulesRemote::F1(
-                            RemoteTypeBuilder::default()._type("foo").build().unwrap(),
+                            RemoteAnyOneOfRegexTypeBuilder::default()
+                                ._type("foo")
+                                .any_one_of(Vec::from(["foo".into()]))
+                                .build()
+                                .unwrap(),
                         )]))
                         .build()
                         .unwrap()]))

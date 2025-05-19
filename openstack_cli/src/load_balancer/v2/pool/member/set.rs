@@ -70,14 +70,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_pool_id",
-        value_name = "POOL_ID"
-    )]
-    pool_id: String,
-
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
     #[arg(
@@ -86,6 +78,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_pool_id",
+        value_name = "POOL_ID"
+    )]
+    pool_id: String,
 }
 /// Member Body data
 #[derive(Args, Clone)]
@@ -149,8 +149,8 @@ impl MemberCommand {
 
         let mut find_builder = find::Request::builder();
 
-        find_builder.pool_id(&self.path.pool_id);
         find_builder.id(&self.path.id);
+        find_builder.pool_id(&self.path.pool_id);
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -163,43 +163,43 @@ impl MemberCommand {
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
-        ep_builder.pool_id(resource_id.clone());
+        ep_builder.id(resource_id.clone());
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
-        ep_builder.id(resource_id.clone());
+        ep_builder.pool_id(resource_id.clone());
         // Set query parameters
         // Set body parameters
         // Set Request.member data
         let args = &self.member;
         let mut member_builder = set::MemberBuilder::default();
-        if let Some(val) = &args.name {
-            member_builder.name(val);
-        }
-
         if let Some(val) = &args.admin_state_up {
             member_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.weight {
-            member_builder.weight(*val);
         }
 
         if let Some(val) = &args.backup {
             member_builder.backup(*val);
         }
 
-        if let Some(val) = &args.monitor_port {
-            member_builder.monitor_port(*val);
-        }
-
         if let Some(val) = &args.monitor_address {
             member_builder.monitor_address(val);
         }
 
+        if let Some(val) = &args.monitor_port {
+            member_builder.monitor_port(*val);
+        }
+
+        if let Some(val) = &args.name {
+            member_builder.name(val);
+        }
+
         if let Some(val) = &args.tags {
             member_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.weight {
+            member_builder.weight(*val);
         }
 
         ep_builder.member(member_builder.build().unwrap());

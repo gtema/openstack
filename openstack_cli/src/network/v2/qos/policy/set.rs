@@ -125,20 +125,20 @@ impl PolicyCommand {
         // Set Request.policy data
         let args = &self.policy;
         let mut policy_builder = set::PolicyBuilder::default();
-        if let Some(val) = &args.name {
-            policy_builder.name(val);
-        }
-
-        if let Some(val) = &args.shared {
-            policy_builder.shared(*val);
+        if let Some(val) = &args.description {
+            policy_builder.description(val);
         }
 
         if let Some(val) = &args.is_default {
             policy_builder.is_default(*val);
         }
 
-        if let Some(val) = &args.description {
-            policy_builder.description(val);
+        if let Some(val) = &args.name {
+            policy_builder.name(val);
+        }
+
+        if let Some(val) = &args.shared {
+            policy_builder.shared(*val);
         }
 
         ep_builder.policy(policy_builder.build().unwrap());

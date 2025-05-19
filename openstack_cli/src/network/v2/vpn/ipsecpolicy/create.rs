@@ -66,6 +66,22 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum AuthAlgorithm {
+    AesCmac,
+    AesXcbc,
+    Sha1,
+    Sha256,
+    Sha384,
+    Sha512,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum EncapsulationMode {
+    Transport,
+    Tunnel,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum EncryptionAlgorithm {
     _3des,
     Aes128,
@@ -95,29 +111,6 @@ enum EncryptionAlgorithm {
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum TransformProtocol {
-    Ah,
-    AhEsp,
-    Esp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum AuthAlgorithm {
-    AesCmac,
-    AesXcbc,
-    Sha1,
-    Sha256,
-    Sha384,
-    Sha512,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum EncapsulationMode {
-    Transport,
-    Tunnel,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Pfs {
     Group14,
     Group15,
@@ -139,6 +132,13 @@ enum Pfs {
     Group30,
     Group31,
     Group5,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum TransformProtocol {
+    Ah,
+    AhEsp,
+    Esp,
 }
 
 /// Ipsecpolicy Body data
@@ -214,6 +214,30 @@ impl IpsecpolicyCommand {
         // Set Request.ipsecpolicy data
         let args = &self.ipsecpolicy;
         let mut ipsecpolicy_builder = create::IpsecpolicyBuilder::default();
+        if let Some(val) = &args.auth_algorithm {
+            let tmp = match val {
+                AuthAlgorithm::AesCmac => create::AuthAlgorithm::AesCmac,
+                AuthAlgorithm::AesXcbc => create::AuthAlgorithm::AesXcbc,
+                AuthAlgorithm::Sha1 => create::AuthAlgorithm::Sha1,
+                AuthAlgorithm::Sha256 => create::AuthAlgorithm::Sha256,
+                AuthAlgorithm::Sha384 => create::AuthAlgorithm::Sha384,
+                AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
+            };
+            ipsecpolicy_builder.auth_algorithm(tmp);
+        }
+
+        if let Some(val) = &args.description {
+            ipsecpolicy_builder.description(val);
+        }
+
+        if let Some(val) = &args.encapsulation_mode {
+            let tmp = match val {
+                EncapsulationMode::Transport => create::EncapsulationMode::Transport,
+                EncapsulationMode::Tunnel => create::EncapsulationMode::Tunnel,
+            };
+            ipsecpolicy_builder.encapsulation_mode(tmp);
+        }
+
         if let Some(val) = &args.encryption_algorithm {
             let tmp = match val {
                 EncryptionAlgorithm::_3des => create::EncryptionAlgorithm::_3des,
@@ -245,49 +269,12 @@ impl IpsecpolicyCommand {
             ipsecpolicy_builder.encryption_algorithm(tmp);
         }
 
-        if let Some(val) = &args.tenant_id {
-            ipsecpolicy_builder.tenant_id(val);
+        if let Some(val) = &args.lifetime {
+            ipsecpolicy_builder.lifetime(val);
         }
 
         if let Some(val) = &args.name {
             ipsecpolicy_builder.name(val);
-        }
-
-        if let Some(val) = &args.description {
-            ipsecpolicy_builder.description(val);
-        }
-
-        if let Some(val) = &args.transform_protocol {
-            let tmp = match val {
-                TransformProtocol::Ah => create::TransformProtocol::Ah,
-                TransformProtocol::AhEsp => create::TransformProtocol::AhEsp,
-                TransformProtocol::Esp => create::TransformProtocol::Esp,
-            };
-            ipsecpolicy_builder.transform_protocol(tmp);
-        }
-
-        if let Some(val) = &args.auth_algorithm {
-            let tmp = match val {
-                AuthAlgorithm::AesCmac => create::AuthAlgorithm::AesCmac,
-                AuthAlgorithm::AesXcbc => create::AuthAlgorithm::AesXcbc,
-                AuthAlgorithm::Sha1 => create::AuthAlgorithm::Sha1,
-                AuthAlgorithm::Sha256 => create::AuthAlgorithm::Sha256,
-                AuthAlgorithm::Sha384 => create::AuthAlgorithm::Sha384,
-                AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
-            };
-            ipsecpolicy_builder.auth_algorithm(tmp);
-        }
-
-        if let Some(val) = &args.encapsulation_mode {
-            let tmp = match val {
-                EncapsulationMode::Transport => create::EncapsulationMode::Transport,
-                EncapsulationMode::Tunnel => create::EncapsulationMode::Tunnel,
-            };
-            ipsecpolicy_builder.encapsulation_mode(tmp);
-        }
-
-        if let Some(val) = &args.lifetime {
-            ipsecpolicy_builder.lifetime(val);
         }
 
         if let Some(val) = &args.pfs {
@@ -314,6 +301,19 @@ impl IpsecpolicyCommand {
                 Pfs::Group5 => create::Pfs::Group5,
             };
             ipsecpolicy_builder.pfs(tmp);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            ipsecpolicy_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.transform_protocol {
+            let tmp = match val {
+                TransformProtocol::Ah => create::TransformProtocol::Ah,
+                TransformProtocol::AhEsp => create::TransformProtocol::AhEsp,
+                TransformProtocol::Esp => create::TransformProtocol::Esp,
+            };
+            ipsecpolicy_builder.transform_protocol(tmp);
         }
 
         ep_builder.ipsecpolicy(ipsecpolicy_builder.build().unwrap());
