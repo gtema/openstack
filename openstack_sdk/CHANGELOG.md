@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.0...openstack_sdk-v0.21.1) - 2025-05-18
+
+### Added
+
+- Hopefully address nested structures renaming race ([#1237](https://github.com/gtema/openstack/pull/1237))
+- Add cascade QP for delete octavia loadbalancer ([#1204](https://github.com/gtema/openstack/pull/1204))
+
+### Fixed
+
+- Address explicit nullable types in network ([#1226](https://github.com/gtema/openstack/pull/1226))
+
+### Other
+
+- Vendor token auth endpoint ([#1236](https://github.com/gtema/openstack/pull/1236))
+- Fix typos in parameter names ([#1203](https://github.com/gtema/openstack/pull/1203))
+- Initialize mock testing ([#1202](https://github.com/gtema/openstack/pull/1202))
+
 ## [0.21.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.20.1...openstack_sdk-v0.21.0) - 2025-05-05
 
 ### Added
