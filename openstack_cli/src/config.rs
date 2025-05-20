@@ -36,7 +36,6 @@ use std::{
     fmt,
     path::{Path, PathBuf},
 };
-use structable::OutputConfig;
 use thiserror::Error;
 use tracing::error;
 
@@ -88,6 +87,35 @@ pub enum ConfigFileBuilderError {
         path: PathBuf,
     },
 }
+///
+/// Output configuration
+///
+/// This structure is controlling how the table table is being built for a structure.
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct ViewConfig {
+    /// Limit fields (their titles) to be returned
+    #[serde(default)]
+    pub fields: Vec<FieldConfig>,
+}
+
+/// Field output configuration
+#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialOrd, PartialEq)]
+#[serde(untagged)]
+pub enum FieldConfig {
+    /// Simple - only attribute name as string
+    Simple(String),
+    /// Extended - object with individual properties of the output column
+    Extended {
+        /// Attribute name
+        name: String,
+        /// Min length of the column
+        #[serde(default)]
+        min_len: Option<usize>,
+        /// Max length of the column
+        #[serde(default)]
+        max_len: Option<usize>,
+    },
+}
 
 /// OpenStackClient configuration
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -95,7 +123,7 @@ pub struct Config {
     /// Map of views with the key being the resource key `<SERVICE_TYPE>.<RESOURCE>[/<SUBRESOURCE>]`)
     /// and the value being an `[OutputConfig]`
     #[serde(default)]
-    pub views: HashMap<String, OutputConfig>,
+    pub views: HashMap<String, ViewConfig>,
 }
 
 /// A builder to create a [`ConfigFile`] by specifying which files to load.
@@ -222,5 +250,38 @@ fn get_config_dir() -> PathBuf {
 impl fmt::Display for Config {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use tempfile::Builder;
+
+    #[test]
+    fn test_parse_config() {
+        let mut config_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CONFIG_DATA: &str = r#"
+            views:
+              foo:
+                fields: ["a", "b", "c"]
+              bar:
+                fields:
+                  - "a"
+                  - name: "b"
+                    min_len: 1
+                  - "c"
+        "#;
+
+        write!(config_file, "{}", CONFIG_DATA).unwrap();
+
+        let _cfg = ConfigFileBuilder {
+            sources: Vec::new(),
+        }
+        .add_source(config_file.path())
+        .unwrap()
+        .build();
     }
 }
