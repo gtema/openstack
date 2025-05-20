@@ -55,13 +55,6 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    strategy:
-      matrix:
-        include:
-          - rust_ver: 1.76
-            clippy_args: "-p openstack_sdk -p openstack_types"
-          - rust_ver: 1.85
-            clippy_args: "-p openstack_cli -p openstack_tui"
     steps:
 
       - name: Harden Runner
@@ -71,10 +64,10 @@ jobs:
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Install Rust ${{ matrix.rust_ver }}
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
         with:
-          toolchain: ${{ matrix.rust_ver }}
+          toolchain: stable
           components: rustfmt, clippy
 
       - uses: swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
@@ -91,7 +84,7 @@ jobs:
         run:
           cargo clippy
           --lib --tests
-          --all-features ${{ matrix.clippy_args }}
+          --all-features
           --message-format=json | ${CARGO_HOME}/bin/clippy-sarif | tee rust-clippy-results.sarif | ${CARGO_HOME}/bin/sarif-fmt
 
       - name: Upload analysis results to GitHub

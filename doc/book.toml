@@ -6,7 +6,7 @@ src = "src"
 title = "OpenStack Client Tools"
 
 [rust]
-edition = "2024" 
+edition = "2024"
 
 [build]
 build-dir = "html"
