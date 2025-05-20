@@ -60,17 +60,17 @@ impl TryFrom<&ComputeServerInstanceActionList> for RequestBuilder<'_> {
     fn try_from(value: &ComputeServerInstanceActionList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
         ep_builder.server_id(value.server_id.clone());
+        if let Some(val) = &value.changes_before {
+            ep_builder.changes_before(val.clone());
+        }
+        if let Some(val) = &value.changes_since {
+            ep_builder.changes_since(val.clone());
+        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
-        }
-        if let Some(val) = &value.changes_since {
-            ep_builder.changes_since(val.clone());
-        }
-        if let Some(val) = &value.changes_before {
-            ep_builder.changes_before(val.clone());
         }
 
         Ok(ep_builder)

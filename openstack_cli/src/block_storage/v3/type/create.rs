@@ -104,9 +104,6 @@ impl TypeCommand {
         // Set Request.volume_type data
         let args = &self.volume_type;
         let mut volume_type_builder = create::VolumeTypeBuilder::default();
-
-        volume_type_builder.name(&args.name);
-
         if let Some(val) = &args.description {
             volume_type_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -117,6 +114,8 @@ impl TypeCommand {
             volume_type_builder
                 .extra_specs(val.iter().cloned().map(|(k, v)| (k, v.map(Into::into))));
         }
+
+        volume_type_builder.name(&args.name);
 
         if let Some(val) = &args.os_volume_type_access_is_public {
             volume_type_builder.os_volume_type_access_is_public(*val);

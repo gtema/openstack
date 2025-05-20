@@ -79,7 +79,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Group_Type.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -116,12 +116,12 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("all_tenants", self.all_tenants);
-        params.push_opt("sort", self.sort.as_ref());
-        params.push_opt("sort_key", self.sort_key.as_ref());
-        params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("offset", self.offset);
+        params.push_opt("sort", self.sort.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
 
         params
     }

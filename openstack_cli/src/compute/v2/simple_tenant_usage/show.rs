@@ -97,9 +97,6 @@ impl SimpleTenantUsageCommand {
         // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
-        if let Some(val) = &self.query.start {
-            ep_builder.start(val);
-        }
         if let Some(val) = &self.query.end {
             ep_builder.end(val);
         }
@@ -108,6 +105,9 @@ impl SimpleTenantUsageCommand {
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.start {
+            ep_builder.start(val);
         }
         // Set body parameters
 

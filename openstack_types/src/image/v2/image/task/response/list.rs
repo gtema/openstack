@@ -100,33 +100,6 @@ pub struct TaskResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
-    // ApiImageImport
-    #[serde(rename = "api_image_import")]
-    ApiImageImport,
-
-    // Import
-    #[serde(rename = "import")]
-    Import,
-
-    // LocationImport
-    #[serde(rename = "location_import")]
-    LocationImport,
-}
-
-impl std::str::FromStr for Type {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "api_image_import" => Ok(Self::ApiImageImport),
-            "import" => Ok(Self::Import),
-            "location_import" => Ok(Self::LocationImport),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Failure
     #[serde(rename = "failure")]
@@ -153,6 +126,33 @@ impl std::str::FromStr for Status {
             "pending" => Ok(Self::Pending),
             "processing" => Ok(Self::Processing),
             "success" => Ok(Self::Success),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Type {
+    // ApiImageImport
+    #[serde(rename = "api_image_import")]
+    ApiImageImport,
+
+    // Import
+    #[serde(rename = "import")]
+    Import,
+
+    // LocationImport
+    #[serde(rename = "location_import")]
+    LocationImport,
+}
+
+impl std::str::FromStr for Type {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "api_image_import" => Ok(Self::ApiImageImport),
+            "import" => Ok(Self::Import),
+            "location_import" => Ok(Self::LocationImport),
             _ => Err(()),
         }
     }

@@ -337,27 +337,29 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.uuid {
-            params.push("uuid", serde_json::to_value(val)?);
+        if let Some(val) = &self.apiserver_port {
+            params.push("apiserver_port", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.name {
-            params.push("name", serde_json::to_value(val)?);
+        if let Some(val) = &self.cluster_distro {
+            params.push("cluster_distro", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.coe {
             params.push("coe", serde_json::to_value(val)?);
         }
-        params.push("image_id", serde_json::to_value(&self.image_id)?);
-        if let Some(val) = &self.flavor_id {
-            params.push("flavor_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.master_flavor_id {
-            params.push("master_flavor_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.dns_nameserver {
             params.push("dns_nameserver", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.keypair_id {
-            params.push("keypair_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.docker_storage_driver {
+            params.push("docker_storage_driver", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.docker_volume_size {
+            params.push("docker_volume_size", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.driver {
+            params.push("driver", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.external_network_id {
             params.push("external_network_id", serde_json::to_value(val)?);
@@ -368,20 +370,14 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.fixed_subnet {
             params.push("fixed_subnet", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.network_driver {
-            params.push("network_driver", serde_json::to_value(val)?);
+        if let Some(val) = &self.flavor_id {
+            params.push("flavor_id", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.apiserver_port {
-            params.push("apiserver_port", serde_json::to_value(val)?);
+        if let Some(val) = &self.floating_ip_enabled {
+            params.push("floating_ip_enabled", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.docker_volume_size {
-            params.push("docker_volume_size", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.cluster_distro {
-            params.push("cluster_distro", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.links {
-            params.push("links", serde_json::to_value(val)?);
+        if let Some(val) = &self.hidden {
+            params.push("hidden", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.http_proxy {
             params.push("http_proxy", serde_json::to_value(val)?);
@@ -389,59 +385,63 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.https_proxy {
             params.push("https_proxy", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.no_proxy {
-            params.push("no_proxy", serde_json::to_value(val)?);
+        params.push("image_id", serde_json::to_value(&self.image_id)?);
+        if let Some(val) = &self.insecure_registry {
+            params.push("insecure_registry", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.volume_driver {
-            params.push("volume_driver", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.registry_enabled {
-            params.push("registry_enabled", serde_json::to_value(val)?);
+        if let Some(val) = &self.keypair_id {
+            params.push("keypair_id", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.labels {
             params.push("labels", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.tls_disabled {
-            params.push("tls_disabled", serde_json::to_value(val)?);
+        if let Some(val) = &self.links {
+            params.push("links", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.public {
-            params.push("public", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.server_type {
-            params.push("server_type", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.insecure_registry {
-            params.push("insecure_registry", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.docker_storage_driver {
-            params.push("docker_storage_driver", serde_json::to_value(val)?);
+        if let Some(val) = &self.master_flavor_id {
+            params.push("master_flavor_id", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.master_lb_enabled {
             params.push("master_lb_enabled", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.floating_ip_enabled {
-            params.push("floating_ip_enabled", serde_json::to_value(val)?);
+        if let Some(val) = &self.name {
+            params.push("name", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.network_driver {
+            params.push("network_driver", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.no_proxy {
+            params.push("no_proxy", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.project_id {
             params.push("project_id", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.user_id {
-            params.push("user_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.public {
+            params.push("public", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.hidden {
-            params.push("hidden", serde_json::to_value(val)?);
+        if let Some(val) = &self.registry_enabled {
+            params.push("registry_enabled", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.server_type {
+            params.push("server_type", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.tags {
             params.push("tags", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.driver {
-            params.push("driver", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
+        if let Some(val) = &self.tls_disabled {
+            params.push("tls_disabled", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.user_id {
+            params.push("user_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.uuid {
+            params.push("uuid", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.volume_driver {
+            params.push("volume_driver", serde_json::to_value(val)?);
         }
 
         params.into_body()

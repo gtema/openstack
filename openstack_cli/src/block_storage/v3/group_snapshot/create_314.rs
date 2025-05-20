@@ -103,6 +103,11 @@ impl GroupSnapshotCommand {
         // Set Request.group_snapshot data
         let args = &self.group_snapshot;
         let mut group_snapshot_builder = create_314::GroupSnapshotBuilder::default();
+        if let Some(val) = &args.description {
+            group_snapshot_builder.description(Some(val.into()));
+        } else if args.no_description {
+            group_snapshot_builder.description(None);
+        }
 
         group_snapshot_builder.group_id(&args.group_id);
 
@@ -110,12 +115,6 @@ impl GroupSnapshotCommand {
             group_snapshot_builder.name(Some(val.into()));
         } else if args.no_name {
             group_snapshot_builder.name(None);
-        }
-
-        if let Some(val) = &args.description {
-            group_snapshot_builder.description(Some(val.into()));
-        } else if args.no_description {
-            group_snapshot_builder.description(None);
         }
 
         ep_builder.group_snapshot(group_snapshot_builder.build().unwrap());

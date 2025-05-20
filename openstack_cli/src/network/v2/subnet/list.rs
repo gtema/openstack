@@ -203,72 +203,6 @@ impl SubnetsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.ip_version {
-            ep_builder.ip_version(*val);
-        }
-        if let Some(val) = &self.query.network_id {
-            ep_builder.network_id(val);
-        }
-        if let Some(val) = &self.query.subnetpool_id {
-            ep_builder.subnetpool_id(val);
-        }
-        if let Some(val) = &self.query.cidr {
-            ep_builder.cidr(val);
-        }
-        if let Some(val) = &self.query.gateway_ip {
-            ep_builder.gateway_ip(val);
-        }
-        if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val);
-        }
-        if let Some(val) = &self.query.enable_dhcp {
-            ep_builder.enable_dhcp(*val);
-        }
-        if let Some(val) = &self.query.ipv6_ra_mode {
-            ep_builder.ipv6_ra_mode(val);
-        }
-        if let Some(val) = &self.query.ipv6_address_mode {
-            ep_builder.ipv6_address_mode(val);
-        }
-        if let Some(val) = &self.query.shared {
-            ep_builder.shared(*val);
-        }
-        if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val);
-        }
-        if let Some(val) = &self.query.router_external {
-            ep_builder.router_external(*val);
-        }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val.iter());
-        }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val.iter());
-        }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val.iter());
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.segment_id {
-            ep_builder.segment_id(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
@@ -277,6 +211,72 @@ impl SubnetsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
+        }
+        if let Some(val) = &self.query.cidr {
+            ep_builder.cidr(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.enable_dhcp {
+            ep_builder.enable_dhcp(*val);
+        }
+        if let Some(val) = &self.query.gateway_ip {
+            ep_builder.gateway_ip(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.ip_version {
+            ep_builder.ip_version(*val);
+        }
+        if let Some(val) = &self.query.ipv6_address_mode {
+            ep_builder.ipv6_address_mode(val);
+        }
+        if let Some(val) = &self.query.ipv6_ra_mode {
+            ep_builder.ipv6_ra_mode(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.network_id {
+            ep_builder.network_id(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val.iter());
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val.iter());
+        }
+        if let Some(val) = &self.query.revision_number {
+            ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.router_external {
+            ep_builder.router_external(*val);
+        }
+        if let Some(val) = &self.query.segment_id {
+            ep_builder.segment_id(val);
+        }
+        if let Some(val) = &self.query.shared {
+            ep_builder.shared(*val);
+        }
+        if let Some(val) = &self.query.subnetpool_id {
+            ep_builder.subnetpool_id(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val.iter());
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val.iter());
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
         }
         // Set body parameters
 

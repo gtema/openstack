@@ -172,20 +172,8 @@ impl DefaultSecurityGroupRuleCommand {
         let args = &self.default_security_group_rule;
         let mut default_security_group_rule_builder =
             create::DefaultSecurityGroupRuleBuilder::default();
-        if let Some(val) = &args.tenant_id {
-            default_security_group_rule_builder.tenant_id(val);
-        }
-
         if let Some(val) = &args.description {
             default_security_group_rule_builder.description(val);
-        }
-
-        if let Some(val) = &args.remote_group_id {
-            default_security_group_rule_builder.remote_group_id(val);
-        }
-
-        if let Some(val) = &args.remote_address_group_id {
-            default_security_group_rule_builder.remote_address_group_id(val);
         }
 
         if let Some(val) = &args.direction {
@@ -196,18 +184,6 @@ impl DefaultSecurityGroupRuleCommand {
             default_security_group_rule_builder.direction(tmp);
         }
 
-        if let Some(val) = &args.protocol {
-            default_security_group_rule_builder.protocol(val);
-        }
-
-        if let Some(val) = &args.port_range_min {
-            default_security_group_rule_builder.port_range_min(*val);
-        }
-
-        if let Some(val) = &args.port_range_max {
-            default_security_group_rule_builder.port_range_max(*val);
-        }
-
         if let Some(val) = &args.ethertype {
             let tmp = match val {
                 Ethertype::Ipv4 => create::Ethertype::Ipv4,
@@ -216,8 +192,32 @@ impl DefaultSecurityGroupRuleCommand {
             default_security_group_rule_builder.ethertype(tmp);
         }
 
+        if let Some(val) = &args.port_range_max {
+            default_security_group_rule_builder.port_range_max(*val);
+        }
+
+        if let Some(val) = &args.port_range_min {
+            default_security_group_rule_builder.port_range_min(*val);
+        }
+
+        if let Some(val) = &args.protocol {
+            default_security_group_rule_builder.protocol(val);
+        }
+
+        if let Some(val) = &args.remote_address_group_id {
+            default_security_group_rule_builder.remote_address_group_id(val);
+        }
+
+        if let Some(val) = &args.remote_group_id {
+            default_security_group_rule_builder.remote_group_id(val);
+        }
+
         if let Some(val) = &args.remote_ip_prefix {
             default_security_group_rule_builder.remote_ip_prefix(val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            default_security_group_rule_builder.tenant_id(val);
         }
 
         if let Some(val) = &args.used_in_default_sg {

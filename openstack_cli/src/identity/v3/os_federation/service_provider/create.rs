@@ -124,8 +124,6 @@ impl ServiceProviderCommand {
 
         service_provider_builder.auth_url(&args.auth_url);
 
-        service_provider_builder.sp_url(&args.sp_url);
-
         if let Some(val) = &args.description {
             service_provider_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -141,6 +139,8 @@ impl ServiceProviderCommand {
         } else if args.no_relay_state_prefix {
             service_provider_builder.relay_state_prefix(None);
         }
+
+        service_provider_builder.sp_url(&args.sp_url);
 
         ep_builder.service_provider(service_provider_builder.build().unwrap());
 

@@ -65,15 +65,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// policy_id parameter for
-    /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_policy_id",
-        value_name = "POLICY_ID"
-    )]
-    policy_id: String,
-
     /// id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
     #[arg(
@@ -82,6 +73,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// policy_id parameter for
+    /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_policy_id",
+        value_name = "POLICY_ID"
+    )]
+    policy_id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -123,23 +123,23 @@ impl MinimumBandwidthRuleCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
+        ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         // Set body parameters
         // Set Request.minimum_bandwidth_rule data
         let args = &self.minimum_bandwidth_rule;
         let mut minimum_bandwidth_rule_builder = set::MinimumBandwidthRuleBuilder::default();
-        if let Some(val) = &args.min_kbps {
-            minimum_bandwidth_rule_builder.min_kbps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => set::Direction::Egress,
                 Direction::Ingress => set::Direction::Ingress,
             };
             minimum_bandwidth_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.min_kbps {
+            minimum_bandwidth_rule_builder.min_kbps(*val);
         }
 
         ep_builder.minimum_bandwidth_rule(minimum_bandwidth_rule_builder.build().unwrap());

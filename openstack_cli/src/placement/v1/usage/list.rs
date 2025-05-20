@@ -128,6 +128,9 @@ impl UsagesCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.consumer_type {
+            ep_builder.consumer_type(val);
+        }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
             ep_builder.project_id(id);
@@ -213,9 +216,6 @@ impl UsagesCommand {
                     .user
                     .id,
             );
-        }
-        if let Some(val) = &self.query.consumer_type {
-            ep_builder.consumer_type(val);
         }
         // Set body parameters
 

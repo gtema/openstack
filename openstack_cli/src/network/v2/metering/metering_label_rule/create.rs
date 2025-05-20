@@ -125,8 +125,8 @@ impl MeteringLabelRuleCommand {
         // Set Request.metering_label_rule data
         let args = &self.metering_label_rule;
         let mut metering_label_rule_builder = create::MeteringLabelRuleBuilder::default();
-        if let Some(val) = &args.metering_label_id {
-            metering_label_rule_builder.metering_label_id(val);
+        if let Some(val) = &args.destination_ip_prefix {
+            metering_label_rule_builder.destination_ip_prefix(val);
         }
 
         if let Some(val) = &args.direction {
@@ -141,20 +141,20 @@ impl MeteringLabelRuleCommand {
             metering_label_rule_builder.excluded(*val);
         }
 
-        if let Some(val) = &args.remote_ip_prefix {
-            metering_label_rule_builder.remote_ip_prefix(val);
+        if let Some(val) = &args.metering_label_id {
+            metering_label_rule_builder.metering_label_id(val);
         }
 
-        if let Some(val) = &args.tenant_id {
-            metering_label_rule_builder.tenant_id(val);
+        if let Some(val) = &args.remote_ip_prefix {
+            metering_label_rule_builder.remote_ip_prefix(val);
         }
 
         if let Some(val) = &args.source_ip_prefix {
             metering_label_rule_builder.source_ip_prefix(val);
         }
 
-        if let Some(val) = &args.destination_ip_prefix {
-            metering_label_rule_builder.destination_ip_prefix(val);
+        if let Some(val) = &args.tenant_id {
+            metering_label_rule_builder.tenant_id(val);
         }
 
         ep_builder.metering_label_rule(metering_label_rule_builder.build().unwrap());

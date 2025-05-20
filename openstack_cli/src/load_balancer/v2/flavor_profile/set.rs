@@ -115,16 +115,16 @@ impl FlavorProfileCommand {
         // Set Request.flavorprofile data
         let args = &self.flavorprofile;
         let mut flavorprofile_builder = set::FlavorprofileBuilder::default();
+        if let Some(val) = &args.flavor_data {
+            flavorprofile_builder.flavor_data(val);
+        }
+
         if let Some(val) = &args.name {
             flavorprofile_builder.name(val);
         }
 
         if let Some(val) = &args.provider_name {
             flavorprofile_builder.provider_name(val);
-        }
-
-        if let Some(val) = &args.flavor_data {
-            flavorprofile_builder.flavor_data(val);
         }
 
         ep_builder.flavorprofile(flavorprofile_builder.build().unwrap());

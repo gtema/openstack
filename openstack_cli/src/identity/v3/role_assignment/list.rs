@@ -175,20 +175,20 @@ impl RoleAssignmentsCommand {
         if let Some(val) = &self.query.effective {
             ep_builder.effective(val);
         }
+        if let Some(val) = &self.query.group_id {
+            ep_builder.group_id(val);
+        }
         if let Some(val) = &self.query.include_names {
             ep_builder.include_names(val);
         }
         if let Some(val) = &self.query.include_subtree {
             ep_builder.include_subtree(val);
         }
-        if let Some(val) = &self.query.group_id {
-            ep_builder.group_id(val);
-        }
         if let Some(val) = &self.query.role_id {
             ep_builder.role_id(val);
         }
-        if let Some(val) = &self.query.scope_system {
-            ep_builder.scope_system(val);
+        if let Some(val) = &self.query.scope_os_inherit_inherited_to {
+            ep_builder.scope_os_inherit_inherited_to(val);
         }
         if let Some(val) = &self.query.scope_domain_id {
             ep_builder.scope_domain_id(val);
@@ -196,11 +196,11 @@ impl RoleAssignmentsCommand {
         if let Some(val) = &self.query.scope_project_id {
             ep_builder.scope_project_id(val);
         }
+        if let Some(val) = &self.query.scope_system {
+            ep_builder.scope_system(val);
+        }
         if let Some(val) = &self.query.user_id {
             ep_builder.user_id(val);
-        }
-        if let Some(val) = &self.query.scope_os_inherit_inherited_to {
-            ep_builder.scope_os_inherit_inherited_to(val);
         }
         // Set body parameters
 

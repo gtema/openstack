@@ -203,6 +203,12 @@ impl UsersCommand {
         if let Some(val) = &self.query.idp_id {
             ep_builder.idp_id(val);
         }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
@@ -212,20 +218,14 @@ impl UsersCommand {
         if let Some(val) = &self.query.protocol_id {
             ep_builder.protocol_id(val);
         }
-        if let Some(val) = &self.query.unique_id {
-            ep_builder.unique_id(val);
-        }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
         }
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val);
         }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
+        if let Some(val) = &self.query.unique_id {
+            ep_builder.unique_id(val);
         }
         // Set body parameters
 

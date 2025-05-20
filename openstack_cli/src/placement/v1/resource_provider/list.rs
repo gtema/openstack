@@ -159,23 +159,23 @@ impl ResourceProvidersCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.uuid {
-            ep_builder.uuid(val);
-        }
-        if let Some(val) = &self.query.resources {
-            ep_builder.resources(val);
-        }
-        if let Some(val) = &self.query.required {
-            ep_builder.required(val.iter());
+        if let Some(val) = &self.query.in_tree {
+            ep_builder.in_tree(val);
         }
         if let Some(val) = &self.query.member_of {
             ep_builder.member_of(val.iter());
         }
-        if let Some(val) = &self.query.in_tree {
-            ep_builder.in_tree(val);
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.required {
+            ep_builder.required(val.iter());
+        }
+        if let Some(val) = &self.query.resources {
+            ep_builder.resources(val);
+        }
+        if let Some(val) = &self.query.uuid {
+            ep_builder.uuid(val);
         }
         // Set body parameters
 

@@ -139,10 +139,6 @@ impl RoleCommand {
         // Set Request.role data
         let args = &self.role;
         let mut role_builder = set::RoleBuilder::default();
-        if let Some(val) = &args.name {
-            role_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             role_builder.description(Some(val.into()));
         } else if args.no_description {
@@ -153,6 +149,10 @@ impl RoleCommand {
             role_builder.domain_id(Some(val.into()));
         } else if args.no_domain_id {
             role_builder.domain_id(None);
+        }
+
+        if let Some(val) = &args.name {
+            role_builder.name(val);
         }
 
         if let Some(val) = &args.options {

@@ -51,14 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_snapshot_id",
-        value_name = "SNAPSHOT_ID"
-    )]
-    snapshot_id: String,
-
     /// id parameter for /v3/snapshots/{snapshot_id}/metadata/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -66,6 +58,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_snapshot_id",
+        value_name = "SNAPSHOT_ID"
+    )]
+    snapshot_id: String,
 }
 
 impl MetadataCommand {
@@ -86,8 +86,8 @@ impl MetadataCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.snapshot_id(&self.path.snapshot_id);
         ep_builder.id(&self.path.id);
+        ep_builder.snapshot_id(&self.path.snapshot_id);
         // Set query parameters
         // Set body parameters
 

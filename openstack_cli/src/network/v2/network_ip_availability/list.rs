@@ -140,6 +140,15 @@ impl NetworkIpAvailabilitiesCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.ip_version {
+            ep_builder.ip_version(val);
+        }
         if let Some(val) = &self.query.network_id {
             ep_builder.network_id(val);
         }
@@ -149,23 +158,14 @@ impl NetworkIpAvailabilitiesCommand {
         if let Some(val) = &self.query.tenant_id {
             ep_builder.tenant_id(val);
         }
-        if let Some(val) = &self.query.ip_version {
-            ep_builder.ip_version(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.query.page_reverse {
-            ep_builder.page_reverse(*val);
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

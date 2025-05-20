@@ -98,7 +98,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Recordset.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -134,17 +134,17 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("zone_id", self.zone_id.as_ref());
+        params.push_opt("data", self.data.as_ref());
+        params.push_opt("description", self.description.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("market", self.market.as_ref());
+        params.push_opt("name", self.name.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("description", self.description.as_ref());
-        params.push_opt("type", self._type.as_ref());
         params.push_opt("status", self.status.as_ref());
         params.push_opt("ttl", self.ttl);
-        params.push_opt("data", self.data.as_ref());
+        params.push_opt("type", self._type.as_ref());
+        params.push_opt("zone_id", self.zone_id.as_ref());
 
         params
     }

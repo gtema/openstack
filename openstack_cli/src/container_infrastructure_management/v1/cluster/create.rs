@@ -221,6 +221,13 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum HealthStatus {
+    Healthy,
+    Unhealthy,
+    Unknown,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Status {
     AdoptComplete,
     CheckComplete,
@@ -240,13 +247,6 @@ enum Status {
     UpdateComplete,
     UpdateFailed,
     UpdateInProgress,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum HealthStatus {
-    Healthy,
-    Unhealthy,
-    Unknown,
 }
 
 impl ClusterCommand {

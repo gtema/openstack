@@ -120,20 +120,20 @@ impl BandwidthLimitRuleCommand {
         // Set Request.bandwidth_limit_rule data
         let args = &self.bandwidth_limit_rule;
         let mut bandwidth_limit_rule_builder = create::BandwidthLimitRuleBuilder::default();
-        if let Some(val) = &args.max_kbps {
-            bandwidth_limit_rule_builder.max_kbps(*val);
-        }
-
-        if let Some(val) = &args.max_burst_kbps {
-            bandwidth_limit_rule_builder.max_burst_kbps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => create::Direction::Egress,
                 Direction::Ingress => create::Direction::Ingress,
             };
             bandwidth_limit_rule_builder.direction(tmp);
+        }
+
+        if let Some(val) = &args.max_burst_kbps {
+            bandwidth_limit_rule_builder.max_burst_kbps(*val);
+        }
+
+        if let Some(val) = &args.max_kbps {
+            bandwidth_limit_rule_builder.max_kbps(*val);
         }
 
         ep_builder.bandwidth_limit_rule(bandwidth_limit_rule_builder.build().unwrap());

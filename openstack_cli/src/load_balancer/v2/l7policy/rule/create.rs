@@ -93,6 +93,15 @@ struct PathParameters {
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum CompareType {
+    Contains,
+    EndsWith,
+    EqualTo,
+    Regex,
+    StartsWith,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
     Cookie,
     FileType,
@@ -102,15 +111,6 @@ enum Type {
     SslConnHasCert,
     SslDnField,
     SslVerifyResult,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum CompareType {
-    Contains,
-    EndsWith,
-    EqualTo,
-    Regex,
-    StartsWith,
 }
 
 /// Rule Body data
@@ -186,18 +186,9 @@ impl RuleCommand {
         // Set Request.rule data
         let args = &self.rule;
         let mut rule_builder = create::RuleBuilder::default();
-
-        let tmp = match &args._type {
-            Type::Cookie => create::Type::Cookie,
-            Type::FileType => create::Type::FileType,
-            Type::Header => create::Type::Header,
-            Type::HostName => create::Type::HostName,
-            Type::Path => create::Type::Path,
-            Type::SslConnHasCert => create::Type::SslConnHasCert,
-            Type::SslDnField => create::Type::SslDnField,
-            Type::SslVerifyResult => create::Type::SslVerifyResult,
-        };
-        rule_builder._type(tmp);
+        if let Some(val) = &args.admin_state_up {
+            rule_builder.admin_state_up(*val);
+        }
 
         let tmp = match &args.compare_type {
             CompareType::Contains => create::CompareType::Contains,
@@ -208,18 +199,12 @@ impl RuleCommand {
         };
         rule_builder.compare_type(tmp);
 
-        if let Some(val) = &args.key {
-            rule_builder.key(val);
-        }
-
-        rule_builder.value(&args.value);
-
         if let Some(val) = &args.invert {
             rule_builder.invert(*val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            rule_builder.admin_state_up(*val);
+        if let Some(val) = &args.key {
+            rule_builder.key(val);
         }
 
         if let Some(val) = &args.project_id {
@@ -233,6 +218,20 @@ impl RuleCommand {
         if let Some(val) = &args.tenant_id {
             rule_builder.tenant_id(val);
         }
+
+        let tmp = match &args._type {
+            Type::Cookie => create::Type::Cookie,
+            Type::FileType => create::Type::FileType,
+            Type::Header => create::Type::Header,
+            Type::HostName => create::Type::HostName,
+            Type::Path => create::Type::Path,
+            Type::SslConnHasCert => create::Type::SslConnHasCert,
+            Type::SslDnField => create::Type::SslDnField,
+            Type::SslVerifyResult => create::Type::SslVerifyResult,
+        };
+        rule_builder._type(tmp);
+
+        rule_builder.value(&args.value);
 
         ep_builder.rule(rule_builder.build().unwrap());
 

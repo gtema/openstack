@@ -164,6 +164,15 @@ impl TryFrom<&LoadBalancerHealthmonitorList> for RequestBuilder<'_> {
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
         }
+        if let Some(val) = &value.not_tags {
+            ep_builder.not_tags(val.clone());
+        }
+        if let Some(val) = &value.not_tags_any {
+            ep_builder.not_tags_any(val.clone());
+        }
+        if let Some(val) = &value.operating_status {
+            ep_builder.operating_status(val.clone());
+        }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);
         }
@@ -172,6 +181,15 @@ impl TryFrom<&LoadBalancerHealthmonitorList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.project_id {
             ep_builder.project_id(val.clone());
+        }
+        if let Some(val) = &value.provisioning_status {
+            ep_builder.provisioning_status(val.clone());
+        }
+        if let Some(val) = &value.tags {
+            ep_builder.tags(val.clone());
+        }
+        if let Some(val) = &value.tags_any {
+            ep_builder.tags_any(val.clone());
         }
         if let Some(val) = &value.timeout {
             ep_builder.timeout(*val);
@@ -184,24 +202,6 @@ impl TryFrom<&LoadBalancerHealthmonitorList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.url_path {
             ep_builder.url_path(val.clone());
-        }
-        if let Some(val) = &value.provisioning_status {
-            ep_builder.provisioning_status(val.clone());
-        }
-        if let Some(val) = &value.operating_status {
-            ep_builder.operating_status(val.clone());
-        }
-        if let Some(val) = &value.tags {
-            ep_builder.tags(val.clone());
-        }
-        if let Some(val) = &value.tags_any {
-            ep_builder.tags_any(val.clone());
-        }
-        if let Some(val) = &value.not_tags {
-            ep_builder.not_tags(val.clone());
-        }
-        if let Some(val) = &value.not_tags_any {
-            ep_builder.not_tags_any(val.clone());
         }
 
         Ok(ep_builder)

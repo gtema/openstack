@@ -107,8 +107,8 @@ impl RestEndpoint for Request<'_> {
         format!(
             "policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{id}",
             policy_id = self.policy_id.as_ref(),
-            service_id = self.service_id.as_ref(),
             id = self.id.as_ref(),
+            service_id = self.service_id.as_ref(),
         )
         .into()
     }
@@ -179,8 +179,8 @@ mod tests {
             when.method(httpmock::Method::PUT).path(format!(
                 "/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{id}",
                 policy_id = "policy_id",
-                service_id = "service_id",
                 id = "id",
+                service_id = "service_id",
             ));
 
             then.status(200)
@@ -190,8 +190,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .policy_id("policy_id")
-            .service_id("service_id")
             .id("id")
+            .service_id("service_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -208,8 +208,8 @@ mod tests {
                 .path(format!(
                     "/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{id}",
                     policy_id = "policy_id",
-                    service_id = "service_id",
                     id = "id",
+                    service_id = "service_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -220,8 +220,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .policy_id("policy_id")
-            .service_id("service_id")
             .id("id")
+            .service_id("service_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

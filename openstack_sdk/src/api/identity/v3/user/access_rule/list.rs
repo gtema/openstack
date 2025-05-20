@@ -59,7 +59,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Access_Rule.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -99,9 +99,9 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("service", self.service.as_ref());
-        params.push_opt("path", self.path.as_ref());
         params.push_opt("method", self.method.as_ref());
+        params.push_opt("path", self.path.as_ref());
+        params.push_opt("service", self.service.as_ref());
 
         params
     }

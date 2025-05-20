@@ -52,14 +52,14 @@ impl TryFrom<&ComputeHypervisorList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &ComputeHypervisorList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
+        if let Some(val) = &value.hypervisor_hostname_pattern {
+            ep_builder.hypervisor_hostname_pattern(val.clone());
+        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
-        }
-        if let Some(val) = &value.hypervisor_hostname_pattern {
-            ep_builder.hypervisor_hostname_pattern(val.clone());
         }
         if let Some(val) = &value.with_servers {
             ep_builder.with_servers(*val);

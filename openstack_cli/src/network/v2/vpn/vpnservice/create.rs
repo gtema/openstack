@@ -134,16 +134,26 @@ impl VpnserviceCommand {
         // Set Request.vpnservice data
         let args = &self.vpnservice;
         let mut vpnservice_builder = create::VpnserviceBuilder::default();
-        if let Some(val) = &args.tenant_id {
-            vpnservice_builder.tenant_id(val);
+        if let Some(val) = &args.admin_state_up {
+            vpnservice_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.description {
+            vpnservice_builder.description(val);
+        }
+
+        if let Some(val) = &args.flavor_id {
+            vpnservice_builder.flavor_id(Some(val.into()));
+        } else if args.no_flavor_id {
+            vpnservice_builder.flavor_id(None);
         }
 
         if let Some(val) = &args.name {
             vpnservice_builder.name(val);
         }
 
-        if let Some(val) = &args.description {
-            vpnservice_builder.description(val);
+        if let Some(val) = &args.router_id {
+            vpnservice_builder.router_id(val);
         }
 
         if let Some(val) = &args.subnet_id {
@@ -152,18 +162,8 @@ impl VpnserviceCommand {
             vpnservice_builder.subnet_id(None);
         }
 
-        if let Some(val) = &args.router_id {
-            vpnservice_builder.router_id(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            vpnservice_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.flavor_id {
-            vpnservice_builder.flavor_id(Some(val.into()));
-        } else if args.no_flavor_id {
-            vpnservice_builder.flavor_id(None);
+        if let Some(val) = &args.tenant_id {
+            vpnservice_builder.tenant_id(val);
         }
 
         ep_builder.vpnservice(vpnservice_builder.build().unwrap());

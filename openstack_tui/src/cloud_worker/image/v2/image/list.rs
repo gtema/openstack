@@ -90,17 +90,26 @@ impl TryFrom<&ImageImageList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &ImageImageList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
+        if let Some(val) = &value.created_at {
+            ep_builder.created_at(val.clone());
+        }
+        if let Some(val) = &value.id {
+            ep_builder.id(val.clone());
+        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
         }
+        if let Some(val) = &value.member_status {
+            ep_builder.member_status(val.clone());
+        }
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
         }
-        if let Some(val) = &value.id {
-            ep_builder.id(val.clone());
+        if let Some(val) = &value.os_hidden {
+            ep_builder.os_hidden(*val);
         }
         if let Some(val) = &value.owner {
             ep_builder.owner(val.clone());
@@ -108,32 +117,14 @@ impl TryFrom<&ImageImageList> for RequestBuilder<'_> {
         if let Some(val) = &value.protected {
             ep_builder.protected(*val);
         }
-        if let Some(val) = &value.status {
-            ep_builder.status(val.clone());
-        }
-        if let Some(val) = &value.tag {
-            ep_builder.tag(val.iter().cloned());
-        }
-        if let Some(val) = &value.visibility {
-            ep_builder.visibility(val.clone());
-        }
-        if let Some(val) = &value.os_hidden {
-            ep_builder.os_hidden(*val);
-        }
-        if let Some(val) = &value.member_status {
-            ep_builder.member_status(val.clone());
-        }
         if let Some(val) = &value.size_max {
             ep_builder.size_max(val.clone());
         }
         if let Some(val) = &value.size_min {
             ep_builder.size_min(val.clone());
         }
-        if let Some(val) = &value.created_at {
-            ep_builder.created_at(val.clone());
-        }
-        if let Some(val) = &value.updated_at {
-            ep_builder.updated_at(val.clone());
+        if let Some(val) = &value.sort {
+            ep_builder.sort(val.clone());
         }
         if let Some(val) = &value.sort_dir {
             ep_builder.sort_dir(val.clone());
@@ -141,8 +132,17 @@ impl TryFrom<&ImageImageList> for RequestBuilder<'_> {
         if let Some(val) = &value.sort_key {
             ep_builder.sort_key(val.clone());
         }
-        if let Some(val) = &value.sort {
-            ep_builder.sort(val.clone());
+        if let Some(val) = &value.status {
+            ep_builder.status(val.clone());
+        }
+        if let Some(val) = &value.tag {
+            ep_builder.tag(val.iter().cloned());
+        }
+        if let Some(val) = &value.updated_at {
+            ep_builder.updated_at(val.clone());
+        }
+        if let Some(val) = &value.visibility {
+            ep_builder.visibility(val.clone());
         }
 
         Ok(ep_builder)

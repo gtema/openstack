@@ -147,29 +147,23 @@ impl TryFrom<&LoadBalancerPoolList> for RequestBuilder<'_> {
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
         }
+        if let Some(val) = &value.not_tags {
+            ep_builder.not_tags(val.clone());
+        }
+        if let Some(val) = &value.not_tags_any {
+            ep_builder.not_tags_any(val.clone());
+        }
+        if let Some(val) = &value.operating_status {
+            ep_builder.operating_status(val.clone());
+        }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);
         }
         if let Some(val) = &value.project_id {
             ep_builder.project_id(val.clone());
         }
-        if let Some(val) = &value.tls_enabled {
-            ep_builder.tls_enabled(*val);
-        }
-        if let Some(val) = &value.tls_ciphers {
-            ep_builder.tls_ciphers(val.clone());
-        }
-        if let Some(val) = &value.tls_versions {
-            ep_builder.tls_versions(val.clone());
-        }
-        if let Some(val) = &value.updated_at {
-            ep_builder.updated_at(val.clone());
-        }
         if let Some(val) = &value.provisioning_status {
             ep_builder.provisioning_status(val.clone());
-        }
-        if let Some(val) = &value.operating_status {
-            ep_builder.operating_status(val.clone());
         }
         if let Some(val) = &value.tags {
             ep_builder.tags(val.clone());
@@ -177,11 +171,17 @@ impl TryFrom<&LoadBalancerPoolList> for RequestBuilder<'_> {
         if let Some(val) = &value.tags_any {
             ep_builder.tags_any(val.clone());
         }
-        if let Some(val) = &value.not_tags {
-            ep_builder.not_tags(val.clone());
+        if let Some(val) = &value.tls_ciphers {
+            ep_builder.tls_ciphers(val.clone());
         }
-        if let Some(val) = &value.not_tags_any {
-            ep_builder.not_tags_any(val.clone());
+        if let Some(val) = &value.tls_enabled {
+            ep_builder.tls_enabled(*val);
+        }
+        if let Some(val) = &value.tls_versions {
+            ep_builder.tls_versions(val.clone());
+        }
+        if let Some(val) = &value.updated_at {
+            ep_builder.updated_at(val.clone());
         }
 
         Ok(ep_builder)

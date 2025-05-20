@@ -258,6 +258,25 @@ pub struct ImageResponse {
     pub visibility: Option<Visibility>,
 }
 
+/// Values to be used to populate the corresponding image properties. If the
+/// image status is not 'queued', values must exactly match those already
+/// contained in the image properties.
+/// `ValidationData` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ValidationData {
+    pub checksum: Option<String>,
+    pub os_hash_algo: String,
+    pub os_hash_value: String,
+}
+
+/// `Locations` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Locations {
+    pub metadata: BTreeMap<String, Value>,
+    pub url: String,
+    pub validation_data: Option<ValidationData>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Active
@@ -345,23 +364,4 @@ impl std::str::FromStr for Visibility {
             _ => Err(()),
         }
     }
-}
-
-/// Values to be used to populate the corresponding image properties. If the
-/// image status is not 'queued', values must exactly match those already
-/// contained in the image properties.
-/// `ValidationData` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ValidationData {
-    pub checksum: Option<String>,
-    pub os_hash_algo: String,
-    pub os_hash_value: String,
-}
-
-/// `Locations` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Locations {
-    pub metadata: BTreeMap<String, Value>,
-    pub url: String,
-    pub validation_data: Option<ValidationData>,
 }

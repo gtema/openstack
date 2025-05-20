@@ -94,12 +94,11 @@ impl SnapshotCommand {
         let args = &self.os_update_snapshot_status;
         let mut os_update_snapshot_status_builder =
             os_update_snapshot_status::OsUpdateSnapshotStatusBuilder::default();
-
-        os_update_snapshot_status_builder.status(&args.status);
-
         if let Some(val) = &args.progress {
             os_update_snapshot_status_builder.progress(val);
         }
+
+        os_update_snapshot_status_builder.status(&args.status);
 
         ep_builder.os_update_snapshot_status(os_update_snapshot_status_builder.build().unwrap());
 

@@ -114,6 +114,80 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// OsSchedulerHints Body data
+#[derive(Args, Clone)]
+struct OsSchedulerHints {
+    /// Schedule the server on a host in the network specified with this
+    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
+    #[arg(help_heading = "Body parameters", long)]
+    build_near_host_ip: Option<String>,
+
+    /// Schedule the server on a host in the network specified with an IP
+    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
+    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
+    /// parameter is omitted, `/24` is used. It is available when
+    /// `SimpleCIDRAffinityFilter` is available on cloud side.
+    #[arg(help_heading = "Body parameters", long)]
+    cidr: Option<String>,
+
+    /// A list of cell routes or a cell route (string). Schedule the server in
+    /// a cell that is not specified. It is available when
+    /// `DifferentCellFilter` is available on cloud side that is cell v1
+    /// environment.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    different_cell: Option<Vec<String>>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on a
+    /// different host from a set of servers. It is available when
+    /// `DifferentHostFilter` is available on cloud side.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    different_host: Option<Vec<String>>,
+
+    /// The server group UUID. Schedule the server according to a policy of the
+    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
+    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
+    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
+    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
+    #[arg(help_heading = "Body parameters", long)]
+    group: Option<String>,
+
+    /// Schedule the server by using a custom filter in JSON format. For
+    /// example:
+    ///
+    /// ```text
+    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
+    ///
+    /// ```
+    ///
+    /// It is available when `JsonFilter` is available on cloud side.
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    query: Option<Value>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on the
+    /// same host as another server in a set of servers. It is available when
+    /// `SameHostFilter` is available on cloud side.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    same_host: Option<Vec<String>>,
+
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
+    #[arg(help_heading = "Body parameters", long)]
+    target_cell: Option<String>,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum OsDcfDiskConfig {
+    Auto,
+    Manual,
+}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum NetworksStringEnum {
@@ -134,12 +208,6 @@ struct ServerNetworks {
 
     #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
     none_networks: bool,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum OsDcfDiskConfig {
-    Auto,
-    Manual,
 }
 
 /// Server Body data
@@ -370,75 +438,6 @@ struct Server {
     user_data: Option<String>,
 }
 
-/// OsSchedulerHints Body data
-#[derive(Args, Clone)]
-struct OsSchedulerHints {
-    /// Schedule the server on a host in the network specified with this
-    /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[arg(help_heading = "Body parameters", long)]
-    build_near_host_ip: Option<String>,
-
-    /// Schedule the server on a host in the network specified with an IP
-    /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
-    /// If `os:scheduler_hints:build_near_host_ip` is specified and this
-    /// parameter is omitted, `/24` is used. It is available when
-    /// `SimpleCIDRAffinityFilter` is available on cloud side.
-    #[arg(help_heading = "Body parameters", long)]
-    cidr: Option<String>,
-
-    /// A list of cell routes or a cell route (string). Schedule the server in
-    /// a cell that is not specified. It is available when
-    /// `DifferentCellFilter` is available on cloud side that is cell v1
-    /// environment.
-    ///
-    /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    different_cell: Option<Vec<String>>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on a
-    /// different host from a set of servers. It is available when
-    /// `DifferentHostFilter` is available on cloud side.
-    ///
-    /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    different_host: Option<Vec<String>>,
-
-    /// The server group UUID. Schedule the server according to a policy of the
-    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
-    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
-    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
-    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    #[arg(help_heading = "Body parameters", long)]
-    group: Option<String>,
-
-    /// Schedule the server by using a custom filter in JSON format. For
-    /// example:
-    ///
-    /// ```text
-    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
-    /// ```
-    ///
-    /// It is available when `JsonFilter` is available on cloud side.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
-    query: Option<Value>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on the
-    /// same host as another server in a set of servers. It is available when
-    /// `SameHostFilter` is available on cloud side.
-    ///
-    /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    same_host: Option<Vec<String>>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    #[arg(help_heading = "Body parameters", long)]
-    target_cell: Option<String>,
-}
-
 impl ServerCommand {
     /// Perform command action
     pub async fn take_action(
@@ -460,33 +459,6 @@ impl ServerCommand {
         // Set Request.os_scheduler_hints data
         if let Some(args) = &self.os_scheduler_hints {
             let mut os_scheduler_hints_builder = create_263::OsSchedulerHintsBuilder::default();
-            if let Some(val) = &args.group {
-                os_scheduler_hints_builder.group(val);
-            }
-
-            if let Some(val) = &args.different_host {
-                os_scheduler_hints_builder
-                    .different_host(val.iter().map(Into::into).collect::<Vec<_>>());
-            }
-
-            if let Some(val) = &args.same_host {
-                os_scheduler_hints_builder
-                    .same_host(val.iter().map(Into::into).collect::<Vec<_>>());
-            }
-
-            if let Some(val) = &args.query {
-                os_scheduler_hints_builder.query(val.clone());
-            }
-
-            if let Some(val) = &args.target_cell {
-                os_scheduler_hints_builder.target_cell(val);
-            }
-
-            if let Some(val) = &args.different_cell {
-                os_scheduler_hints_builder
-                    .different_cell(val.iter().map(Into::into).collect::<Vec<_>>());
-            }
-
             if let Some(val) = &args.build_near_host_ip {
                 os_scheduler_hints_builder.build_near_host_ip(val);
             }
@@ -495,48 +467,39 @@ impl ServerCommand {
                 os_scheduler_hints_builder.cidr(val);
             }
 
+            if let Some(val) = &args.different_cell {
+                os_scheduler_hints_builder
+                    .different_cell(val.iter().map(Into::into).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.different_host {
+                os_scheduler_hints_builder
+                    .different_host(val.iter().map(Into::into).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.group {
+                os_scheduler_hints_builder.group(val);
+            }
+
+            if let Some(val) = &args.query {
+                os_scheduler_hints_builder.query(val.clone());
+            }
+
+            if let Some(val) = &args.same_host {
+                os_scheduler_hints_builder
+                    .same_host(val.iter().map(Into::into).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.target_cell {
+                os_scheduler_hints_builder.target_cell(val);
+            }
+
             ep_builder.os_scheduler_hints(os_scheduler_hints_builder.build().unwrap());
         }
 
         // Set Request.server data
         let args = &self.server;
         let mut server_builder = create_263::ServerBuilder::default();
-
-        server_builder.name(&args.name);
-
-        if let Some(val) = &args.image_ref {
-            server_builder.image_ref(val);
-        }
-
-        server_builder.flavor_ref(&args.flavor_ref);
-
-        if let Some(val) = &args.admin_pass {
-            server_builder.admin_pass(val);
-        }
-
-        if let Some(val) = &args.metadata {
-            server_builder.metadata(val.iter().cloned());
-        }
-
-        if args.networks.auto_networks {
-            server_builder.networks(create_263::ServerNetworks::F2(
-                create_263::NetworksStringEnum::Auto,
-            ));
-        }
-
-        if let Some(data) = &args.networks.networks {
-            let networks_builder: Vec<create_263::Networks> = data
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create_263::Networks>(v.to_owned()))
-                .collect();
-            server_builder.networks(create_263::ServerNetworks::F1(networks_builder));
-        }
-        if args.networks.none_networks {
-            server_builder.networks(create_263::ServerNetworks::F2(
-                create_263::NetworksStringEnum::None,
-            ));
-        }
-
         if let Some(val) = &args.os_dcf_disk_config {
             let tmp = match val {
                 OsDcfDiskConfig::Auto => create_263::OsDcfDiskConfig::Auto,
@@ -551,6 +514,10 @@ impl ServerCommand {
 
         if let Some(val) = &args.access_ipv6 {
             server_builder.access_ipv6(val);
+        }
+
+        if let Some(val) = &args.admin_pass {
+            server_builder.admin_pass(val);
         }
 
         if let Some(val) = &args.availability_zone {
@@ -581,16 +548,53 @@ impl ServerCommand {
             server_builder.config_drive(*val);
         }
 
+        if let Some(val) = &args.description {
+            server_builder.description(Some(val.into()));
+        } else if args.no_description {
+            server_builder.description(None);
+        }
+
+        server_builder.flavor_ref(&args.flavor_ref);
+
+        if let Some(val) = &args.image_ref {
+            server_builder.image_ref(val);
+        }
+
         if let Some(val) = &args.key_name {
             server_builder.key_name(val);
+        }
+
+        if let Some(val) = &args.max_count {
+            server_builder.max_count(*val);
+        }
+
+        if let Some(val) = &args.metadata {
+            server_builder.metadata(val.iter().cloned());
         }
 
         if let Some(val) = &args.min_count {
             server_builder.min_count(*val);
         }
 
-        if let Some(val) = &args.max_count {
-            server_builder.max_count(*val);
+        server_builder.name(&args.name);
+
+        if args.networks.auto_networks {
+            server_builder.networks(create_263::ServerNetworks::F2(
+                create_263::NetworksStringEnum::Auto,
+            ));
+        }
+
+        if let Some(data) = &args.networks.networks {
+            let networks_builder: Vec<create_263::Networks> = data
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create_263::Networks>(v.to_owned()))
+                .collect();
+            server_builder.networks(create_263::ServerNetworks::F1(networks_builder));
+        }
+        if args.networks.none_networks {
+            server_builder.networks(create_263::ServerNetworks::F2(
+                create_263::NetworksStringEnum::None,
+            ));
         }
 
         if let Some(val) = &args.return_reservation_id {
@@ -605,16 +609,6 @@ impl ServerCommand {
             server_builder.security_groups(security_groups_builder);
         }
 
-        if let Some(val) = &args.user_data {
-            server_builder.user_data(val);
-        }
-
-        if let Some(val) = &args.description {
-            server_builder.description(Some(val.into()));
-        } else if args.no_description {
-            server_builder.description(None);
-        }
-
         if let Some(val) = &args.tags {
             server_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
@@ -622,6 +616,10 @@ impl ServerCommand {
         if let Some(val) = &args.trusted_image_certificates {
             server_builder
                 .trusted_image_certificates(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.user_data {
+            server_builder.user_data(val);
         }
 
         ep_builder.server(server_builder.build().unwrap());

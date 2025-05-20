@@ -111,16 +111,16 @@ impl FlavorCommand {
         // Set Request.flavor data
         let args = &self.flavor;
         let mut flavor_builder = set::FlavorBuilder::default();
-        if let Some(val) = &args.name {
-            flavor_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             flavor_builder.description(val);
         }
 
         if let Some(val) = &args.enabled {
             flavor_builder.enabled(*val);
+        }
+
+        if let Some(val) = &args.name {
+            flavor_builder.name(val);
         }
 
         ep_builder.flavor(flavor_builder.build().unwrap());

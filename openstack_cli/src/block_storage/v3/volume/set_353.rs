@@ -135,22 +135,10 @@ impl VolumeCommand {
         // Set Request.volume data
         let args = &self.volume;
         let mut volume_builder = set_353::VolumeBuilder::default();
-        if let Some(val) = &args.name {
-            volume_builder.name(Some(val.into()));
-        } else if args.no_name {
-            volume_builder.name(None);
-        }
-
         if let Some(val) = &args.description {
             volume_builder.description(Some(val.into()));
         } else if args.no_description {
             volume_builder.description(None);
-        }
-
-        if let Some(val) = &args.display_name {
-            volume_builder.display_name(Some(val.into()));
-        } else if args.no_display_name {
-            volume_builder.display_name(None);
         }
 
         if let Some(val) = &args.display_description {
@@ -159,8 +147,20 @@ impl VolumeCommand {
             volume_builder.display_description(None);
         }
 
+        if let Some(val) = &args.display_name {
+            volume_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            volume_builder.display_name(None);
+        }
+
         if let Some(val) = &args.metadata {
             volume_builder.metadata(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.name {
+            volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
         }
 
         ep_builder.volume(volume_builder.build().unwrap());

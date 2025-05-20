@@ -114,8 +114,8 @@ impl IdentityProviderCommand {
         // Set Request.identity_provider data
         let args = &self.identity_provider;
         let mut identity_provider_builder = set::IdentityProviderBuilder::default();
-        if let Some(val) = &args.enabled {
-            identity_provider_builder.enabled(*val);
+        if let Some(val) = &args.authorization_ttl {
+            identity_provider_builder.authorization_ttl(*val);
         }
 
         if let Some(val) = &args.description {
@@ -124,8 +124,8 @@ impl IdentityProviderCommand {
             identity_provider_builder.description(None);
         }
 
-        if let Some(val) = &args.authorization_ttl {
-            identity_provider_builder.authorization_ttl(*val);
+        if let Some(val) = &args.enabled {
+            identity_provider_builder.enabled(*val);
         }
 
         if let Some(val) = &args.remote_ids {

@@ -110,8 +110,8 @@ impl RestEndpoint for Request<'_> {
         format!(
       "OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects",
           project_id = self.project_id.as_ref(),
-          user_id = self.user_id.as_ref(),
           role_id = self.role_id.as_ref(),
+          user_id = self.user_id.as_ref(),
       )
         .into()
     }
@@ -182,8 +182,8 @@ mod tests {
             when.method(httpmock::Method::PUT).path(format!(
       "/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects",
           project_id = "project_id",
-          user_id = "user_id",
           role_id = "role_id",
+          user_id = "user_id",
       ));
 
             then.status(200)
@@ -193,8 +193,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .project_id("project_id")
-            .user_id("user_id")
             .role_id("role_id")
+            .user_id("user_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -211,8 +211,8 @@ mod tests {
                 .path(format!(
       "/OS-INHERIT/projects/{project_id}/users/{user_id}/roles/{role_id}/inherited_to_projects",
           project_id = "project_id",
-          user_id = "user_id",
           role_id = "role_id",
+          user_id = "user_id",
       ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -223,8 +223,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .project_id("project_id")
-            .user_id("user_id")
             .role_id("role_id")
+            .user_id("user_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

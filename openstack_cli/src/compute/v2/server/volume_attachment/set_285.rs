@@ -73,15 +73,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// server_id parameter for
-    /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_server_id",
-        value_name = "SERVER_ID"
-    )]
-    server_id: String,
-
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
     #[arg(
@@ -90,6 +81,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// server_id parameter for
+    /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
+    server_id: String,
 }
 /// VolumeAttachment Body data
 #[derive(Args, Clone)]
@@ -153,15 +153,16 @@ impl VolumeAttachmentCommand {
         ep_builder.header("OpenStack-API-Version", "compute 2.85");
 
         // Set path parameters
-        ep_builder.server_id(&self.path.server_id);
         ep_builder.id(&self.path.id);
+        ep_builder.server_id(&self.path.server_id);
         // Set query parameters
         // Set body parameters
         // Set Request.volume_attachment data
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = set_285::VolumeAttachmentBuilder::default();
-
-        volume_attachment_builder.volume_id(&args.volume_id);
+        if let Some(val) = &args.delete_on_termination {
+            volume_attachment_builder.delete_on_termination(*val);
+        }
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
@@ -169,21 +170,19 @@ impl VolumeAttachmentCommand {
             volume_attachment_builder.device(None);
         }
 
-        if let Some(val) = &args.tag {
-            volume_attachment_builder.tag(val);
-        }
-
-        if let Some(val) = &args.delete_on_termination {
-            volume_attachment_builder.delete_on_termination(*val);
+        if let Some(val) = &args.id {
+            volume_attachment_builder.id(val);
         }
 
         if let Some(val) = &args.server_id {
             volume_attachment_builder.server_id(val);
         }
 
-        if let Some(val) = &args.id {
-            volume_attachment_builder.id(val);
+        if let Some(val) = &args.tag {
+            volume_attachment_builder.tag(val);
         }
+
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());
 

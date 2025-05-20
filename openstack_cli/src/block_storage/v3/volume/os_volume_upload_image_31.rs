@@ -131,11 +131,10 @@ impl VolumeCommand {
         let args = &self.os_volume_upload_image;
         let mut os_volume_upload_image_builder =
             os_volume_upload_image_31::OsVolumeUploadImageBuilder::default();
-
-        os_volume_upload_image_builder.image_name(&args.image_name);
-
-        if let Some(val) = &args.force {
-            os_volume_upload_image_builder.force(*val);
+        if let Some(val) = &args.container_format {
+            os_volume_upload_image_builder.container_format(Some(val.into()));
+        } else if args.no_container_format {
+            os_volume_upload_image_builder.container_format(None);
         }
 
         if let Some(val) = &args.disk_format {
@@ -151,10 +150,14 @@ impl VolumeCommand {
             os_volume_upload_image_builder.disk_format(tmp);
         }
 
-        if let Some(val) = &args.container_format {
-            os_volume_upload_image_builder.container_format(Some(val.into()));
-        } else if args.no_container_format {
-            os_volume_upload_image_builder.container_format(None);
+        if let Some(val) = &args.force {
+            os_volume_upload_image_builder.force(*val);
+        }
+
+        os_volume_upload_image_builder.image_name(&args.image_name);
+
+        if let Some(val) = &args.protected {
+            os_volume_upload_image_builder.protected(*val);
         }
 
         if let Some(val) = &args.visibility {
@@ -165,10 +168,6 @@ impl VolumeCommand {
                 Visibility::Shared => os_volume_upload_image_31::Visibility::Shared,
             };
             os_volume_upload_image_builder.visibility(tmp);
-        }
-
-        if let Some(val) = &args.protected {
-            os_volume_upload_image_builder.protected(*val);
         }
 
         ep_builder.os_volume_upload_image(os_volume_upload_image_builder.build().unwrap());

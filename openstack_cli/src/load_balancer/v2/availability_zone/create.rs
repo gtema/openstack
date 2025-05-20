@@ -95,7 +95,7 @@ impl AvailabilityZoneCommand {
         let args = &self.availability_zone;
         let mut availability_zone_builder = create::AvailabilityZoneBuilder::default();
 
-        availability_zone_builder.name(&args.name);
+        availability_zone_builder.availability_zone_profile_id(&args.availability_zone_profile_id);
 
         if let Some(val) = &args.description {
             availability_zone_builder.description(val);
@@ -105,7 +105,7 @@ impl AvailabilityZoneCommand {
             availability_zone_builder.enabled(*val);
         }
 
-        availability_zone_builder.availability_zone_profile_id(&args.availability_zone_profile_id);
+        availability_zone_builder.name(&args.name);
 
         ep_builder.availability_zone(availability_zone_builder.build().unwrap());
 

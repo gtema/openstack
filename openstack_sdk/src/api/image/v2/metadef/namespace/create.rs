@@ -27,30 +27,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Visibility {
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct ResourceTypeAssociations<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) prefix: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) properties_target: Option<Cow<'a, str>>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     #[serde(rename = "array")]
     Array,
@@ -195,10 +171,34 @@ impl<'a> ObjectsBuilder<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
+pub struct ResourceTypeAssociations<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) prefix: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) properties_target: Option<Cow<'a, str>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
 pub struct Tags<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Visibility {
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -304,33 +304,33 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("namespace", serde_json::to_value(&self.namespace)?);
-        if let Some(val) = &self.display_name {
-            params.push("display_name", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.visibility {
-            params.push("visibility", serde_json::to_value(val)?);
+        if let Some(val) = &self.display_name {
+            params.push("display_name", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.protected {
-            params.push("protected", serde_json::to_value(val)?);
+        params.push("namespace", serde_json::to_value(&self.namespace)?);
+        if let Some(val) = &self.objects {
+            params.push("objects", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.owner {
             params.push("owner", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.resource_type_associations {
-            params.push("resource_type_associations", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.properties {
             params.push("properties", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.objects {
-            params.push("objects", serde_json::to_value(val)?);
+        if let Some(val) = &self.protected {
+            params.push("protected", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.resource_type_associations {
+            params.push("resource_type_associations", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.tags {
             params.push("tags", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.visibility {
+            params.push("visibility", serde_json::to_value(val)?);
         }
 
         params.into_body()

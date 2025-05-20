@@ -114,11 +114,11 @@ impl EncryptionCommand {
         // Set Request.encryption data
         let args = &self.encryption;
         let mut encryption_builder = create::EncryptionBuilder::default();
-        if let Some(val) = &args.key_size {
-            encryption_builder.key_size(*val);
+        if let Some(val) = &args.cipher {
+            encryption_builder.cipher(Some(val.into()));
+        } else if args.no_cipher {
+            encryption_builder.cipher(None);
         }
-
-        encryption_builder.provider(&args.provider);
 
         let tmp = match &args.control_location {
             ControlLocation::BackEnd => create::ControlLocation::BackEnd,
@@ -126,11 +126,11 @@ impl EncryptionCommand {
         };
         encryption_builder.control_location(tmp);
 
-        if let Some(val) = &args.cipher {
-            encryption_builder.cipher(Some(val.into()));
-        } else if args.no_cipher {
-            encryption_builder.cipher(None);
+        if let Some(val) = &args.key_size {
+            encryption_builder.key_size(*val);
         }
+
+        encryption_builder.provider(&args.provider);
 
         ep_builder.encryption(encryption_builder.build().unwrap());
 

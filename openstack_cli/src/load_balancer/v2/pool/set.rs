@@ -234,16 +234,24 @@ impl PoolCommand {
         // Set Request.pool data
         let args = &self.pool;
         let mut pool_builder = set::PoolBuilder::default();
-        if let Some(val) = &args.name {
-            pool_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            pool_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.alpn_protocols {
+            pool_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.ca_tls_container_ref {
+            pool_builder.ca_tls_container_ref(val);
+        }
+
+        if let Some(val) = &args.crl_container_ref {
+            pool_builder.crl_container_ref(val);
         }
 
         if let Some(val) = &args.description {
             pool_builder.description(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            pool_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.lb_algorithm {
@@ -256,8 +264,21 @@ impl PoolCommand {
             pool_builder.lb_algorithm(tmp);
         }
 
+        if let Some(val) = &args.name {
+            pool_builder.name(val);
+        }
+
         if let Some(val) = &args.session_persistence {
             let mut session_persistence_builder = set::SessionPersistenceBuilder::default();
+            if let Some(val) = &val.cookie_name {
+                session_persistence_builder.cookie_name(val);
+            }
+            if let Some(val) = &val.persistence_granularity {
+                session_persistence_builder.persistence_granularity(val);
+            }
+            if let Some(val) = &val.persistence_timeout {
+                session_persistence_builder.persistence_timeout(*val);
+            }
             if let Some(val) = &val._type {
                 let tmp = match val {
                     Type::AppCookie => set::Type::AppCookie,
@@ -265,15 +286,6 @@ impl PoolCommand {
                     Type::SourceIp => set::Type::SourceIp,
                 };
                 session_persistence_builder._type(tmp);
-            }
-            if let Some(val) = &val.cookie_name {
-                session_persistence_builder.cookie_name(val);
-            }
-            if let Some(val) = &val.persistence_timeout {
-                session_persistence_builder.persistence_timeout(*val);
-            }
-            if let Some(val) = &val.persistence_granularity {
-                session_persistence_builder.persistence_granularity(val);
             }
             pool_builder
                 .session_persistence(session_persistence_builder.build().expect("A valid object"));
@@ -283,32 +295,20 @@ impl PoolCommand {
             pool_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
+        if let Some(val) = &args.tls_ciphers {
+            pool_builder.tls_ciphers(val);
+        }
+
         if let Some(val) = &args.tls_container_ref {
             pool_builder.tls_container_ref(val);
-        }
-
-        if let Some(val) = &args.ca_tls_container_ref {
-            pool_builder.ca_tls_container_ref(val);
-        }
-
-        if let Some(val) = &args.crl_container_ref {
-            pool_builder.crl_container_ref(val);
         }
 
         if let Some(val) = &args.tls_enabled {
             pool_builder.tls_enabled(*val);
         }
 
-        if let Some(val) = &args.tls_ciphers {
-            pool_builder.tls_ciphers(val);
-        }
-
         if let Some(val) = &args.tls_versions {
             pool_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.alpn_protocols {
-            pool_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.pool(pool_builder.build().unwrap());

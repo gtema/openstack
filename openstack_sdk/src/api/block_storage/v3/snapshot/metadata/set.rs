@@ -96,8 +96,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "snapshots/{snapshot_id}/metadata/{id}",
-            snapshot_id = self.snapshot_id.as_ref(),
             id = self.id.as_ref(),
+            snapshot_id = self.snapshot_id.as_ref(),
         )
         .into()
     }
@@ -177,8 +177,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/snapshots/{snapshot_id}/metadata/{id}",
-                snapshot_id = "snapshot_id",
                 id = "id",
+                snapshot_id = "snapshot_id",
             ));
 
             then.status(200)
@@ -187,8 +187,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .snapshot_id("snapshot_id")
             .id("id")
+            .snapshot_id("snapshot_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .build()
             .unwrap();
@@ -205,8 +205,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/snapshots/{snapshot_id}/metadata/{id}",
-                    snapshot_id = "snapshot_id",
                     id = "id",
+                    snapshot_id = "snapshot_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -216,8 +216,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .snapshot_id("snapshot_id")
             .id("id")
+            .snapshot_id("snapshot_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .headers(
                 [(

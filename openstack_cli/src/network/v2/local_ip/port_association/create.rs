@@ -115,14 +115,14 @@ impl PortAssociationCommand {
         // Set Request.port_association data
         let args = &self.port_association;
         let mut port_association_builder = create::PortAssociationBuilder::default();
-        if let Some(val) = &args.fixed_port_id {
-            port_association_builder.fixed_port_id(val);
-        }
-
         if let Some(val) = &args.fixed_ip {
             port_association_builder.fixed_ip(Some(val.into()));
         } else if args.no_fixed_ip {
             port_association_builder.fixed_ip(None);
+        }
+
+        if let Some(val) = &args.fixed_port_id {
+            port_association_builder.fixed_port_id(val);
         }
 
         if let Some(val) = &args.project_id {

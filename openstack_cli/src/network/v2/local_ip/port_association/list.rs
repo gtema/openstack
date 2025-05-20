@@ -151,24 +151,6 @@ impl PortAssociationsCommand {
         // Set path parameters
         ep_builder.local_ip_id(&self.path.local_ip_id);
         // Set query parameters
-        if let Some(val) = &self.query.local_ip_address {
-            ep_builder.local_ip_address(val);
-        }
-        if let Some(val) = &self.query.fixed_port_id {
-            ep_builder.fixed_port_id(val);
-        }
-        if let Some(val) = &self.query.fixed_ip {
-            ep_builder.fixed_ip(val);
-        }
-        if let Some(val) = &self.query.host {
-            ep_builder.host(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
@@ -177,6 +159,24 @@ impl PortAssociationsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.fixed_ip {
+            ep_builder.fixed_ip(val);
+        }
+        if let Some(val) = &self.query.fixed_port_id {
+            ep_builder.fixed_port_id(val);
+        }
+        if let Some(val) = &self.query.host {
+            ep_builder.host(val);
+        }
+        if let Some(val) = &self.query.local_ip_address {
+            ep_builder.local_ip_address(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

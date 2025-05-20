@@ -59,10 +59,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// access_token_id parameter for
     /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
     /// API
@@ -72,6 +68,10 @@ struct PathParameters {
         value_name = "ACCESS_TOKEN_ID"
     )]
     access_token_id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// User input select group
@@ -107,6 +107,7 @@ impl RolesCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set path parameters
+        ep_builder.access_token_id(&self.path.access_token_id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -152,7 +153,6 @@ impl RolesCommand {
                     .id,
             );
         }
-        ep_builder.access_token_id(&self.path.access_token_id);
         // Set query parameters
         // Set body parameters
 

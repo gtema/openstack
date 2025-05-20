@@ -50,15 +50,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// security_group_id parameter for
-    /// /v2.0/security-groups/{security_group_id}/tags/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_security_group_id",
-        value_name = "SECURITY_GROUP_ID"
-    )]
-    security_group_id: String,
-
     /// id parameter for /v2.0/security-groups/{security_group_id}/tags/{id}
     /// API
     #[arg(
@@ -67,6 +58,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// security_group_id parameter for
+    /// /v2.0/security-groups/{security_group_id}/tags/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_security_group_id",
+        value_name = "SECURITY_GROUP_ID"
+    )]
+    security_group_id: String,
 }
 
 impl TagCommand {
@@ -85,8 +85,8 @@ impl TagCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.security_group_id(&self.path.security_group_id);
         ep_builder.id(&self.path.id);
+        ep_builder.security_group_id(&self.path.security_group_id);
         // Set query parameters
         // Set body parameters
 

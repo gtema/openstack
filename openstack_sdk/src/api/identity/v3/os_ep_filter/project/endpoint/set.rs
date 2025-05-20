@@ -98,8 +98,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "OS-EP-FILTER/projects/{project_id}/endpoints/{id}",
-            project_id = self.project_id.as_ref(),
             id = self.id.as_ref(),
+            project_id = self.project_id.as_ref(),
         )
         .into()
     }
@@ -169,8 +169,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/OS-EP-FILTER/projects/{project_id}/endpoints/{id}",
-                project_id = "project_id",
                 id = "id",
+                project_id = "project_id",
             ));
 
             then.status(200)
@@ -179,8 +179,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .project_id("project_id")
             .id("id")
+            .project_id("project_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -196,8 +196,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/OS-EP-FILTER/projects/{project_id}/endpoints/{id}",
-                    project_id = "project_id",
                     id = "id",
+                    project_id = "project_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -207,8 +207,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .project_id("project_id")
             .id("id")
+            .project_id("project_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

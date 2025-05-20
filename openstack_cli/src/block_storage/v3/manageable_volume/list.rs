@@ -113,23 +113,23 @@ impl ManageableVolumesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.sort {
-            ep_builder.sort(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.offset {
             ep_builder.offset(*val);
         }
-        if let Some(val) = &self.query.marker {
-            ep_builder.marker(val);
+        if let Some(val) = &self.query.sort {
+            ep_builder.sort(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
         }
         // Set body parameters
 

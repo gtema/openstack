@@ -47,7 +47,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Role.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -80,8 +80,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "OS-TRUST/trusts/{trust_id}/roles/{id}",
-            trust_id = self.trust_id.as_ref(),
             id = self.id.as_ref(),
+            trust_id = self.trust_id.as_ref(),
         )
         .into()
     }
@@ -140,16 +140,16 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::HEAD).path(format!(
                 "/OS-TRUST/trusts/{trust_id}/roles/{id}",
-                trust_id = "trust_id",
                 id = "id",
+                trust_id = "trust_id",
             ));
 
             then.status(200).header("content-type", "application/json");
         });
 
         let endpoint = Request::builder()
-            .trust_id("trust_id")
             .id("id")
+            .trust_id("trust_id")
             .build()
             .unwrap();
         let _ = endpoint.raw_query(&client).unwrap();
@@ -165,8 +165,8 @@ mod tests {
             when.method(httpmock::Method::HEAD)
                 .path(format!(
                     "/OS-TRUST/trusts/{trust_id}/roles/{id}",
-                    trust_id = "trust_id",
                     id = "id",
+                    trust_id = "trust_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -174,8 +174,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .trust_id("trust_id")
             .id("id")
+            .trust_id("trust_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

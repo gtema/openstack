@@ -119,14 +119,14 @@ impl SegmentCommand {
         // Set Request.segment data
         let args = &self.segment;
         let mut segment_builder = set::SegmentBuilder::default();
+        if let Some(val) = &args.description {
+            segment_builder.description(val);
+        }
+
         if let Some(val) = &args.name {
             segment_builder.name(Some(val.into()));
         } else if args.no_name {
             segment_builder.name(None);
-        }
-
-        if let Some(val) = &args.description {
-            segment_builder.description(val);
         }
 
         ep_builder.segment(segment_builder.build().unwrap());

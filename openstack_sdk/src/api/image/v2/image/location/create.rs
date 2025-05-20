@@ -153,8 +153,8 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("url", serde_json::to_value(&self.url)?);
         params.push("metadata", serde_json::to_value(&self.metadata)?);
+        params.push("url", serde_json::to_value(&self.url)?);
         if let Some(val) = &self.validation_data {
             params.push("validation_data", serde_json::to_value(val)?);
         }
@@ -196,8 +196,8 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .url("foo")
                 .metadata(BTreeMap::<String, Value>::new().into_iter())
+                .url("foo")
                 .build()
                 .unwrap()
                 .service_type(),
@@ -208,8 +208,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .url("foo")
             .metadata(BTreeMap::<String, Value>::new().into_iter())
+            .url("foo")
             .build()
             .unwrap()
             .response_key()
@@ -234,8 +234,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .image_id("image_id")
-            .url("foo")
             .metadata(BTreeMap::<String, Value>::new().into_iter())
+            .url("foo")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -262,8 +262,8 @@ mod tests {
 
         let endpoint = Request::builder()
             .image_id("image_id")
-            .url("foo")
             .metadata(BTreeMap::<String, Value>::new().into_iter())
+            .url("foo")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

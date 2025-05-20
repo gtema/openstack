@@ -96,12 +96,12 @@ impl MeteringLabelRuleCommand {
         // Set Request.metering_label_rule data
         let args = &self.metering_label_rule;
         let mut metering_label_rule_builder = set::MeteringLabelRuleBuilder::default();
-        if let Some(val) = &args.source_ip_prefix {
-            metering_label_rule_builder.source_ip_prefix(val);
-        }
-
         if let Some(val) = &args.destination_ip_prefix {
             metering_label_rule_builder.destination_ip_prefix(val);
+        }
+
+        if let Some(val) = &args.source_ip_prefix {
+            metering_label_rule_builder.source_ip_prefix(val);
         }
 
         ep_builder.metering_label_rule(metering_label_rule_builder.build().unwrap());

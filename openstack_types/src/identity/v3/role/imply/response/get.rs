@@ -41,9 +41,9 @@ pub struct Links {
 }
 
 /// A prior role object.
-/// `PriorRole` type
+/// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct PriorRole {
+pub struct Implies {
     pub description: Option<String>,
     pub id: Option<String>,
     pub links: Option<Links>,
@@ -51,9 +51,9 @@ pub struct PriorRole {
 }
 
 /// A prior role object.
-/// `Implies` type
+/// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Implies {
+pub struct PriorRole {
     pub description: Option<String>,
     pub id: Option<String>,
     pub links: Option<Links>,

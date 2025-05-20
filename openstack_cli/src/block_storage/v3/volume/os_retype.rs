@@ -100,9 +100,6 @@ impl VolumeCommand {
         // Set Request.os_retype data
         let args = &self.os_retype;
         let mut os_retype_builder = os_retype::OsRetypeBuilder::default();
-
-        os_retype_builder.new_type(&args.new_type);
-
         if let Some(val) = &args.migration_policy {
             let tmp = match val {
                 MigrationPolicy::Never => os_retype::MigrationPolicy::Never,
@@ -110,6 +107,8 @@ impl VolumeCommand {
             };
             os_retype_builder.migration_policy(tmp);
         }
+
+        os_retype_builder.new_type(&args.new_type);
 
         ep_builder.os_retype(os_retype_builder.build().unwrap());
 

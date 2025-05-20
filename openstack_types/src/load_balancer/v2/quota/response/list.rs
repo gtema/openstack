@@ -23,7 +23,7 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub health_monitor: Option<i32>,
 
     /// The configured health monitor quota limit. A setting of `null` means it
@@ -76,7 +76,7 @@ pub struct QuotaResponse {
 
     /// The ID of the project owning this resource.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     #[serde(default)]

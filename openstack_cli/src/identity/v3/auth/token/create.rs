@@ -67,6 +67,30 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// ApplicationCredential Body data
+#[derive(Args, Clone)]
+#[group(required = false, multiple = true)]
+struct ApplicationCredential {
+    /// The ID of the application credential used for authentication. If not
+    /// provided, the application credential must be identified by its name and
+    /// its owning user.
+    #[arg(help_heading = "Body parameters", long)]
+    id: Option<String>,
+
+    /// The name of the application credential used for authentication. If
+    /// provided, must be accompanied by a user object.
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+
+    /// The secret for authenticating the application credential.
+    #[arg(help_heading = "Body parameters", long, required = false)]
+    secret: Option<String>,
+
+    /// A user object, required if an application credential is identified by
+    /// name and not ID.
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    user: Option<Value>,
+}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Methods {
@@ -76,10 +100,10 @@ enum Methods {
     Totp,
 }
 
-/// User Body data
+/// PasswordUser Body data
 #[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
-struct User {
+struct PasswordUser {
     /// A `domain` object
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     domain: Option<Value>,
@@ -105,7 +129,7 @@ struct User {
 struct Password {
     /// A `user` object.
     #[command(flatten)]
-    user: Option<User>,
+    user: Option<PasswordUser>,
 }
 
 /// Token Body data
@@ -146,31 +170,6 @@ struct Totp {
     user: TotpUser,
 }
 
-/// ApplicationCredential Body data
-#[derive(Args, Clone)]
-#[group(required = false, multiple = true)]
-struct ApplicationCredential {
-    /// The ID of the application credential used for authentication. If not
-    /// provided, the application credential must be identified by its name and
-    /// its owning user.
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    /// The name of the application credential used for authentication. If
-    /// provided, must be accompanied by a user object.
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-
-    /// The secret for authenticating the application credential.
-    #[arg(help_heading = "Body parameters", long, required = false)]
-    secret: Option<String>,
-
-    /// A user object, required if an application credential is identified by
-    /// name and not ID.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
-    user: Option<Value>,
-}
-
 /// Identity Body data
 #[derive(Args, Clone)]
 #[group(required = true, multiple = true)]
@@ -199,6 +198,14 @@ struct Identity {
     totp: Option<Totp>,
 }
 
+/// OsTrustTrust Body data
+#[derive(Args, Clone)]
+#[group(required = false, multiple = true)]
+struct OsTrustTrust {
+    #[arg(help_heading = "Body parameters", long)]
+    id: Option<String>,
+}
+
 /// ScopeDomain Body data
 #[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
@@ -210,14 +217,6 @@ struct ScopeDomain {
     /// Domain name
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-}
-
-/// OsTrustTrust Body data
-#[derive(Args, Clone)]
-#[group(required = false, multiple = true)]
-struct OsTrustTrust {
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
 }
 
 /// System Body data
@@ -287,6 +286,27 @@ impl TokenCommand {
         let mut auth_builder = create::AuthBuilder::default();
 
         let mut identity_builder = create::IdentityBuilder::default();
+        if let Some(val) = &&args.identity.application_credential {
+            let mut application_credential_builder =
+                create::ApplicationCredentialBuilder::default();
+            if let Some(val) = &val.id {
+                application_credential_builder.id(val);
+            }
+            if let Some(val) = &val.name {
+                application_credential_builder.name(val);
+            }
+
+            application_credential_builder.secret(&val.secret);
+            if let Some(val) = &val.user {
+                application_credential_builder
+                    .user(serde_json::from_value::<create::User>(val.to_owned())?);
+            }
+            identity_builder.application_credential(
+                application_credential_builder
+                    .build()
+                    .expect("A valid object"),
+            );
+        }
 
         identity_builder.methods(
             args.identity
@@ -298,7 +318,10 @@ impl TokenCommand {
         if let Some(val) = &&args.identity.password {
             let mut password_builder = create::PasswordBuilder::default();
             if let Some(val) = &val.user {
-                let mut user_builder = create::UserBuilder::default();
+                let mut user_builder = create::PasswordUserBuilder::default();
+                if let Some(val) = &val.domain {
+                    user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
+                }
                 if let Some(val) = &val.id {
                     user_builder.id(val);
                 }
@@ -307,9 +330,6 @@ impl TokenCommand {
                 }
                 if let Some(val) = &val.password {
                     user_builder.password(val);
-                }
-                if let Some(val) = &val.domain {
-                    user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
                 }
                 password_builder.user(user_builder.build().expect("A valid object"));
             }
@@ -325,48 +345,31 @@ impl TokenCommand {
             let mut totp_builder = create::TotpBuilder::default();
 
             let mut user_builder = create::TotpUserBuilder::default();
+            if let Some(val) = &&val.user.domain {
+                user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
+            }
             if let Some(val) = &&val.user.id {
                 user_builder.id(val);
             }
             if let Some(val) = &&val.user.name {
                 user_builder.name(val);
             }
-            if let Some(val) = &&val.user.domain {
-                user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
-            }
 
             user_builder.passcode(&val.user.passcode);
             totp_builder.user(user_builder.build().expect("A valid object"));
             identity_builder.totp(totp_builder.build().expect("A valid object"));
         }
-        if let Some(val) = &&args.identity.application_credential {
-            let mut application_credential_builder =
-                create::ApplicationCredentialBuilder::default();
-            if let Some(val) = &val.id {
-                application_credential_builder.id(val);
-            }
-            if let Some(val) = &val.name {
-                application_credential_builder.name(val);
-            }
-
-            application_credential_builder.secret(&val.secret);
-            if let Some(val) = &val.user {
-                application_credential_builder.user(serde_json::from_value::<
-                    create::ApplicationCredentialUser,
-                >(val.to_owned())?);
-            }
-            identity_builder.application_credential(
-                application_credential_builder
-                    .build()
-                    .expect("A valid object"),
-            );
-        }
         auth_builder.identity(identity_builder.build().expect("A valid object"));
 
         if let Some(val) = &args.scope {
             let mut scope_builder = create::ScopeBuilder::default();
-            if let Some(val) = &val.project {
-                scope_builder.project(serde_json::from_value::<create::Project>(val.to_owned())?);
+            if let Some(val) = &val.os_trust_trust {
+                let mut os_trust_trust_builder = create::OsTrustTrustBuilder::default();
+                if let Some(val) = &val.id {
+                    os_trust_trust_builder.id(val);
+                }
+                scope_builder
+                    .os_trust_trust(os_trust_trust_builder.build().expect("A valid object"));
             }
             if let Some(val) = &val.domain {
                 let mut domain_builder = create::ScopeDomainBuilder::default();
@@ -378,13 +381,8 @@ impl TokenCommand {
                 }
                 scope_builder.domain(domain_builder.build().expect("A valid object"));
             }
-            if let Some(val) = &val.os_trust_trust {
-                let mut os_trust_trust_builder = create::OsTrustTrustBuilder::default();
-                if let Some(val) = &val.id {
-                    os_trust_trust_builder.id(val);
-                }
-                scope_builder
-                    .os_trust_trust(os_trust_trust_builder.build().expect("A valid object"));
+            if let Some(val) = &val.project {
+                scope_builder.project(serde_json::from_value::<create::Project>(val.to_owned())?);
             }
             if let Some(val) = &val.system {
                 let mut system_builder = create::SystemBuilder::default();

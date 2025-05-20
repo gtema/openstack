@@ -186,17 +186,7 @@ impl ProjectCommand {
             project_builder.is_domain(*val);
         }
 
-        if let Some(val) = &args.parent_id {
-            project_builder.parent_id(Some(val.into()));
-        } else if args.no_parent_id {
-            project_builder.parent_id(None);
-        }
-
         project_builder.name(&args.name);
-
-        if let Some(val) = &args.tags {
-            project_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
 
         if let Some(val) = &args.options {
             let mut options_builder = create::OptionsBuilder::default();
@@ -204,6 +194,16 @@ impl ProjectCommand {
                 options_builder.immutable(*val);
             }
             project_builder.options(options_builder.build().expect("A valid object"));
+        }
+
+        if let Some(val) = &args.parent_id {
+            project_builder.parent_id(Some(val.into()));
+        } else if args.no_parent_id {
+            project_builder.parent_id(None);
+        }
+
+        if let Some(val) = &args.tags {
+            project_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.project(project_builder.build().unwrap());

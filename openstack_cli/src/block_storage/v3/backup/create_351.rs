@@ -143,8 +143,11 @@ impl BackupCommand {
         // Set Request.backup data
         let args = &self.backup;
         let mut backup_builder = create_351::BackupBuilder::default();
-
-        backup_builder.volume_id(&args.volume_id);
+        if let Some(val) = &args.availability_zone {
+            backup_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            backup_builder.availability_zone(None);
+        }
 
         if let Some(val) = &args.container {
             backup_builder.container(Some(val.into()));
@@ -158,12 +161,16 @@ impl BackupCommand {
             backup_builder.description(None);
         }
 
+        if let Some(val) = &args.force {
+            backup_builder.force(*val);
+        }
+
         if let Some(val) = &args.incremental {
             backup_builder.incremental(*val);
         }
 
-        if let Some(val) = &args.force {
-            backup_builder.force(*val);
+        if let Some(val) = &args.metadata {
+            backup_builder.metadata(val.iter().cloned());
         }
 
         if let Some(val) = &args.name {
@@ -178,15 +185,7 @@ impl BackupCommand {
             backup_builder.snapshot_id(None);
         }
 
-        if let Some(val) = &args.metadata {
-            backup_builder.metadata(val.iter().cloned());
-        }
-
-        if let Some(val) = &args.availability_zone {
-            backup_builder.availability_zone(Some(val.into()));
-        } else if args.no_availability_zone {
-            backup_builder.availability_zone(None);
-        }
+        backup_builder.volume_id(&args.volume_id);
 
         ep_builder.backup(backup_builder.build().unwrap());
 

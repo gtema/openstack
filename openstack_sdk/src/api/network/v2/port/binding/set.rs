@@ -108,7 +108,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Binding.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -141,8 +141,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "ports/{port_id}/bindings/{id}",
-            port_id = self.port_id.as_ref(),
             id = self.id.as_ref(),
+            port_id = self.port_id.as_ref(),
         )
         .into()
     }
@@ -222,8 +222,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/ports/{port_id}/bindings/{id}",
-                port_id = "port_id",
                 id = "id",
+                port_id = "port_id",
             ));
 
             then.status(200)
@@ -232,8 +232,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .port_id("port_id")
             .id("id")
+            .port_id("port_id")
             .binding(BindingBuilder::default().build().unwrap())
             .build()
             .unwrap();
@@ -250,8 +250,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/ports/{port_id}/bindings/{id}",
-                    port_id = "port_id",
                     id = "id",
+                    port_id = "port_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -261,8 +261,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .port_id("port_id")
             .id("id")
+            .port_id("port_id")
             .binding(BindingBuilder::default().build().unwrap())
             .headers(
                 [(

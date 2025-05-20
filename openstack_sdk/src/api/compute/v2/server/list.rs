@@ -224,7 +224,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Server.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -260,63 +260,63 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("user_id", self.user_id.as_ref());
-        params.push_opt("project_id", self.project_id.as_ref());
-        params.push_opt("tenant_id", self.tenant_id.as_ref());
-        params.push_opt("launch_index", self.launch_index.as_ref());
-        params.push_opt("image_ref", self.image_ref.as_ref());
-        params.push_opt("image", self.image.as_ref());
-        params.push_opt("kernel_id", self.kernel_id.as_ref());
-        params.push_opt("ramdisk_id", self.ramdisk_id.as_ref());
-        params.push_opt("hostname", self.hostname.as_ref());
-        params.push_opt("key_name", self.key_name.as_ref());
-        params.push_opt("power_state", self.power_state.as_ref());
-        params.push_opt("vm_state", self.vm_state.as_ref());
-        params.push_opt("task_state", self.task_state.as_ref());
-        params.push_opt("host", self.host.as_ref());
-        params.push_opt("node", self.node.as_ref());
-        params.push_opt("flavor", self.flavor.as_ref());
-        params.push_opt("reservation_id", self.reservation_id.as_ref());
-        params.push_opt("launched_at", self.launched_at.as_ref());
-        params.push_opt("terminated_at", self.terminated_at.as_ref());
-        params.push_opt("availability_zone", self.availability_zone.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("display_name", self.display_name.as_ref());
-        params.push_opt("description", self.description.as_ref());
-        params.push_opt("display_description", self.display_description.as_ref());
-        params.push_opt("locked_by", self.locked_by.as_ref());
-        params.push_opt("uuid", self.uuid.as_ref());
-        params.push_opt("root_device_name", self.root_device_name.as_ref());
-        params.push_opt("config_drive", self.config_drive.as_ref());
         params.push_opt("access_ip_v4", self.access_ip_v4.as_ref());
         params.push_opt("access_ip_v6", self.access_ip_v6.as_ref());
-        params.push_opt("auto_disk_config", self.auto_disk_config.as_ref());
-        params.push_opt("progress", self.progress.as_ref());
-        params.push_opt("sort_key", self.sort_key.as_ref());
-        params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("all_tenants", self.all_tenants.as_ref());
-        params.push_opt("soft_deleted", self.soft_deleted.as_ref());
-        params.push_opt("deleted", self.deleted.as_ref());
-        params.push_opt("status", self.status.as_ref());
+        params.push_opt("auto_disk_config", self.auto_disk_config.as_ref());
+        params.push_opt("availability_zone", self.availability_zone.as_ref());
+        params.push_opt("block_device_mapping", self.block_device_mapping.as_ref());
+        params.push_opt("changes-before", self.changes_before.as_ref());
         params.push_opt("changes-since", self.changes_since.as_ref());
+        params.push_opt("config_drive", self.config_drive.as_ref());
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("deleted", self.deleted.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("display_description", self.display_description.as_ref());
+        params.push_opt("display_name", self.display_name.as_ref());
+        params.push_opt("flavor", self.flavor.as_ref());
+        params.push_opt("host", self.host.as_ref());
+        params.push_opt("hostname", self.hostname.as_ref());
+        params.push_opt("image", self.image.as_ref());
+        params.push_opt("image_ref", self.image_ref.as_ref());
+        params.push_opt("info_cache", self.info_cache.as_ref());
         params.push_opt("ip", self.ip.as_ref());
         params.push_opt("ip6", self.ip6.as_ref());
-        params.push_opt("created_at", self.created_at.as_ref());
-        params.push_opt("block_device_mapping", self.block_device_mapping.as_ref());
-        params.push_opt("services", self.services.as_ref());
-        params.push_opt("metadata", self.metadata.as_ref());
-        params.push_opt("system_metadata", self.system_metadata.as_ref());
-        params.push_opt("info_cache", self.info_cache.as_ref());
-        params.push_opt("security_groups", self.security_groups.as_ref());
-        params.push_opt("pci_devices", self.pci_devices.as_ref());
+        params.push_opt("kernel_id", self.kernel_id.as_ref());
+        params.push_opt("key_name", self.key_name.as_ref());
+        params.push_opt("launch_index", self.launch_index.as_ref());
+        params.push_opt("launched_at", self.launched_at.as_ref());
         params.push_opt("limit", self.limit);
+        params.push_opt("locked", self.locked.as_ref());
+        params.push_opt("locked_by", self.locked_by.as_ref());
         params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("metadata", self.metadata.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("node", self.node.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
-        params.push_opt("changes-before", self.changes_before.as_ref());
-        params.push_opt("locked", self.locked.as_ref());
+        params.push_opt("pci_devices", self.pci_devices.as_ref());
+        params.push_opt("power_state", self.power_state.as_ref());
+        params.push_opt("progress", self.progress.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("ramdisk_id", self.ramdisk_id.as_ref());
+        params.push_opt("reservation_id", self.reservation_id.as_ref());
+        params.push_opt("root_device_name", self.root_device_name.as_ref());
+        params.push_opt("security_groups", self.security_groups.as_ref());
+        params.push_opt("services", self.services.as_ref());
+        params.push_opt("soft_deleted", self.soft_deleted.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("system_metadata", self.system_metadata.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("task_state", self.task_state.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
+        params.push_opt("terminated_at", self.terminated_at.as_ref());
+        params.push_opt("user_id", self.user_id.as_ref());
+        params.push_opt("uuid", self.uuid.as_ref());
+        params.push_opt("vm_state", self.vm_state.as_ref());
 
         params
     }

@@ -104,22 +104,21 @@ impl GroupTypeCommand {
         // Set Request.group_type data
         let args = &self.group_type;
         let mut group_type_builder = create_311::GroupTypeBuilder::default();
-
-        group_type_builder.name(&args.name);
-
         if let Some(val) = &args.description {
             group_type_builder.description(Some(val.into()));
         } else if args.no_description {
             group_type_builder.description(None);
         }
 
+        if let Some(val) = &args.group_specs {
+            group_type_builder.group_specs(val.iter().cloned());
+        }
+
         if let Some(val) = &args.is_public {
             group_type_builder.is_public(*val);
         }
 
-        if let Some(val) = &args.group_specs {
-            group_type_builder.group_specs(val.iter().cloned());
-        }
+        group_type_builder.name(&args.name);
 
         ep_builder.group_type(group_type_builder.build().unwrap());
 

@@ -149,35 +149,8 @@ impl FlavorCommand {
         // Set Request.flavor data
         let args = &self.flavor;
         let mut flavor_builder = create_255::FlavorBuilder::default();
-
-        flavor_builder.name(&args.name);
-
-        if let Some(val) = &args.id {
-            flavor_builder.id(Some(val.into()));
-        } else if args.no_id {
-            flavor_builder.id(None);
-        }
-
-        flavor_builder.ram(args.ram);
-
-        flavor_builder.vcpus(args.vcpus);
-
-        flavor_builder.disk(args.disk);
-
         if let Some(val) = &args.os_flv_ext_data_ephemeral {
             flavor_builder.os_flv_ext_data_ephemeral(*val);
-        }
-
-        if let Some(val) = &args.swap {
-            flavor_builder.swap(*val);
-        }
-
-        if let Some(val) = &args.rxtx_factor {
-            flavor_builder.rxtx_factor(val);
-        }
-
-        if let Some(val) = &args.os_flavor_access_is_public {
-            flavor_builder.os_flavor_access_is_public(*val);
         }
 
         if let Some(val) = &args.description {
@@ -185,6 +158,32 @@ impl FlavorCommand {
         } else if args.no_description {
             flavor_builder.description(None);
         }
+
+        flavor_builder.disk(args.disk);
+
+        if let Some(val) = &args.id {
+            flavor_builder.id(Some(val.into()));
+        } else if args.no_id {
+            flavor_builder.id(None);
+        }
+
+        flavor_builder.name(&args.name);
+
+        if let Some(val) = &args.os_flavor_access_is_public {
+            flavor_builder.os_flavor_access_is_public(*val);
+        }
+
+        flavor_builder.ram(args.ram);
+
+        if let Some(val) = &args.rxtx_factor {
+            flavor_builder.rxtx_factor(val);
+        }
+
+        if let Some(val) = &args.swap {
+            flavor_builder.swap(*val);
+        }
+
+        flavor_builder.vcpus(args.vcpus);
 
         ep_builder.flavor(flavor_builder.build().unwrap());
 

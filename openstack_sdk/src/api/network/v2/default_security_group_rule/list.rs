@@ -144,20 +144,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Sort results by the attribute. This is an optional feature and may be
-    /// silently ignored by the server.
-    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.sort_key
-            .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
@@ -166,6 +152,20 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.sort_dir
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.sort_key
             .get_or_insert(None)
             .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
@@ -207,30 +207,30 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
         params.push_opt("description", self.description.as_ref());
-        params.push_opt("remote_group_id", self.remote_group_id.as_ref());
+        params.push_opt("direction", self.direction.as_ref());
+        params.push_opt("ethertype", self.ethertype.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("port_range_max", self.port_range_max);
+        params.push_opt("port_range_min", self.port_range_min);
+        params.push_opt("protocol", self.protocol.as_ref());
         params.push_opt(
             "remote_address_group_id",
             self.remote_address_group_id.as_ref(),
         );
-        params.push_opt("direction", self.direction.as_ref());
-        params.push_opt("protocol", self.protocol.as_ref());
-        params.push_opt("port_range_min", self.port_range_min);
-        params.push_opt("port_range_max", self.port_range_max);
-        params.push_opt("ethertype", self.ethertype.as_ref());
+        params.push_opt("remote_group_id", self.remote_group_id.as_ref());
         params.push_opt("remote_ip_prefix", self.remote_ip_prefix.as_ref());
         params.push_opt("used_in_default_sg", self.used_in_default_sg);
         params.push_opt("used_in_non_default_sg", self.used_in_non_default_sg);
-        if let Some(val) = &self.sort_key {
-            params.extend(val.iter().map(|value| ("sort_key", value)));
-        }
-        if let Some(val) = &self.sort_dir {
-            params.extend(val.iter().map(|value| ("sort_dir", value)));
-        }
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
+        if let Some(val) = &self.sort_dir {
+            params.extend(val.iter().map(|value| ("sort_dir", value)));
+        }
+        if let Some(val) = &self.sort_key {
+            params.extend(val.iter().map(|value| ("sort_key", value)));
+        }
 
         params
     }

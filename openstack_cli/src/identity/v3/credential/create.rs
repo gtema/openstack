@@ -114,11 +114,12 @@ impl CredentialCommand {
         // Set Request.credential data
         let args = &self.credential;
         let mut credential_builder = create::CredentialBuilder::default();
+
+        credential_builder.blob(&args.blob);
+
         if let Some(val) = &args.id {
             credential_builder.id(val);
         }
-
-        credential_builder.blob(&args.blob);
 
         if let Some(val) = &args.project_id {
             credential_builder.project_id(Some(val.into()));

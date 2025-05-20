@@ -97,6 +97,47 @@ pub struct RecordsetResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Action {
+    // Create
+    #[serde(rename = "CREATE")]
+    Create,
+
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
+
+    // None
+    #[serde(rename = "NONE")]
+    None,
+
+    // Update
+    #[serde(rename = "UPDATE")]
+    Update,
+}
+
+impl std::str::FromStr for Action {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "CREATE" => Ok(Self::Create),
+            "DELETE" => Ok(Self::Delete),
+            "NONE" => Ok(Self::None),
+            "UPDATE" => Ok(Self::Update),
+            _ => Err(()),
+        }
+    }
+}
+
+/// Links to the resource, and other related resources. When a response has
+/// been broken into pages, we will include a `next` link that should be
+/// followed to retrieve all results
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub _self: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     // Active
     #[serde(rename = "ACTIVE")]
@@ -128,38 +169,6 @@ impl std::str::FromStr for Status {
             "ERROR" => Ok(Self::Error),
             "PENDING" => Ok(Self::Pending),
             "SUCCESS" => Ok(Self::Success),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Action {
-    // Create
-    #[serde(rename = "CREATE")]
-    Create,
-
-    // Delete
-    #[serde(rename = "DELETE")]
-    Delete,
-
-    // None
-    #[serde(rename = "NONE")]
-    None,
-
-    // Update
-    #[serde(rename = "UPDATE")]
-    Update,
-}
-
-impl std::str::FromStr for Action {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "CREATE" => Ok(Self::Create),
-            "DELETE" => Ok(Self::Delete),
-            "NONE" => Ok(Self::None),
-            "UPDATE" => Ok(Self::Update),
             _ => Err(()),
         }
     }
@@ -245,13 +254,4 @@ impl std::str::FromStr for Type {
             _ => Err(()),
         }
     }
-}
-
-/// Links to the resource, and other related resources. When a response has
-/// been broken into pages, we will include a `next` link that should be
-/// followed to retrieve all results
-/// `Links` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    pub _self: Option<String>,
 }

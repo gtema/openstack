@@ -75,6 +75,20 @@ pub enum Action {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum CompareType {
+    #[serde(rename = "CONTAINS")]
+    Contains,
+    #[serde(rename = "ENDS_WITH")]
+    EndsWith,
+    #[serde(rename = "EQUAL_TO")]
+    EqualTo,
+    #[serde(rename = "REGEX")]
+    Regex,
+    #[serde(rename = "STARTS_WITH")]
+    StartsWith,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     #[serde(rename = "COOKIE")]
     Cookie,
@@ -92,20 +106,6 @@ pub enum Type {
     SslDnField,
     #[serde(rename = "SSL_VERIFY_RESULT")]
     SslVerifyResult,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum CompareType {
-    #[serde(rename = "CONTAINS")]
-    Contains,
-    #[serde(rename = "ENDS_WITH")]
-    EndsWith,
-    #[serde(rename = "EQUAL_TO")]
-    EqualTo,
-    #[serde(rename = "REGEX")]
-    Regex,
-    #[serde(rename = "STARTS_WITH")]
-    StartsWith,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -245,7 +245,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the L7Policy.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

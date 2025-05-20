@@ -147,7 +147,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Member.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -198,18 +198,18 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("monitor_address", self.monitor_address.as_ref());
         params.push_opt("monitor_port", self.monitor_port.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         params.push_opt("project_id", self.project_id.as_ref());
         params.push_opt("protocol_port", self.protocol_port);
-        params.push_opt("subnet_id", self.subnet_id.as_ref());
-        params.push_opt("updated_at", self.updated_at.as_ref());
-        params.push_opt("weight", self.weight);
         params.push_opt("provisioning_status", self.provisioning_status.as_ref());
-        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("subnet_id", self.subnet_id.as_ref());
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());
-        params.push_opt("not-tags", self.not_tags.as_ref());
-        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("weight", self.weight);
 
         params
     }

@@ -155,14 +155,14 @@ impl AccessRulesCommand {
             );
         }
         // Set query parameters
-        if let Some(val) = &self.query.service {
-            ep_builder.service(val);
+        if let Some(val) = &self.query.method {
+            ep_builder.method(val);
         }
         if let Some(val) = &self.query.path {
             ep_builder.path(val);
         }
-        if let Some(val) = &self.query.method {
-            ep_builder.method(val);
+        if let Some(val) = &self.query.service {
+            ep_builder.service(val);
         }
         // Set body parameters
 

@@ -185,24 +185,6 @@ impl ServerCommand {
         // Set Request.rebuild data
         let args = &self.rebuild;
         let mut rebuild_builder = rebuild_219::RebuildBuilder::default();
-        if let Some(val) = &args.name {
-            rebuild_builder.name(val);
-        }
-
-        rebuild_builder.image_ref(&args.image_ref);
-
-        if let Some(val) = &args.admin_pass {
-            rebuild_builder.admin_pass(val);
-        }
-
-        if let Some(val) = &args.metadata {
-            rebuild_builder.metadata(val.iter().cloned());
-        }
-
-        if let Some(val) = &args.preserve_ephemeral {
-            rebuild_builder.preserve_ephemeral(*val);
-        }
-
         if let Some(val) = &args.os_dcf_disk_config {
             let tmp = match val {
                 OsDcfDiskConfig::Auto => rebuild_219::OsDcfDiskConfig::Auto,
@@ -219,6 +201,26 @@ impl ServerCommand {
             rebuild_builder.access_ipv6(val);
         }
 
+        if let Some(val) = &args.admin_pass {
+            rebuild_builder.admin_pass(val);
+        }
+
+        if let Some(val) = &args.description {
+            rebuild_builder.description(Some(val.into()));
+        } else if args.no_description {
+            rebuild_builder.description(None);
+        }
+
+        rebuild_builder.image_ref(&args.image_ref);
+
+        if let Some(val) = &args.metadata {
+            rebuild_builder.metadata(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.name {
+            rebuild_builder.name(val);
+        }
+
         if let Some(val) = &args.personality {
             let personality_builder: Vec<rebuild_219::Personality> = val
                 .iter()
@@ -227,10 +229,8 @@ impl ServerCommand {
             rebuild_builder.personality(personality_builder);
         }
 
-        if let Some(val) = &args.description {
-            rebuild_builder.description(Some(val.into()));
-        } else if args.no_description {
-            rebuild_builder.description(None);
+        if let Some(val) = &args.preserve_ephemeral {
+            rebuild_builder.preserve_ephemeral(*val);
         }
 
         ep_builder.rebuild(rebuild_builder.build().unwrap());

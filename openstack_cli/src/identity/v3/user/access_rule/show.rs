@@ -59,10 +59,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
     #[arg(
@@ -71,6 +67,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// User input select group
@@ -104,6 +104,7 @@ impl AccessRuleCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
+        ep_builder.id(&self.path.id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -149,7 +150,6 @@ impl AccessRuleCommand {
                     .id,
             );
         }
-        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

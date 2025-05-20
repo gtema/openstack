@@ -81,11 +81,11 @@ impl ServicesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.host {
-            ep_builder.host(val);
-        }
         if let Some(val) = &self.query.binary {
             ep_builder.binary(val);
+        }
+        if let Some(val) = &self.query.host {
+            ep_builder.host(val);
         }
         // Set body parameters
 

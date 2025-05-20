@@ -124,29 +124,35 @@ impl TryFrom<&NetworkNetworkList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &NetworkNetworkList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        if let Some(val) = &value.id {
-            ep_builder.id(val.clone());
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
         }
-        if let Some(val) = &value.name {
-            ep_builder.name(val.clone());
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
         }
         if let Some(val) = &value.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
-        if let Some(val) = &value.status {
-            ep_builder.status(val.clone());
+        if let Some(val) = &value.description {
+            ep_builder.description(val.clone());
         }
-        if let Some(val) = &value.tenant_id {
-            ep_builder.tenant_id(val.clone());
+        if let Some(val) = &value.id {
+            ep_builder.id(val.clone());
         }
-        if let Some(val) = &value.shared {
-            ep_builder.shared(*val);
-        }
-        if let Some(val) = &value.router_external {
-            ep_builder.router_external(*val);
+        if let Some(val) = &value.is_default {
+            ep_builder.is_default(*val);
         }
         if let Some(val) = &value.mtu {
             ep_builder.mtu(*val);
+        }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
+        }
+        if let Some(val) = &value.not_tags {
+            ep_builder.not_tags(val.iter().cloned());
+        }
+        if let Some(val) = &value.not_tags_any {
+            ep_builder.not_tags_any(val.iter().cloned());
         }
         if let Some(val) = &value.provider_network_type {
             ep_builder.provider_network_type(val.clone());
@@ -160,38 +166,32 @@ impl TryFrom<&NetworkNetworkList> for RequestBuilder<'_> {
         if let Some(val) = &value.revision_number {
             ep_builder.revision_number(val.clone());
         }
+        if let Some(val) = &value.router_external {
+            ep_builder.router_external(*val);
+        }
+        if let Some(val) = &value.shared {
+            ep_builder.shared(*val);
+        }
+        if let Some(val) = &value.status {
+            ep_builder.status(val.clone());
+        }
         if let Some(val) = &value.tags {
             ep_builder.tags(val.iter().cloned());
         }
         if let Some(val) = &value.tags_any {
             ep_builder.tags_any(val.iter().cloned());
         }
-        if let Some(val) = &value.not_tags {
-            ep_builder.not_tags(val.iter().cloned());
+        if let Some(val) = &value.tenant_id {
+            ep_builder.tenant_id(val.clone());
         }
-        if let Some(val) = &value.not_tags_any {
-            ep_builder.not_tags_any(val.iter().cloned());
-        }
-        if let Some(val) = &value.is_default {
-            ep_builder.is_default(*val);
-        }
-        if let Some(val) = &value.description {
-            ep_builder.description(val.clone());
-        }
-        if let Some(val) = &value.sort_key {
-            ep_builder.sort_key(val.iter().cloned());
+        if let Some(val) = &value.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(val) = &value.sort_dir {
             ep_builder.sort_dir(val.iter().cloned());
         }
-        if let Some(val) = &value.limit {
-            ep_builder.limit(*val);
-        }
-        if let Some(val) = &value.marker {
-            ep_builder.marker(val.clone());
-        }
-        if let Some(val) = &value.page_reverse {
-            ep_builder.page_reverse(*val);
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.iter().cloned());
         }
 
         Ok(ep_builder)

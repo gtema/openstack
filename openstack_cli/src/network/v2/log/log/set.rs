@@ -120,16 +120,16 @@ impl LogCommand {
         // Set Request.log data
         let args = &self.log;
         let mut log_builder = set::LogBuilder::default();
-        if let Some(val) = &args.name {
-            log_builder.name(val);
+        if let Some(val) = &args.description {
+            log_builder.description(val);
         }
 
         if let Some(val) = &args.enabled {
             log_builder.enabled(*val);
         }
 
-        if let Some(val) = &args.description {
-            log_builder.description(val);
+        if let Some(val) = &args.name {
+            log_builder.name(val);
         }
 
         ep_builder.log(log_builder.build().unwrap());

@@ -81,11 +81,11 @@ impl IdentityProvidersCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
         }
         // Set body parameters
 

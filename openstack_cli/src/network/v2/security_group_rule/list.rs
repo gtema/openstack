@@ -186,57 +186,6 @@ impl SecurityGroupRulesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.security_group_id {
-            ep_builder.security_group_id(val);
-        }
-        if let Some(val) = &self.query.remote_group_id {
-            ep_builder.remote_group_id(val);
-        }
-        if let Some(val) = &self.query.direction {
-            ep_builder.direction(val);
-        }
-        if let Some(val) = &self.query.protocol {
-            ep_builder.protocol(val);
-        }
-        if let Some(val) = &self.query.port_range_min {
-            ep_builder.port_range_min(*val);
-        }
-        if let Some(val) = &self.query.port_range_max {
-            ep_builder.port_range_max(*val);
-        }
-        if let Some(val) = &self.query.ethertype {
-            ep_builder.ethertype(val);
-        }
-        if let Some(val) = &self.query.remote_ip_prefix {
-            ep_builder.remote_ip_prefix(val);
-        }
-        if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val);
-        }
-        if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val);
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.normalized_cidr {
-            ep_builder.normalized_cidr(val);
-        }
-        if let Some(val) = &self.query.remote_address_group_id {
-            ep_builder.remote_address_group_id(val);
-        }
-        if let Some(val) = &self.query.belongs_to_default_sg {
-            ep_builder.belongs_to_default_sg(*val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
@@ -245,6 +194,57 @@ impl SecurityGroupRulesCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.belongs_to_default_sg {
+            ep_builder.belongs_to_default_sg(*val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.direction {
+            ep_builder.direction(val);
+        }
+        if let Some(val) = &self.query.ethertype {
+            ep_builder.ethertype(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.normalized_cidr {
+            ep_builder.normalized_cidr(val);
+        }
+        if let Some(val) = &self.query.port_range_max {
+            ep_builder.port_range_max(*val);
+        }
+        if let Some(val) = &self.query.port_range_min {
+            ep_builder.port_range_min(*val);
+        }
+        if let Some(val) = &self.query.protocol {
+            ep_builder.protocol(val);
+        }
+        if let Some(val) = &self.query.remote_address_group_id {
+            ep_builder.remote_address_group_id(val);
+        }
+        if let Some(val) = &self.query.remote_group_id {
+            ep_builder.remote_group_id(val);
+        }
+        if let Some(val) = &self.query.remote_ip_prefix {
+            ep_builder.remote_ip_prefix(val);
+        }
+        if let Some(val) = &self.query.revision_number {
+            ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.security_group_id {
+            ep_builder.security_group_id(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

@@ -96,14 +96,14 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Ipv6RaMode {
+enum Ipv6AddressMode {
     Dhcpv6Stateful,
     Dhcpv6Stateless,
     Slaac,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Ipv6AddressMode {
+enum Ipv6RaMode {
     Dhcpv6Stateful,
     Dhcpv6Stateless,
     Slaac,
@@ -252,36 +252,6 @@ impl SubnetCommand {
         // Set Request.subnet data
         let args = &self.subnet;
         let mut subnet_builder = create::SubnetBuilder::default();
-        if let Some(val) = &args.name {
-            subnet_builder.name(val);
-        }
-
-        subnet_builder.ip_version(args.ip_version);
-
-        subnet_builder.network_id(&args.network_id);
-
-        if let Some(val) = &args.subnetpool_id {
-            subnet_builder.subnetpool_id(Some(val.into()));
-        } else if args.no_subnetpool_id {
-            subnet_builder.subnetpool_id(None);
-        }
-
-        if let Some(val) = &args.prefixlen {
-            subnet_builder.prefixlen(*val);
-        }
-
-        if let Some(val) = &args.cidr {
-            subnet_builder.cidr(Some(val.into()));
-        } else if args.no_cidr {
-            subnet_builder.cidr(None);
-        }
-
-        if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(Some(val.into()));
-        } else if args.no_gateway_ip {
-            subnet_builder.gateway_ip(None);
-        }
-
         if let Some(val) = &args.allocation_pools {
             let allocation_pools_builder: Vec<create::AllocationPools> = val
                 .iter()
@@ -290,8 +260,32 @@ impl SubnetCommand {
             subnet_builder.allocation_pools(allocation_pools_builder);
         }
 
+        if let Some(val) = &args.cidr {
+            subnet_builder.cidr(Some(val.into()));
+        } else if args.no_cidr {
+            subnet_builder.cidr(None);
+        }
+
+        if let Some(val) = &args.description {
+            subnet_builder.description(val);
+        }
+
         if let Some(val) = &args.dns_nameservers {
             subnet_builder.dns_nameservers(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.dns_publish_fixed_ip {
+            subnet_builder.dns_publish_fixed_ip(*val);
+        }
+
+        if let Some(val) = &args.enable_dhcp {
+            subnet_builder.enable_dhcp(*val);
+        }
+
+        if let Some(val) = &args.gateway_ip {
+            subnet_builder.gateway_ip(Some(val.into()));
+        } else if args.no_gateway_ip {
+            subnet_builder.gateway_ip(None);
         }
 
         if let Some(val) = &args.host_routes {
@@ -302,12 +296,15 @@ impl SubnetCommand {
             subnet_builder.host_routes(host_routes_builder);
         }
 
-        if let Some(val) = &args.tenant_id {
-            subnet_builder.tenant_id(val);
-        }
+        subnet_builder.ip_version(args.ip_version);
 
-        if let Some(val) = &args.enable_dhcp {
-            subnet_builder.enable_dhcp(*val);
+        if let Some(val) = &args.ipv6_address_mode {
+            let tmp = match val {
+                Ipv6AddressMode::Dhcpv6Stateful => create::Ipv6AddressMode::Dhcpv6Stateful,
+                Ipv6AddressMode::Dhcpv6Stateless => create::Ipv6AddressMode::Dhcpv6Stateless,
+                Ipv6AddressMode::Slaac => create::Ipv6AddressMode::Slaac,
+            };
+            subnet_builder.ipv6_address_mode(tmp);
         }
 
         if let Some(val) = &args.ipv6_ra_mode {
@@ -319,35 +316,38 @@ impl SubnetCommand {
             subnet_builder.ipv6_ra_mode(tmp);
         }
 
-        if let Some(val) = &args.ipv6_address_mode {
-            let tmp = match val {
-                Ipv6AddressMode::Dhcpv6Stateful => create::Ipv6AddressMode::Dhcpv6Stateful,
-                Ipv6AddressMode::Dhcpv6Stateless => create::Ipv6AddressMode::Dhcpv6Stateless,
-                Ipv6AddressMode::Slaac => create::Ipv6AddressMode::Slaac,
-            };
-            subnet_builder.ipv6_address_mode(tmp);
+        if let Some(val) = &args.name {
+            subnet_builder.name(val);
         }
 
-        if let Some(val) = &args.service_types {
-            subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
+        subnet_builder.network_id(&args.network_id);
 
-        if let Some(val) = &args.use_default_subnetpool {
-            subnet_builder.use_default_subnetpool(*val);
-        }
-
-        if let Some(val) = &args.dns_publish_fixed_ip {
-            subnet_builder.dns_publish_fixed_ip(*val);
-        }
-
-        if let Some(val) = &args.description {
-            subnet_builder.description(val);
+        if let Some(val) = &args.prefixlen {
+            subnet_builder.prefixlen(*val);
         }
 
         if let Some(val) = &args.segment_id {
             subnet_builder.segment_id(Some(val.into()));
         } else if args.no_segment_id {
             subnet_builder.segment_id(None);
+        }
+
+        if let Some(val) = &args.service_types {
+            subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.subnetpool_id {
+            subnet_builder.subnetpool_id(Some(val.into()));
+        } else if args.no_subnetpool_id {
+            subnet_builder.subnetpool_id(None);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            subnet_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.use_default_subnetpool {
+            subnet_builder.use_default_subnetpool(*val);
         }
 
         ep_builder.subnet(subnet_builder.build().unwrap());

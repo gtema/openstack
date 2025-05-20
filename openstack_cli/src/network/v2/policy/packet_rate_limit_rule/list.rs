@@ -133,32 +133,32 @@ impl PacketRateLimitRulesCommand {
         // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.max_kpps {
-            ep_builder.max_kpps(*val);
-        }
-        if let Some(val) = &self.query.max_burst_kpps {
-            ep_builder.max_burst_kpps(*val);
-        }
-        if let Some(val) = &self.query.direction {
-            ep_builder.direction(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
+        if let Some(val) = &self.query.direction {
+            ep_builder.direction(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.max_burst_kpps {
+            ep_builder.max_burst_kpps(*val);
+        }
+        if let Some(val) = &self.query.max_kpps {
+            ep_builder.max_kpps(*val);
+        }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

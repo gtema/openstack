@@ -157,12 +157,12 @@ impl AttachmentCommand {
         // Set Request.attachment data
         let args = &self.attachment;
         let mut attachment_builder = create_327::AttachmentBuilder::default();
-        if let Some(val) = &args.instance_uuid {
-            attachment_builder.instance_uuid(val);
-        }
-
         if let Some(val) = &args.connector {
             attachment_builder.connector(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.instance_uuid {
+            attachment_builder.instance_uuid(val);
         }
 
         attachment_builder.volume_uuid(&args.volume_uuid);

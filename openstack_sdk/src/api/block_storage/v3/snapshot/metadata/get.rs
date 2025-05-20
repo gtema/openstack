@@ -45,7 +45,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Metadata.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -78,8 +78,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "snapshots/{snapshot_id}/metadata/{id}",
-            snapshot_id = self.snapshot_id.as_ref(),
             id = self.id.as_ref(),
+            snapshot_id = self.snapshot_id.as_ref(),
         )
         .into()
     }
@@ -142,8 +142,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path(format!(
                 "/snapshots/{snapshot_id}/metadata/{id}",
-                snapshot_id = "snapshot_id",
                 id = "id",
+                snapshot_id = "snapshot_id",
             ));
 
             then.status(200)
@@ -152,8 +152,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .snapshot_id("snapshot_id")
             .id("id")
+            .snapshot_id("snapshot_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -169,8 +169,8 @@ mod tests {
             when.method(httpmock::Method::GET)
                 .path(format!(
                     "/snapshots/{snapshot_id}/metadata/{id}",
-                    snapshot_id = "snapshot_id",
                     id = "id",
+                    snapshot_id = "snapshot_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -180,8 +180,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .snapshot_id("snapshot_id")
             .id("id")
+            .snapshot_id("snapshot_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

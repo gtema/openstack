@@ -220,6 +220,33 @@ pub struct ClusterResponse {
     pub uuid: Option<String>,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HealthStatus {
+    // Healthy
+    #[serde(rename = "HEALTHY")]
+    Healthy,
+
+    // Unhealthy
+    #[serde(rename = "UNHEALTHY")]
+    Unhealthy,
+
+    // Unknown
+    #[serde(rename = "UNKNOWN")]
+    Unknown,
+}
+
+impl std::str::FromStr for HealthStatus {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "HEALTHY" => Ok(Self::Healthy),
+            "UNHEALTHY" => Ok(Self::Unhealthy),
+            "UNKNOWN" => Ok(Self::Unknown),
+            _ => Err(()),
+        }
+    }
+}
+
 /// A link representation.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -328,33 +355,6 @@ impl std::str::FromStr for Status {
             "UPDATE_COMPLETE" => Ok(Self::UpdateComplete),
             "UPDATE_FAILED" => Ok(Self::UpdateFailed),
             "UPDATE_IN_PROGRESS" => Ok(Self::UpdateInProgress),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum HealthStatus {
-    // Healthy
-    #[serde(rename = "HEALTHY")]
-    Healthy,
-
-    // Unhealthy
-    #[serde(rename = "UNHEALTHY")]
-    Unhealthy,
-
-    // Unknown
-    #[serde(rename = "UNKNOWN")]
-    Unknown,
-}
-
-impl std::str::FromStr for HealthStatus {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "HEALTHY" => Ok(Self::Healthy),
-            "UNHEALTHY" => Ok(Self::Unhealthy),
-            "UNKNOWN" => Ok(Self::Unknown),
             _ => Err(()),
         }
     }

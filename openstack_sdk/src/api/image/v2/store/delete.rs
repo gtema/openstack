@@ -50,7 +50,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Store.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -83,8 +83,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "stores/{id}/{image_id}",
-            id = self.id.as_ref(),
             image_id = self.image_id.as_ref(),
+            id = self.id.as_ref(),
         )
         .into()
     }
@@ -144,8 +144,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::DELETE).path(format!(
                 "/stores/{id}/{image_id}",
-                id = "id",
                 image_id = "image_id",
+                id = "id",
             ));
 
             then.status(200)
@@ -154,8 +154,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .id("id")
             .image_id("image_id")
+            .id("id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -171,8 +171,8 @@ mod tests {
             when.method(httpmock::Method::DELETE)
                 .path(format!(
                     "/stores/{id}/{image_id}",
-                    id = "id",
                     image_id = "image_id",
+                    id = "id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -182,8 +182,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .id("id")
             .image_id("image_id")
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

@@ -167,16 +167,16 @@ impl RestEndpoint for Request<'_> {
         let mut params = JsonBodyParams::default();
 
         params.push("allocations", serde_json::to_value(&self.allocations)?);
-        params.push("project_id", serde_json::to_value(&self.project_id)?);
-        params.push("user_id", serde_json::to_value(&self.user_id)?);
         params.push(
             "consumer_generation",
             serde_json::to_value(self.consumer_generation)?,
         );
+        params.push("consumer_type", serde_json::to_value(&self.consumer_type)?);
         if let Some(val) = &self.mappings {
             params.push("mappings", serde_json::to_value(val)?);
         }
-        params.push("consumer_type", serde_json::to_value(&self.consumer_type)?);
+        params.push("project_id", serde_json::to_value(&self.project_id)?);
+        params.push("user_id", serde_json::to_value(&self.user_id)?);
 
         params.into_body()
     }
@@ -216,10 +216,10 @@ mod tests {
         assert_eq!(
             Request::builder()
                 .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
-                .project_id("foo")
-                .user_id("foo")
                 .consumer_generation(123)
                 .consumer_type("foo")
+                .project_id("foo")
+                .user_id("foo")
                 .build()
                 .unwrap()
                 .service_type(),
@@ -231,10 +231,10 @@ mod tests {
     fn test_response_key() {
         assert!(Request::builder()
             .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
             .consumer_generation(123)
             .consumer_type("foo")
+            .project_id("foo")
+            .user_id("foo")
             .build()
             .unwrap()
             .response_key()
@@ -260,10 +260,10 @@ mod tests {
         let endpoint = Request::builder()
             .consumer_uuid("consumer_uuid")
             .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
             .consumer_generation(123)
             .consumer_type("foo")
+            .project_id("foo")
+            .user_id("foo")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -291,10 +291,10 @@ mod tests {
         let endpoint = Request::builder()
             .consumer_uuid("consumer_uuid")
             .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
             .consumer_generation(123)
             .consumer_type("foo")
+            .project_id("foo")
+            .user_id("foo")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

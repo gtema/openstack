@@ -46,18 +46,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Visibility {
-    #[serde(rename = "community")]
-    Community,
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-    #[serde(rename = "shared")]
-    Shared,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum ContainerFormat {
     #[serde(rename = "aki")]
     Aki,
@@ -153,6 +141,18 @@ impl<'a> LocationsBuilder<'a> {
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self
     }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Visibility {
+    #[serde(rename = "community")]
+    Community,
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
+    #[serde(rename = "shared")]
+    Shared,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -324,17 +324,26 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
+        if let Some(val) = &self.container_format {
+            params.push("container_format", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.disk_format {
+            params.push("disk_format", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.id {
             params.push("id", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.locations {
+            params.push("locations", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.min_disk {
+            params.push("min_disk", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.min_ram {
+            params.push("min_ram", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.name {
             params.push("name", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.visibility {
-            params.push("visibility", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.protected {
-            params.push("protected", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.os_hidden {
             params.push("os_hidden", serde_json::to_value(val)?);
@@ -342,23 +351,14 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.owner {
             params.push("owner", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.container_format {
-            params.push("container_format", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.disk_format {
-            params.push("disk_format", serde_json::to_value(val)?);
+        if let Some(val) = &self.protected {
+            params.push("protected", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.tags {
             params.push("tags", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.min_ram {
-            params.push("min_ram", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.min_disk {
-            params.push("min_disk", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.locations {
-            params.push("locations", serde_json::to_value(val)?);
+        if let Some(val) = &self.visibility {
+            params.push("visibility", serde_json::to_value(val)?);
         }
         for (key, val) in &self._properties {
             params.push(key.clone(), val.clone());

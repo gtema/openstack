@@ -98,8 +98,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{id}",
-            policy_id = self.policy_id.as_ref(),
             id = self.id.as_ref(),
+            policy_id = self.policy_id.as_ref(),
         )
         .into()
     }
@@ -169,8 +169,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{id}",
-                policy_id = "policy_id",
                 id = "id",
+                policy_id = "policy_id",
             ));
 
             then.status(200)
@@ -179,8 +179,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .policy_id("policy_id")
             .id("id")
+            .policy_id("policy_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -196,8 +196,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{id}",
-                    policy_id = "policy_id",
                     id = "id",
+                    policy_id = "policy_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -207,8 +207,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .policy_id("policy_id")
             .id("id")
+            .policy_id("policy_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

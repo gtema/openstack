@@ -130,16 +130,16 @@ impl SnapshotCommand {
         // Set Request.snapshot data
         let args = &self.snapshot;
         let mut snapshot_builder = set::SnapshotBuilder::default();
-        if let Some(val) = &args.name {
-            snapshot_builder.name(Some(val.into()));
-        } else if args.no_name {
-            snapshot_builder.name(None);
-        }
-
         if let Some(val) = &args.description {
             snapshot_builder.description(Some(val.into()));
         } else if args.no_description {
             snapshot_builder.description(None);
+        }
+
+        if let Some(val) = &args.display_description {
+            snapshot_builder.display_description(Some(val.into()));
+        } else if args.no_display_description {
+            snapshot_builder.display_description(None);
         }
 
         if let Some(val) = &args.display_name {
@@ -148,10 +148,10 @@ impl SnapshotCommand {
             snapshot_builder.display_name(None);
         }
 
-        if let Some(val) = &args.display_description {
-            snapshot_builder.display_description(Some(val.into()));
-        } else if args.no_display_description {
-            snapshot_builder.display_description(None);
+        if let Some(val) = &args.name {
+            snapshot_builder.name(Some(val.into()));
+        } else if args.no_name {
+            snapshot_builder.name(None);
         }
 
         ep_builder.snapshot(snapshot_builder.build().unwrap());

@@ -27,6 +27,7 @@ pub struct FloatingipResponse {
     #[structable(optional)]
     pub created_at: Option<String>,
 
+    /// A human-readable description for the resource.
     #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
@@ -103,7 +104,6 @@ pub struct FloatingipResponse {
     #[structable(optional)]
     pub router_id: Option<String>,
 
-    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
     #[serde(default)]
     #[structable(optional)]
     pub status: Option<String>,

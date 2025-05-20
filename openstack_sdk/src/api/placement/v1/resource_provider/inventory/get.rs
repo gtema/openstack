@@ -49,7 +49,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Inventory.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -82,8 +82,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "resource_providers/{uuid}/inventories/{resource_class}",
-            uuid = self.uuid.as_ref(),
             resource_class = self.resource_class.as_ref(),
+            uuid = self.uuid.as_ref(),
         )
         .into()
     }
@@ -138,8 +138,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path(format!(
                 "/resource_providers/{uuid}/inventories/{resource_class}",
-                uuid = "uuid",
                 resource_class = "resource_class",
+                uuid = "uuid",
             ));
 
             then.status(200)
@@ -148,8 +148,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .uuid("uuid")
             .resource_class("resource_class")
+            .uuid("uuid")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -165,8 +165,8 @@ mod tests {
             when.method(httpmock::Method::GET)
                 .path(format!(
                     "/resource_providers/{uuid}/inventories/{resource_class}",
-                    uuid = "uuid",
                     resource_class = "resource_class",
+                    uuid = "uuid",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -176,8 +176,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .uuid("uuid")
             .resource_class("resource_class")
+            .uuid("uuid")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

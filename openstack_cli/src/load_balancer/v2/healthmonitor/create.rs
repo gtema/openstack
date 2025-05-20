@@ -91,17 +91,6 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Type {
-    Http,
-    Https,
-    Ping,
-    Sctp,
-    Tcp,
-    TlsHello,
-    UdpConnect,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum HttpMethod {
     Connect,
     Delete,
@@ -112,6 +101,17 @@ enum HttpMethod {
     Post,
     Put,
     Trace,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Type {
+    Http,
+    Https,
+    Ping,
+    Sctp,
+    Tcp,
+    TlsHello,
+    UdpConnect,
 }
 
 /// Healthmonitor Body data
@@ -230,30 +230,19 @@ impl HealthmonitorCommand {
         // Set Request.healthmonitor data
         let args = &self.healthmonitor;
         let mut healthmonitor_builder = create::HealthmonitorBuilder::default();
-        if let Some(val) = &args.name {
-            healthmonitor_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            healthmonitor_builder.admin_state_up(*val);
         }
-
-        let tmp = match &args._type {
-            Type::Http => create::Type::Http,
-            Type::Https => create::Type::Https,
-            Type::Ping => create::Type::Ping,
-            Type::Sctp => create::Type::Sctp,
-            Type::Tcp => create::Type::Tcp,
-            Type::TlsHello => create::Type::TlsHello,
-            Type::UdpConnect => create::Type::UdpConnect,
-        };
-        healthmonitor_builder._type(tmp);
 
         healthmonitor_builder.delay(args.delay);
 
-        healthmonitor_builder.timeout(args.timeout);
-
-        if let Some(val) = &args.max_retries_down {
-            healthmonitor_builder.max_retries_down(*val);
+        if let Some(val) = &args.domain_name {
+            healthmonitor_builder.domain_name(val);
         }
 
-        healthmonitor_builder.max_retries(args.max_retries);
+        if let Some(val) = &args.expected_codes {
+            healthmonitor_builder.expected_codes(val);
+        }
 
         if let Some(val) = &args.http_method {
             let tmp = match val {
@@ -270,38 +259,49 @@ impl HealthmonitorCommand {
             healthmonitor_builder.http_method(tmp);
         }
 
-        if let Some(val) = &args.url_path {
-            healthmonitor_builder.url_path(val);
+        if let Some(val) = &args.http_version {
+            healthmonitor_builder.http_version(*val);
         }
 
-        if let Some(val) = &args.expected_codes {
-            healthmonitor_builder.expected_codes(val);
+        healthmonitor_builder.max_retries(args.max_retries);
+
+        if let Some(val) = &args.max_retries_down {
+            healthmonitor_builder.max_retries_down(*val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            healthmonitor_builder.admin_state_up(*val);
+        if let Some(val) = &args.name {
+            healthmonitor_builder.name(val);
         }
+
+        healthmonitor_builder.pool_id(&args.pool_id);
 
         if let Some(val) = &args.project_id {
             healthmonitor_builder.project_id(val);
         }
 
-        healthmonitor_builder.pool_id(&args.pool_id);
-
         if let Some(val) = &args.tags {
             healthmonitor_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.http_version {
-            healthmonitor_builder.http_version(*val);
-        }
-
-        if let Some(val) = &args.domain_name {
-            healthmonitor_builder.domain_name(val);
-        }
-
         if let Some(val) = &args.tenant_id {
             healthmonitor_builder.tenant_id(val);
+        }
+
+        healthmonitor_builder.timeout(args.timeout);
+
+        let tmp = match &args._type {
+            Type::Http => create::Type::Http,
+            Type::Https => create::Type::Https,
+            Type::Ping => create::Type::Ping,
+            Type::Sctp => create::Type::Sctp,
+            Type::Tcp => create::Type::Tcp,
+            Type::TlsHello => create::Type::TlsHello,
+            Type::UdpConnect => create::Type::UdpConnect,
+        };
+        healthmonitor_builder._type(tmp);
+
+        if let Some(val) = &args.url_path {
+            healthmonitor_builder.url_path(val);
         }
 
         ep_builder.healthmonitor(healthmonitor_builder.build().unwrap());

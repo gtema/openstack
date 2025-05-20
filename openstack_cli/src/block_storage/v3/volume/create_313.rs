@@ -216,10 +216,16 @@ impl VolumeCommand {
         // Set Request.volume data
         let args = &self.volume;
         let mut volume_builder = create_313::VolumeBuilder::default();
-        if let Some(val) = &args.name {
-            volume_builder.name(Some(val.into()));
-        } else if args.no_name {
-            volume_builder.name(None);
+        if let Some(val) = &args.availability_zone {
+            volume_builder.availability_zone(Some(val.into()));
+        } else if args.no_availability_zone {
+            volume_builder.availability_zone(None);
+        }
+
+        if let Some(val) = &args.consistencygroup_id {
+            volume_builder.consistencygroup_id(Some(val.into()));
+        } else if args.no_consistencygroup_id {
+            volume_builder.consistencygroup_id(None);
         }
 
         if let Some(val) = &args.description {
@@ -228,26 +234,52 @@ impl VolumeCommand {
             volume_builder.description(None);
         }
 
-        if let Some(val) = &args.display_name {
-            volume_builder.display_name(Some(val.into()));
-        } else if args.no_display_name {
-            volume_builder.display_name(None);
-        }
-
         if let Some(val) = &args.display_description {
             volume_builder.display_description(Some(val.into()));
         } else if args.no_display_description {
             volume_builder.display_description(None);
         }
 
-        if let Some(val) = &args.volume_type {
-            volume_builder.volume_type(Some(val.into()));
-        } else if args.no_volume_type {
-            volume_builder.volume_type(None);
+        if let Some(val) = &args.display_name {
+            volume_builder.display_name(Some(val.into()));
+        } else if args.no_display_name {
+            volume_builder.display_name(None);
+        }
+
+        if let Some(val) = &args.group_id {
+            volume_builder.group_id(Some(val.into()));
+        } else if args.no_group_id {
+            volume_builder.group_id(None);
+        }
+
+        if let Some(val) = &args.image_ref {
+            volume_builder.image_ref(Some(val.into()));
+        } else if args.no_image_ref {
+            volume_builder.image_ref(None);
+        }
+
+        if let Some(val) = &args.image_id {
+            volume_builder.image_id(Some(val.into()));
+        } else if args.no_image_id {
+            volume_builder.image_id(None);
         }
 
         if let Some(val) = &args.metadata {
             volume_builder.metadata(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.multiattach {
+            volume_builder.multiattach(*val);
+        }
+
+        if let Some(val) = &args.name {
+            volume_builder.name(Some(val.into()));
+        } else if args.no_name {
+            volume_builder.name(None);
+        }
+
+        if let Some(val) = &args.size {
+            volume_builder.size(*val);
         }
 
         if let Some(val) = &args.snapshot_id {
@@ -262,42 +294,10 @@ impl VolumeCommand {
             volume_builder.source_volid(None);
         }
 
-        if let Some(val) = &args.consistencygroup_id {
-            volume_builder.consistencygroup_id(Some(val.into()));
-        } else if args.no_consistencygroup_id {
-            volume_builder.consistencygroup_id(None);
-        }
-
-        if let Some(val) = &args.size {
-            volume_builder.size(*val);
-        }
-
-        if let Some(val) = &args.availability_zone {
-            volume_builder.availability_zone(Some(val.into()));
-        } else if args.no_availability_zone {
-            volume_builder.availability_zone(None);
-        }
-
-        if let Some(val) = &args.multiattach {
-            volume_builder.multiattach(*val);
-        }
-
-        if let Some(val) = &args.image_id {
-            volume_builder.image_id(Some(val.into()));
-        } else if args.no_image_id {
-            volume_builder.image_id(None);
-        }
-
-        if let Some(val) = &args.image_ref {
-            volume_builder.image_ref(Some(val.into()));
-        } else if args.no_image_ref {
-            volume_builder.image_ref(None);
-        }
-
-        if let Some(val) = &args.group_id {
-            volume_builder.group_id(Some(val.into()));
-        } else if args.no_group_id {
-            volume_builder.group_id(None);
+        if let Some(val) = &args.volume_type {
+            volume_builder.volume_type(Some(val.into()));
+        } else if args.no_volume_type {
+            volume_builder.volume_type(None);
         }
 
         ep_builder.volume(volume_builder.build().unwrap());

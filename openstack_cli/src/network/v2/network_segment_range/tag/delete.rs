@@ -50,15 +50,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// network_segment_range_id parameter for
-    /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_network_segment_range_id",
-        value_name = "NETWORK_SEGMENT_RANGE_ID"
-    )]
-    network_segment_range_id: String,
-
     /// id parameter for
     /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
     #[arg(
@@ -67,6 +58,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// network_segment_range_id parameter for
+    /// /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_network_segment_range_id",
+        value_name = "NETWORK_SEGMENT_RANGE_ID"
+    )]
+    network_segment_range_id: String,
 }
 
 impl TagCommand {
@@ -87,8 +87,8 @@ impl TagCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.network_segment_range_id(&self.path.network_segment_range_id);
         ep_builder.id(&self.path.id);
+        ep_builder.network_segment_range_id(&self.path.network_segment_range_id);
         // Set query parameters
         // Set body parameters
 

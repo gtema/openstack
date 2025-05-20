@@ -46,13 +46,6 @@ pub struct EndpointGroupResponse {
     pub name: Option<String>,
 }
 
-/// The link to the resources in question.
-/// `Links` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    pub _self: Option<String>,
-}
-
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Interface {
     // Admin
@@ -91,4 +84,11 @@ pub struct Filters {
     pub interface: Option<Interface>,
     pub region_id: Option<String>,
     pub service_id: Option<String>,
+}
+
+/// The link to the resources in question.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub _self: Option<String>,
 }

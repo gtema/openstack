@@ -175,10 +175,6 @@ impl ServerCommand {
         // Set Request.server data
         let args = &self.server;
         let mut server_builder = set_294::ServerBuilder::default();
-        if let Some(val) = &args.name {
-            server_builder.name(val);
-        }
-
         if let Some(val) = &args.os_dcf_disk_config {
             let tmp = match val {
                 OsDcfDiskConfig::Auto => set_294::OsDcfDiskConfig::Auto,
@@ -203,6 +199,10 @@ impl ServerCommand {
 
         if let Some(val) = &args.hostname {
             server_builder.hostname(val);
+        }
+
+        if let Some(val) = &args.name {
+            server_builder.name(val);
         }
 
         ep_builder.server(server_builder.build().unwrap());

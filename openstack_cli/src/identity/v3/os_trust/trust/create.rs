@@ -173,10 +173,15 @@ impl TrustCommand {
         // Set Request.trust data
         let args = &self.trust;
         let mut trust_builder = create::TrustBuilder::default();
+        if let Some(val) = &args.allow_redelegation {
+            trust_builder.allow_redelegation(*val);
+        }
 
-        trust_builder.trustor_user_id(&args.trustor_user_id);
-
-        trust_builder.trustee_user_id(&args.trustee_user_id);
+        if let Some(val) = &args.expires_at {
+            trust_builder.expires_at(Some(val.into()));
+        } else if args.no_expires_at {
+            trust_builder.expires_at(None);
+        }
 
         trust_builder.impersonation(args.impersonation);
 
@@ -186,28 +191,18 @@ impl TrustCommand {
             trust_builder.project_id(None);
         }
 
-        if let Some(val) = &args.remaining_uses {
-            trust_builder.remaining_uses(*val);
-        }
-
-        if let Some(val) = &args.expires_at {
-            trust_builder.expires_at(Some(val.into()));
-        } else if args.no_expires_at {
-            trust_builder.expires_at(None);
-        }
-
-        if let Some(val) = &args.allow_redelegation {
-            trust_builder.allow_redelegation(*val);
+        if let Some(val) = &args.redelegated_trust_id {
+            trust_builder.redelegated_trust_id(Some(val.into()));
+        } else if args.no_redelegated_trust_id {
+            trust_builder.redelegated_trust_id(None);
         }
 
         if let Some(val) = &args.redelegation_count {
             trust_builder.redelegation_count(*val);
         }
 
-        if let Some(val) = &args.redelegated_trust_id {
-            trust_builder.redelegated_trust_id(Some(val.into()));
-        } else if args.no_redelegated_trust_id {
-            trust_builder.redelegated_trust_id(None);
+        if let Some(val) = &args.remaining_uses {
+            trust_builder.remaining_uses(*val);
         }
 
         if let Some(val) = &args.roles {
@@ -217,6 +212,10 @@ impl TrustCommand {
                 .collect::<Vec<create::Roles>>();
             trust_builder.roles(roles_builder);
         }
+
+        trust_builder.trustee_user_id(&args.trustee_user_id);
+
+        trust_builder.trustor_user_id(&args.trustor_user_id);
 
         ep_builder.trust(trust_builder.build().unwrap());
 

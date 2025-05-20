@@ -36,68 +36,6 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct InventoriesItem {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) allocation_ratio: Option<f32>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) max_unit: Option<i32>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) min_unit: Option<i32>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) reserved: Option<i32>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) resource_provider_generation: Option<i32>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) step_size: Option<i32>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) total: i32,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct InventoriesItemStruct<'a> {
-    /// A dictionary of inventories keyed by resource classes.
-    #[serde()]
-    #[builder(private, setter(into, name = "_inventories"))]
-    pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItem>,
-
-    /// A consistent view marker that assists with the management of concurrent
-    /// resource provider updates.
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) resource_provider_generation: i32,
-}
-
-impl<'a> InventoriesItemStructBuilder<'a> {
-    /// A dictionary of inventories keyed by resource classes.
-    pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<InventoriesItem>,
-    {
-        self.inventories
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
 pub struct AllocationsItem<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -206,6 +144,68 @@ impl<'a> AllocationsItemStructBuilder<'a> {
     }
 }
 
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct InventoriesItem {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) allocation_ratio: Option<f32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) max_unit: Option<i32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) min_unit: Option<i32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) reserved: Option<i32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) resource_provider_generation: Option<i32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) step_size: Option<i32>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) total: i32,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct InventoriesItemStruct<'a> {
+    /// A dictionary of inventories keyed by resource classes.
+    #[serde()]
+    #[builder(private, setter(into, name = "_inventories"))]
+    pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItem>,
+
+    /// A consistent view marker that assists with the management of concurrent
+    /// resource provider updates.
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) resource_provider_generation: i32,
+}
+
+impl<'a> InventoriesItemStructBuilder<'a> {
+    /// A dictionary of inventories keyed by resource classes.
+    pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<InventoriesItem>,
+    {
+        self.inventories
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+}
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -237,22 +237,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// A dictionary of multiple inventories, keyed by resource provider uuid.
-    /// Each inventory describes the desired full inventory for each resource
-    /// provider. An empty dictionary causes the inventory for that provider to
-    /// be deleted.
-    pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<InventoriesItemStruct<'a>>,
-    {
-        self.inventories
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-
     /// A dictionary of multiple allocations, keyed by consumer uuid. Each
     /// collection of allocations describes the full set of allocations for
     /// each consumer. Each consumer allocations dict is itself a dictionary of
@@ -267,6 +251,22 @@ impl<'a> RequestBuilder<'a> {
         V: Into<AllocationsItemStruct<'a>>,
     {
         self.allocations
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
+    /// A dictionary of multiple inventories, keyed by resource provider uuid.
+    /// Each inventory describes the desired full inventory for each resource
+    /// provider. An empty dictionary causes the inventory for that provider to
+    /// be deleted.
+    pub fn inventories<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<InventoriesItemStruct<'a>>,
+    {
+        self.inventories
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self
@@ -312,8 +312,8 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("inventories", serde_json::to_value(&self.inventories)?);
         params.push("allocations", serde_json::to_value(&self.allocations)?);
+        params.push("inventories", serde_json::to_value(&self.inventories)?);
 
         params.into_body()
     }
@@ -352,8 +352,8 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
                 .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
+                .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -364,8 +364,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .build()
             .unwrap()
             .response_key()
@@ -387,8 +387,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -411,8 +411,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

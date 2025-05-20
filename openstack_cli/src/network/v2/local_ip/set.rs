@@ -107,12 +107,12 @@ impl LocalIpCommand {
         // Set Request.local_ip data
         let args = &self.local_ip;
         let mut local_ip_builder = set::LocalIpBuilder::default();
-        if let Some(val) = &args.name {
-            local_ip_builder.name(val);
-        }
-
         if let Some(val) = &args.description {
             local_ip_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            local_ip_builder.name(val);
         }
 
         ep_builder.local_ip(local_ip_builder.build().unwrap());

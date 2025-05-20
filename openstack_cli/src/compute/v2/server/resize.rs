@@ -146,9 +146,6 @@ impl ServerCommand {
         // Set Request.resize data
         let args = &self.resize;
         let mut resize_builder = resize::ResizeBuilder::default();
-
-        resize_builder.flavor_ref(&args.flavor_ref);
-
         if let Some(val) = &args.os_dcf_disk_config {
             let tmp = match val {
                 OsDcfDiskConfig::Auto => resize::OsDcfDiskConfig::Auto,
@@ -156,6 +153,8 @@ impl ServerCommand {
             };
             resize_builder.os_dcf_disk_config(tmp);
         }
+
+        resize_builder.flavor_ref(&args.flavor_ref);
 
         ep_builder.resize(resize_builder.build().unwrap());
 

@@ -156,6 +156,9 @@ impl EndpointGroupCommand {
 
         if let Some(val) = &args.filters {
             let mut filters_builder = set::FiltersBuilder::default();
+            if let Some(val) = &val.enabled {
+                filters_builder.enabled(*val);
+            }
             if let Some(val) = &val.interface {
                 let tmp = match val {
                     Interface::Admin => set::Interface::Admin,
@@ -164,14 +167,11 @@ impl EndpointGroupCommand {
                 };
                 filters_builder.interface(tmp);
             }
-            if let Some(val) = &val.service_id {
-                filters_builder.service_id(val);
-            }
             if let Some(val) = &val.region_id {
                 filters_builder.region_id(Some(val.into()));
             }
-            if let Some(val) = &val.enabled {
-                filters_builder.enabled(*val);
+            if let Some(val) = &val.service_id {
+                filters_builder.service_id(val);
             }
             endpoint_group_builder.filters(filters_builder.build().expect("A valid object"));
         }

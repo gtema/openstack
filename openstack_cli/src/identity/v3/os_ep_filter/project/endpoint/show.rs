@@ -57,10 +57,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// Project resource for which the operation should be performed.
-    #[command(flatten)]
-    project: ProjectInput,
-
     /// endpoint_id parameter for
     /// /v3/OS-EP-FILTER/projects/{project_id}/endpoints/{endpoint_id} API
     #[arg(
@@ -69,6 +65,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
 }
 
 /// Project input select group
@@ -104,6 +104,7 @@ impl EndpointCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
+        ep_builder.id(&self.path.id);
 
         // Process path parameter `project_id`
         if let Some(id) = &self.path.project.project_id {
@@ -154,7 +155,6 @@ impl EndpointCommand {
                 return Err(eyre!("Current project information can not be identified").into());
             }
         }
-        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

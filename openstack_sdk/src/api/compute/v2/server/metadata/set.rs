@@ -107,8 +107,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "servers/{server_id}/metadata/{id}",
-            server_id = self.server_id.as_ref(),
             id = self.id.as_ref(),
+            server_id = self.server_id.as_ref(),
         )
         .into()
     }
@@ -185,8 +185,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/servers/{server_id}/metadata/{id}",
-                server_id = "server_id",
                 id = "id",
+                server_id = "server_id",
             ));
 
             then.status(200)
@@ -195,8 +195,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .server_id("server_id")
             .id("id")
+            .server_id("server_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .build()
             .unwrap();
@@ -213,8 +213,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/servers/{server_id}/metadata/{id}",
-                    server_id = "server_id",
                     id = "id",
+                    server_id = "server_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -224,8 +224,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .server_id("server_id")
             .id("id")
+            .server_id("server_id")
             .meta(BTreeMap::<String, String>::new().into_iter())
             .headers(
                 [(

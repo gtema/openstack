@@ -143,17 +143,11 @@ impl DscpMarkingRulesCommand {
         // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
         if let Some(val) = &self.query.dscp_mark {
             ep_builder.dscp_mark(*val);
         }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -163,6 +157,12 @@ impl DscpMarkingRulesCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

@@ -166,11 +166,11 @@ impl AmphoraesCommand {
         if let Some(val) = &self.query.cert_expiration {
             ep_builder.cert_expiration(val);
         }
-        if let Some(val) = &self.query.compute_id {
-            ep_builder.compute_id(val);
-        }
         if let Some(val) = &self.query.compute_flavor {
             ep_builder.compute_flavor(val);
+        }
+        if let Some(val) = &self.query.compute_id {
+            ep_builder.compute_id(val);
         }
         if let Some(val) = &self.query.created_at {
             ep_builder.created_at(val);
@@ -211,17 +211,17 @@ impl AmphoraesCommand {
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
         }
+        if let Some(val) = &self.query.vrrp_id {
+            ep_builder.vrrp_id(val);
+        }
+        if let Some(val) = &self.query.vrrp_interface {
+            ep_builder.vrrp_interface(val);
+        }
         if let Some(val) = &self.query.vrrp_ip {
             ep_builder.vrrp_ip(val);
         }
         if let Some(val) = &self.query.vrrp_port_id {
             ep_builder.vrrp_port_id(val);
-        }
-        if let Some(val) = &self.query.vrrp_interface {
-            ep_builder.vrrp_interface(val);
-        }
-        if let Some(val) = &self.query.vrrp_id {
-            ep_builder.vrrp_id(val);
         }
         if let Some(val) = &self.query.vrrp_priority {
             ep_builder.vrrp_priority(val);

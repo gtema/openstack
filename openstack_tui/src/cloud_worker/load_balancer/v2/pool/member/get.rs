@@ -57,8 +57,8 @@ impl TryFrom<&LoadBalancerPoolMemberShow> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &LoadBalancerPoolMemberShow) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        ep_builder.pool_id(value.pool_id.clone());
         ep_builder.id(value.id.clone());
+        ep_builder.pool_id(value.pool_id.clone());
 
         Ok(ep_builder)
     }

@@ -59,8 +59,8 @@ impl TryFrom<&IdentityUserApplicationCredentialDelete> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &IdentityUserApplicationCredentialDelete) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
-        ep_builder.user_id(value.user_id.clone());
         ep_builder.id(value.id.clone());
+        ep_builder.user_id(value.user_id.clone());
 
         Ok(ep_builder)
     }

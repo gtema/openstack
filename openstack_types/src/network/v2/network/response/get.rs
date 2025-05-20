@@ -97,14 +97,23 @@ pub struct NetworkResponse {
     #[structable(optional)]
     pub port_security_enabled: Option<bool>,
 
+    /// The type of physical network that this network is mapped to. For
+    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
+    /// networking back-end.
     #[serde(default, rename = "provider:network_type")]
     #[structable(optional, title = "provider:network_type")]
     pub provider_network_type: Option<String>,
 
+    /// The physical network where this network/segment is implemented.
     #[serde(default, rename = "provider:physical_network")]
     #[structable(optional, title = "provider:physical_network")]
     pub provider_physical_network: Option<String>,
 
+    /// The ID of the isolated segment on the physical network. The
+    /// `network_type` attribute defines the segmentation model. For example,
+    /// if the `network_type` value is vlan, this ID is a vlan identifier. If
+    /// the `network_type` value is gre, this ID is a gre key. `Note` that only
+    /// the segmentation-id of VLAN type networks can be changed!
     #[serde(
         default,
         deserialize_with = "crate::common::deser_num_str_opt",

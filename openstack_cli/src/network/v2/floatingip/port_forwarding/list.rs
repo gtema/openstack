@@ -165,30 +165,6 @@ impl PortForwardingsCommand {
         // Set path parameters
         ep_builder.floatingip_id(&self.path.floatingip_id);
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.external_port {
-            ep_builder.external_port(*val);
-        }
-        if let Some(val) = &self.query.protocol {
-            ep_builder.protocol(val);
-        }
-        if let Some(val) = &self.query.internal_port_id {
-            ep_builder.internal_port_id(val);
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.external_port_range {
-            ep_builder.external_port_range(*val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
@@ -197,6 +173,30 @@ impl PortForwardingsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.external_port {
+            ep_builder.external_port(*val);
+        }
+        if let Some(val) = &self.query.external_port_range {
+            ep_builder.external_port_range(*val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.internal_port_id {
+            ep_builder.internal_port_id(val);
+        }
+        if let Some(val) = &self.query.protocol {
+            ep_builder.protocol(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

@@ -27,6 +27,12 @@ pub struct ShareResponse {
     pub shared_zones: Option<Vec<SharedZones>>,
 }
 
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    pub _self: Option<String>,
+}
+
 /// Links to the resource, and other related resources. When a response has
 /// been broken into pages, we will include a `next` link that should be
 /// followed to retrieve all results
@@ -47,10 +53,4 @@ pub struct SharedZones {
     pub project_id: Option<String>,
     pub target_project_id: Option<String>,
     pub updated_at: Option<String>,
-}
-
-/// `LinksStructResponse` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct LinksStructResponse {
-    pub _self: Option<String>,
 }

@@ -96,20 +96,17 @@ impl TryFrom<&IdentityProjectList> for RequestBuilder<'_> {
         if let Some(val) = &value.enabled {
             ep_builder.enabled(*val);
         }
-        if let Some(val) = &value.name {
-            ep_builder.name(val.clone());
-        }
-        if let Some(val) = &value.parent_id {
-            ep_builder.parent_id(val.clone());
-        }
         if let Some(val) = &value.is_domain {
             ep_builder.is_domain(*val);
         }
-        if let Some(val) = &value.tags {
-            ep_builder.tags(val.clone());
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
         }
-        if let Some(val) = &value.tags_any {
-            ep_builder.tags_any(val.clone());
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
+        }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &value.not_tags {
             ep_builder.not_tags(val.clone());
@@ -117,11 +114,14 @@ impl TryFrom<&IdentityProjectList> for RequestBuilder<'_> {
         if let Some(val) = &value.not_tags_any {
             ep_builder.not_tags_any(val.clone());
         }
-        if let Some(val) = &value.marker {
-            ep_builder.marker(val.clone());
+        if let Some(val) = &value.parent_id {
+            ep_builder.parent_id(val.clone());
         }
-        if let Some(val) = &value.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &value.tags {
+            ep_builder.tags(val.clone());
+        }
+        if let Some(val) = &value.tags_any {
+            ep_builder.tags_any(val.clone());
         }
 
         Ok(ep_builder)

@@ -204,69 +204,6 @@ impl PortsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.query.network_id {
-            ep_builder.network_id(val);
-        }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
-        }
-        if let Some(val) = &self.query.mac_address {
-            ep_builder.mac_address(val);
-        }
-        if let Some(val) = &self.query.fixed_ips {
-            ep_builder.fixed_ips(val.iter());
-        }
-        if let Some(val) = &self.query.device_id {
-            ep_builder.device_id(val);
-        }
-        if let Some(val) = &self.query.device_owner {
-            ep_builder.device_owner(val);
-        }
-        if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val);
-        }
-        if let Some(val) = &self.query.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.query.ip_allocation {
-            ep_builder.ip_allocation(val);
-        }
-        if let Some(val) = &self.query.binding_host_id {
-            ep_builder.binding_host_id(val);
-        }
-        if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val);
-        }
-        if let Some(val) = &self.query.tags {
-            ep_builder.tags(val.iter());
-        }
-        if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val.iter());
-        }
-        if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val.iter());
-        }
-        if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
-        }
-        if let Some(val) = &self.query.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.query.security_groups {
-            ep_builder.security_groups(val.iter());
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.iter());
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.iter());
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
@@ -275,6 +212,69 @@ impl PortsCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.binding_host_id {
+            ep_builder.binding_host_id(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.device_id {
+            ep_builder.device_id(val);
+        }
+        if let Some(val) = &self.query.device_owner {
+            ep_builder.device_owner(val);
+        }
+        if let Some(val) = &self.query.fixed_ips {
+            ep_builder.fixed_ips(val.iter());
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.ip_allocation {
+            ep_builder.ip_allocation(val);
+        }
+        if let Some(val) = &self.query.mac_address {
+            ep_builder.mac_address(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.network_id {
+            ep_builder.network_id(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val.iter());
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val.iter());
+        }
+        if let Some(val) = &self.query.revision_number {
+            ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.security_groups {
+            ep_builder.security_groups(val.iter());
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val.iter());
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val.iter());
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val.iter());
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val.iter());
         }
         // Set body parameters
 

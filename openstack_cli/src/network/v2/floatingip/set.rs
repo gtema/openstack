@@ -140,10 +140,8 @@ impl FloatingipCommand {
         // Set Request.floatingip data
         let args = &self.floatingip;
         let mut floatingip_builder = set::FloatingipBuilder::default();
-        if let Some(val) = &args.port_id {
-            floatingip_builder.port_id(Some(val.into()));
-        } else if args.no_port_id {
-            floatingip_builder.port_id(None);
+        if let Some(val) = &args.description {
+            floatingip_builder.description(val);
         }
 
         if let Some(val) = &args.fixed_ip_address {
@@ -152,14 +150,16 @@ impl FloatingipCommand {
             floatingip_builder.fixed_ip_address(None);
         }
 
+        if let Some(val) = &args.port_id {
+            floatingip_builder.port_id(Some(val.into()));
+        } else if args.no_port_id {
+            floatingip_builder.port_id(None);
+        }
+
         if let Some(val) = &args.qos_policy_id {
             floatingip_builder.qos_policy_id(Some(val.into()));
         } else if args.no_qos_policy_id {
             floatingip_builder.qos_policy_id(None);
-        }
-
-        if let Some(val) = &args.description {
-            floatingip_builder.description(val);
         }
 
         ep_builder.floatingip(floatingip_builder.build().unwrap());

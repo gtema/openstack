@@ -58,14 +58,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_port_id",
-        value_name = "PORT_ID"
-    )]
-    port_id: String,
-
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     #[arg(
         help_heading = "Path parameters",
@@ -73,6 +65,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_port_id",
+        value_name = "PORT_ID"
+    )]
+    port_id: String,
 }
 
 impl BindingCommand {
@@ -90,8 +90,8 @@ impl BindingCommand {
         let mut ep_builder = activate::Request::builder();
 
         // Set path parameters
-        ep_builder.port_id(&self.path.port_id);
         ep_builder.id(&self.path.id);
+        ep_builder.port_id(&self.path.port_id);
         // Set query parameters
         // Set body parameters
         // Set Request.host data

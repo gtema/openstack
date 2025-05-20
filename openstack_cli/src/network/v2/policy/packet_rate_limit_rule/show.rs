@@ -51,15 +51,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// policy_id parameter for
-    /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_policy_id",
-        value_name = "POLICY_ID"
-    )]
-    policy_id: String,
-
     /// id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
     #[arg(
@@ -68,6 +59,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// policy_id parameter for
+    /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_policy_id",
+        value_name = "POLICY_ID"
+    )]
+    policy_id: String,
 }
 
 impl PacketRateLimitRuleCommand {
@@ -88,8 +88,8 @@ impl PacketRateLimitRuleCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
+        ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         // Set body parameters
 

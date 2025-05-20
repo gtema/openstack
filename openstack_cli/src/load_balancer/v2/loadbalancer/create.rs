@@ -226,42 +226,6 @@ impl LoadbalancerCommand {
         // Set Request.loadbalancer data
         let args = &self.loadbalancer;
         let mut loadbalancer_builder = create::LoadbalancerBuilder::default();
-        if let Some(val) = &args.name {
-            loadbalancer_builder.name(val);
-        }
-
-        if let Some(val) = &args.description {
-            loadbalancer_builder.description(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            loadbalancer_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.vip_address {
-            loadbalancer_builder.vip_address(val);
-        }
-
-        if let Some(val) = &args.vip_port_id {
-            loadbalancer_builder.vip_port_id(val);
-        }
-
-        if let Some(val) = &args.vip_subnet_id {
-            loadbalancer_builder.vip_subnet_id(val);
-        }
-
-        if let Some(val) = &args.vip_network_id {
-            loadbalancer_builder.vip_network_id(val);
-        }
-
-        if let Some(val) = &args.vip_qos_policy_id {
-            loadbalancer_builder.vip_qos_policy_id(val);
-        }
-
-        if let Some(val) = &args.vip_sg_ids {
-            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
         if let Some(val) = &args.additional_vips {
             let additional_vips_builder: Vec<create::AdditionalVips> = val
                 .iter()
@@ -270,8 +234,20 @@ impl LoadbalancerCommand {
             loadbalancer_builder.additional_vips(additional_vips_builder);
         }
 
-        if let Some(val) = &args.project_id {
-            loadbalancer_builder.project_id(val);
+        if let Some(val) = &args.admin_state_up {
+            loadbalancer_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.availability_zone {
+            loadbalancer_builder.availability_zone(val);
+        }
+
+        if let Some(val) = &args.description {
+            loadbalancer_builder.description(val);
+        }
+
+        if let Some(val) = &args.flavor_id {
+            loadbalancer_builder.flavor_id(val);
         }
 
         if let Some(val) = &args.listeners {
@@ -282,12 +258,20 @@ impl LoadbalancerCommand {
             loadbalancer_builder.listeners(listeners_builder);
         }
 
+        if let Some(val) = &args.name {
+            loadbalancer_builder.name(val);
+        }
+
         if let Some(val) = &args.pools {
             let pools_builder: Vec<create::Pools> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Pools>(v.to_owned()))
                 .collect::<Vec<create::Pools>>();
             loadbalancer_builder.pools(pools_builder);
+        }
+
+        if let Some(val) = &args.project_id {
+            loadbalancer_builder.project_id(val);
         }
 
         if let Some(val) = &args.provider {
@@ -298,16 +282,32 @@ impl LoadbalancerCommand {
             loadbalancer_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.flavor_id {
-            loadbalancer_builder.flavor_id(val);
-        }
-
-        if let Some(val) = &args.availability_zone {
-            loadbalancer_builder.availability_zone(val);
-        }
-
         if let Some(val) = &args.tenant_id {
             loadbalancer_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.vip_address {
+            loadbalancer_builder.vip_address(val);
+        }
+
+        if let Some(val) = &args.vip_network_id {
+            loadbalancer_builder.vip_network_id(val);
+        }
+
+        if let Some(val) = &args.vip_port_id {
+            loadbalancer_builder.vip_port_id(val);
+        }
+
+        if let Some(val) = &args.vip_qos_policy_id {
+            loadbalancer_builder.vip_qos_policy_id(val);
+        }
+
+        if let Some(val) = &args.vip_sg_ids {
+            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.vip_subnet_id {
+            loadbalancer_builder.vip_subnet_id(val);
         }
 
         ep_builder.loadbalancer(loadbalancer_builder.build().unwrap());

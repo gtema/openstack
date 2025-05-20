@@ -59,14 +59,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_pool_id",
-        value_name = "POOL_ID"
-    )]
-    pool_id: String,
-
     /// member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
     /// API
     #[arg(
@@ -75,6 +67,14 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_pool_id",
+        value_name = "POOL_ID"
+    )]
+    pool_id: String,
 }
 
 impl MemberCommand {
@@ -92,8 +92,8 @@ impl MemberCommand {
 
         let mut find_builder = find::Request::builder();
 
-        find_builder.pool_id(&self.path.pool_id);
         find_builder.id(&self.path.id);
+        find_builder.pool_id(&self.path.pool_id);
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

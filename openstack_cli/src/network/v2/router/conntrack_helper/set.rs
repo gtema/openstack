@@ -60,6 +60,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
+    /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
+    id: String,
+
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     #[arg(
@@ -68,14 +76,6 @@ struct PathParameters {
         value_name = "ROUTER_ID"
     )]
     router_id: String,
-
-    /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -122,13 +122,21 @@ impl ConntrackHelperCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.router_id(&self.path.router_id);
         ep_builder.id(&self.path.id);
+        ep_builder.router_id(&self.path.router_id);
         // Set query parameters
         // Set body parameters
         // Set Request.conntrack_helper data
         let args = &self.conntrack_helper;
         let mut conntrack_helper_builder = set::ConntrackHelperBuilder::default();
+        if let Some(val) = &args.helper {
+            conntrack_helper_builder.helper(val);
+        }
+
+        if let Some(val) = &args.port {
+            conntrack_helper_builder.port(*val);
+        }
+
         if let Some(val) = &args.protocol {
             let tmp = match val {
                 Protocol::Dccp => set::Protocol::Dccp,
@@ -139,14 +147,6 @@ impl ConntrackHelperCommand {
                 Protocol::Udp => set::Protocol::Udp,
             };
             conntrack_helper_builder.protocol(tmp);
-        }
-
-        if let Some(val) = &args.port {
-            conntrack_helper_builder.port(*val);
-        }
-
-        if let Some(val) = &args.helper {
-            conntrack_helper_builder.helper(val);
         }
 
         ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());

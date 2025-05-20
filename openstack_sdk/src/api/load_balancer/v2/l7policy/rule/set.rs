@@ -35,6 +35,20 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum CompareType {
+    #[serde(rename = "CONTAINS")]
+    Contains,
+    #[serde(rename = "ENDS_WITH")]
+    EndsWith,
+    #[serde(rename = "EQUAL_TO")]
+    EqualTo,
+    #[serde(rename = "REGEX")]
+    Regex,
+    #[serde(rename = "STARTS_WITH")]
+    StartsWith,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Type {
     #[serde(rename = "COOKIE")]
     Cookie,
@@ -52,20 +66,6 @@ pub enum Type {
     SslDnField,
     #[serde(rename = "SSL_VERIFY_RESULT")]
     SslVerifyResult,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum CompareType {
-    #[serde(rename = "CONTAINS")]
-    Contains,
-    #[serde(rename = "ENDS_WITH")]
-    EndsWith,
-    #[serde(rename = "EQUAL_TO")]
-    EqualTo,
-    #[serde(rename = "REGEX")]
-    Regex,
-    #[serde(rename = "STARTS_WITH")]
-    StartsWith,
 }
 
 /// Defines attributes that are acceptable of a PUT request.
@@ -143,7 +143,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Rule.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

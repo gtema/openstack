@@ -96,6 +96,14 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum LbAlgorithm {
+    LeastConnections,
+    RoundRobin,
+    SourceIp,
+    SourceIpPort,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Protocol {
     Http,
     Https,
@@ -104,14 +112,6 @@ enum Protocol {
     Sctp,
     Tcp,
     Udp,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum LbAlgorithm {
-    LeastConnections,
-    RoundRobin,
-    SourceIp,
-    SourceIpPort,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -279,17 +279,39 @@ impl PoolCommand {
         // Set Request.pool data
         let args = &self.pool;
         let mut pool_builder = create::PoolBuilder::default();
-        if let Some(val) = &args.name {
-            pool_builder.name(val);
+        if let Some(val) = &args.admin_state_up {
+            pool_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.alpn_protocols {
+            pool_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.ca_tls_container_ref {
+            pool_builder.ca_tls_container_ref(val);
+        }
+
+        if let Some(val) = &args.crl_container_ref {
+            pool_builder.crl_container_ref(val);
         }
 
         if let Some(val) = &args.description {
             pool_builder.description(val);
         }
 
-        if let Some(val) = &args.admin_state_up {
-            pool_builder.admin_state_up(*val);
+        if let Some(val) = &args.healthmonitor {
+            pool_builder.healthmonitor(serde_json::from_value::<create::Healthmonitor>(
+                val.to_owned(),
+            )?);
         }
+
+        let tmp = match &args.lb_algorithm {
+            LbAlgorithm::LeastConnections => create::LbAlgorithm::LeastConnections,
+            LbAlgorithm::RoundRobin => create::LbAlgorithm::RoundRobin,
+            LbAlgorithm::SourceIp => create::LbAlgorithm::SourceIp,
+            LbAlgorithm::SourceIpPort => create::LbAlgorithm::SourceIpPort,
+        };
+        pool_builder.lb_algorithm(tmp);
 
         if let Some(val) = &args.listener_id {
             pool_builder.listener_id(val);
@@ -297,6 +319,22 @@ impl PoolCommand {
 
         if let Some(val) = &args.loadbalancer_id {
             pool_builder.loadbalancer_id(val);
+        }
+
+        if let Some(val) = &args.members {
+            let members_builder: Vec<create::Members> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::Members>(v.to_owned()))
+                .collect::<Vec<create::Members>>();
+            pool_builder.members(members_builder);
+        }
+
+        if let Some(val) = &args.name {
+            pool_builder.name(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            pool_builder.project_id(val);
         }
 
         let tmp = match &args.protocol {
@@ -310,16 +348,17 @@ impl PoolCommand {
         };
         pool_builder.protocol(tmp);
 
-        let tmp = match &args.lb_algorithm {
-            LbAlgorithm::LeastConnections => create::LbAlgorithm::LeastConnections,
-            LbAlgorithm::RoundRobin => create::LbAlgorithm::RoundRobin,
-            LbAlgorithm::SourceIp => create::LbAlgorithm::SourceIp,
-            LbAlgorithm::SourceIpPort => create::LbAlgorithm::SourceIpPort,
-        };
-        pool_builder.lb_algorithm(tmp);
-
         if let Some(val) = &args.session_persistence {
             let mut session_persistence_builder = create::SessionPersistenceBuilder::default();
+            if let Some(val) = &val.cookie_name {
+                session_persistence_builder.cookie_name(val);
+            }
+            if let Some(val) = &val.persistence_granularity {
+                session_persistence_builder.persistence_granularity(val);
+            }
+            if let Some(val) = &val.persistence_timeout {
+                session_persistence_builder.persistence_timeout(*val);
+            }
 
             let tmp = match &val._type {
                 SessionPersistenceType::AppCookie => create::SessionPersistenceType::AppCookie,
@@ -327,71 +366,32 @@ impl PoolCommand {
                 SessionPersistenceType::SourceIp => create::SessionPersistenceType::SourceIp,
             };
             session_persistence_builder._type(tmp);
-            if let Some(val) = &val.cookie_name {
-                session_persistence_builder.cookie_name(val);
-            }
-            if let Some(val) = &val.persistence_timeout {
-                session_persistence_builder.persistence_timeout(*val);
-            }
-            if let Some(val) = &val.persistence_granularity {
-                session_persistence_builder.persistence_granularity(val);
-            }
             pool_builder
                 .session_persistence(session_persistence_builder.build().expect("A valid object"));
-        }
-
-        if let Some(val) = &args.project_id {
-            pool_builder.project_id(val);
-        }
-
-        if let Some(val) = &args.healthmonitor {
-            pool_builder.healthmonitor(serde_json::from_value::<create::Healthmonitor>(
-                val.to_owned(),
-            )?);
-        }
-
-        if let Some(val) = &args.members {
-            let members_builder: Vec<create::Members> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create::Members>(v.to_owned()))
-                .collect::<Vec<create::Members>>();
-            pool_builder.members(members_builder);
         }
 
         if let Some(val) = &args.tags {
             pool_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.tls_container_ref {
-            pool_builder.tls_container_ref(val);
-        }
-
-        if let Some(val) = &args.ca_tls_container_ref {
-            pool_builder.ca_tls_container_ref(val);
-        }
-
-        if let Some(val) = &args.crl_container_ref {
-            pool_builder.crl_container_ref(val);
-        }
-
-        if let Some(val) = &args.tls_enabled {
-            pool_builder.tls_enabled(*val);
+        if let Some(val) = &args.tenant_id {
+            pool_builder.tenant_id(val);
         }
 
         if let Some(val) = &args.tls_ciphers {
             pool_builder.tls_ciphers(val);
         }
 
+        if let Some(val) = &args.tls_container_ref {
+            pool_builder.tls_container_ref(val);
+        }
+
+        if let Some(val) = &args.tls_enabled {
+            pool_builder.tls_enabled(*val);
+        }
+
         if let Some(val) = &args.tls_versions {
             pool_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.alpn_protocols {
-            pool_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.tenant_id {
-            pool_builder.tenant_id(val);
         }
 
         ep_builder.pool(pool_builder.build().unwrap());

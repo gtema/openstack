@@ -110,15 +110,15 @@ impl ServerCommand {
         let args = &self.create_backup;
         let mut create_backup_builder = create_backup_20::CreateBackupBuilder::default();
 
-        create_backup_builder.name(&args.name);
-
         create_backup_builder.backup_type(&args.backup_type);
-
-        create_backup_builder.rotation(args.rotation);
 
         if let Some(val) = &args.metadata {
             create_backup_builder.metadata(val.iter().cloned());
         }
+
+        create_backup_builder.name(&args.name);
+
+        create_backup_builder.rotation(args.rotation);
 
         ep_builder.create_backup(create_backup_builder.build().unwrap());
 

@@ -56,7 +56,7 @@ pub struct ClustertemplateResponse {
     /// The name of a driver to manage the storage for the images and the
     /// container’s writable layer. The default is `devicemapper`.
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub docker_storage_driver: Option<String>,
 
     /// The size in GB for the local storage on each server for the Docker
@@ -69,7 +69,7 @@ pub struct ClustertemplateResponse {
     pub docker_volume_size: Option<i32>,
 
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub driver: Option<String>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
@@ -108,13 +108,13 @@ pub struct ClustertemplateResponse {
     /// cloud providers used floating IP, some used public IP, thus Magnum
     /// provide this option for specifying the choice of using floating IP.
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub floating_ip_enabled: Option<String>,
 
     /// Indicates whether the ClusterTemplate is hidden or not, the default
     /// value is false.
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub hidden: Option<String>,
 
     /// The IP address for a proxy to use when direct http access from the
@@ -176,7 +176,7 @@ pub struct ClustertemplateResponse {
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub master_lb_enabled: Option<String>,
 
     /// Name of the resource.
@@ -208,7 +208,7 @@ pub struct ClustertemplateResponse {
     /// cluster template public and accessible by other users. The default is
     /// not public.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub public: Option<String>,
 
     /// Docker images by default are pulled from the public Docker registry,
@@ -217,14 +217,14 @@ pub struct ClustertemplateResponse {
     /// Magnum will create a local registry in the cluster backed by swift to
     /// host the images. The default is to use the public registry.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub registry_enabled: Option<String>,
 
     /// The servers in the cluster can be `vm` or `baremetal`. This parameter
     /// selects the type of server to create for the cluster. The default is
     /// `vm`.
     #[serde(default)]
-    #[structable(optional, serialize, wide)]
+    #[structable(optional, serialize)]
     pub server_type: Option<ServerType>,
 
     /// Administrator tags for the cluster template.
@@ -238,7 +238,7 @@ pub struct ClustertemplateResponse {
     /// Specifying this parameter will disable TLS so that users can access the
     /// COE endpoints without a certificate. The default is TLS enabled.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub tls_disabled: Option<String>,
 
     #[serde(default)]
@@ -257,7 +257,7 @@ pub struct ClustertemplateResponse {
     /// The name of a volume driver for managing the persistent storage for the
     /// containers. The functionality supported are specific to the driver.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub volume_driver: Option<String>,
 }
 

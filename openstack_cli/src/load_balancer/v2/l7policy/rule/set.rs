@@ -85,6 +85,15 @@ struct PathParameters {
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum CompareType {
+    Contains,
+    EndsWith,
+    EqualTo,
+    Regex,
+    StartsWith,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
     Cookie,
     FileType,
@@ -94,15 +103,6 @@ enum Type {
     SslConnHasCert,
     SslDnField,
     SslVerifyResult,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum CompareType {
-    Contains,
-    EndsWith,
-    EqualTo,
-    Regex,
-    StartsWith,
 }
 
 /// Rule Body data
@@ -172,6 +172,33 @@ impl RuleCommand {
         // Set Request.rule data
         let args = &self.rule;
         let mut rule_builder = set::RuleBuilder::default();
+        if let Some(val) = &args.admin_state_up {
+            rule_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.compare_type {
+            let tmp = match val {
+                CompareType::Contains => set::CompareType::Contains,
+                CompareType::EndsWith => set::CompareType::EndsWith,
+                CompareType::EqualTo => set::CompareType::EqualTo,
+                CompareType::Regex => set::CompareType::Regex,
+                CompareType::StartsWith => set::CompareType::StartsWith,
+            };
+            rule_builder.compare_type(tmp);
+        }
+
+        if let Some(val) = &args.invert {
+            rule_builder.invert(*val);
+        }
+
+        if let Some(val) = &args.key {
+            rule_builder.key(val);
+        }
+
+        if let Some(val) = &args.tags {
+            rule_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
         if let Some(val) = &args._type {
             let tmp = match val {
                 Type::Cookie => set::Type::Cookie,
@@ -186,35 +213,8 @@ impl RuleCommand {
             rule_builder._type(tmp);
         }
 
-        if let Some(val) = &args.compare_type {
-            let tmp = match val {
-                CompareType::Contains => set::CompareType::Contains,
-                CompareType::EndsWith => set::CompareType::EndsWith,
-                CompareType::EqualTo => set::CompareType::EqualTo,
-                CompareType::Regex => set::CompareType::Regex,
-                CompareType::StartsWith => set::CompareType::StartsWith,
-            };
-            rule_builder.compare_type(tmp);
-        }
-
-        if let Some(val) = &args.key {
-            rule_builder.key(val);
-        }
-
         if let Some(val) = &args.value {
             rule_builder.value(val);
-        }
-
-        if let Some(val) = &args.invert {
-            rule_builder.invert(*val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            rule_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.tags {
-            rule_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.rule(rule_builder.build().unwrap());

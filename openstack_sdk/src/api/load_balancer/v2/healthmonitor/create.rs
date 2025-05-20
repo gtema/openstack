@@ -59,24 +59,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PING")]
-    Ping,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "TLS-HELLO")]
-    TlsHello,
-    #[serde(rename = "UDP-CONNECT")]
-    UdpConnect,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum HttpMethod {
     #[serde(rename = "CONNECT")]
     Connect,
@@ -96,6 +78,24 @@ pub enum HttpMethod {
     Put,
     #[serde(rename = "TRACE")]
     Trace,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Type {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PING")]
+    Ping,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "TLS-HELLO")]
+    TlsHello,
+    #[serde(rename = "UDP-CONNECT")]
+    UdpConnect,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -223,7 +223,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Healthmonitor.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

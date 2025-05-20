@@ -28,17 +28,17 @@ pub struct ManageableSnapshotResponse {
     pub manageable_snapshots: Vec<ManageableSnapshots>,
 }
 
-/// The snapshot’s origin volume information.
-/// `SourceReference` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SourceReference {
-    pub source_name: Option<String>,
-}
-
 /// Some information for the resource.
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
+    pub source_name: Option<String>,
+}
+
+/// The snapshot’s origin volume information.
+/// `SourceReference` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SourceReference {
     pub source_name: Option<String>,
 }
 

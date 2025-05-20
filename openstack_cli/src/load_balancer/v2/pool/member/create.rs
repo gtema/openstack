@@ -197,52 +197,53 @@ impl MemberCommand {
         // Set Request.member data
         let args = &self.member;
         let mut member_builder = create::MemberBuilder::default();
-        if let Some(val) = &args.name {
-            member_builder.name(val);
-        }
-
-        if let Some(val) = &args.admin_state_up {
-            member_builder.admin_state_up(*val);
-        }
 
         member_builder.address(&args.address);
 
-        member_builder.protocol_port(args.protocol_port);
-
-        if let Some(val) = &args.weight {
-            member_builder.weight(*val);
+        if let Some(val) = &args.admin_state_up {
+            member_builder.admin_state_up(*val);
         }
 
         if let Some(val) = &args.backup {
             member_builder.backup(*val);
         }
 
-        if let Some(val) = &args.subnet_id {
-            member_builder.subnet_id(val);
-        }
-
-        if let Some(val) = &args.project_id {
-            member_builder.project_id(val);
+        if let Some(val) = &args.monitor_address {
+            member_builder.monitor_address(val);
         }
 
         if let Some(val) = &args.monitor_port {
             member_builder.monitor_port(*val);
         }
 
-        if let Some(val) = &args.monitor_address {
-            member_builder.monitor_address(val);
+        if let Some(val) = &args.name {
+            member_builder.name(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            member_builder.project_id(val);
+        }
+
+        member_builder.protocol_port(args.protocol_port);
+
+        if let Some(val) = &args.request_sriov {
+            member_builder.request_sriov(*val);
+        }
+
+        if let Some(val) = &args.subnet_id {
+            member_builder.subnet_id(val);
         }
 
         if let Some(val) = &args.tags {
             member_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        if let Some(val) = &args.request_sriov {
-            member_builder.request_sriov(*val);
-        }
-
         if let Some(val) = &args.tenant_id {
             member_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.weight {
+            member_builder.weight(*val);
         }
 
         ep_builder.member(member_builder.build().unwrap());

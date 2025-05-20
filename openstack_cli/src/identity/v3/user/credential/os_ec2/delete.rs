@@ -57,10 +57,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// User resource for which the operation should be performed.
-    #[command(flatten)]
-    user: UserInput,
-
     /// credential_id parameter for
     /// /v3/users/{user_id}/credentials/OS-EC2/{credential_id} API
     #[arg(
@@ -69,6 +65,10 @@ struct PathParameters {
         value_name = "CREDENTIAL_ID"
     )]
     credential_id: String,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 }
 
 /// User input select group
@@ -104,6 +104,7 @@ impl OsEc2Command {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
+        ep_builder.credential_id(&self.path.credential_id);
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
@@ -149,7 +150,6 @@ impl OsEc2Command {
                     .id,
             );
         }
-        ep_builder.credential_id(&self.path.credential_id);
         // Set query parameters
         // Set body parameters
 

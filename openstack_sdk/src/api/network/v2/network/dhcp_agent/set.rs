@@ -94,8 +94,8 @@ impl RestEndpoint for Request<'_> {
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
             "networks/{network_id}/dhcp-agents/{id}",
-            network_id = self.network_id.as_ref(),
             id = self.id.as_ref(),
+            network_id = self.network_id.as_ref(),
         )
         .into()
     }
@@ -165,8 +165,8 @@ mod tests {
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
                 "/networks/{network_id}/dhcp-agents/{id}",
-                network_id = "network_id",
                 id = "id",
+                network_id = "network_id",
             ));
 
             then.status(200)
@@ -175,8 +175,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .network_id("network_id")
             .id("id")
+            .network_id("network_id")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -192,8 +192,8 @@ mod tests {
             when.method(httpmock::Method::PUT)
                 .path(format!(
                     "/networks/{network_id}/dhcp-agents/{id}",
-                    network_id = "network_id",
                     id = "id",
+                    network_id = "network_id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -203,8 +203,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .network_id("network_id")
             .id("id")
+            .network_id("network_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

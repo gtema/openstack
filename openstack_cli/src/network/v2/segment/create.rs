@@ -120,24 +120,8 @@ impl SegmentCommand {
         // Set Request.segment data
         let args = &self.segment;
         let mut segment_builder = create::SegmentBuilder::default();
-        if let Some(val) = &args.tenant_id {
-            segment_builder.tenant_id(val);
-        }
-
-        if let Some(val) = &args.network_id {
-            segment_builder.network_id(val);
-        }
-
-        if let Some(val) = &args.physical_network {
-            segment_builder.physical_network(val);
-        }
-
-        if let Some(val) = &args.network_type {
-            segment_builder.network_type(val);
-        }
-
-        if let Some(val) = &args.segmentation_id {
-            segment_builder.segmentation_id(val);
+        if let Some(val) = &args.description {
+            segment_builder.description(val);
         }
 
         if let Some(val) = &args.name {
@@ -146,8 +130,24 @@ impl SegmentCommand {
             segment_builder.name(None);
         }
 
-        if let Some(val) = &args.description {
-            segment_builder.description(val);
+        if let Some(val) = &args.network_id {
+            segment_builder.network_id(val);
+        }
+
+        if let Some(val) = &args.network_type {
+            segment_builder.network_type(val);
+        }
+
+        if let Some(val) = &args.physical_network {
+            segment_builder.physical_network(val);
+        }
+
+        if let Some(val) = &args.segmentation_id {
+            segment_builder.segmentation_id(val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            segment_builder.tenant_id(val);
         }
 
         ep_builder.segment(segment_builder.build().unwrap());

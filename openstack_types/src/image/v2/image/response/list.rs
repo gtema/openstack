@@ -154,95 +154,6 @@ pub struct ImageResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Status {
-    // Active
-    #[serde(rename = "active")]
-    Active,
-
-    // Deactivated
-    #[serde(rename = "deactivated")]
-    Deactivated,
-
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // Importing
-    #[serde(rename = "importing")]
-    Importing,
-
-    // Killed
-    #[serde(rename = "killed")]
-    Killed,
-
-    // PendingDelete
-    #[serde(rename = "pending_delete")]
-    PendingDelete,
-
-    // Queued
-    #[serde(rename = "queued")]
-    Queued,
-
-    // Saving
-    #[serde(rename = "saving")]
-    Saving,
-
-    // Uploading
-    #[serde(rename = "uploading")]
-    Uploading,
-}
-
-impl std::str::FromStr for Status {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "active" => Ok(Self::Active),
-            "deactivated" => Ok(Self::Deactivated),
-            "deleted" => Ok(Self::Deleted),
-            "importing" => Ok(Self::Importing),
-            "killed" => Ok(Self::Killed),
-            "pending_delete" => Ok(Self::PendingDelete),
-            "queued" => Ok(Self::Queued),
-            "saving" => Ok(Self::Saving),
-            "uploading" => Ok(Self::Uploading),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Visibility {
-    // Community
-    #[serde(rename = "community")]
-    Community,
-
-    // Private
-    #[serde(rename = "private")]
-    Private,
-
-    // Public
-    #[serde(rename = "public")]
-    Public,
-
-    // Shared
-    #[serde(rename = "shared")]
-    Shared,
-}
-
-impl std::str::FromStr for Visibility {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "community" => Ok(Self::Community),
-            "private" => Ok(Self::Private),
-            "public" => Ok(Self::Public),
-            "shared" => Ok(Self::Shared),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ContainerFormatStringEnum {
     // Aki
@@ -384,4 +295,93 @@ pub struct Locations {
     pub metadata: BTreeMap<String, Value>,
     pub url: String,
     pub validation_data: Option<ValidationData>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Status {
+    // Active
+    #[serde(rename = "active")]
+    Active,
+
+    // Deactivated
+    #[serde(rename = "deactivated")]
+    Deactivated,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
+
+    // Importing
+    #[serde(rename = "importing")]
+    Importing,
+
+    // Killed
+    #[serde(rename = "killed")]
+    Killed,
+
+    // PendingDelete
+    #[serde(rename = "pending_delete")]
+    PendingDelete,
+
+    // Queued
+    #[serde(rename = "queued")]
+    Queued,
+
+    // Saving
+    #[serde(rename = "saving")]
+    Saving,
+
+    // Uploading
+    #[serde(rename = "uploading")]
+    Uploading,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "active" => Ok(Self::Active),
+            "deactivated" => Ok(Self::Deactivated),
+            "deleted" => Ok(Self::Deleted),
+            "importing" => Ok(Self::Importing),
+            "killed" => Ok(Self::Killed),
+            "pending_delete" => Ok(Self::PendingDelete),
+            "queued" => Ok(Self::Queued),
+            "saving" => Ok(Self::Saving),
+            "uploading" => Ok(Self::Uploading),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Visibility {
+    // Community
+    #[serde(rename = "community")]
+    Community,
+
+    // Private
+    #[serde(rename = "private")]
+    Private,
+
+    // Public
+    #[serde(rename = "public")]
+    Public,
+
+    // Shared
+    #[serde(rename = "shared")]
+    Shared,
+}
+
+impl std::str::FromStr for Visibility {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "community" => Ok(Self::Community),
+            "private" => Ok(Self::Private),
+            "public" => Ok(Self::Public),
+            "shared" => Ok(Self::Shared),
+            _ => Err(()),
+        }
+    }
 }

@@ -418,13 +418,6 @@ pub struct ServerResponse {
     pub user_id: Option<String>,
 }
 
-/// `Addresses` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Addresses {
-    pub addr: Option<String>,
-    pub version: Option<i32>,
-}
-
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum OsDcfDiskConfig {
     // Auto
@@ -445,6 +438,13 @@ impl std::str::FromStr for OsDcfDiskConfig {
             _ => Err(()),
         }
     }
+}
+
+/// `Addresses` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Addresses {
+    pub addr: Option<String>,
+    pub version: Option<i32>,
 }
 
 /// A fault object. Only displayed when the server status is `ERROR` or

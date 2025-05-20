@@ -149,50 +149,50 @@ impl SubnetpoolCommand {
         // Set Request.subnetpool data
         let args = &self.subnetpool;
         let mut subnetpool_builder = create::SubnetpoolBuilder::default();
-        if let Some(val) = &args.name {
-            subnetpool_builder.name(val);
-        }
-
-        if let Some(val) = &args.tenant_id {
-            subnetpool_builder.tenant_id(val);
-        }
-
-        if let Some(val) = &args.prefixes {
-            subnetpool_builder.prefixes(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.default_quota {
-            subnetpool_builder.default_quota(*val);
-        }
-
-        if let Some(val) = &args.default_prefixlen {
-            subnetpool_builder.default_prefixlen(*val);
-        }
-
-        if let Some(val) = &args.min_prefixlen {
-            subnetpool_builder.min_prefixlen(*val);
-        }
-
-        if let Some(val) = &args.max_prefixlen {
-            subnetpool_builder.max_prefixlen(*val);
-        }
-
-        if let Some(val) = &args.is_default {
-            subnetpool_builder.is_default(*val);
-        }
-
-        if let Some(val) = &args.shared {
-            subnetpool_builder.shared(*val);
-        }
-
         if let Some(val) = &args.address_scope_id {
             subnetpool_builder.address_scope_id(Some(val.into()));
         } else if args.no_address_scope_id {
             subnetpool_builder.address_scope_id(None);
         }
 
+        if let Some(val) = &args.default_prefixlen {
+            subnetpool_builder.default_prefixlen(*val);
+        }
+
+        if let Some(val) = &args.default_quota {
+            subnetpool_builder.default_quota(*val);
+        }
+
         if let Some(val) = &args.description {
             subnetpool_builder.description(val);
+        }
+
+        if let Some(val) = &args.is_default {
+            subnetpool_builder.is_default(*val);
+        }
+
+        if let Some(val) = &args.max_prefixlen {
+            subnetpool_builder.max_prefixlen(*val);
+        }
+
+        if let Some(val) = &args.min_prefixlen {
+            subnetpool_builder.min_prefixlen(*val);
+        }
+
+        if let Some(val) = &args.name {
+            subnetpool_builder.name(val);
+        }
+
+        if let Some(val) = &args.prefixes {
+            subnetpool_builder.prefixes(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.shared {
+            subnetpool_builder.shared(*val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            subnetpool_builder.tenant_id(val);
         }
 
         ep_builder.subnetpool(subnetpool_builder.build().unwrap());

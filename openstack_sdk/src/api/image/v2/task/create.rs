@@ -33,16 +33,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
-    #[serde(rename = "api_image_import")]
-    ApiImageImport,
-    #[serde(rename = "import")]
-    Import,
-    #[serde(rename = "location_import")]
-    LocationImport,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Status {
     #[serde(rename = "failure")]
     Failure,
@@ -52,6 +42,16 @@ pub enum Status {
     Processing,
     #[serde(rename = "success")]
     Success,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Type {
+    #[serde(rename = "api_image_import")]
+    ApiImageImport,
+    #[serde(rename = "import")]
+    Import,
+    #[serde(rename = "location_import")]
+    LocationImport,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -193,44 +193,44 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.id {
-            params.push("id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self._type {
-            params.push("type", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.status {
-            params.push("status", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.input {
-            params.push("input", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.result {
-            params.push("result", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.owner {
-            params.push("owner", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.message {
-            params.push("message", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.image_id {
-            params.push("image_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.request_id {
-            params.push("request_id", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.user_id {
-            params.push("user_id", serde_json::to_value(val)?);
+        if let Some(val) = &self.created_at {
+            params.push("created_at", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.expires_at {
             params.push("expires_at", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.created_at {
-            params.push("created_at", serde_json::to_value(val)?);
+        if let Some(val) = &self.id {
+            params.push("id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.image_id {
+            params.push("image_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.input {
+            params.push("input", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.message {
+            params.push("message", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.owner {
+            params.push("owner", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.request_id {
+            params.push("request_id", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.result {
+            params.push("result", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.status {
+            params.push("status", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self._type {
+            params.push("type", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.user_id {
+            params.push("user_id", serde_json::to_value(val)?);
         }
 
         params.into_body()

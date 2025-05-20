@@ -68,16 +68,6 @@ struct PathParameters {
     )]
     policy_id: String,
 
-    /// service_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_service_id",
-        value_name = "SERVICE_ID"
-    )]
-    service_id: String,
-
     /// region_id parameter for
     /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
     /// API
@@ -87,6 +77,16 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// service_id parameter for
+    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
+    /// API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_service_id",
+        value_name = "SERVICE_ID"
+    )]
+    service_id: String,
 }
 
 impl RegionCommand {
@@ -108,8 +108,8 @@ impl RegionCommand {
 
         // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
-        ep_builder.service_id(&self.path.service_id);
         ep_builder.id(&self.path.id);
+        ep_builder.service_id(&self.path.service_id);
         // Set query parameters
         // Set body parameters
         if let Some(properties) = &self.properties {

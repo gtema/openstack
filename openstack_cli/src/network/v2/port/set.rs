@@ -101,20 +101,6 @@ struct PathParameters {
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum DataPlaneStatus {
-    Active,
-    Down,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum NumaAffinityPolicy {
-    Legacy,
-    Preferred,
-    Required,
-    Socket,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum BindingVnicType {
     AcceleratorDirect,
     AcceleratorDirectPhysical,
@@ -127,6 +113,20 @@ enum BindingVnicType {
     SmartNic,
     Vdpa,
     VirtioForwarder,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum DataPlaneStatus {
+    Active,
+    Down,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum NumaAffinityPolicy {
+    Legacy,
+    Preferred,
+    Required,
+    Socket,
 }
 
 /// Port Body data
@@ -316,32 +316,8 @@ impl PortCommand {
         // Set Request.port data
         let args = &self.port;
         let mut port_builder = set::PortBuilder::default();
-        if let Some(val) = &args.name {
-            port_builder.name(val);
-        }
-
         if let Some(val) = &args.admin_state_up {
             port_builder.admin_state_up(*val);
-        }
-
-        if let Some(val) = &args.mac_address {
-            port_builder.mac_address(val);
-        }
-
-        if let Some(val) = &args.fixed_ips {
-            let fixed_ips_builder: Vec<set::FixedIps> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<set::FixedIps>(v.to_owned()))
-                .collect::<Vec<set::FixedIps>>();
-            port_builder.fixed_ips(fixed_ips_builder);
-        }
-
-        if let Some(val) = &args.device_id {
-            port_builder.device_id(val);
-        }
-
-        if let Some(val) = &args.device_owner {
-            port_builder.device_owner(val);
         }
 
         if let Some(val) = &args.allowed_address_pairs {
@@ -352,41 +328,12 @@ impl PortCommand {
             port_builder.allowed_address_pairs(allowed_address_pairs_builder);
         }
 
-        if let Some(val) = &args.data_plane_status {
-            let tmp = match val {
-                DataPlaneStatus::Active => set::DataPlaneStatus::Active,
-                DataPlaneStatus::Down => set::DataPlaneStatus::Down,
-            };
-            port_builder.data_plane_status(tmp);
+        if let Some(val) = &args.binding_host_id {
+            port_builder.binding_host_id(val);
         }
 
-        if let Some(val) = &args.extra_dhcp_opts {
-            use std::collections::BTreeMap;
-            port_builder.extra_dhcp_opts(
-                val.iter()
-                    .map(|v| {
-                        v.as_object()
-                            .expect("Is a valid Json object")
-                            .into_iter()
-                            .map(|(k, v)| (k.into(), v.clone()))
-                            .collect::<BTreeMap<_, Value>>()
-                    })
-                    .collect::<Vec<_>>(),
-            );
-        }
-
-        if let Some(val) = &args.hints {
-            port_builder.hints(val.iter().cloned());
-        }
-
-        if let Some(val) = &args.numa_affinity_policy {
-            let tmp = match val {
-                NumaAffinityPolicy::Legacy => set::NumaAffinityPolicy::Legacy,
-                NumaAffinityPolicy::Preferred => set::NumaAffinityPolicy::Preferred,
-                NumaAffinityPolicy::Required => set::NumaAffinityPolicy::Required,
-                NumaAffinityPolicy::Socket => set::NumaAffinityPolicy::Socket,
-            };
-            port_builder.numa_affinity_policy(tmp);
+        if let Some(val) = &args.binding_profile {
+            port_builder.binding_profile(val.iter().cloned());
         }
 
         if let Some(val) = &args.binding_vnic_type {
@@ -408,12 +355,77 @@ impl PortCommand {
             port_builder.binding_vnic_type(tmp);
         }
 
-        if let Some(val) = &args.binding_host_id {
-            port_builder.binding_host_id(val);
+        if let Some(val) = &args.data_plane_status {
+            let tmp = match val {
+                DataPlaneStatus::Active => set::DataPlaneStatus::Active,
+                DataPlaneStatus::Down => set::DataPlaneStatus::Down,
+            };
+            port_builder.data_plane_status(tmp);
         }
 
-        if let Some(val) = &args.binding_profile {
-            port_builder.binding_profile(val.iter().cloned());
+        if let Some(val) = &args.description {
+            port_builder.description(val);
+        }
+
+        if let Some(val) = &args.device_id {
+            port_builder.device_id(val);
+        }
+
+        if let Some(val) = &args.device_owner {
+            port_builder.device_owner(val);
+        }
+
+        if let Some(val) = &args.dns_domain {
+            port_builder.dns_domain(val);
+        }
+
+        if let Some(val) = &args.dns_name {
+            port_builder.dns_name(val);
+        }
+
+        if let Some(val) = &args.extra_dhcp_opts {
+            use std::collections::BTreeMap;
+            port_builder.extra_dhcp_opts(
+                val.iter()
+                    .map(|v| {
+                        v.as_object()
+                            .expect("Is a valid Json object")
+                            .into_iter()
+                            .map(|(k, v)| (k.into(), v.clone()))
+                            .collect::<BTreeMap<_, Value>>()
+                    })
+                    .collect::<Vec<_>>(),
+            );
+        }
+
+        if let Some(val) = &args.fixed_ips {
+            let fixed_ips_builder: Vec<set::FixedIps> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<set::FixedIps>(v.to_owned()))
+                .collect::<Vec<set::FixedIps>>();
+            port_builder.fixed_ips(fixed_ips_builder);
+        }
+
+        if let Some(val) = &args.hints {
+            port_builder.hints(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.mac_address {
+            port_builder.mac_address(val);
+        }
+
+        if let Some(val) = &args.name {
+            port_builder.name(val);
+        }
+
+        if let Some(val) = &args.numa_affinity_policy {
+            let tmp = match val {
+                NumaAffinityPolicy::Legacy => set::NumaAffinityPolicy::Legacy,
+                NumaAffinityPolicy::Preferred => set::NumaAffinityPolicy::Preferred,
+                NumaAffinityPolicy::Required => set::NumaAffinityPolicy::Required,
+                NumaAffinityPolicy::Socket => set::NumaAffinityPolicy::Socket,
+            };
+            port_builder.numa_affinity_policy(tmp);
         }
 
         if let Some(val) = &args.port_security_enabled {
@@ -424,18 +436,6 @@ impl PortCommand {
             port_builder.qos_policy_id(Some(val.into()));
         } else if args.no_qos_policy_id {
             port_builder.qos_policy_id(None);
-        }
-
-        if let Some(val) = &args.dns_name {
-            port_builder.dns_name(val);
-        }
-
-        if let Some(val) = &args.dns_domain {
-            port_builder.dns_domain(val);
-        }
-
-        if let Some(val) = &args.description {
-            port_builder.description(val);
         }
 
         if let Some(val) = &args.security_groups {

@@ -60,100 +60,13 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum ListenerProtocol {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PROMETHEUS")]
-    Prometheus,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "TERMINATED_HTTPS")]
-    TerminatedHttps,
-    #[serde(rename = "UDP")]
-    Udp,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum DefaultPoolProtocol {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PROXY")]
-    Proxy,
-    #[serde(rename = "PROXYV2")]
-    Proxyv2,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "UDP")]
-    Udp,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum LbAlgorithm {
-    #[serde(rename = "LEAST_CONNECTIONS")]
-    LeastConnections,
-    #[serde(rename = "ROUND_ROBIN")]
-    RoundRobin,
-    #[serde(rename = "SOURCE_IP")]
-    SourceIp,
-    #[serde(rename = "SOURCE_IP_PORT")]
-    SourceIpPort,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum SessionPersistenceType {
-    #[serde(rename = "APP_COOKIE")]
-    AppCookie,
-    #[serde(rename = "HTTP_COOKIE")]
-    HttpCookie,
-    #[serde(rename = "SOURCE_IP")]
-    SourceIp,
-}
-
-/// Defines mandatory and optional attributes of a POST request.
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct SessionPersistence<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) cookie_name: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) persistence_granularity: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) persistence_timeout: Option<i32>,
-
-    #[serde(rename = "type")]
-    #[builder()]
-    pub(crate) _type: SessionPersistenceType,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum HealthmonitorType {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PING")]
-    Ping,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "TLS-HELLO")]
-    TlsHello,
-    #[serde(rename = "UDP-CONNECT")]
-    UdpConnect,
+pub enum ClientAuthentication {
+    #[serde(rename = "MANDATORY")]
+    Mandatory,
+    #[serde(rename = "NONE")]
+    None,
+    #[serde(rename = "OPTIONAL")]
+    Optional,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -176,6 +89,24 @@ pub enum HttpMethod {
     Put,
     #[serde(rename = "TRACE")]
     Trace,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HealthmonitorType {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PING")]
+    Ping,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "TLS-HELLO")]
+    TlsHello,
+    #[serde(rename = "UDP-CONNECT")]
+    UdpConnect,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -238,6 +169,18 @@ pub struct Healthmonitor<'a> {
     pub(crate) url_path: Option<Cow<'a, str>>,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum LbAlgorithm {
+    #[serde(rename = "LEAST_CONNECTIONS")]
+    LeastConnections,
+    #[serde(rename = "ROUND_ROBIN")]
+    RoundRobin,
+    #[serde(rename = "SOURCE_IP")]
+    SourceIp,
+    #[serde(rename = "SOURCE_IP_PORT")]
+    SourceIpPort,
+}
+
 /// Defines mandatory and optional attributes of a POST request.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -285,6 +228,55 @@ pub struct Members<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) weight: Option<i32>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum DefaultPoolProtocol {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PROXY")]
+    Proxy,
+    #[serde(rename = "PROXYV2")]
+    Proxyv2,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "UDP")]
+    Udp,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum SessionPersistenceType {
+    #[serde(rename = "APP_COOKIE")]
+    AppCookie,
+    #[serde(rename = "HTTP_COOKIE")]
+    HttpCookie,
+    #[serde(rename = "SOURCE_IP")]
+    SourceIp,
+}
+
+/// Defines mandatory and optional attributes of a POST request.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct SessionPersistence<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) cookie_name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) persistence_granularity: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) persistence_timeout: Option<i32>,
+
+    #[serde(rename = "type")]
+    #[builder()]
+    pub(crate) _type: SessionPersistenceType,
 }
 
 /// A pool object.
@@ -382,24 +374,6 @@ pub enum Action {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum RedirectPoolProtocol {
-    #[serde(rename = "HTTP")]
-    Http,
-    #[serde(rename = "HTTPS")]
-    Https,
-    #[serde(rename = "PROXY")]
-    Proxy,
-    #[serde(rename = "PROXYV2")]
-    Proxyv2,
-    #[serde(rename = "SCTP")]
-    Sctp,
-    #[serde(rename = "TCP")]
-    Tcp,
-    #[serde(rename = "UDP")]
-    Udp,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum RedirectPoolHealthmonitorType {
     #[serde(rename = "HTTP")]
     Http,
@@ -474,6 +448,34 @@ pub struct RedirectPoolHealthmonitor<'a> {
     pub(crate) url_path: Option<Cow<'a, str>>,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum RedirectPoolProtocol {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PROXY")]
+    Proxy,
+    #[serde(rename = "PROXYV2")]
+    Proxyv2,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "UDP")]
+    Udp,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Type {
+    #[serde(rename = "APP_COOKIE")]
+    AppCookie,
+    #[serde(rename = "HTTP_COOKIE")]
+    HttpCookie,
+    #[serde(rename = "SOURCE_IP")]
+    SourceIp,
+}
+
 /// Defines mandatory and optional attributes of a POST request.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -546,6 +548,20 @@ pub struct RedirectPool<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum CompareType {
+    #[serde(rename = "CONTAINS")]
+    Contains,
+    #[serde(rename = "ENDS_WITH")]
+    EndsWith,
+    #[serde(rename = "EQUAL_TO")]
+    EqualTo,
+    #[serde(rename = "REGEX")]
+    Regex,
+    #[serde(rename = "STARTS_WITH")]
+    StartsWith,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum RulesType {
     #[serde(rename = "COOKIE")]
     Cookie,
@@ -563,20 +579,6 @@ pub enum RulesType {
     SslDnField,
     #[serde(rename = "SSL_VERIFY_RESULT")]
     SslVerifyResult,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum CompareType {
-    #[serde(rename = "CONTAINS")]
-    Contains,
-    #[serde(rename = "ENDS_WITH")]
-    EndsWith,
-    #[serde(rename = "EQUAL_TO")]
-    EqualTo,
-    #[serde(rename = "REGEX")]
-    Regex,
-    #[serde(rename = "STARTS_WITH")]
-    StartsWith,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -663,13 +665,21 @@ pub struct L7policies<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum ClientAuthentication {
-    #[serde(rename = "MANDATORY")]
-    Mandatory,
-    #[serde(rename = "NONE")]
-    None,
-    #[serde(rename = "OPTIONAL")]
-    Optional,
+pub enum ListenerProtocol {
+    #[serde(rename = "HTTP")]
+    Http,
+    #[serde(rename = "HTTPS")]
+    Https,
+    #[serde(rename = "PROMETHEUS")]
+    Prometheus,
+    #[serde(rename = "SCTP")]
+    Sctp,
+    #[serde(rename = "TCP")]
+    Tcp,
+    #[serde(rename = "TERMINATED_HTTPS")]
+    TerminatedHttps,
+    #[serde(rename = "UDP")]
+    Udp,
 }
 
 /// Defines mandatory and optional attributes of a POST request.
@@ -914,7 +924,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Listener.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

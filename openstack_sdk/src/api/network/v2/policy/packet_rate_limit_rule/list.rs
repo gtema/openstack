@@ -89,20 +89,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Sort results by the attribute. This is an optional feature and may be
-    /// silently ignored by the server.
-    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.sort_key
-            .get_or_insert(None)
-            .get_or_insert_with(Vec::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
@@ -111,6 +97,20 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.sort_dir
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.sort_key
             .get_or_insert(None)
             .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
@@ -156,19 +156,19 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
-        params.push_opt("max_kpps", self.max_kpps);
-        params.push_opt("max_burst_kpps", self.max_burst_kpps);
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("direction", self.direction.as_ref());
-        if let Some(val) = &self.sort_key {
-            params.extend(val.iter().map(|value| ("sort_key", value)));
-        }
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("max_burst_kpps", self.max_burst_kpps);
+        params.push_opt("max_kpps", self.max_kpps);
+        params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));
         }
-        params.push_opt("limit", self.limit);
-        params.push_opt("marker", self.marker.as_ref());
-        params.push_opt("page_reverse", self.page_reverse);
+        if let Some(val) = &self.sort_key {
+            params.extend(val.iter().map(|value| ("sort_key", value)));
+        }
 
         params
     }

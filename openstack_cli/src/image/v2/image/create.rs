@@ -183,14 +183,6 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Visibility {
-    Community,
-    Private,
-    Public,
-    Shared,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum ContainerFormat {
     Aki,
     Ami,
@@ -215,6 +207,14 @@ enum DiskFormat {
     Vhd,
     Vhdx,
     Vmdk,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Visibility {
+    Community,
+    Private,
+    Public,
+    Shared,
 }
 
 impl ImageCommand {

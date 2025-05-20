@@ -69,13 +69,6 @@ pub struct ApplicationCredentialResponse {
     pub unrestricted: Option<bool>,
 }
 
-/// `Roles` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Roles {
-    pub id: Option<String>,
-    pub name: Option<String>,
-}
-
 /// `AccessRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AccessRules {
@@ -83,4 +76,11 @@ pub struct AccessRules {
     pub method: Option<String>,
     pub path: Option<String>,
     pub service: Option<String>,
+}
+
+/// `Roles` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Roles {
+    pub id: Option<String>,
+    pub name: Option<String>,
 }

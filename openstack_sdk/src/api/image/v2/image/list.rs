@@ -286,26 +286,26 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("id", self.id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("member_status", self.member_status.as_ref());
         params.push_opt("name", self.name.as_ref());
-        params.push_opt("id", self.id.as_ref());
+        params.push_opt("os_hidden", self.os_hidden);
         params.push_opt("owner", self.owner.as_ref());
         params.push_opt("protected", self.protected);
+        params.push_opt("size_max", self.size_max.as_ref());
+        params.push_opt("size_min", self.size_min.as_ref());
+        params.push_opt("sort", self.sort.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("status", self.status.as_ref());
         if let Some(val) = &self.tag {
             params.extend(val.iter().map(|value| ("tag", value)));
         }
-        params.push_opt("visibility", self.visibility.as_ref());
-        params.push_opt("os_hidden", self.os_hidden);
-        params.push_opt("member_status", self.member_status.as_ref());
-        params.push_opt("size_max", self.size_max.as_ref());
-        params.push_opt("size_min", self.size_min.as_ref());
-        params.push_opt("created_at", self.created_at.as_ref());
         params.push_opt("updated_at", self.updated_at.as_ref());
-        params.push_opt("sort_dir", self.sort_dir.as_ref());
-        params.push_opt("sort_key", self.sort_key.as_ref());
-        params.push_opt("sort", self.sort.as_ref());
+        params.push_opt("visibility", self.visibility.as_ref());
 
         params
     }

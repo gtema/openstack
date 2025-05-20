@@ -107,10 +107,6 @@ impl AliasBandwidthLimitRuleCommand {
         // Set Request.alias_bandwidth_limit_rule data
         let args = &self.alias_bandwidth_limit_rule;
         let mut alias_bandwidth_limit_rule_builder = set::AliasBandwidthLimitRuleBuilder::default();
-        if let Some(val) = &args.max_kbps {
-            alias_bandwidth_limit_rule_builder.max_kbps(*val);
-        }
-
         if let Some(val) = &args.direction {
             let tmp = match val {
                 Direction::Egress => set::Direction::Egress,
@@ -121,6 +117,10 @@ impl AliasBandwidthLimitRuleCommand {
 
         if let Some(val) = &args.max_burst_kbps {
             alias_bandwidth_limit_rule_builder.max_burst_kbps(*val);
+        }
+
+        if let Some(val) = &args.max_kbps {
+            alias_bandwidth_limit_rule_builder.max_kbps(*val);
         }
 
         ep_builder.alias_bandwidth_limit_rule(alias_bandwidth_limit_rule_builder.build().unwrap());

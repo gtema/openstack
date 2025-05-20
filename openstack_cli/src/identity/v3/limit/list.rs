@@ -77,21 +77,6 @@ struct QueryParameters {
     service_id: Option<String>,
 }
 
-/// Project input select group
-#[derive(Args)]
-#[group(required = false, multiple = false)]
-struct ProjectInput {
-    /// Project Name.
-    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
-    project_name: Option<String>,
-    /// Project ID.
-    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
-    project_id: Option<String>,
-    /// Current project.
-    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
-    current_project: bool,
-}
-
 /// Domain input select group
 #[derive(Args)]
 #[group(required = false, multiple = false)]
@@ -105,6 +90,21 @@ struct DomainInput {
     /// Current domain.
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_domain: bool,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
 }
 
 /// Path parameters
@@ -127,14 +127,48 @@ impl LimitsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.service_id {
-            ep_builder.service_id(val);
-        }
-        if let Some(val) = &self.query.region_id {
-            ep_builder.region_id(val);
-        }
-        if let Some(val) = &self.query.resource_name {
-            ep_builder.resource_name(val);
+        if let Some(id) = &self.query.domain.domain_id {
+            // domain_id is passed. No need to lookup
+            ep_builder.domain_id(id);
+        } else if let Some(name) = &self.query.domain.domain_name {
+            // domain_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_domain::Request::builder();
+            warn!(
+                "Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead."
+            );
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.domain_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ));
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ));
+                }
+            };
+        } else if self.query.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -179,48 +213,14 @@ impl LimitsCommand {
                     .id,
             );
         }
-        if let Some(id) = &self.query.domain.domain_id {
-            // domain_id is passed. No need to lookup
-            ep_builder.domain_id(id);
-        } else if let Some(name) = &self.query.domain.domain_name {
-            // domain_name is passed. Need to lookup resource
-            let mut sub_find_builder = find_domain::Request::builder();
-            warn!(
-                "Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead."
-            );
-
-            sub_find_builder.id(name);
-            let find_ep = sub_find_builder
-                .build()
-                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
-            // Try to extract resource id
-            match find_data.get("id") {
-                Some(val) => match val.as_str() {
-                    Some(id_str) => {
-                        ep_builder.domain_id(id_str.to_owned());
-                    }
-                    None => {
-                        return Err(OpenStackCliError::ResourceAttributeNotString(
-                            serde_json::to_string(&val)?,
-                        ));
-                    }
-                },
-                None => {
-                    return Err(OpenStackCliError::ResourceAttributeMissing(
-                        "id".to_string(),
-                    ));
-                }
-            };
-        } else if self.query.domain.current_domain {
-            ep_builder.domain_id(
-                client
-                    .get_auth_info()
-                    .ok_or_eyre("Cannot determine current authentication information")?
-                    .token
-                    .user
-                    .id,
-            );
+        if let Some(val) = &self.query.region_id {
+            ep_builder.region_id(val);
+        }
+        if let Some(val) = &self.query.resource_name {
+            ep_builder.resource_name(val);
+        }
+        if let Some(val) = &self.query.service_id {
+            ep_builder.service_id(val);
         }
         // Set body parameters
 

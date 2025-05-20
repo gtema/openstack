@@ -121,14 +121,14 @@ impl BackupCommand {
         // Set Request.backup data
         if let Some(lbackup) = &self.backup {
             let mut backup_builder = set_343::BackupBuilder::default();
-            if let Some(val) = &lbackup.name {
-                backup_builder.name(Some(val.into()));
-            }
             if let Some(val) = &lbackup.description {
                 backup_builder.description(Some(val.into()));
             }
             if let Some(val) = &lbackup.metadata {
                 backup_builder.metadata(val.iter().cloned());
+            }
+            if let Some(val) = &lbackup.name {
+                backup_builder.name(Some(val.into()));
             }
             ep_builder.backup(backup_builder.build().expect("A valid object"));
         }

@@ -60,15 +60,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// policy_id parameter for
-    /// /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_policy_id",
-        value_name = "POLICY_ID"
-    )]
-    policy_id: String,
-
     /// id parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id}
     /// API
     #[arg(
@@ -77,6 +68,15 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// policy_id parameter for
+    /// /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_policy_id",
+        value_name = "POLICY_ID"
+    )]
+    policy_id: String,
 }
 /// DscpMarkingRule Body data
 #[derive(Args, Clone)]
@@ -104,8 +104,8 @@ impl DscpMarkingRuleCommand {
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
+        ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         // Set body parameters
         // Set Request.dscp_marking_rule data

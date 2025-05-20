@@ -54,10 +54,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// Zone resource for which the operation should be performed.
-    #[command(flatten)]
-    zone: ZoneInput,
-
     /// recordset_id parameter for
     /// /v2/zones/{zone_id}/recordsets/{recordset_id} API
     #[arg(
@@ -66,6 +62,10 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+
+    /// Zone resource for which the operation should be performed.
+    #[command(flatten)]
+    zone: ZoneInput,
 }
 
 /// Zone input select group
@@ -95,6 +95,7 @@ impl RecordsetCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
+        ep_builder.id(&self.path.id);
 
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
@@ -131,7 +132,6 @@ impl RecordsetCommand {
                 }
             };
         }
-        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

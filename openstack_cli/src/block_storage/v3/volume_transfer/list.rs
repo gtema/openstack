@@ -121,20 +121,11 @@ impl VolumeTransfersCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.is_public {
-            ep_builder.is_public(*val);
-        }
         if let Some(val) = &self.query.all_tenants {
             ep_builder.all_tenants(*val);
         }
-        if let Some(val) = &self.query.sort {
-            ep_builder.sort(val);
-        }
-        if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
-        }
-        if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
+        if let Some(val) = &self.query.is_public {
+            ep_builder.is_public(*val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -144,6 +135,15 @@ impl VolumeTransfersCommand {
         }
         if let Some(val) = &self.query.offset {
             ep_builder.offset(*val);
+        }
+        if let Some(val) = &self.query.sort {
+            ep_builder.sort(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
         }
         // Set body parameters
 

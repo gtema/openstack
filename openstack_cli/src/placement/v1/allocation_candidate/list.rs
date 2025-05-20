@@ -196,23 +196,23 @@ impl AllocationCandidateCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.resources {
-            ep_builder.resources(val);
-        }
-        if let Some(val) = &self.query.required {
-            ep_builder.required(val.iter());
-        }
-        if let Some(val) = &self.query.member_of {
-            ep_builder.member_of(val.iter());
+        if let Some(val) = &self.query.group_policy {
+            ep_builder.group_policy(val);
         }
         if let Some(val) = &self.query.in_tree {
             ep_builder.in_tree(val);
         }
-        if let Some(val) = &self.query.group_policy {
-            ep_builder.group_policy(val);
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.member_of {
+            ep_builder.member_of(val.iter());
+        }
+        if let Some(val) = &self.query.required {
+            ep_builder.required(val.iter());
+        }
+        if let Some(val) = &self.query.resources {
+            ep_builder.resources(val);
         }
         if let Some(val) = &self.query.root_required {
             ep_builder.root_required(val);

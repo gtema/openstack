@@ -115,16 +115,20 @@ impl NetworkSegmentRangeCommand {
         // Set Request.network_segment_range data
         let args = &self.network_segment_range;
         let mut network_segment_range_builder = create::NetworkSegmentRangeBuilder::default();
+        if let Some(val) = &args.description {
+            network_segment_range_builder.description(val);
+        }
+
+        if let Some(val) = &args.maximum {
+            network_segment_range_builder.maximum(*val);
+        }
+
+        if let Some(val) = &args.minimum {
+            network_segment_range_builder.minimum(*val);
+        }
+
         if let Some(val) = &args.name {
             network_segment_range_builder.name(val);
-        }
-
-        if let Some(val) = &args.shared {
-            network_segment_range_builder.shared(*val);
-        }
-
-        if let Some(val) = &args.project_id {
-            network_segment_range_builder.project_id(val);
         }
 
         if let Some(val) = &args.network_type {
@@ -141,16 +145,12 @@ impl NetworkSegmentRangeCommand {
             network_segment_range_builder.physical_network(val);
         }
 
-        if let Some(val) = &args.minimum {
-            network_segment_range_builder.minimum(*val);
+        if let Some(val) = &args.project_id {
+            network_segment_range_builder.project_id(val);
         }
 
-        if let Some(val) = &args.maximum {
-            network_segment_range_builder.maximum(*val);
-        }
-
-        if let Some(val) = &args.description {
-            network_segment_range_builder.description(val);
+        if let Some(val) = &args.shared {
+            network_segment_range_builder.shared(*val);
         }
 
         ep_builder.network_segment_range(network_segment_range_builder.build().unwrap());

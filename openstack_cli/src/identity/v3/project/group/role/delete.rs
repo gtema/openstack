@@ -59,10 +59,6 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// Project resource for which the operation should be performed.
-    #[command(flatten)]
-    project: ProjectInput,
-
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
     #[arg(
@@ -71,6 +67,10 @@ struct PathParameters {
         value_name = "GROUP_ID"
     )]
     group_id: String,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
@@ -115,6 +115,7 @@ impl RoleCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
+        ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `project_id`
         if let Some(id) = &self.path.project.project_id {
@@ -165,7 +166,6 @@ impl RoleCommand {
                 return Err(eyre!("Current project information can not be identified").into());
             }
         }
-        ep_builder.group_id(&self.path.group_id);
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters

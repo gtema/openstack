@@ -156,16 +156,32 @@ impl PortForwardingCommand {
         // Set Request.port_forwarding data
         let args = &self.port_forwarding;
         let mut port_forwarding_builder = set::PortForwardingBuilder::default();
+        if let Some(val) = &args.description {
+            port_forwarding_builder.description(val);
+        }
+
         if let Some(val) = &args.external_port {
             port_forwarding_builder.external_port(*val);
+        }
+
+        if let Some(val) = &args.external_port_range {
+            port_forwarding_builder.external_port_range(*val);
+        }
+
+        if let Some(val) = &args.internal_ip_address {
+            port_forwarding_builder.internal_ip_address(val);
         }
 
         if let Some(val) = &args.internal_port {
             port_forwarding_builder.internal_port(*val);
         }
 
-        if let Some(val) = &args.internal_ip_address {
-            port_forwarding_builder.internal_ip_address(val);
+        if let Some(val) = &args.internal_port_id {
+            port_forwarding_builder.internal_port_id(val);
+        }
+
+        if let Some(val) = &args.internal_port_range {
+            port_forwarding_builder.internal_port_range(*val);
         }
 
         if let Some(val) = &args.protocol {
@@ -178,22 +194,6 @@ impl PortForwardingCommand {
                 Protocol::Udp => set::Protocol::Udp,
             };
             port_forwarding_builder.protocol(tmp);
-        }
-
-        if let Some(val) = &args.internal_port_id {
-            port_forwarding_builder.internal_port_id(val);
-        }
-
-        if let Some(val) = &args.description {
-            port_forwarding_builder.description(val);
-        }
-
-        if let Some(val) = &args.external_port_range {
-            port_forwarding_builder.external_port_range(*val);
-        }
-
-        if let Some(val) = &args.internal_port_range {
-            port_forwarding_builder.internal_port_range(*val);
         }
 
         ep_builder.port_forwarding(port_forwarding_builder.build().unwrap());

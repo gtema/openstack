@@ -35,6 +35,22 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthAlgorithm {
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
+    #[serde(rename = "sha1")]
+    Sha1,
+    #[serde(rename = "sha256")]
+    Sha256,
+    #[serde(rename = "sha384")]
+    Sha384,
+    #[serde(rename = "sha512")]
+    Sha512,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
     #[serde(rename = "3des")]
     _3des,
@@ -89,30 +105,6 @@ pub enum EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthAlgorithm {
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
-    #[serde(rename = "sha1")]
-    Sha1,
-    #[serde(rename = "sha256")]
-    Sha256,
-    #[serde(rename = "sha384")]
-    Sha384,
-    #[serde(rename = "sha512")]
-    Sha512,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Phase1NegotiationMode {
-    #[serde(rename = "aggressive")]
-    Aggressive,
-    #[serde(rename = "main")]
-    Main,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum IkeVersion {
     #[serde(rename = "v1")]
     V1,
@@ -162,6 +154,14 @@ pub enum Pfs {
     Group31,
     #[serde(rename = "group5")]
     Group5,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Phase1NegotiationMode {
+    #[serde(rename = "aggressive")]
+    Aggressive,
+    #[serde(rename = "main")]
+    Main,
 }
 
 /// An `ikepolicy` object.
@@ -241,7 +241,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Ikepolicy.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

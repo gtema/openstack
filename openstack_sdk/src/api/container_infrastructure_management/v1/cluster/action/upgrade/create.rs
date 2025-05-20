@@ -50,7 +50,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Upgrade.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -91,17 +91,17 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.max_batch_size {
-            params.push("max_batch_size", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.nodegroup {
-            params.push("nodegroup", serde_json::to_value(val)?);
-        }
         if let Some(val) = &self.cluster_template {
             params.push("cluster_template", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.created_at {
             params.push("created_at", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.max_batch_size {
+            params.push("max_batch_size", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.nodegroup {
+            params.push("nodegroup", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.updated_at {
             params.push("updated_at", serde_json::to_value(val)?);

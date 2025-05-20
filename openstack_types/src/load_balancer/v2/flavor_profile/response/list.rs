@@ -31,6 +31,14 @@ pub struct FlavorProfileResponse {
     pub flavorprofiles: Option<Vec<Flavorprofiles>>,
 }
 
+/// Base type for complex types
+/// `FlavorprofileLinks` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct FlavorprofileLinks {
+    pub href: Option<String>,
+    pub rel: Option<String>,
+}
+
 /// Defines which attributes are to be shown on any response.
 /// `Flavorprofiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -39,12 +47,4 @@ pub struct Flavorprofiles {
     pub id: Option<String>,
     pub name: Option<String>,
     pub provider_name: Option<String>,
-}
-
-/// Base type for complex types
-/// `FlavorprofileLinks` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FlavorprofileLinks {
-    pub href: Option<String>,
-    pub rel: Option<String>,
 }

@@ -97,14 +97,14 @@ impl DomainsCommand {
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
         }
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
-        if let Some(val) = &self.query.limit {
-            ep_builder.limit(*val);
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         // Set body parameters
 

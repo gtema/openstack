@@ -115,18 +115,18 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum Type {
-    ApiImageImport,
-    Import,
-    LocationImport,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Status {
     Failure,
     Pending,
     Processing,
     Success,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Type {
+    ApiImageImport,
+    Import,
+    LocationImport,
 }
 
 impl TaskCommand {

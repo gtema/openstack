@@ -84,6 +84,48 @@ pub struct IkepolicyResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthAlgorithm {
+    // AesCmac
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
+
+    // AesXcbc
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
+
+    // Sha1
+    #[serde(rename = "sha1")]
+    Sha1,
+
+    // Sha256
+    #[serde(rename = "sha256")]
+    Sha256,
+
+    // Sha384
+    #[serde(rename = "sha384")]
+    Sha384,
+
+    // Sha512
+    #[serde(rename = "sha512")]
+    Sha512,
+}
+
+impl std::str::FromStr for AuthAlgorithm {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aes-cmac" => Ok(Self::AesCmac),
+            "aes-xcbc" => Ok(Self::AesXcbc),
+            "sha1" => Ok(Self::Sha1),
+            "sha256" => Ok(Self::Sha256),
+            "sha384" => Ok(Self::Sha384),
+            "sha512" => Ok(Self::Sha512),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
     // _3des
     #[serde(rename = "3des")]
@@ -221,70 +263,6 @@ impl std::str::FromStr for EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthAlgorithm {
-    // AesCmac
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-
-    // AesXcbc
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
-
-    // Sha1
-    #[serde(rename = "sha1")]
-    Sha1,
-
-    // Sha256
-    #[serde(rename = "sha256")]
-    Sha256,
-
-    // Sha384
-    #[serde(rename = "sha384")]
-    Sha384,
-
-    // Sha512
-    #[serde(rename = "sha512")]
-    Sha512,
-}
-
-impl std::str::FromStr for AuthAlgorithm {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "aes-cmac" => Ok(Self::AesCmac),
-            "aes-xcbc" => Ok(Self::AesXcbc),
-            "sha1" => Ok(Self::Sha1),
-            "sha256" => Ok(Self::Sha256),
-            "sha384" => Ok(Self::Sha384),
-            "sha512" => Ok(Self::Sha512),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Phase1NegotiationMode {
-    // Aggressive
-    #[serde(rename = "aggressive")]
-    Aggressive,
-
-    // Main
-    #[serde(rename = "main")]
-    Main,
-}
-
-impl std::str::FromStr for Phase1NegotiationMode {
-    type Err = ();
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "aggressive" => Ok(Self::Aggressive),
-            "main" => Ok(Self::Main),
-            _ => Err(()),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum IkeVersion {
     // V1
     #[serde(rename = "v1")]
@@ -413,6 +391,28 @@ impl std::str::FromStr for Pfs {
             "group30" => Ok(Self::Group30),
             "group31" => Ok(Self::Group31),
             "group5" => Ok(Self::Group5),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Phase1NegotiationMode {
+    // Aggressive
+    #[serde(rename = "aggressive")]
+    Aggressive,
+
+    // Main
+    #[serde(rename = "main")]
+    Main,
+}
+
+impl std::str::FromStr for Phase1NegotiationMode {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "aggressive" => Ok(Self::Aggressive),
+            "main" => Ok(Self::Main),
             _ => Err(()),
         }
     }

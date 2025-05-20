@@ -139,26 +139,26 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.name {
-            params.push("name", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.email {
-            params.push("email", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.ttl {
-            params.push("ttl", serde_json::to_value(val)?);
+        if let Some(val) = &self.attributes {
+            params.push("attributes", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.email {
+            params.push("email", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self.masters {
             params.push("masters", serde_json::to_value(val)?);
         }
+        if let Some(val) = &self.name {
+            params.push("name", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.ttl {
+            params.push("ttl", serde_json::to_value(val)?);
+        }
         if let Some(val) = &self._type {
             params.push("type", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.attributes {
-            params.push("attributes", serde_json::to_value(val)?);
         }
 
         params.into_body()

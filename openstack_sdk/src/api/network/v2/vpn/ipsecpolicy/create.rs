@@ -34,6 +34,30 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthAlgorithm {
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
+    #[serde(rename = "sha1")]
+    Sha1,
+    #[serde(rename = "sha256")]
+    Sha256,
+    #[serde(rename = "sha384")]
+    Sha384,
+    #[serde(rename = "sha512")]
+    Sha512,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum EncapsulationMode {
+    #[serde(rename = "transport")]
+    Transport,
+    #[serde(rename = "tunnel")]
+    Tunnel,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
     #[serde(rename = "3des")]
     _3des,
@@ -88,40 +112,6 @@ pub enum EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum TransformProtocol {
-    #[serde(rename = "ah")]
-    Ah,
-    #[serde(rename = "ah-esp")]
-    AhEsp,
-    #[serde(rename = "esp")]
-    Esp,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthAlgorithm {
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
-    #[serde(rename = "sha1")]
-    Sha1,
-    #[serde(rename = "sha256")]
-    Sha256,
-    #[serde(rename = "sha384")]
-    Sha384,
-    #[serde(rename = "sha512")]
-    Sha512,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum EncapsulationMode {
-    #[serde(rename = "transport")]
-    Transport,
-    #[serde(rename = "tunnel")]
-    Tunnel,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Pfs {
     #[serde(rename = "group14")]
     Group14,
@@ -163,6 +153,16 @@ pub enum Pfs {
     Group31,
     #[serde(rename = "group5")]
     Group5,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum TransformProtocol {
+    #[serde(rename = "ah")]
+    Ah,
+    #[serde(rename = "ah-esp")]
+    AhEsp,
+    #[serde(rename = "esp")]
+    Esp,
 }
 
 /// An `ipsecpolicy` object.
@@ -244,7 +244,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Ipsecpolicy.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

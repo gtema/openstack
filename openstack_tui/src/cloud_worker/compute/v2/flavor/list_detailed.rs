@@ -58,26 +58,26 @@ impl TryFrom<&ComputeFlavorList> for RequestBuilder<'_> {
     type Error = Report;
     fn try_from(value: &ComputeFlavorList) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
+        if let Some(val) = &value.is_public {
+            ep_builder.is_public(val.clone());
+        }
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &value.marker {
             ep_builder.marker(val.clone());
         }
-        if let Some(val) = &value.is_public {
-            ep_builder.is_public(val.clone());
+        if let Some(val) = &value.min_disk {
+            ep_builder.min_disk(val.clone());
         }
         if let Some(val) = &value.min_ram {
             ep_builder.min_ram(val.clone());
         }
-        if let Some(val) = &value.min_disk {
-            ep_builder.min_disk(val.clone());
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.clone());
         }
         if let Some(val) = &value.sort_key {
             ep_builder.sort_key(val.clone());
-        }
-        if let Some(val) = &value.sort_dir {
-            ep_builder.sort_dir(val.clone());
         }
 
         Ok(ep_builder)

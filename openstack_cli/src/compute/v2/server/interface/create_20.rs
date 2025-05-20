@@ -118,20 +118,20 @@ impl InterfaceCommand {
         // Set Request.interface_attachment data
         let args = &self.interface_attachment;
         let mut interface_attachment_builder = create_20::InterfaceAttachmentBuilder::default();
-        if let Some(val) = &args.net_id {
-            interface_attachment_builder.net_id(val);
-        }
-
-        if let Some(val) = &args.port_id {
-            interface_attachment_builder.port_id(val);
-        }
-
         if let Some(val) = &args.fixed_ips {
             let fixed_ips_builder: Vec<create_20::FixedIps> = val
                 .iter()
                 .flat_map(|v| create_20::FixedIpsBuilder::default().ip_address(v).build())
                 .collect();
             interface_attachment_builder.fixed_ips(fixed_ips_builder);
+        }
+
+        if let Some(val) = &args.net_id {
+            interface_attachment_builder.net_id(val);
+        }
+
+        if let Some(val) = &args.port_id {
+            interface_attachment_builder.port_id(val);
         }
 
         ep_builder.interface_attachment(interface_attachment_builder.build().unwrap());

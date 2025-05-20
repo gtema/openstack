@@ -26,12 +26,12 @@ pub struct ClusterResponse {
     ///
     /// **New in version 3.26**
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub active_backend_id: Option<String>,
 
     /// The binary name of the services in the cluster.
     #[serde(default)]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     pub binary: Option<String>,
 
     /// The date and time when the resource was created.
@@ -79,7 +79,7 @@ pub struct ClusterResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub last_heartbeat: Option<String>,
 
     /// The name of the service cluster.
@@ -89,12 +89,12 @@ pub struct ClusterResponse {
 
     /// The number of down hosts in the cluster.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub num_down_hosts: Option<i32>,
 
     /// The number of hosts in the cluster.
     #[serde(default)]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     pub num_hosts: Option<i32>,
 
     /// The cluster replication status. Only included in responses if

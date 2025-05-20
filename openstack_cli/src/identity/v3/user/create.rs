@@ -187,12 +187,6 @@ impl UserCommand {
         // Set Request.user data
         let args = &self.user;
         let mut user_builder = create::UserBuilder::default();
-        if let Some(val) = &args.password {
-            user_builder.password(Some(val.into()));
-        } else if args.no_password {
-            user_builder.password(None);
-        }
-
         if let Some(val) = &args.default_project_id {
             user_builder.default_project_id(Some(val.into()));
         } else if args.no_default_project_id {
@@ -228,25 +222,31 @@ impl UserCommand {
             if let Some(val) = &val.ignore_change_password_upon_first_use {
                 options_builder.ignore_change_password_upon_first_use(*val);
             }
-            if let Some(val) = &val.ignore_password_expiry {
-                options_builder.ignore_password_expiry(*val);
-            }
             if let Some(val) = &val.ignore_lockout_failure_attempts {
                 options_builder.ignore_lockout_failure_attempts(*val);
             }
-            if let Some(val) = &val.lock_password {
-                options_builder.lock_password(*val);
+            if let Some(val) = &val.ignore_password_expiry {
+                options_builder.ignore_password_expiry(*val);
             }
             if let Some(val) = &val.ignore_user_inactivity {
                 options_builder.ignore_user_inactivity(*val);
             }
-            if let Some(val) = &val.multi_factor_auth_rules {
-                options_builder.multi_factor_auth_rules(val.iter());
+            if let Some(val) = &val.lock_password {
+                options_builder.lock_password(*val);
             }
             if let Some(val) = &val.multi_factor_auth_enabled {
                 options_builder.multi_factor_auth_enabled(*val);
             }
+            if let Some(val) = &val.multi_factor_auth_rules {
+                options_builder.multi_factor_auth_rules(val.iter());
+            }
             user_builder.options(options_builder.build().expect("A valid object"));
+        }
+
+        if let Some(val) = &args.password {
+            user_builder.password(Some(val.into()));
+        } else if args.no_password {
+            user_builder.password(None);
         }
 
         ep_builder.user(user_builder.build().unwrap());

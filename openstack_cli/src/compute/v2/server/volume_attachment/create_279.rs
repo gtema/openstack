@@ -138,8 +138,9 @@ impl VolumeAttachmentCommand {
         // Set Request.volume_attachment data
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = create_279::VolumeAttachmentBuilder::default();
-
-        volume_attachment_builder.volume_id(&args.volume_id);
+        if let Some(val) = &args.delete_on_termination {
+            volume_attachment_builder.delete_on_termination(*val);
+        }
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
@@ -151,9 +152,7 @@ impl VolumeAttachmentCommand {
             volume_attachment_builder.tag(val);
         }
 
-        if let Some(val) = &args.delete_on_termination {
-            volume_attachment_builder.delete_on_termination(*val);
-        }
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());
 

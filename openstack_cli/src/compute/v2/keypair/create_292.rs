@@ -125,6 +125,8 @@ impl KeypairCommand {
 
         keypair_builder.name(&args.name);
 
+        keypair_builder.public_key(&args.public_key);
+
         if let Some(val) = &args._type {
             let tmp = match val {
                 Type::Ssh => create_292::Type::Ssh,
@@ -132,8 +134,6 @@ impl KeypairCommand {
             };
             keypair_builder._type(tmp);
         }
-
-        keypair_builder.public_key(&args.public_key);
 
         if let Some(val) = &args.user_id {
             keypair_builder.user_id(val);
