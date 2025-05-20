@@ -26,7 +26,7 @@ views:
   dns.zone/recordset:
     fields: [id, name, description, records, status, type, zone_name, created_at, updated_at]
   dns.zone:
-    fields: [id, name, descripion, email, shared, status, ttl, type, created_at, updated_at]
+    fields: [id, name, description, email, shared, status, ttl, type, created_at, updated_at]
   # identity
   identity.group:
     fields: [id, name, domain_id, description]
