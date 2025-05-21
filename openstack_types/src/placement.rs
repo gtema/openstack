@@ -25,10 +25,9 @@ pub fn get_openapi_spec() -> &'static str {
 
 #[cfg(test)]
 mod tests {
-
     #[cfg(feature = "openapi")]
     #[test]
     fn test_get_openapi_spec() {
-        assert!(get_openapi_spec().len() > 0);
+        assert!(!super::get_openapi_spec().is_empty());
     }
 }
