@@ -12,4 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod v1;
+use openstack_sdk::api::image::v2::image::list::Request;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::image::v2::image::response::list::ImageResponse;
+
+use crate::get_client;
+
+#[tokio::test]
+async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let client = get_client("image");
+
+    // NOTE: we do not test paginated response since schema `next` parameters is string so the mock
+    // contain insane value which fails in sdk pagination.
+    let _res: Vec<ImageResponse> = Request::builder().build()?.query_async(&client).await?;
+
+    Ok(())
+}

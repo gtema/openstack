@@ -46,19 +46,88 @@ pub fn get_client<S: AsRef<str>>(service: S) -> FakeOpenStackClient {
     match service.as_ref() {
         "block-storage" => {
             client.add_endpoint(
-                "block-storage",
+                service,
                 Url::parse(&env::var("OPENSTACK_BLOCK_STORAGE_ENDPOINT").expect(
                     "OPENSTACK_BLOCK_STORAGE_ENDPOINT environment variable must be present",
                 ))
                 .expect("url must be valid uri"),
             );
         }
+        "compute" => {
+            client.add_endpoint(
+                service,
+                Url::parse(
+                    &env::var("OPENSTACK_COMPUTE_ENDPOINT")
+                        .expect("OPENSTACK_COMPUTE_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
+        "dns" => {
+            client.add_endpoint(
+                service,
+                Url::parse(
+                    &env::var("OPENSTACK_DNS_ENDPOINT")
+                        .expect("OPENSTACK_DNS_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
+        "identity" => {
+            client.add_endpoint(
+                service,
+                Url::parse(
+                    &env::var("OPENSTACK_IDENTITY_ENDPOINT")
+                        .expect("OPENSTACK_IDENTITY_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
+        "image" => {
+            client.add_endpoint(
+                service,
+                Url::parse(
+                    &env::var("OPENSTACK_IMAGE_ENDPOINT")
+                        .expect("OPENSTACK_IMAGE_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
+        "load-balancer" => {
+            client.add_endpoint(
+                service,
+                Url::parse(&env::var("OPENSTACK_LOAD_BALANCER_ENDPOINT").expect(
+                    "OPENSTACK_LOAD_BALANCER_ENDPOINT environment variable must be present",
+                ))
+                .expect("url must be valid uri"),
+            );
+        }
         "network" => {
             client.add_endpoint(
-                service.as_ref(),
+                service,
                 Url::parse(
                     &env::var("OPENSTACK_NETWORK_ENDPOINT")
                         .expect("OPENSTACK_NETWORK_ENDPOINT environment variable must be present"),
+                )
+                .expect("url must be valid uri"),
+            );
+        }
+        "object-store" => {
+            client.add_endpoint(
+                service,
+                Url::parse(&env::var("OPENSTACK_OBJECT_STORE_ENDPOINT").expect(
+                    "OPENSTACK_OBJECT_STORE_ENDPOINT environment variable must be present",
+                ))
+                .expect("url must be valid uri"),
+            );
+        }
+        "placement" => {
+            client.add_endpoint(
+                service,
+                Url::parse(
+                    &env::var("OPENSTACK_PLACEMENT_ENDPOINT").expect(
+                        "OPENSTACK_PLACEMENT_ENDPOINT environment variable must be present",
+                    ),
                 )
                 .expect("url must be valid uri"),
             );
