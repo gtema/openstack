@@ -94,3 +94,6 @@ tempfile = { workspace = true }
 name = "functional"
 path = "tests/main.rs"
 test = false
+
+[lints]
+workspace = true

@@ -61,8 +61,8 @@ pub struct MetadefCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MetadefCommands {
-    Namespace(namespace::NamespaceCommand),
-    ResourceType(resource_type::ResourceTypeCommand),
+    Namespace(Box<namespace::NamespaceCommand>),
+    ResourceType(Box<resource_type::ResourceTypeCommand>),
 }
 
 impl MetadefCommand {

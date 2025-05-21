@@ -53,3 +53,6 @@ url.workspace = true
 name = "mocked"
 path = "tests/mocked/main.rs"
 test = false
+
+[lints]
+workspace = true
