@@ -30,7 +30,9 @@ pub struct L3RouterResponse {
 /// `ExternalFixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalFixedIps {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
 }
 
@@ -41,35 +43,56 @@ pub struct ExternalFixedIps {
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {
+    #[serde(default)]
     pub enable_snat: Option<bool>,
+    #[serde(default)]
     pub external_fixed_ips: Option<Vec<ExternalFixedIps>>,
+    #[serde(default)]
     pub network_id: Option<String>,
 }
 
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
+    #[serde(default)]
     pub destination: Option<String>,
+    #[serde(default)]
     pub next_hop: Option<String>,
 }
 
 /// `Routers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routers {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub availability_zone_hints: Option<Vec<String>>,
+    #[serde(default)]
     pub availability_zones: Option<Vec<String>>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub distributed: Option<bool>,
+    #[serde(default)]
     pub external_gateway_info: Option<ExternalGatewayInfo>,
+    #[serde(default)]
     pub flavor_id: Option<String>,
+    #[serde(default)]
     pub ha: Option<bool>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub revision_number: Option<i32>,
+    #[serde(default)]
     pub routes: Option<Vec<Routes>>,
+    #[serde(default)]
     pub service_type_id: Option<String>,
+    #[serde(default)]
     pub status: Option<String>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
 }

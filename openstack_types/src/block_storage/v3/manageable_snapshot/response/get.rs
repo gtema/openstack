@@ -32,6 +32,7 @@ pub struct ManageableSnapshotResponse {
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
+    #[serde(default, rename = "source-name")]
     pub source_name: Option<String>,
 }
 
@@ -39,6 +40,7 @@ pub struct Reference {
 /// `SourceReference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SourceReference {
+    #[serde(default, rename = "source-name")]
     pub source_name: Option<String>,
 }
 

@@ -443,7 +443,9 @@ impl std::str::FromStr for OsDcfDiskConfig {
 /// `Addresses` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Addresses {
+    #[serde(default)]
     pub addr: Option<String>,
+    #[serde(default)]
     pub version: Option<i32>,
 }
 
@@ -452,9 +454,13 @@ pub struct Addresses {
 /// `Fault` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Fault {
+    #[serde(default)]
     pub code: Option<i32>,
+    #[serde(default)]
     pub created: Option<String>,
+    #[serde(default)]
     pub details: Option<String>,
+    #[serde(default)]
     pub message: Option<String>,
 }
 
@@ -464,7 +470,9 @@ pub struct Fault {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }
 
@@ -478,14 +486,23 @@ pub struct Links {
 /// `Flavor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Flavor {
+    #[serde(default)]
     pub disk: Option<i32>,
+    #[serde(default)]
     pub ephemeral: Option<i32>,
+    #[serde(default)]
     pub extra_specs: Option<BTreeMap<String, String>>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub links: Option<Vec<Links>>,
+    #[serde(default)]
     pub original_name: Option<String>,
+    #[serde(default)]
     pub ram: Option<i32>,
+    #[serde(default)]
     pub swap: Option<i32>,
+    #[serde(default)]
     pub vcpus: Option<i32>,
 }
 
@@ -536,7 +553,9 @@ impl std::str::FromStr for HostStatus {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Image {
     pub id: String,
+    #[serde(default)]
     pub links: Option<Vec<Links>>,
+    #[serde(default)]
     pub properties: Option<BTreeMap<String, Value>>,
 }
 
@@ -569,5 +588,6 @@ pub enum ImageEnum {
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
+    #[serde(default)]
     pub name: Option<String>,
 }

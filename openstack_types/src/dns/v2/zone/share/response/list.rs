@@ -30,6 +30,7 @@ pub struct ShareResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }
 
@@ -39,7 +40,9 @@ pub struct Links {
 /// `SharedZonesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SharedZonesLinks {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
+    #[serde(default)]
     pub zone: Option<String>,
 }
 
@@ -47,10 +50,16 @@ pub struct SharedZonesLinks {
 /// `SharedZones` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SharedZones {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub links: Option<SharedZonesLinks>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub target_project_id: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }

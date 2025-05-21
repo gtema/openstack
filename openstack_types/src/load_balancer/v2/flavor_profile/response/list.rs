@@ -35,7 +35,9 @@ pub struct FlavorProfileResponse {
 /// `FlavorprofileLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FlavorprofileLinks {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }
 
@@ -43,8 +45,12 @@ pub struct FlavorprofileLinks {
 /// `Flavorprofiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Flavorprofiles {
+    #[serde(default)]
     pub flavor_data: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub provider_name: Option<String>,
 }

@@ -31,10 +31,15 @@ pub struct LoadbalancerResponse {
 /// `HealthMonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct HealthMonitor {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
 }
 
@@ -42,11 +47,17 @@ pub struct HealthMonitor {
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
+    #[serde(default)]
     pub address: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub protocol_port: Option<i32>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
 }
 
@@ -54,11 +65,17 @@ pub struct Members {
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {
+    #[serde(default)]
     pub health_monitor: Option<HealthMonitor>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub members: Option<Vec<Members>>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
 }
 
@@ -66,10 +83,15 @@ pub struct Pools {
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub pools: Option<Vec<Pools>>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
 }
 
@@ -77,9 +99,14 @@ pub struct Listeners {
 /// `Loadbalancer` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancer {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub listeners: Option<Vec<Listeners>>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
 }

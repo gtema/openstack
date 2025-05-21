@@ -77,6 +77,7 @@ pub struct ProjectResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }
 
@@ -85,5 +86,6 @@ pub struct Links {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
+    #[serde(default)]
     pub immutable: Option<bool>,
 }

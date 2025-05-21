@@ -150,14 +150,18 @@ pub struct SubnetResponse {
 /// `AllocationPools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationPools {
+    #[serde(default)]
     pub end: Option<String>,
+    #[serde(default)]
     pub start: Option<String>,
 }
 
 /// `HostRoutes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct HostRoutes {
+    #[serde(default)]
     pub destination: Option<String>,
+    #[serde(default)]
     pub nexthop: Option<String>,
 }
 

@@ -126,25 +126,35 @@ pub struct TrustResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub next: Option<String>,
+    #[serde(default)]
     pub previous: Option<String>,
+    #[serde(rename = "self")]
     pub _self: String,
 }
 
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
+    #[serde(default)]
     pub immutable: Option<bool>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub domain_id: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub links: Option<Links>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub options: Option<Options>,
 }
 
@@ -152,7 +162,10 @@ pub struct Roles {
 /// `RolesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RolesLinks {
+    #[serde(default)]
     pub next: Option<String>,
+    #[serde(default)]
     pub previous: Option<String>,
+    #[serde(rename = "self")]
     pub _self: String,
 }

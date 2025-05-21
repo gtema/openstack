@@ -36,10 +36,15 @@ pub struct InventoryResponse {
 /// `InventoriesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InventoriesItem {
+    #[serde(default)]
     pub allocation_ratio: Option<f32>,
+    #[serde(default)]
     pub max_unit: Option<i32>,
+    #[serde(default)]
     pub min_unit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub step_size: Option<i32>,
     pub total: i32,
 }

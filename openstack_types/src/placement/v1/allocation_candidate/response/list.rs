@@ -38,6 +38,7 @@ pub struct AllocationCandidateResponse {
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
+    #[serde(default)]
     pub resources: Option<BTreeMap<String, i32>>,
 }
 
@@ -45,21 +46,27 @@ pub struct AllocationsItem {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationRequests {
     pub allocations: BTreeMap<String, AllocationsItem>,
+    #[serde(default)]
     pub mappings: Option<BTreeMap<String, Vec<String>>>,
 }
 
 /// `ResourcesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ResourcesItem {
+    #[serde(default)]
     pub capacity: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
 /// `ProviderSummariesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProviderSummariesItem {
+    #[serde(default)]
     pub parent_provider_uuid: Option<String>,
     pub resources: BTreeMap<String, ResourcesItem>,
+    #[serde(default)]
     pub root_provider_uuid: Option<String>,
+    #[serde(default)]
     pub traits: Option<Vec<String>>,
 }

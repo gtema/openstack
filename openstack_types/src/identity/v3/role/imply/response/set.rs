@@ -37,6 +37,7 @@ pub struct ImplyResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }
 
@@ -44,9 +45,13 @@ pub struct Links {
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub links: Option<Links>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -54,8 +59,12 @@ pub struct Implies {
 /// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub links: Option<Links>,
+    #[serde(default)]
     pub name: Option<String>,
 }

@@ -32,6 +32,7 @@ pub struct ManageableVolumeResponse {
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
+    #[serde(default, rename = "source-name")]
     pub source_name: Option<String>,
 }
 
@@ -39,10 +40,16 @@ pub struct Reference {
 /// `ManageableVolumes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ManageableVolumes {
+    #[serde(default)]
     pub cinder_id: Option<String>,
+    #[serde(default)]
     pub extra_info: Option<String>,
+    #[serde(default)]
     pub reason_not_safe: Option<String>,
+    #[serde(default)]
     pub reference: Option<Reference>,
+    #[serde(default)]
     pub safe_to_manage: Option<bool>,
+    #[serde(default)]
     pub size: Option<i64>,
 }

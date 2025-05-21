@@ -72,6 +72,7 @@ pub struct VersionResponse {
 pub struct Links {
     pub href: String,
     pub rel: String,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
 }
 
@@ -79,6 +80,7 @@ pub struct Links {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MediaTypes {
     pub base: String,
+    #[serde(rename = "type")]
     pub _type: String,
 }
 

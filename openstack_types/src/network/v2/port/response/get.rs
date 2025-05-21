@@ -267,7 +267,9 @@ pub struct PortResponse {
 /// `AllowedAddressPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllowedAddressPairs {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub max_address: Option<String>,
 }
 
@@ -363,15 +365,20 @@ impl std::str::FromStr for DataPlaneStatus {
 /// `DnsAssignment` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DnsAssignment {
+    #[serde(default)]
     pub fqdn: Option<String>,
+    #[serde(default)]
     pub hostname: Option<String>,
+    #[serde(default)]
     pub ip_address: Option<String>,
 }
 
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
 }
 

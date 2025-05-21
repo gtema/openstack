@@ -143,6 +143,8 @@ impl std::str::FromStr for Type {
 /// `Items` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Items {
+    #[serde(default, rename = "enum")]
     pub _enum: Option<Vec<String>>,
+    #[serde(default, rename = "type")]
     pub _type: Option<Type>,
 }

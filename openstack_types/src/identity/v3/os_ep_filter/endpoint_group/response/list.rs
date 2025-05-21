@@ -80,9 +80,13 @@ impl std::str::FromStr for Interface {
 /// `Filters` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Filters {
+    #[serde(default)]
     pub enabled: Option<bool>,
+    #[serde(default)]
     pub interface: Option<Interface>,
+    #[serde(default)]
     pub region_id: Option<String>,
+    #[serde(default)]
     pub service_id: Option<String>,
 }
 
@@ -90,5 +94,6 @@ pub struct Filters {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }

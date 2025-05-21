@@ -40,30 +40,50 @@ pub struct SimpleTenantUsageResponse {
 /// `ServerUsages` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerUsages {
+    #[serde(default)]
     pub ended_at: Option<String>,
+    #[serde(default)]
     pub flavor: Option<String>,
+    #[serde(default)]
     pub hours: Option<f32>,
+    #[serde(default)]
     pub instance_id: Option<String>,
+    #[serde(default)]
     pub local_gb: Option<i32>,
+    #[serde(default)]
     pub memory_mb: Option<i32>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub started_at: Option<String>,
+    #[serde(default)]
     pub state: Option<String>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub uptime: Option<i32>,
+    #[serde(default)]
     pub vcpus: Option<i32>,
 }
 
 /// `TenantUsages` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TenantUsages {
+    #[serde(default)]
     pub server_usages: Option<Vec<ServerUsages>>,
+    #[serde(default)]
     pub start: Option<String>,
+    #[serde(default)]
     pub stop: Option<String>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub total_hours: Option<f32>,
+    #[serde(default)]
     pub total_local_gb_usage: Option<f32>,
+    #[serde(default)]
     pub total_memory_mb_usage: Option<f32>,
+    #[serde(default)]
     pub total_vcpus_usage: Option<f32>,
 }
 
@@ -73,6 +93,8 @@ pub struct TenantUsages {
 /// `TenantUsagesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TenantUsagesLinks {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }

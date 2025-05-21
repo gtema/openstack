@@ -51,17 +51,25 @@ pub struct SecurityGroupResponse {
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
+    #[serde(default)]
     pub name: Option<String>,
 }
 
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
+    #[serde(default)]
     pub from_port: Option<i32>,
+    #[serde(default)]
     pub group: Option<Group>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub ip_protocol: Option<String>,
+    #[serde(default)]
     pub ip_range: Option<BTreeMap<String, Value>>,
+    #[serde(default)]
     pub parent_group_id: Option<String>,
+    #[serde(default)]
     pub to_port: Option<i32>,
 }

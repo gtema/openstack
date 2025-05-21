@@ -133,25 +133,41 @@ pub struct FloatingipResponse {
 /// `PortDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortDetails {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub device_id: Option<String>,
+    #[serde(default)]
     pub device_owner: Option<String>,
+    #[serde(default)]
     pub mac_address: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub network_id: Option<String>,
+    #[serde(default)]
     pub status: Option<String>,
 }
 
 /// `PortForwardings` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortForwardings {
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub external_port: Option<f32>,
+    #[serde(default)]
     pub external_port_range: Option<f32>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub internal_ip_address: Option<String>,
+    #[serde(default)]
     pub internal_port: Option<f32>,
+    #[serde(default)]
     pub internal_port_id: Option<String>,
+    #[serde(default)]
     pub internal_port_range: Option<f32>,
+    #[serde(default)]
     pub protocol: Option<String>,
 }

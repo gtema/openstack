@@ -133,54 +133,82 @@ impl std::str::FromStr for Type {
 /// `Items` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Items {
+    #[serde(default, rename = "enum")]
     pub _enum: Option<Vec<String>>,
+    #[serde(default, rename = "type")]
     pub _type: Option<Type>,
 }
 
 /// `Properties` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Properties {
+    #[serde(default, rename = "additionalItems")]
     pub additional_items: Option<bool>,
+    #[serde(default, rename = "default")]
     pub _default: Option<Value>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default, rename = "enum")]
     pub _enum: Option<Vec<String>>,
+    #[serde(default)]
     pub items: Option<Items>,
+    #[serde(default)]
     pub maximum: Option<f32>,
+    #[serde(default, rename = "maxItems")]
     pub max_items: Option<i32>,
+    #[serde(default, rename = "maxLength")]
     pub max_length: Option<i32>,
+    #[serde(default)]
     pub minimum: Option<f32>,
+    #[serde(default, rename = "minItems")]
     pub min_items: Option<i32>,
+    #[serde(default, rename = "minLength")]
     pub min_length: Option<i32>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operators: Option<Vec<String>>,
+    #[serde(default)]
     pub pattern: Option<String>,
+    #[serde(default)]
     pub readonly: Option<bool>,
+    #[serde(default)]
     pub required: Option<Vec<String>>,
     pub title: String,
+    #[serde(rename = "type")]
     pub _type: Type,
+    #[serde(default, rename = "uniqueItems")]
     pub unique_items: Option<bool>,
 }
 
 /// `Objects` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Objects {
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub properties: Option<BTreeMap<String, Properties>>,
+    #[serde(default)]
     pub required: Option<Vec<String>>,
 }
 
 /// `ResourceTypeAssociations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ResourceTypeAssociations {
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub prefix: Option<String>,
+    #[serde(default)]
     pub properties_target: Option<String>,
 }
 
 /// `Tags` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Tags {
+    #[serde(default)]
     pub name: Option<String>,
 }
 

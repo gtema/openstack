@@ -88,12 +88,15 @@ impl std::str::FromStr for OsDcfDiskConfig {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }
 
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
+    #[serde(default)]
     pub name: Option<String>,
 }

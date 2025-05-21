@@ -282,10 +282,15 @@ impl std::str::FromStr for Coe {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 

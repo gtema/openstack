@@ -220,6 +220,7 @@ pub struct ManageableVolumeResponse {
 /// `Attachments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Attachments {
+    #[serde(default)]
     pub attached_at: Option<String>,
     pub attachment_id: String,
     pub device: Option<String>,
@@ -235,6 +236,8 @@ pub struct Attachments {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }

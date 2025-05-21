@@ -44,6 +44,7 @@ pub struct LocationResponse {
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
+    #[serde(default)]
     pub checksum: Option<String>,
     pub os_hash_algo: String,
     pub os_hash_value: String,
