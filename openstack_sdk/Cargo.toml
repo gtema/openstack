@@ -100,3 +100,6 @@ required-features = ["async", "compute"]
 [[example]]
 name = "ignore"
 required-features = ["async", "compute"]
+
+[lints]
+workspace = true
