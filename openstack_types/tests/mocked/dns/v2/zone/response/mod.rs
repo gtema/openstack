@@ -11,5 +11,3 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
-mod v1;

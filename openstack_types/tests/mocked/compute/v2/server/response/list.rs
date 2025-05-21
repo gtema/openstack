@@ -12,4 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod v1;
+use openstack_sdk::api::compute::v2::server::list::Request;
+use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_types::compute::v2::server::response::list::ServerResponse;
+
+use crate::get_client;
+
+#[tokio::test]
+async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let client = get_client("compute");
+
+    let _res: Vec<ServerResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
+        .query_async(&client)
+        .await?;
+
+    Ok(())
+}
