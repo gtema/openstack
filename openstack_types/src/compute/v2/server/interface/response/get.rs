@@ -57,6 +57,8 @@ pub struct InterfaceResponse {
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
 }

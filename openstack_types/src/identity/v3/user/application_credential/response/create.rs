@@ -80,15 +80,21 @@ pub struct ApplicationCredentialResponse {
 /// `AccessRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AccessRules {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub method: Option<String>,
+    #[serde(default)]
     pub path: Option<String>,
+    #[serde(default)]
     pub service: Option<String>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }

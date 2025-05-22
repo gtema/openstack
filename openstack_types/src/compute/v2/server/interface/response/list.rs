@@ -31,7 +31,9 @@ pub struct InterfaceResponse {
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
 }
 
@@ -40,9 +42,14 @@ pub struct FixedIps {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InterfaceAttachments {
     pub fixed_ips: Vec<FixedIps>,
+    #[serde(default)]
     pub mac_addr: Option<String>,
+    #[serde(default)]
     pub net_id: Option<String>,
+    #[serde(default)]
     pub port_id: Option<String>,
+    #[serde(default)]
     pub port_state: Option<String>,
+    #[serde(default)]
     pub tag: Option<String>,
 }

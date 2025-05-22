@@ -33,15 +33,26 @@ pub struct LimitResponse {
 /// `Absolute` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {
+    #[serde(default, rename = "maxServerGroupMembers")]
     pub max_server_group_members: Option<i32>,
+    #[serde(default, rename = "maxServerGroups")]
     pub max_server_groups: Option<i32>,
+    #[serde(default, rename = "maxServerMetamaxServerMeta")]
     pub max_server_metamax_server_meta: Option<i32>,
+    #[serde(default, rename = "maxTotalCores")]
     pub max_total_cores: Option<i32>,
+    #[serde(default, rename = "maxTotalInstances")]
     pub max_total_instances: Option<i32>,
+    #[serde(default, rename = "maxTotalKeypairs")]
     pub max_total_keypairs: Option<i32>,
+    #[serde(default, rename = "maxTotalRAMSize")]
     pub max_total_ramsize: Option<i32>,
+    #[serde(default, rename = "totalCoresUsed")]
     pub total_cores_used: Option<i32>,
+    #[serde(default, rename = "totalInstancesUsed")]
     pub total_instances_used: Option<i32>,
+    #[serde(default, rename = "totalRAMUsed")]
     pub total_ramused: Option<i32>,
+    #[serde(default, rename = "totalServerGroupsUsed")]
     pub total_server_groups_used: Option<i32>,
 }

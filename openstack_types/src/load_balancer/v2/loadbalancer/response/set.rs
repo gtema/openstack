@@ -162,6 +162,7 @@ pub struct LoadbalancerResponse {
 /// `AdditionalVips` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AdditionalVips {
+    #[serde(default)]
     pub ip_address: Option<String>,
     pub subnet_id: String,
 }

@@ -208,8 +208,12 @@ pub struct Members {
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionPersistence {
+    #[serde(default)]
     pub cookie_name: Option<String>,
+    #[serde(default)]
     pub persistence_granularity: Option<String>,
+    #[serde(default)]
     pub persistence_timeout: Option<i32>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
 }

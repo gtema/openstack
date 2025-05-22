@@ -184,5 +184,6 @@ impl std::str::FromStr for Policy {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     pub max_server_per_host: Option<i64>,
 }

@@ -146,18 +146,26 @@ impl std::str::FromStr for Interface {
 /// `Endpoints` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Endpoints {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub interface: Option<Interface>,
+    #[serde(default)]
     pub region: Option<String>,
+    #[serde(default)]
     pub url: Option<String>,
 }
 
 /// `Catalog` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Catalog {
+    #[serde(default)]
     pub endpoints: Option<Vec<Endpoints>>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
 }
 
@@ -166,7 +174,9 @@ pub struct Catalog {
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -176,14 +186,18 @@ pub struct Domain {
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -193,7 +207,9 @@ pub struct Roles {
 /// `UserDomain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct UserDomain {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -201,9 +217,14 @@ pub struct UserDomain {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
+    #[serde(default)]
     pub domain: Option<UserDomain>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default, rename = "OS-FEDERATION")]
     pub os_federation: Option<BTreeMap<String, Value>>,
+    #[serde(default)]
     pub password_expires_at: Option<String>,
 }

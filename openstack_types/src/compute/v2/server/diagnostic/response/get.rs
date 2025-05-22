@@ -208,16 +208,27 @@ impl std::str::FromStr for Driver {
 /// `NicDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NicDetails {
+    #[serde(default)]
     pub mac_address: Option<String>,
+    #[serde(default)]
     pub rx_drop: Option<i32>,
+    #[serde(default)]
     pub rx_errors: Option<i32>,
+    #[serde(default)]
     pub rx_octets: Option<i32>,
+    #[serde(default)]
     pub rx_packets: Option<i32>,
+    #[serde(default)]
     pub rx_rate: Option<i32>,
+    #[serde(default)]
     pub tx_drop: Option<i32>,
+    #[serde(default)]
     pub tx_errors: Option<i32>,
+    #[serde(default)]
     pub tx_octets: Option<i32>,
+    #[serde(default)]
     pub tx_packets: Option<i32>,
+    #[serde(default)]
     pub tx_rate: Option<i32>,
 }
 

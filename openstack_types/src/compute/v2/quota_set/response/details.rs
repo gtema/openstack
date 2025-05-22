@@ -139,8 +139,11 @@ pub struct QuotaSetResponse {
 /// `Cores` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Cores {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -151,8 +154,11 @@ pub struct Cores {
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -163,8 +169,11 @@ pub struct FixedIps {
 /// `FloatingIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FloatingIps {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -175,8 +184,11 @@ pub struct FloatingIps {
 /// `InjectedFiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFiles {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -185,8 +197,11 @@ pub struct InjectedFiles {
 /// `InjectedFilesContentBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesContentBytes {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -195,8 +210,11 @@ pub struct InjectedFilesContentBytes {
 /// `InjectedFilesPathBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesPathBytes {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -205,8 +223,11 @@ pub struct InjectedFilesPathBytes {
 /// `Instances` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Instances {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -221,8 +242,11 @@ pub struct Instances {
 /// `KeyPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct KeyPairs {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -231,8 +255,11 @@ pub struct KeyPairs {
 /// `MetadataItems` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MetadataItems {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -242,8 +269,11 @@ pub struct MetadataItems {
 /// `Networks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Networks {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -252,8 +282,11 @@ pub struct Networks {
 /// `Ram` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ram {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -264,8 +297,11 @@ pub struct Ram {
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -276,8 +312,11 @@ pub struct SecurityGroupRules {
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -286,8 +325,11 @@ pub struct SecurityGroups {
 /// `ServerGroupMembers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroupMembers {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }
 
@@ -296,7 +338,10 @@ pub struct ServerGroupMembers {
 /// `ServerGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroups {
+    #[serde(default)]
     pub in_use: Option<i32>,
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
 }

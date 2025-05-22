@@ -201,8 +201,11 @@ pub struct Servers {
 /// `Service` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Service {
+    #[serde(default)]
     pub disabled_reason: Option<String>,
+    #[serde(default)]
     pub host: Option<String>,
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
     pub id: Option<i64>,
 }
 

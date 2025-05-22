@@ -186,7 +186,10 @@ pub struct NetworkResponse {
 /// `Segments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Segments {
+    #[serde(default, rename = "provider:network_type")]
     pub provider_network_type: Option<String>,
+    #[serde(default, rename = "provider:physical_network")]
     pub provider_physical_network: Option<String>,
+    #[serde(default, rename = "provider:segmentation_id")]
     pub provider_segmentation_id: Option<i32>,
 }

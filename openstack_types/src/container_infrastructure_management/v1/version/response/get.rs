@@ -79,10 +79,15 @@ pub struct VersionResponse {
 /// `Certificates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Certificates {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -90,10 +95,15 @@ pub struct Certificates {
 /// `Clusters` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Clusters {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -101,10 +111,15 @@ pub struct Clusters {
 /// `Clustertemplates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Clustertemplates {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -112,10 +127,15 @@ pub struct Clustertemplates {
 /// `Federations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Federations {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -123,10 +143,15 @@ pub struct Federations {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -134,9 +159,13 @@ pub struct Links {
 /// `MediaTypes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MediaTypes {
+    #[serde(default)]
     pub base: Option<String>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -144,10 +173,15 @@ pub struct MediaTypes {
 /// `Mservices` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Mservices {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -155,10 +189,15 @@ pub struct Mservices {
 /// `Nodegroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Nodegroups {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -166,10 +205,15 @@ pub struct Nodegroups {
 /// `Quotas` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Quotas {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -177,9 +221,14 @@ pub struct Quotas {
 /// `Stats` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Stats {
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }

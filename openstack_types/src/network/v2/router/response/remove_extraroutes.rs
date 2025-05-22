@@ -43,6 +43,8 @@ pub struct RouterResponse {
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
+    #[serde(default)]
     pub destination: Option<String>,
+    #[serde(default)]
     pub nexthop: Option<String>,
 }

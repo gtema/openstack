@@ -126,6 +126,8 @@ pub struct BackupResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub href: Option<String>,
+    #[serde(default)]
     pub rel: Option<String>,
 }

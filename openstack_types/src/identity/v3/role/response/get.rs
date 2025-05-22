@@ -60,5 +60,6 @@ pub struct RoleResponse {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
+    #[serde(default)]
     pub immutable: Option<bool>,
 }

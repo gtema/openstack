@@ -140,7 +140,9 @@ pub struct RouterResponse {
 /// `ExternalFixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalFixedIps {
+    #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
 }
 
@@ -151,15 +153,20 @@ pub struct ExternalFixedIps {
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     pub enable_snat: Option<bool>,
+    #[serde(default)]
     pub external_fixed_ips: Option<Vec<ExternalFixedIps>>,
     pub network_id: String,
+    #[serde(default)]
     pub qos_policy_id: Option<String>,
 }
 
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
+    #[serde(default)]
     pub destination: Option<String>,
+    #[serde(default)]
     pub nexthop: Option<String>,
 }

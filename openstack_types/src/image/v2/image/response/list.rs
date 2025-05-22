@@ -284,6 +284,7 @@ impl std::str::FromStr for DiskFormatStringEnum {
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
+    #[serde(default)]
     pub checksum: Option<String>,
     pub os_hash_algo: String,
     pub os_hash_value: String,
@@ -294,6 +295,7 @@ pub struct ValidationData {
 pub struct Locations {
     pub metadata: BTreeMap<String, Value>,
     pub url: String,
+    #[serde(default)]
     pub validation_data: Option<ValidationData>,
 }
 

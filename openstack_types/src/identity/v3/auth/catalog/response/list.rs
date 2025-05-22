@@ -74,8 +74,12 @@ impl std::str::FromStr for Interface {
 /// `Endpoints` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Endpoints {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub interface: Option<Interface>,
+    #[serde(default)]
     pub region: Option<String>,
+    #[serde(default)]
     pub url: Option<String>,
 }

@@ -119,8 +119,11 @@ pub struct Federated {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
     pub next: Option<String>,
+    #[serde(default)]
     pub previous: Option<String>,
+    #[serde(rename = "self")]
     pub _self: String,
 }
 
@@ -132,11 +135,18 @@ pub struct Links {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
+    #[serde(default)]
     pub ignore_change_password_upon_first_use: Option<bool>,
+    #[serde(default)]
     pub ignore_lockout_failure_attempts: Option<bool>,
+    #[serde(default)]
     pub ignore_password_expiry: Option<bool>,
+    #[serde(default)]
     pub ignore_user_inactivity: Option<bool>,
+    #[serde(default)]
     pub lock_password: Option<bool>,
+    #[serde(default)]
     pub multi_factor_auth_enabled: Option<bool>,
+    #[serde(default)]
     pub multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }

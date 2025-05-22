@@ -71,6 +71,7 @@ pub struct AllocationResponse {
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
+    #[serde(default)]
     pub generation: Option<i32>,
     pub resources: BTreeMap<String, i32>,
 }

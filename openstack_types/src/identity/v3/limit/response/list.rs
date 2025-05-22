@@ -68,5 +68,6 @@ pub struct LimitResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }

@@ -149,6 +149,7 @@ pub struct LoadbalancerResponse {
 /// `AdditionalVips` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AdditionalVips {
+    #[serde(default)]
     pub ip_address: Option<String>,
     pub subnet_id: String,
 }
@@ -157,19 +158,33 @@ pub struct AdditionalVips {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub compare_type: Option<String>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub invert: Option<bool>,
+    #[serde(default)]
     pub key: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
+    #[serde(default)]
     pub value: Option<String>,
 }
 
@@ -177,24 +192,43 @@ pub struct Rules {
 /// `L7policies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct L7policies {
+    #[serde(default)]
     pub action: Option<String>,
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub listener_id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub position: Option<i32>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub redirect_http_code: Option<i32>,
+    #[serde(default)]
     pub redirect_pool_id: Option<String>,
+    #[serde(default)]
     pub redirect_prefix: Option<String>,
+    #[serde(default)]
     pub redirect_url: Option<String>,
+    #[serde(default)]
     pub rules: Option<Vec<Rules>>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -209,39 +243,73 @@ pub struct Loadbalancers {
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub allowed_cidrs: Option<Vec<String>>,
+    #[serde(default)]
     pub alpn_protocols: Option<Vec<String>>,
+    #[serde(default)]
     pub client_authentication: Option<String>,
+    #[serde(default)]
     pub client_ca_tls_container_ref: Option<String>,
+    #[serde(default)]
     pub client_crl_container_ref: Option<String>,
+    #[serde(default)]
     pub connection_limit: Option<i32>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub default_pool_id: Option<String>,
+    #[serde(default)]
     pub default_tls_container_ref: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub hsts_include_subdomains: Option<bool>,
+    #[serde(default)]
     pub hsts_max_age: Option<i32>,
+    #[serde(default)]
     pub hsts_preload: Option<bool>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub insert_headers: Option<BTreeMap<String, String>>,
+    #[serde(default)]
     pub l7policies: Option<Vec<L7policies>>,
+    #[serde(default)]
     pub loadbalancers: Option<Vec<Loadbalancers>>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub protocol: Option<String>,
+    #[serde(default)]
     pub protocol_port: Option<i32>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub sni_container_refs: Option<Vec<String>>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub timeout_client_data: Option<i32>,
+    #[serde(default)]
     pub timeout_member_connect: Option<i32>,
+    #[serde(default)]
     pub timeout_member_data: Option<i32>,
+    #[serde(default)]
     pub timeout_tcp_inspect: Option<i32>,
+    #[serde(default)]
     pub tls_ciphers: Option<String>,
+    #[serde(default)]
     pub tls_versions: Option<Vec<String>>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }
 
@@ -256,26 +324,47 @@ pub struct HealthmonitorPools {
 /// `Healthmonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Healthmonitor {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub delay: Option<i32>,
+    #[serde(default)]
     pub domain_name: Option<String>,
+    #[serde(default)]
     pub expected_codes: Option<String>,
+    #[serde(default)]
     pub http_method: Option<String>,
+    #[serde(default)]
     pub http_version: Option<f32>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub max_retries: Option<i32>,
+    #[serde(default)]
     pub max_retries_down: Option<i32>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub pools: Option<Vec<HealthmonitorPools>>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub timeout: Option<i32>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
+    #[serde(default)]
     pub url_path: Option<String>,
 }
 
@@ -290,23 +379,41 @@ pub struct PoolsListeners {
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
+    #[serde(default)]
     pub address: Option<String>,
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub backup: Option<bool>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub monitor_address: Option<String>,
+    #[serde(default)]
     pub monitor_port: Option<i32>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub protocol_port: Option<i32>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub subnet_id: Option<String>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
+    #[serde(default)]
     pub vnic_type: Option<String>,
+    #[serde(default)]
     pub weight: Option<i32>,
 }
 
@@ -314,9 +421,13 @@ pub struct Members {
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionPersistence {
+    #[serde(default)]
     pub cookie_name: Option<String>,
+    #[serde(default)]
     pub persistence_granularity: Option<String>,
+    #[serde(default)]
     pub persistence_timeout: Option<i32>,
+    #[serde(default, rename = "type")]
     pub _type: Option<String>,
 }
 
@@ -324,30 +435,56 @@ pub struct SessionPersistence {
 /// `PoolsStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoolsStructResponse {
+    #[serde(default)]
     pub admin_state_up: Option<bool>,
+    #[serde(default)]
     pub alpn_protocols: Option<Vec<String>>,
+    #[serde(default)]
     pub ca_tls_container_ref: Option<String>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub crl_container_ref: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub healthmonitor: Option<Healthmonitor>,
+    #[serde(default)]
     pub healthmonitor_id: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub lb_algorithm: Option<String>,
+    #[serde(default)]
     pub listeners: Option<Vec<PoolsListeners>>,
+    #[serde(default)]
     pub loadbalancers: Option<Vec<Loadbalancers>>,
+    #[serde(default)]
     pub members: Option<Vec<Members>>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub operating_status: Option<String>,
+    #[serde(default)]
     pub project_id: Option<String>,
+    #[serde(default)]
     pub protocol: Option<String>,
+    #[serde(default)]
     pub provisioning_status: Option<String>,
+    #[serde(default)]
     pub session_persistence: Option<SessionPersistence>,
+    #[serde(default)]
     pub tags: Option<Vec<String>>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub tls_ciphers: Option<String>,
+    #[serde(default)]
     pub tls_container_ref: Option<String>,
+    #[serde(default)]
     pub tls_enabled: Option<bool>,
+    #[serde(default)]
     pub tls_versions: Option<Vec<String>>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }

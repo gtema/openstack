@@ -73,8 +73,11 @@ pub struct QuotaResponse {
 /// `Floatingip` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Floatingip {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -82,8 +85,11 @@ pub struct Floatingip {
 /// `Network` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Network {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -91,8 +97,11 @@ pub struct Network {
 /// `Port` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Port {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -100,8 +109,11 @@ pub struct Port {
 /// `RbacPolicy` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RbacPolicy {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -109,8 +121,11 @@ pub struct RbacPolicy {
 /// `Router` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Router {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -118,8 +133,11 @@ pub struct Router {
 /// `SecurityGroup` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroup {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -127,8 +145,11 @@ pub struct SecurityGroup {
 /// `SecurityGroupRule` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRule {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -136,8 +157,11 @@ pub struct SecurityGroupRule {
 /// `Subnet` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnet {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }
 
@@ -145,7 +169,10 @@ pub struct Subnet {
 /// `Subnetpool` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnetpool {
+    #[serde(default)]
     pub limit: Option<i32>,
+    #[serde(default)]
     pub reserved: Option<i32>,
+    #[serde(default)]
     pub used: Option<i32>,
 }

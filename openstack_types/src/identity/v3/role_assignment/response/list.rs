@@ -41,14 +41,17 @@ pub struct RoleAssignmentResponse {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
+    #[serde(default)]
     pub domain: Option<Domain>,
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -56,15 +59,19 @@ pub struct Group {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
     pub assignment: String,
+    #[serde(default)]
     pub membership: Option<String>,
+    #[serde(default)]
     pub prior_role: Option<String>,
 }
 
 /// `Role` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Role {
+    #[serde(default)]
     pub domain: Option<Domain>,
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -72,14 +79,17 @@ pub struct Role {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ScopeDomain {
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {
+    #[serde(default)]
     pub domain: Option<Domain>,
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -92,16 +102,22 @@ pub struct System {
 /// `Scope` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Scope {
+    #[serde(default)]
     pub domain: Option<ScopeDomain>,
+    #[serde(default, rename = "OS-INHERIT:inherited_to")]
     pub os_inherit_inherited_to: Option<String>,
+    #[serde(default)]
     pub project: Option<Project>,
+    #[serde(default)]
     pub system: Option<System>,
 }
 
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
+    #[serde(default)]
     pub domain: Option<Domain>,
     pub id: String,
+    #[serde(default)]
     pub name: Option<String>,
 }

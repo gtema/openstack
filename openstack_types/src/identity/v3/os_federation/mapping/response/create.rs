@@ -40,7 +40,9 @@ pub struct MappingResponse {
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
 }
 
@@ -75,6 +77,7 @@ pub struct Roles {
 /// `Projects` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Projects {
+    #[serde(default)]
     pub domain: Option<Domain>,
     pub name: String,
     pub roles: Vec<Roles>,
@@ -105,21 +108,32 @@ impl std::str::FromStr for Type {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
+    #[serde(default)]
     pub domain: Option<Domain>,
+    #[serde(default)]
     pub email: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default, rename = "type")]
     pub _type: Option<Type>,
 }
 
 /// `Local` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Local {
+    #[serde(default)]
     pub domain: Option<Domain>,
+    #[serde(default)]
     pub group: Option<LocalGroup>,
+    #[serde(default)]
     pub group_ids: Option<String>,
+    #[serde(default)]
     pub groups: Option<String>,
+    #[serde(default)]
     pub projects: Option<Vec<Projects>>,
+    #[serde(default)]
     pub user: Option<User>,
 }
 
@@ -127,7 +141,9 @@ pub struct Local {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteAnyOneOfRegexType {
     pub any_one_of: Vec<String>,
+    #[serde(default)]
     pub regex: Option<bool>,
+    #[serde(rename = "type")]
     pub _type: String,
 }
 
@@ -135,7 +151,9 @@ pub struct RemoteAnyOneOfRegexType {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteBlacklistRegexType {
     pub blacklist: Vec<String>,
+    #[serde(default)]
     pub regex: Option<bool>,
+    #[serde(rename = "type")]
     pub _type: String,
 }
 
@@ -143,14 +161,18 @@ pub struct RemoteBlacklistRegexType {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteNotAnyOfRegexType {
     pub not_any_of: Vec<String>,
+    #[serde(default)]
     pub regex: Option<bool>,
+    #[serde(rename = "type")]
     pub _type: String,
 }
 
 /// `RemoteRegexTypeWhitelist` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteRegexTypeWhitelist {
+    #[serde(default)]
     pub regex: Option<bool>,
+    #[serde(rename = "type")]
     pub _type: String,
     pub whitelist: Vec<String>,
 }
@@ -158,6 +180,7 @@ pub struct RemoteRegexTypeWhitelist {
 /// `RemoteType` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteType {
+    #[serde(rename = "type")]
     pub _type: String,
 }
 

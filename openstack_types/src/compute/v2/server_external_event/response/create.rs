@@ -107,5 +107,6 @@ pub struct Events {
     pub name: Name,
     pub server_uuid: String,
     pub status: Status,
+    #[serde(default)]
     pub tag: Option<String>,
 }

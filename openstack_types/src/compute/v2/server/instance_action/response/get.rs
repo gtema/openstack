@@ -97,12 +97,19 @@ pub struct InstanceActionResponse {
 /// `Events` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Events {
+    #[serde(default)]
     pub details: Option<String>,
     pub event: String,
+    #[serde(default)]
     pub finish_time: Option<String>,
+    #[serde(default)]
     pub host: Option<String>,
+    #[serde(default, rename = "hostId")]
     pub host_id: Option<String>,
+    #[serde(default)]
     pub result: Option<String>,
+    #[serde(default)]
     pub start_time: Option<String>,
+    #[serde(default)]
     pub traceback: Option<String>,
 }

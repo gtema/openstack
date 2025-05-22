@@ -125,21 +125,38 @@ impl std::str::FromStr for Ethertype {
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
+    #[serde(default)]
     pub belongs_to_default_sg: Option<bool>,
+    #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub direction: Option<Direction>,
+    #[serde(default)]
     pub ethertype: Option<Ethertype>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub normalized_cidr: Option<String>,
+    #[serde(default)]
     pub port_range_max: Option<i32>,
+    #[serde(default)]
     pub port_range_min: Option<i32>,
+    #[serde(default)]
     pub protocol: Option<String>,
+    #[serde(default)]
     pub remote_address_group_id: Option<String>,
+    #[serde(default)]
     pub remote_group_id: Option<String>,
+    #[serde(default)]
     pub remote_ip_prefix: Option<String>,
+    #[serde(default)]
     pub revision_number: Option<i32>,
+    #[serde(default)]
     pub security_group_id: Option<String>,
+    #[serde(default)]
     pub tenant_id: Option<String>,
+    #[serde(default)]
     pub updated_at: Option<String>,
 }

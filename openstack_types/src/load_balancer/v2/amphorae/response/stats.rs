@@ -33,12 +33,20 @@ pub struct AmphoraeResponse {
 /// `AmphoraStats` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AmphoraStats {
+    #[serde(default)]
     pub active_connections: Option<i32>,
+    #[serde(default)]
     pub bytes_in: Option<i32>,
+    #[serde(default)]
     pub bytes_out: Option<i32>,
+    #[serde(default)]
     pub id: Option<String>,
+    #[serde(default)]
     pub listener_id: Option<String>,
+    #[serde(default)]
     pub loadbalancer_id: Option<String>,
+    #[serde(default)]
     pub request_errors: Option<i32>,
+    #[serde(default)]
     pub total_connections: Option<i32>,
 }

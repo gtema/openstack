@@ -43,5 +43,6 @@ pub struct AvailabilityZoneResponse {
 /// `ZoneState` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ZoneState {
+    #[serde(default)]
     pub available: Option<bool>,
 }
