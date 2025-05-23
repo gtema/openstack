@@ -96,7 +96,7 @@ pub struct Project {
 /// `System` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct System {
-    pub all: i32,
+    pub all: bool,
 }
 
 /// `Scope` type
