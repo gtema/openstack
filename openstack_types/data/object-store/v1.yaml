@@ -1355,11 +1355,13 @@ components:
           description: The number of objects in the container.
           type: integer
           format: int64
+          minimum: 0
         bytes:
           description: |
             The total number of bytes that are stored in Object Storage for the account.
           type: integer
           format: int64
+          minimum: 0
         name:
           description: The name of the container.
           type: string
@@ -1385,6 +1387,7 @@ components:
             The total number of bytes that are stored in Object Storage for the container.
           type: integer
           format: int64
+          minimum: 0
         hash:
           description: The MD5 checksum value of the object content.
           type: string
