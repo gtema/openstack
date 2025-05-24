@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.1...openstack_cli-v0.12.2) - 2025-05-24
+
+### Added
+
+- Prepare cli config for column magic ([#1246](https://github.com/gtema/openstack/pull/1246))
+- Make openapi specs reproducible ([#1244](https://github.com/gtema/openstack/pull/1244))
+
+### Other
+
+- Add global clippy config ([#1252](https://github.com/gtema/openstack/pull/1252))
+
 ## [0.12.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.0...openstack_cli-v0.12.1) - 2025-05-18
 
 ### Added
