@@ -3149,9 +3149,9 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "structable"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0adc292340ede1c78c925b552c7d785f5f06204cf3b9f798d26cef89bc1dd7cf"
+checksum = "e6257306fe544bd6250d9c80e8e6bf50ef0b8a5abc7160e5601585a0f1e87b17"
 dependencies = [
  "serde",
  "structable_derive",
