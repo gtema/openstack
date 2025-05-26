@@ -11,10 +11,18 @@ views:
   compute.server:
     # Listing compute servers will only return ID, NAME and IMAGE columns unless `-o wide` or
     `-f XXX` parameters are being passed
-    fields: [id, name, image]
+    default_fields: [id, name, image]
+    fields:
+      - name: id
+        width: 38 # Set column width at fixed 38 chars
+        # min_width: 1 - Set minimal column width
+        # max_width: 1 - Set maximal column width
   dns.zone/recordset:
     # DNS zone recordsets are listed in the wide mode by default.
     wide: true
+    fields:
+      - name: status
+        max_width: 15  # status column can be maximum 15 chars wide
 ```
 
 The key of the `views` map is a resource key shared among all

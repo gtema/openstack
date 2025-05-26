@@ -14,7 +14,9 @@
 
 //! Output processing module
 
-use comfy_table::{Cell, Color, ContentArrangement, Table, presets::UTF8_FULL_CONDENSED};
+use comfy_table::{
+    Cell, Color, ColumnConstraint, ContentArrangement, Table, Width, presets::UTF8_FULL_CONDENSED,
+};
 use openstack_sdk::types::EntryStatus;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
@@ -22,7 +24,7 @@ use std::io::{self, Write};
 
 use crate::OpenStackCliError;
 use crate::cli::{Cli, OutputFormat, TableArrangement};
-use crate::config::{FieldConfig, ViewConfig};
+use crate::config::ViewConfig;
 use structable::{OutputConfig, StructTable, StructTableOptions};
 
 /// Output Processor
@@ -45,6 +47,10 @@ pub(crate) struct OutputProcessor {
 impl StructTableOptions for OutputProcessor {
     fn wide_mode(&self) -> bool {
         self.wide
+            || self
+                .config
+                .as_ref()
+                .is_some_and(|cfg| cfg.wide.is_some_and(|w| w))
     }
 
     fn pretty_mode(&self) -> bool {
@@ -61,20 +67,20 @@ impl StructTableOptions for OutputProcessor {
                     .config
                     .as_ref()
                     .map(|cfg| {
-                        cfg.fields.iter().any(|x| {
-                            match x {
-                                FieldConfig::Simple(name) => name,
-                                FieldConfig::Extended { name, .. } => name,
-                            }
-                            .to_lowercase()
-                                == field.as_ref().to_lowercase()
-                        })
+                        cfg.default_fields
+                            .iter()
+                            .any(|x| x.to_lowercase() == field.as_ref().to_lowercase())
                     })
                     .is_some_and(|x| x));
 
         if !is_wide_field {
             // Return non wide field when no field filters passed or explicitly requested the field
-            is_requested || (self.fields.is_empty() && self.config.is_none())
+            is_requested
+                || (self.fields.is_empty()
+                    && self
+                        .config
+                        .as_ref()
+                        .is_none_or(|cfg| cfg.default_fields.is_empty()))
         } else {
             // The wide field is returned in wide mode when no filters passed or explicitly
             // requested the field
@@ -141,6 +147,80 @@ impl OutputProcessor {
         Ok(())
     }
 
+    /// Re-sort table according to the configuration and determine column constraints
+    fn prepare_table(
+        &self,
+        headers: Vec<String>,
+        data: Vec<Vec<String>>,
+    ) -> (Vec<String>, Vec<Vec<String>>, Vec<Option<ColumnConstraint>>) {
+        let mut headers = headers;
+        let mut rows = data;
+        let mut column_constrains: Vec<Option<ColumnConstraint>> = vec![None; headers.len()];
+
+        if let Some(cfg) = &self.config {
+            // Offset from the current iteration pointer
+            if headers.len() > 1 {
+                let mut idx_offset: usize = 0;
+                for (idx, field) in cfg.default_fields.iter().enumerate() {
+                    if let Some(curr_idx) = headers
+                        .iter()
+                        .position(|x| x.to_lowercase() == field.to_lowercase())
+                    {
+                        // Swap headers between current and should pos
+                        headers.swap(idx - idx_offset, curr_idx);
+                        for row in rows.iter_mut() {
+                            // Swap also data columns
+                            row.swap(idx - idx_offset, curr_idx);
+                        }
+                    } else {
+                        // This column is not found in the data. Perhars structable returned some
+                        // other name. Move the column to the very end
+                        let curr_hdr = headers.remove(idx - idx_offset);
+                        headers.push(curr_hdr);
+                        for row in rows.iter_mut() {
+                            let curr_cell = row.remove(idx - idx_offset);
+                            row.push(curr_cell);
+                        }
+                        // Some unmatched field moved to the end. Our "current" index should respect
+                        // the offset
+                        idx_offset += 1;
+                    }
+                }
+            }
+            // Find field configuration
+            for (idx, field) in headers.iter().enumerate() {
+                if let Some(field_config) = cfg
+                    .fields
+                    .iter()
+                    .find(|x| x.name.to_lowercase() == field.to_lowercase())
+                {
+                    let constraint = match (
+                        field_config.width,
+                        field_config.min_width,
+                        field_config.max_width,
+                    ) {
+                        (Some(fixed), _, _) => {
+                            Some(ColumnConstraint::Absolute(Width::Fixed(fixed as u16)))
+                        }
+                        (None, Some(lower), Some(upper)) => Some(ColumnConstraint::Boundaries {
+                            lower: Width::Fixed(lower as u16),
+                            upper: Width::Fixed(upper as u16),
+                        }),
+                        (None, Some(lower), None) => {
+                            Some(ColumnConstraint::LowerBoundary(Width::Fixed(lower as u16)))
+                        }
+                        (None, None, Some(upper)) => {
+                            Some(ColumnConstraint::UpperBoundary(Width::Fixed(upper as u16)))
+                        }
+                        _ => None,
+                    };
+                    column_constrains[idx] = constraint;
+                }
+            }
+        }
+        (headers, rows, column_constrains)
+    }
+
     /// Output List of resources
     pub fn output_list<T>(&self, data: Vec<serde_json::Value>) -> Result<(), OpenStackCliError>
     where
@@ -165,7 +245,8 @@ impl OutputProcessor {
                         )
                     })?;
 
-                let (headers, table_rows) = structable::build_list_table(table.iter(), self);
+                let data = structable::build_list_table(table.iter(), self);
+                let (headers, table_rows, table_constraints) = self.prepare_table(data.0, data.1);
                 let mut statuses: Vec<Option<String>> =
                     table.iter().map(|item| item.status()).collect();
 
@@ -196,6 +277,15 @@ impl OutputProcessor {
                     .set_content_arrangement(ContentArrangement::from(self.table_arrangement))
                     .set_header(headers)
                     .add_rows(rows);
+
+                for (idx, constraint) in table_constraints.iter().enumerate() {
+                    if let Some(constraint) = constraint {
+                        if let Some(col) = table.column_mut(idx) {
+                            col.set_constraint(*constraint);
+                        }
+                    }
+                }
+
                 println!("{table}");
                 Ok(())
             }
@@ -254,6 +344,47 @@ impl OutputProcessor {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::FieldConfig;
+
+    #[test]
+    fn test_wide_mode() {
+        assert!(
+            !OutputProcessor {
+                config: None,
+                target: OutputFor::Human,
+                table_arrangement: TableArrangement::Disabled,
+                fields: BTreeSet::new(),
+                wide: false,
+                pretty: false,
+            }
+            .wide_mode()
+        );
+        assert!(
+            OutputProcessor {
+                config: None,
+                target: OutputFor::Human,
+                table_arrangement: TableArrangement::Disabled,
+                fields: BTreeSet::new(),
+                wide: true,
+                pretty: false,
+            }
+            .wide_mode()
+        );
+        assert!(
+            OutputProcessor {
+                config: Some(ViewConfig {
+                    wide: Some(true),
+                    ..Default::default()
+                }),
+                target: OutputFor::Human,
+                table_arrangement: TableArrangement::Disabled,
+                fields: BTreeSet::new(),
+                wide: false,
+                pretty: false,
+            }
+            .wide_mode()
+        );
+    }
 
     #[test]
     fn test_field_returned_no_selection() {
@@ -342,10 +473,32 @@ mod tests {
     }
 
     #[test]
+    fn test_field_returned_selection_empty_config() {
+        let out = OutputProcessor {
+            config: Some(ViewConfig::default()),
+            target: OutputFor::Human,
+            table_arrangement: TableArrangement::Disabled,
+            fields: BTreeSet::new(),
+            wide: false,
+            pretty: false,
+        };
+
+        assert!(
+            out.should_return_field("dummy", false),
+            "default field returned in non-wide mode with mismatching fields selector and empty config"
+        );
+        assert!(
+            !out.should_return_field("dummy", true),
+            "wide field not returned in non-wide mode with mismatching fields selector and empty config"
+        );
+    }
+
+    #[test]
     fn test_field_returned_selection_with_config_with_filters() {
         let out = OutputProcessor {
             config: Some(ViewConfig {
-                fields: Vec::from([FieldConfig::Simple("foo".to_string())]),
+                default_fields: vec!["foo".to_string()],
+                ..Default::default()
             }),
             target: OutputFor::Human,
             table_arrangement: TableArrangement::Disabled,
@@ -381,7 +534,8 @@ mod tests {
 
         let out = OutputProcessor {
             config: Some(ViewConfig {
-                fields: Vec::from([FieldConfig::Simple("foo".to_string())]),
+                default_fields: vec!["foo".to_string()],
+                ..Default::default()
             }),
             target: OutputFor::Human,
             table_arrangement: TableArrangement::Disabled,
@@ -420,7 +574,8 @@ mod tests {
     fn test_field_returned_selection_with_config_no_filters() {
         let out = OutputProcessor {
             config: Some(ViewConfig {
-                fields: Vec::from([FieldConfig::Simple("foo".to_string())]),
+                default_fields: vec!["foo".to_string()],
+                ..Default::default()
             }),
             target: OutputFor::Human,
             table_arrangement: TableArrangement::Disabled,
@@ -448,7 +603,8 @@ mod tests {
 
         let out = OutputProcessor {
             config: Some(ViewConfig {
-                fields: Vec::from([FieldConfig::Simple("foo".to_string())]),
+                default_fields: vec!["foo".to_string()],
+                ..Default::default()
             }),
             target: OutputFor::Human,
             table_arrangement: TableArrangement::Disabled,
@@ -472,6 +628,141 @@ mod tests {
         assert!(
             out.should_return_field("foo", true),
             "wide field returned in wide mode with empty fields selector, but in config"
+        );
+    }
+
+    #[test]
+    fn test_prepare_table() {
+        let out = OutputProcessor {
+            config: Some(ViewConfig {
+                default_fields: vec![
+                    "foo".to_string(),
+                    "bar".to_string(),
+                    "baz".to_string(),
+                    "dummy".to_string(),
+                ],
+                fields: vec![FieldConfig {
+                    name: "bar".to_string(),
+                    min_width: Some(15),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }),
+            target: OutputFor::Human,
+            table_arrangement: TableArrangement::Disabled,
+            fields: BTreeSet::new(),
+            wide: true,
+            pretty: false,
+        };
+        let (hdr, rows, constraints) = out.prepare_table(
+            vec![
+                "dummy".to_string(),
+                "bar".to_string(),
+                "foo".to_string(),
+                "baz".to_string(),
+            ],
+            vec![
+                vec![
+                    "11".to_string(),
+                    "12".to_string(),
+                    "13".to_string(),
+                    "14".to_string(),
+                ],
+                vec![
+                    "21".to_string(),
+                    "22".to_string(),
+                    "23".to_string(),
+                    "24".to_string(),
+                ],
+            ],
+        );
+        assert_eq!(
+            vec![
+                "foo".to_string(),
+                "bar".to_string(),
+                "baz".to_string(),
+                "dummy".to_string()
+            ],
+            hdr,
+            "headers in the correct sort order"
+        );
+        assert_eq!(
+            vec![
+                vec![
+                    "13".to_string(),
+                    "12".to_string(),
+                    "14".to_string(),
+                    "11".to_string(),
+                ],
+                vec![
+                    "23".to_string(),
+                    "22".to_string(),
+                    "24".to_string(),
+                    "21".to_string(),
+                ],
+            ],
+            rows,
+            "row columns sorted properly"
+        );
+        assert_eq![
+            vec![
+                None,
+                Some(ColumnConstraint::LowerBoundary(Width::Fixed(15))),
+                None,
+                None
+            ],
+            constraints
+        ];
+
+        let (hdr, rows, _constraints) = out.prepare_table(
+            vec![
+                "dummy".to_string(),
+                "bar2".to_string(),
+                "foo".to_string(),
+                "baz2".to_string(),
+            ],
+            vec![
+                vec![
+                    "11".to_string(),
+                    "12".to_string(),
+                    "13".to_string(),
+                    "14".to_string(),
+                ],
+                vec![
+                    "21".to_string(),
+                    "22".to_string(),
+                    "23".to_string(),
+                    "24".to_string(),
+                ],
+            ],
+        );
+        assert_eq!(
+            vec![
+                "foo".to_string(),
+                "dummy".to_string(),
+                "bar2".to_string(),
+                "baz2".to_string(),
+            ],
+            hdr,
+            "headers with unknown fields in the correct sort order"
+        );
+        assert_eq!(
+            vec![
+                vec![
+                    "13".to_string(),
+                    "11".to_string(),
+                    "12".to_string(),
+                    "14".to_string(),
+                ],
+                vec![
+                    "23".to_string(),
+                    "21".to_string(),
+                    "22".to_string(),
+                    "24".to_string(),
+                ],
+            ],
+            rows,
+            "row columns sorted properly"
         );
     }
 }
