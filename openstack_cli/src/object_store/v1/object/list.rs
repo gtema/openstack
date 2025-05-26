@@ -107,7 +107,7 @@ pub struct ObjectsCommand {
 
 /// Objects
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Objects {
+pub struct Object {
     /// The name of the container.
     #[structable(optional)]
     name: Option<String>,
@@ -193,7 +193,7 @@ impl ObjectsCommand {
             .query_async(client)
             .await?;
 
-        op.output_list::<Objects>(data)?;
+        op.output_list::<Object>(data)?;
         Ok(())
     }
 }

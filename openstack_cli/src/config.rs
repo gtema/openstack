@@ -95,26 +95,29 @@ pub enum ConfigFileBuilderError {
 pub struct ViewConfig {
     /// Limit fields (their titles) to be returned
     #[serde(default)]
+    pub default_fields: Vec<String>,
+    /// Fields configurations
+    #[serde(default)]
     pub fields: Vec<FieldConfig>,
+    /// Defaults to wide mode
+    #[serde(default)]
+    pub wide: Option<bool>,
 }
 
 /// Field output configuration
-#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialOrd, PartialEq)]
-#[serde(untagged)]
-pub enum FieldConfig {
-    /// Simple - only attribute name as string
-    Simple(String),
-    /// Extended - object with individual properties of the output column
-    Extended {
-        /// Attribute name
-        name: String,
-        /// Min length of the column
-        #[serde(default)]
-        min_len: Option<usize>,
-        /// Max length of the column
-        #[serde(default)]
-        max_len: Option<usize>,
-    },
+#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialOrd, PartialEq)]
+pub struct FieldConfig {
+    /// Attribute name
+    pub name: String,
+    /// Fixed width of the column
+    #[serde(default)]
+    pub width: Option<usize>,
+    /// Min width of the column
+    #[serde(default)]
+    pub min_width: Option<usize>,
+    /// Max width of the column
+    #[serde(default)]
+    pub max_width: Option<usize>,
 }
 
 /// OpenStackClient configuration
@@ -266,13 +269,11 @@ mod tests {
         const CONFIG_DATA: &str = r#"
             views:
               foo:
-                fields: ["a", "b", "c"]
+                default_fields: ["a", "b", "c"]
               bar:
                 fields:
-                  - "a"
                   - name: "b"
-                    min_len: 1
-                  - "c"
+                    min_width: 1
         "#;
 
         write!(config_file, "{}", CONFIG_DATA).unwrap();

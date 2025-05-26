@@ -2,68 +2,217 @@
 views:
   # block storage
   block-storage.backup:
-    fields: [id, name, availability_zone, description, fail_reason, is_incremental, metadata, object_count, size, snapshot_id, status, volume_id, created_at]
-  block-storage.snapshots:
-    fields: [id, name, description, os-extended-snapshot-attributes:progress, size, status, volume_id, created_at]
+    default_fields: [id, name, availability_zone, description, fail_reason, is_incremental, metadata, object_count, size, snapshot_id, status, volume_id, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: volume_id
+        width: 38
+  block-storage.snapshot:
+    default_fields: [id, name, description, os-extended-snapshot-attributes:progress, size, status, volume_id, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: volume_id
+        width: 38
+      - name: group_snapshot_id
+        width: 38
   block-storage.volume:
-    fields: [id, name, availability_zone, bootable, description, encrypted, imetadata, migration_status, multiattach, replication_status, size, status, volume_type]
+    default_fields: [id, name, availability_zone, bootable, description, encrypted, imetadata, migration_status, multiattach, replication_status, size, status, volume_type]
+    fields:
+      - name: id
+        width: 38
+      - name: service_uuid
+        width: 38
+      - name: user_id
+        width: 34
+      - name: volume_type_id
+        width: 38
   # compute
   compute.aggregate:
-    fields: [name, uuid, az, updated_at]
+    default_fields: [name, uuid, az, updated_at]
+    fields:
+      - name: id
+        width: 38
   compute.flavor:
-    fields: [id, name, vcpus, ram, disk]
+    default_fields: [id, name, vcpus, ram, disk]
+    fields:
+      - name: id
+        width: 38
   compute.hypervisor:
-    fields: [ip, hostname, status, state]
+    default_fields: [ip, hostname, status, state]
+    fields:
+      - name: id
+        width: 38
   compute.server/instance_action/event:
-    fields: [event, result, start_time, finish_time, host]
+    default_fields: [event, result, start_time, finish_time, host]
+    fields:
+      - name: id
+        width: 38
   compute.server/instance_action:
-    fields: [id, action, message, start_time, user_id]
+    default_fields: [id, action, message, start_time, user_id]
+    fields:
+      - name: id
+        width: 38
   compute.server:
-    fields: [id, name, status, created, address, image, flavor, security_groups]
+    default_fields: [id, name, status, created, address, image, flavor, security_groups]
+    fields:
+      - name: id
+        width: 38
+      - name: hostId
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: locked
+        width: 7
+      - name: status
+        width: 8
   # dns
   dns.recordset:
-    fields: [id, name, description, records, status, type, zone_id, zone_name, created_at, updated_at]
+    default_fields: [id, name, description, records, status, type, zone_id, zone_name, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: zone_id
+        width: 38
+      - name: project_id
+        width: 34
   dns.zone/recordset:
-    fields: [id, name, description, records, status, type, zone_name, created_at, updated_at]
+    default_fields: [id, name, description, records, status, type, zone_name, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: zone_id
+        width: 38
+      - name: project_id
+        width: 34
   dns.zone:
-    fields: [id, name, description, email, shared, status, ttl, type, created_at, updated_at]
+    default_fields: [id, name, description, email, shared, status, ttl, type, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: pool_id
+        width: 38
+      - name: project_id
+        width: 34
   # identity
   identity.group:
-    fields: [id, name, domain_id, description]
+    default_fields: [id, name, domain_id, description]
+    fields:
+      - name: id
+        width: 34
   identity.project:
-    fields: [id, name, domain_id, enabled, parent_id]
+    default_fields: [id, name, domain_id, enabled, parent_id]
+    fields:
+      - name: id
+        width: 34
   identity.user/application_credential:
-    fields: [id, name, expires_at, project_id, roles, unrestricted]
+    default_fields: [id, name, expires_at, project_id, roles, unrestricted]
+    fields:
+      - name: id
+        width: 34
   identity.user:
-    fields: [id, name, domain_id, description, enabled, password_expires_at]
+    default_fields: [id, name, domain_id, description, enabled, password_expires_at]
+    fields:
+      - name: id
+        width: 34
   # image
   image.image:
-    fields: [id, name, distro, version, arch, min_disk, min_ram, os_hidden, protected, status, tags, visibility]
+    default_fields: [id, name, distro, version, arch, min_disk, min_ram, os_hidden, protected, status, visibility, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: owner
+        width: 34
   # load balancer
   load-balancer.healthmonitor:
-    fields: [id, name, admin_state_up, delay, http_method, timeout, type, operating_status, provisioning_status, url_path, tags]
+    default_fields: [id, name, admin_state_up, delay, http_method, timeout, type, operating_status, provisioning_status, url_path, tags]
+    fields:
+      - name: id
+        width: 38
   load-balancer.listener:
-    fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, protocol, port, tags]
+    default_fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, protocol, port, tags]
+    fields:
+      - name: id
+        width: 38
   load-balancer.loadbalancer:
-    fields: [id, name, admin_state_up, description, listeners, operating_status, pools, provisioning_status, status, tags, vip_address]
+    default_fields: [id, name, admin_state_up, description, listeners, operating_status, pools, provisioning_status, status, vip_address, tags]
+    fields:
+      - name: id
+        width: 38
   load-balancer.pool/member:
-    fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protovcol_port, provisioning_status, subnet_id, weight, tags]
+    default_fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protocol_port, provisioning_status, subnet_id, weight, tags]
+    fields:
+      - name: id
+        width: 38
   load-balancer.pool:
-    fields: [id, name, admin_state_up, description, healthmonitor_id, lb_algorithm, listeners, loadbalancers, members, operating_status, protocol, provisioning_status, tls_enabled, tags]
+    default_fields: [id, name, admin_state_up, description, healthmonitor_id, lb_algorithm, listeners, loadbalancers, members, operating_status, protocol, provisioning_status, tls_enabled, tags]
+    fields:
+      - name: id
+        width: 38
   # network
   network.network:
-    fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
+    default_fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: subnets
+        min_width: 42
+      - name: tenant_id
+        width: 34
   network.port:
-    fields: [id, name, admin_state_up, device_id, device_owner, dns_assignment, fixed_ips, network_id, security_groups, status, tags]
+    default_fields: [id, name, admin_state_up, device_id, device_owner, dns_assignment, fixed_ips, network_id, security_groups, status, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: device_id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: security_groups
+        min_width: 42
+      - name: admin_state_up
+        min_width: 6
+      - name: port_security_enabled
+        min_width: 6
+      - name: status
+        min_width: 8
+      - name: tenant_id
+        width: 34
   network.router:
-    fields: [id, name, admin_stateu_up, description, external_gateway_info, status, created_at, tags]
+    default_fields: [id, name, admin_stateu_up, description, external_gateway_info, status, created_at, tags]
   network.subnet:
-    fields: [id, name, allocation_pools, cidr, created_at, description, dns_nameservers, gateway_ip, ip_version, tags]
+    default_fields: [id, name, allocation_pools, cidr, created_at, description, dns_nameservers, gateway_ip, ip_version, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: cidr
+        min_width: 13
   network.security_group_rule:
-    fields: [id, ethertype, description, direction, protocol, port_range_min, port_range_maxi, remote_group_id, remote_ip_prefix]
+    default_fields: [id, ethertype, description, direction, protocol, port_range_min, port_range_max, remote_group_id, remote_ip_prefix]
+    fields:
+      - name: id
+        width: 38
+      - name: remote_group_id
+        max_width: 38
+      - name: tenant_id
+        width: 34
   network.security_group:
-    fields: [id, name, description, created_at]
+    default_fields: [id, name, description, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: security_group_rules
+        max_width: 70
   object-store.container:
-    wide: true
+    default_fields: [name, count, bytes, last_modified]
   object-store.object:
-    wide: true
+    default_fields: [name, bytes, content_type, last_modified, hash, symlink_path]
