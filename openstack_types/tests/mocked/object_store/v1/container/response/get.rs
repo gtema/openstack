@@ -12,4 +12,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod v1;
+use openstack_sdk::api::object_store::v1::container::get::Request;
+use openstack_sdk::api::QueryAsync;
+use openstack_types::object_store::v1::container::response::get::ContainerResponse;
+
+use crate::get_client;
+
+#[tokio::test]
+async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let client = get_client("object-store");
+
+    let _res: Vec<ContainerResponse> = Request::builder()
+        .account("foo")
+        .container("bar")
+        .build()?
+        .query_async(&client)
+        .await?;
+
+    Ok(())
+}

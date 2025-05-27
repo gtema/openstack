@@ -110,12 +110,42 @@ jobs:
         run: |
           docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4010:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/block-storage/v3.yaml -d
 
+      - name: Start prism mock server - Compute
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4011:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/compute/v2.yaml -d
+
+      - name: Start prism mock server - DNS
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4012:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/dns/v2.yaml -d
+
+      - name: Start prism mock server - Identity
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4013:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/identity/v3.yaml -d
+
+      - name: Start prism mock server - Image
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4014:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/image/v2.yaml -d
+
+      - name: Start prism mock server - Load Balancer
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4015:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/load-balancer/v2.yaml -d
+
       - name: Start prism mock server - Network
         run: |
-          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4020:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/network/v2.yaml -d
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4016:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/network/v2.yaml -d
+
+      - name: Start prism mock server - Object Storage
+        run: |
+          docker run --init --rm -d -v "$GITHUB_WORKSPACE/openstack_types/data":"/data" -p 4017:4010 stoplight/prism:4 mock -h 0.0.0.0 /data/object-store/v1.yaml -d
 
       - name: Run tests
         env:
           OPENSTACK_BLOCK_STORAGE_ENDPOINT: http://localhost:4010/v3
-          OPENSTACK_NETWORK_ENDPOINT: http://localhost:4020/v2.0
+          OPENSTACK_COMPUTE_ENDPOINT: http://localhost:4011/v2.1
+          OPENSTACK_DNS_ENDPOINT: http://localhost:4012/v2
+          OPENSTACK_IDENTITY_ENDPOINT: http://localhost:4013/v3
+          OPENSTACK_IMAGE_ENDPOINT: http://localhost:4014/v2
+          OPENSTACK_LOAD_BALANCER_ENDPOINT: http://localhost:4015/v2
+          OPENSTACK_NETWORK_ENDPOINT: http://localhost:4016/v2.0
+          OPENSTACK_OBJECT_STORE_ENDPOINT: http://localhost:4017/v1
         run: cargo test -p openstack_types --test mocked
