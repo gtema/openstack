@@ -25,8 +25,7 @@ use structable::{StructTable, StructTableOptions};
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityAuthApiRequest, IdentityAuthProjectApiRequest,
-        IdentityAuthProjectListBuilder,
+        IdentityApiRequest, IdentityAuthProjectApiRequest, IdentityAuthProjectListBuilder,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, FuzzySelectList},
@@ -112,12 +111,10 @@ impl Component for ProjectSelect {
                 ))));
             }
             Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::Auth(req)),
+                request: ApiRequest::Identity(IdentityApiRequest::Auth(_req)),
                 data,
             } => {
-                if let IdentityAuthApiRequest::Project(_) = *req {
-                    self.set_data(data)?;
-                }
+                self.set_data(data)?;
             }
             _ => {}
         };

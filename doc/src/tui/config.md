@@ -22,3 +22,31 @@ Every resource view can be configured in a separate section of the config.
 Resource key in a form <SERVICE>.<RESOURCE>[/<SUBRESOURCE>] as used by the
 codegenerator is a name of a view. `fields` is an array of field names to be
 populated. All column names are forcibly converted to the UPPER CASE.
+
+## Resource view options
+
+- **default_fields** (*list[str]*)
+
+  A list of fields to be displayed by default (in not wide mode). If not
+  specified, only certain fields determined internally are displayed. Output
+  columns are sorted in the order given in the list.
+
+- **wide** (*bool*)
+
+  If set to true, display all fields. If set to false, display only the
+  default_fields.
+
+- **fields** (*list[obj]*)
+
+  A list of column configuration. Consists of:
+
+  - **name** (*str*) - field name (resource attribute name)
+
+  - **width** (*int*) - column width in characters
+
+  - **min_width** (*int*) - minimum column width in characters
+
+  - **max_width** (*int*) - maximum column width in characters
+
+  - **json_pointer** (*str*) - JSON pointer to the extract from the resource
+    field. This is only applied in the list and not `wide` mode.

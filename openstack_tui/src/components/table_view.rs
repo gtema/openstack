@@ -14,6 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
+use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
 use ratatui::{
     prelude::*,
@@ -22,14 +23,14 @@ use ratatui::{
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
-use structable::{OutputConfig, StructTable, build_list_table};
+use structable::{StructTable, build_list_table};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::{debug, instrument};
 
 use crate::{
     action::Action,
     components::{Component, Frame, describe::Describe},
-    config::Config,
+    config::{Config, ViewConfig},
     error::TuiError,
     mode::Mode,
     utils::ResourceKey,
@@ -129,7 +130,7 @@ where
         self.command_tx.as_ref()
     }
 
-    pub fn get_output_config(&mut self) -> &mut OutputConfig {
+    pub fn get_output_config(&mut self) -> &mut ViewConfig {
         self.config.views.entry(T::get_key().into()).or_default()
     }
 
@@ -348,10 +349,78 @@ where
         Ok(())
     }
 
+    /// Re-sort table according to the configuration and determine column constraints
+    fn prepare_table(
+        &mut self,
+        headers: Vec<String>,
+        data: Vec<Vec<String>>,
+    ) -> (Vec<String>, Vec<Vec<String>>, Vec<Option<Constraint>>) {
+        let mut headers = headers;
+        let mut rows = data;
+        let mut column_constrains: Vec<Option<Constraint>> = vec![None; headers.len()];
+
+        let cfg = self.get_output_config();
+        // Offset from the current iteration pointer
+        if headers.len() > 1 {
+            let mut idx_offset: usize = 0;
+            for (default_idx, field) in cfg.default_fields.iter().unique().enumerate() {
+                if let Some(curr_idx) = headers
+                    .iter()
+                    .position(|x| x.to_lowercase() == field.to_lowercase())
+                {
+                    // Swap headers between current and should pos
+                    if default_idx - idx_offset < headers.len() {
+                        headers.swap(default_idx - idx_offset, curr_idx);
+                        for row in rows.iter_mut() {
+                            // Swap also data columns
+                            row.swap(default_idx - idx_offset, curr_idx);
+                        }
+                    }
+                } else {
+                    // This column is not found in the data. Perhars structable returned some
+                    // other name. Move the column to the very end
+                    if default_idx - idx_offset < headers.len() {
+                        let curr_hdr = headers.remove(default_idx - idx_offset);
+                        headers.push(curr_hdr);
+                        for row in rows.iter_mut() {
+                            let curr_cell = row.remove(default_idx - idx_offset);
+                            row.push(curr_cell);
+                        }
+                        // Some unmatched field moved to the end. Our "current" index should respect
+                        // the offset
+                        idx_offset += 1;
+                    }
+                }
+            }
+        }
+        // Find field configuration
+        for (idx, field) in headers.iter().enumerate() {
+            if let Some(field_config) = cfg
+                .fields
+                .iter()
+                .find(|x| x.name.to_lowercase() == field.to_lowercase())
+            {
+                let constraint = match (
+                    field_config.width,
+                    field_config.min_width,
+                    field_config.max_width,
+                ) {
+                    (Some(fixed), _, _) => Some(Constraint::Length(fixed as u16)),
+                    (None, Some(lower), _) => Some(Constraint::Min(lower as u16)),
+                    (None, None, Some(upper)) => Some(Constraint::Max(upper as u16)),
+                    _ => None,
+                };
+                column_constrains[idx] = constraint;
+            }
+        }
+        (headers, rows, column_constrains)
+    }
+
     /// Synchronize table data from internal vector of typed entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
         let view_config = self.get_output_config().clone();
-        let (table_headers, table_rows) = build_list_table(self.items.iter(), &view_config);
+        let data = build_list_table(self.items.iter(), &view_config);
+        let (table_headers, table_rows, _table_constraints) = self.prepare_table(data.0, data.1);
         let mut statuses: Vec<Option<String>> =
             self.items.iter().map(|item| item.status()).collect();
 

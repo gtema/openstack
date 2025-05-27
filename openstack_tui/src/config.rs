@@ -19,41 +19,16 @@ use ratatui::style::{Color, palette::tailwind};
 use serde::{Deserialize, de::Deserializer};
 use std::fmt;
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, HashMap},
     path::{Path, PathBuf},
 };
-use structable::OutputConfig;
+use structable::StructTableOptions;
 use thiserror::Error;
 use tracing::error;
 
 use crate::{action::Action, mode::Mode};
 
 const CONFIG: &str = include_str!("../.config/config.yaml");
-
-//#[derive(Clone, Debug, Deserialize, Default)]
-//pub struct AppConfig {
-//    #[serde(default)]
-//    pub _data_dir: PathBuf,
-//    #[serde(default)]
-//    pub _config_dir: PathBuf,
-//}
-
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct Config {
-    //#[serde(default, flatten)]
-    //pub config: AppConfig,
-    #[serde(default)]
-    pub mode_keybindings: HashMap<Mode, KeyBindings>,
-    #[serde(default)]
-    pub global_keybindings: KeyBindings,
-    /// Aliases for the mode (for use in the mode selector)
-    #[serde(default)]
-    pub mode_aliases: BTreeMap<String, Mode>,
-    #[serde(default)]
-    pub styles: Styles,
-    #[serde(default)]
-    pub views: HashMap<String, OutputConfig>,
-}
 
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.
@@ -159,6 +134,60 @@ impl fmt::Debug for ConfigFileBuilderError {
     }
 }
 
+/// TUI config
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct Config {
+    //#[serde(default, flatten)]
+    //pub config: AppConfig,
+    #[serde(default)]
+    pub mode_keybindings: HashMap<Mode, KeyBindings>,
+    #[serde(default)]
+    pub global_keybindings: KeyBindings,
+    /// Aliases for the mode (for use in the mode selector)
+    #[serde(default)]
+    pub mode_aliases: BTreeMap<String, Mode>,
+    #[serde(default)]
+    pub styles: Styles,
+    #[serde(default)]
+    pub views: HashMap<String, ViewConfig>,
+}
+
+/// Output configuration
+///
+/// This structure is controlling how the table table is being built for a structure.
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct ViewConfig {
+    /// Limit fields (their titles) to be returned
+    #[serde(default)]
+    pub default_fields: Vec<String>,
+    /// Fields configurations
+    #[serde(default)]
+    pub fields: Vec<FieldConfig>,
+    /// Defaults to wide mode
+    #[serde(default)]
+    pub wide: Option<bool>,
+}
+
+/// Field output configuration
+#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialOrd, PartialEq)]
+pub struct FieldConfig {
+    /// Attribute name
+    pub name: String,
+    /// Fixed width of the column
+    #[serde(default)]
+    pub width: Option<usize>,
+    /// Min width of the column
+    #[serde(default)]
+    pub min_width: Option<usize>,
+    /// Max width of the column
+    #[serde(default)]
+    pub max_width: Option<usize>,
+    /// [JSON pointer](https://datatracker.ietf.org/doc/html/rfc6901) to extract data from the
+    /// field
+    #[serde(default)]
+    pub json_pointer: Option<String>,
+}
+
 impl Config {
     pub fn new() -> Result<Self, ConfigError> {
         let default_config: config::Config = config::Config::builder()
@@ -205,6 +234,29 @@ impl Config {
     }
 }
 
+impl StructTableOptions for ViewConfig {
+    fn wide_mode(&self) -> bool {
+        self.wide.unwrap_or_default()
+    }
+
+    fn pretty_mode(&self) -> bool {
+        true
+    }
+
+    fn should_return_field<S: AsRef<str>>(&self, field: S, _is_wide_field: bool) -> bool {
+        self.default_fields
+            .iter()
+            .any(|x| x.to_lowercase() == field.as_ref().to_lowercase())
+    }
+
+    fn field_data_json_pointer<S: AsRef<str>>(&self, field: S) -> Option<String> {
+        self.fields
+            .iter()
+            .find(|x| x.name.to_lowercase() == field.as_ref().to_lowercase())
+            .and_then(|field_config| field_config.json_pointer.clone())
+    }
+}
+
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Eq, Ord, PartialOrd)]
 pub enum CommandType {
     /// ApiRequest action
@@ -245,15 +297,6 @@ impl<'de> Deserialize<'de> for KeyBindings {
 
         Ok(KeyBindings(keybindings))
     }
-}
-
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct ViewConfig {
-    /// List of fields to be shown
-    pub fields: BTreeSet<String>,
-    /// Wide mode (additional fields requested)
-    #[serde(default)]
-    pub wide: bool,
 }
 
 fn parse_key_event(raw: &str) -> Result<KeyEvent, String> {
