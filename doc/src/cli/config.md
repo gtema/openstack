@@ -2,9 +2,9 @@
 
 It is possible to configure different aspects of the OpenStackClient (not the
 clouds connection credentials) using the configuration file
-(`$XDG_CONFIG_DIR/osc/config.yaml`). This enables user to configurate which
-columns should be returned when no corresponding run time arguments on a
-resource base.
+([$XDG_CONFIG_DIR](https://docs.rs/dirs/latest/dirs/fn.config_dir.html)`/osc/config.yaml`).
+This enables user to configurate which columns should be returned when no
+corresponding run time arguments on a resource base.
 
 ```yaml
 views:
@@ -34,3 +34,31 @@ The key of the `views` map is a resource key shared among all
 [Codegenerator
 metadata](https://opendev.org/openstack/codegenerator/src/branch/master/metadata)
 for known resource keys.
+
+## Resource view options
+
+- **default_fields** (*list[str]*)
+
+  A list of fields to be displayed by default (in not wide mode). If not
+  specified, only certain fields determined internally are displayed. Output
+  columns are sorted in the order given in the list.
+
+- **wide** (*bool*)
+
+  If set to true, display all fields. If set to false, display only the
+  default_fields.
+
+- **fields** (*list[obj]*)
+
+  A list of column configuration. Consists of:
+
+  - **name** (*str*) - field name (resource attribute name)
+
+  - **width** (*int*) - column width in characters
+
+  - **min_width** (*int*) - minimum column width in characters
+
+  - **max_width** (*int*) - maximum column width in characters
+
+  - **json_pointer** (*str*) - JSON pointer to the extract from the resource
+    field. This is only applied in the list and not `wide` mode.

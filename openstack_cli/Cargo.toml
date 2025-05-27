@@ -83,6 +83,7 @@ tracing-subscriber = { workspace = true }
 url = { workspace = true }
 config.workspace = true
 dirs.workspace = true
+itertools.workspace = true
 
 [dev-dependencies]
 assert_cmd = "^2.0"

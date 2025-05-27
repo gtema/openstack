@@ -118,6 +118,10 @@ pub struct FieldConfig {
     /// Max width of the column
     #[serde(default)]
     pub max_width: Option<usize>,
+    /// [JSON pointer](https://datatracker.ietf.org/doc/html/rfc6901) to extract data from the
+    /// field
+    #[serde(default)]
+    pub json_pointer: Option<String>,
 }
 
 /// OpenStackClient configuration
