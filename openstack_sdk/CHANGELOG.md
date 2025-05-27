@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.1...openstack_sdk-v0.21.2) - 2025-05-27
+
+### Added
+
+- Make openapi specs reproducible ([#1244](https://github.com/gtema/openstack/pull/1244))
+
+### Other
+
+- Add global clippy config ([#1252](https://github.com/gtema/openstack/pull/1252))
+
 ## [0.21.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.0...openstack_sdk-v0.21.1) - 2025-05-18
 
 ### Added
