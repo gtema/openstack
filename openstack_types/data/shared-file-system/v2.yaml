@@ -3799,7 +3799,7 @@ components:
       in: query
       name: resource_id
       schema:
-        description: "The ID of the resource that the locks pertain to to filter resource\n
+        description: "The ID of the resource that the locks pertain to to filter resource\n\
           locks by.\n"
         format: uuid
         type:
@@ -4887,7 +4887,7 @@ components:
             updated_at:
               description: "The date and time stamp when the resource was last updated
                 within the\nservice's database. If a resource was never updated after
-                it was\ncreated, the value of this parameter is set to ``null``.\n
+                it was\ncreated, the value of this parameter is set to ``null``.\n\
                 \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
                 \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
                 returns the time zone as an\noffset from UTC.\n\nFor example, ``2016-12-31T13:14:15-05:00``.\n"
@@ -5038,7 +5038,7 @@ components:
             updated_at:
               description: "The date and time stamp when the resource was last updated
                 within the\nservice's database. If a resource was never updated after
-                it was\ncreated, the value of this parameter is set to ``null``.\n
+                it was\ncreated, the value of this parameter is set to ``null``.\n\
                 \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
                 \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
                 returns the time zone as an\noffset from UTC.\n\nFor example, ``2016-12-31T13:14:15-05:00``.\n"
@@ -5246,7 +5246,7 @@ components:
             updated_at:
               description: "The date and time stamp when the resource was last updated
                 within the\nservice's database. If a resource was never updated after
-                it was\ncreated, the value of this parameter is set to ``null``.\n
+                it was\ncreated, the value of this parameter is set to ``null``.\n\
                 \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
                 \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
                 returns the time zone as an\noffset from UTC.\n\nFor example, ``2016-12-31T13:14:15-05:00``.\n"
@@ -5422,7 +5422,7 @@ components:
               updated_at:
                 description: "The date and time stamp when the resource was last updated
                   within the\nservice's database. If a resource was never updated
-                  after it was\ncreated, the value of this parameter is set to ``null``.\n
+                  after it was\ncreated, the value of this parameter is set to ``null``.\n\
                   \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
                   \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if
                   included, returns the time zone as an\noffset from UTC.\n\nFor example,
