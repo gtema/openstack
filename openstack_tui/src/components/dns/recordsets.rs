@@ -21,7 +21,10 @@ use openstack_types::dns::v2::recordset::response::list::RecordsetResponse;
 
 use crate::{
     action::Action,
-    cloud_worker::dns::v2::{DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
+    cloud_worker::dns::v2::{
+        DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList, DnsZoneApiRequest,
+        DnsZoneRecordsetApiRequest, DnsZoneRecordsetList,
+    },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
     config::Config,
@@ -36,6 +39,26 @@ const VIEW_CONFIG_KEY: &str = "dns.recordset";
 impl ResourceKey for RecordsetResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
+    }
+}
+
+impl From<DnsRecordsetList> for DnsZoneRecordsetList {
+    fn from(value: DnsRecordsetList) -> Self {
+        Self {
+            _type: value._type,
+            data: value.data,
+            description: value.description,
+            limit: value.limit,
+            //market: value.market,
+            name: value.name,
+            sort_dir: value.sort_dir,
+            sort_key: value.sort_key,
+            status: value.status,
+            ttl: value.ttl,
+            zone_name: value.zone_name,
+            zone_id: value.zone_id.unwrap_or_default(),
+            ..Default::default()
+        }
     }
 }
 
@@ -59,9 +82,17 @@ impl Component for DnsRecordsets<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::DnsRecordsets = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
+                    if self.get_filters().zone_id.is_some() {
+                        return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                            DnsZoneRecordsetApiRequest::List(Box::new(
+                                self.get_filters().clone().into(),
+                            )),
+                        ))));
+                    } else {
+                        return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                            DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
+                        ))));
+                    }
                 }
             }
             Action::Mode {
@@ -70,27 +101,48 @@ impl Component for DnsRecordsets<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
+                if self.get_filters().zone_id.is_some() {
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        DnsZoneRecordsetApiRequest::List(Box::new(
+                            self.get_filters().clone().into(),
+                        )),
+                    ))));
+                } else {
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
+                    ))));
+                }
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::Dns(DnsApiRequest::Recordset(_req)),
+                request: ApiRequest::Dns(req),
                 data,
-            } => {
-                //if let DnsRecordsetApiRequest::List(_) = *req {
-                self.set_data(data)?;
-                //}
-            }
+            } => match req {
+                DnsApiRequest::Recordset(_) => {
+                    self.set_data(data)?;
+                }
+                DnsApiRequest::Zone(sub) => {
+                    if let DnsZoneApiRequest::Recordset(_) = *sub {
+                        self.set_data(data)?;
+                    }
+                }
+            },
             Action::SetDnsRecordsetListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
+                if self.get_filters().zone_id.is_some() {
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        DnsZoneRecordsetApiRequest::List(Box::new(
+                            self.get_filters().clone().into(),
+                        )),
+                    ))));
+                } else {
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
+                    ))));
+                }
             }
             //Action::DeleteDnsRecordset => {
             //    // only if we are currently in the right mode

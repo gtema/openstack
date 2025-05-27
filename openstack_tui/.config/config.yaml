@@ -82,7 +82,7 @@ mode_keybindings:
     "y":
       action: DescribeApiResponse
       description: YAML
-    "r":
+    "<enter>":
       action: ShowDnsZoneRecordsets
       description: Recordsets
     "ctrl-d":
@@ -228,7 +228,7 @@ mode_keybindings:
     "y":
       action: DescribeApiResponse
       description: YAML
-    "l":
+    "<enter>":
       action: ShowNetworkSecurityGroupRules
       description: Rules
   NetworkSecurityGroupRules:
@@ -313,60 +313,63 @@ mode_aliases:
 views:
   # Block Storage
   block_storage.backup:
-    fields: [ID, NAME, AZ, SIZE, STATUS, CREATED_AT]
+    default_fields: [id, name, az, size, status, created_at]
   block_storage.snapshots:
-    fields: [ID, NAME, STATUS, CREATED_AT]
+    default_fields: [id, name, status, created_at]
   block_storage.volume:
-    fields: [ID, NAME, AZ, SIZE, STATUS, UPDATED_AT]
-  # Compute
+    default_fields: [id, name, az, size, status, updated_at]
+  # compute
   compute.aggregate:
-    fields: [NAME, UUID, AZ, UPDATED_AT]
+    default_fields: [name, uuid, az, updated_at]
   compute.flavor:
-    fields: [id, name, vcpus, ram, disk]
+    default_fields: [id, name, vcpus, ram, disk, swap]
   compute.hypervisor:
-    fields: [IP, HOSTNAME, STATUS, STATE]
+    default_fields: [ip, hostname, status, state]
   compute.server/instance_action/event:
-    fields: [EVENT, RESULT, START_TIME, FINISH_TIME, HOST]
+    default_fields: [event, result, start_time, finish_time, host]
   compute.server/instance_action:
-    fields: [ID, ACTION, MESSAGE, START_TIME, USER_ID]
+    default_fields: [id, action, message, start_time, user_id]
   compute.server:
-    fields: [ID, NAME, STATUS, CREATED, UPDATED]
-  # DNS
+    default_fields: [id, name, flavor, status, created, updated]
+    fields:
+      - name: flavor
+        json_pointer: "/original_name"
+  # dns
   dns.recordset:
-    fields: [ID, NAME, STATUS, CREATED, UPDATED]
+    default_fields: [name, status, type, created, updated]
   dns.zone:
-    fields: [ID, NAME, STATUS, CREATED, UPDATED]
-  # Identity
+    default_fields: [name, status, type, email, created, updated]
+  # identity
   identity.group:
-    fields: [ID, NAME, DOMAIN, DESCRIPTION]
+    default_fields: [id, name, domain, description]
   identity.project:
-    fields: [ID, NAME, "PARENT ID", ENABLED, "DOMAIN ID"]
+    default_fields: [id, name, parent_id, enabled, domain_id]
   identity.user/application_credential:
-    fields: [ID, NAME, "EXPIRES AT", "UNRESTRICTED"]
+    default_fields: [id, name, expires_at, unrestricted, description]
   identity.user:
-    fields: [NAME, DOMAIN, ENABLED, EMAIL, "PWD EXPIRY"]
-  # Image
+    default_fields: [name, enabled, password_expires_at]
+  # image
   image.image:
-    fields: [ID, NAME, DISTRO, VERSION, ARCH, VISIBILITY]
-  # Load Balancer
+    default_fields: [id, name, distro, version, visibility, min_disk, min_ram]
+  # load balancer
   load-balancer.healthmonitor:
-    fields: [ID, NAME, STATUS, TYPE]
+    default_fields: [id, name, status, type]
   load-balancer.listener:
-    fields: [ID, NAME, STATUS, PROTOCOL, PORT]
+    default_fields: [id, name, status, protocol, port]
   load-balancer.loadbalancer:
-    fields: [ID, NAME, STATUS, ADDRESS]
+    default_fields: [id, name, status, address]
   load-balancer.pool/member:
-    fields: [ID, NAME, STATUS, PORT]
+    default_fields: [id, name, status, port]
   load-balancer.pool:
-    fields: [ID, NAME, STATUS, PROTOCOL]
-  # Network
+    default_fields: [id, name, status, protocol]
+  # network
   network.network:
-    fields: [ID, NAME, STATUS, CREATED_AT, UPDATED_AT]
+    default_fields: [id, name, status, description, created_at, updated_at]
   network.router:
-    fields: [ID, NAME, STATUS, CREATED_AT, UPDATED_AT]
+    default_fields: [id, name, status, description, created_at, updated_at]
   network.subnet:
-    fields: [ID, NAME, CIDR, DESCRIPTION, CREATED_AT]
+    default_fields: [id, name, cidr, description, created_at]
   network.security_group_rule:
-    fields: [ID, ETHERTYPE, DIRECTION, PROTOCOL, "RANGE MIN", "RANGE MAX"]
+    default_fields: [id, ethertype, direction, protocol, port_range_min, port_range_max, description]
   network.security_group:
-    fields: [ID, NAME, CREATED_AT, UPDATED_AT]
+    default_fields: [id, name, description, created_at, updated_at, description]
