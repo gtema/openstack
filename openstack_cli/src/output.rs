@@ -17,6 +17,7 @@
 use comfy_table::{
     Cell, Color, ColumnConstraint, ContentArrangement, Table, Width, presets::UTF8_FULL_CONDENSED,
 };
+use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
@@ -28,7 +29,7 @@ use crate::config::ViewConfig;
 use structable::{OutputConfig, StructTable, StructTableOptions};
 
 /// Output Processor
-#[derive(Clone)]
+#[derive(Default, Clone)]
 pub(crate) struct OutputProcessor {
     /// Resource output configuration
     pub(crate) config: Option<ViewConfig>,
@@ -87,11 +88,26 @@ impl StructTableOptions for OutputProcessor {
             (self.fields.is_empty() && self.wide_mode()) || is_requested
         }
     }
+
+    fn field_data_json_pointer<S: AsRef<str>>(&self, field: S) -> Option<String> {
+        if !self.wide_mode() {
+            self.config.as_ref().and_then(|config| {
+                config
+                    .fields
+                    .iter()
+                    .find(|x| x.name.to_lowercase() == field.as_ref().to_lowercase())
+                    .and_then(|field_config| field_config.json_pointer.clone())
+            })
+        } else {
+            None
+        }
+    }
 }
 
 /// Output target (human or machine) enum
-#[derive(Clone)]
+#[derive(Default, Clone)]
 pub(crate) enum OutputFor {
+    #[default]
     Human,
     Machine,
 }
@@ -161,29 +177,33 @@ impl OutputProcessor {
             // Offset from the current iteration pointer
             if headers.len() > 1 {
                 let mut idx_offset: usize = 0;
-                for (idx, field) in cfg.default_fields.iter().enumerate() {
+                for (default_idx, field) in cfg.default_fields.iter().unique().enumerate() {
                     if let Some(curr_idx) = headers
                         .iter()
                         .position(|x| x.to_lowercase() == field.to_lowercase())
                     {
                         // Swap headers between current and should pos
-                        headers.swap(idx - idx_offset, curr_idx);
-                        for row in rows.iter_mut() {
-                            // Swap also data columns
-                            row.swap(idx - idx_offset, curr_idx);
+                        if default_idx - idx_offset < headers.len() {
+                            headers.swap(default_idx - idx_offset, curr_idx);
+                            for row in rows.iter_mut() {
+                                // Swap also data columns
+                                row.swap(default_idx - idx_offset, curr_idx);
+                            }
                         }
                     } else {
                         // This column is not found in the data. Perhars structable returned some
                         // other name. Move the column to the very end
-                        let curr_hdr = headers.remove(idx - idx_offset);
-                        headers.push(curr_hdr);
-                        for row in rows.iter_mut() {
-                            let curr_cell = row.remove(idx - idx_offset);
-                            row.push(curr_cell);
+                        if default_idx - idx_offset < headers.len() {
+                            let curr_hdr = headers.remove(default_idx - idx_offset);
+                            headers.push(curr_hdr);
+                            for row in rows.iter_mut() {
+                                let curr_cell = row.remove(default_idx - idx_offset);
+                                row.push(curr_cell);
+                            }
+                            // Some unmatched field moved to the end. Our "current" index should respect
+                            // the offset
+                            idx_offset += 1;
                         }
-                        // Some unmatched field moved to the end. Our "current" index should respect
-                        // the offset
-                        idx_offset += 1;
                     }
                 }
             }
@@ -348,25 +368,11 @@ mod tests {
 
     #[test]
     fn test_wide_mode() {
-        assert!(
-            !OutputProcessor {
-                config: None,
-                target: OutputFor::Human,
-                table_arrangement: TableArrangement::Disabled,
-                fields: BTreeSet::new(),
-                wide: false,
-                pretty: false,
-            }
-            .wide_mode()
-        );
+        assert!(!OutputProcessor::default().wide_mode());
         assert!(
             OutputProcessor {
-                config: None,
-                target: OutputFor::Human,
-                table_arrangement: TableArrangement::Disabled,
-                fields: BTreeSet::new(),
                 wide: true,
-                pretty: false,
+                ..Default::default()
             }
             .wide_mode()
         );
@@ -376,11 +382,7 @@ mod tests {
                     wide: Some(true),
                     ..Default::default()
                 }),
-                target: OutputFor::Human,
-                table_arrangement: TableArrangement::Disabled,
-                fields: BTreeSet::new(),
-                wide: false,
-                pretty: false,
+                ..Default::default()
             }
             .wide_mode()
         );
@@ -388,14 +390,7 @@ mod tests {
 
     #[test]
     fn test_field_returned_no_selection() {
-        let out = OutputProcessor {
-            config: None,
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
-            fields: BTreeSet::new(),
-            wide: false,
-            pretty: false,
-        };
+        let out = OutputProcessor::default();
 
         assert!(
             out.should_return_field("dummy", false),
@@ -407,12 +402,8 @@ mod tests {
         );
 
         let out = OutputProcessor {
-            config: None,
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
-            fields: BTreeSet::new(),
             wide: true,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -428,12 +419,8 @@ mod tests {
     #[test]
     fn test_field_returned_selection_no_config() {
         let out = OutputProcessor {
-            config: None,
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
             fields: BTreeSet::from(["foo".to_string()]),
-            wide: false,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -454,12 +441,9 @@ mod tests {
         );
 
         let out = OutputProcessor {
-            config: None,
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
             fields: BTreeSet::from(["foo".to_string()]),
             wide: true,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -500,11 +484,8 @@ mod tests {
                 default_fields: vec!["foo".to_string()],
                 ..Default::default()
             }),
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
             fields: BTreeSet::from(["bar".to_string()]),
-            wide: false,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -537,11 +518,9 @@ mod tests {
                 default_fields: vec!["foo".to_string()],
                 ..Default::default()
             }),
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
             fields: BTreeSet::from(["bar".to_string()]),
             wide: true,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -577,11 +556,7 @@ mod tests {
                 default_fields: vec!["foo".to_string()],
                 ..Default::default()
             }),
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
-            fields: BTreeSet::new(),
-            wide: false,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -606,11 +581,8 @@ mod tests {
                 default_fields: vec!["foo".to_string()],
                 ..Default::default()
             }),
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
-            fields: BTreeSet::new(),
             wide: true,
-            pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -648,11 +620,7 @@ mod tests {
                 }],
                 ..Default::default()
             }),
-            target: OutputFor::Human,
-            table_arrangement: TableArrangement::Disabled,
-            fields: BTreeSet::new(),
-            wide: true,
-            pretty: false,
+            ..Default::default()
         };
         let (hdr, rows, constraints) = out.prepare_table(
             vec![
@@ -760,6 +728,78 @@ mod tests {
                     "22".to_string(),
                     "24".to_string(),
                 ],
+            ],
+            rows,
+            "row columns sorted properly"
+        );
+    }
+
+    #[test]
+    fn test_prepare_table_duplicated_values() {
+        let out = OutputProcessor {
+            config: Some(ViewConfig {
+                default_fields: vec![
+                    "foo".to_string(),
+                    "bar".to_string(),
+                    "foo".to_string(),
+                    "baz".to_string(),
+                ],
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let (hdr, rows, _constraints) = out.prepare_table(
+            vec!["bar".to_string(), "foo".to_string(), "baz".to_string()],
+            vec![
+                vec!["11".to_string(), "12".to_string(), "13".to_string()],
+                vec!["21".to_string(), "22".to_string(), "23".to_string()],
+            ],
+        );
+        assert_eq!(
+            vec!["foo".to_string(), "bar".to_string(), "baz".to_string(),],
+            hdr,
+            "headers in the correct sort order"
+        );
+        assert_eq!(
+            vec![
+                vec!["12".to_string(), "11".to_string(), "13".to_string(),],
+                vec!["22".to_string(), "21".to_string(), "23".to_string(),],
+            ],
+            rows,
+            "row columns sorted properly"
+        );
+    }
+
+    #[test]
+    fn test_prepare_table_missing_default_fields() {
+        let out = OutputProcessor {
+            config: Some(ViewConfig {
+                default_fields: vec![
+                    "foo".to_string(),
+                    "bar1".to_string(),
+                    "foo1".to_string(),
+                    "baz1".to_string(),
+                ],
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let (hdr, rows, _constraints) = out.prepare_table(
+            vec!["bar".to_string(), "foo".to_string(), "baz".to_string()],
+            vec![
+                vec!["11".to_string(), "12".to_string(), "13".to_string()],
+                vec!["21".to_string(), "22".to_string(), "23".to_string()],
+            ],
+        );
+        assert_eq!(
+            vec!["foo".to_string(), "baz".to_string(), "bar".to_string(),],
+            hdr,
+            "headers in the correct sort order"
+        );
+        assert_eq!(
+            vec![
+                vec!["12".to_string(), "13".to_string(), "11".to_string(),],
+                vec!["22".to_string(), "23".to_string(), "21".to_string(),],
             ],
             rows,
             "row columns sorted properly"

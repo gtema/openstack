@@ -1,6 +1,15 @@
 ---
 views:
   # block storage
+  block-storage.attachment:
+    default_fields: [id, instance, volume_id, status, attach_mode, attached_at]
+    fields:
+      - name: id
+        width: 38
+      - name: instance
+        width: 38
+      - name: volume_id
+        width: 38
   block-storage.backup:
     default_fields: [id, name, availability_zone, description, fail_reason, is_incremental, metadata, object_count, size, snapshot_id, status, volume_id, created_at]
     fields:
@@ -32,10 +41,10 @@ views:
   compute.aggregate:
     default_fields: [name, uuid, az, updated_at]
     fields:
-      - name: id
+      - name: uuid
         width: 38
   compute.flavor:
-    default_fields: [id, name, vcpus, ram, disk]
+    default_fields: [id, name, vcpus, ram, disk, swap, description]
     fields:
       - name: id
         width: 38
@@ -67,6 +76,10 @@ views:
         width: 7
       - name: status
         width: 8
+      - name: flavor
+        json_pointer: "/original_name"
+      - name: image
+        json_pointer: "/id"
   # dns
   dns.recordset:
     default_fields: [id, name, description, records, status, type, zone_id, zone_name, created_at, updated_at]
@@ -96,25 +109,47 @@ views:
       - name: project_id
         width: 34
   # identity
+  identity.domain:
+    default_fields: [id, name, enabled, description, options, tags]
+    fields:
+      - name: id
+        width: 34
   identity.group:
     default_fields: [id, name, domain_id, description]
     fields:
       - name: id
         width: 34
+      - name: domain_id
+        width: 34
   identity.project:
-    default_fields: [id, name, domain_id, enabled, parent_id]
+    default_fields: [id, name, domain_id, enabled, parent_id, description, options, tags]
     fields:
       - name: id
         width: 34
+      - name: domain_id
+        width: 34
+      - name: parent_id
+        width: 34
   identity.user/application_credential:
-    default_fields: [id, name, expires_at, project_id, roles, unrestricted]
+    default_fields: [id, name, description, project_id, expires_at, roles, unrestricted]
+    fields:
+      - name: id
+        width: 34
+      - name: project_id
+        width: 34
+  identity.user/access_rule:
+    default_fields: [id, service, path, method]
     fields:
       - name: id
         width: 34
   identity.user:
-    default_fields: [id, name, domain_id, description, enabled, password_expires_at]
+    default_fields: [id, name, domain_id, enabled, description, password_expires_at]
     fields:
       - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+      - name: default_project_id
         width: 34
   # image
   image.image:
@@ -131,25 +166,51 @@ views:
       - name: id
         width: 38
   load-balancer.listener:
-    default_fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, protocol, port, tags]
+    default_fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, port, tags]
     fields:
       - name: id
+        width: 38
+      - name: default_pool_id
         width: 38
   load-balancer.loadbalancer:
     default_fields: [id, name, admin_state_up, description, listeners, operating_status, pools, provisioning_status, status, vip_address, tags]
     fields:
       - name: id
         width: 38
+      - name: vip_network_id
+        width: 38
+      - name: vip_subnet_id
+        width: 38
+      - name: vip_port_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
   load-balancer.pool/member:
     default_fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protocol_port, provisioning_status, subnet_id, weight, tags]
     fields:
       - name: id
         width: 38
+      - name: subnet_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
   load-balancer.pool:
     default_fields: [id, name, admin_state_up, description, healthmonitor_id, lb_algorithm, listeners, loadbalancers, members, operating_status, protocol, provisioning_status, tls_enabled, tags]
     fields:
       - name: id
         width: 38
+      - name: healthmonitor_id
+        width: 38
+      - name: admin_state_up
+        min_width: 5
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
   # network
   network.network:
     default_fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
@@ -182,7 +243,12 @@ views:
       - name: tenant_id
         width: 34
   network.router:
-    default_fields: [id, name, admin_stateu_up, description, external_gateway_info, status, created_at, tags]
+    default_fields: [id, name, admin_state_up, description, external_gateway_info, status, created_at, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: tenant_id
+        width: 34
   network.subnet:
     default_fields: [id, name, allocation_pools, cidr, created_at, description, dns_nameservers, gateway_ip, ip_version, tags]
     fields:
