@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.2](https://github.com/gtema/openstack/compare/openstack_types-v0.21.1...openstack_types-v0.21.2) - 2025-05-28
+
+### Added
+
+- Make openapi specs reproducible ([#1244](https://github.com/gtema/openstack/pull/1244))
+
+### Fixed
+
+- Fix type conversion of const bool ([#1258](https://github.com/gtema/openstack/pull/1258))
+- Ensure swift bytes are positive integers ([#1255](https://github.com/gtema/openstack/pull/1255))
+- Add missed serde macros in types ([#1254](https://github.com/gtema/openstack/pull/1254))
+
+### Other
+
+- Add global clippy config ([#1252](https://github.com/gtema/openstack/pull/1252))
+- Fix lint for openstack_types tests ([#1250](https://github.com/gtema/openstack/pull/1250))
+
 ## [0.21.1](https://github.com/gtema/openstack/compare/openstack_types-v0.21.0...openstack_types-v0.21.1) - 2025-05-18
 
 ### Added
