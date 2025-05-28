@@ -282,3 +282,19 @@ views:
     default_fields: [name, count, bytes, last_modified]
   object-store.object:
     default_fields: [name, bytes, content_type, last_modified, hash, symlink_path]
+hints:
+  - >
+    You can configure which fields are returned for the resource by setting the
+    `default_fields` option in the `general` section of the configuration file
+    ($XDG_CONFIG_DIR/osc/config.yaml).
+  - >
+    Use $XDG_CONFIG_DIR/osc/config.yaml configuration file to modify default
+    fields, column width constraints or hints.
+  - "Use `-o json | jq -r '.[].id'` to return list of resource ids only."
+  - "Use `--pretty` to apply pretty formatting of the serialized data in the table."
+  - "List operations support `--max-items <NUM>` argument to limit the number of items returned."
+  - "Place you custom hints in the `hints` or `command_hints` section of the configuration file."
+  - "Disable hints by setting `enable_hints: false` in the configuration file."
+command_hints:
+  object-store.object:
+    list: []

@@ -65,7 +65,8 @@ impl ContainerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Container with {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("object-store.container"), Some("delete"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -89,6 +90,7 @@ impl ContainerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        op.show_command_hint()?;
         Ok(())
     }
 }

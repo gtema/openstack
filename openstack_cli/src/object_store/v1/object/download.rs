@@ -107,7 +107,8 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Object with {:?}", self);
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.object");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("object-store.object"), Some("download"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -156,6 +157,7 @@ impl ObjectCommand {
             .parse()
             .unwrap();
         download_file(self.file.clone().unwrap_or(self.object.clone()), size, data).await?;
+        op.show_command_hint()?;
         Ok(())
     }
 }

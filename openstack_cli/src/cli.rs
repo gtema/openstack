@@ -19,7 +19,6 @@ use clap::builder::{
 };
 use clap::{Args, Parser, ValueEnum};
 use clap_complete::Shell;
-use std::error::Error;
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -30,7 +29,7 @@ use crate::auth;
 use crate::block_storage::v3 as block_storage;
 use crate::catalog;
 use crate::compute::v2 as compute;
-use crate::config::Config;
+use crate::config::{Config, ConfigError};
 use crate::container_infrastructure_management::v1 as container_infra;
 use crate::dns::v2 as dns;
 use crate::identity::v3 as identity;
@@ -128,8 +127,12 @@ pub struct Cli {
 }
 
 /// Parse config file
-pub fn parse_config(_s: &str) -> Result<Config, Box<dyn Error + Send + Sync + 'static>> {
-    Ok(Config::new()?)
+pub fn parse_config(s: &str) -> Result<Config, OpenStackCliError> {
+    let mut builder = Config::builder();
+    if !s.is_empty() {
+        builder = builder.add_source(s).map_err(ConfigError::builder)?;
+    }
+    Ok(builder.build()?)
 }
 
 /// Global CLI options

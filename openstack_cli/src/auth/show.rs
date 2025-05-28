@@ -117,7 +117,7 @@ impl ShowCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show auth info");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args(parsed_args, Some("auth"), Some("show"));
 
         if let Some(auth_info) = client.get_auth_info() {
             match op.target {
@@ -129,6 +129,7 @@ impl ShowCommand {
                 }
             }
         }
+        op.show_command_hint()?;
         Ok(())
     }
 }

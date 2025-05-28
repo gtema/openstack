@@ -53,26 +53,37 @@ pub enum ConfigError {
         #[from]
         source: config::ConfigError,
     },
+    /// Parsing error
+    #[error("failed to parse config: {}", source)]
+    Builder {
+        /// The source of the error.
+        #[from]
+        source: ConfigBuilderError,
+    },
 }
 
 impl ConfigError {
-    /// Build a `[ConfigError::Parse]` error from `[config::ConfigError]`
+    /// Build a `[ConfigError::Parse]` error from `[ConfigError]`
     pub fn parse(source: config::ConfigError) -> Self {
         ConfigError::Parse { source }
     }
+    /// Build a `[ConfigError::Builder]` error from `[ConfigBuilderError]`
+    pub fn builder(source: ConfigBuilderError) -> Self {
+        ConfigError::Builder { source }
+    }
 }
 
-/// Errors which may occur when adding sources to the [`ConfigFileBuilder`].
+/// Errors which may occur when adding sources to the [`ConfigBuilder`].
 #[derive(Error)]
 #[non_exhaustive]
-pub enum ConfigFileBuilderError {
+pub enum ConfigBuilderError {
     /// File parsing error
     #[error("failed to parse file {path:?}: {source}")]
     FileParse {
         /// Error source
         source: Box<config::ConfigError>,
         /// Builder object
-        builder: ConfigFileBuilder,
+        builder: ConfigBuilder,
         /// Error file path
         path: PathBuf,
     },
@@ -82,7 +93,7 @@ pub enum ConfigFileBuilderError {
         /// Error source
         source: Box<config::ConfigError>,
         /// Builder object
-        builder: ConfigFileBuilder,
+        builder: ConfigBuilder,
         /// Error file path
         path: PathBuf,
     },
@@ -124,6 +135,10 @@ pub struct FieldConfig {
     pub json_pointer: Option<String>,
 }
 
+const fn _default_true() -> bool {
+    true
+}
+
 /// OpenStackClient configuration
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct Config {
@@ -131,27 +146,36 @@ pub struct Config {
     /// and the value being an `[OutputConfig]`
     #[serde(default)]
     pub views: HashMap<String, ViewConfig>,
+    /// List of CLI hints per resource
+    #[serde(default)]
+    pub command_hints: HashMap<String, HashMap<String, Vec<String>>>,
+    /// General hints for the CLI to be used independent on the command
+    #[serde(default)]
+    pub hints: Vec<String>,
+    /// Enable/disable show the hints after successful command execution. Enabled by default
+    #[serde(default = "_default_true")]
+    pub enable_hints: bool,
 }
 
 /// A builder to create a [`ConfigFile`] by specifying which files to load.
-pub struct ConfigFileBuilder {
+pub struct ConfigBuilder {
     /// Config source files
     sources: Vec<config::Config>,
 }
 
-impl ConfigFileBuilder {
+impl ConfigBuilder {
     /// Add a source to the builder. This will directly parse the config and check if it is valid.
     /// Values of sources added first will be overridden by later added sources, if the keys match.
     /// In other words, the sources will be merged, with the later taking precedence over the
     /// earlier ones.
-    pub fn add_source(mut self, source: impl AsRef<Path>) -> Result<Self, ConfigFileBuilderError> {
+    pub fn add_source(mut self, source: impl AsRef<Path>) -> Result<Self, ConfigBuilderError> {
         let config = match config::Config::builder()
             .add_source(config::File::from(source.as_ref()))
             .build()
         {
             Ok(config) => config,
             Err(error) => {
-                return Err(ConfigFileBuilderError::FileParse {
+                return Err(ConfigBuilderError::FileParse {
                     source: Box::new(error),
                     builder: self,
                     path: source.as_ref().to_owned(),
@@ -160,7 +184,7 @@ impl ConfigFileBuilder {
         };
 
         if let Err(error) = config.clone().try_deserialize::<Config>() {
-            return Err(ConfigFileBuilderError::ConfigDeserialize {
+            return Err(ConfigBuilderError::ConfigDeserialize {
                 source: Box::new(error),
                 builder: self,
                 path: source.as_ref().to_owned(),
@@ -173,26 +197,26 @@ impl ConfigFileBuilder {
 
     /// This will build a [`ConfigFile`] with the previously specified sources. Since
     /// the sources have already been checked on errors, this will not fail.
-    pub fn build(self) -> Config {
+    pub fn build(self) -> Result<Config, ConfigError> {
         let mut config = config::Config::builder();
 
         for source in self.sources {
             config = config.add_source(source);
         }
 
-        config.build().unwrap().try_deserialize().unwrap()
+        Ok(config.build()?.try_deserialize::<Config>()?)
     }
 }
 
-impl fmt::Debug for ConfigFileBuilderError {
+impl fmt::Debug for ConfigBuilderError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ConfigFileBuilderError::FileParse { source, path, .. } => f
+            ConfigBuilderError::FileParse { source, path, .. } => f
                 .debug_struct("FileParse")
                 .field("source", source)
                 .field("path", path)
                 .finish_non_exhaustive(),
-            ConfigFileBuilderError::ConfigDeserialize { source, path, .. } => f
+            ConfigBuilderError::ConfigDeserialize { source, path, .. } => f
                 .debug_struct("ConfigDeserialize")
                 .field("source", source)
                 .field("path", path)
@@ -202,6 +226,18 @@ impl fmt::Debug for ConfigFileBuilderError {
 }
 
 impl Config {
+    /// Get the config builder
+    pub fn builder() -> ConfigBuilder {
+        let default_config: config::Config = config::Config::builder()
+            .add_source(config::File::from_str(CONFIG, config::FileFormat::Yaml))
+            .build()
+            .expect("default config must be valid");
+
+        ConfigBuilder {
+            sources: Vec::from([default_config]),
+        }
+    }
+
     /// Instantiate new config reading default config updating it with local configuration
     pub fn new() -> Result<Self, ConfigError> {
         let default_config: config::Config = config::Config::builder()
@@ -209,7 +245,7 @@ impl Config {
             .build()?;
 
         let config_dir = get_config_dir();
-        let mut builder = ConfigFileBuilder {
+        let mut builder = ConfigBuilder {
             sources: Vec::from([default_config]),
         };
 
@@ -224,10 +260,10 @@ impl Config {
 
                 builder = match builder.add_source(config_dir.join(file)) {
                     Ok(builder) => builder,
-                    Err(ConfigFileBuilderError::FileParse { source, .. }) => {
+                    Err(ConfigBuilderError::FileParse { source, .. }) => {
                         return Err(ConfigError::parse(*source));
                     }
-                    Err(ConfigFileBuilderError::ConfigDeserialize {
+                    Err(ConfigBuilderError::ConfigDeserialize {
                         source,
                         builder,
                         path,
@@ -244,7 +280,7 @@ impl Config {
             tracing::error!("No configuration file found. Application may not behave as expected");
         }
 
-        Ok(builder.build())
+        builder.build()
     }
 }
 
@@ -278,15 +314,22 @@ mod tests {
                 fields:
                   - name: "b"
                     min_width: 1
+            command_hints:
+              res:
+                cmd:
+                  - hint1
+                  - hint2
+            hints:
+              - hint1
+              - hint2
+            enable_hints: true
         "#;
 
         write!(config_file, "{}", CONFIG_DATA).unwrap();
 
-        let _cfg = ConfigFileBuilder {
-            sources: Vec::new(),
-        }
-        .add_source(config_file.path())
-        .unwrap()
-        .build();
+        let _cfg = Config::builder()
+            .add_source(config_file.path())
+            .unwrap()
+            .build();
     }
 }

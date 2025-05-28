@@ -73,7 +73,15 @@ pub enum OpenStackCliError {
 
     /// Configuration error.
     #[error(transparent)]
-    ConfigError {
+    CliConfig {
+        /// The source of the error.
+        #[from]
+        source: crate::config::ConfigError,
+    },
+
+    /// Configuration error.
+    #[error(transparent)]
+    CloudConfig {
         /// The source of the error.
         #[from]
         source: openstack_sdk::config::ConfigError,

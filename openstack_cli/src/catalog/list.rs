@@ -100,7 +100,7 @@ impl ListCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Catalog");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args(parsed_args, Some("catalog"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let data: Vec<Value> = client
@@ -111,6 +111,7 @@ impl ListCommand {
             .collect();
 
         op.output_list::<Catalog>(data).unwrap();
+        op.show_command_hint()?;
         Ok(())
     }
 }
