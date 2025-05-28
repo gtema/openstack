@@ -49,7 +49,7 @@ impl From<DnsRecordsetList> for DnsZoneRecordsetList {
             data: value.data,
             description: value.description,
             limit: value.limit,
-            //market: value.market,
+            marker: value.marker,
             name: value.name,
             sort_dir: value.sort_dir,
             sort_key: value.sort_key,
@@ -57,7 +57,6 @@ impl From<DnsRecordsetList> for DnsZoneRecordsetList {
             ttl: value.ttl,
             zone_name: value.zone_name,
             zone_id: value.zone_id.unwrap_or_default(),
-            ..Default::default()
         }
     }
 }

@@ -53,7 +53,7 @@ pub struct Request<'a> {
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     #[builder(default, setter(into))]
-    market: Option<Cow<'a, str>>,
+    marker: Option<Cow<'a, str>>,
 
     /// Filter results to only show zones that have a name matching the filter
     #[builder(default, setter(into))]
@@ -137,7 +137,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("data", self.data.as_ref());
         params.push_opt("description", self.description.as_ref());
         params.push_opt("limit", self.limit);
-        params.push_opt("market", self.market.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("name", self.name.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());

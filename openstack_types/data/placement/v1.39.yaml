@@ -933,13 +933,13 @@ components:
         by a comma-separated list of strings representing aggregate uuids. The resource
         providers in the allocation request in the response must directly or via the
         root provider be associated with the aggregate or aggregates identified by
-        uuid:\n``member_of=5e08ea53-c4c6-448e-9334-ac4953de3cfa``, ``member_of=in:42896e0d-205d-4fe3-bd1e-100924931787,5e08ea53-c4c6-448e-9334-ac4953de3cfa``\n
+        uuid:\n``member_of=5e08ea53-c4c6-448e-9334-ac4953de3cfa``, ``member_of=in:42896e0d-205d-4fe3-bd1e-100924931787,5e08ea53-c4c6-448e-9334-ac4953de3cfa``\n\
         Starting from microversion 1.24 specifying multiple member_of query string
         parameters is possible. Multiple member_of parameters will result in filtering
         providers that are directly or via root provider associated with aggregates
         listed in all of the member_of query string values. For example, to get the
         providers that are associated with aggregate A as well as associated with
-        any of aggregates B or C, the user could issue the following query: ``member_of=AGGA_UUID&member_of=in:AGGB_UUID,AGGC_UUID``\n
+        any of aggregates B or C, the user could issue the following query: ``member_of=AGGA_UUID&member_of=in:AGGB_UUID,AGGC_UUID``\n\
         Starting from microversion 1.32 specifying forbidden aggregates is supported
         in the member_of query string parameter. Forbidden aggregates are prefixed
         with a !. This negative expression can also be used in multiple member_of
@@ -947,7 +947,7 @@ components:
         to “Candidate resource providers must be in AGGA and not in AGGB.” We do NOT
         support ! on the values within in:, but we support !in:. Both of the following
         two example queries return candidate resource providers that are NOT in AGGA,
-        AGGB, or AGGC: ``member_of=!in:AGGA_UUID,AGGB_UUID,AGGC_UUID``, ``member_of=!AGGA_UUID&member_of=!AGGB_UUID&member_of=!AGGC_UUID``\n
+        AGGB, or AGGC: ``member_of=!in:AGGA_UUID,AGGB_UUID,AGGC_UUID``, ``member_of=!AGGA_UUID&member_of=!AGGB_UUID&member_of=!AGGC_UUID``\n\
         We do not check if the same aggregate uuid is in both positive and negative
         expression to return 400 BadRequest. We still return 200 for such cases. For
         example: ``member_of=AGGA_UUID&member_of=!AGGA_UUID`` would return empty allocation_requests
@@ -980,17 +980,17 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     required:
-      description: "A comma-separated list of traits that a provider must have:\n
-        ``required=HW_CPU_X86_AVX,HW_CPU_X86_SSE``\n Allocation requests in the response
-        will be for resource providers that have capacity for all requested resources
-        and the set of those resource providers will collectively contain all of the
-        required traits. These traits may be satisfied by any provider in the same
-        non-sharing tree or associated via aggregate as far as that provider also
-        contributes resource to the request. Starting from microversion 1.22 traits
-        which are forbidden from any resource provider contributing resources to the
-        request may be expressed by prefixing a trait with a `!`.\nStarting from microversion
-        1.39 the required query parameter can be repeated. The trait lists from the
-        repeated parameters are AND-ed together. So:\n``required=T1,!T2&required=T3``
+      description: "A comma-separated list of traits that a provider must have:\n\
+        \ ``required=HW_CPU_X86_AVX,HW_CPU_X86_SSE``\n Allocation requests in the
+        response will be for resource providers that have capacity for all requested
+        resources and the set of those resource providers will collectively contain
+        all of the required traits. These traits may be satisfied by any provider
+        in the same non-sharing tree or associated via aggregate as far as that provider
+        also contributes resource to the request. Starting from microversion 1.22
+        traits which are forbidden from any resource provider contributing resources
+        to the request may be expressed by prefixing a trait with a `!`.\nStarting
+        from microversion 1.39 the required query parameter can be repeated. The trait
+        lists from the repeated parameters are AND-ed together. So:\n``required=T1,!T2&required=T3``
         means T1 and not T2 and T3.\n Also starting from microversion 1.39 the required
         parameter supports the syntax:\n``required=in:T1,T2,T3`` which means T1 or
         T2 or T3.\nMixing forbidden traits into an in: prefixed value is not supported

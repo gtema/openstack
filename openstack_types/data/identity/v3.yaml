@@ -8915,7 +8915,7 @@ components:
         \  - gt: expiration time higher than the timestamp\n  - gte: expiration time
         higher than or equal to the timestamp\n  - eq: expiration time equal to the
         timestamp\n  - neq: expiration time not equal to the timestamp\n\nValid timestamps
-        are of the form: `YYYY-MM-DDTHH:mm:ssZ`.For example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z`\n
+        are of the form: `YYYY-MM-DDTHH:mm:ssZ`.For example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z`\n\
         The example would return a list of users whose password expired before the
         timestamp `(2016-12-08T22:02:00Z).`"
       in: query
@@ -8928,8 +8928,8 @@ components:
           than the timestamp\n  - lte: expiration time lower than or equal to the
           timestamp\n  - gt: expiration time higher than the timestamp\n  - gte: expiration
           time higher than or equal to the timestamp\n  - eq: expiration time equal
-          to the timestamp\n  - neq: expiration time not equal to the timestamp\n\n
-          Valid timestamps are of the form: `YYYY-MM-DDTHH:mm:ssZ`.For example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z`\n
+          to the timestamp\n  - neq: expiration time not equal to the timestamp\n\n\
+          Valid timestamps are of the form: `YYYY-MM-DDTHH:mm:ssZ`.For example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z`\n\
           The example would return a list of users whose password expired before the
           timestamp `(2016-12-08T22:02:00Z).`"
         type: string
