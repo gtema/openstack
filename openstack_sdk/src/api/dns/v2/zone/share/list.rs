@@ -41,7 +41,7 @@ pub struct Request<'a> {
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     #[builder(default, setter(into))]
-    market: Option<Cow<'a, str>>,
+    marker: Option<Cow<'a, str>>,
 
     /// Filter results to only show resources that have a matching
     /// target_project_id
@@ -99,7 +99,7 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("limit", self.limit);
-        params.push_opt("market", self.market.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("target_project_id", self.target_project_id.as_ref());
 
         params

@@ -23520,7 +23520,7 @@ components:
                       - ingress
                     type: string
                   ethertype:
-                    description: "Must be IPv4 or IPv6, and addresses represented\n
+                    description: "Must be IPv4 or IPv6, and addresses represented\n\
                       in CIDR must match the ingress or egress rules."
                     enum:
                       - IPv4
@@ -23537,8 +23537,8 @@ components:
                   port_range_max:
                     description: "The maximum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be greater than or equal to\n
-                      the `port_range_min` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be greater than or equal to\n\
+                      the `port_range_min` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP code."
                     type:
                       - integer
@@ -23546,8 +23546,8 @@ components:
                   port_range_min:
                     description: "The minimum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be less than or equal to\n
-                      the `port_range_max` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be less than or equal to\n\
+                      the `port_range_max` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP type."
                     type:
                       - integer
@@ -23698,7 +23698,7 @@ components:
                       - ingress
                     type: string
                   ethertype:
-                    description: "Must be IPv4 or IPv6, and addresses represented\n
+                    description: "Must be IPv4 or IPv6, and addresses represented\n\
                       in CIDR must match the ingress or egress rules."
                     enum:
                       - IPv4
@@ -23715,8 +23715,8 @@ components:
                   port_range_max:
                     description: "The maximum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be greater than or equal to\n
-                      the `port_range_min` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be greater than or equal to\n\
+                      the `port_range_min` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP code."
                     type:
                       - integer
@@ -23724,8 +23724,8 @@ components:
                   port_range_min:
                     description: "The minimum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be less than or equal to\n
-                      the `port_range_max` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be less than or equal to\n\
+                      the `port_range_max` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP type."
                     type:
                       - integer
@@ -24411,7 +24411,7 @@ components:
                       - ingress
                     type: string
                   ethertype:
-                    description: "Must be IPv4 or IPv6, and addresses represented\n
+                    description: "Must be IPv4 or IPv6, and addresses represented\n\
                       in CIDR must match the ingress or egress rules."
                     enum:
                       - IPv4
@@ -24428,8 +24428,8 @@ components:
                   port_range_max:
                     description: "The maximum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be greater than or equal to\n
-                      the `port_range_min` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be greater than or equal to\n\
+                      the `port_range_min` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP code."
                     type:
                       - integer
@@ -24437,8 +24437,8 @@ components:
                   port_range_min:
                     description: "The minimum port number in the range that is\nmatched
                       by the security group rule. If the protocol is TCP, UDP,\nDCCP,
-                      SCTP or UDP-Lite this value must be less than or equal to\n
-                      the `port_range_max` attribute value. If the protocol is ICMP,\n
+                      SCTP or UDP-Lite this value must be less than or equal to\n\
+                      the `port_range_max` attribute value. If the protocol is ICMP,\n\
                       this value must be an ICMP type."
                     type:
                       - integer
@@ -24559,14 +24559,14 @@ components:
                       maxLength: 255
                       type: string
                     direction:
-                      description: "Ingress or egress, which is the direction in\n
+                      description: "Ingress or egress, which is the direction in\n\
                         which the security group rule is applied."
                       enum:
                         - egress
                         - ingress
                       type: string
                     ethertype:
-                      description: "Must be IPv4 or IPv6, and addresses represented\n
+                      description: "Must be IPv4 or IPv6, and addresses represented\n\
                         in CIDR must match the ingress or egress rules."
                       enum:
                         - IPv4
@@ -24581,7 +24581,7 @@ components:
                         - 'null'
                         - string
                     port_range_max:
-                      description: "The maximum port number in the range that is\n
+                      description: "The maximum port number in the range that is\n\
                         matched by the security group rule. If the protocol is TCP,
                         UDP,\nDCCP, SCTP or UDP-Lite this value must be greater than
                         or equal to\nthe `port_range_min` attribute value. If the
@@ -24590,7 +24590,7 @@ components:
                         - integer
                         - 'null'
                     port_range_min:
-                      description: "The minimum port number in the range that is\n
+                      description: "The minimum port number in the range that is\n\
                         matched by the security group rule. If the protocol is TCP,
                         UDP,\nDCCP, SCTP or UDP-Lite this value must be less than
                         or equal to\nthe `port_range_max` attribute value. If the
@@ -24607,7 +24607,7 @@ components:
                         with this\nsecurity group rule."
                       type: string
                     remote_group_id:
-                      description: "The remote group UUID to associate with this\n
+                      description: "The remote group UUID to associate with this\n\
                         security group rule. You can specify either the\n`remote_group_id`
                         or `remote_ip_prefix` attribute in the\nrequest body."
                       type: string
@@ -24621,7 +24621,7 @@ components:
                       description: The revision number of the resource.
                       type: integer
                     security_group_id:
-                      description: "The security group ID to associate with this\n
+                      description: "The security group ID to associate with this\n\
                         security group rule."
                       maxLength: 36
                       type: string

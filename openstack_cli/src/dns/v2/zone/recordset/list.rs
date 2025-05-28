@@ -81,7 +81,7 @@ struct QueryParameters {
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     #[arg(help_heading = "Query parameters", long)]
-    market: Option<String>,
+    marker: Option<String>,
 
     /// Filter results to only show zones that have a name matching the filter
     #[arg(help_heading = "Query parameters", long)]
@@ -194,8 +194,8 @@ impl RecordsetsCommand {
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
-        if let Some(val) = &self.query.market {
-            ep_builder.market(val);
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);

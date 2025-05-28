@@ -40,7 +40,7 @@ pub struct DnsZoneList {
     #[builder(default)]
     pub limit: Option<i32>,
     #[builder(default)]
-    pub market: Option<String>,
+    pub marker: Option<String>,
     #[builder(default)]
     pub name: Option<String>,
     #[builder(default)]
@@ -73,8 +73,8 @@ impl TryFrom<&DnsZoneList> for RequestBuilder<'_> {
         if let Some(val) = &value.limit {
             ep_builder.limit(*val);
         }
-        if let Some(val) = &value.market {
-            ep_builder.market(val.clone());
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
         }
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());

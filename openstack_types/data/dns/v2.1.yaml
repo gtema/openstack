@@ -1231,7 +1231,7 @@ components:
         initial limited request and use the ID of the last-seen item from the response
         as the marker parameter value in a subsequent limited request.
       in: query
-      name: market
+      name: marker
       schema:
         format: uuid
         type: string
