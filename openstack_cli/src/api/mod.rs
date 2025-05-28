@@ -114,7 +114,7 @@ impl ApiCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Perform REST API call {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args(parsed_args, Some("api"), Some("exec"));
         op.validate_args(parsed_args)?;
 
         let service_type = ServiceType::from(self.service_type.as_str());
@@ -156,6 +156,8 @@ impl ApiCommand {
                 io::stdout().write_all(rsp.body())?;
             }
         }
+
+        op.show_command_hint()?;
 
         Ok(())
     }

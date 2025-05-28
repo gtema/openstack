@@ -54,7 +54,7 @@ impl ContainerCommand {
         info!("Prune Container with {:?}", self);
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.container");
+            OutputProcessor::from_args(parsed_args, Some("object-store.container"), Some("prune"));
         op.validate_args(parsed_args)?;
 
         let ep = client.get_service_endpoint(
@@ -71,6 +71,7 @@ impl ContainerCommand {
         client
             .object_store_container_prune_async(account, &self.container, self.prefix.as_ref())
             .await?;
+        op.show_command_hint()?;
         Ok(())
     }
 }

@@ -133,7 +133,8 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Put Object with {:?}", self);
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.object");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("object-store.object"), Some("upload"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -179,6 +180,7 @@ impl ObjectCommand {
 
         let _rsp: Response<Bytes> = ep.raw_query_read_body_async(client, data).await?;
         // TODO: what if there is an interesting response
+        op.show_command_hint()?;
         Ok(())
     }
 }

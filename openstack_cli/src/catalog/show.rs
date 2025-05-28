@@ -57,7 +57,7 @@ impl ShowCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show service endpoint catalog configuration");
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args(parsed_args, Some("catalog"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let data: Vec<Value> = client
@@ -81,6 +81,7 @@ impl ShowCommand {
         }
 
         op.output_list::<CatalogEndpoint>(data).unwrap();
+        op.show_command_hint()?;
         Ok(())
     }
 }

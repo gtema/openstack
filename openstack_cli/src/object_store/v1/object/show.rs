@@ -105,7 +105,7 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Head Object with {:?}", self);
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "object-store.object");
+        let op = OutputProcessor::from_args(parsed_args, Some("object-store.object"), Some("show"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -190,6 +190,7 @@ impl ObjectCommand {
         };
         // Maybe output some headers metadata
         op.output_human::<Object>(&data)?;
+        op.show_command_hint()?;
         Ok(())
     }
 }

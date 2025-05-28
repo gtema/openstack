@@ -93,7 +93,8 @@ fn initialize_panic_handler() -> Result<()> {
             color_eyre::ErrorKind::Recoverable(error) => !matches!(
                 error.downcast_ref::<OpenStackCliError>(),
                 Some(OpenStackCliError::Auth { .. })
-                    | Some(OpenStackCliError::ConfigError { .. })
+                    | Some(OpenStackCliError::CliConfig { .. })
+                    | Some(OpenStackCliError::CloudConfig { .. })
                     | Some(OpenStackCliError::ConnectionNotFound { .. })
                     | Some(OpenStackCliError::OpenStackApi { .. })
                     | Some(OpenStackCliError::ReScope { .. })

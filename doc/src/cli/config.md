@@ -62,3 +62,20 @@ for known resource keys.
 
   - **json_pointer** (*str*) - JSON pointer to the extract from the resource
     field. This is only applied in the list and not `wide` mode.
+
+## Hints
+
+`osc` allows showing hints after the command output.
+
+- **enable_hints** (*bool*) - enable or disable hints. Is on by default.
+
+- **hints** (*list*) - list of general hints that are not command specific.
+
+- **command_hints** (*dict*) - dictionary of command specific hints. The key is
+  the resource name. The value is a dictionary with the command name and the
+  value is a list of hints.
+
+All global hints are combined with the command specific hints and then a random
+hint is being selected to be shown.
+
+Hints are not shows always. They are hidden between a random flag gate.

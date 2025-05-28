@@ -19,6 +19,8 @@ use comfy_table::{
 };
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
+use owo_colors::{OwoColorize, Stream::Stderr};
+use rand::prelude::*; //seq::IndexedRandom;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
 use std::io::{self, Write};
@@ -43,6 +45,8 @@ pub(crate) struct OutputProcessor {
     pub(crate) wide: bool,
     /// Pretty mode
     pub(crate) pretty: bool,
+    /// Command hints
+    hints: Option<Vec<String>>,
 }
 
 impl StructTableOptions for OutputProcessor {
@@ -124,38 +128,45 @@ impl From<TableArrangement> for ContentArrangement {
 
 impl OutputProcessor {
     /// Get OutputConfig from passed arguments
-    pub fn from_args(args: &Cli) -> Self {
+    pub fn from_args<R: AsRef<str>, A: AsRef<str>>(
+        args: &Cli,
+        resource_key: Option<R>,
+        action: Option<A>,
+    ) -> Self {
         let target = match args.global_opts.output {
             None => OutputFor::Human,
             Some(OutputFormat::Wide) => OutputFor::Human,
             _ => OutputFor::Machine,
         };
+        let mut hints: Vec<String> = args.config.hints.clone();
+
+        if let (Some(resource_key), Some(action)) = (&resource_key, &action) {
+            args.config
+                .command_hints
+                .get(resource_key.as_ref())
+                .and_then(|cmd_hints| {
+                    cmd_hints.get(action.as_ref()).map(|val| {
+                        hints.extend(val.clone());
+                    })
+                });
+        }
+
         Self {
-            config: None,
+            config: resource_key
+                .as_ref()
+                .and_then(|val| args.config.views.get(val.as_ref()).cloned()),
             target,
             table_arrangement: args.global_opts.table_arrangement,
             fields: BTreeSet::from_iter(args.global_opts.fields.iter().cloned()),
             wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
             pretty: args.global_opts.pretty,
+            hints: Some(hints),
         }
     }
 
     /// Get OutputConfig from passed arguments
     pub fn from_args_with_resource_key<S: AsRef<str>>(args: &Cli, resource_key: S) -> Self {
-        let target = match args.global_opts.output {
-            None => OutputFor::Human,
-            Some(OutputFormat::Wide) => OutputFor::Human,
-            _ => OutputFor::Machine,
-        };
-
-        Self {
-            config: args.config.views.get(resource_key.as_ref()).cloned(),
-            target,
-            table_arrangement: args.global_opts.table_arrangement,
-            fields: BTreeSet::from_iter(args.global_opts.fields.iter().cloned()),
-            wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
-            pretty: args.global_opts.pretty,
-        }
+        OutputProcessor::from_args(args, Some(resource_key), None::<&str>)
     }
 
     /// Validate command arguments with respect to the output producing
@@ -359,12 +370,31 @@ impl OutputProcessor {
         io::stdout().write_all(b"\n")?;
         Ok(())
     }
+
+    /// Show hints
+    pub fn show_command_hint(&self) -> Result<(), OpenStackCliError> {
+        if rand::random_bool(1.0 / 2.0) {
+            self.hints.as_ref().and_then(|hints| {
+                hints.choose(&mut rand::rng()).map(|hint| {
+                    eprintln!(
+                        "\n{} {}",
+                        "Hint:".if_supports_color(Stderr, |text| text.green()),
+                        hint.if_supports_color(Stderr, |text| text.blue())
+                    );
+                })
+            });
+        }
+        Ok(())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::config::FieldConfig;
+    use clap::Parser;
+    use std::io::Write;
+    use tempfile::Builder;
 
     #[test]
     fn test_wide_mode() {
@@ -465,6 +495,7 @@ mod tests {
             fields: BTreeSet::new(),
             wide: false,
             pretty: false,
+            ..Default::default()
         };
 
         assert!(
@@ -803,6 +834,56 @@ mod tests {
             ],
             rows,
             "row columns sorted properly"
+        );
+    }
+
+    #[test]
+    fn test_output_processor_from_args_hints() {
+        let mut config_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CONFIG_DATA: &str = r#"
+            views:
+              foo:
+                default_fields: ["a", "b", "c"]
+              bar:
+                fields:
+                  - name: "b"
+                    min_width: 1
+            command_hints:
+              res:
+                cmd:
+                  - cmd_hint1
+                  - cmd_hint2
+                cmd2: [cmd2_hint1]
+              res2:
+                cmd: []
+            hints:
+              - hint1
+              - hint2
+            enable_hints: true
+        "#;
+
+        write!(config_file, "{}", CONFIG_DATA).unwrap();
+
+        let op = OutputProcessor::from_args(
+            &Cli::parse_from([
+                "osc",
+                "--cli-config",
+                &config_file.path().as_os_str().to_string_lossy(),
+                "auth",
+                "show",
+            ]),
+            Some("res"),
+            Some("cmd"),
+        );
+        assert_eq!(
+            Some(vec![
+                "hint1".to_string(),
+                "hint2".to_string(),
+                "cmd_hint1".to_string(),
+                "cmd_hint2".to_string()
+            ]),
+            op.hints
         );
     }
 }

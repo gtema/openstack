@@ -86,7 +86,8 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Object with {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("object-store.object"), Some("delete"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -114,6 +115,7 @@ impl ObjectCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        op.show_command_hint()?;
         Ok(())
     }
 }

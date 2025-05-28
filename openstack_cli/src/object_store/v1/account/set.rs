@@ -82,7 +82,7 @@ impl AccountCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Post Account with {:?}", self);
 
-        let op = OutputProcessor::from_args(parsed_args);
+        let op = OutputProcessor::from_args(parsed_args, Some("object-store.account"), Some("set"));
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
@@ -114,6 +114,8 @@ impl AccountCommand {
         let data = Account {};
         // Maybe output some headers metadata
         op.output_human::<Account>(&data)?;
+
+        op.show_command_hint()?;
         Ok(())
     }
 }
