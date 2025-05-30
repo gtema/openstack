@@ -32,11 +32,6 @@ pub struct UserResponse {
     #[structable(optional)]
     pub description: Option<String>,
 
-    /// The ID of the domain.
-    #[serde(default)]
-    #[structable(optional)]
-    pub domain_id: Option<String>,
-
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     #[serde(default)]
@@ -86,6 +81,10 @@ pub struct UserResponse {
     #[serde(default)]
     #[structable(optional, serialize)]
     pub options: Option<Options>,
+
+    #[serde(default)]
+    #[structable(optional)]
+    pub password: Option<String>,
 
     /// The date and time when the password expires. The time zone is UTC.
     ///
