@@ -12074,11 +12074,39 @@ components:
       x-openstack:
         discriminator: microversion
     GroupsUsersGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: |-
+            The links for the `user` resource.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        truncated:
+          description: Flag indicating that the amount of entities exceeds global
+            response limit
+          type: boolean
         users:
           description: |-
             A list of `user` objects
           items:
+            additionalProperties: true
             description: |-
               A `user` object
             properties:
@@ -18946,8 +18974,10 @@ components:
           type: boolean
       type: object
     UserGetResponse:
+      additionalProperties: false
       properties:
         user:
+          additionalProperties: true
           description: |-
             A `user` object
           properties:
@@ -19160,6 +19190,8 @@ components:
                 - 'null'
                 - string
           type: object
+      required:
+        - user
       type: object
     UserPatch:
       additionalProperties: false
@@ -19386,10 +19418,13 @@ components:
       x-openstack:
         discriminator: microversion
     UserPatchResponse:
+      additionalProperties: false
       properties:
         user:
+          additionalProperties: true
           description: |-
             A `user` object
+          minProperties: 1
           properties:
             default_project_id:
               description: |-
@@ -19405,13 +19440,6 @@ components:
               type:
                 - 'null'
                 - string
-            domain_id:
-              description: |-
-                The ID of the domain.
-              maxLength: 64
-              minLength: 1
-              pattern: ^[a-zA-Z0-9-]+$
-              type: string
             enabled:
               description: |-
                 If the user is enabled, this value is `true`.
@@ -19585,6 +19613,10 @@ components:
                     - 'null'
                   uniqueItems: true
               type: object
+            password:
+              type:
+                - 'null'
+                - string
             password_expires_at:
               description: |-
                 The date and time when the password expires. The time zone
@@ -19600,6 +19632,8 @@ components:
                 - 'null'
                 - string
           type: object
+      required:
+        - user
       type: object
     UsersAccess_RuleGetResponse:
       additionalProperties: false
@@ -20073,11 +20107,39 @@ components:
       description: Response of the users/user_id/credentials/OS-EC2:post operation
       type: object
     UsersGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: |-
+            The links for the `user` resource.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        truncated:
+          description: Flag indicating that the amount of entities exceeds global
+            response limit
+          type: boolean
         users:
           description: |-
             A list of `user` objects
           items:
+            additionalProperties: true
             description: |-
               A `user` object
             properties:
