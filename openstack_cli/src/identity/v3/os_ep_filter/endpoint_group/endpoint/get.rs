@@ -71,9 +71,10 @@ impl EndpointCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Endpoint");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_EP_FILTER/endpoint_group/endpoint",
+            Some("identity.OS_EP_FILTER/endpoint_group/endpoint"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

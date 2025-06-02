@@ -73,7 +73,7 @@ impl QuotaCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Quota");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.quota");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.quota"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

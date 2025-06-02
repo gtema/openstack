@@ -119,7 +119,7 @@ impl NamespaceCommand {
         info!("Set Namespace");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "image.metadef/namespace");
+            OutputProcessor::from_args(parsed_args, Some("image.metadef/namespace"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

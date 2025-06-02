@@ -80,7 +80,7 @@ impl ServerCommand {
         info!("Get Server");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.hypervisor/server");
+            OutputProcessor::from_args(parsed_args, Some("compute.hypervisor/server"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

@@ -61,9 +61,10 @@ impl GetPoolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get GetPool");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.scheduler_stat/get_pool",
+            Some("block-storage.scheduler_stat/get_pool"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

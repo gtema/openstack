@@ -115,9 +115,10 @@ impl VolumeAttachmentCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create VolumeAttachment");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/volume_attachment",
+            Some("compute.server/volume_attachment"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

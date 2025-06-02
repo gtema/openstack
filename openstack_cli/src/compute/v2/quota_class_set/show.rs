@@ -75,7 +75,7 @@ impl QuotaClassSetCommand {
         info!("Show QuotaClassSet");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.quota_class_set");
+            OutputProcessor::from_args(parsed_args, Some("compute.quota_class_set"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

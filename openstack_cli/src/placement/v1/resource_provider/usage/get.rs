@@ -77,9 +77,10 @@ impl UsageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Usage");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "placement.resource_provider/usage",
+            Some("placement.resource_provider/usage"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

@@ -77,7 +77,7 @@ impl PortCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Port");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.port");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.port"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

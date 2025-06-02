@@ -112,7 +112,7 @@ impl IpsecpoliciesCommand {
         info!("List Ipsecpolicies");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.vpn/ipsecpolicy");
+            OutputProcessor::from_args(parsed_args, Some("network.vpn/ipsecpolicy"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

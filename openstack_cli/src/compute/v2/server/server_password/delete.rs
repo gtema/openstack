@@ -81,9 +81,10 @@ impl ServerPasswordCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete ServerPassword");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/server_password",
+            Some("compute.server/server_password"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

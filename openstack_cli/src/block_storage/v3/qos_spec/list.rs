@@ -104,7 +104,7 @@ impl QosSpecsCommand {
         info!("List QosSpecs");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.qos_spec");
+            OutputProcessor::from_args(parsed_args, Some("block-storage.qos_spec"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

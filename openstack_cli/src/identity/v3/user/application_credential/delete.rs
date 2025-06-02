@@ -97,9 +97,10 @@ impl ApplicationCredentialCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete ApplicationCredential");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.user/application_credential",
+            Some("identity.user/application_credential"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

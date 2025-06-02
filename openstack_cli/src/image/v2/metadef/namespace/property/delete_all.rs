@@ -69,9 +69,10 @@ impl PropertyCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Property");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.metadef/namespace/property",
+            Some("image.metadef/namespace/property"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

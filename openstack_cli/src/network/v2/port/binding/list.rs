@@ -123,7 +123,8 @@ impl BindingsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Bindings");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.port/binding");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.port/binding"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

@@ -97,8 +97,11 @@ impl AccessRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show AccessRule");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.user/access_rule");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.user/access_rule"),
+            Some("show"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

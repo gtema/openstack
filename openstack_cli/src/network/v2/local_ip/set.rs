@@ -83,7 +83,7 @@ impl LocalIpCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set LocalIp");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.local_ip");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.local_ip"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

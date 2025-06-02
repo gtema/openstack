@@ -120,7 +120,7 @@ impl L3RoutersCommand {
         info!("List L3Routers");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.agent/l3_router");
+            OutputProcessor::from_args(parsed_args, Some("network.agent/l3_router"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

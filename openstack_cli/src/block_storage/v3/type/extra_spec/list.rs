@@ -69,9 +69,10 @@ impl ExtraSpecsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ExtraSpecs");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.type/extra_spec",
+            Some("block-storage.type/extra_spec"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

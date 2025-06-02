@@ -93,7 +93,7 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("action"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = add_fixed_ip_21::Request::builder();

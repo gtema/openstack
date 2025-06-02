@@ -137,9 +137,10 @@ impl NetworkSegmentRangesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List NetworkSegmentRanges");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.network_segment_range",
+            Some("network.network_segment_range"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

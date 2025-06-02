@@ -70,9 +70,10 @@ impl ProjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Project");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_EP_FILTER/endpoint/project",
+            Some("identity.OS_EP_FILTER/endpoint/project"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

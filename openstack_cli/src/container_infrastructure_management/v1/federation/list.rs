@@ -66,9 +66,10 @@ impl FederationsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Federations");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.federation",
+            Some("container-infrastructure-management.federation"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

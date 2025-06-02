@@ -91,9 +91,10 @@ impl ConsistencygroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Consistencygroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.consistencygroup",
+            Some("block-storage.consistencygroup"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

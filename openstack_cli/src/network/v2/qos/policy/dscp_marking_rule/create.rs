@@ -86,9 +86,10 @@ impl DscpMarkingRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create DscpMarkingRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/policy/dscp_marking_rule",
+            Some("network.qos/policy/dscp_marking_rule"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

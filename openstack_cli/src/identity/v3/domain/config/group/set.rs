@@ -108,9 +108,10 @@ impl GroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Group");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.domain/config/group",
+            Some("identity.domain/config/group"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

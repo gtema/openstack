@@ -70,7 +70,7 @@ impl FloatingIpsBulkCommand {
         info!("Set FloatingIpsBulk");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.floating_ips_bulk");
+            OutputProcessor::from_args(parsed_args, Some("compute.floating_ips_bulk"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

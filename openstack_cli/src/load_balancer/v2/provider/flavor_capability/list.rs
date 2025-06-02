@@ -79,9 +79,10 @@ impl FlavorCapabilitiesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List FlavorCapabilities");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.provider/flavor_capability",
+            Some("load-balancer.provider/flavor_capability"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

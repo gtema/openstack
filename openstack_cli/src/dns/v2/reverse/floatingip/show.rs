@@ -71,7 +71,7 @@ impl FloatingipCommand {
         info!("Show Floatingip");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "dns.reverse/floatingip");
+            OutputProcessor::from_args(parsed_args, Some("dns.reverse/floatingip"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

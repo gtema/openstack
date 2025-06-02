@@ -176,9 +176,10 @@ impl SecurityGroupRulesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List SecurityGroupRules");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.security_group_rule",
+            Some("network.security_group_rule"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

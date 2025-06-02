@@ -69,9 +69,10 @@ impl AvailabilityZoneCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete AvailabilityZone");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.availability_zone",
+            Some("load-balancer.availability_zone"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

@@ -65,7 +65,7 @@ impl PoliciesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Policies");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.policy");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.policy"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

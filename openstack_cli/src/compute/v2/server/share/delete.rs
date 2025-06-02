@@ -82,7 +82,8 @@ impl ShareCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Share");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/share");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("compute.server/share"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

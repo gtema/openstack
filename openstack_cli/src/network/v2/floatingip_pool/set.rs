@@ -75,7 +75,7 @@ impl FloatingipPoolCommand {
         info!("Set FloatingipPool");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.floatingip_pool");
+            OutputProcessor::from_args(parsed_args, Some("network.floatingip_pool"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

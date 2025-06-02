@@ -80,8 +80,11 @@ impl RoleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Role");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.system/group/role");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.system/group/role"),
+            Some("set"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

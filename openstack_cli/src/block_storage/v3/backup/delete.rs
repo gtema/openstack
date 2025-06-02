@@ -68,7 +68,8 @@ impl BackupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Backup");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.backup");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.backup"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

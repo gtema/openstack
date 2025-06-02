@@ -81,7 +81,7 @@ impl TraitCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Trait");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "placement.trait");
+        let op = OutputProcessor::from_args(parsed_args, Some("placement.trait"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

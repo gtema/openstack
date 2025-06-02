@@ -83,8 +83,11 @@ impl ImageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Image");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.aggregate/image");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.aggregate/image"),
+            Some("action"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = cache_281::Request::builder();

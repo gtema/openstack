@@ -62,7 +62,7 @@ impl EventCommand {
         info!("Get Event");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.OS_REVOKE/event");
+            OutputProcessor::from_args(parsed_args, Some("identity.OS_REVOKE/event"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

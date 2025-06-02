@@ -62,9 +62,10 @@ impl ClustertemplatesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Clustertemplates");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.clustertemplate",
+            Some("container-infrastructure-management.clustertemplate"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

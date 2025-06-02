@@ -86,9 +86,10 @@ impl ServerPasswordCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get ServerPassword");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/server_password",
+            Some("compute.server/server_password"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

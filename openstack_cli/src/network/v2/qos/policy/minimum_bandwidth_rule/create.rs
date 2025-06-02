@@ -101,9 +101,10 @@ impl MinimumBandwidthRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create MinimumBandwidthRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/policy/minimum_bandwidth_rule",
+            Some("network.qos/policy/minimum_bandwidth_rule"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

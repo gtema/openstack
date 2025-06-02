@@ -112,7 +112,7 @@ impl GroupsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Groups");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.group");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.group"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

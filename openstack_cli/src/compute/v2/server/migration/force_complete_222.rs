@@ -112,8 +112,11 @@ impl MigrationCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Migration");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/migration");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server/migration"),
+            Some("action"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = force_complete_222::Request::builder();

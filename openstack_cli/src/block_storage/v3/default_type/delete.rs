@@ -68,8 +68,11 @@ impl DefaultTypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete DefaultType");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.default_type");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.default_type"),
+            Some("delete"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

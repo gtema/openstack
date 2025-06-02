@@ -78,9 +78,10 @@ impl IpsecSiteConnectionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show IpsecSiteConnection");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.vpn/ipsec_site_connection",
+            Some("network.vpn/ipsec_site_connection"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

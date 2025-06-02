@@ -67,8 +67,11 @@ impl TokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Token");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.OS_OAUTH2/token");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.OS_OAUTH2/token"),
+            Some("action"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = token::Request::builder();

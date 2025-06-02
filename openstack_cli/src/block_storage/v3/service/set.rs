@@ -79,7 +79,8 @@ impl ServiceCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Service");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.service");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.service"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

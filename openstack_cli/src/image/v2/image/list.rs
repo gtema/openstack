@@ -264,7 +264,7 @@ impl ImagesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Images");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

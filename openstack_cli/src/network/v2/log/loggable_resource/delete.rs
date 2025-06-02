@@ -68,9 +68,10 @@ impl LoggableResourceCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete LoggableResource");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.log/loggable_resource",
+            Some("network.log/loggable_resource"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

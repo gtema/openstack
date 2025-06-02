@@ -78,7 +78,7 @@ impl AggregateCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Aggregate");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.aggregate");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.aggregate"), Some("action"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = remove_host::Request::builder();

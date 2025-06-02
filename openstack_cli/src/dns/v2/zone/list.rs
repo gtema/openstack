@@ -123,7 +123,7 @@ impl ZonesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Zones");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.zone"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();
