@@ -34,13 +34,13 @@ pub fn extract_discovery_endpoints<S: AsRef<str>>(
     service_type: S,
 ) -> Result<Vec<ServiceEndpoint>, CatalogError> {
     let mut endpoints: Vec<ServiceEndpoint> = Vec::new();
-    // Explicitly add `unversioned` endpoint
-    endpoints.push(ServiceEndpoint::new(
-        discovery_url.clone(),
-        ApiVersion::new(0, 0),
-    ));
 
     if let Ok(versions) = serde_json::from_slice::<EndpointVersions>(data) {
+        // Explicitly add `unversioned` endpoint
+        endpoints.push(ServiceEndpoint::new(
+            discovery_url.clone(),
+            ApiVersion::new(0, 0),
+        ));
         // Unversioned endpoint normally returns: `{versions: []}`
         for ver in versions.versions {
             endpoints.push(ver.as_endpoint(discovery_url, service_type.as_ref())?);
@@ -54,6 +54,11 @@ pub fn extract_discovery_endpoints<S: AsRef<str>>(
         );
         return Ok(endpoints);
     } else if let Ok(vers) = serde_json::from_slice::<EndpointVersionsValues>(data) {
+        // Explicitly add `unversioned` endpoint
+        endpoints.push(ServiceEndpoint::new(
+            discovery_url.clone(),
+            ApiVersion::new(0, 0),
+        ));
         // Keystone returns `{versions: {values: []}}}`
         for ver in vers.versions.values {
             endpoints.push(ver.as_endpoint(discovery_url, service_type.as_ref())?);
@@ -77,7 +82,7 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
         Ok(url) => url,
         Err(url::ParseError::InvalidPort) => {
             error!(
-                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Invalid port. Only path part is going to be used. Please inform your cloud provider.",
+                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Invalid port. Only path part is going to be used. [https://gtema.github.io/openstack/possible_errors.html#invalid-port]",
                 service_type.as_ref(),
                 link.as_ref()
             );
@@ -90,7 +95,7 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
                     .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, path)))?
             } else {
                 error!(
-                    "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. Please inform your cloud provider.",
+                    "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. [https://gtema.github.io/openstack/possible_errors.html#format]",
                     service_type.as_ref(),
                     link.as_ref()
                 );
@@ -99,7 +104,7 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
         }
         Err(url::ParseError::RelativeUrlWithoutBase) => {
             error!(
-                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: URL without a base. Ignoring base information from the discovery document. Please inform your cloud provider.",
+                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: URL without a base. Ignoring base information from the discovery document. [https://gtema.github.io/openstack/possible_errors.html#absolute-path]",
                 service_type.as_ref(),
                 link.as_ref()
             );
@@ -364,9 +369,8 @@ mod tests {
             "dummy",
         )
         .unwrap();
-        assert_eq!(2, endpoints.len());
-        assert_eq!(&ApiVersion::new(0, 0), endpoints[0].version());
-        assert_eq!(&ApiVersion::new(2, 0), endpoints[1].version());
+        assert_eq!(1, endpoints.len());
+        assert_eq!(&ApiVersion::new(2, 0), endpoints[0].version());
     }
 
     #[test]

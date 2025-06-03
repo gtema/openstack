@@ -54,3 +54,7 @@
     - [Security Groups](./tui/network/security-groups.md)
     - [Security Group Rules](./tui/network/security-group-rules.md)
   - [Configuration](./tui/config.md)
+
+---
+
+- [Possible errors](possible_errors.md)
