@@ -77,9 +77,10 @@ impl MetadataCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Metadata");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.snapshot/metadata",
+            Some("block-storage.snapshot/metadata"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

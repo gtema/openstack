@@ -99,9 +99,10 @@ impl IdentityProviderCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set IdentityProvider");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_FEDERATION/identity_provider",
+            Some("identity.OS_FEDERATION/identity_provider"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

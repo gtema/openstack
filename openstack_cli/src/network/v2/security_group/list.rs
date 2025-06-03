@@ -155,7 +155,7 @@ impl SecurityGroupsCommand {
         info!("List SecurityGroups");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.security_group");
+            OutputProcessor::from_args(parsed_args, Some("network.security_group"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

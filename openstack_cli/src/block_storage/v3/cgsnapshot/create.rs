@@ -68,7 +68,7 @@ impl CgsnapshotCommand {
         info!("Create Cgsnapshot");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.cgsnapshot");
+            OutputProcessor::from_args(parsed_args, Some("block-storage.cgsnapshot"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

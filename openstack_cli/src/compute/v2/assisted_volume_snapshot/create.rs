@@ -111,9 +111,10 @@ impl AssistedVolumeSnapshotCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create AssistedVolumeSnapshot");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.assisted_volume_snapshot",
+            Some("compute.assisted_volume_snapshot"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

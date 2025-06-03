@@ -122,6 +122,10 @@ pub struct NetworkResponse {
     #[structable(optional, title = "provider:segmentation_id")]
     pub provider_segmentation_id: Option<i64>,
 
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
+    #[structable(optional)]
+    pub qinq: Option<bool>,
+
     /// The ID of the QoS policy associated with the network.
     #[serde(default)]
     #[structable(optional)]
@@ -181,6 +185,12 @@ pub struct NetworkResponse {
     #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
+
+    /// Indicates the VLAN transparency mode of the network, which is VLAN
+    /// transparent (`true`) or not VLAN transparent (`false`).
+    #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
+    #[structable(optional)]
+    pub vlan_transparent: Option<bool>,
 }
 
 /// `Segments` type

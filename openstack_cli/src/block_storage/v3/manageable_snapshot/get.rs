@@ -98,9 +98,10 @@ impl ManageableSnapshotCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get ManageableSnapshot");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.manageable_snapshot",
+            Some("block-storage.manageable_snapshot"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

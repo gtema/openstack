@@ -66,9 +66,10 @@ impl MservicesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Mservices");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.mservice",
+            Some("container-infrastructure-management.mservice"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

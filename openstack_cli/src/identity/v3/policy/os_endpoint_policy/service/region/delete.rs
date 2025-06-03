@@ -91,9 +91,10 @@ impl RegionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Region");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.policy/OS_ENDPOINT_POLICY/service/region",
+            Some("identity.policy/OS_ENDPOINT_POLICY/service/region"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

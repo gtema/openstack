@@ -100,9 +100,10 @@ impl InstanceActionsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List InstanceActions");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/instance_action",
+            Some("compute.server/instance_action"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

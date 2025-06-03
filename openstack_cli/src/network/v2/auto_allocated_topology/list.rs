@@ -93,9 +93,10 @@ impl AutoAllocatedTopologiesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List AutoAllocatedTopologies");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.auto_allocated_topology",
+            Some("network.auto_allocated_topology"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

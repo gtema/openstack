@@ -68,9 +68,10 @@ impl AliasBandwidthLimitRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete AliasBandwidthLimitRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/alias_bandwidth_limit_rule",
+            Some("network.qos/alias_bandwidth_limit_rule"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

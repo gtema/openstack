@@ -82,7 +82,7 @@ impl L3RouterCommand {
         info!("Delete L3Router");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.agent/l3_router");
+            OutputProcessor::from_args(parsed_args, Some("network.agent/l3_router"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

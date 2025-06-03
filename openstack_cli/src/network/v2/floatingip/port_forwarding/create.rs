@@ -136,9 +136,10 @@ impl PortForwardingCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create PortForwarding");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.floatingip/port_forwarding",
+            Some("network.floatingip/port_forwarding"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

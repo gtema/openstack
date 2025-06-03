@@ -192,7 +192,8 @@ impl VolumeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Volume");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.volume");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.volume"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_30::Request::builder();

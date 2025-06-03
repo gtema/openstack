@@ -80,9 +80,10 @@ impl AvailabilityZoneCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create AvailabilityZone");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.availability_zone",
+            Some("load-balancer.availability_zone"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

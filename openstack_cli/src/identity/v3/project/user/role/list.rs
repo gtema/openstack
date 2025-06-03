@@ -109,8 +109,11 @@ impl RolesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Roles");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.project/user/role");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.project/user/role"),
+            Some("None"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

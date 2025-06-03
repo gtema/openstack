@@ -88,7 +88,8 @@ impl ProjectsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Projects");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.user/project");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("identity.user/project"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

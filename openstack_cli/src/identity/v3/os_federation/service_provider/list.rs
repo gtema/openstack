@@ -71,9 +71,10 @@ impl ServiceProvidersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ServiceProviders");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_FEDERATION/service_provider",
+            Some("identity.OS_FEDERATION/service_provider"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

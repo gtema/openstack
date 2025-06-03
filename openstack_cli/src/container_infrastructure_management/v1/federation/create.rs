@@ -112,9 +112,10 @@ impl FederationCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Federation");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.federation",
+            Some("container-infrastructure-management.federation"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

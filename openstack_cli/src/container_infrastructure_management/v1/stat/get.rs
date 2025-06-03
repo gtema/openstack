@@ -63,9 +63,10 @@ impl StatCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Stat");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.stat",
+            Some("container-infrastructure-management.stat"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

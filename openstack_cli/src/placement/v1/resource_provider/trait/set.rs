@@ -82,9 +82,10 @@ impl TraitCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Trait");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "placement.resource_provider/trait",
+            Some("placement.resource_provider/trait"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

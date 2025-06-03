@@ -80,7 +80,7 @@ impl ResourceClassCommand {
         info!("Set ResourceClass");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "placement.resource_class");
+            OutputProcessor::from_args(parsed_args, Some("placement.resource_class"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_17::Request::builder();

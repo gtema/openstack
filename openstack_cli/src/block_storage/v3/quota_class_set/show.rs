@@ -69,9 +69,10 @@ impl QuotaClassSetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show QuotaClassSet");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.quota_class_set",
+            Some("block-storage.quota_class_set"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

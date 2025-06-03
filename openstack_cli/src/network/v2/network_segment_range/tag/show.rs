@@ -78,9 +78,10 @@ impl TagCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Tag");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.network_segment_range/tag",
+            Some("network.network_segment_range/tag"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

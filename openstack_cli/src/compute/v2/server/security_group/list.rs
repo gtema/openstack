@@ -75,9 +75,10 @@ impl SecurityGroupsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List SecurityGroups");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/security_group",
+            Some("compute.server/security_group"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

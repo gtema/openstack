@@ -74,8 +74,11 @@ impl RegisteredLimitCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show RegisteredLimit");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.registered_limit");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.registered_limit"),
+            Some("None"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

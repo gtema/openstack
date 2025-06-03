@@ -120,7 +120,7 @@ impl ProjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Project");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.project");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.project"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

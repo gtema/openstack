@@ -76,9 +76,10 @@ impl OnboardNetworkSubnetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action OnboardNetworkSubnet");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.subnetpool/onboard_network_subnet",
+            Some("network.subnetpool/onboard_network_subnet"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

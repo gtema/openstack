@@ -62,7 +62,7 @@ impl BlacklistsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Blacklists");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.blacklist");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.blacklist"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

@@ -70,9 +70,10 @@ impl OsVolumeTransferCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show OsVolumeTransfer");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.os_volume_transfer",
+            Some("block-storage.os_volume_transfer"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

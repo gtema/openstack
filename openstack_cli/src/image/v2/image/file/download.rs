@@ -94,7 +94,7 @@ impl FileCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Download File");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image/file");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image/file"), Some("None"));
         op.validate_args(parsed_args)?;
         let find_ep = find::Request::builder()
             .id(&self.path.image_id)

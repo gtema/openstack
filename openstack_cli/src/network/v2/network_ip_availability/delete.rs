@@ -68,9 +68,10 @@ impl NetworkIpAvailabilityCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete NetworkIpAvailability");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.network_ip_availability",
+            Some("network.network_ip_availability"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

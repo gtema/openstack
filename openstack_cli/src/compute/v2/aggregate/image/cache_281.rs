@@ -84,7 +84,7 @@ impl ImageCommand {
         info!("Action Image");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.aggregate/image");
+            OutputProcessor::from_args(parsed_args, Some("compute.aggregate/image"), Some("cache"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = cache_281::Request::builder();

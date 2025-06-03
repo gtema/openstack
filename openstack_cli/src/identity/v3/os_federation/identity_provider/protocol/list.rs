@@ -72,9 +72,10 @@ impl ProtocolsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Protocols");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_FEDERATION/identity_provider/protocol",
+            Some("identity.OS_FEDERATION/identity_provider/protocol"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -89,9 +89,10 @@ impl RestoreCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Restore");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.backup/restore",
+            Some("block-storage.backup/restore"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

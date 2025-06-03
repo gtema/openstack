@@ -265,9 +265,10 @@ impl Saml2Command {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Saml2");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.auth/OS_FEDERATION/saml2",
+            Some("identity.auth/OS_FEDERATION/saml2"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

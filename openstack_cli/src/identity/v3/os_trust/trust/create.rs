@@ -162,7 +162,7 @@ impl TrustCommand {
         info!("Create Trust");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.OS_TRUST/trust");
+            OutputProcessor::from_args(parsed_args, Some("identity.OS_TRUST/trust"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

@@ -75,9 +75,10 @@ impl InstanceUsageAuditLogCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show InstanceUsageAuditLog");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.instance_usage_audit_log",
+            Some("compute.instance_usage_audit_log"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

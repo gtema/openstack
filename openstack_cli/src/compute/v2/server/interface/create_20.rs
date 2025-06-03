@@ -105,7 +105,7 @@ impl InterfaceCommand {
         info!("Create Interface");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/interface");
+            OutputProcessor::from_args(parsed_args, Some("compute.server/interface"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_20::Request::builder();

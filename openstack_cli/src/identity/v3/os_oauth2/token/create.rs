@@ -70,7 +70,7 @@ impl TokenCommand {
         info!("Create Token");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.OS_OAUTH2/token");
+            OutputProcessor::from_args(parsed_args, Some("identity.OS_OAUTH2/token"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

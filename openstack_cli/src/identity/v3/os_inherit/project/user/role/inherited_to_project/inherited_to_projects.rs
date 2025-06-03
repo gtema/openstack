@@ -124,9 +124,10 @@ impl InheritedToProjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action InheritedToProject");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_INHERIT/project/user/role/inherited_to_project",
+            Some("identity.OS_INHERIT/project/user/role/inherited_to_project"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

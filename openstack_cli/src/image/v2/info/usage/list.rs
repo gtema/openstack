@@ -65,7 +65,7 @@ impl UsagesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Usages");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.info/usage");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.info/usage"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

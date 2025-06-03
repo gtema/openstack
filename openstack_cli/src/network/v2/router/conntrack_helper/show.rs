@@ -86,9 +86,10 @@ impl ConntrackHelperCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show ConntrackHelper");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.router/conntrack_helper",
+            Some("network.router/conntrack_helper"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

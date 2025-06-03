@@ -149,9 +149,10 @@ impl ResourceProvidersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ResourceProviders");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "placement.resource_provider",
+            Some("placement.resource_provider"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

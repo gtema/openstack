@@ -70,9 +70,10 @@ impl VolumeTypeAccessCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get VolumeTypeAccess");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.type/volume_type_access",
+            Some("block-storage.type/volume_type_access"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

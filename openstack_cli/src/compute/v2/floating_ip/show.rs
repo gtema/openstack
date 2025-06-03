@@ -80,7 +80,7 @@ impl FloatingIpCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show FloatingIp");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.floating_ip");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.floating_ip"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

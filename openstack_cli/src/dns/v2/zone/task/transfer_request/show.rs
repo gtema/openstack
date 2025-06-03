@@ -71,9 +71,10 @@ impl TransferRequestCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show TransferRequest");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "dns.zone/task/transfer_request",
+            Some("dns.zone/task/transfer_request"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -79,7 +79,8 @@ impl BindingCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Binding");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.port/binding");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.port/binding"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

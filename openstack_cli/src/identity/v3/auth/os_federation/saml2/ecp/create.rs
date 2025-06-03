@@ -265,9 +265,10 @@ impl EcpCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Ecp");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.auth/OS_FEDERATION/saml2/ecp",
+            Some("identity.auth/OS_FEDERATION/saml2/ecp"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

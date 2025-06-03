@@ -118,9 +118,10 @@ impl RemoteConsoleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create RemoteConsole");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.server/remote_console",
+            Some("compute.server/remote_console"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

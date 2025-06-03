@@ -143,8 +143,11 @@ impl MemberCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Member");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.pool/member");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("load-balancer.pool/member"),
+            Some("None"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

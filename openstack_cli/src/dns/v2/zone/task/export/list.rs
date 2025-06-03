@@ -62,7 +62,8 @@ impl ExportsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Exports");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone/task/export");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("dns.zone/task/export"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

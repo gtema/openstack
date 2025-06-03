@@ -79,9 +79,10 @@ impl RoleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Role");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_TRUST/trust/role",
+            Some("identity.OS_TRUST/trust/role"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

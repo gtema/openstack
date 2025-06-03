@@ -116,6 +116,10 @@ pub struct Request<'a> {
     #[builder(default)]
     provider_segmentation_id: Option<i32>,
 
+    /// qinq query parameter for /v2.0/networks API
+    #[builder(default)]
+    qinq: Option<bool>,
+
     /// revision_number query parameter for /v2.0/networks API
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
@@ -153,6 +157,10 @@ pub struct Request<'a> {
     /// tenant_id query parameter for /v2.0/networks API
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
+
+    /// vlan_transparent query parameter for /v2.0/networks API
+    #[builder(default)]
+    vlan_transparent: Option<bool>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -296,6 +304,7 @@ impl RestEndpoint for Request<'_> {
             self.provider_physical_network.as_ref(),
         );
         params.push_opt("provider:segmentation_id", self.provider_segmentation_id);
+        params.push_opt("qinq", self.qinq);
         params.push_opt("revision_number", self.revision_number.as_ref());
         params.push_opt("router:external", self.router_external);
         params.push_opt("shared", self.shared);
@@ -303,6 +312,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());
         params.push_opt("tenant_id", self.tenant_id.as_ref());
+        params.push_opt("vlan_transparent", self.vlan_transparent);
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));

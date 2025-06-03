@@ -60,9 +60,10 @@ impl ObjectsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Objects");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.schema/metadef/objects",
+            Some("image.schema/metadef/objects"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -74,7 +74,7 @@ impl TraitsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Traits");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "placement.trait");
+        let op = OutputProcessor::from_args(parsed_args, Some("placement.trait"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

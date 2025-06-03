@@ -95,9 +95,10 @@ impl AccessTokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete AccessToken");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.user/OS_OAUTH1/access_token",
+            Some("identity.user/OS_OAUTH1/access_token"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

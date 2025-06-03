@@ -90,9 +90,10 @@ impl AvailabilityZoneProfilesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List AvailabilityZoneProfiles");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.availability_zone_profile",
+            Some("load-balancer.availability_zone_profile"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

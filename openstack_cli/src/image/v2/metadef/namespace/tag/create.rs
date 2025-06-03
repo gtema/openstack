@@ -82,9 +82,10 @@ impl TagCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Tag");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.metadef/namespace/tag",
+            Some("image.metadef/namespace/tag"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -71,9 +71,10 @@ impl ResourceTypesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ResourceTypes");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.metadef/namespace/resource_type",
+            Some("image.metadef/namespace/resource_type"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -70,9 +70,10 @@ impl TransferAcceptCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show TransferAccept");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "dns.zone/task/transfer_accept",
+            Some("dns.zone/task/transfer_accept"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -78,7 +78,7 @@ impl IpsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Ips");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/ip");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server/ip"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

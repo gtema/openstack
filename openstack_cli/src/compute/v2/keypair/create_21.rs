@@ -89,7 +89,7 @@ impl KeypairCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Keypair");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.keypair");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.keypair"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_21::Request::builder();

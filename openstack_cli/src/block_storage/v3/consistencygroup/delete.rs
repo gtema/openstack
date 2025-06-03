@@ -68,9 +68,10 @@ impl ConsistencygroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Consistencygroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.consistencygroup",
+            Some("block-storage.consistencygroup"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

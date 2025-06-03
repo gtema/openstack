@@ -74,7 +74,7 @@ impl TasksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Tasks");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.schema/tasks");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.schema/tasks"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

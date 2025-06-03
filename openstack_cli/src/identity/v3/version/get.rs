@@ -61,7 +61,7 @@ impl VersionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Version");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.version");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.version"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

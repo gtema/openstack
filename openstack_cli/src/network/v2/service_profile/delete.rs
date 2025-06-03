@@ -80,7 +80,7 @@ impl ServiceProfileCommand {
         info!("Delete ServiceProfile");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.service_profile");
+            OutputProcessor::from_args(parsed_args, Some("network.service_profile"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

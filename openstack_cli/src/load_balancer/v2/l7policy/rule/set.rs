@@ -156,9 +156,10 @@ impl RuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Rule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.l7policy/rule",
+            Some("load-balancer.l7policy/rule"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -69,9 +69,10 @@ impl ObjectCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Object");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.metadef/namespace/object",
+            Some("image.metadef/namespace/object"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

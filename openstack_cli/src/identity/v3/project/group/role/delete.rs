@@ -106,9 +106,10 @@ impl RoleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Role");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.project/group/role",
+            Some("identity.project/group/role"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

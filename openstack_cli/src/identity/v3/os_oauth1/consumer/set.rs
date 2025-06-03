@@ -75,9 +75,10 @@ impl ConsumerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Consumer");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_OAUTH1/consumer",
+            Some("identity.OS_OAUTH1/consumer"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

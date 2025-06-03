@@ -111,7 +111,7 @@ impl MigrationCommand {
         info!("Delete Migration");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/migration");
+            OutputProcessor::from_args(parsed_args, Some("compute.server/migration"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

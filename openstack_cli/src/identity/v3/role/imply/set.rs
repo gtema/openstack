@@ -83,7 +83,7 @@ impl ImplyCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Imply");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.role/imply");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.role/imply"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

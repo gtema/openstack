@@ -156,9 +156,10 @@ impl MeteringLabelRulesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List MeteringLabelRules");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.metering/metering_label_rule",
+            Some("network.metering/metering_label_rule"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

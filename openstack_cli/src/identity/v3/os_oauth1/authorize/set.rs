@@ -76,9 +76,10 @@ impl AuthorizeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Authorize");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_OAUTH1/authorize",
+            Some("identity.OS_OAUTH1/authorize"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

@@ -74,7 +74,7 @@ impl TagsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Tags");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/tag");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server/tag"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

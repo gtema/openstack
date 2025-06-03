@@ -70,7 +70,7 @@ impl TypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Type");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.type");
+        let op = OutputProcessor::from_args(parsed_args, Some("block-storage.type"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

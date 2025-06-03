@@ -140,6 +140,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     provider_segmentation_id: Option<i32>,
 
+    /// qinq query parameter for /v2.0/networks API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    qinq: Option<bool>,
+
     /// revision_number query parameter for /v2.0/networks API
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
@@ -177,6 +181,10 @@ struct QueryParameters {
     /// tenant_id query parameter for /v2.0/networks API
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
+
+    /// vlan_transparent query parameter for /v2.0/networks API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    vlan_transparent: Option<bool>,
 }
 
 /// Path parameters
@@ -192,7 +200,7 @@ impl NetworksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Networks");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.network");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.network"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();
@@ -238,6 +246,9 @@ impl NetworksCommand {
         if let Some(val) = &self.query.provider_segmentation_id {
             ep_builder.provider_segmentation_id(*val);
         }
+        if let Some(val) = &self.query.qinq {
+            ep_builder.qinq(*val);
+        }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
         }
@@ -258,6 +269,9 @@ impl NetworksCommand {
         }
         if let Some(val) = &self.query.tenant_id {
             ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query.vlan_transparent {
+            ep_builder.vlan_transparent(*val);
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);

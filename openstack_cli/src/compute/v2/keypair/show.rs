@@ -94,7 +94,7 @@ impl KeypairCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Keypair");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.keypair");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.keypair"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

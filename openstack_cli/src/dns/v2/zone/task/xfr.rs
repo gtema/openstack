@@ -89,7 +89,7 @@ impl TaskCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Task");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone/task");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.zone/task"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = xfr::Request::builder();

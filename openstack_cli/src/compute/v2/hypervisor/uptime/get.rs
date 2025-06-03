@@ -79,8 +79,11 @@ impl UptimeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Uptime");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.hypervisor/uptime");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.hypervisor/uptime"),
+            Some("None"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

@@ -89,7 +89,11 @@ impl FlavorCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Flavor");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.flavor");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.flavor"),
+            Some("removeTenantAccess"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = remove_tenant_access::Request::builder();

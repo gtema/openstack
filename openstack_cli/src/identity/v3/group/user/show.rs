@@ -92,7 +92,7 @@ impl UserCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show User");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.group/user");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.group/user"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

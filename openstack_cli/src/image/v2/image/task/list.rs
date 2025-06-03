@@ -79,7 +79,7 @@ impl TasksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Tasks");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image/task");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image/task"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

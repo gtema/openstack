@@ -140,9 +140,10 @@ impl PortAssociationsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List PortAssociations");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.local_ip/port_association",
+            Some("network.local_ip/port_association"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

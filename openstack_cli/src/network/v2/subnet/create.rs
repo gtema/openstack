@@ -241,7 +241,7 @@ impl SubnetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Subnet");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.subnet");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.subnet"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

@@ -61,7 +61,7 @@ impl TokenCommand {
         info!("Delete Token");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.OS_OAUTH2/token");
+            OutputProcessor::from_args(parsed_args, Some("identity.OS_OAUTH2/token"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = delete::Request::builder();

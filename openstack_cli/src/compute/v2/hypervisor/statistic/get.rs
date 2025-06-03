@@ -71,9 +71,10 @@ impl StatisticCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Statistic");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.hypervisor/statistic",
+            Some("compute.hypervisor/statistic"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

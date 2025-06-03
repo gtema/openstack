@@ -2857,6 +2857,7 @@ paths:
         - $ref: '#/components/parameters/networks_provider_network_type'
         - $ref: '#/components/parameters/networks_provider_physical_network'
         - $ref: '#/components/parameters/networks_provider_segmentation_id'
+        - $ref: '#/components/parameters/networks_qinq'
         - $ref: '#/components/parameters/networks_revision_number'
         - $ref: '#/components/parameters/networks_router_external'
         - $ref: '#/components/parameters/networks_shared'
@@ -2864,6 +2865,7 @@ paths:
         - $ref: '#/components/parameters/networks_tags'
         - $ref: '#/components/parameters/networks_tags-any'
         - $ref: '#/components/parameters/networks_tenant_id'
+        - $ref: '#/components/parameters/networks_vlan_transparent'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
@@ -9410,6 +9412,14 @@ components:
         type:
           - integer
           - string
+    networks_qinq:
+      description: qinq query parameter for /v2.0/networks API
+      in: query
+      name: qinq
+      schema:
+        type:
+          - boolean
+          - string
     networks_revision_number:
       description: revision_number query parameter for /v2.0/networks API
       in: query
@@ -9480,6 +9490,14 @@ components:
       schema:
         maxLength: 255
         type: string
+    networks_vlan_transparent:
+      description: vlan_transparent query parameter for /v2.0/networks API
+      in: query
+      name: vlan_transparent
+      schema:
+        type:
+          - boolean
+          - string
     next_providers_next_provider_flavor_id:
       description: flavor_id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id}
         API
@@ -15788,6 +15806,10 @@ components:
               type:
                 - integer
                 - string
+            qinq:
+              type:
+                - boolean
+                - string
             qos_policy_id:
               description: |-
                 The ID of the QoS policy associated with the network.
@@ -15856,6 +15878,13 @@ components:
               description: |-
                 Time at which the resource has been updated (in UTC ISO8601 format).
               type: string
+            vlan_transparent:
+              description: |-
+                Indicates the VLAN transparency mode of the network, which is
+                VLAN transparent (`true`) or not VLAN transparent (`false`).
+              type:
+                - boolean
+                - string
           type: object
       type: object
     NetworkUpdateRequest:
@@ -16083,6 +16112,10 @@ components:
               type:
                 - integer
                 - string
+            qinq:
+              type:
+                - boolean
+                - string
             qos_policy_id:
               description: |-
                 The ID of the QoS policy associated with the network.
@@ -16151,6 +16184,10 @@ components:
               description: |-
                 Time at which the resource has been updated (in UTC ISO8601 format).
               type: string
+            vlan_transparent:
+              type:
+                - boolean
+                - string
           type: object
       type: object
     Network_Ip_AvailabilitiesCreateRequest:
@@ -16726,6 +16763,10 @@ components:
               type:
                 - integer
                 - string
+            qinq:
+              type:
+                - boolean
+                - string
             qos_policy_id:
               description: |-
                 The ID of the QoS policy associated with the network.
@@ -16768,6 +16809,13 @@ components:
                 You cannot change this value through authorization policies.
               maxLength: 255
               type: string
+            vlan_transparent:
+              description: |-
+                Indicates the VLAN transparency mode of the network, which is
+                VLAN transparent (`true`) or not VLAN transparent (`false`).
+              type:
+                - boolean
+                - string
           type: object
       type: object
     NetworksCreateResponse:
@@ -16881,6 +16929,10 @@ components:
               type:
                 - integer
                 - string
+            qinq:
+              type:
+                - boolean
+                - string
             qos_policy_id:
               description: |-
                 The ID of the QoS policy associated with the network.
@@ -16949,6 +17001,13 @@ components:
               description: |-
                 Time at which the resource has been updated (in UTC ISO8601 format).
               type: string
+            vlan_transparent:
+              description: |-
+                Indicates the VLAN transparency mode of the network, which is
+                VLAN transparent (`true`) or not VLAN transparent (`false`).
+              type:
+                - boolean
+                - string
           type: object
       type: object
     NetworksDhcp_AgentShowResponse:
@@ -17081,6 +17140,10 @@ components:
                 type:
                   - integer
                   - string
+              qinq:
+                type:
+                  - boolean
+                  - string
               qos_policy_id:
                 description: |-
                   The ID of the QoS policy associated with the network.
@@ -17149,6 +17212,13 @@ components:
                 description: |-
                   Time at which the resource has been updated (in UTC ISO8601 format).
                 type: string
+              vlan_transparent:
+                description: |-
+                  Indicates the VLAN transparency mode of the network, which is
+                  VLAN transparent (`true`) or not VLAN transparent (`false`).
+                type:
+                  - boolean
+                  - string
             type: object
           type: array
       type: object

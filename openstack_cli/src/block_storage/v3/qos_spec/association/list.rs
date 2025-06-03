@@ -69,9 +69,10 @@ impl AssociationsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Associations");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.qos_spec/association",
+            Some("block-storage.qos_spec/association"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

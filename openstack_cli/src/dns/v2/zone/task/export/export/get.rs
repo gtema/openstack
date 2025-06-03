@@ -70,9 +70,10 @@ impl ExportCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Export");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "dns.zone/task/export/export",
+            Some("dns.zone/task/export/export"),
+            Some("None"),
         );
         op.validate_args(parsed_args)?;
 

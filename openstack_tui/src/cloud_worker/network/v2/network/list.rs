@@ -62,6 +62,8 @@ pub struct NetworkNetworkList {
     #[builder(default)]
     pub provider_segmentation_name: Option<i32>,
     #[builder(default)]
+    pub qinq: Option<bool>,
+    #[builder(default)]
     pub revision_number: Option<String>,
     #[builder(default)]
     pub router_external: Option<bool>,
@@ -81,6 +83,8 @@ pub struct NetworkNetworkList {
     pub tenant_id: Option<String>,
     #[builder(default)]
     pub tenant_name: Option<String>,
+    #[builder(default)]
+    pub vlan_transparent: Option<bool>,
 }
 
 impl fmt::Display for NetworkNetworkList {
@@ -163,6 +167,9 @@ impl TryFrom<&NetworkNetworkList> for RequestBuilder<'_> {
         if let Some(val) = &value.provider_segmentation_id {
             ep_builder.provider_segmentation_id(*val);
         }
+        if let Some(val) = &value.qinq {
+            ep_builder.qinq(*val);
+        }
         if let Some(val) = &value.revision_number {
             ep_builder.revision_number(val.clone());
         }
@@ -183,6 +190,9 @@ impl TryFrom<&NetworkNetworkList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.tenant_id {
             ep_builder.tenant_id(val.clone());
+        }
+        if let Some(val) = &value.vlan_transparent {
+            ep_builder.vlan_transparent(*val);
         }
         if let Some(val) = &value.page_reverse {
             ep_builder.page_reverse(*val);

@@ -80,7 +80,7 @@ impl ImageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Image");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image"), Some("None"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();
