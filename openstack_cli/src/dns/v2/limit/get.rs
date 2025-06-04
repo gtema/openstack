@@ -62,7 +62,7 @@ impl LimitCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Limit");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.limit");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.limit"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

@@ -73,7 +73,7 @@ impl FlavorCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Flavor");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.flavor");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.flavor"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

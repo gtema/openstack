@@ -80,7 +80,8 @@ impl AllocationCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Allocation");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "placement.allocation");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("placement.allocation"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_128::Request::builder();

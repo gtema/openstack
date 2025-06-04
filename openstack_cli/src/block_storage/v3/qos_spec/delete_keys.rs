@@ -74,7 +74,7 @@ impl QosSpecCommand {
         info!("Action QosSpec");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.qos_spec");
+            OutputProcessor::from_args(parsed_args, Some("block-storage.qos_spec"), Some("action"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete_keys::Request::builder();

@@ -68,7 +68,8 @@ impl ImportCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Import");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone/task/import");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("dns.zone/task/import"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

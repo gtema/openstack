@@ -61,7 +61,7 @@ impl TypesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Types");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.type");
+        let op = OutputProcessor::from_args(parsed_args, Some("block-storage.type"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

@@ -70,9 +70,10 @@ impl WebssoCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Websso");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.auth/OS_FEDERATION/websso",
+            Some("identity.auth/OS_FEDERATION/websso"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

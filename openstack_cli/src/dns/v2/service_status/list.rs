@@ -62,7 +62,7 @@ impl ServiceStatusesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ServiceStatuses");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.service_status");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.service_status"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

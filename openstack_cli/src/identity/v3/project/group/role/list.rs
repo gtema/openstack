@@ -98,9 +98,10 @@ impl RolesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Roles");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.project/group/role",
+            Some("identity.project/group/role"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

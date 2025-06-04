@@ -176,7 +176,7 @@ impl UserCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create User");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.user");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.user"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

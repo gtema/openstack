@@ -71,7 +71,8 @@ impl ProjectsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Projects");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.auth/project");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("identity.auth/project"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

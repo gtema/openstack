@@ -99,9 +99,10 @@ impl EncryptionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Encryption");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.type/encryption",
+            Some("block-storage.type/encryption"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

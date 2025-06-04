@@ -69,9 +69,10 @@ impl AliasDscpMarkingRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show AliasDscpMarkingRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/alias_dscp_marking_rule",
+            Some("network.qos/alias_dscp_marking_rule"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

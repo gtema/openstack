@@ -61,7 +61,8 @@ impl OctaviaCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Octavia");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.octavia");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("load-balancer.octavia"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

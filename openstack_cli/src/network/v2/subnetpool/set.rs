@@ -139,7 +139,7 @@ impl SubnetpoolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Subnetpool");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.subnetpool");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.subnetpool"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

@@ -62,7 +62,7 @@ impl CgsnapshotsCommand {
         info!("List Cgsnapshots");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.cgsnapshot");
+            OutputProcessor::from_args(parsed_args, Some("block-storage.cgsnapshot"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list_detailed::Request::builder();

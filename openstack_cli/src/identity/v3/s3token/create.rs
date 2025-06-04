@@ -69,7 +69,7 @@ impl S3TokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create S3Token");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.s3token");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.s3token"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

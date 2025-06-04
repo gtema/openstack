@@ -100,7 +100,11 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server"),
+            Some("os-getserialconsole"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = os_get_serial_console_21::Request::builder();

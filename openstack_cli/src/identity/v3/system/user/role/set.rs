@@ -97,7 +97,7 @@ impl RoleCommand {
         info!("Set Role");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.system/user/role");
+            OutputProcessor::from_args(parsed_args, Some("identity.system/user/role"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

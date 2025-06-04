@@ -159,7 +159,7 @@ impl NetworkCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Network");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.network");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.network"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

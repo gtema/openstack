@@ -92,9 +92,10 @@ impl MeteringLabelCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create MeteringLabel");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.metering/metering_label",
+            Some("network.metering/metering_label"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

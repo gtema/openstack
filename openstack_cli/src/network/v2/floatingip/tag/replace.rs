@@ -75,7 +75,7 @@ impl TagCommand {
         info!("Set Tag");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.floatingip/tag");
+            OutputProcessor::from_args(parsed_args, Some("network.floatingip/tag"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace::Request::builder();

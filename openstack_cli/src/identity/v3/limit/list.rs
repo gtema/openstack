@@ -120,7 +120,7 @@ impl LimitsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Limits");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.limit");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.limit"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

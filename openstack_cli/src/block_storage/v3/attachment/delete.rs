@@ -73,8 +73,11 @@ impl AttachmentCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Attachment");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.attachment");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.attachment"),
+            Some("delete"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

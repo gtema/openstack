@@ -60,9 +60,10 @@ impl NamespacesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Namespaces");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.schema/metadef/namespaces",
+            Some("image.schema/metadef/namespaces"),
+            Some("json"),
         );
         op.validate_args(parsed_args)?;
 

@@ -61,9 +61,10 @@ impl VersionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Version");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.version",
+            Some("container-infrastructure-management.version"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

@@ -80,7 +80,7 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("lock"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = lock_273::Request::builder();

@@ -74,9 +74,10 @@ impl FlavorAccessesCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List FlavorAccesses");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.flavor/flavor_access",
+            Some("compute.flavor/flavor_access"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

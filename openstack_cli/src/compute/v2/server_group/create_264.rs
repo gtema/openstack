@@ -126,7 +126,8 @@ impl ServerGroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create ServerGroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server_group");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("compute.server_group"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_264::Request::builder();

@@ -67,9 +67,10 @@ impl RequestTokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create RequestToken");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_OAUTH1/request_token",
+            Some("identity.OS_OAUTH1/request_token"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

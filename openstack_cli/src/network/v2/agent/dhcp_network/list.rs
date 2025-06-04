@@ -118,8 +118,11 @@ impl DhcpNetworksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List DhcpNetworks");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.agent/dhcp_network");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.agent/dhcp_network"),
+            Some("list"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

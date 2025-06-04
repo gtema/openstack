@@ -82,7 +82,7 @@ impl StoreCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Store");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.store");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.store"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

@@ -61,9 +61,10 @@ impl CertificateCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Certificate");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_SIMPLE_CERT/certificate",
+            Some("identity.OS_SIMPLE_CERT/certificate"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

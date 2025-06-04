@@ -75,8 +75,11 @@ impl ExtraSpecsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ExtraSpecs");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.flavor/extra_spec");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.flavor/extra_spec"),
+            Some("list"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

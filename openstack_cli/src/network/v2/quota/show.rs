@@ -87,7 +87,7 @@ impl QuotaCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Quota");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.quota");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.quota"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

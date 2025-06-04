@@ -204,9 +204,10 @@ impl HealthmonitorsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Healthmonitors");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.healthmonitor",
+            Some("load-balancer.healthmonitor"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

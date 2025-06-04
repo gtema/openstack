@@ -130,7 +130,7 @@ impl ServiceProfilesCommand {
         info!("List ServiceProfiles");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.service_profile");
+            OutputProcessor::from_args(parsed_args, Some("network.service_profile"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

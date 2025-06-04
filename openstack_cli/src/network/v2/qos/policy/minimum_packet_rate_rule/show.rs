@@ -79,9 +79,10 @@ impl MinimumPacketRateRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show MinimumPacketRateRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/policy/minimum_packet_rate_rule",
+            Some("network.qos/policy/minimum_packet_rate_rule"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

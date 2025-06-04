@@ -82,9 +82,10 @@ impl InventoryCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Inventory");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "placement.resource_provider/inventory",
+            Some("placement.resource_provider/inventory"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

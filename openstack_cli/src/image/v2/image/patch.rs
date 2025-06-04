@@ -208,7 +208,7 @@ impl ImageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Image");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

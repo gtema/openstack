@@ -196,7 +196,7 @@ impl SubnetsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Subnets");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.subnet");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.subnet"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

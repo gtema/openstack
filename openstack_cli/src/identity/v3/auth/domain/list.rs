@@ -70,7 +70,8 @@ impl DomainsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Domains");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.auth/domain");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("identity.auth/domain"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();

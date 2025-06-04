@@ -214,8 +214,11 @@ impl LoadbalancerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Loadbalancer");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.loadbalancer");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("load-balancer.loadbalancer"),
+            Some("create"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

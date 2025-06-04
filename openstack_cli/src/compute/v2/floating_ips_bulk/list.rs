@@ -67,8 +67,11 @@ impl FloatingIpsBulksCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List FloatingIpsBulks");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "compute.floating_ips_bulk");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.floating_ips_bulk"),
+            Some("list"),
+        );
         op.validate_args(parsed_args)?;
 
         let ep_builder = list::Request::builder();
