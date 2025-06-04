@@ -85,6 +85,7 @@ impl ServiceEndpoint {
                 seg.into_iter().filter(|x| !x.is_empty()).collect()
             });
             // Save last element if it ends with project_id
+
             if let Some(last) = path_segments.last() {
                 if last.ends_with(pid.as_ref()) {
                     last_segment_with_project_id = Some(last.to_string().clone());
@@ -321,7 +322,7 @@ impl ServiceEndpoints {
         self.0.clear();
     }
 
-    #[cfg(test)]
+    /// Get all endpoints
     pub fn get_all(&self) -> &Vec<ServiceEndpoint> {
         &self.0
     }

@@ -16,22 +16,18 @@
 
 #![deny(dead_code, unused_imports, unused_mut)]
 
+use bytes::Bytes;
+use chrono::TimeDelta;
+use http::{Response as HttpResponse, StatusCode};
+use reqwest::{
+    blocking::{Client, Request, Response},
+    Certificate, Url,
+};
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
 use tracing::{debug, error, event, info, instrument, trace, warn, Level};
-
-use bytes::Bytes;
-use chrono::TimeDelta;
-use http::{Response as HttpResponse, StatusCode};
-
-use reqwest::{
-    blocking::{Client, Request, Response},
-    Certificate, Url,
-};
-
-use crate::config::CloudConfig;
 
 use crate::api;
 use crate::api::query;
@@ -41,14 +37,13 @@ use crate::auth::{
     authtoken::{AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
 };
+use crate::catalog::{Catalog, CatalogError, ServiceEndpoint};
+use crate::config::CloudConfig;
 use crate::config::{get_config_identity_hash, ConfigFile};
+use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project};
 use crate::types::{ApiVersion, ServiceType};
-
-use crate::catalog::{Catalog, ServiceEndpoint};
-
-use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::utils::expand_tilde;
 
 // Private enum that enables the parsing of the cert bytes to be
@@ -157,7 +152,7 @@ impl OpenStack {
         }
         if let Some(false) = &config.verify {
             warn!(
-                "SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate."
+                "SSL Verification is disabled! Please consider using `cacert` for adding custom certificate instead."
             );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
@@ -382,6 +377,13 @@ impl OpenStack {
 
                 let orig_url = ep.url().clone();
                 let mut try_url = ep.url().clone();
+                // Version discovery document must logically end with "/" since API url goes even
+                // deeper.
+                try_url
+                    .path_segments_mut()
+                    .map_err(|_| CatalogError::cannot_be_base(ep.url()))?
+                    .pop_if_empty()
+                    .push("");
                 let mut max_depth = 10;
                 loop {
                     let req = http::Request::builder()
@@ -396,7 +398,7 @@ impl OpenStack {
                                 service_type,
                                 &try_url,
                                 rsp.body(),
-                                None::<String>,
+                                self.config.region_name.as_ref(),
                             )
                             .is_ok()
                     {
@@ -406,7 +408,10 @@ impl OpenStack {
                     if try_url.path() != "/" {
                         // We are not at the root yet and have not found a
                         // valid version document so far, try one level up
-                        try_url = try_url.join("../")?;
+                        try_url
+                            .path_segments_mut()
+                            .map_err(|_| CatalogError::cannot_be_base(&orig_url))?
+                            .pop();
                     } else {
                         return Err(OpenStackError::Discovery {
                             service: service_type.to_string(),

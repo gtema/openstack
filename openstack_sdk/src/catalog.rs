@@ -22,7 +22,7 @@
 
 use bytes::Bytes;
 use std::collections::{HashMap, HashSet};
-use tracing::{debug, error, trace};
+use tracing::{debug, error, trace, warn};
 use url::Url;
 
 pub use crate::catalog::error::CatalogError;
@@ -44,13 +44,13 @@ pub(crate) struct Catalog {
     /// Current project_id
     project_id: Option<String>,
 
-    // Current region
+    /// Current region
     region: Option<String>,
 
     /// HashMap containing service endpoints by the service type
     pub(crate) service_endpoints: HashMap<String, ServiceEndpoints>,
 
-    // Catalog information as presented in the token
+    /// Catalog information as presented in the token
     token_catalog: Option<Vec<ApiServiceEndpoints>>,
 
     /// Configured endpoint overrides
@@ -274,22 +274,15 @@ impl Catalog {
         ))
     }
 
-    /// Process version discovery response for the service
-    ///
-    /// This is implemented this way since it is hard to get mutable entry
-    /// from the mutable catalog in the main client while invoking non
-    /// mutable methods (in openstack::discover_service_endpoint).
-    pub(crate) fn process_endpoint_discovery<S: AsRef<str>>(
-        &mut self,
+    /// Process version discovery response for the service returning list of extracted endpoints
+    pub(crate) fn parse_endpoint_discovery<S: AsRef<str>>(
+        &self,
         service_type: &ServiceType,
         url: &Url,
         data: &Bytes,
         region: Option<S>,
-    ) -> Result<&mut Self, CatalogError> {
-        let service_entry = self
-            .service_endpoints
-            .entry(service_type.to_string())
-            .or_default();
+    ) -> Result<ServiceEndpoints, CatalogError> {
+        let mut service_entry = ServiceEndpoints::default();
         // Get main service type
         let main_service_type = self
             .service_authority
@@ -326,10 +319,46 @@ impl Catalog {
                     );
                 }
             }
+            if !ep.build_request_url("./")?.path().starts_with(url.path()) {
+                warn!(
+                    "Discovered url [{}] does not have the same prefix as the url it was discovered from [{}]. This may indicate misconfiguration [https://gtema.github.io/openstack/possible_errors.html#discovered-url-has-different-prefix]",
+                    ep.build_request_url("./")?.as_str(),
+                    url.as_str()
+                );
+            }
 
             service_entry.push(ep.to_owned());
         }
+        Ok(service_entry)
+    }
+
+    /// Consume service endpoints as discovered
+    pub(crate) fn consume_discovered_endpoints(
+        &mut self,
+        service_type: &ServiceType,
+        endpoints: ServiceEndpoints,
+    ) -> Result<&mut Self, CatalogError> {
+        let service_entry = self
+            .service_endpoints
+            .entry(service_type.to_string())
+            .or_default();
+        for ep in endpoints.get_all().iter() {
+            service_entry.push(ep.to_owned());
+        }
         Ok(self)
+    }
+
+    /// Parse service endpoint discovery document and set discovered endpoints.
+    pub(crate) fn process_endpoint_discovery<S: AsRef<str>>(
+        &mut self,
+        service_type: &ServiceType,
+        url: &Url,
+        data: &Bytes,
+        region: Option<S>,
+    ) -> Result<&mut Self, CatalogError> {
+        let discovered_endpoints =
+            self.parse_endpoint_discovery(service_type, url, data, region)?;
+        self.consume_discovered_endpoints(service_type, discovered_endpoints)
     }
 
     /// Return catalog endpoints as returned in the authorization response

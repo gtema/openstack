@@ -14,25 +14,20 @@
 
 //! Asynchronous OpenStack client
 
-use std::convert::TryInto;
-use std::fmt::{self, Debug};
-use std::time::SystemTime;
-use std::{fs::File, io::Read};
-use tracing::{debug, enabled, error, event, info, instrument, trace, warn, Level};
-
 use async_trait::async_trait;
 use bytes::Bytes;
 use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
 use http::{header, HeaderMap, HeaderValue, Response as HttpResponse, StatusCode};
-
+use reqwest::{Body, Certificate, Client as AsyncClient, Request, Response};
+use std::convert::TryInto;
+use std::fmt::{self, Debug};
+use std::time::SystemTime;
+use std::{fs::File, io::Read};
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
-
-use reqwest::{Body, Certificate, Client as AsyncClient, Request, Response};
-
-use crate::config::CloudConfig;
+use tracing::{debug, enabled, error, event, info, instrument, trace, warn, Level};
 
 use crate::api;
 use crate::api::query;
@@ -43,14 +38,13 @@ use crate::auth::{
     authtoken::{AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
 };
+use crate::catalog::{Catalog, CatalogError, ServiceEndpoint};
+use crate::config::CloudConfig;
 use crate::config::{get_config_identity_hash, ConfigFile};
+use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints};
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
-
-use crate::catalog::{Catalog, ServiceEndpoint};
-
-use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::utils::expand_tilde;
 
 /// Asynchronous client for the OpenStack API for a single user
@@ -192,7 +186,7 @@ impl AsyncOpenStack {
         }
         if let Some(false) = &config.verify {
             warn!(
-                "SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate."
+                "SSL Verification is disabled! Please consider using `cacert` for adding custom certificate instead."
             );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
@@ -461,6 +455,13 @@ where {
 
                 let orig_url = ep.url().clone();
                 let mut try_url = ep.url().clone();
+                // Version discovery document must logically end with "/" since API url goes even
+                // deeper.
+                try_url
+                    .path_segments_mut()
+                    .map_err(|_| CatalogError::cannot_be_base(ep.url()))?
+                    .pop_if_empty()
+                    .push("");
                 let mut max_depth = 10;
                 loop {
                     let req = http::Request::builder()
@@ -477,7 +478,7 @@ where {
                                 service_type,
                                 &try_url,
                                 rsp.body(),
-                                None::<String>,
+                                self.config.region_name.as_ref(),
                             )
                             .is_ok()
                     {
@@ -487,7 +488,10 @@ where {
                     if try_url.path() != "/" {
                         // We are not at the root yet and have not found a
                         // valid version document so far, try one level up
-                        try_url = try_url.join("../")?;
+                        try_url
+                            .path_segments_mut()
+                            .map_err(|_| CatalogError::cannot_be_base(&orig_url))?
+                            .pop();
                     } else {
                         return Err(OpenStackError::Discovery {
                             service: service_type.to_string(),
