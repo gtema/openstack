@@ -89,7 +89,7 @@ impl ConfigCommand {
         info!("Delete Config");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.domain/config");
+            OutputProcessor::from_args(parsed_args, Some("identity.domain/config"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete_all::Request::builder();

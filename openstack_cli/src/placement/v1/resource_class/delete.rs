@@ -79,8 +79,11 @@ impl ResourceClassCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete ResourceClass");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "placement.resource_class");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("placement.resource_class"),
+            Some("delete"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

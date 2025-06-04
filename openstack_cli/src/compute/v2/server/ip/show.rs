@@ -86,7 +86,7 @@ impl IpCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Ip");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.server/ip");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server/ip"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

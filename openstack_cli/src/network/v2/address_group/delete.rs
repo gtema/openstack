@@ -73,7 +73,8 @@ impl AddressGroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete AddressGroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.address_group");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.address_group"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

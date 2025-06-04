@@ -60,9 +60,10 @@ impl ResourceTypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json ResourceType");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "image.schema/metadef/resource_type",
+            Some("image.schema/metadef/resource_type"),
+            Some("json"),
         );
         op.validate_args(parsed_args)?;
 

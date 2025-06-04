@@ -101,7 +101,7 @@ impl MemberCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Member");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "image.image/member");
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image/member"), Some("set"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set::Request::builder();

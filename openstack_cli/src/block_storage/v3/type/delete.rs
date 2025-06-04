@@ -68,7 +68,8 @@ impl TypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Type");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.type");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.type"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

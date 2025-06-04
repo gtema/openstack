@@ -73,8 +73,11 @@ impl EndpointGroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete EndpointGroup");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.vpn/endpoint_group");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.vpn/endpoint_group"),
+            Some("delete"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

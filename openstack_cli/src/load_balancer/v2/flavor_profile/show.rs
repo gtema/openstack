@@ -71,9 +71,10 @@ impl FlavorProfileCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show FlavorProfile");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "load-balancer.flavor_profile",
+            Some("load-balancer.flavor_profile"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

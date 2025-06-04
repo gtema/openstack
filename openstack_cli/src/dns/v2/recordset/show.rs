@@ -69,7 +69,7 @@ impl RecordsetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Recordset");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.recordset");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.recordset"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

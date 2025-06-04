@@ -91,7 +91,7 @@ impl ShareCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Share");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "dns.zone/share");
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.zone/share"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

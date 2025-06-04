@@ -76,7 +76,11 @@ impl GroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Group");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.group");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.group"),
+            Some("failover_replication"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = failover_replication_338::Request::builder();

@@ -80,7 +80,7 @@ impl ListenerCommand {
         info!("Get Listener");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.listener");
+            OutputProcessor::from_args(parsed_args, Some("load-balancer.listener"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = stats::Request::builder();

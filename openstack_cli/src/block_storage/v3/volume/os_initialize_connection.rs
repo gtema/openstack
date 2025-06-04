@@ -78,7 +78,11 @@ impl VolumeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Volume");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.volume");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.volume"),
+            Some("os-initialize_connection"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = os_initialize_connection::Request::builder();

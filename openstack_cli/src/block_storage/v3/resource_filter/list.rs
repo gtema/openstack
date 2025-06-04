@@ -61,9 +61,10 @@ impl ResourceFiltersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List ResourceFilters");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.resource_filter",
+            Some("block-storage.resource_filter"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

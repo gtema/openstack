@@ -75,7 +75,8 @@ impl FloatingIpCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create FloatingIp");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.floating_ip");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("compute.floating_ip"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = create::Request::builder();

@@ -229,7 +229,7 @@ impl ListenersCommand {
         info!("List Listeners");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "load-balancer.listener");
+            OutputProcessor::from_args(parsed_args, Some("load-balancer.listener"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

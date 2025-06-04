@@ -73,9 +73,10 @@ impl NodegroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Nodegroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.cluster/nodegroup",
+            Some("container-infrastructure-management.cluster/nodegroup"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

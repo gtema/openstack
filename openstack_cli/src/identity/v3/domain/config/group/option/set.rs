@@ -116,9 +116,10 @@ impl OptionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Option");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.domain/config/group/option",
+            Some("identity.domain/config/group/option"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

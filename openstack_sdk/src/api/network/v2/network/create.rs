@@ -145,6 +145,10 @@ pub struct Network<'a> {
     #[builder(default, setter(into))]
     pub(crate) provider_segmentation_id: Option<Cow<'a, str>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) qinq: Option<bool>,
+
     /// The ID of the QoS policy associated with the network.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -173,6 +177,12 @@ pub struct Network<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
+
+    /// Indicates the VLAN transparency mode of the network, which is VLAN
+    /// transparent (`true`) or not VLAN transparent (`false`).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) vlan_transparent: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]

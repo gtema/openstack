@@ -63,9 +63,10 @@ impl ProjectsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Projects");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_FEDERATION/project",
+            Some("identity.OS_FEDERATION/project"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

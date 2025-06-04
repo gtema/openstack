@@ -79,9 +79,10 @@ impl MeteringLabelRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show MeteringLabelRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.metering/metering_label_rule",
+            Some("network.metering/metering_label_rule"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

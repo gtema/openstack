@@ -87,7 +87,8 @@ impl ReshaperCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Reshaper");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "placement.reshaper");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("placement.reshaper"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_134::Request::builder();

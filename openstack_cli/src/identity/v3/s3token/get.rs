@@ -61,7 +61,7 @@ impl S3TokenCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get S3Token");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.s3token");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.s3token"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

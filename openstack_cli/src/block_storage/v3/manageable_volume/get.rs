@@ -98,9 +98,10 @@ impl ManageableVolumeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get ManageableVolume");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.manageable_volume",
+            Some("block-storage.manageable_volume"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

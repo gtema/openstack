@@ -69,9 +69,10 @@ impl AliasMinimumPacketRateRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show AliasMinimumPacketRateRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.qos/alias_minimum_packet_rate_rule",
+            Some("network.qos/alias_minimum_packet_rate_rule"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

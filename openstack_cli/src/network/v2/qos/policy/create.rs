@@ -107,7 +107,8 @@ impl PolicyCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Policy");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.qos/policy");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.qos/policy"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

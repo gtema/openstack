@@ -76,7 +76,8 @@ impl SubnetpoolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Subnetpool");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.subnetpool");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.subnetpool"), Some("action"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = add_prefixes::Request::builder();

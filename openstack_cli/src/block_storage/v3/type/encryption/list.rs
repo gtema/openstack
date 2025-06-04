@@ -69,9 +69,10 @@ impl EncryptionsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Encryptions");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.type/encryption",
+            Some("block-storage.type/encryption"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

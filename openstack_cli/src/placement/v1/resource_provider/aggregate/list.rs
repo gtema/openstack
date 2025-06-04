@@ -77,9 +77,10 @@ impl AggregateCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Aggregate");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "placement.resource_provider/aggregate",
+            Some("placement.resource_provider/aggregate"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

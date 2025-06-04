@@ -72,7 +72,8 @@ impl CredentialCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Credential");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.credential");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("identity.credential"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

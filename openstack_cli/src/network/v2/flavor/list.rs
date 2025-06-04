@@ -133,7 +133,7 @@ impl FlavorsCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Flavors");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.flavor");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.flavor"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

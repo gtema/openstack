@@ -109,8 +109,11 @@ impl NamespaceCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Namespace");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "image.metadef/namespace");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("image.metadef/namespace"),
+            Some("create"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

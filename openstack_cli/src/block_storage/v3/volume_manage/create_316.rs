@@ -174,9 +174,10 @@ impl VolumeManageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create VolumeManage");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.volume_manage",
+            Some("block-storage.volume_manage"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

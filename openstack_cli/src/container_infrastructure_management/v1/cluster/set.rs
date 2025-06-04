@@ -94,9 +94,10 @@ impl ClusterCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Cluster");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "container-infrastructure-management.cluster",
+            Some("container-infrastructure-management.cluster"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

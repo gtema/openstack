@@ -82,7 +82,7 @@ impl HypervisorCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Hypervisor");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "compute.hypervisor");
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.hypervisor"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();

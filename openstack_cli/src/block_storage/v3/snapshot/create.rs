@@ -107,7 +107,7 @@ impl SnapshotCommand {
         info!("Create Snapshot");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.snapshot");
+            OutputProcessor::from_args(parsed_args, Some("block-storage.snapshot"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

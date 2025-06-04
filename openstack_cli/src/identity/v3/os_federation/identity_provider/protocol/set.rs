@@ -98,9 +98,10 @@ impl ProtocolCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Protocol");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.OS_FEDERATION/identity_provider/protocol",
+            Some("identity.OS_FEDERATION/identity_provider/protocol"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

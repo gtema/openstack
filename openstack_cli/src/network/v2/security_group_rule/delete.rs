@@ -73,9 +73,10 @@ impl SecurityGroupRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete SecurityGroupRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.security_group_rule",
+            Some("network.security_group_rule"),
+            Some("delete"),
         );
         op.validate_args(parsed_args)?;
 

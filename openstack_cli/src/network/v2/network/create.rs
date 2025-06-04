@@ -131,6 +131,9 @@ struct Network {
     #[arg(help_heading = "Body parameters", long)]
     provider_segmentation_id: Option<String>,
 
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    qinq: Option<bool>,
+
     /// The ID of the QoS policy associated with the network.
     #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
@@ -160,6 +163,11 @@ struct Network {
     /// You cannot change this value through authorization policies.
     #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
+
+    /// Indicates the VLAN transparency mode of the network, which is VLAN
+    /// transparent (`true`) or not VLAN transparent (`false`).
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    vlan_transparent: Option<bool>,
 }
 
 impl NetworkCommand {
@@ -171,7 +179,7 @@ impl NetworkCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create Network");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.network");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.network"), Some("create"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();
@@ -230,6 +238,10 @@ impl NetworkCommand {
             network_builder.provider_segmentation_id(val);
         }
 
+        if let Some(val) = &args.qinq {
+            network_builder.qinq(*val);
+        }
+
         if let Some(val) = &args.qos_policy_id {
             network_builder.qos_policy_id(Some(val.into()));
         } else if args.no_qos_policy_id {
@@ -254,6 +266,10 @@ impl NetworkCommand {
 
         if let Some(val) = &args.tenant_id {
             network_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.vlan_transparent {
+            network_builder.vlan_transparent(*val);
         }
 
         ep_builder.network(network_builder.build().unwrap());

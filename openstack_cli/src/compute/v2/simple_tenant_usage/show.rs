@@ -86,9 +86,10 @@ impl SimpleTenantUsageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show SimpleTenantUsage");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "compute.simple_tenant_usage",
+            Some("compute.simple_tenant_usage"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

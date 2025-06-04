@@ -88,9 +88,10 @@ impl GroupSnapshotCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create GroupSnapshot");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "block-storage.group_snapshot",
+            Some("block-storage.group_snapshot"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

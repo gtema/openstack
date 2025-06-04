@@ -68,7 +68,8 @@ impl RuleTypeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete RuleType");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.qos/rule_type");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.qos/rule_type"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

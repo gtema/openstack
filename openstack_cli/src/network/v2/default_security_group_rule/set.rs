@@ -74,9 +74,10 @@ impl DefaultSecurityGroupRuleCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set DefaultSecurityGroupRule");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.default_security_group_rule",
+            Some("network.default_security_group_rule"),
+            Some("set"),
         );
         op.validate_args(parsed_args)?;
 

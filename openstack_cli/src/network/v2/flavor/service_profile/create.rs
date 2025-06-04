@@ -90,9 +90,10 @@ impl ServiceProfileCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create ServiceProfile");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.flavor/service_profile",
+            Some("network.flavor/service_profile"),
+            Some("create"),
         );
         op.validate_args(parsed_args)?;
 

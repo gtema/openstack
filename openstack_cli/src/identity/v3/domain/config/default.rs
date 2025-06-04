@@ -67,7 +67,7 @@ impl ConfigCommand {
         info!("Show Config");
 
         let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "identity.domain/config");
+            OutputProcessor::from_args(parsed_args, Some("identity.domain/config"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = default::Request::builder();

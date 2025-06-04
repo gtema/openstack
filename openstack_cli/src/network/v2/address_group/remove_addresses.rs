@@ -81,7 +81,8 @@ impl AddressGroupCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action AddressGroup");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.address_group");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("network.address_group"), Some("action"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = remove_addresses::Request::builder();

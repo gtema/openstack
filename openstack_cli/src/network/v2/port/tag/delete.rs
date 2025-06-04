@@ -76,7 +76,7 @@ impl TagCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Tag");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "network.port/tag");
+        let op = OutputProcessor::from_args(parsed_args, Some("network.port/tag"), Some("delete"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();

@@ -147,7 +147,7 @@ impl UsersCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("List Users");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.user");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.user"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

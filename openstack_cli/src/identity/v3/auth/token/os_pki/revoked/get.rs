@@ -65,9 +65,10 @@ impl RevokedCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Revoked");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "identity.auth/token/OS_PKI/revoked",
+            Some("identity.auth/token/OS_PKI/revoked"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

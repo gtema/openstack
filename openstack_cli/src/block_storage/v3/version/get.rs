@@ -62,7 +62,8 @@ impl VersionCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get Version");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.version");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.version"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

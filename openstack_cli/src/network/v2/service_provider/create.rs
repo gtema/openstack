@@ -66,8 +66,11 @@ impl ServiceProviderCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Create ServiceProvider");
 
-        let op =
-            OutputProcessor::from_args_with_resource_key(parsed_args, "network.service_provider");
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.service_provider"),
+            Some("create"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create::Request::builder();

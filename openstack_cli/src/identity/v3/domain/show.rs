@@ -74,7 +74,7 @@ impl DomainCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Domain");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "identity.domain");
+        let op = OutputProcessor::from_args(parsed_args, Some("identity.domain"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut find_builder = find::Request::builder();

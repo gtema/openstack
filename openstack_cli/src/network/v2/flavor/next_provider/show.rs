@@ -78,9 +78,10 @@ impl NextProviderCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show NextProvider");
 
-        let op = OutputProcessor::from_args_with_resource_key(
+        let op = OutputProcessor::from_args(
             parsed_args,
-            "network.flavor/next_provider",
+            Some("network.flavor/next_provider"),
+            Some("show"),
         );
         op.validate_args(parsed_args)?;
 

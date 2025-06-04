@@ -69,7 +69,8 @@ impl ClusterCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Cluster");
 
-        let op = OutputProcessor::from_args_with_resource_key(parsed_args, "block-storage.cluster");
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("block-storage.cluster"), Some("show"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = get::Request::builder();
