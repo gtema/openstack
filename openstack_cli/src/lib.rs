@@ -24,7 +24,7 @@
 use std::io::{self, IsTerminal};
 
 use clap::{CommandFactory, Parser};
-use clap_complete::generate;
+use clap_complete::Generator;
 use dialoguer::FuzzySelect;
 use eyre::eyre;
 use std::sync::{Arc, Mutex};
@@ -74,12 +74,11 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
 
     if let TopLevelCommands::Completion(args) = &cli.command {
         // generate completion output
-        generate(
-            args.shell,
-            &mut Cli::command(),
-            Cli::command().get_name().to_string(),
-            &mut io::stdout(),
-        );
+        let mut cmd = Cli::command();
+        cmd.set_bin_name(cmd.get_name().to_string());
+        cmd.build();
+        // Ignore any error during writing the completion
+        args.shell.try_generate(&cmd, &mut io::stdout()).ok();
         return Ok(());
     }
 
