@@ -164,11 +164,6 @@ impl OutputProcessor {
         }
     }
 
-    /// Get OutputConfig from passed arguments
-    pub fn from_args_with_resource_key<S: AsRef<str>>(args: &Cli, resource_key: S) -> Self {
-        OutputProcessor::from_args(args, Some(resource_key), None::<&str>)
-    }
-
     /// Validate command arguments with respect to the output producing
     pub fn validate_args(&self, _args: &Cli) -> Result<(), OpenStackCliError> {
         Ok(())
