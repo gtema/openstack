@@ -108,7 +108,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("shelveoffload"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("shelve_offload"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = shelve_offload::Request::builder();

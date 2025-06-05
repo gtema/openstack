@@ -89,8 +89,11 @@ impl MetadataCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Metadata");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server/metadata"), Some("set"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server/metadata"),
+            Some("replace"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace::Request::builder();

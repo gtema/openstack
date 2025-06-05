@@ -70,7 +70,7 @@ impl TokenCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("identity.OS_OAUTH2/token"),
-            Some("action"),
+            Some("token"),
         );
         op.validate_args(parsed_args)?;
 

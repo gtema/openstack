@@ -103,7 +103,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("os-getspiceconsole"),
+            Some("os_get_spiceconsole"),
         );
         op.validate_args(parsed_args)?;
 

@@ -66,7 +66,7 @@ impl NodegroupCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("container-infrastructure-management.cluster/nodegroup"),
-            Some("delete"),
+            Some("delete_all"),
         );
         op.validate_args(parsed_args)?;
 

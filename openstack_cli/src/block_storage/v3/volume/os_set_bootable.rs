@@ -80,7 +80,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-set_bootable"),
+            Some("os_set_bootable"),
         );
         op.validate_args(parsed_args)?;
 

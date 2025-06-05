@@ -75,8 +75,11 @@ impl AmphoraeCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Amphorae");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("load-balancer.amphorae"), Some("action"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("load-balancer.amphorae"),
+            Some("failover"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = failover::Request::builder();

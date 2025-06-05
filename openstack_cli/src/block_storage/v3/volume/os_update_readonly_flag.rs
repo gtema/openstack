@@ -80,7 +80,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-update_readonly_flag"),
+            Some("os_update_readonly_flag"),
         );
         op.validate_args(parsed_args)?;
 

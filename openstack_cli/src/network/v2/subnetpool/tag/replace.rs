@@ -74,8 +74,11 @@ impl TagCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Tag");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("network.subnetpool/tag"), Some("set"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.subnetpool/tag"),
+            Some("replace"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace::Request::builder();

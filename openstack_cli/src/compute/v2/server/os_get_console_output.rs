@@ -102,7 +102,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("os-getconsoleoutput"),
+            Some("os_get_console_output"),
         );
         op.validate_args(parsed_args)?;
 

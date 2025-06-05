@@ -97,7 +97,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-attach"),
+            Some("os_attach"),
         );
         op.validate_args(parsed_args)?;
 

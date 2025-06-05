@@ -79,7 +79,7 @@ impl AllocationCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.resource_provider/allocation"),
-            Some("show"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

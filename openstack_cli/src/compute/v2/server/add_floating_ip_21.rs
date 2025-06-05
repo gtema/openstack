@@ -114,8 +114,11 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("addfloatingip"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server"),
+            Some("add_floating_ip"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = add_floating_ip_21::Request::builder();

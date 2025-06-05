@@ -72,7 +72,7 @@ impl ObjectCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.metadef/namespace/object"),
-            Some("delete"),
+            Some("delete_all"),
         );
         op.validate_args(parsed_args)?;
 

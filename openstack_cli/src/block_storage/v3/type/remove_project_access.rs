@@ -80,7 +80,7 @@ impl TypeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.type"),
-            Some("removeprojectaccess"),
+            Some("remove_project_access"),
         );
         op.validate_args(parsed_args)?;
 

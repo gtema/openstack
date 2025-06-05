@@ -72,7 +72,7 @@ impl PropertyCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.metadef/namespace/property"),
-            Some("delete"),
+            Some("delete_all"),
         );
         op.validate_args(parsed_args)?;
 

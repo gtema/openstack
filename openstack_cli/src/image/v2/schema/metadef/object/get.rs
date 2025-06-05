@@ -63,7 +63,7 @@ impl ObjectCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.schema/metadef/object"),
-            Some("json"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

@@ -90,7 +90,7 @@ impl InventoryCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.resource_provider/inventory"),
-            Some("set"),
+            Some("replace"),
         );
         op.validate_args(parsed_args)?;
 

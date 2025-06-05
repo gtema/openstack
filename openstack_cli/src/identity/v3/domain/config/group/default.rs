@@ -78,7 +78,7 @@ impl GroupCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("identity.domain/config/group"),
-            Some("show"),
+            Some("default"),
         );
         op.validate_args(parsed_args)?;
 

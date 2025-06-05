@@ -76,7 +76,7 @@ impl StageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Stage");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("image.image/stage"), Some("action"));
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image/stage"), Some("stage"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = stage::Request::builder();

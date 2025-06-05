@@ -70,7 +70,7 @@ impl MemberCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Member");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("image.schema/member"), Some("json"));
+        let op = OutputProcessor::from_args(parsed_args, Some("image.schema/member"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

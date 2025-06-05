@@ -84,7 +84,7 @@ impl InventoryCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.resource_provider/inventory"),
-            Some("delete"),
+            Some("delete_all"),
         );
         op.validate_args(parsed_args)?;
 

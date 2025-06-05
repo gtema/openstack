@@ -73,7 +73,7 @@ impl PropertyCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.metadef/namespace/property"),
-            Some("list_from_struct"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

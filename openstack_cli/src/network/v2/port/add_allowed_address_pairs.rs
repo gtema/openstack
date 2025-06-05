@@ -77,7 +77,11 @@ impl PortCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Port");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("network.port"), Some("action"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.port"),
+            Some("add_allowed_address_pairs"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = add_allowed_address_pairs::Request::builder();

@@ -71,7 +71,7 @@ impl AttachmentCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.attachment"),
-            Some("os-complete"),
+            Some("os_complete"),
         );
         op.validate_args(parsed_args)?;
 

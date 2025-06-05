@@ -77,7 +77,7 @@ impl TagCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("network.network_segment_range/tag"),
-            Some("set"),
+            Some("replace"),
         );
         op.validate_args(parsed_args)?;
 

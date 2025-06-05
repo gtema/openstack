@@ -65,7 +65,7 @@ impl CacheCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Cache");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("image.cache"), Some("delete"));
+        let op = OutputProcessor::from_args(parsed_args, Some("image.cache"), Some("delete_all"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = delete_all::Request::builder();

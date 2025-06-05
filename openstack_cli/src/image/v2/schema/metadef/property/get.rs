@@ -63,7 +63,7 @@ impl PropertyCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.schema/metadef/property"),
-            Some("json"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

@@ -89,7 +89,7 @@ impl TaskCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Task");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("dns.zone/task"), Some("action"));
+        let op = OutputProcessor::from_args(parsed_args, Some("dns.zone/task"), Some("pool_move"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = pool_move::Request::builder();

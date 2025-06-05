@@ -76,7 +76,7 @@ impl ImageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Image");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("image.image"), Some("action"));
+        let op = OutputProcessor::from_args(parsed_args, Some("image.image"), Some("deactivate"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = deactivate::Request::builder();

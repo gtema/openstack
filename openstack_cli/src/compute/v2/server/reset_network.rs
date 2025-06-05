@@ -81,7 +81,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("resetnetwork"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("reset_network"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = reset_network::Request::builder();

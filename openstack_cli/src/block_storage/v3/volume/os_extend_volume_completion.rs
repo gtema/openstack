@@ -81,7 +81,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-extend_volume_completion"),
+            Some("os_extend_volume_completion"),
         );
         op.validate_args(parsed_args)?;
 

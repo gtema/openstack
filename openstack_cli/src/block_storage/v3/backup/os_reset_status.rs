@@ -80,7 +80,7 @@ impl BackupCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.backup"),
-            Some("os-reset_status"),
+            Some("os_reset_status"),
         );
         op.validate_args(parsed_args)?;
 

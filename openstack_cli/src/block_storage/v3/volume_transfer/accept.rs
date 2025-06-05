@@ -81,7 +81,7 @@ impl VolumeTransferCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume_transfer"),
-            Some("action"),
+            Some("accept"),
         );
         op.validate_args(parsed_args)?;
 

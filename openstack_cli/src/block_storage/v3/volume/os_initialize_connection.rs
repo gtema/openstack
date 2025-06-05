@@ -81,7 +81,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-initialize_connection"),
+            Some("os_initialize_connection"),
         );
         op.validate_args(parsed_args)?;
 

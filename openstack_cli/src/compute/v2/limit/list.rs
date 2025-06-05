@@ -69,7 +69,7 @@ impl LimitCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Limit");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("compute.limit"), Some("show"));
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.limit"), Some("list"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();

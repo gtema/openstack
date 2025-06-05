@@ -61,7 +61,7 @@ impl TagCommand {
         info!("Json Tag");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("image.schema/metadef/tag"), Some("json"));
+            OutputProcessor::from_args(parsed_args, Some("image.schema/metadef/tag"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

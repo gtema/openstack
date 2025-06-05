@@ -79,7 +79,7 @@ impl AmphoraeCommand {
         info!("Get Amphorae");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("load-balancer.amphorae"), Some("get"));
+            OutputProcessor::from_args(parsed_args, Some("load-balancer.amphorae"), Some("stats"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = stats::Request::builder();

@@ -66,8 +66,11 @@ impl ConfigCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Config");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("identity.domain/config"), Some("show"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.domain/config"),
+            Some("default"),
+        );
         op.validate_args(parsed_args)?;
 
         let ep_builder = default::Request::builder();

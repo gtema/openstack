@@ -74,7 +74,8 @@ impl QuotaSetCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show QuotaSet");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("compute.quota_set"), Some("show"));
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("compute.quota_set"), Some("defaults"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = defaults::Request::builder();

@@ -70,7 +70,7 @@ impl ImageCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Json Image");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("image.schema/image"), Some("json"));
+        let op = OutputProcessor::from_args(parsed_args, Some("image.schema/image"), Some("get"));
         op.validate_args(parsed_args)?;
 
         let ep_builder = get::Request::builder();

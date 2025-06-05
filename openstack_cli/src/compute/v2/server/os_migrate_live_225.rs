@@ -102,8 +102,11 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("os-migratelive"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server"),
+            Some("os_migrate_live"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = os_migrate_live_225::Request::builder();

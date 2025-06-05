@@ -91,8 +91,11 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("changepassword"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("compute.server"),
+            Some("change_password"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = change_password::Request::builder();

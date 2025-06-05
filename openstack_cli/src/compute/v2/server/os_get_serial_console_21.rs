@@ -103,7 +103,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("os-getserialconsole"),
+            Some("os_get_serial_console"),
         );
         op.validate_args(parsed_args)?;
 
