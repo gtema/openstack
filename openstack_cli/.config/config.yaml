@@ -295,6 +295,45 @@ hints:
   - "List operations support `--max-items <NUM>` argument to limit the number of items returned."
   - "Place you custom hints in the `hints` or `command_hints` section of the configuration file."
   - "Disable hints by setting `enable_hints: false` in the configuration file."
+  - "If you think that by default other resource fields should be returned consider reporting that."
+  - "`osc` supports authenticated API calls (similar to curl) with `osc api <SERVICE_TYPE> <URL> ...`. Use this if certain API is not natively supported yet."
 command_hints:
+  auth:
+    show:
+      - "Auth token can be set to the shell variable with `TOKEN=$(osc auth login)`"
+      - "A full authentication response can be seen with `osc auth show -o json --pretty`"
+    login:
+      - "You can force new token instead of the cached one with the `--renew` argument."
+  network.router:
+    list:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    show:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    create:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    add_router_interface:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    remove_router_interface:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+  object-store.container:
+    create:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    delete:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    list:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    set:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    show:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
   object-store.object:
-    list: []
+    delete:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    download:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    list:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    show:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    upload:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
