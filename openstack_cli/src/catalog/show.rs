@@ -67,7 +67,9 @@ impl ShowCommand {
             .filter(|x| x.service_type == self.service_type)
             .flat_map(|x| {
                 let mut eps = x.endpoints;
-                eps.sort_by_key(|x| format!("{}{}", x.region, x.interface));
+                eps.sort_by_key(|x| {
+                    format!("{}{}", x.region.as_deref().unwrap_or_default(), x.interface)
+                });
                 eps
             })
             .map(|x| serde_json::to_value(x).unwrap())

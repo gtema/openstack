@@ -53,7 +53,7 @@ pub struct ServiceEndpoints {
 pub struct CatalogEndpoint {
     pub id: String,
     pub interface: String,
-    pub region: String,
+    pub region: Option<String>,
     pub url: String,
 }
 
