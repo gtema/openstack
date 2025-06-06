@@ -89,7 +89,7 @@ impl GroupCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.group"),
-            Some("create-from-src"),
+            Some("create_from_src"),
         );
         op.validate_args(parsed_args)?;
 

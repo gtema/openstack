@@ -94,7 +94,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("addfixedip"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("add_fixed_ip"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = add_fixed_ip_21::Request::builder();

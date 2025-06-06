@@ -88,7 +88,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-force_detach"),
+            Some("os_force_detach"),
         );
         op.validate_args(parsed_args)?;
 

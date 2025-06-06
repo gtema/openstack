@@ -87,7 +87,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("injectnetworkinfo"),
+            Some("inject_network_info"),
         );
         op.validate_args(parsed_args)?;
 

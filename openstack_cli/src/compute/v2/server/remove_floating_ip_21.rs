@@ -98,7 +98,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("removefloatingip"),
+            Some("remove_floating_ip"),
         );
         op.validate_args(parsed_args)?;
 

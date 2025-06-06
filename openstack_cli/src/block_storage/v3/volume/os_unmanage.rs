@@ -71,7 +71,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-unmanage"),
+            Some("os_unmanage"),
         );
         op.validate_args(parsed_args)?;
 

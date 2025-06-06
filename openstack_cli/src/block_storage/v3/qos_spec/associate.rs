@@ -68,8 +68,11 @@ impl QosSpecCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Get QosSpec");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("block-storage.qos_spec"), Some("get"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.qos_spec"),
+            Some("associate"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = associate::Request::builder();

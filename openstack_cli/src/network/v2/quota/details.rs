@@ -69,7 +69,7 @@ impl QuotaCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Show Quota");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("network.quota"), Some("show"));
+        let op = OutputProcessor::from_args(parsed_args, Some("network.quota"), Some("details"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = details::Request::builder();

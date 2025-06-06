@@ -81,7 +81,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-set_image_metadata"),
+            Some("os_set_image_metadata"),
         );
         op.validate_args(parsed_args)?;
 

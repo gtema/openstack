@@ -96,8 +96,11 @@ impl ConfigCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Config");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("identity.domain/config"), Some("set"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.domain/config"),
+            Some("replace"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace::Request::builder();

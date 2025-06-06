@@ -106,7 +106,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-volume_upload_image"),
+            Some("os_volume_upload_image"),
         );
         op.validate_args(parsed_args)?;
 

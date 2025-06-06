@@ -91,7 +91,7 @@ impl FlavorCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.flavor"),
-            Some("addtenantaccess"),
+            Some("add_tenant_access"),
         );
         op.validate_args(parsed_args)?;
 

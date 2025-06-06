@@ -80,7 +80,7 @@ impl AggregateCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.resource_provider/aggregate"),
-            Some("show"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

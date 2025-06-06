@@ -73,8 +73,11 @@ impl QosSpecCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action QosSpec");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("block-storage.qos_spec"), Some("action"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("block-storage.qos_spec"),
+            Some("delete_keys"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete_keys::Request::builder();

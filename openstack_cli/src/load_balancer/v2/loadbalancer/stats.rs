@@ -83,7 +83,7 @@ impl LoadbalancerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("load-balancer.loadbalancer"),
-            Some("get"),
+            Some("stats"),
         );
         op.validate_args(parsed_args)?;
 

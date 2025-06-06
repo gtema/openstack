@@ -63,7 +63,7 @@ impl ResourceTypesCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("image.schema/metadef/resource_types"),
-            Some("json"),
+            Some("get"),
         );
         op.validate_args(parsed_args)?;
 

@@ -97,7 +97,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("createbackup"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("create_backup"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_backup_21::Request::builder();

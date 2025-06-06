@@ -77,7 +77,7 @@ impl MetadataCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.snapshot/metadata"),
-            Some("set"),
+            Some("replace"),
         );
         op.validate_args(parsed_args)?;
 

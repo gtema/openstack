@@ -89,7 +89,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("createimage"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("create_image"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_image_21::Request::builder();

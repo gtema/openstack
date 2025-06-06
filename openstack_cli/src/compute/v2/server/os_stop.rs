@@ -93,7 +93,7 @@ impl ServerCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("os-stop"));
+        let op = OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("os_stop"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = os_stop::Request::builder();

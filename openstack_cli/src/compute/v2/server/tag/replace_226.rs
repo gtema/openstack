@@ -81,7 +81,8 @@ impl TagCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Set Tag");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("compute.server/tag"), Some("set"));
+        let op =
+            OutputProcessor::from_args(parsed_args, Some("compute.server/tag"), Some("replace"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace_226::Request::builder();

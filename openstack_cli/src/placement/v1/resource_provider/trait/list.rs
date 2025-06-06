@@ -77,7 +77,7 @@ impl TraitCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.resource_provider/trait"),
-            Some("show"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

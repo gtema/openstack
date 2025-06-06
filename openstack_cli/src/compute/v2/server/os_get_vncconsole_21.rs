@@ -99,7 +99,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("os-getvncconsole"),
+            Some("os_get_vncconsole"),
         );
         op.validate_args(parsed_args)?;
 

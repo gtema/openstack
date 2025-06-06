@@ -106,7 +106,7 @@ impl ServerCommand {
         info!("Action Server");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("confirmresize"));
+            OutputProcessor::from_args(parsed_args, Some("compute.server"), Some("confirm_resize"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = confirm_resize::Request::builder();

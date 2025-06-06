@@ -69,7 +69,7 @@ impl TagCommand {
         info!("Delete Tag");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("network.router/tag"), Some("delete"));
+            OutputProcessor::from_args(parsed_args, Some("network.router/tag"), Some("delete_all"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete_all::Request::builder();

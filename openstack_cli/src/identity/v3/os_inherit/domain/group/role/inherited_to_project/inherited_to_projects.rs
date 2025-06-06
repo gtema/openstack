@@ -117,7 +117,7 @@ impl InheritedToProjectCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("identity.OS_INHERIT/domain/group/role/inherited_to_project"),
-            Some("action"),
+            Some("inherited_to_projects"),
         );
         op.validate_args(parsed_args)?;
 

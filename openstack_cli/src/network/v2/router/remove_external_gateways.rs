@@ -83,7 +83,11 @@ impl RouterCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Action Router");
 
-        let op = OutputProcessor::from_args(parsed_args, Some("network.router"), Some("action"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("network.router"),
+            Some("remove_external_gateways"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = remove_external_gateways::Request::builder();

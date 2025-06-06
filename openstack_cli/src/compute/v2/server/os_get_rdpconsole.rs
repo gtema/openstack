@@ -84,7 +84,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("os-getrdpconsole"),
+            Some("os_get_rdpconsole"),
         );
         op.validate_args(parsed_args)?;
 

@@ -71,7 +71,7 @@ impl SnapshotCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.snapshot"),
-            Some("os-reset_status"),
+            Some("os_reset_status"),
         );
         op.validate_args(parsed_args)?;
 

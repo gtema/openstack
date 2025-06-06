@@ -88,8 +88,11 @@ impl ConfigCommand {
     ) -> Result<(), OpenStackCliError> {
         info!("Delete Config");
 
-        let op =
-            OutputProcessor::from_args(parsed_args, Some("identity.domain/config"), Some("delete"));
+        let op = OutputProcessor::from_args(
+            parsed_args,
+            Some("identity.domain/config"),
+            Some("delete_all"),
+        );
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete_all::Request::builder();

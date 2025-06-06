@@ -97,7 +97,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-migrate_volume"),
+            Some("os_migrate_volume"),
         );
         op.validate_args(parsed_args)?;
 

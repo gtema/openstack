@@ -79,7 +79,7 @@ impl OnboardNetworkSubnetCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("network.subnetpool/onboard_network_subnet"),
-            Some("action"),
+            Some("onboard_network_subnets"),
         );
         op.validate_args(parsed_args)?;
 

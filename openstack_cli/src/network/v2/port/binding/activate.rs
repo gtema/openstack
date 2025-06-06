@@ -85,7 +85,7 @@ impl BindingCommand {
         info!("Action Binding");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("network.port/binding"), Some("action"));
+            OutputProcessor::from_args(parsed_args, Some("network.port/binding"), Some("activate"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = activate::Request::builder();

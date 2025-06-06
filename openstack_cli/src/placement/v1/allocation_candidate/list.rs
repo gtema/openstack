@@ -189,7 +189,7 @@ impl AllocationCandidateCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("placement.allocation_candidate"),
-            Some("show"),
+            Some("list"),
         );
         op.validate_args(parsed_args)?;
 

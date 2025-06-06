@@ -77,7 +77,7 @@ impl AmphoraeCommand {
         info!("Action Amphorae");
 
         let op =
-            OutputProcessor::from_args(parsed_args, Some("load-balancer.amphorae"), Some("action"));
+            OutputProcessor::from_args(parsed_args, Some("load-balancer.amphorae"), Some("config"));
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = config::Request::builder();

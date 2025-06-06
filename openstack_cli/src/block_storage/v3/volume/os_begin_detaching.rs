@@ -71,7 +71,7 @@ impl VolumeCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("block-storage.volume"),
-            Some("os-begin_detaching"),
+            Some("os_begin_detaching"),
         );
         op.validate_args(parsed_args)?;
 

@@ -96,7 +96,7 @@ impl ServerCommand {
         let op = OutputProcessor::from_args(
             parsed_args,
             Some("compute.server"),
-            Some("removesecuritygroup"),
+            Some("remove_security_group"),
         );
         op.validate_args(parsed_args)?;
 
