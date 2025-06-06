@@ -28,7 +28,7 @@ async fn tokio_main() -> Result<()> {
 
     let args = Cli::parse();
 
-    let mut app = App::new(args.tick_rate, args.frame_rate, args.os_cloud)?;
+    let mut app = App::new(&args)?;
     app.run().await?;
 
     Ok(())

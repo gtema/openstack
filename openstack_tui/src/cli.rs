@@ -11,31 +11,34 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
-use clap::Parser;
+//! TUI Cli parameters
+use clap::{Parser, ValueHint};
+use std::path::PathBuf;
 
 use crate::utils::version;
 
+/// TUI Cli parameters
 #[derive(Parser, Debug)]
 #[command(author, version = version(), about)]
 pub struct Cli {
-    #[arg(
-        short,
-        long,
-        value_name = "FLOAT",
-        help = "Tick rate, i.e. number of ticks per second",
-        default_value_t = 0.2
-    )]
+    /// Number of ticks per second. May be used by certain views to trigger certain actions, but
+    /// most likely not used.
+    #[arg(short, long, value_name = "FLOAT", default_value_t = 0.2)]
     pub tick_rate: f64,
 
-    #[arg(
-        short,
-        long,
-        value_name = "FLOAT",
-        help = "Frame rate, i.e. number of frames per second",
-        default_value_t = 1.0
-    )]
+    /// Refresh frame rate (number of frames per second)
+    #[arg(short, long, value_name = "FLOAT", default_value_t = 1.0)]
     pub frame_rate: f64,
-    #[arg(long)]
+
+    /// Cloud name to connect to after the start
+    #[arg(long, env = "OS_CLOUD")]
     pub os_cloud: Option<String>,
+
+    /// Custom path to the `clouds.yaml` config file
+    #[arg(long, env = "OS_CLIENT_CONFIG_FILE", value_hint = ValueHint::FilePath)]
+    pub os_client_config_file: Option<PathBuf>,
+
+    /// Custom path to the `secure.yaml` config file
+    #[arg(long, env = "OS_CLIENT_SECURE_FILE", value_hint = ValueHint::FilePath)]
+    pub os_client_secure_file: Option<PathBuf>,
 }

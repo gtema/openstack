@@ -19,6 +19,7 @@ use std::collections::HashMap;
 use tokio::sync::mpsc;
 use tracing::{debug, error, instrument};
 
+use crate::cli::Cli;
 use crate::{
     action::Action,
     cloud_worker::Cloud,
@@ -100,15 +101,17 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(tick_rate: f64, frame_rate: f64, cloud_name: Option<String>) -> Result<Self> {
+    pub fn new(args: &Cli) -> Result<Self> {
         let config = Config::new()?;
         let mode = Mode::Home;
         let (action_tx, action_rx) = mpsc::unbounded_channel();
 
         let (cloud_worker, mut cloud_worker_receiver) = mpsc::unbounded_channel();
         let cloud_worker_app_tx = action_tx.clone();
+        let client_config = args.os_client_config_file.clone();
+        let client_secure_config = args.os_client_secure_file.clone();
         tokio::spawn(async move {
-            let mut cloud = Cloud::new();
+            let mut cloud = Cloud::new(client_config, client_secure_config);
             cloud
                 .run(cloud_worker_app_tx, &mut cloud_worker_receiver)
                 .await
@@ -194,8 +197,8 @@ impl App {
         components.insert(Mode::NetworkSubnets, Box::new(NetworkSubnets::new()));
 
         Ok(Self {
-            tick_rate,
-            frame_rate,
+            tick_rate: args.tick_rate,
+            frame_rate: args.frame_rate,
             components,
             header: Box::new(Header::new()),
             should_quit: false,
@@ -207,7 +210,7 @@ impl App {
             action_rx,
             cloud_worker_tx: cloud_worker,
             last_tick_key_events: Vec::new(),
-            cloud_name,
+            cloud_name: args.os_cloud.clone(),
             cloud_connected: false,
             active_popup: None,
             popups: HashMap::from([

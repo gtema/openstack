@@ -11,12 +11,17 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//! Cloud worker module.
+//!
+//! Handle communication with the cloud including connection, re-connection (when auth expires) and
+//! all the API requests.
 
 use chrono::TimeDelta;
 use eyre::{Report, Result, eyre};
 use openstack_sdk::{
     AsyncOpenStack, auth::AuthState, config::ConfigFile, types::identity::v3::AuthResponse,
 };
+use std::path::PathBuf;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tracing::debug;
 
@@ -44,8 +49,16 @@ pub(crate) struct Cloud {
 }
 
 impl Cloud {
-    pub fn new() -> Self {
-        let cfg = ConfigFile::new().unwrap();
+    pub fn new(
+        client_config_config_file: Option<PathBuf>,
+        client_secure_config_file: Option<PathBuf>,
+    ) -> Self {
+        let cfg = ConfigFile::new_with_user_specified_configs(
+            client_config_config_file.as_deref(),
+            client_secure_config_file.as_deref(),
+        )
+        .expect("unable to load config files");
+
         Self {
             cloud_configs: cfg,
             cloud: None,

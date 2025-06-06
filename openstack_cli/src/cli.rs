@@ -17,7 +17,7 @@ use clap::builder::{
     Styles,
     styling::{AnsiColor, Effects},
 };
-use clap::{Args, Parser, ValueEnum};
+use clap::{Args, Parser, ValueEnum, ValueHint};
 use clap_complete::Shell;
 
 use openstack_sdk::AsyncOpenStack;
@@ -156,6 +156,7 @@ pub struct GlobalOpts {
         long,
         env = "OS_CLIENT_CONFIG_FILE",
         global = true,
+        value_hint = ValueHint::FilePath,
         display_order = 905
     )]
     pub os_client_config_file: Option<String>,
@@ -165,6 +166,7 @@ pub struct GlobalOpts {
         long,
         env = "OS_CLIENT_SECURE_FILE",
         global = true,
+        value_hint = ValueHint::FilePath,
         display_order = 905
     )]
     pub os_client_secure_file: Option<String>,
