@@ -144,7 +144,7 @@ impl Catalog {
                     self.register_catalog_endpoint(
                         &srv.service_type,
                         &ep.url,
-                        Some(&ep.region),
+                        ep.region.clone(),
                         Some(&ep.interface),
                     )?;
                 }
