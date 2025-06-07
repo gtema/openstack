@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.3](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.2...openstack_sdk-v0.21.3) - 2025-06-07
+
+### Added
+
+- Use operation_type when operation_name is empty ([#1284](https://github.com/gtema/openstack/pull/1284))
+- Improve service discovery (hopefully) ([#1274](https://github.com/gtema/openstack/pull/1274))
+
+### Fixed
+
+- Make catalog more permissive ([#1291](https://github.com/gtema/openstack/pull/1291))
+
 ## [0.21.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.1...openstack_sdk-v0.21.2) - 2025-05-28
 
 ### Added
