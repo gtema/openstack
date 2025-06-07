@@ -53,7 +53,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@264ea76100c468f10c5d2e62bb81c6dc26fd5a3b # v0.18
+        uses: EmilienM/devstack-action@60ca1042045c0c9e3e001c64575d381654ffcba1 # v0.19
         with:
           branch: ${{ matrix.openstack_version }}
           enabled_services: swift
