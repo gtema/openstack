@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.2...openstack_cli-v0.12.3) - 2025-06-07
+
+### Added
+
+- Allow starting tui with custom clouds.yaml ([#1290](https://github.com/gtema/openstack/pull/1290))
+- Adjust operation_name ([#1288](https://github.com/gtema/openstack/pull/1288))
+- Use operation_type when operation_name is empty ([#1284](https://github.com/gtema/openstack/pull/1284))
+- Improve service discovery (hopefully) ([#1274](https://github.com/gtema/openstack/pull/1274))
+
+### Fixed
+
+- Make catalog more permissive ([#1291](https://github.com/gtema/openstack/pull/1291))
+- Fix crash when osc completion fails ([#1286](https://github.com/gtema/openstack/pull/1286))
+
+### Other
+
+- Add first command hints ([#1285](https://github.com/gtema/openstack/pull/1285))
+
 ## [0.12.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.1...openstack_cli-v0.12.2) - 2025-05-28
 
 ### Added
