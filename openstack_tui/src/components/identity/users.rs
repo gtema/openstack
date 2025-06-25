@@ -49,12 +49,12 @@ impl TryFrom<&UserResponse> for IdentityUserDelete {
     type Error = IdentityUserDeleteBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserDeleteBuilder::default();
-        if let Some(val) = &value.id {
-            builder.id(val.clone());
-        }
-        if let Some(val) = &value.name {
-            builder.name(val.clone());
-        }
+        //if let Some(val) = &value.id {
+        //    builder.id(val.clone());
+        //}
+        //if let Some(val) = &value.name {
+        //    builder.name(val.clone());
+        //}
         builder.build()
     }
 }
@@ -63,12 +63,12 @@ impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
     type Error = IdentityUserApplicationCredentialListBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserApplicationCredentialListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.user_id(val.clone());
-        }
-        if let Some(val) = &value.name {
-            builder.user_name(val.clone());
-        }
+        // if let Some(val) = &value.id {
+        //     builder.user_id(val.clone());
+        // }
+        // if let Some(val) = &value.name {
+        //     builder.user_name(val.clone());
+        // }
         builder.build()
     }
 }
@@ -116,14 +116,14 @@ impl Component for IdentityUsers<'_> {
                         // and have a selected entry
                         if let Some(selected_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
-                            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                                IdentityUserApiRequest::Set(Box::new(
-                                    IdentityUserSetBuilder::default()
-                                        .id(selected_row.id.clone().ok_or_eyre("id must be present")?)
-                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled.ok_or_eyre("user enabled property must be preset")?).build().wrap_err("cannot prepare user data structure")?)
-                                        .build().wrap_err("error preparing OpenStack request")?
-                                )))))?;
-                            self.set_loading(true);
+                            // command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                            //     IdentityUserApiRequest::Set(Box::new(
+                            //         IdentityUserSetBuilder::default()
+                            //             .id(selected_row.id.clone().ok_or_eyre("id must be present")?)
+                            //             .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled.ok_or_eyre("user enabled property must be preset")?).build().wrap_err("cannot prepare user data structure")?)
+                            //             .build().wrap_err("error preparing OpenStack request")?
+                            //     )))))?;
+                            // self.set_loading(true);
                         }
                     }
                 }

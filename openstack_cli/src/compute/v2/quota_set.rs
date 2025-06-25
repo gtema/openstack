@@ -23,7 +23,7 @@ use crate::{Cli, OpenStackCliError};
 pub mod defaults;
 pub mod delete;
 pub mod details;
-pub mod set_21;
+//pub mod set_21;
 pub mod show;
 
 /// Quota sets (os-quota-sets)
@@ -44,8 +44,8 @@ pub enum QuotaSetCommands {
     Defaults(defaults::QuotaSetCommand),
     Delete(delete::QuotaSetCommand),
     Details(details::QuotaSetCommand),
-    #[command(visible_alias = "set")]
-    Set21(set_21::QuotaSetCommand),
+    //    #[command(visible_alias = "set")]
+    //    Set21(set_21::QuotaSetCommand),
     Show(show::QuotaSetCommand),
 }
 
@@ -60,7 +60,7 @@ impl QuotaSetCommand {
             QuotaSetCommands::Defaults(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Details(cmd) => cmd.take_action(parsed_args, session).await,
-            QuotaSetCommands::Set21(cmd) => cmd.take_action(parsed_args, session).await,
+            //            QuotaSetCommands::Set21(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
