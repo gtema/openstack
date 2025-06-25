@@ -37,7 +37,7 @@ pub struct GroupResponse {
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// The user name. Must be unique within the owning domain.
+    /// The name of the group.
     #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,

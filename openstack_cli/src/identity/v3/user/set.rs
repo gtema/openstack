@@ -111,13 +111,20 @@ struct User {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "default_project_id")]
     no_default_project_id: bool,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Set explicit NULL for the description
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
     no_description: bool,
+
+    /// The ID of the new domain for the user. The ability to change the domain
+    /// of a user is now deprecated, and will be removed in subequent release.
+    /// It is already disabled by default in most Identity service
+    /// implementations.
+    #[arg(help_heading = "Body parameters", long)]
+    domain_id: Option<String>,
 
     /// Enables or disables the user. An enabled user can authenticate and
     /// receive authorization. A disabled user cannot authenticate or receive
@@ -213,6 +220,10 @@ impl UserCommand {
             user_builder.description(Some(val.into()));
         } else if args.no_description {
             user_builder.description(None);
+        }
+
+        if let Some(val) = &args.domain_id {
+            user_builder.domain_id(val);
         }
 
         if let Some(val) = &args.enabled {

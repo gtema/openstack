@@ -178,9 +178,16 @@ pub struct User {
     #[builder(default, setter(into))]
     pub default_project_id: Option<Option<String>>,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[builder(default, setter(into))]
     pub description: Option<Option<String>>,
+
+    /// The ID of the new domain for the user. The ability to change the domain
+    /// of a user is now deprecated, and will be removed in subequent release.
+    /// It is already disabled by default in most Identity service
+    /// implementations.
+    #[builder(default, setter(into))]
+    pub domain_id: Option<String>,
 
     /// Enables or disables the user. An enabled user can authenticate and
     /// receive authorization. A disabled user cannot authenticate or receive
@@ -236,6 +243,9 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
         }
         if let Some(val) = &value.description {
             ep_builder.description(val.clone().map(Into::into));
+        }
+        if let Some(val) = &value.domain_id {
+            ep_builder.domain_id(val.clone());
         }
         if let Some(val) = &value.enabled {
             ep_builder.enabled(*val);

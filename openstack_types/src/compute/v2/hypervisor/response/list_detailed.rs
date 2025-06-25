@@ -140,9 +140,10 @@ pub struct HypervisorResponse {
     #[structable(optional, wide)]
     pub running_vms: Option<i32>,
 
-    /// A list of `server` objects. This field has become mandatory in
-    /// microversion 2.75. If no servers is on hypervisor then empty list is
-    /// returned.
+    /// A list of `server` objects. Before microversion 2.75, this field is
+    /// only returned if non-empty. From microversion 2.75, this field will
+    /// always be returned unless the `with_servers` query parameter is
+    /// provided and is set to `false`.
     ///
     /// **New in version 2.53**
     #[serde(default)]

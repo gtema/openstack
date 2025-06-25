@@ -27,7 +27,7 @@ pub struct UserResponse {
     #[structable(optional)]
     pub default_project_id: Option<String>,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
@@ -63,16 +63,6 @@ pub struct UserResponse {
     #[structable(optional, serialize)]
     pub federated: Option<Vec<Federated>>,
 
-    /// The user ID.
-    #[serde(default)]
-    #[structable(optional)]
-    pub id: Option<String>,
-
-    /// The links for the `user` resource.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub links: Option<Links>,
-
     /// The user name. Must be unique within the owning domain.
     #[serde(default)]
     #[structable(optional)]
@@ -87,15 +77,10 @@ pub struct UserResponse {
     #[structable(optional, serialize)]
     pub options: Option<Options>,
 
-    /// The date and time when the password expires. The time zone is UTC.
-    ///
-    /// This is a response object attribute; not valid for requests. A `null`
-    /// value indicates that the password never expires.
-    ///
-    /// **New in version 3.7**
+    /// The password for the user.
     #[serde(default)]
     #[structable(optional)]
-    pub password_expires_at: Option<String>,
+    pub password: Option<String>,
 }
 
 /// `Protocols` type
@@ -110,18 +95,6 @@ pub struct Protocols {
 pub struct Federated {
     pub idp_id: String,
     pub protocols: Vec<Protocols>,
-}
-
-/// The links for the `user` resource.
-/// `Links` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Links {
-    #[serde(default)]
-    pub next: Option<String>,
-    #[serde(default)]
-    pub previous: Option<String>,
-    #[serde(rename = "self")]
-    pub _self: String,
 }
 
 /// The resource options for the user. Available resource options are

@@ -109,9 +109,7 @@ struct Subnet {
     enable_dhcp: Option<bool>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
-    /// gateway is associated with the subnet. If the gateway_ip is not
-    /// specified, OpenStack Networking allocates an address from the CIDR for
-    /// the gateway for the subnet by default.
+    /// gateway is associated with the subnet.
     #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
 

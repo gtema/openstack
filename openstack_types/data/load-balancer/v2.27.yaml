@@ -61,7 +61,8 @@ paths:
     delete:
       description: |-
         Deletes an Availability Zone Profile
-      operationId: lbaas/availabilityzoneprofiles/availabilityzoneprofile_id:delete
+      operationId: 
+        lbaas/availabilityzoneprofiles/availabilityzoneprofile_id:delete
       responses:
         '204':
           description: Ok
@@ -2045,8 +2046,8 @@ components:
       schema:
         type: string
     lbaas_availabilityzoneprofiles_availabilityzoneprofile_id:
-      description: availabilityzoneprofile_id parameter for /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id}
-        API
+      description: availabilityzoneprofile_id parameter for 
+        /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} API
       in: path
       name: availabilityzoneprofile_id
       required: true
@@ -2103,8 +2104,8 @@ components:
         description: ''
         type: string
     lbaas_availabilityzones_availabilityzone_id:
-      description: availabilityzone_id parameter for /v2/lbaas/availabilityzones/{availabilityzone_id}
-        API
+      description: availabilityzone_id parameter for 
+        /v2/lbaas/availabilityzones/{availabilityzone_id} API
       in: path
       name: availabilityzone_id
       required: true
@@ -2159,8 +2160,8 @@ components:
         description: ''
         type: string
     lbaas_flavorprofiles_flavorprofile_id:
-      description: flavorprofile_id parameter for /v2/lbaas/flavorprofiles/{flavorprofile_id}
-        API
+      description: flavorprofile_id parameter for 
+        /v2/lbaas/flavorprofiles/{flavorprofile_id} API
       in: path
       name: flavorprofile_id
       required: true
@@ -2301,17 +2302,17 @@ components:
         description: A human-readable description for the resource.
         type: string
     lbaas_healthmonitors_expected_codes:
-      description: The list of HTTP status codes expected in response from the member
-        to declare it healthy.
+      description: The list of HTTP status codes expected in response from the 
+        member to declare it healthy.
       in: query
       name: expected_codes
       schema:
-        description: The list of HTTP status codes expected in response from the member
-          to declare it healthy.
+        description: The list of HTTP status codes expected in response from the
+          member to declare it healthy.
         type: string
     lbaas_healthmonitors_healthmonitor_id:
-      description: healthmonitor_id parameter for /v2/lbaas/healthmonitors/{healthmonitor_id}
-        API
+      description: healthmonitor_id parameter for 
+        /v2/lbaas/healthmonitors/{healthmonitor_id} API
       in: path
       name: healthmonitor_id
       required: true
@@ -2358,22 +2359,24 @@ components:
         format: uuid
         type: string
     lbaas_healthmonitors_max_retries:
-      description: The number of successful checks before changing the operating status
-        of the member to ONLINE. A valid value is from 1 to 10.
+      description: The number of successful checks before changing the operating
+        status of the member to ONLINE. A valid value is from 1 to 10.
       in: query
       name: max_retries
       schema:
-        description: The number of successful checks before changing the operating
-          status of the member to ONLINE. A valid value is from 1 to 10.
+        description: The number of successful checks before changing the 
+          operating status of the member to ONLINE. A valid value is from 1 to 
+          10.
         type: integer
     lbaas_healthmonitors_max_retries_down:
-      description: The number of allowed check failures before changing the operating
-        status of the member to ERROR. A valid value is from 1 to 10.
+      description: The number of allowed check failures before changing the 
+        operating status of the member to ERROR. A valid value is from 1 to 10.
       in: query
       name: max_retries_down
       schema:
-        description: The number of allowed check failures before changing the operating
-          status of the member to ERROR. A valid value is from 1 to 10.
+        description: The number of allowed check failures before changing the 
+          operating status of the member to ERROR. A valid value is from 1 to 
+          10.
         type: integer
     lbaas_healthmonitors_name:
       description: Human-readable name of the resource.
@@ -2383,15 +2386,15 @@ components:
         description: Human-readable name of the resource.
         type: string
     lbaas_healthmonitors_not-tags:
-      description: Return the list of entities that do not have one or more of the
-        given tags.
+      description: Return the list of entities that do not have one or more of 
+        the given tags.
       in: query
       name: not-tags
       schema:
         type: string
     lbaas_healthmonitors_not-tags-any:
-      description: Return the list of entities that do not have at least one of the
-        given tags.
+      description: Return the list of entities that do not have at least one of 
+        the given tags.
       in: query
       name: not-tags-any
       schema:
@@ -2454,20 +2457,20 @@ components:
       schema:
         type: string
     lbaas_healthmonitors_tags-any:
-      description: Return the list of entities that have one or more of the given
-        tags.
+      description: Return the list of entities that have one or more of the 
+        given tags.
       in: query
       name: tags-any
       schema:
         type: string
     lbaas_healthmonitors_timeout:
-      description: The maximum time, in seconds, that a monitor waits to connect before
-        it times out.
+      description: The maximum time, in seconds, that a monitor waits to connect
+        before it times out.
       in: query
       name: timeout
       schema:
-        description: The maximum time, in seconds, that a monitor waits to connect
-          before it times out.
+        description: The maximum time, in seconds, that a monitor waits to 
+          connect before it times out.
         type: integer
     lbaas_healthmonitors_type:
       description: The type of health monitor.
@@ -2485,23 +2488,25 @@ components:
           - UDP-CONNECT
         type: string
     lbaas_healthmonitors_updated_at:
-      description: The UTC date and timestamp when the resource was last updated.
+      description: The UTC date and timestamp when the resource was last 
+        updated.
       in: query
       name: updated_at
       schema:
-        description: The UTC date and timestamp when the resource was last updated.
+        description: The UTC date and timestamp when the resource was last 
+          updated.
         format: date-time
         type: string
     lbaas_healthmonitors_url_path:
-      description: The HTTP URL path of the request sent by the monitor to test the
-        health of a backend member. Must be a string that begins with a forward slash
-        (/).
+      description: The HTTP URL path of the request sent by the monitor to test 
+        the health of a backend member. Must be a string that begins with a 
+        forward slash (/).
       in: query
       name: url_path
       schema:
-        description: The HTTP URL path of the request sent by the monitor to test
-          the health of a backend member. Must be a string that begins with a forward
-          slash (/).
+        description: The HTTP URL path of the request sent by the monitor to 
+          test the health of a backend member. Must be a string that begins with
+          a forward slash (/).
         type: string
     lbaas_l7policies_action:
       description: ''
@@ -2525,7 +2530,8 @@ components:
         description: ''
         type: string
     lbaas_l7policies_l7policy_id:
-      description: l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} API
+      description: l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} 
+        API
       in: path
       name: l7policy_id
       required: true
@@ -2654,8 +2660,8 @@ components:
         description: ''
         type: string
     lbaas_l7policies_rules_l7policy_id:
-      description: l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id}
-        API
+      description: l7policy_id parameter for 
+        /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
       in: path
       name: l7policy_id
       required: true
@@ -2707,8 +2713,8 @@ components:
         description: ''
         type: string
     lbaas_l7policies_rules_rule_id:
-      description: rule_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id}
-        API
+      description: rule_id parameter for 
+        /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
       in: path
       name: rule_id
       required: true
@@ -2752,15 +2758,15 @@ components:
           h2'
         type: string
     lbaas_listeners_connection_limit:
-      description: The maximum number of connections permitted for this listener.
-        Default value is -1 which represents infinite connections or a default value
-        defined by the provider driver.
+      description: The maximum number of connections permitted for this 
+        listener. Default value is -1 which represents infinite connections or a
+        default value defined by the provider driver.
       in: query
       name: connection_limit
       schema:
-        description: The maximum number of connections permitted for this listener.
-          Default value is -1 which represents infinite connections or a default value
-          defined by the provider driver.
+        description: The maximum number of connections permitted for this 
+          listener. Default value is -1 which represents infinite connections or
+          a default value defined by the provider driver.
         type: string
     lbaas_listeners_created_at:
       description: The UTC date and timestamp when the resource was created.
@@ -2771,11 +2777,13 @@ components:
         format: date-time
         type: string
     lbaas_listeners_default_pool_id:
-      description: The ID of the pool used by the listener if no L7 policies match.
+      description: The ID of the pool used by the listener if no L7 policies 
+        match.
       in: query
       name: default_pool_id
       schema:
-        description: The ID of the pool used by the listener if no L7 policies match.
+        description: The ID of the pool used by the listener if no L7 policies 
+          match.
         type: string
     lbaas_listeners_description:
       description: A human-readable description for the resource.
@@ -2785,31 +2793,31 @@ components:
         description: A human-readable description for the resource.
         type: string
     lbaas_listeners_hsts_include_subdomains:
-      description: Defines whether the includeSubDomains directive should be added
-        to the Strict-Transport-Security HTTP response header.
+      description: Defines whether the includeSubDomains directive should be 
+        added to the Strict-Transport-Security HTTP response header.
       in: query
       name: hsts_include_subdomains
       schema:
-        description: Defines whether the includeSubDomains directive should be added
-          to the Strict-Transport-Security HTTP response header.
+        description: Defines whether the includeSubDomains directive should be 
+          added to the Strict-Transport-Security HTTP response header.
         type: boolean
     lbaas_listeners_hsts_max_age:
-      description: The value of the max_age directive for the Strict-Transport-Security
-        HTTP response header.
+      description: The value of the max_age directive for the 
+        Strict-Transport-Security HTTP response header.
       in: query
       name: hsts_max_age
       schema:
-        description: The value of the max_age directive for the Strict-Transport-Security
-          HTTP response header.
+        description: The value of the max_age directive for the 
+          Strict-Transport-Security HTTP response header.
         type: integer
     lbaas_listeners_hsts_preload:
-      description: Defines whether the preload directive should be added to the Strict-Transport-Security
-        HTTP response header.
+      description: Defines whether the preload directive should be added to the 
+        Strict-Transport-Security HTTP response header.
       in: query
       name: hsts_preload
       schema:
-        description: Defines whether the preload directive should be added to the
-          Strict-Transport-Security HTTP response header.
+        description: Defines whether the preload directive should be added to 
+          the Strict-Transport-Security HTTP response header.
         type: boolean
     lbaas_listeners_id:
       description: The ID of the resource
@@ -2827,7 +2835,8 @@ components:
         description: Page size
         type: integer
     lbaas_listeners_listener_id:
-      description: listener_id parameter for /v2/lbaas/listeners/{listener_id} API
+      description: listener_id parameter for /v2/lbaas/listeners/{listener_id} 
+        API
       in: path
       name: listener_id
       required: true
@@ -2856,15 +2865,15 @@ components:
         description: Human-readable name of the resource.
         type: string
     lbaas_listeners_not-tags:
-      description: Return the list of entities that do not have one or more of the
-        given tags.
+      description: Return the list of entities that do not have one or more of 
+        the given tags.
       in: query
       name: not-tags
       schema:
         type: string
     lbaas_listeners_not-tags-any:
-      description: Return the list of entities that do not have at least one of the
-        given tags.
+      description: Return the list of entities that do not have at least one of 
+        the given tags.
       in: query
       name: not-tags-any
       schema:
@@ -2936,8 +2945,8 @@ components:
           - PENDING_UPDATE
         type: string
     lbaas_listeners_stats_listener_id:
-      description: listener_id parameter for /v2/lbaas/listeners/{listener_id}/stats
-        API
+      description: listener_id parameter for 
+        /v2/lbaas/listeners/{listener_id}/stats API
       in: path
       name: listener_id
       required: true
@@ -2950,8 +2959,8 @@ components:
       schema:
         type: string
     lbaas_listeners_tags-any:
-      description: Return the list of entities that have one or more of the given
-        tags.
+      description: Return the list of entities that have one or more of the 
+        given tags.
       in: query
       name: tags-any
       schema:
@@ -2978,13 +2987,13 @@ components:
         description: Backend member inactivity timeout in milliseconds.
         type: integer
     lbaas_listeners_timeout_tcp_inspect:
-      description: Time, in milliseconds, to wait for additional TCP packets for content
-        inspection.
+      description: Time, in milliseconds, to wait for additional TCP packets for
+        content inspection.
       in: query
       name: timeout_tcp_inspect
       schema:
-        description: Time, in milliseconds, to wait for additional TCP packets for
-          content inspection.
+        description: Time, in milliseconds, to wait for additional TCP packets 
+          for content inspection.
         type: integer
     lbaas_listeners_tls_ciphers:
       description: 'List of ciphers in OpenSSL format '
@@ -3001,11 +3010,13 @@ components:
         description: A list of TLS protocol versions.
         type: string
     lbaas_listeners_updated_at:
-      description: The UTC date and timestamp when the resource was last updated.
+      description: The UTC date and timestamp when the resource was last 
+        updated.
       in: query
       name: updated_at
       schema:
-        description: The UTC date and timestamp when the resource was last updated.
+        description: The UTC date and timestamp when the resource was last 
+          updated.
         format: date-time
         type: string
     lbaas_loadbalancer_cascade:
@@ -3038,8 +3049,8 @@ components:
         description: A human-readable description for the resource.
         type: string
     lbaas_loadbalancers_failover_loadbalancer_id:
-      description: loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/failover
-        API
+      description: loadbalancer_id parameter for 
+        /v2/lbaas/loadbalancers/{loadbalancer_id}/failover API
       in: path
       name: loadbalancer_id
       required: true
@@ -3069,8 +3080,8 @@ components:
         description: Page size
         type: integer
     lbaas_loadbalancers_loadbalancer_id:
-      description: loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}
-        API
+      description: loadbalancer_id parameter for 
+        /v2/lbaas/loadbalancers/{loadbalancer_id} API
       in: path
       name: loadbalancer_id
       required: true
@@ -3092,15 +3103,15 @@ components:
         description: Human-readable name of the resource.
         type: string
     lbaas_loadbalancers_not-tags:
-      description: Return the list of entities that do not have one or more of the
-        given tags.
+      description: Return the list of entities that do not have one or more of 
+        the given tags.
       in: query
       name: not-tags
       schema:
         type: string
     lbaas_loadbalancers_not-tags-any:
-      description: Return the list of entities that do not have at least one of the
-        given tags.
+      description: Return the list of entities that do not have at least one of 
+        the given tags.
       in: query
       name: not-tags-any
       schema:
@@ -3158,16 +3169,16 @@ components:
           - PENDING_UPDATE
         type: string
     lbaas_loadbalancers_stats_loadbalancer_id:
-      description: loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/stats
-        API
+      description: loadbalancer_id parameter for 
+        /v2/lbaas/loadbalancers/{loadbalancer_id}/stats API
       in: path
       name: loadbalancer_id
       required: true
       schema:
         type: string
     lbaas_loadbalancers_status_loadbalancer_id:
-      description: loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/status
-        API
+      description: loadbalancer_id parameter for 
+        /v2/lbaas/loadbalancers/{loadbalancer_id}/status API
       in: path
       name: loadbalancer_id
       required: true
@@ -3180,18 +3191,20 @@ components:
       schema:
         type: string
     lbaas_loadbalancers_tags-any:
-      description: Return the list of entities that have one or more of the given
-        tags.
+      description: Return the list of entities that have one or more of the 
+        given tags.
       in: query
       name: tags-any
       schema:
         type: string
     lbaas_loadbalancers_updated_at:
-      description: The UTC date and timestamp when the resource was last updated.
+      description: The UTC date and timestamp when the resource was last 
+        updated.
       in: query
       name: updated_at
       schema:
-        description: The UTC date and timestamp when the resource was last updated.
+        description: The UTC date and timestamp when the resource was last 
+          updated.
         format: date-time
         type: string
     lbaas_loadbalancers_vip_address:
@@ -3218,11 +3231,13 @@ components:
         format: uuid
         type: string
     lbaas_loadbalancers_vip_qos_policy_id:
-      description: The ID of the QoS Policy which will apply to the Virtual IP (VIP).
+      description: The ID of the QoS Policy which will apply to the Virtual IP 
+        (VIP).
       in: query
       name: vip_qos_policy_id
       schema:
-        description: The ID of the QoS Policy which will apply to the Virtual IP (VIP).
+        description: The ID of the QoS Policy which will apply to the Virtual IP
+          (VIP).
         format: uuid
         type: string
     lbaas_loadbalancers_vip_subnet_id:
@@ -3355,29 +3370,30 @@ components:
         format: uuid
         type: string
     lbaas_pools_members_member_id:
-      description: member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
-        API
+      description: member_id parameter for 
+        /v2/lbaas/pools/{pool_id}/members/{member_id} API
       in: path
       name: member_id
       required: true
       schema:
         type: string
     lbaas_pools_members_monitor_address:
-      description: An alternate IP address used for health monitoring a backend member.
+      description: An alternate IP address used for health monitoring a backend 
+        member.
       in: query
       name: monitor_address
       schema:
-        description: An alternate IP address used for health monitoring a backend
-          member.
+        description: An alternate IP address used for health monitoring a 
+          backend member.
         type: string
     lbaas_pools_members_monitor_port:
-      description: An alternate protocol port used for health monitoring a backend
-        member.
+      description: An alternate protocol port used for health monitoring a 
+        backend member.
       in: query
       name: monitor_port
       schema:
-        description: An alternate protocol port used for health monitoring a backend
-          member.
+        description: An alternate protocol port used for health monitoring a 
+          backend member.
         type: string
     lbaas_pools_members_name:
       description: Human-readable name of the resource.
@@ -3387,15 +3403,15 @@ components:
         description: Human-readable name of the resource.
         type: string
     lbaas_pools_members_not-tags:
-      description: Return the list of entities that do not have one or more of the
-        given tags.
+      description: Return the list of entities that do not have one or more of 
+        the given tags.
       in: query
       name: not-tags
       schema:
         type: string
     lbaas_pools_members_not-tags-any:
-      description: Return the list of entities that do not have at least one of the
-        given tags.
+      description: Return the list of entities that do not have at least one of 
+        the given tags.
       in: query
       name: not-tags-any
       schema:
@@ -3422,8 +3438,8 @@ components:
         description: The page direction.
         type: boolean
     lbaas_pools_members_pool_id:
-      description: pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id}
-        API
+      description: pool_id parameter for 
+        /v2/lbaas/pools/{pool_id}/members/{member_id} API
       in: path
       name: pool_id
       required: true
@@ -3439,13 +3455,13 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     lbaas_pools_members_protocol_port:
-      description: The protocol port number the backend member server is listening
-        on.
+      description: The protocol port number the backend member server is 
+        listening on.
       in: query
       name: protocol_port
       schema:
-        description: The protocol port number the backend member server is listening
-          on.
+        description: The protocol port number the backend member server is 
+          listening on.
         type: integer
     lbaas_pools_members_provisioning_status:
       description: The provisioning status of the resource.
@@ -3476,28 +3492,30 @@ components:
       schema:
         type: string
     lbaas_pools_members_tags-any:
-      description: Return the list of entities that have one or more of the given
-        tags.
+      description: Return the list of entities that have one or more of the 
+        given tags.
       in: query
       name: tags-any
       schema:
         type: string
     lbaas_pools_members_updated_at:
-      description: The UTC date and timestamp when the resource was last updated.
+      description: The UTC date and timestamp when the resource was last 
+        updated.
       in: query
       name: updated_at
       schema:
-        description: The UTC date and timestamp when the resource was last updated.
+        description: The UTC date and timestamp when the resource was last 
+          updated.
         format: date-time
         type: string
     lbaas_pools_members_weight:
-      description: The weight of a member determines the portion of requests or connections
-        it services compared to the other members of the pool.
+      description: The weight of a member determines the portion of requests or 
+        connections it services compared to the other members of the pool.
       in: query
       name: weight
       schema:
-        description: The weight of a member determines the portion of requests or
-          connections it services compared to the other members of the pool.
+        description: The weight of a member determines the portion of requests 
+          or connections it services compared to the other members of the pool.
         type: integer
     lbaas_pools_name:
       description: Human-readable name of the resource.
@@ -3507,15 +3525,15 @@ components:
         description: Human-readable name of the resource.
         type: string
     lbaas_pools_not-tags:
-      description: Return the list of entities that do not have one or more of the
-        given tags.
+      description: Return the list of entities that do not have one or more of 
+        the given tags.
       in: query
       name: not-tags
       schema:
         type: string
     lbaas_pools_not-tags-any:
-      description: Return the list of entities that do not have at least one of the
-        given tags.
+      description: Return the list of entities that do not have at least one of 
+        the given tags.
       in: query
       name: not-tags-any
       schema:
@@ -3578,8 +3596,8 @@ components:
       schema:
         type: string
     lbaas_pools_tags-any:
-      description: Return the list of entities that have one or more of the given
-        tags.
+      description: Return the list of entities that have one or more of the 
+        given tags.
       in: query
       name: tags-any
       schema:
@@ -3604,16 +3622,18 @@ components:
         description: A list of TLS protocol versions.
         type: string
     lbaas_pools_updated_at:
-      description: The UTC date and timestamp when the resource was last updated.
+      description: The UTC date and timestamp when the resource was last 
+        updated.
       in: query
       name: updated_at
       schema:
-        description: The UTC date and timestamp when the resource was last updated.
+        description: The UTC date and timestamp when the resource was last 
+          updated.
         format: date-time
         type: string
     lbaas_providers_availability_zone_capabilities_provider:
-      description: provider parameter for /v2/lbaas/providers/{provider}/availability_zone_capabilities
-        API
+      description: provider parameter for 
+        /v2/lbaas/providers/{provider}/availability_zone_capabilities API
       in: path
       name: provider
       required: true
@@ -3627,8 +3647,8 @@ components:
         description: ''
         type: string
     lbaas_providers_flavor_capabilities_provider:
-      description: provider parameter for /v2/lbaas/providers/{provider}/flavor_capabilities
-        API
+      description: provider parameter for 
+        /v2/lbaas/providers/{provider}/flavor_capabilities API
       in: path
       name: provider
       required: true
@@ -3673,7 +3693,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     octavia_amphorae_amphora_id:
-      description: amphora_id parameter for /v2/octavia/amphorae/{amphora_id} API
+      description: amphora_id parameter for /v2/octavia/amphorae/{amphora_id} 
+        API
       in: path
       name: amphora_id
       required: true
@@ -3715,8 +3736,8 @@ components:
         description: ''
         type: string
     octavia_amphorae_config_amphora_id:
-      description: amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/config
-        API
+      description: amphora_id parameter for 
+        /v2/octavia/amphorae/{amphora_id}/config API
       in: path
       name: amphora_id
       required: true
@@ -3730,8 +3751,8 @@ components:
         description: ''
         type: string
     octavia_amphorae_failover_amphora_id:
-      description: amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/failover
-        API
+      description: amphora_id parameter for 
+        /v2/octavia/amphorae/{amphora_id}/failover API
       in: path
       name: amphora_id
       required: true
@@ -3809,8 +3830,8 @@ components:
         description: ''
         type: string
     octavia_amphorae_stats_amphora_id:
-      description: amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/stats
-        API
+      description: amphora_id parameter for 
+        /v2/octavia/amphorae/{amphora_id}/stats API
       in: path
       name: amphora_id
       required: true
@@ -8169,8 +8190,8 @@ components:
     LbaasLoadbalancersFailoverFailoverRequest:
       type: 'null'
     LbaasLoadbalancersFailoverResponse:
-      description: Response of the lbaas/loadbalancers/loadbalancer_id/failover:put
-        operation
+      description: Response of the 
+        lbaas/loadbalancers/loadbalancer_id/failover:put operation
       type: object
     LbaasLoadbalancersListResponse:
       description: Base type for complex types
@@ -12033,17 +12054,20 @@ components:
           type: array
       type: object
     OctaviaAmphoraeConfigConfigRequest:
-      description: Request of the octavia/amphorae/amphora_id/config:put operation
+      description: Request of the octavia/amphorae/amphora_id/config:put 
+        operation
       type: object
       x-openstack:
         action-name: config
     OctaviaAmphoraeConfigResponse:
-      description: Response of the octavia/amphorae/amphora_id/config:put operation
+      description: Response of the octavia/amphorae/amphora_id/config:put 
+        operation
       type: object
     OctaviaAmphoraeFailoverFailoverRequest:
       type: 'null'
     OctaviaAmphoraeFailoverResponse:
-      description: Response of the octavia/amphorae/amphora_id/failover:put operation
+      description: Response of the octavia/amphorae/amphora_id/failover:put 
+        operation
       type: object
     OctaviaAmphoraeListResponse:
       description: Base type for complex types

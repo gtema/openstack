@@ -17,30 +17,65 @@
 //! Response type for the GET `os-hypervisors/{id}/search` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct SearchResponse(BTreeMap<String, Value>);
+/// Search response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct SearchResponse {
+    /// An array of hypervisor information.
+    #[structable(serialize)]
+    pub hypervisors: Vec<Hypervisors>,
+}
 
-impl StructTable for SearchResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum State {
+    // Down
+    #[serde(rename = "down")]
+    Down,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    // Up
+    #[serde(rename = "up")]
+    Up,
+}
+
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "down" => Ok(Self::Down),
+            "up" => Ok(Self::Up),
+            _ => Err(()),
+        }
     }
 }
 
-impl StructTable for &SearchResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Status {
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    // Enabled
+    #[serde(rename = "enabled")]
+    Enabled,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
     }
+}
+
+/// `Hypervisors` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Hypervisors {
+    pub hypervisor_hostname: String,
+    pub id: i32,
+    pub state: State,
+    pub status: Status,
 }

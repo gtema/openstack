@@ -33,8 +33,8 @@ pub struct AggregateResponse {
     #[structable()]
     pub deleted: bool,
 
-    #[structable()]
-    pub deleted_at: String,
+    #[structable(optional)]
+    pub deleted_at: Option<String>,
 
     #[structable(serialize)]
     pub hosts: Vec<String>,
@@ -48,8 +48,8 @@ pub struct AggregateResponse {
     #[structable()]
     pub name: String,
 
-    #[structable()]
-    pub updated_at: String,
+    #[structable(optional)]
+    pub updated_at: Option<String>,
 
     #[structable()]
     pub uuid: String,

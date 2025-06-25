@@ -33,7 +33,9 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 /// A `region` object
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -42,13 +44,36 @@ pub struct Region<'a> {
     /// The region description.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
+
+    /// The ID for the region.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Option<Cow<'a, str>>>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) parent_id: Option<Cow<'a, str>>,
+    pub(crate) parent_region_id: Option<Option<Cow<'a, str>>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> RegionBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]

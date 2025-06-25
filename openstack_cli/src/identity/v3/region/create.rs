@@ -72,10 +72,26 @@ struct Region {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
+    /// The ID for the region.
+    #[arg(help_heading = "Body parameters", long)]
+    id: Option<String>,
+
+    /// Set explicit NULL for the id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "id")]
+    no_id: bool,
+
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     #[arg(help_heading = "Body parameters", long)]
-    parent_id: Option<String>,
+    parent_region_id: Option<String>,
+
+    /// Set explicit NULL for the parent_region_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "parent_region_id")]
+    no_parent_region_id: bool,
 }
 
 impl RegionCommand {
@@ -99,11 +115,21 @@ impl RegionCommand {
         let args = &self.region;
         let mut region_builder = create::RegionBuilder::default();
         if let Some(val) = &args.description {
-            region_builder.description(val);
+            region_builder.description(Some(val.into()));
+        } else if args.no_description {
+            region_builder.description(None);
         }
 
-        if let Some(val) = &args.parent_id {
-            region_builder.parent_id(val);
+        if let Some(val) = &args.id {
+            region_builder.id(Some(val.into()));
+        } else if args.no_id {
+            region_builder.id(None);
+        }
+
+        if let Some(val) = &args.parent_region_id {
+            region_builder.parent_region_id(Some(val.into()));
+        } else if args.no_parent_region_id {
+            region_builder.parent_region_id(None);
         }
 
         ep_builder.region(region_builder.build().unwrap());

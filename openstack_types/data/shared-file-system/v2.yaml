@@ -525,7 +525,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource_LocksCreateRequest'
+              $ref: '#/components/schemas/Resource_LocksCreate_281'
       responses:
         '201':
           content:
@@ -574,7 +574,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource_LockUpdateRequest'
+              $ref: '#/components/schemas/Resource_LockUpdate_281'
       responses:
         '200':
           content:
@@ -1653,7 +1653,8 @@ paths:
     get:
       description: |-
         Returns the list of metadata for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata:get
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata:get
       responses:
         '200':
           content:
@@ -1671,7 +1672,8 @@ paths:
     post:
       description: |-
         Create metadata for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata:post
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata:post
       requestBody:
         content:
           application/json:
@@ -1691,7 +1693,8 @@ paths:
     put:
       description: |-
         Update entire metadata for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata:put
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata:put
       requestBody:
         content:
           application/json:
@@ -1712,7 +1715,8 @@ paths:
     delete:
       description: |-
         Delete metadata for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata/key:delete
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:delete
       responses:
         '204':
           description: Ok
@@ -1723,7 +1727,8 @@ paths:
     get:
       description: |-
         Show metadata for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata/key:get
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:get
       responses:
         '200':
           content:
@@ -1742,7 +1747,8 @@ paths:
     post:
       description: |-
         Update metadata item for a given share network subnet.
-      operationId: share-networks/share_network_id/subnets/resource_id/metadata/key:post
+      operationId: 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:post
       requestBody:
         content:
           application/json:
@@ -1763,7 +1769,8 @@ paths:
     delete:
       description: |-
         Delete specified share network subnet.
-      operationId: share-networks/share_network_id/subnets/share_network_subnet_id:delete
+      operationId: 
+        share-networks/share_network_id/subnets/share_network_subnet_id:delete
       responses:
         '204':
           description: Ok
@@ -1774,7 +1781,8 @@ paths:
     get:
       description: |-
         Show share network subnet.
-      operationId: share-networks/share_network_id/subnets/share_network_subnet_id:get
+      operationId: 
+        share-networks/share_network_id/subnets/share_network_subnet_id:get
       responses:
         '200':
           content:
@@ -1934,7 +1942,8 @@ paths:
   /share-replicas/{share_replica_id}/export-locations/{export_location_uuid}:
     get:
       deprecated: true
-      operationId: share-replicas/share_replica_id/export-locations/export_location_uuid:get
+      operationId: 
+        share-replicas/share_replica_id/export-locations/export_location_uuid:get
       responses:
         '200':
           content:
@@ -2254,7 +2263,8 @@ paths:
     get:
       description: |-
         Return data about the requested export location.
-      operationId: share_instances/share_instance_id/export_locations/export_location_uuid:get
+      operationId: 
+        share_instances/share_instance_id/export_locations/export_location_uuid:get
       responses:
         '200':
           content:
@@ -2654,7 +2664,8 @@ paths:
     delete:
       description: |-
         Delete metadata for a given share export location.
-      operationId: shares/share_id/export_locations/resource_id/metadata/key:delete
+      operationId: 
+        shares/share_id/export_locations/resource_id/metadata/key:delete
       responses:
         '204':
           description: Ok
@@ -2684,7 +2695,8 @@ paths:
     post:
       description: |-
         Update metadata item for a given share export location.
-      operationId: shares/share_id/export_locations/resource_id/metadata/key:post
+      operationId: 
+        shares/share_id/export_locations/resource_id/metadata/key:post
       requestBody:
         content:
           application/json:
@@ -2805,7 +2817,8 @@ paths:
       - $ref: '#/components/parameters/snapshot_instances_export_locations_snapshot_instance_id'
   /snapshot-instances/{snapshot_instance_id}/export-locations/{export_location_id}:
     get:
-      operationId: snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
+      operationId: 
+        snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
       responses:
         '200':
           content:
@@ -3399,7 +3412,7 @@ components:
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_created_before:
       in: query
       name: created_before
@@ -3422,7 +3435,7 @@ components:
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_edit_id:
       description: id parameter for /messages/{id}/edit API
       in: path
@@ -3449,14 +3462,14 @@ components:
           - integer
           - string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_message_level:
       in: query
       name: message_level
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_offset:
       in: query
       name: offset
@@ -3469,28 +3482,28 @@ components:
           - integer
           - string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_request_id:
       in: query
       name: request_id
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_resource_id:
       in: query
       name: resource_id
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_resource_type:
       in: query
       name: resource_type
       schema:
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_sort_dir:
       in: query
       name: sort_dir
@@ -3498,7 +3511,7 @@ components:
         default: desc
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     messages_sort_key:
       in: query
       name: sort_key
@@ -3506,7 +3519,7 @@ components:
         default: created_at
         type: string
       x-openstack:
-        min-ver: '2.52'
+        min-ver: '2.37'
     os_availability_zone_edit_id:
       description: id parameter for /os-availability-zone/{id}/edit API
       in: path
@@ -3934,16 +3947,16 @@ components:
       schema:
         type: string
     share_access_rules_metadata_access_id:
-      description: access_id parameter for /share-access-rules/{access_id}/metadata/{key}
-        API
+      description: access_id parameter for 
+        /share-access-rules/{access_id}/metadata/{key} API
       in: path
       name: access_id
       required: true
       schema:
         type: string
     share_access_rules_metadata_key:
-      description: key parameter for /share-access-rules/{access_id}/metadata/{key}
-        API
+      description: key parameter for 
+        /share-access-rules/{access_id}/metadata/{key} API
       in: path
       name: key
       required: true
@@ -4020,14 +4033,16 @@ components:
       schema:
         type: string
     share_group_types_group_specs_id:
-      description: id parameter for /share-group-types/{id}/group-specs/{key} API
+      description: id parameter for /share-group-types/{id}/group-specs/{key} 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     share_group_types_group_specs_key:
-      description: key parameter for /share-group-types/{id}/group-specs/{key} API
+      description: key parameter for /share-group-types/{id}/group-specs/{key} 
+        API
       in: path
       name: key
       required: true
@@ -4076,7 +4091,8 @@ components:
       schema:
         type: string
     share_instances_export_locations_export_location_uuid:
-      description: export_location_uuid parameter for /share_instances/{share_instance_id}/export_locations/{export_location_uuid}
+      description: export_location_uuid parameter for 
+        /share_instances/{share_instance_id}/export_locations/{export_location_uuid}
         API
       in: path
       name: export_location_uuid
@@ -4084,7 +4100,8 @@ components:
       schema:
         type: string
     share_instances_export_locations_share_instance_id:
-      description: share_instance_id parameter for /share_instances/{share_instance_id}/export_locations/{export_location_uuid}
+      description: share_instance_id parameter for 
+        /share_instances/{share_instance_id}/export_locations/{export_location_uuid}
         API
       in: path
       name: share_instance_id
@@ -4120,7 +4137,8 @@ components:
       schema:
         type: string
     share_networks_subnets_metadata_key:
-      description: key parameter for /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key}
+      description: key parameter for 
+        /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key} 
         API
       in: path
       name: key
@@ -4128,7 +4146,8 @@ components:
       schema:
         type: string
     share_networks_subnets_metadata_resource_id:
-      description: resource_id parameter for /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key}
+      description: resource_id parameter for 
+        /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key} 
         API
       in: path
       name: resource_id
@@ -4136,7 +4155,8 @@ components:
       schema:
         type: string
     share_networks_subnets_metadata_share_network_id:
-      description: share_network_id parameter for /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key}
+      description: share_network_id parameter for 
+        /share-networks/{share_network_id}/subnets/{resource_id}/metadata/{key} 
         API
       in: path
       name: share_network_id
@@ -4144,16 +4164,16 @@ components:
       schema:
         type: string
     share_networks_subnets_share_network_id:
-      description: share_network_id parameter for /share-networks/{share_network_id}/subnets
-        API
+      description: share_network_id parameter for 
+        /share-networks/{share_network_id}/subnets API
       in: path
       name: share_network_id
       required: true
       schema:
         type: string
     share_networks_subnets_share_network_subnet_id:
-      description: share_network_subnet_id parameter for /share-networks/{share_network_id}/subnets/{share_network_subnet_id}
-        API
+      description: share_network_subnet_id parameter for 
+        /share-networks/{share_network_id}/subnets/{share_network_subnet_id} API
       in: path
       name: share_network_subnet_id
       required: true
@@ -4174,7 +4194,8 @@ components:
       schema:
         type: string
     share_replicas_export_locations_export_location_uuid:
-      description: export_location_uuid parameter for /share-replicas/{share_replica_id}/export-locations/{export_location_uuid}
+      description: export_location_uuid parameter for 
+        /share-replicas/{share_replica_id}/export-locations/{export_location_uuid}
         API
       in: path
       name: export_location_uuid
@@ -4182,7 +4203,8 @@ components:
       schema:
         type: string
     share_replicas_export_locations_share_replica_id:
-      description: share_replica_id parameter for /share-replicas/{share_replica_id}/export-locations/{export_location_uuid}
+      description: share_replica_id parameter for 
+        /share-replicas/{share_replica_id}/export-locations/{export_location_uuid}
         API
       in: path
       name: share_replica_id
@@ -4260,40 +4282,40 @@ components:
       schema:
         type: string
     shares_export_locations_export_location_uuid:
-      description: export_location_uuid parameter for /shares/{share_id}/export_locations/{export_location_uuid}
-        API
+      description: export_location_uuid parameter for 
+        /shares/{share_id}/export_locations/{export_location_uuid} API
       in: path
       name: export_location_uuid
       required: true
       schema:
         type: string
     shares_export_locations_metadata_key:
-      description: key parameter for /shares/{share_id}/export_locations/{resource_id}/metadata/{key}
-        API
+      description: key parameter for 
+        /shares/{share_id}/export_locations/{resource_id}/metadata/{key} API
       in: path
       name: key
       required: true
       schema:
         type: string
     shares_export_locations_metadata_resource_id:
-      description: resource_id parameter for /shares/{share_id}/export_locations/{resource_id}/metadata/{key}
-        API
+      description: resource_id parameter for 
+        /shares/{share_id}/export_locations/{resource_id}/metadata/{key} API
       in: path
       name: resource_id
       required: true
       schema:
         type: string
     shares_export_locations_metadata_share_id:
-      description: share_id parameter for /shares/{share_id}/export_locations/{resource_id}/metadata/{key}
-        API
+      description: share_id parameter for 
+        /shares/{share_id}/export_locations/{resource_id}/metadata/{key} API
       in: path
       name: share_id
       required: true
       schema:
         type: string
     shares_export_locations_share_id:
-      description: share_id parameter for /shares/{share_id}/export_locations/{export_location_uuid}
-        API
+      description: share_id parameter for 
+        /shares/{share_id}/export_locations/{export_location_uuid} API
       in: path
       name: share_id
       required: true
@@ -4321,8 +4343,8 @@ components:
       schema:
         type: string
     shares_metadata_resource_id:
-      description: resource_id parameter for /shares/{resource_id}/metadata/{key}
-        API
+      description: resource_id parameter for 
+        /shares/{resource_id}/metadata/{key} API
       in: path
       name: resource_id
       required: true
@@ -4343,7 +4365,8 @@ components:
       schema:
         type: string
     snapshot_instances_export_locations_export_location_id:
-      description: export_location_id parameter for /snapshot-instances/{snapshot_instance_id}/export-locations/{export_location_id}
+      description: export_location_id parameter for 
+        /snapshot-instances/{snapshot_instance_id}/export-locations/{export_location_id}
         API
       in: path
       name: export_location_id
@@ -4351,7 +4374,8 @@ components:
       schema:
         type: string
     snapshot_instances_export_locations_snapshot_instance_id:
-      description: snapshot_instance_id parameter for /snapshot-instances/{snapshot_instance_id}/export-locations/{export_location_id}
+      description: snapshot_instance_id parameter for 
+        /snapshot-instances/{snapshot_instance_id}/export-locations/{export_location_id}
         API
       in: path
       name: snapshot_instance_id
@@ -4366,8 +4390,8 @@ components:
       schema:
         type: string
     snapshots_access_list_snapshot_id:
-      description: snapshot_id parameter for /snapshots/{snapshot_id}/access-list
-        API
+      description: snapshot_id parameter for 
+        /snapshots/{snapshot_id}/access-list API
       in: path
       name: snapshot_id
       required: true
@@ -4388,16 +4412,16 @@ components:
       schema:
         type: string
     snapshots_export_locations_export_location_id:
-      description: export_location_id parameter for /snapshots/{snapshot_id}/export-locations/{export_location_id}
-        API
+      description: export_location_id parameter for 
+        /snapshots/{snapshot_id}/export-locations/{export_location_id} API
       in: path
       name: export_location_id
       required: true
       schema:
         type: string
     snapshots_export_locations_snapshot_id:
-      description: snapshot_id parameter for /snapshots/{snapshot_id}/export-locations/{export_location_id}
-        API
+      description: snapshot_id parameter for 
+        /snapshots/{snapshot_id}/export-locations/{export_location_id} API
       in: path
       name: snapshot_id
       required: true
@@ -4418,8 +4442,8 @@ components:
       schema:
         type: string
     snapshots_metadata_resource_id:
-      description: resource_id parameter for /snapshots/{resource_id}/metadata/{key}
-        API
+      description: resource_id parameter for 
+        /snapshots/{resource_id}/metadata/{key} API
       in: path
       name: resource_id
       required: true
@@ -4447,7 +4471,8 @@ components:
       schema:
         type: string
     types_extra_specs_edit_type_id:
-      description: type_id parameter for /types/{type_id}/extra_specs/{id}/edit API
+      description: type_id parameter for /types/{type_id}/extra_specs/{id}/edit 
+        API
       in: path
       name: type_id
       required: true
@@ -4915,45 +4940,6 @@ components:
       required:
         - resource_lock
       type: object
-    Resource_LockUpdate:
-      additionalProperties: true
-      properties:
-        resource_lock:
-          additionalProperties: false
-          description: "A resource lock object when making resource lock requests.
-            All other\nparameters are included in this object.\n"
-          properties:
-            lock_reason:
-              description: "A blob of text representing the reason for the specific
-                resource lock.\n"
-              maxLength: 1023
-              type:
-                - 'null'
-                - string
-            resource_action:
-              description: "The action pertaining to a resource that the resource
-                lock prevents. For\nexample, if a resource lock prevents deletion
-                of a share, the value of\n``resource_action`` is ``delete``. Resource
-                locks are not supported for\nall API actions.\n"
-              enum:
-                - 
-                - delete
-                - show
-              type:
-                - 'null'
-                - string
-          type: object
-      required:
-        - resource_lock
-      type: object
-      x-openstack:
-        min-ver: '2.81'
-    Resource_LockUpdateRequest:
-      oneOf:
-        - $ref: '#/components/schemas/Resource_LockUpdate'
-        - $ref: '#/components/schemas/Resource_LockUpdate_281'
-      x-openstack:
-        discriminator: microversion
     Resource_LockUpdateResponse:
       additionalProperties: false
       properties:
@@ -5099,69 +5085,6 @@ components:
       type: object
       x-openstack:
         min-ver: '2.81'
-    Resource_LocksCreate:
-      additionalProperties: true
-      properties:
-        resource_lock:
-          additionalProperties: false
-          description: "A resource lock object when making resource lock requests.
-            All other\nparameters are included in this object.\n"
-          properties:
-            lock_reason:
-              description: "A blob of text representing the reason for the specific
-                resource lock.\n"
-              maxLength: 1023
-              type:
-                - 'null'
-                - string
-            resource_action:
-              default: delete
-              description: "The action pertaining to a resource that the resource
-                lock prevents. For\nexample, if a resource lock prevents deletion
-                of a share, the value of\n``resource_action`` is ``delete``. Resource
-                locks are not supported for\nall API actions. Currently support only
-                exists for ``delete``, and for\nspecific resources. If not provided,
-                the value of this parameter\ndefaults to ``delete``.\n"
-              enum:
-                - 
-                - delete
-                - show
-              type:
-                - 'null'
-                - string
-            resource_id:
-              description: "The UUID of the resource that the lock pertains to. For
-                example, this\ncan be the ID of the share that is locked from deletion.\n"
-              format: uuid
-              type: string
-            resource_type:
-              default: share
-              description: "The type of resource that the ID in ``resource_id`` denotes.
-                For\nexample, ``share`` is the resource type that is specified when
-                the\nresource lock pertains to a share being locked from deletion.
-                Resource\nlocks are not supported for all resources. Currently support
-                only\nexists for ``share``.\n"
-              enum:
-                - 
-                - access_rule
-                - share
-              type:
-                - 'null'
-                - string
-          required:
-            - resource_id
-          type: object
-      required:
-        - resource_lock
-      type: object
-      x-openstack:
-        min-ver: '2.81'
-    Resource_LocksCreateRequest:
-      oneOf:
-        - $ref: '#/components/schemas/Resource_LocksCreate'
-        - $ref: '#/components/schemas/Resource_LocksCreate_281'
-      x-openstack:
-        discriminator: microversion
     Resource_LocksCreateResponse:
       additionalProperties: false
       properties:
@@ -5547,12 +5470,14 @@ components:
       description: Response of the share-access-rules:get operation
       type: object
     Share_Access_RulesMetadataUpdateRequest:
-      description: Request of the share-access-rules/access_id/metadata:put operation
+      description: Request of the share-access-rules/access_id/metadata:put 
+        operation
       type: object
       x-openstack:
         action-name: update
     Share_Access_RulesMetadataUpdateResponse:
-      description: Response of the share-access-rules/access_id/metadata:put operation
+      description: Response of the share-access-rules/access_id/metadata:put 
+        operation
       type: object
     Share_BackupShowResponse:
       description: Response of the share-backups/id:get operation
@@ -5574,7 +5499,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_BackupsActionReset_StatusResponse:
-      description: Response of the share-backups/id/action:post:reset_status action
+      description: Response of the share-backups/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -5636,8 +5562,8 @@ components:
       x-openstack:
         action-name: force_delete
     Share_Group_SnapshotsActionForce_DeleteResponse:
-      description: Response of the share-group-snapshots/id/action:post:force_delete
-        action
+      description: Response of the 
+        share-group-snapshots/id/action:post:force_delete action
       type: object
       x-openstack:
         action-name: force_delete
@@ -5650,8 +5576,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_Group_SnapshotsActionReset_StatusResponse:
-      description: Response of the share-group-snapshots/id/action:post:reset_status
-        action
+      description: Response of the 
+        share-group-snapshots/id/action:post:reset_status action
       type: object
       x-openstack:
         action-name: reset_status
@@ -5670,7 +5596,8 @@ components:
       description: Response of the share-group-snapshots:get operation
       type: object
     Share_Group_SnapshotsMembersResponse:
-      description: Response of the share-group-snapshots/id/members:get operation
+      description: Response of the share-group-snapshots/id/members:get 
+        operation
       type: object
     Share_Group_TypeShowResponse:
       description: Response of the share-group-types/id:get operation
@@ -5687,8 +5614,8 @@ components:
       x-openstack:
         action-name: addProjectAccess
     Share_Group_TypesActionAddprojectaccessResponse:
-      description: Response of the share-group-types/id/action:post:addProjectAccess
-        action
+      description: Response of the 
+        share-group-types/id/action:post:addProjectAccess action
       type: object
       x-openstack:
         action-name: addProjectAccess
@@ -5701,7 +5628,8 @@ components:
       x-openstack:
         action-name: create
     Share_Group_TypesActionCreateResponse:
-      description: Response of the share-group-types/id/action:post:create action
+      description: Response of the share-group-types/id/action:post:create 
+        action
       type: object
       x-openstack:
         action-name: create
@@ -5714,7 +5642,8 @@ components:
       x-openstack:
         action-name: delete
     Share_Group_TypesActionDeleteResponse:
-      description: Response of the share-group-types/id/action:post:delete action
+      description: Response of the share-group-types/id/action:post:delete 
+        action
       type: object
       x-openstack:
         action-name: delete
@@ -5727,8 +5656,8 @@ components:
       x-openstack:
         action-name: removeProjectAccess
     Share_Group_TypesActionRemoveprojectaccessResponse:
-      description: Response of the share-group-types/id/action:post:removeProjectAccess
-        action
+      description: Response of the 
+        share-group-types/id/action:post:removeProjectAccess action
       type: object
       x-openstack:
         action-name: removeProjectAccess
@@ -5746,26 +5675,32 @@ components:
       description: Response of the share-group-types/default:get operation
       type: object
     Share_Group_TypesGroup_SpecShowResponse:
-      description: Response of the share-group-types/id/group-specs/key:get operation
+      description: Response of the share-group-types/id/group-specs/key:get 
+        operation
       type: object
     Share_Group_TypesGroup_SpecUpdateRequest:
-      description: Request of the share-group-types/id/group-specs/key:put operation
+      description: Request of the share-group-types/id/group-specs/key:put 
+        operation
       type: object
       x-openstack:
         action-name: update
     Share_Group_TypesGroup_SpecUpdateResponse:
-      description: Response of the share-group-types/id/group-specs/key:put operation
+      description: Response of the share-group-types/id/group-specs/key:put 
+        operation
       type: object
     Share_Group_TypesGroup_SpecsCreateRequest:
-      description: Request of the share-group-types/id/group-specs:post operation
+      description: Request of the share-group-types/id/group-specs:post 
+        operation
       type: object
       x-openstack:
         action-name: create
     Share_Group_TypesGroup_SpecsCreateResponse:
-      description: Response of the share-group-types/id/group-specs:post operation
+      description: Response of the share-group-types/id/group-specs:post 
+        operation
       type: object
     Share_Group_TypesGroup_SpecsListResponse:
-      description: Response of the share-group-types/id/group-specs:get operation
+      description: Response of the share-group-types/id/group-specs:get 
+        operation
       type: object
     Share_Group_TypesListResponse:
       description: Response of the share-group-types:get operation
@@ -5779,7 +5714,8 @@ components:
       x-openstack:
         action-name: force_delete
     Share_GroupsActionForce_DeleteResponse:
-      description: Response of the share-groups/id/action:post:force_delete action
+      description: Response of the share-groups/id/action:post:force_delete 
+        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -5792,7 +5728,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_GroupsActionReset_StatusResponse:
-      description: Response of the share-groups/id/action:post:reset_status action
+      description: Response of the share-groups/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -5822,7 +5759,8 @@ components:
       x-openstack:
         action-name: force_delete
     Share_InstancesActionForce_DeleteResponse:
-      description: Response of the share_instances/id/action:post:force_delete action
+      description: Response of the share_instances/id/action:post:force_delete 
+        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -5835,8 +5773,8 @@ components:
       x-openstack:
         action-name: os-force_delete
     Share_InstancesActionOs-Force_DeleteResponse:
-      description: Response of the share_instances/id/action:post:os-force_delete
-        action
+      description: Response of the 
+        share_instances/id/action:post:os-force_delete action
       type: object
       x-openstack:
         action-name: os-force_delete
@@ -5849,8 +5787,8 @@ components:
       x-openstack:
         action-name: os-reset_status
     Share_InstancesActionOs-Reset_StatusResponse:
-      description: Response of the share_instances/id/action:post:os-reset_status
-        action
+      description: Response of the 
+        share_instances/id/action:post:os-reset_status action
       type: object
       x-openstack:
         action-name: os-reset_status
@@ -5863,17 +5801,19 @@ components:
       x-openstack:
         action-name: reset_status
     Share_InstancesActionReset_StatusResponse:
-      description: Response of the share_instances/id/action:post:reset_status action
+      description: Response of the share_instances/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
     Share_InstancesExport_LocationShowResponse:
-      description: Response of the share_instances/share_instance_id/export_locations/export_location_uuid:get
+      description: Response of the 
+        share_instances/share_instance_id/export_locations/export_location_uuid:get
         operation
       type: object
     Share_InstancesExport_LocationsListResponse:
-      description: Response of the share_instances/share_instance_id/export_locations:get
-        operation
+      description: Response of the 
+        share_instances/share_instance_id/export_locations:get operation
       type: object
     Share_InstancesListResponse:
       description: Response of the share_instances:get operation
@@ -5898,8 +5838,8 @@ components:
       x-openstack:
         action-name: add_security_service
     Share_NetworksActionAdd_Security_ServiceResponse:
-      description: Response of the share-networks/id/action:post:add_security_service
-        action
+      description: Response of the 
+        share-networks/id/action:post:add_security_service action
       type: object
       x-openstack:
         action-name: add_security_service
@@ -5912,8 +5852,8 @@ components:
       x-openstack:
         action-name: add_security_service_check
     Share_NetworksActionAdd_Security_Service_CheckResponse:
-      description: Response of the share-networks/id/action:post:add_security_service_check
-        action
+      description: Response of the 
+        share-networks/id/action:post:add_security_service_check action
       type: object
       x-openstack:
         action-name: add_security_service_check
@@ -5926,8 +5866,8 @@ components:
       x-openstack:
         action-name: remove_security_service
     Share_NetworksActionRemove_Security_ServiceResponse:
-      description: Response of the share-networks/id/action:post:remove_security_service
-        action
+      description: Response of the 
+        share-networks/id/action:post:remove_security_service action
       type: object
       x-openstack:
         action-name: remove_security_service
@@ -5940,7 +5880,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_NetworksActionReset_StatusResponse:
-      description: Response of the share-networks/id/action:post:reset_status action
+      description: Response of the share-networks/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -5953,8 +5894,8 @@ components:
       x-openstack:
         action-name: share_network_subnet_create_check
     Share_NetworksActionShare_Network_Subnet_Create_CheckResponse:
-      description: Response of the share-networks/id/action:post:share_network_subnet_create_check
-        action
+      description: Response of the 
+        share-networks/id/action:post:share_network_subnet_create_check action
       type: object
       x-openstack:
         action-name: share_network_subnet_create_check
@@ -5967,8 +5908,8 @@ components:
       x-openstack:
         action-name: update_security_service
     Share_NetworksActionUpdate_Security_ServiceResponse:
-      description: Response of the share-networks/id/action:post:update_security_service
-        action
+      description: Response of the 
+        share-networks/id/action:post:update_security_service action
       type: object
       x-openstack:
         action-name: update_security_service
@@ -5981,8 +5922,8 @@ components:
       x-openstack:
         action-name: update_security_service_check
     Share_NetworksActionUpdate_Security_Service_CheckResponse:
-      description: Response of the share-networks/id/action:post:update_security_service_check
-        action
+      description: Response of the 
+        share-networks/id/action:post:update_security_service_check action
       type: object
       x-openstack:
         action-name: update_security_service_check
@@ -6001,56 +5942,68 @@ components:
       description: Response of the share-networks:get operation
       type: object
     Share_NetworksSubnetShowResponse:
-      description: Response of the share-networks/share_network_id/subnets/share_network_subnet_id:get
+      description: Response of the 
+        share-networks/share_network_id/subnets/share_network_subnet_id:get 
         operation
       type: object
     Share_NetworksSubnetsCreateRequest:
-      description: Request of the share-networks/share_network_id/subnets:post operation
+      description: Request of the share-networks/share_network_id/subnets:post 
+        operation
       type: object
       x-openstack:
         action-name: create
     Share_NetworksSubnetsCreateResponse:
-      description: Response of the share-networks/share_network_id/subnets:post operation
+      description: Response of the share-networks/share_network_id/subnets:post 
+        operation
       type: object
     Share_NetworksSubnetsListResponse:
-      description: Response of the share-networks/share_network_id/subnets:get operation
+      description: Response of the share-networks/share_network_id/subnets:get 
+        operation
       type: object
     Share_NetworksSubnetsMetadataCreate_MetadataRequest:
-      description: Request of the share-networks/share_network_id/subnets/resource_id/metadata:post
+      description: Request of the 
+        share-networks/share_network_id/subnets/resource_id/metadata:post 
         operation
       type: object
       x-openstack:
         action-name: create_metadata
     Share_NetworksSubnetsMetadataCreate_MetadataResponse:
-      description: Response of the share-networks/share_network_id/subnets/resource_id/metadata:post
+      description: Response of the 
+        share-networks/share_network_id/subnets/resource_id/metadata:post 
         operation
       type: object
     Share_NetworksSubnetsMetadataList_MetadataResponse:
-      description: Response of the share-networks/share_network_id/subnets/resource_id/metadata:get
+      description: Response of the 
+        share-networks/share_network_id/subnets/resource_id/metadata:get 
         operation
       type: object
     Share_NetworksSubnetsMetadataShow_MetadataResponse:
-      description: Response of the share-networks/share_network_id/subnets/resource_id/metadata/key:get
+      description: Response of the 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:get 
         operation
       type: object
     Share_NetworksSubnetsMetadataUpdate_All_MetadataRequest:
-      description: Request of the share-networks/share_network_id/subnets/resource_id/metadata:put
+      description: Request of the 
+        share-networks/share_network_id/subnets/resource_id/metadata:put 
         operation
       type: object
       x-openstack:
         action-name: update_all_metadata
     Share_NetworksSubnetsMetadataUpdate_All_MetadataResponse:
-      description: Response of the share-networks/share_network_id/subnets/resource_id/metadata:put
+      description: Response of the 
+        share-networks/share_network_id/subnets/resource_id/metadata:put 
         operation
       type: object
     Share_NetworksSubnetsMetadataUpdate_Metadata_ItemRequest:
-      description: Request of the share-networks/share_network_id/subnets/resource_id/metadata/key:post
+      description: Request of the 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:post 
         operation
       type: object
       x-openstack:
         action-name: update_metadata_item
     Share_NetworksSubnetsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the share-networks/share_network_id/subnets/resource_id/metadata/key:post
+      description: Response of the 
+        share-networks/share_network_id/subnets/resource_id/metadata/key:post 
         operation
       type: object
     Share_ReplicaShowResponse:
@@ -6065,7 +6018,8 @@ components:
       x-openstack:
         action-name: force_delete
     Share_ReplicasActionForce_DeleteResponse:
-      description: Response of the share-replicas/id/action:post:force_delete action
+      description: Response of the share-replicas/id/action:post:force_delete 
+        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -6091,8 +6045,8 @@ components:
       x-openstack:
         action-name: reset_replica_state
     Share_ReplicasActionReset_Replica_StateResponse:
-      description: Response of the share-replicas/id/action:post:reset_replica_state
-        action
+      description: Response of the 
+        share-replicas/id/action:post:reset_replica_state action
       type: object
       x-openstack:
         action-name: reset_replica_state
@@ -6105,7 +6059,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_ReplicasActionReset_StatusResponse:
-      description: Response of the share-replicas/id/action:post:reset_status action
+      description: Response of the share-replicas/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -6134,12 +6089,13 @@ components:
       description: Response of the share-replicas/detail:get operation
       type: object
     Share_ReplicasExport_LocationShowResponse:
-      description: Response of the share-replicas/share_replica_id/export-locations/export_location_uuid:get
+      description: Response of the 
+        share-replicas/share_replica_id/export-locations/export_location_uuid:get
         operation
       type: object
     Share_ReplicasExport_LocationsListResponse:
-      description: Response of the share-replicas/share_replica_id/export-locations:get
-        operation
+      description: Response of the 
+        share-replicas/share_replica_id/export-locations:get operation
       type: object
     Share_ReplicasListResponse:
       description: Response of the share-replicas:get operation
@@ -6156,7 +6112,8 @@ components:
       x-openstack:
         action-name: migration_cancel
     Share_ServersActionMigration_CancelResponse:
-      description: Response of the share-servers/id/action:post:migration_cancel action
+      description: Response of the share-servers/id/action:post:migration_cancel
+        action
       type: object
       x-openstack:
         action-name: migration_cancel
@@ -6169,7 +6126,8 @@ components:
       x-openstack:
         action-name: migration_check
     Share_ServersActionMigration_CheckResponse:
-      description: Response of the share-servers/id/action:post:migration_check action
+      description: Response of the share-servers/id/action:post:migration_check 
+        action
       type: object
       x-openstack:
         action-name: migration_check
@@ -6182,8 +6140,8 @@ components:
       x-openstack:
         action-name: migration_complete
     Share_ServersActionMigration_CompleteResponse:
-      description: Response of the share-servers/id/action:post:migration_complete
-        action
+      description: Response of the 
+        share-servers/id/action:post:migration_complete action
       type: object
       x-openstack:
         action-name: migration_complete
@@ -6196,8 +6154,8 @@ components:
       x-openstack:
         action-name: migration_get_progress
     Share_ServersActionMigration_Get_ProgressResponse:
-      description: Response of the share-servers/id/action:post:migration_get_progress
-        action
+      description: Response of the 
+        share-servers/id/action:post:migration_get_progress action
       type: object
       x-openstack:
         action-name: migration_get_progress
@@ -6210,7 +6168,8 @@ components:
       x-openstack:
         action-name: migration_start
     Share_ServersActionMigration_StartResponse:
-      description: Response of the share-servers/id/action:post:migration_start action
+      description: Response of the share-servers/id/action:post:migration_start 
+        action
       type: object
       x-openstack:
         action-name: migration_start
@@ -6223,7 +6182,8 @@ components:
       x-openstack:
         action-name: reset_status
     Share_ServersActionReset_StatusResponse:
-      description: Response of the share-servers/id/action:post:reset_status action
+      description: Response of the share-servers/id/action:post:reset_status 
+        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -6236,7 +6196,8 @@ components:
       x-openstack:
         action-name: reset_task_state
     Share_ServersActionReset_Task_StateResponse:
-      description: Response of the share-servers/id/action:post:reset_task_state action
+      description: Response of the share-servers/id/action:post:reset_task_state
+        action
       type: object
       x-openstack:
         action-name: reset_task_state
@@ -6379,7 +6340,8 @@ components:
       x-openstack:
         action-name: migration_complete
     SharesActionMigration_CompleteResponse:
-      description: Response of the shares/id/action:post:migration_complete action
+      description: Response of the shares/id/action:post:migration_complete 
+        action
       type: object
       x-openstack:
         action-name: migration_complete
@@ -6392,7 +6354,8 @@ components:
       x-openstack:
         action-name: migration_get_progress
     SharesActionMigration_Get_ProgressResponse:
-      description: Response of the shares/id/action:post:migration_get_progress action
+      description: Response of the shares/id/action:post:migration_get_progress 
+        action
       type: object
       x-openstack:
         action-name: migration_get_progress
@@ -6603,49 +6566,50 @@ components:
       description: Response of the shares/detail:get operation
       type: object
     SharesExport_LocationShowResponse:
-      description: Response of the shares/share_id/export_locations/export_location_uuid:get
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/export_location_uuid:get operation
       type: object
     SharesExport_LocationsListResponse:
-      description: Response of the shares/share_id/export_locations:get operation
+      description: Response of the shares/share_id/export_locations:get 
+        operation
       type: object
     SharesExport_LocationsMetadataCreate_MetadataRequest:
-      description: Request of the shares/share_id/export_locations/resource_id/metadata:post
-        operation
+      description: Request of the 
+        shares/share_id/export_locations/resource_id/metadata:post operation
       type: object
       x-openstack:
         action-name: create_metadata
     SharesExport_LocationsMetadataCreate_MetadataResponse:
-      description: Response of the shares/share_id/export_locations/resource_id/metadata:post
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/resource_id/metadata:post operation
       type: object
     SharesExport_LocationsMetadataList_MetadataResponse:
-      description: Response of the shares/share_id/export_locations/resource_id/metadata:get
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/resource_id/metadata:get operation
       type: object
     SharesExport_LocationsMetadataShow_MetadataResponse:
-      description: Response of the shares/share_id/export_locations/resource_id/metadata/key:get
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/resource_id/metadata/key:get operation
       type: object
     SharesExport_LocationsMetadataUpdate_All_MetadataRequest:
-      description: Request of the shares/share_id/export_locations/resource_id/metadata:put
-        operation
+      description: Request of the 
+        shares/share_id/export_locations/resource_id/metadata:put operation
       type: object
       x-openstack:
         action-name: update_all_metadata
     SharesExport_LocationsMetadataUpdate_All_MetadataResponse:
-      description: Response of the shares/share_id/export_locations/resource_id/metadata:put
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/resource_id/metadata:put operation
       type: object
     SharesExport_LocationsMetadataUpdate_Metadata_ItemRequest:
-      description: Request of the shares/share_id/export_locations/resource_id/metadata/key:post
-        operation
+      description: Request of the 
+        shares/share_id/export_locations/resource_id/metadata/key:post operation
       type: object
       x-openstack:
         action-name: update_metadata_item
     SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the shares/share_id/export_locations/resource_id/metadata/key:post
-        operation
+      description: Response of the 
+        shares/share_id/export_locations/resource_id/metadata/key:post operation
       type: object
     SharesInstancesGet_Share_InstancesResponse:
       description: Response of the shares/share_id/instances:get operation
@@ -6689,7 +6653,8 @@ components:
       x-openstack:
         action-name: update_metadata_item
     SharesMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the shares/resource_id/metadata/key:post operation
+      description: Response of the shares/resource_id/metadata/key:post 
+        operation
       type: object
     SnapshotShowResponse:
       description: Response of the snapshots/id:get operation
@@ -6714,8 +6679,8 @@ components:
       x-openstack:
         action-name: reset_status
     Snapshot_InstancesActionReset_StatusResponse:
-      description: Response of the snapshot-instances/id/action:post:reset_status
-        action
+      description: Response of the 
+        snapshot-instances/id/action:post:reset_status action
       type: object
       x-openstack:
         action-name: reset_status
@@ -6723,18 +6688,20 @@ components:
       description: Response of the snapshot-instances/detail:get operation
       type: object
     Snapshot_InstancesExport_LocationShowResponse:
-      description: Response of the snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
+      description: Response of the 
+        snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
         operation
       type: object
     Snapshot_InstancesExport_LocationsListResponse:
-      description: Response of the snapshot-instances/snapshot_instance_id/export-locations:get
-        operation
+      description: Response of the 
+        snapshot-instances/snapshot_instance_id/export-locations:get operation
       type: object
     Snapshot_InstancesListResponse:
       description: Response of the snapshot-instances:get operation
       type: object
     SnapshotsAccess_ListResponse:
-      description: Response of the snapshots/snapshot_id/access-list:get operation
+      description: Response of the snapshots/snapshot_id/access-list:get 
+        operation
       type: object
     SnapshotsActionAllow_AccessRequest:
       description: Empty body for allow_access action
@@ -6784,7 +6751,8 @@ components:
       x-openstack:
         action-name: os-force_delete
     SnapshotsActionOs-Force_DeleteResponse:
-      description: Response of the snapshots/id/action:post:os-force_delete action
+      description: Response of the snapshots/id/action:post:os-force_delete 
+        action
       type: object
       x-openstack:
         action-name: os-force_delete
@@ -6797,7 +6765,8 @@ components:
       x-openstack:
         action-name: os-reset_status
     SnapshotsActionOs-Reset_StatusResponse:
-      description: Response of the snapshots/id/action:post:os-reset_status action
+      description: Response of the snapshots/id/action:post:os-reset_status 
+        action
       type: object
       x-openstack:
         action-name: os-reset_status
@@ -6839,11 +6808,12 @@ components:
       description: Response of the snapshots/detail:get operation
       type: object
     SnapshotsExport_LocationShowResponse:
-      description: Response of the snapshots/snapshot_id/export-locations/export_location_id:get
-        operation
+      description: Response of the 
+        snapshots/snapshot_id/export-locations/export_location_id:get operation
       type: object
     SnapshotsExport_LocationsListResponse:
-      description: Response of the snapshots/snapshot_id/export-locations:get operation
+      description: Response of the snapshots/snapshot_id/export-locations:get 
+        operation
       type: object
     SnapshotsListResponse:
       description: Response of the snapshots:get operation
@@ -6868,7 +6838,8 @@ components:
       description: Response of the snapshots/resource_id/metadata:get operation
       type: object
     SnapshotsMetadataShow_MetadataResponse:
-      description: Response of the snapshots/resource_id/metadata/key:get operation
+      description: Response of the snapshots/resource_id/metadata/key:get 
+        operation
       type: object
     SnapshotsMetadataUpdate_All_MetadataRequest:
       description: Request of the snapshots/resource_id/metadata:put operation
@@ -6879,12 +6850,14 @@ components:
       description: Response of the snapshots/resource_id/metadata:put operation
       type: object
     SnapshotsMetadataUpdate_Metadata_ItemRequest:
-      description: Request of the snapshots/resource_id/metadata/key:post operation
+      description: Request of the snapshots/resource_id/metadata/key:post 
+        operation
       type: object
       x-openstack:
         action-name: update_metadata_item
     SnapshotsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the snapshots/resource_id/metadata/key:post operation
+      description: Response of the snapshots/resource_id/metadata/key:post 
+        operation
       type: object
     TypeShowResponse:
       description: Response of the types/id:get operation
@@ -6947,7 +6920,8 @@ components:
       x-openstack:
         action-name: removeProjectAccess
     TypesActionRemoveprojectaccessResponse:
-      description: Response of the types/id/action:post:removeProjectAccess action
+      description: Response of the types/id/action:post:removeProjectAccess 
+        action
       type: object
       x-openstack:
         action-name: removeProjectAccess

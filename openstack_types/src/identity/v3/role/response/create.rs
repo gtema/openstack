@@ -43,7 +43,7 @@ pub struct RoleResponse {
     #[structable(optional, serialize)]
     pub links: Option<BTreeMap<String, Option<String>>>,
 
-    /// The resource name.
+    /// The role name.
     #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,

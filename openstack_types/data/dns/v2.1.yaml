@@ -1196,48 +1196,48 @@ components:
       schema:
         type: string
     data:
-      description: Filter results to only show recordsets that have a record with
-        data matching the filter
+      description: Filter results to only show recordsets that have a record 
+        with data matching the filter
       in: query
       name: data
       schema:
         type: string
     description:
-      description: Filter results to only show zones that have a description matching
-        the filter
+      description: Filter results to only show zones that have a description 
+        matching the filter
       in: query
       name: description
       schema:
         type: string
     email:
-      description: Filter results to only show zones that have an email matching the
-        filter
+      description: Filter results to only show zones that have an email matching
+        the filter
       in: query
       name: email
       schema:
         format: email
         type: string
     limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         format: uuid
         type: string
     name:
-      description: Filter results to only show zones that have a name matching the
-        filter
+      description: Filter results to only show zones that have a name matching 
+        the filter
       in: query
       name: name
       schema:
@@ -1273,18 +1273,20 @@ components:
       schema:
         type: string
     service_statuses_service_id:
-      description: service_id parameter for /v2/service_statuses/{service_id} API
+      description: service_id parameter for /v2/service_statuses/{service_id} 
+        API
       in: path
       name: service_id
       required: true
       schema:
         type: string
     sort_dir:
-      description: Sorts the response by the requested sort direction. A valid value
-        is asc (ascending) or desc (descending). Default is asc. You can specify multiple
-        pairs of sort key and sort direction query parameters. If you omit the sort
-        direction in a pair, the API uses the natural sorting direction of the server
-        attribute that is provided as the sort_key.
+      description: Sorts the response by the requested sort direction. A valid 
+        value is asc (ascending) or desc (descending). Default is asc. You can 
+        specify multiple pairs of sort key and sort direction query parameters. 
+        If you omit the sort direction in a pair, the API uses the natural 
+        sorting direction of the server attribute that is provided as the 
+        sort_key.
       in: query
       name: sort_dir
       schema:
@@ -1293,10 +1295,11 @@ components:
           - desc
         type: string
     sort_key:
-      description: Sorts the response by the this attribute value. Default is id.
-        You can specify multiple pairs of sort key and sort direction query parameters.
-        If you omit the sort direction in a pair, the API uses the natural sorting
-        direction of the server attribute that is provided as the sort_key.
+      description: Sorts the response by the this attribute value. Default is 
+        id. You can specify multiple pairs of sort key and sort direction query 
+        parameters. If you omit the sort direction in a pair, the API uses the 
+        natural sorting direction of the server attribute that is provided as 
+        the sort_key.
       in: query
       name: sort_key
       schema:
@@ -1311,8 +1314,8 @@ components:
           - updated_at
         type: string
     status:
-      description: Filter results to only show zones that have a status matching the
-        filter
+      description: Filter results to only show zones that have a status matching
+        the filter
       in: query
       name: status
       schema:
@@ -1325,7 +1328,8 @@ components:
           - ZONE
         type: string
     target_project_id:
-      description: Filter results to only show resources that have a matching target_project_id
+      description: Filter results to only show resources that have a matching 
+        target_project_id
       in: query
       name: target_project_id
       schema:
@@ -1348,15 +1352,15 @@ components:
       schema:
         type: string
     ttl:
-      description: Filter results to only show zones that have a ttl matching the
-        filter
+      description: Filter results to only show zones that have a ttl matching 
+        the filter
       in: query
       name: ttl
       schema:
         type: integer
     type:
-      description: Filter results to only show zones that have a type matching the
-        filter
+      description: Filter results to only show zones that have a type matching 
+        the filter
       in: query
       name: type
       schema:
@@ -1366,7 +1370,8 @@ components:
           - SECONDARY
         type: string
     x-auth-all-projects:
-      description: If enabled this will show results from all projects in Designate
+      description: If enabled this will show results from all projects in 
+        Designate
       in: header
       name: x-auth-all-projects
       schema:
@@ -1395,16 +1400,16 @@ components:
       x-openstack:
         resource_link: dns/v2/zone.id
     zones_recordsets_recordset_id:
-      description: recordset_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id}
-        API
+      description: recordset_id parameter for 
+        /v2/zones/{zone_id}/recordsets/{recordset_id} API
       in: path
       name: recordset_id
       required: true
       schema:
         type: string
     zones_recordsets_zone_id:
-      description: zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id}
-        API
+      description: zone_id parameter for 
+        /v2/zones/{zone_id}/recordsets/{recordset_id} API
       in: path
       name: zone_id
       required: true
@@ -1422,8 +1427,8 @@ components:
       x-openstack:
         resource_link: dns/v2/zone.id
     zones_shares_zone_share_id:
-      description: zone_share_id parameter for /v2/zones/{zone_id}/shares/{zone_share_id}
-        API
+      description: zone_share_id parameter for 
+        /v2/zones/{zone_id}/shares/{zone_share_id} API
       in: path
       name: zone_share_id
       required: true
@@ -1448,38 +1453,40 @@ components:
       x-openstack:
         resource_link: dns/v2/zone.id
     zones_tasks_exports_export_export_id:
-      description: export_id parameter for /v2/zones/tasks/exports/{export_id}/export
-        API
+      description: export_id parameter for 
+        /v2/zones/tasks/exports/{export_id}/export API
       in: path
       name: export_id
       required: true
       schema:
         type: string
     zones_tasks_exports_export_id:
-      description: export_id parameter for /v2/zones/tasks/exports/{export_id} API
+      description: export_id parameter for /v2/zones/tasks/exports/{export_id} 
+        API
       in: path
       name: export_id
       required: true
       schema:
         type: string
     zones_tasks_exports_zone_export_id:
-      description: zone_export_id parameter for /v2/zones/tasks/exports/{zone_export_id}
-        API
+      description: zone_export_id parameter for 
+        /v2/zones/tasks/exports/{zone_export_id} API
       in: path
       name: zone_export_id
       required: true
       schema:
         type: string
     zones_tasks_imports_import_id:
-      description: import_id parameter for /v2/zones/tasks/imports/{import_id} API
+      description: import_id parameter for /v2/zones/tasks/imports/{import_id} 
+        API
       in: path
       name: import_id
       required: true
       schema:
         type: string
     zones_tasks_imports_zone_import_id:
-      description: zone_import_id parameter for /v2/zones/tasks/imports/{zone_import_id}
-        API
+      description: zone_import_id parameter for 
+        /v2/zones/tasks/imports/{zone_import_id} API
       in: path
       name: zone_import_id
       required: true
@@ -1495,16 +1502,16 @@ components:
       x-openstack:
         resource_link: dns/v2/zone.id
     zones_tasks_transfer_accepts_transfer_accept_id:
-      description: transfer_accept_id parameter for /v2/zones/tasks/transfer_accepts/{transfer_accept_id}
-        API
+      description: transfer_accept_id parameter for 
+        /v2/zones/tasks/transfer_accepts/{transfer_accept_id} API
       in: path
       name: transfer_accept_id
       required: true
       schema:
         type: string
     zones_tasks_transfer_requests_zone_id:
-      description: zone_id parameter for /v2/zones/{zone_id}/tasks/transfer_requests
-        API
+      description: zone_id parameter for 
+        /v2/zones/{zone_id}/tasks/transfer_requests API
       in: path
       name: zone_id
       required: true
@@ -1513,8 +1520,8 @@ components:
       x-openstack:
         resource_link: dns/v2/zone.id
     zones_tasks_transfer_requests_zone_transfer_request_id:
-      description: zone_transfer_request_id parameter for /v2/zones/tasks/transfer_requests/{zone_transfer_request_id}
-        API
+      description: zone_transfer_request_id parameter for 
+        /v2/zones/tasks/transfer_requests/{zone_transfer_request_id} API
       in: path
       name: zone_transfer_request_id
       required: true
@@ -2208,8 +2215,8 @@ components:
             - 'null'
             - string
         transferred_at:
-          description: For secondary zones. The last time an update was retrieved
-            from the master servers
+          description: For secondary zones. The last time an update was 
+            retrieved from the master servers
           format: date-time
           readOnly: true
           type:
@@ -2370,8 +2377,8 @@ components:
             - 'null'
             - string
         transferred_at:
-          description: For secondary zones. The last time an update was retrieved
-            from the master servers
+          description: For secondary zones. The last time an update was 
+            retrieved from the master servers
           format: date-time
           readOnly: true
           type:
@@ -2512,8 +2519,8 @@ components:
             - 'null'
             - string
         transferred_at:
-          description: For secondary zones. The last time an update was retrieved
-            from the master servers
+          description: For secondary zones. The last time an update was 
+            retrieved from the master servers
           format: date-time
           readOnly: true
           type:
@@ -2656,8 +2663,8 @@ components:
             - 'null'
             - string
         transferred_at:
-          description: For secondary zones. The last time an update was retrieved
-            from the master servers
+          description: For secondary zones. The last time an update was 
+            retrieved from the master servers
           format: date-time
           readOnly: true
           type:
@@ -2808,8 +2815,8 @@ components:
                   - 'null'
                   - string
               transferred_at:
-                description: For secondary zones. The last time an update was retrieved
-                  from the master servers
+                description: For secondary zones. The last time an update was 
+                  retrieved from the master servers
                 format: date-time
                 readOnly: true
                 type:
@@ -3769,7 +3776,8 @@ components:
       description: Response of the zones/tasks/exports/export_id:get operation
       type: object
     ZonesTasksExportsExportListResponse:
-      description: Response of the zones/tasks/exports/export_id/export:get operation
+      description: Response of the zones/tasks/exports/export_id/export:get 
+        operation
       type: object
     ZonesTasksExportsListResponse:
       description: Response of the zones/tasks/exports:get operation
@@ -3797,8 +3805,8 @@ components:
       description: Response of the zones/zone_id/tasks/pool_move:post operation
       type: object
     ZonesTasksTransfer_AcceptShowResponse:
-      description: Response of the zones/tasks/transfer_accepts/transfer_accept_id:get
-        operation
+      description: Response of the 
+        zones/tasks/transfer_accepts/transfer_accept_id:get operation
       type: object
     ZonesTasksTransfer_AcceptsCreateRequest:
       description: Request of the zones/tasks/transfer_accepts:post operation
@@ -3812,26 +3820,28 @@ components:
       description: Response of the zones/tasks/transfer_accepts:get operation
       type: object
     ZonesTasksTransfer_RequestShowResponse:
-      description: Response of the zones/tasks/transfer_requests/zone_transfer_request_id:get
-        operation
+      description: Response of the 
+        zones/tasks/transfer_requests/zone_transfer_request_id:get operation
       type: object
     ZonesTasksTransfer_RequestUpdateRequest:
-      description: Request of the zones/tasks/transfer_requests/zone_transfer_request_id:patch
-        operation
+      description: Request of the 
+        zones/tasks/transfer_requests/zone_transfer_request_id:patch operation
       type: object
       x-openstack:
         action-name: update
     ZonesTasksTransfer_RequestUpdateResponse:
-      description: Response of the zones/tasks/transfer_requests/zone_transfer_request_id:patch
-        operation
+      description: Response of the 
+        zones/tasks/transfer_requests/zone_transfer_request_id:patch operation
       type: object
     ZonesTasksTransfer_RequestsCreateRequest:
-      description: Request of the zones/zone_id/tasks/transfer_requests:post operation
+      description: Request of the zones/zone_id/tasks/transfer_requests:post 
+        operation
       type: object
       x-openstack:
         action-name: create
     ZonesTasksTransfer_RequestsCreateResponse:
-      description: Response of the zones/zone_id/tasks/transfer_requests:post operation
+      description: Response of the zones/zone_id/tasks/transfer_requests:post 
+        operation
       type: object
     ZonesTasksTransfer_RequestsListResponse:
       description: Response of the zones/tasks/transfer_requests:get operation

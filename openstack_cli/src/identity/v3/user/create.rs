@@ -105,7 +105,7 @@ struct User {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "default_project_id")]
     no_default_project_id: bool,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 

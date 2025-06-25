@@ -221,7 +221,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AttachmentUpdate'
+              $ref: '#/components/schemas/AttachmentUpdate_327'
       responses:
         '200':
           content:
@@ -275,6 +275,7 @@ paths:
       tags:
         - backups
     post:
+      deprecated: true
       description: |-
         Create a new backup.
       operationId: backups:post
@@ -292,6 +293,9 @@ paths:
           description: Ok
       tags:
         - backups
+      x-openstack:
+        max-ver: '3.42'
+        min-ver: '3.0'
   /v3/backups/detail:
     get:
       description: |-
@@ -867,7 +871,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Default_TypeCreate_Update'
+              $ref: '#/components/schemas/Default_TypeCreate_Update_362'
       responses:
         '200':
           content:
@@ -923,7 +927,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_SnapshotsCreate'
+              $ref: '#/components/schemas/Group_SnapshotsCreate_314'
       responses:
         '202':
           content:
@@ -998,7 +1002,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/Group_SnapshotsActionReset_Status'
+                - $ref: '#/components/schemas/Group_SnapshotsActionReset_Status_319'
               x-openstack:
                 discriminator: action
       responses:
@@ -1042,7 +1046,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesCreate'
+              $ref: '#/components/schemas/Group_TypesCreate_311'
       responses:
         '202':
           content:
@@ -1078,7 +1082,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesGroup_SpecsCreate'
+              $ref: '#/components/schemas/Group_TypesGroup_SpecsCreate_311'
       responses:
         '202':
           content:
@@ -1126,7 +1130,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesGroup_SpecUpdate'
+              $ref: '#/components/schemas/Group_TypesGroup_SpecUpdate_311'
       responses:
         '200':
           content:
@@ -1173,7 +1177,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypeUpdate'
+              $ref: '#/components/schemas/Group_TypeUpdate_311'
       responses:
         '200':
           content:
@@ -1217,7 +1221,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupsCreate'
+              $ref: '#/components/schemas/GroupsCreate_313'
       responses:
         '202':
           content:
@@ -1237,13 +1241,13 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/GroupsActionCreate_From_Src'
-                - $ref: '#/components/schemas/GroupsActionDelete_Group'
-                - $ref: '#/components/schemas/GroupsActionDisable_Replication'
-                - $ref: '#/components/schemas/GroupsActionEnable_Replication'
-                - $ref: '#/components/schemas/GroupsActionFailover_Replication'
-                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets'
-                - $ref: '#/components/schemas/GroupsActionReset_Status'
+                - $ref: '#/components/schemas/GroupsActionCreate_From_Src_314'
+                - $ref: '#/components/schemas/GroupsActionDelete_Group_313'
+                - $ref: '#/components/schemas/GroupsActionDisable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionEnable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionFailover_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets_338'
+                - $ref: '#/components/schemas/GroupsActionReset_Status_320'
               x-openstack:
                 discriminator: action
       responses:
@@ -1345,7 +1349,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupUpdate'
+              $ref: '#/components/schemas/GroupUpdate_313'
       responses:
         '200':
           content:
@@ -1367,13 +1371,13 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/GroupsActionCreate_From_Src'
-                - $ref: '#/components/schemas/GroupsActionDelete_Group'
-                - $ref: '#/components/schemas/GroupsActionDisable_Replication'
-                - $ref: '#/components/schemas/GroupsActionEnable_Replication'
-                - $ref: '#/components/schemas/GroupsActionFailover_Replication'
-                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets'
-                - $ref: '#/components/schemas/GroupsActionReset_Status'
+                - $ref: '#/components/schemas/GroupsActionCreate_From_Src_314'
+                - $ref: '#/components/schemas/GroupsActionDelete_Group_313'
+                - $ref: '#/components/schemas/GroupsActionDisable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionEnable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionFailover_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets_338'
+                - $ref: '#/components/schemas/GroupsActionReset_Status_320'
               x-openstack:
                 discriminator: action
       responses:
@@ -2008,6 +2012,7 @@ paths:
       tags:
         - os-volume-manage
     post:
+      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -2080,6 +2085,9 @@ paths:
           description: Ok
       tags:
         - os-volume-manage
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.0'
   /v3/os-volume-manage/detail:
     get:
       description: |-
@@ -2878,6 +2886,7 @@ paths:
       x-openstack:
         min-ver: '3.55'
     post:
+      deprecated: true
       description: |-
         Create a new volume transfer.
       operationId: volume-transfers:post
@@ -2896,7 +2905,8 @@ paths:
       tags:
         - volume-transfers
       x-openstack:
-        min-ver: '3.55'
+        max-ver: '3.54'
+        min-ver: '3.0'
   /v3/volume-transfers/detail:
     get:
       description: |-
@@ -3001,6 +3011,7 @@ paths:
       tags:
         - volumes
     post:
+      deprecated: true
       description: |-
         Creates a new volume.
 
@@ -3026,6 +3037,9 @@ paths:
           description: Ok
       tags:
         - volumes
+      x-openstack:
+        max-ver: '3.12'
+        min-ver: '3.0'
   /v3/volumes/detail:
     get:
       description: |-
@@ -3094,6 +3108,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volumes_id'
     put:
+      deprecated: true
       description: |-
         Update a volume.
       operationId: volumes/id:put
@@ -3111,6 +3126,9 @@ paths:
           description: Ok
       tags:
         - volumes
+      x-openstack:
+        max-ver: '3.52'
+        min-ver: '3.0'
   /v3/volumes/{id}/action:
     parameters:
       - $ref: '#/components/parameters/volumes_action_id'
@@ -3301,7 +3319,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkersCleanupCleanup'
+              $ref: '#/components/schemas/WorkersCleanupCleanup_324'
       responses:
         '202':
           content:
@@ -3465,7 +3483,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AttachmentUpdate'
+              $ref: '#/components/schemas/AttachmentUpdate_327'
       responses:
         '200':
           content:
@@ -3525,6 +3543,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/backups_project_id'
     post:
+      deprecated: true
       description: |-
         Creates a Block Storage backup from a volume or snapshot.
 
@@ -3546,6 +3565,9 @@ paths:
       summary: Create a backup
       tags:
         - backups
+      x-openstack:
+        max-ver: '3.42'
+        min-ver: '3.0'
   /v3/{project_id}/backups/detail:
     get:
       description: |-
@@ -4161,7 +4183,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Default_TypeCreate_Update'
+              $ref: '#/components/schemas/Default_TypeCreate_Update_362'
       responses:
         '200':
           content:
@@ -4226,7 +4248,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_SnapshotsCreate'
+              $ref: '#/components/schemas/Group_SnapshotsCreate_314'
       responses:
         '202':
           content:
@@ -4308,7 +4330,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/Group_SnapshotsActionReset_Status'
+                - $ref: '#/components/schemas/Group_SnapshotsActionReset_Status_319'
               x-openstack:
                 discriminator: action
       responses:
@@ -4355,7 +4377,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesCreate'
+              $ref: '#/components/schemas/Group_TypesCreate_311'
       responses:
         '202':
           content:
@@ -4397,7 +4419,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesGroup_SpecsCreate'
+              $ref: '#/components/schemas/Group_TypesGroup_SpecsCreate_311'
       responses:
         '202':
           content:
@@ -4447,7 +4469,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypesGroup_SpecUpdate'
+              $ref: '#/components/schemas/Group_TypesGroup_SpecUpdate_311'
       responses:
         '200':
           content:
@@ -4495,7 +4517,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group_TypeUpdate'
+              $ref: '#/components/schemas/Group_TypeUpdate_311'
       responses:
         '200':
           content:
@@ -4543,7 +4565,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupsCreate'
+              $ref: '#/components/schemas/GroupsCreate_313'
       responses:
         '202':
           content:
@@ -4566,13 +4588,13 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/GroupsActionCreate_From_Src'
-                - $ref: '#/components/schemas/GroupsActionDelete_Group'
-                - $ref: '#/components/schemas/GroupsActionDisable_Replication'
-                - $ref: '#/components/schemas/GroupsActionEnable_Replication'
-                - $ref: '#/components/schemas/GroupsActionFailover_Replication'
-                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets'
-                - $ref: '#/components/schemas/GroupsActionReset_Status'
+                - $ref: '#/components/schemas/GroupsActionCreate_From_Src_314'
+                - $ref: '#/components/schemas/GroupsActionDelete_Group_313'
+                - $ref: '#/components/schemas/GroupsActionDisable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionEnable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionFailover_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets_338'
+                - $ref: '#/components/schemas/GroupsActionReset_Status_320'
               x-openstack:
                 discriminator: action
       responses:
@@ -4679,7 +4701,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupUpdate'
+              $ref: '#/components/schemas/GroupUpdate_313'
       responses:
         '200':
           content:
@@ -4702,13 +4724,13 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/GroupsActionCreate_From_Src'
-                - $ref: '#/components/schemas/GroupsActionDelete_Group'
-                - $ref: '#/components/schemas/GroupsActionDisable_Replication'
-                - $ref: '#/components/schemas/GroupsActionEnable_Replication'
-                - $ref: '#/components/schemas/GroupsActionFailover_Replication'
-                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets'
-                - $ref: '#/components/schemas/GroupsActionReset_Status'
+                - $ref: '#/components/schemas/GroupsActionCreate_From_Src_314'
+                - $ref: '#/components/schemas/GroupsActionDelete_Group_313'
+                - $ref: '#/components/schemas/GroupsActionDisable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionEnable_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionFailover_Replication_338'
+                - $ref: '#/components/schemas/GroupsActionList_Replication_Targets_338'
+                - $ref: '#/components/schemas/GroupsActionReset_Status_320'
               x-openstack:
                 discriminator: action
       responses:
@@ -5316,6 +5338,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/os_volume_manage_project_id'
     post:
+      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -5388,6 +5411,9 @@ paths:
           description: Ok
       tags:
         - os-volume-manage
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.0'
   /v3/{project_id}/os-volume-manage/detail:
     get:
       description: |-
@@ -6291,6 +6317,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volume_transfers_project_id'
     post:
+      deprecated: true
       description: |-
         Creates a volume transfer.
 
@@ -6312,7 +6339,8 @@ paths:
       tags:
         - volume-transfers
       x-openstack:
-        min-ver: '3.55'
+        max-ver: '3.54'
+        min-ver: '3.0'
   /v3/{project_id}/volume-transfers/detail:
     get:
       description: |-
@@ -6427,6 +6455,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volumes_project_id'
     post:
+      deprecated: true
       description: |-
         Creates a volume.
 
@@ -6463,6 +6492,9 @@ paths:
       summary: Create a volume
       tags:
         - volumes
+      x-openstack:
+        max-ver: '3.12'
+        min-ver: '3.0'
   /v3/{project_id}/volumes/detail:
     get:
       description: |-
@@ -6543,6 +6575,7 @@ paths:
       - $ref: '#/components/parameters/volumes_id'
       - $ref: '#/components/parameters/volumes_project_id'
     put:
+      deprecated: true
       description: |-
         Update a volume.
       operationId: project_id/volumes/id:put
@@ -6560,6 +6593,9 @@ paths:
           description: Ok
       tags:
         - volumes
+      x-openstack:
+        max-ver: '3.52'
+        min-ver: '3.0'
   /v3/{project_id}/volumes/{id}/action:
     parameters:
       - $ref: '#/components/parameters/volumes_action_id'
@@ -6765,7 +6801,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkersCleanupCleanup'
+              $ref: '#/components/schemas/WorkersCleanupCleanup_324'
       responses:
         '202':
           content:
@@ -6793,8 +6829,8 @@ components:
       schema:
         type: string
     attachments_action_project_id:
-      description: project_id parameter for /v3/{project_id}/attachments/{id}/action
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/attachments/{id}/action API
       in: path
       name: project_id
       required: true
@@ -6803,7 +6839,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     attachments_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/attachments/detail API
+      description: project_id parameter for /v3/{project_id}/attachments/detail 
+        API
       in: path
       name: project_id
       required: true
@@ -6819,8 +6856,8 @@ components:
       schema:
         type: string
     attachments_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/attachments/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/attachments/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -6845,7 +6882,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     attachments_project_id:
-      description: project_id parameter for /v3/{project_id}/attachments/{id} API
+      description: project_id parameter for /v3/{project_id}/attachments/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -6854,7 +6892,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     attachments_summary_project_id:
-      description: project_id parameter for /v3/{project_id}/attachments/summary API
+      description: project_id parameter for /v3/{project_id}/attachments/summary
+        API
       in: path
       name: project_id
       required: true
@@ -6869,25 +6908,25 @@ components:
       schema:
         type: boolean
     backup_limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     backup_marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     backup_offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -6901,24 +6940,26 @@ components:
       schema:
         type: string
     backup_sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
         type: string
     backup_sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
         type: string
     backup_with_count:
-      description: Whether to show count in API response or not, default is False.
+      description: Whether to show count in API response or not, default is 
+        False.
       in: query
       name: with_count
       schema:
@@ -6933,7 +6974,8 @@ components:
       schema:
         type: string
     backups_action_project_id:
-      description: project_id parameter for /v3/{project_id}/backups/{id}/action API
+      description: project_id parameter for /v3/{project_id}/backups/{id}/action
+        API
       in: path
       name: project_id
       required: true
@@ -6958,7 +7000,8 @@ components:
       schema:
         type: string
     backups_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/backups/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/backups/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -6974,8 +7017,8 @@ components:
       schema:
         type: string
     backups_export_record_project_id:
-      description: project_id parameter for /v3/{project_id}/backups/{id}/export_record
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/backups/{id}/export_record API
       in: path
       name: project_id
       required: true
@@ -6991,8 +7034,8 @@ components:
       schema:
         type: string
     backups_import_record_project_id:
-      description: project_id parameter for /v3/{project_id}/backups/import_record
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/backups/import_record API
       in: path
       name: project_id
       required: true
@@ -7026,8 +7069,8 @@ components:
       schema:
         type: string
     backups_restore_project_id:
-      description: project_id parameter for /v3/{project_id}/backups/{id}/restore
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/backups/{id}/restore API
       in: path
       name: project_id
       required: true
@@ -7043,8 +7086,8 @@ components:
       schema:
         type: string
     capabilities_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/capabilities/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/capabilities/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7060,7 +7103,8 @@ components:
       schema:
         type: string
     capabilities_new_project_id:
-      description: project_id parameter for /v3/{project_id}/capabilities/new API
+      description: project_id parameter for /v3/{project_id}/capabilities/new 
+        API
       in: path
       name: project_id
       required: true
@@ -7069,7 +7113,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     capabilities_project_id:
-      description: project_id parameter for /v3/{project_id}/capabilities/{id} API
+      description: project_id parameter for /v3/{project_id}/capabilities/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -7078,7 +7123,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     cgsnapshots_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/cgsnapshots/detail API
+      description: project_id parameter for /v3/{project_id}/cgsnapshots/detail 
+        API
       in: path
       name: project_id
       required: true
@@ -7094,8 +7140,8 @@ components:
       schema:
         type: string
     cgsnapshots_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/cgsnapshots/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/cgsnapshots/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7120,7 +7166,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     cgsnapshots_project_id:
-      description: project_id parameter for /v3/{project_id}/cgsnapshots/{id} API
+      description: project_id parameter for /v3/{project_id}/cgsnapshots/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -7129,7 +7176,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     cluster_active_backend_id:
-      description: The ID of active storage backend. Only in cinder-volume service.
+      description: The ID of active storage backend. Only in cinder-volume 
+        service.
       in: query
       name: active_backend_id
       schema:
@@ -7137,8 +7185,9 @@ components:
       x-openstack:
         min-ver: '3.26'
     cluster_binary:
-      description: Filter the cluster list result by binary name of the clustered
-        services. One of cinder-api, cinder-scheduler, cinder-volume or cinder-backup.
+      description: Filter the cluster list result by binary name of the 
+        clustered services. One of cinder-api, cinder-scheduler, cinder-volume 
+        or cinder-backup.
       in: query
       name: binary
       schema:
@@ -7212,7 +7261,8 @@ components:
       schema:
         type: string
     clusters_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/clusters/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/clusters/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -7253,8 +7303,8 @@ components:
       schema:
         type: string
     consistencygroups_action_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/{id}/action
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/{id}/action API
       in: path
       name: project_id
       required: true
@@ -7263,8 +7313,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     consistencygroups_create_from_src_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/create_from_src
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/create_from_src API
       in: path
       name: project_id
       required: true
@@ -7280,8 +7330,8 @@ components:
       schema:
         type: string
     consistencygroups_delete_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/{id}/delete
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/{id}/delete API
       in: path
       name: project_id
       required: true
@@ -7290,8 +7340,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     consistencygroups_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/detail API
       in: path
       name: project_id
       required: true
@@ -7307,8 +7357,8 @@ components:
       schema:
         type: string
     consistencygroups_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7324,8 +7374,8 @@ components:
       schema:
         type: string
     consistencygroups_new_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/new API
       in: path
       name: project_id
       required: true
@@ -7334,8 +7384,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     consistencygroups_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/{id} API
       in: path
       name: project_id
       required: true
@@ -7351,8 +7401,8 @@ components:
       schema:
         type: string
     consistencygroups_update_project_id:
-      description: project_id parameter for /v3/{project_id}/consistencygroups/{id}/update
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/consistencygroups/{id}/update API
       in: path
       name: project_id
       required: true
@@ -7361,11 +7411,11 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     consumes_quota:
-      description: Filters results by consumes_quota field. Resources that don’t use
-        quotas are usually temporary internal resources created to perform an operation.
-        Default is to not filter by it. Filtering by this option may not be always
-        possible in a cloud, see List Resource Filters to determine whether this filter
-        is available in your cloud.
+      description: Filters results by consumes_quota field. Resources that don’t
+        use quotas are usually temporary internal resources created to perform 
+        an operation. Default is to not filter by it. Filtering by this option 
+        may not be always possible in a cloud, see List Resource Filters to 
+        determine whether this filter is available in your cloud.
       in: query
       name: consumes_quota
       schema:
@@ -7390,7 +7440,8 @@ components:
       schema:
         type: string
     default_types_project_id:
-      description: project_id parameter for /v3/{project_id}/default-types/{id} API
+      description: project_id parameter for /v3/{project_id}/default-types/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -7414,25 +7465,25 @@ components:
       schema:
         type: boolean
     group_limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     group_marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     group_offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -7445,8 +7496,8 @@ components:
       schema:
         type: string
     group_snapshots_action_project_id:
-      description: project_id parameter for /v3/{project_id}/group_snapshots/{id}/action
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_snapshots/{id}/action API
       in: path
       name: project_id
       required: true
@@ -7455,8 +7506,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_snapshots_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/group_snapshots/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_snapshots/detail API
       in: path
       name: project_id
       required: true
@@ -7472,8 +7523,8 @@ components:
       schema:
         type: string
     group_snapshots_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/group_snapshots/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_snapshots/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7489,7 +7540,8 @@ components:
       schema:
         type: string
     group_snapshots_new_project_id:
-      description: project_id parameter for /v3/{project_id}/group_snapshots/new API
+      description: project_id parameter for /v3/{project_id}/group_snapshots/new
+        API
       in: path
       name: project_id
       required: true
@@ -7498,8 +7550,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_snapshots_project_id:
-      description: project_id parameter for /v3/{project_id}/group_snapshots/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_snapshots/{id} API
       in: path
       name: project_id
       required: true
@@ -7516,18 +7568,19 @@ components:
       schema:
         type: string
     group_sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
         type: string
     group_sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
@@ -7540,8 +7593,8 @@ components:
       schema:
         type: string
     group_types_action_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{id}/action
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_types/{id}/action API
       in: path
       name: project_id
       required: true
@@ -7557,8 +7610,8 @@ components:
       schema:
         type: string
     group_types_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_types/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7567,24 +7620,24 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_types_group_specs_edit_group_type_id:
-      description: group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id}/edit
-        API
+      description: group_type_id parameter for 
+        /v3/group_types/{group_type_id}/group_specs/{id}/edit API
       in: path
       name: group_type_id
       required: true
       schema:
         type: string
     group_types_group_specs_edit_id:
-      description: id parameter for /v3/group_types/{group_type_id}/group_specs/{id}/edit
-        API
+      description: id parameter for 
+        /v3/group_types/{group_type_id}/group_specs/{id}/edit API
       in: path
       name: id
       required: true
       schema:
         type: string
     group_types_group_specs_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{group_type_id}/group_specs/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_types/{group_type_id}/group_specs/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7593,32 +7646,32 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_types_group_specs_group_type_id:
-      description: group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id}
-        API
+      description: group_type_id parameter for 
+        /v3/group_types/{group_type_id}/group_specs/{id} API
       in: path
       name: group_type_id
       required: true
       schema:
         type: string
     group_types_group_specs_id:
-      description: id parameter for /v3/group_types/{group_type_id}/group_specs/{id}
-        API
+      description: id parameter for 
+        /v3/group_types/{group_type_id}/group_specs/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     group_types_group_specs_new_group_type_id:
-      description: group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/new
-        API
+      description: group_type_id parameter for 
+        /v3/group_types/{group_type_id}/group_specs/new API
       in: path
       name: group_type_id
       required: true
       schema:
         type: string
     group_types_group_specs_new_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{group_type_id}/group_specs/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_types/{group_type_id}/group_specs/new API
       in: path
       name: project_id
       required: true
@@ -7627,8 +7680,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_types_group_specs_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{group_type_id}/group_specs/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/group_types/{group_type_id}/group_specs/{id} API
       in: path
       name: project_id
       required: true
@@ -7653,7 +7706,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     group_types_project_id:
-      description: project_id parameter for /v3/{project_id}/group_types/{id} API
+      description: project_id parameter for /v3/{project_id}/group_types/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -7694,7 +7748,8 @@ components:
       schema:
         type: string
     groups_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/groups/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/groups/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -7728,10 +7783,10 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
@@ -7745,7 +7800,8 @@ components:
       schema:
         type: string
     limits_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/limits/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/limits/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -7779,8 +7835,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     manageable_snapshots_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_snapshots/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_snapshots/detail API
       in: path
       name: project_id
       required: true
@@ -7796,8 +7852,8 @@ components:
       schema:
         type: string
     manageable_snapshots_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_snapshots/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_snapshots/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7813,8 +7869,8 @@ components:
       schema:
         type: string
     manageable_snapshots_new_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_snapshots/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_snapshots/new API
       in: path
       name: project_id
       required: true
@@ -7823,8 +7879,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     manageable_snapshots_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_snapshots/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_snapshots/{id} API
       in: path
       name: project_id
       required: true
@@ -7833,8 +7889,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     manageable_volumes_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_volumes/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_volumes/detail API
       in: path
       name: project_id
       required: true
@@ -7850,8 +7906,8 @@ components:
       schema:
         type: string
     manageable_volumes_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_volumes/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_volumes/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7867,8 +7923,8 @@ components:
       schema:
         type: string
     manageable_volumes_new_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_volumes/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_volumes/new API
       in: path
       name: project_id
       required: true
@@ -7877,8 +7933,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     manageable_volumes_project_id:
-      description: project_id parameter for /v3/{project_id}/manageable_volumes/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/manageable_volumes/{id} API
       in: path
       name: project_id
       required: true
@@ -7887,9 +7943,9 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
@@ -7912,7 +7968,8 @@ components:
       schema:
         type: string
     messages_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/messages/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/messages/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -7946,8 +8003,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -7960,8 +8017,8 @@ components:
       schema:
         type: string
     os_availability_zone_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-availability-zone/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-availability-zone/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -7977,8 +8034,8 @@ components:
       schema:
         type: string
     os_availability_zone_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-availability-zone/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-availability-zone/new API
       in: path
       name: project_id
       required: true
@@ -7987,8 +8044,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_availability_zone_project_id:
-      description: project_id parameter for /v3/{project_id}/os-availability-zone/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-availability-zone/{id} API
       in: path
       name: project_id
       required: true
@@ -8004,7 +8061,8 @@ components:
       schema:
         type: string
     os_hosts_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-hosts/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/os-hosts/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -8045,8 +8103,8 @@ components:
       schema:
         type: string
     os_hosts_reboot_project_id:
-      description: project_id parameter for /v3/{project_id}/os-hosts/{id}/reboot
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-hosts/{id}/reboot API
       in: path
       name: project_id
       required: true
@@ -8062,8 +8120,8 @@ components:
       schema:
         type: string
     os_hosts_shutdown_project_id:
-      description: project_id parameter for /v3/{project_id}/os-hosts/{id}/shutdown
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-hosts/{id}/shutdown API
       in: path
       name: project_id
       required: true
@@ -8079,8 +8137,8 @@ components:
       schema:
         type: string
     os_hosts_startup_project_id:
-      description: project_id parameter for /v3/{project_id}/os-hosts/{id}/startup
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-hosts/{id}/startup API
       in: path
       name: project_id
       required: true
@@ -8096,8 +8154,8 @@ components:
       schema:
         type: string
     os_quota_class_sets_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-class-sets/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-quota-class-sets/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8113,8 +8171,8 @@ components:
       schema:
         type: string
     os_quota_class_sets_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-class-sets/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-quota-class-sets/new API
       in: path
       name: project_id
       required: true
@@ -8123,8 +8181,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_quota_class_sets_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-class-sets/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-quota-class-sets/{id} API
       in: path
       name: project_id
       required: true
@@ -8140,8 +8198,8 @@ components:
       schema:
         type: string
     os_quota_sets_defaults_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-sets/{id}/defaults
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-quota-sets/{id}/defaults API
       in: path
       name: project_id
       required: true
@@ -8157,8 +8215,8 @@ components:
       schema:
         type: string
     os_quota_sets_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-sets/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-quota-sets/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8174,7 +8232,8 @@ components:
       schema:
         type: string
     os_quota_sets_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-sets/new API
+      description: project_id parameter for /v3/{project_id}/os-quota-sets/new 
+        API
       in: path
       name: project_id
       required: true
@@ -8183,7 +8242,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_quota_sets_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-sets/{id} API
+      description: project_id parameter for /v3/{project_id}/os-quota-sets/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -8199,8 +8259,8 @@ components:
       schema:
         type: string
     os_services_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-services/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-services/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8225,7 +8285,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_services_project_id:
-      description: project_id parameter for /v3/{project_id}/os-services/{id} API
+      description: project_id parameter for /v3/{project_id}/os-services/{id} 
+        API
       in: path
       name: project_id
       required: true
@@ -8234,8 +8295,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_snapshot_manage_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/os-snapshot-manage/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-snapshot-manage/detail API
       in: path
       name: project_id
       required: true
@@ -8251,8 +8312,8 @@ components:
       schema:
         type: string
     os_snapshot_manage_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-snapshot-manage/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-snapshot-manage/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8268,8 +8329,8 @@ components:
       schema:
         type: string
     os_snapshot_manage_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-snapshot-manage/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-snapshot-manage/new API
       in: path
       name: project_id
       required: true
@@ -8278,8 +8339,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_snapshot_manage_project_id:
-      description: project_id parameter for /v3/{project_id}/os-snapshot-manage/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-snapshot-manage/{id} API
       in: path
       name: project_id
       required: true
@@ -8288,8 +8349,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_volume_manage_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-manage/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-manage/detail API
       in: path
       name: project_id
       required: true
@@ -8305,8 +8366,8 @@ components:
       schema:
         type: string
     os_volume_manage_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-manage/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-manage/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8322,8 +8383,8 @@ components:
       schema:
         type: string
     os_volume_manage_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-manage/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-manage/new API
       in: path
       name: project_id
       required: true
@@ -8332,8 +8393,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_volume_manage_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-manage/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-manage/{id} API
       in: path
       name: project_id
       required: true
@@ -8349,8 +8410,8 @@ components:
       schema:
         type: string
     os_volume_transfer_accept_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-transfer/{id}/accept
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-transfer/{id}/accept API
       in: path
       name: project_id
       required: true
@@ -8359,8 +8420,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_volume_transfer_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-transfer/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-transfer/detail API
       in: path
       name: project_id
       required: true
@@ -8376,8 +8437,8 @@ components:
       schema:
         type: string
     os_volume_transfer_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-transfer/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-transfer/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8393,8 +8454,8 @@ components:
       schema:
         type: string
     os_volume_transfer_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-transfer/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-transfer/new API
       in: path
       name: project_id
       required: true
@@ -8403,8 +8464,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_volume_transfer_project_id:
-      description: project_id parameter for /v3/{project_id}/os-volume-transfer/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/os-volume-transfer/{id} API
       in: path
       name: project_id
       required: true
@@ -8413,25 +8474,25 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     qos_spec_limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     qos_spec_marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     qos_spec_offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -8445,18 +8506,19 @@ components:
       schema:
         type: string
     qos_spec_sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
         type: string
     qos_spec_sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
@@ -8469,8 +8531,8 @@ components:
       schema:
         type: string
     qos_specs_associate_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/associate
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/qos-specs/{id}/associate API
       in: path
       name: project_id
       required: true
@@ -8486,8 +8548,8 @@ components:
       schema:
         type: string
     qos_specs_associations_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/associations
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/qos-specs/{id}/associations API
       in: path
       name: project_id
       required: true
@@ -8503,8 +8565,8 @@ components:
       schema:
         type: string
     qos_specs_delete_keys_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/delete_keys
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/qos-specs/{id}/delete_keys API
       in: path
       name: project_id
       required: true
@@ -8520,8 +8582,8 @@ components:
       schema:
         type: string
     qos_specs_disassociate_all_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/disassociate_all
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/qos-specs/{id}/disassociate_all API
       in: path
       name: project_id
       required: true
@@ -8537,8 +8599,8 @@ components:
       schema:
         type: string
     qos_specs_disassociate_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/disassociate
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/qos-specs/{id}/disassociate API
       in: path
       name: project_id
       required: true
@@ -8554,7 +8616,8 @@ components:
       schema:
         type: string
     qos_specs_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/qos-specs/{id}/edit
+        API
       in: path
       name: project_id
       required: true
@@ -8595,8 +8658,8 @@ components:
       schema:
         type: string
     resource_filters_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/resource_filters/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/resource_filters/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8612,8 +8675,8 @@ components:
       schema:
         type: string
     resource_filters_new_project_id:
-      description: project_id parameter for /v3/{project_id}/resource_filters/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/resource_filters/new API
       in: path
       name: project_id
       required: true
@@ -8622,8 +8685,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     resource_filters_project_id:
-      description: project_id parameter for /v3/{project_id}/resource_filters/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/resource_filters/{id} API
       in: path
       name: project_id
       required: true
@@ -8639,8 +8702,8 @@ components:
       schema:
         type: string
     scheduler_stats_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/scheduler-stats/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/scheduler-stats/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8649,8 +8712,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     scheduler_stats_get_pools_project_id:
-      description: project_id parameter for /v3/{project_id}/scheduler-stats/get_pools
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/scheduler-stats/get_pools API
       in: path
       name: project_id
       required: true
@@ -8666,7 +8729,8 @@ components:
       schema:
         type: string
     scheduler_stats_new_project_id:
-      description: project_id parameter for /v3/{project_id}/scheduler-stats/new API
+      description: project_id parameter for /v3/{project_id}/scheduler-stats/new
+        API
       in: path
       name: project_id
       required: true
@@ -8675,8 +8739,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     scheduler_stats_project_id:
-      description: project_id parameter for /v3/{project_id}/scheduler-stats/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/scheduler-stats/{id} API
       in: path
       name: project_id
       required: true
@@ -8692,8 +8756,8 @@ components:
       schema:
         type: string
     snapshots_action_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/{id}/action
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/snapshots/{id}/action API
       in: path
       name: project_id
       required: true
@@ -8702,7 +8766,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     snapshots_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/detail API
+      description: project_id parameter for /v3/{project_id}/snapshots/detail 
+        API
       in: path
       name: project_id
       required: true
@@ -8718,7 +8783,8 @@ components:
       schema:
         type: string
     snapshots_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/snapshots/{id}/edit
+        API
       in: path
       name: project_id
       required: true
@@ -8734,16 +8800,16 @@ components:
       schema:
         type: string
     snapshots_metadata_edit_id:
-      description: id parameter for /v3/snapshots/{snapshot_id}/metadata/{id}/edit
-        API
+      description: id parameter for 
+        /v3/snapshots/{snapshot_id}/metadata/{id}/edit API
       in: path
       name: id
       required: true
       schema:
         type: string
     snapshots_metadata_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/{snapshot_id}/metadata/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/snapshots/{snapshot_id}/metadata/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -8752,23 +8818,24 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     snapshots_metadata_edit_snapshot_id:
-      description: snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata/{id}/edit
-        API
+      description: snapshot_id parameter for 
+        /v3/snapshots/{snapshot_id}/metadata/{id}/edit API
       in: path
       name: snapshot_id
       required: true
       schema:
         type: string
     snapshots_metadata_id:
-      description: id parameter for /v3/snapshots/{snapshot_id}/metadata/{id} API
+      description: id parameter for /v3/snapshots/{snapshot_id}/metadata/{id} 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     snapshots_metadata_new_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/{snapshot_id}/metadata/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/snapshots/{snapshot_id}/metadata/new API
       in: path
       name: project_id
       required: true
@@ -8777,16 +8844,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     snapshots_metadata_new_snapshot_id:
-      description: snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata/new
-        API
+      description: snapshot_id parameter for 
+        /v3/snapshots/{snapshot_id}/metadata/new API
       in: path
       name: snapshot_id
       required: true
       schema:
         type: string
     snapshots_metadata_project_id:
-      description: project_id parameter for /v3/{project_id}/snapshots/{snapshot_id}/metadata
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/snapshots/{snapshot_id}/metadata API
       in: path
       name: project_id
       required: true
@@ -8795,8 +8862,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     snapshots_metadata_snapshot_id:
-      description: snapshot_id parameter for /v3/snapshots/{snapshot_id}/metadata
-        API
+      description: snapshot_id parameter for 
+        /v3/snapshots/{snapshot_id}/metadata API
       in: path
       name: snapshot_id
       required: true
@@ -8829,9 +8896,9 @@ components:
       schema:
         type: string
     sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
@@ -8840,10 +8907,11 @@ components:
           - desc
         type: string
     sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
@@ -8861,25 +8929,25 @@ components:
       schema:
         type: boolean
     transfer_limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     transfer_marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     transfer_offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -8893,18 +8961,19 @@ components:
       schema:
         type: string
     transfer_sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
         type: string
     transfer_sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
@@ -8916,25 +8985,25 @@ components:
       schema:
         type: boolean
     type_limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     type_marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     type_offset:
-      description: Used in conjunction with limit to return a slice of items. offset
-        is where to start in the list.
+      description: Used in conjunction with limit to return a slice of items. 
+        offset is where to start in the list.
       in: query
       name: offset
       schema:
@@ -8948,18 +9017,19 @@ components:
       schema:
         type: string
     type_sort_dir:
-      description: Sorts by one or more sets of attribute and sort direction combinations.
-        If you omit the sort direction in a set, default is desc. Deprecated in favour
-        of the combined sort parameter.
+      description: Sorts by one or more sets of attribute and sort direction 
+        combinations. If you omit the sort direction in a set, default is desc. 
+        Deprecated in favour of the combined sort parameter.
       in: query
       name: sort_dir
       schema:
         type: string
     type_sort_key:
-      description: Sorts by an attribute. A valid value is name, status, container_format,
-        disk_format, size, id, created_at, or updated_at. Default is created_at. The
-        API uses the natural sorting direction of the sort_key attribute value. Deprecated
-        in favour of the combined sort parameter.
+      description: Sorts by an attribute. A valid value is name, status, 
+        container_format, disk_format, size, id, created_at, or updated_at. 
+        Default is created_at. The API uses the natural sorting direction of the
+        sort_key attribute value. Deprecated in favour of the combined sort 
+        parameter.
       in: query
       name: sort_key
       schema:
@@ -8972,7 +9042,8 @@ components:
       schema:
         type: string
     types_action_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{id}/action API
+      description: project_id parameter for /v3/{project_id}/types/{id}/action 
+        API
       in: path
       name: project_id
       required: true
@@ -9004,8 +9075,8 @@ components:
       schema:
         type: string
     types_encryption_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/encryption/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/encryption/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9014,8 +9085,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_encryption_edit_type_id:
-      description: type_id parameter for /v3/types/{type_id}/encryption/{id}/edit
-        API
+      description: type_id parameter for 
+        /v3/types/{type_id}/encryption/{id}/edit API
       in: path
       name: type_id
       required: true
@@ -9029,8 +9100,8 @@ components:
       schema:
         type: string
     types_encryption_new_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/encryption/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/encryption/new API
       in: path
       name: project_id
       required: true
@@ -9046,8 +9117,8 @@ components:
       schema:
         type: string
     types_encryption_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/encryption/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/encryption/{id} API
       in: path
       name: project_id
       required: true
@@ -9063,15 +9134,16 @@ components:
       schema:
         type: string
     types_extra_specs_edit_id:
-      description: id parameter for /v3/types/{type_id}/extra_specs/{id}/edit API
+      description: id parameter for /v3/types/{type_id}/extra_specs/{id}/edit 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     types_extra_specs_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/extra_specs/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/extra_specs/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9080,8 +9152,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_extra_specs_edit_type_id:
-      description: type_id parameter for /v3/types/{type_id}/extra_specs/{id}/edit
-        API
+      description: type_id parameter for 
+        /v3/types/{type_id}/extra_specs/{id}/edit API
       in: path
       name: type_id
       required: true
@@ -9095,8 +9167,8 @@ components:
       schema:
         type: string
     types_extra_specs_new_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/extra_specs/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/extra_specs/new API
       in: path
       name: project_id
       required: true
@@ -9112,8 +9184,8 @@ components:
       schema:
         type: string
     types_extra_specs_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/extra_specs/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/extra_specs/{id} API
       in: path
       name: project_id
       required: true
@@ -9122,7 +9194,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_extra_specs_type_id:
-      description: type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+      description: type_id parameter for /v3/types/{type_id}/extra_specs/{id} 
+        API
       in: path
       name: type_id
       required: true
@@ -9145,16 +9218,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_os_volume_type_access_edit_id:
-      description: id parameter for /v3/types/{type_id}/os-volume-type-access/{id}/edit
-        API
+      description: id parameter for 
+        /v3/types/{type_id}/os-volume-type-access/{id}/edit API
       in: path
       name: id
       required: true
       schema:
         type: string
     types_os_volume_type_access_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/os-volume-type-access/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/os-volume-type-access/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9163,24 +9236,24 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_os_volume_type_access_edit_type_id:
-      description: type_id parameter for /v3/types/{type_id}/os-volume-type-access/{id}/edit
-        API
+      description: type_id parameter for 
+        /v3/types/{type_id}/os-volume-type-access/{id}/edit API
       in: path
       name: type_id
       required: true
       schema:
         type: string
     types_os_volume_type_access_id:
-      description: id parameter for /v3/types/{type_id}/os-volume-type-access/{id}
-        API
+      description: id parameter for 
+        /v3/types/{type_id}/os-volume-type-access/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     types_os_volume_type_access_new_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/os-volume-type-access/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/os-volume-type-access/new API
       in: path
       name: project_id
       required: true
@@ -9189,16 +9262,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_os_volume_type_access_new_type_id:
-      description: type_id parameter for /v3/types/{type_id}/os-volume-type-access/new
-        API
+      description: type_id parameter for 
+        /v3/types/{type_id}/os-volume-type-access/new API
       in: path
       name: type_id
       required: true
       schema:
         type: string
     types_os_volume_type_access_project_id:
-      description: project_id parameter for /v3/{project_id}/types/{type_id}/os-volume-type-access/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/types/{type_id}/os-volume-type-access/{id} API
       in: path
       name: project_id
       required: true
@@ -9207,8 +9280,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     types_os_volume_type_access_type_id:
-      description: type_id parameter for /v3/types/{type_id}/os-volume-type-access/{id}
-        API
+      description: type_id parameter for 
+        /v3/types/{type_id}/os-volume-type-access/{id} API
       in: path
       name: type_id
       required: true
@@ -9241,8 +9314,8 @@ components:
       schema:
         type: string
     volume_transfers_accept_project_id:
-      description: project_id parameter for /v3/{project_id}/volume-transfers/{id}/accept
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volume-transfers/{id}/accept API
       in: path
       name: project_id
       required: true
@@ -9251,8 +9324,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volume_transfers_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/volume-transfers/detail
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volume-transfers/detail API
       in: path
       name: project_id
       required: true
@@ -9268,8 +9341,8 @@ components:
       schema:
         type: string
     volume_transfers_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/volume-transfers/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volume-transfers/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9285,8 +9358,8 @@ components:
       schema:
         type: string
     volume_transfers_new_project_id:
-      description: project_id parameter for /v3/{project_id}/volume-transfers/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volume-transfers/new API
       in: path
       name: project_id
       required: true
@@ -9295,8 +9368,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volume_transfers_project_id:
-      description: project_id parameter for /v3/{project_id}/volume-transfers/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volume-transfers/{id} API
       in: path
       name: project_id
       required: true
@@ -9312,7 +9385,8 @@ components:
       schema:
         type: string
     volumes_action_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{id}/action API
+      description: project_id parameter for /v3/{project_id}/volumes/{id}/action
+        API
       in: path
       name: project_id
       required: true
@@ -9337,7 +9411,8 @@ components:
       schema:
         type: string
     volumes_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/volumes/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -9346,15 +9421,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_encryption_edit_id:
-      description: id parameter for /v3/volumes/{volume_id}/encryption/{id}/edit API
+      description: id parameter for /v3/volumes/{volume_id}/encryption/{id}/edit
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     volumes_encryption_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/encryption/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/encryption/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9363,8 +9439,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_encryption_edit_volume_id:
-      description: volume_id parameter for /v3/volumes/{volume_id}/encryption/{id}/edit
-        API
+      description: volume_id parameter for 
+        /v3/volumes/{volume_id}/encryption/{id}/edit API
       in: path
       name: volume_id
       required: true
@@ -9378,8 +9454,8 @@ components:
       schema:
         type: string
     volumes_encryption_new_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/encryption/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/encryption/new API
       in: path
       name: project_id
       required: true
@@ -9388,16 +9464,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_encryption_new_volume_id:
-      description: volume_id parameter for /v3/volumes/{volume_id}/encryption/new
-        API
+      description: volume_id parameter for 
+        /v3/volumes/{volume_id}/encryption/new API
       in: path
       name: volume_id
       required: true
       schema:
         type: string
     volumes_encryption_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/encryption/{id}
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/encryption/{id} API
       in: path
       name: project_id
       required: true
@@ -9406,8 +9482,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_encryption_volume_id:
-      description: volume_id parameter for /v3/volumes/{volume_id}/encryption/{id}
-        API
+      description: volume_id parameter for 
+        /v3/volumes/{volume_id}/encryption/{id} API
       in: path
       name: volume_id
       required: true
@@ -9421,15 +9497,16 @@ components:
       schema:
         type: string
     volumes_metadata_edit_id:
-      description: id parameter for /v3/volumes/{volume_id}/metadata/{id}/edit API
+      description: id parameter for /v3/volumes/{volume_id}/metadata/{id}/edit 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     volumes_metadata_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/metadata/{id}/edit
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/metadata/{id}/edit API
       in: path
       name: project_id
       required: true
@@ -9438,8 +9515,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_metadata_edit_volume_id:
-      description: volume_id parameter for /v3/volumes/{volume_id}/metadata/{id}/edit
-        API
+      description: volume_id parameter for 
+        /v3/volumes/{volume_id}/metadata/{id}/edit API
       in: path
       name: volume_id
       required: true
@@ -9453,8 +9530,8 @@ components:
       schema:
         type: string
     volumes_metadata_new_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/metadata/new
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/metadata/new API
       in: path
       name: project_id
       required: true
@@ -9463,15 +9540,16 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     volumes_metadata_new_volume_id:
-      description: volume_id parameter for /v3/volumes/{volume_id}/metadata/new API
+      description: volume_id parameter for /v3/volumes/{volume_id}/metadata/new 
+        API
       in: path
       name: volume_id
       required: true
       schema:
         type: string
     volumes_metadata_project_id:
-      description: project_id parameter for /v3/{project_id}/volumes/{volume_id}/metadata
-        API
+      description: project_id parameter for 
+        /v3/{project_id}/volumes/{volume_id}/metadata API
       in: path
       name: project_id
       required: true
@@ -9514,7 +9592,8 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     with_count:
-      description: Whether to show count in API response or not, default is False.
+      description: Whether to show count in API response or not, default is 
+        False.
       in: query
       name: with_count
       schema:
@@ -9538,7 +9617,8 @@ components:
       schema:
         type: string
     workers_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/workers/{id}/edit API
+      description: project_id parameter for /v3/{project_id}/workers/{id}/edit 
+        API
       in: path
       name: project_id
       required: true
@@ -9595,7 +9675,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the volume.
+              description: The connection info used for server to connect the 
+                volume.
               type: object
             detached_at:
               description: |-
@@ -9640,23 +9721,6 @@ components:
             - volume_id
           type: object
       type: object
-    AttachmentUpdate:
-      additionalProperties: false
-      properties:
-        attachment:
-          additionalProperties: false
-          properties:
-            connector:
-              minProperties: 1
-              type: object
-          required:
-            - connector
-          type: object
-      required:
-        - attachment
-      type: object
-      x-openstack:
-        min-ver: '3.27'
     AttachmentUpdateResponse:
       properties:
         attachment:
@@ -9680,7 +9744,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the volume.
+              description: The connection info used for server to connect the 
+                volume.
               type: object
             detached_at:
               description: |-
@@ -9725,6 +9790,23 @@ components:
             - volume_id
           type: object
       type: object
+    AttachmentUpdate_327:
+      additionalProperties: false
+      properties:
+        attachment:
+          additionalProperties: false
+          properties:
+            connector:
+              minProperties: 1
+              type: object
+          required:
+            - connector
+          type: object
+      required:
+        - attachment
+      type: object
+      x-openstack:
+        min-ver: '3.27'
     AttachmentsActionOs-CompleteRequest:
       description: Empty body for os-complete action
       properties:
@@ -9762,7 +9844,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the volume.
+              description: The connection info used for server to connect the 
+                volume.
               type: object
             detached_at:
               description: |-
@@ -9885,6 +9968,7 @@ components:
         - attachment
       type: object
       x-openstack:
+        max-ver: '3.53'
         min-ver: '3.54'
     AttachmentsDetailResponse:
       properties:
@@ -9908,7 +9992,8 @@ components:
                 format: date-time
                 type: string
               connection_info:
-                description: The connection info used for server to connect the volume.
+                description: The connection info used for server to connect the 
+                  volume.
                 type: object
               detached_at:
                 description: |-
@@ -10007,15 +10092,15 @@ components:
                 - 'null'
                 - string
             created_at:
-              description: The date and time when the resource was created. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was created. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             data_timestamp:
-              description: The time when the data on the volume was first saved. If
-                it is a backup from volume, it will be the same as created_at for
-                a backup. If it is a backup from a snapshot, it will be the same as
-                created_at for the snapshot.
+              description: The time when the data on the volume was first saved.
+                If it is a backup from volume, it will be the same as created_at
+                for a backup. If it is a backup from a snapshot, it will be the 
+                same as created_at for the snapshot.
               format: date-time
               type: string
             description:
@@ -10024,14 +10109,14 @@ components:
                 - 'null'
                 - string
             fail_reason:
-              description: If the backup failed, the reason for the failure. Otherwise,
-                null.
+              description: If the backup failed, the reason for the failure. 
+                Otherwise, null.
               type:
                 - 'null'
                 - string
             has_dependent_backups:
-              description: If this value is true, there are other backups depending
-                on this backup.
+              description: If this value is true, there are other backups 
+                depending on this backup.
               type: boolean
             id:
               description: |-
@@ -10039,16 +10124,16 @@ components:
               format: uuid
               type: string
             is_incremental:
-              description: Indicates whether the backup mode is incremental. If this
-                value is true, the backup mode is incremental. If this value is false,
-                the backup mode is full.
+              description: Indicates whether the backup mode is incremental. If 
+                this value is true, the backup mode is incremental. If this 
+                value is false, the backup mode is full.
               type: boolean
             links:
               description: |-
                 Links for the backup.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -10090,12 +10175,12 @@ components:
                 - 'null'
                 - string
             status:
-              description: The backup status. Refer to Backup statuses table for the
-                possible status value.
+              description: The backup status. Refer to Backup statuses table for
+                the possible status value.
               type: string
             updated_at:
-              description: The date and time when the resource was updated. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was updated. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             volume_id:
@@ -10131,15 +10216,15 @@ components:
                 - 'null'
                 - string
             created_at:
-              description: The date and time when the resource was created. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was created. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             data_timestamp:
-              description: The time when the data on the volume was first saved. If
-                it is a backup from volume, it will be the same as created_at for
-                a backup. If it is a backup from a snapshot, it will be the same as
-                created_at for the snapshot.
+              description: The time when the data on the volume was first saved.
+                If it is a backup from volume, it will be the same as created_at
+                for a backup. If it is a backup from a snapshot, it will be the 
+                same as created_at for the snapshot.
               format: date-time
               type: string
             description:
@@ -10148,14 +10233,14 @@ components:
                 - 'null'
                 - string
             fail_reason:
-              description: If the backup failed, the reason for the failure. Otherwise,
-                null.
+              description: If the backup failed, the reason for the failure. 
+                Otherwise, null.
               type:
                 - 'null'
                 - string
             has_dependent_backups:
-              description: If this value is true, there are other backups depending
-                on this backup.
+              description: If this value is true, there are other backups 
+                depending on this backup.
               type: boolean
             id:
               description: |-
@@ -10163,16 +10248,16 @@ components:
               format: uuid
               type: string
             is_incremental:
-              description: Indicates whether the backup mode is incremental. If this
-                value is true, the backup mode is incremental. If this value is false,
-                the backup mode is full.
+              description: Indicates whether the backup mode is incremental. If 
+                this value is true, the backup mode is incremental. If this 
+                value is false, the backup mode is full.
               type: boolean
             links:
               description: |-
                 Links for the backup.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -10214,12 +10299,12 @@ components:
                 - 'null'
                 - string
             status:
-              description: The backup status. Refer to Backup statuses table for the
-                possible status value.
+              description: The backup status. Refer to Backup statuses table for
+                the possible status value.
               type: string
             updated_at:
-              description: The date and time when the resource was updated. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was updated. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             volume_id:
@@ -10268,6 +10353,7 @@ components:
         - backup
       type: object
       x-openstack:
+        max-ver: '3.42'
         min-ver: '3.43'
     BackupUpdate_39:
       additionalProperties: false
@@ -10345,15 +10431,15 @@ components:
                 - 'null'
                 - string
             created_at:
-              description: The date and time when the resource was created. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was created. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             data_timestamp:
-              description: The time when the data on the volume was first saved. If
-                it is a backup from volume, it will be the same as created_at for
-                a backup. If it is a backup from a snapshot, it will be the same as
-                created_at for the snapshot.
+              description: The time when the data on the volume was first saved.
+                If it is a backup from volume, it will be the same as created_at
+                for a backup. If it is a backup from a snapshot, it will be the 
+                same as created_at for the snapshot.
               format: date-time
               type: string
             description:
@@ -10362,14 +10448,14 @@ components:
                 - 'null'
                 - string
             fail_reason:
-              description: If the backup failed, the reason for the failure. Otherwise,
-                null.
+              description: If the backup failed, the reason for the failure. 
+                Otherwise, null.
               type:
                 - 'null'
                 - string
             has_dependent_backups:
-              description: If this value is true, there are other backups depending
-                on this backup.
+              description: If this value is true, there are other backups 
+                depending on this backup.
               type: boolean
             id:
               description: |-
@@ -10377,16 +10463,16 @@ components:
               format: uuid
               type: string
             is_incremental:
-              description: Indicates whether the backup mode is incremental. If this
-                value is true, the backup mode is incremental. If this value is false,
-                the backup mode is full.
+              description: Indicates whether the backup mode is incremental. If 
+                this value is true, the backup mode is incremental. If this 
+                value is false, the backup mode is full.
               type: boolean
             links:
               description: |-
                 Links for the backup.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -10428,12 +10514,12 @@ components:
                 - 'null'
                 - string
             status:
-              description: The backup status. Refer to Backup statuses table for the
-                possible status value.
+              description: The backup status. Refer to Backup statuses table for
+                the possible status value.
               type: string
             updated_at:
-              description: The date and time when the resource was updated. The date
-                and time stamp format is ISO 8601
+              description: The date and time when the resource was updated. The 
+                date and time stamp format is ISO 8601
               format: date-time
               type: string
             volume_id:
@@ -10863,6 +10949,7 @@ components:
         - backup
       type: object
       x-openstack:
+        max-ver: '3.42'
         min-ver: '3.51'
     BackupsDetailResponse:
       description: A container with list of backup objects.
@@ -10941,8 +11028,8 @@ components:
                 description: |-
                   Links for the backup.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -11028,8 +11115,8 @@ components:
     BackupsExport_RecordResponse:
       properties:
         backup-record:
-          description: An object recording volume backup metadata, including backup_service
-            and backup_url.
+          description: An object recording volume backup metadata, including 
+            backup_service and backup_url.
           properties:
             backup_service:
               description: The service used to perform the backup.
@@ -11082,8 +11169,8 @@ components:
               description: |-
                 Links for the backup.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -11123,8 +11210,8 @@ components:
                 description: |-
                   Links for the backup.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -11212,8 +11299,8 @@ components:
         cluster:
           properties:
             active_backend_id:
-              description: The ID of active storage backend. Only in cinder-volume
-                service.
+              description: The ID of active storage backend. Only in 
+                cinder-volume service.
               type:
                 - 'null'
                 - string
@@ -11252,8 +11339,8 @@ components:
               description: The number of hosts in the cluster.
               type: integer
             replication_status:
-              description: The cluster replication status. Only included in responses
-                if configured.
+              description: The cluster replication status. Only included in 
+                responses if configured.
               enum:
                 - disabled
                 - enabled
@@ -11305,8 +11392,8 @@ components:
         cluster:
           properties:
             active_backend_id:
-              description: The ID of active storage backend. Only in cinder-volume
-                service.
+              description: The ID of active storage backend. Only in 
+                cinder-volume service.
               type:
                 - 'null'
                 - string
@@ -11345,8 +11432,8 @@ components:
               description: The number of hosts in the cluster.
               type: integer
             replication_status:
-              description: The cluster replication status. Only included in responses
-                if configured.
+              description: The cluster replication status. Only included in 
+                responses if configured.
               enum:
                 - disabled
                 - enabled
@@ -11557,38 +11644,57 @@ components:
       description: Response of the project_id/consistencygroups:post operation
       type: object
     ConsistencygroupsCreate_From_SrcCreate_From_SrcRequest:
-      description: Request of the project_id/consistencygroups/create_from_src:post
-        operation
+      description: Request of the 
+        project_id/consistencygroups/create_from_src:post operation
       type: object
       x-openstack:
         action-name: create_from_src
     ConsistencygroupsCreate_From_SrcResponse:
-      description: Response of the project_id/consistencygroups/create_from_src:post
-        operation
+      description: Response of the 
+        project_id/consistencygroups/create_from_src:post operation
       type: object
     ConsistencygroupsDeleteDeleteRequest:
-      description: Request of the project_id/consistencygroups/id/delete:post operation
+      description: Request of the project_id/consistencygroups/id/delete:post 
+        operation
       type: object
       x-openstack:
         action-name: delete
     ConsistencygroupsDeleteResponse:
-      description: Response of the project_id/consistencygroups/id/delete:post operation
+      description: Response of the project_id/consistencygroups/id/delete:post 
+        operation
       type: object
     ConsistencygroupsDetailResponse:
-      description: Response of the project_id/consistencygroups/detail:get operation
+      description: Response of the project_id/consistencygroups/detail:get 
+        operation
       type: object
     ConsistencygroupsListResponse:
       description: Response of the project_id/consistencygroups:get operation
       type: object
     ConsistencygroupsUpdateResponse:
-      description: Response of the project_id/consistencygroups/id/update:put operation
+      description: Response of the project_id/consistencygroups/id/update:put 
+        operation
       type: object
     ConsistencygroupsUpdateUpdateRequest:
-      description: Request of the project_id/consistencygroups/id/update:put operation
+      description: Request of the project_id/consistencygroups/id/update:put 
+        operation
       type: object
       x-openstack:
         action-name: update
-    Default_TypeCreate_Update:
+    Default_TypeCreate_UpdateResponse:
+      properties:
+        default_type:
+          properties:
+            project_id:
+              description: The UUID of the project.
+              format: uuid
+              type: string
+            volume_type_id:
+              description: The UUID for an existing volume type.
+              format: uuid
+              type: string
+          type: object
+      type: object
+    Default_TypeCreate_Update_362:
       properties:
         default_type:
           additionalProperties: false
@@ -11604,20 +11710,6 @@ components:
       type: object
       x-openstack:
         min-ver: '3.62'
-    Default_TypeCreate_UpdateResponse:
-      properties:
-        default_type:
-          properties:
-            project_id:
-              description: The UUID of the project.
-              format: uuid
-              type: string
-            volume_type_id:
-              description: The UUID for an existing volume type.
-              format: uuid
-              type: string
-          type: object
-      type: object
     Default_TypeDetailResponse:
       properties:
         default_type:
@@ -11771,8 +11863,8 @@ components:
                 type: string
               type: array
             volumes:
-              description: A list of volume ids, available only when list_volume set
-                true.
+              description: A list of volume ids, available only when list_volume
+                set true.
               items:
                 description: ''
                 format: uuid
@@ -11785,7 +11877,10 @@ components:
             - name
           type: object
       type: object
-    GroupUpdate:
+    GroupUpdateResponse:
+      description: Response of the project_id/groups/id:put operation
+      type: object
+    GroupUpdate_313:
       additionalProperties: false
       properties:
         group:
@@ -11836,9 +11931,6 @@ components:
       type: object
       x-openstack:
         min-ver: '3.13'
-    GroupUpdateResponse:
-      description: Response of the project_id/groups/id:put operation
-      type: object
     Group_SnapshotShowResponse:
       properties:
         group_snapshot:
@@ -11895,7 +11987,13 @@ components:
             - status
           type: object
       type: object
-    Group_SnapshotsActionReset_Status:
+    Group_SnapshotsActionReset_StatusResponse:
+      description: Response of the 
+        project_id/group_snapshots/id/action:post:reset_status action
+      type: object
+      x-openstack:
+        action-name: reset_status
+    Group_SnapshotsActionReset_Status_319:
       additionalProperties: false
       properties:
         reset_status:
@@ -11913,51 +12011,6 @@ components:
       x-openstack:
         action-name: reset_status
         min-ver: '3.19'
-    Group_SnapshotsActionReset_StatusResponse:
-      description: Response of the project_id/group_snapshots/id/action:post:reset_status
-        action
-      type: object
-      x-openstack:
-        action-name: reset_status
-    Group_SnapshotsCreate:
-      additionalProperties: false
-      properties:
-        group_snapshot:
-          additionalProperties: false
-          description: |-
-            The group snapshot.
-          properties:
-            description:
-              description: |-
-                The group snapshot description.
-              maxLength: 255
-              minLength: 0
-              pattern: ^[\ 
-                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
-              type:
-                - 'null'
-                - string
-            group_id:
-              description: |-
-                The ID of the group.
-              format: uuid
-              type: string
-            name:
-              description: |-
-                The group snapshot name.
-              maxLength: 255
-              minLength: 0
-              type:
-                - 'null'
-                - string
-          required:
-            - group_id
-          type: object
-      required:
-        - group_snapshot
-      type: object
-      x-openstack:
-        min-ver: '3.14'
     Group_SnapshotsCreateResponse:
       properties:
         group_snapshot:
@@ -12014,6 +12067,45 @@ components:
             - status
           type: object
       type: object
+    Group_SnapshotsCreate_314:
+      additionalProperties: false
+      properties:
+        group_snapshot:
+          additionalProperties: false
+          description: |-
+            The group snapshot.
+          properties:
+            description:
+              description: |-
+                The group snapshot description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            group_id:
+              description: |-
+                The ID of the group.
+              format: uuid
+              type: string
+            name:
+              description: |-
+                The group snapshot name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+          required:
+            - group_id
+          type: object
+      required:
+        - group_snapshot
+      type: object
+      x-openstack:
+        min-ver: '3.14'
     Group_SnapshotsDetailResponse:
       description: A container with list of group snapshot objects.
       properties:
@@ -12154,7 +12246,45 @@ components:
             - name
           type: object
       type: object
-    Group_TypeUpdate:
+    Group_TypeUpdateResponse:
+      properties:
+        group_type:
+          description: |-
+            A `group_type` object.
+          properties:
+            description:
+              description: |-
+                The group type description.
+              type: string
+            group_specs:
+              description: |-
+                A set of key and value pairs that contains the
+                specifications for a group type.
+              patternProperties:
+                ^.+$:
+                  type: string
+              type: object
+            id:
+              description: |-
+                The group type ID.
+              format: uuid
+              type: string
+            is_public:
+              description: |-
+                Whether the group type is publicly visible.
+              type: boolean
+            name:
+              description: |-
+                The group type name.
+              type:
+                - 'null'
+                - string
+          required:
+            - id
+            - name
+          type: object
+      type: object
+    Group_TypeUpdate_311:
       additionalProperties: false
       properties:
         group_type:
@@ -12211,7 +12341,7 @@ components:
       type: object
       x-openstack:
         min-ver: '3.11'
-    Group_TypeUpdateResponse:
+    Group_TypesCreateResponse:
       properties:
         group_type:
           description: |-
@@ -12249,7 +12379,7 @@ components:
             - name
           type: object
       type: object
-    Group_TypesCreate:
+    Group_TypesCreate_311:
       additionalProperties: false
       properties:
         group_type:
@@ -12328,52 +12458,21 @@ components:
       type: object
       x-openstack:
         min-ver: '3.11'
-    Group_TypesCreateResponse:
-      properties:
-        group_type:
-          description: |-
-            A `group_type` object.
-          properties:
-            description:
-              description: |-
-                The group type description.
-              type: string
-            group_specs:
-              description: |-
-                A set of key and value pairs that contains the
-                specifications for a group type.
-              patternProperties:
-                ^.+$:
-                  type: string
-              type: object
-            id:
-              description: |-
-                The group type ID.
-              format: uuid
-              type: string
-            is_public:
-              description: |-
-                Whether the group type is publicly visible.
-              type: boolean
-            name:
-              description: |-
-                The group type name.
-              type:
-                - 'null'
-                - string
-          required:
-            - id
-            - name
-          type: object
-      type: object
     Group_TypesGroup_SpecShowResponse:
-      description: A set of key and value pairs that contains the specifications for
-        a group type.
+      description: A set of key and value pairs that contains the specifications
+        for a group type.
       patternProperties:
         ^.+$:
           type: string
       type: object
-    Group_TypesGroup_SpecUpdate:
+    Group_TypesGroup_SpecUpdateResponse:
+      description: A set of key and value pairs that contains the specifications
+        for a group type.
+      patternProperties:
+        ^.+$:
+          type: string
+      type: object
+    Group_TypesGroup_SpecUpdate_311:
       additionalProperties: false
       maxProperties: 1
       minProperties: 1
@@ -12386,14 +12485,18 @@ components:
       type: object
       x-openstack:
         min-ver: '3.11'
-    Group_TypesGroup_SpecUpdateResponse:
-      description: A set of key and value pairs that contains the specifications for
-        a group type.
-      patternProperties:
-        ^.+$:
-          type: string
+    Group_TypesGroup_SpecsCreateResponse:
+      properties:
+        group_specs:
+          description: |-
+            A set of key and value pairs that contains the
+            specifications for a group type.
+          patternProperties:
+            ^.+$:
+              type: string
+          type: object
       type: object
-    Group_TypesGroup_SpecsCreate:
+    Group_TypesGroup_SpecsCreate_311:
       additionalProperties: false
       properties:
         group_specs:
@@ -12413,17 +12516,6 @@ components:
       type: object
       x-openstack:
         min-ver: '3.11'
-    Group_TypesGroup_SpecsCreateResponse:
-      properties:
-        group_specs:
-          description: |-
-            A set of key and value pairs that contains the
-            specifications for a group type.
-          patternProperties:
-            ^.+$:
-              type: string
-          type: object
-      type: object
     Group_TypesGroup_SpecsListResponse:
       properties:
         group_specs:
@@ -12478,12 +12570,12 @@ components:
           type: array
       type: object
     GroupsActionCreate-From-SrcResponse:
-      description: Response of the project_id/groups/id/action:post:create-from-src
-        action
+      description: Response of the 
+        project_id/groups/id/action:post:create-from-src action
       type: object
       x-openstack:
         action-name: create-from-src
-    GroupsActionCreate_From_Src:
+    GroupsActionCreate_From_Src_314:
       additionalProperties: false
       properties:
         create-from-src:
@@ -12521,7 +12613,7 @@ components:
       x-openstack:
         action-name: create-from-src
         min-ver: '3.14'
-    GroupsActionDelete_Group:
+    GroupsActionDelete_Group_313:
       additionalProperties: false
       properties:
         delete:
@@ -12565,7 +12657,7 @@ components:
       x-openstack:
         action-name: delete
         min-ver: '3.13'
-    GroupsActionDisable_Replication:
+    GroupsActionDisable_Replication_338:
       additionalProperties: false
       properties:
         disable_replication:
@@ -12576,7 +12668,7 @@ components:
       x-openstack:
         action-name: disable_replication
         min-ver: '3.38'
-    GroupsActionEnable_Replication:
+    GroupsActionEnable_Replication_338:
       additionalProperties: false
       properties:
         enable_replication:
@@ -12587,7 +12679,7 @@ components:
       x-openstack:
         action-name: enable_replication
         min-ver: '3.38'
-    GroupsActionFailover_Replication:
+    GroupsActionFailover_Replication_338:
       additionalProperties: false
       properties:
         failover_replication:
@@ -12637,7 +12729,23 @@ components:
       x-openstack:
         action-name: failover_replication
         min-ver: '3.38'
-    GroupsActionList_Replication_Targets:
+    GroupsActionList_Replication_TargetsResponse:
+      additionalProperties: false
+      properties:
+        backend_id:
+          description: ID of failover target backend.
+          format: uuid
+          type: string
+        unique_key:
+          description: Vendor specific key-values. Only returned if 
+            administrator.
+          type:
+            - 'null'
+            - string
+      required:
+        - backend_id
+      type: object
+    GroupsActionList_Replication_Targets_338:
       additionalProperties: false
       properties:
         list_replication_targets:
@@ -12648,22 +12756,7 @@ components:
       x-openstack:
         action-name: list_replication_targets
         min-ver: '3.38'
-    GroupsActionList_Replication_TargetsResponse:
-      additionalProperties: false
-      properties:
-        backend_id:
-          description: ID of failover target backend.
-          format: uuid
-          type: string
-        unique_key:
-          description: Vendor specific key-values. Only returned if administrator.
-          type:
-            - 'null'
-            - string
-      required:
-        - backend_id
-      type: object
-    GroupsActionReset_Status:
+    GroupsActionReset_Status_320:
       additionalProperties: false
       properties:
         reset_status:
@@ -12681,66 +12774,6 @@ components:
       x-openstack:
         action-name: reset_status
         min-ver: '3.20'
-    GroupsCreate:
-      additionalProperties: false
-      properties:
-        group:
-          additionalProperties: false
-          description: |-
-            A group object.
-          properties:
-            availability_zone:
-              description: |-
-                The name of the availability zone.
-              format: availability_zone
-              type:
-                - 'null'
-                - string
-            description:
-              description: |-
-                The group description.
-              maxLength: 255
-              minLength: 0
-              pattern: ^[\ 
-                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
-              type:
-                - 'null'
-                - string
-            group_type:
-              description: |-
-                The group type ID.
-              format: group_type
-              type: string
-            name:
-              description: |-
-                The group name.
-              maxLength: 255
-              minLength: 0
-              type:
-                - 'null'
-                - string
-            volume_types:
-              description: |-
-                The list of volume types. In an environment with
-                multiple-storage back ends, the scheduler determines where to send
-                the volume based on the volume type. For information about how to
-                use volume types to create multiple- storage back ends, see
-                [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-              items:
-                maxLength: 255
-                type: string
-              minItems: 1
-              type: array
-              uniqueItems: true
-          required:
-            - group_type
-            - volume_types
-          type: object
-      required:
-        - group
-      type: object
-      x-openstack:
-        min-ver: '3.13'
     GroupsCreateResponse:
       properties:
         group:
@@ -12810,8 +12843,8 @@ components:
                 type: string
               type: array
             volumes:
-              description: A list of volume ids, available only when list_volume set
-                true.
+              description: A list of volume ids, available only when list_volume
+                set true.
               items:
                 description: ''
                 format: uuid
@@ -12824,6 +12857,66 @@ components:
             - name
           type: object
       type: object
+    GroupsCreate_313:
+      additionalProperties: false
+      properties:
+        group:
+          additionalProperties: false
+          description: |-
+            A group object.
+          properties:
+            availability_zone:
+              description: |-
+                The name of the availability zone.
+              format: availability_zone
+              type:
+                - 'null'
+                - string
+            description:
+              description: |-
+                The group description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            group_type:
+              description: |-
+                The group type ID.
+              format: group_type
+              type: string
+            name:
+              description: |-
+                The group name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            volume_types:
+              description: |-
+                The list of volume types. In an environment with
+                multiple-storage back ends, the scheduler determines where to send
+                the volume based on the volume type. For information about how to
+                use volume types to create multiple- storage back ends, see
+                [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
+              items:
+                maxLength: 255
+                type: string
+              minItems: 1
+              type: array
+              uniqueItems: true
+          required:
+            - group_type
+            - volume_types
+          type: object
+      required:
+        - group
+      type: object
+      x-openstack:
+        min-ver: '3.13'
     GroupsDetailResponse:
       description: A container with list of group objects.
       properties:
@@ -13127,8 +13220,8 @@ components:
               x-openstack:
                 min-ver: '3.65'
             count:
-              description: The total count of requested resource before pagination
-                is applied.
+              description: The total count of requested resource before 
+                pagination is applied.
               type:
                 - integer
                 - 'null'
@@ -13551,9 +13644,9 @@ components:
           format: uuid
           type: string
         consumes_quota:
-          description: Whether this resource consumes quota or not. Resources that
-            not counted for quota usage are usually temporary internal resources created
-            to perform an operation.
+          description: Whether this resource consumes quota or not. Resources 
+            that not counted for quota usage are usually temporary internal 
+            resources created to perform an operation.
           type: boolean
           x-openstack:
             min-ver: '3.65'
@@ -13598,8 +13691,8 @@ components:
           description: |-
             The volume links.
           items:
-            description: Links to the resources in question. See [API Guide / Links
-              and 
+            description: Links to the resources in question. See [API Guide / 
+              Links and 
               References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
               for more info.
             properties:
@@ -13636,9 +13729,9 @@ components:
             - 'null'
             - string
         provider_id:
-          description: The provider ID for the volume. The value is either a string
-            set by the driver or null if the driver doesn’t use the field or if it
-            hasn’t created it yet. Only returned for administrators.
+          description: The provider ID for the volume. The value is either a 
+            string set by the driver or null if the driver doesn’t use the field
+            or if it hasn’t created it yet. Only returned for administrators.
           format: uuid
           type:
             - 'null'
@@ -13652,18 +13745,19 @@ components:
             - 'null'
             - string
         service_uuid:
-          description: A unique identifier that’s used to indicate what node the volume-service
-            for a particular volume is being serviced by.
+          description: A unique identifier that’s used to indicate what node the
+            volume-service for a particular volume is being serviced by.
           format: uuid
           type: string
           x-openstack:
             min-ver: '3.48'
         shared_targets:
-          description: An indicator whether the host connecting the volume should
-            lock for the whole attach/detach process or not. true means only is iSCSI
-            initiator running on host doesn’t support manual scans, false means never
-            use locks, and null means to always use locks. Look at os-brick’s guard_connection
-            context manager. Default=True.
+          description: An indicator whether the host connecting the volume 
+            should lock for the whole attach/detach process or not. true means 
+            only is iSCSI initiator running on host doesn’t support manual 
+            scans, false means never use locks, and null means to always use 
+            locks. Look at os-brick’s guard_connection context manager. 
+            Default=True.
           type: boolean
           x-openstack:
             min-ver: '3.48'
@@ -13857,8 +13951,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -13949,8 +14043,8 @@ components:
                 description: |-
                   Links for the message.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -14023,18 +14117,19 @@ components:
                 additionalProperties: false
                 properties:
                   host:
-                    description: The name of the host that hosts the storage backend,
-                      may take the format of host@backend.
+                    description: The name of the host that hosts the storage 
+                      backend, may take the format of host@backend.
                     type: string
                   project:
-                    description: The Project ID which the host resource belongs to.
-                      In the summary resource, the value is (total).
+                    description: The Project ID which the host resource belongs 
+                      to. In the summary resource, the value is (total).
                     type: string
                   snapshot_count:
                     description: The total number of snapshots used.
                     type: string
                   total_snapshot_gb:
-                    description: The total number of gibibytes (GiB) used by snapshots.
+                    description: The total number of gibibytes (GiB) used by 
+                      snapshots.
                     type: string
                   total_volume_gb:
                     description: The total number of gibibytes (GiB) used.
@@ -14075,18 +14170,19 @@ components:
                 additionalProperties: false
                 properties:
                   host:
-                    description: The name of the host that hosts the storage backend,
-                      may take the format of host@backend.
+                    description: The name of the host that hosts the storage 
+                      backend, may take the format of host@backend.
                     type: string
                   project:
-                    description: The Project ID which the host resource belongs to.
-                      In the summary resource, the value is (total).
+                    description: The Project ID which the host resource belongs 
+                      to. In the summary resource, the value is (total).
                     type: string
                   snapshot_count:
                     description: The total number of snapshots used.
                     type: string
                   total_snapshot_gb:
-                    description: The total number of gibibytes (GiB) used by snapshots.
+                    description: The total number of gibibytes (GiB) used by 
+                      snapshots.
                     type: string
                   total_volume_gb:
                     description: The total number of gibibytes (GiB) used.
@@ -14116,7 +14212,8 @@ components:
       description: Response of the project_id/os-hosts:put operation
       type: object
     Os_Quota_Class_SetShowResponse:
-      description: Response of the project_id/os-quota-class-sets/id:get operation
+      description: Response of the project_id/os-quota-class-sets/id:get 
+        operation
       type: object
     Os_Quota_Class_SetUpdate:
       additionalProperties: false
@@ -14138,7 +14235,8 @@ components:
         - quota_class_set
       type: object
     Os_Quota_Class_SetUpdateResponse:
-      description: Response of the project_id/os-quota-class-sets/id:put operation
+      description: Response of the project_id/os-quota-class-sets/id:put 
+        operation
       type: object
     Os_Quota_SetShowResponse:
       description: Response of the project_id/os-quota-sets/id:get operation
@@ -14157,7 +14255,8 @@ components:
       description: Response of the project_id/os-quota-sets/id:put operation
       type: object
     Os_Quota_SetsDefaultsResponse:
-      description: Response of the project_id/os-quota-sets/id/defaults:get operation
+      description: Response of the project_id/os-quota-sets/id/defaults:get 
+        operation
       type: object
     Os_ServiceUpdateRequest:
       description: Request of the project_id/os-services/id:put operation
@@ -14218,7 +14317,8 @@ components:
       description: Response of the project_id/os-snapshot-manage:post operation
       type: object
     Os_Snapshot_ManageDetailResponse:
-      description: Response of the project_id/os-snapshot-manage/detail:get operation
+      description: Response of the project_id/os-snapshot-manage/detail:get 
+        operation
       type: object
     Os_Snapshot_ManageListResponse:
       description: Response of the project_id/os-snapshot-manage:get operation
@@ -14420,9 +14520,11 @@ components:
         - volume
       type: object
       x-openstack:
+        max-ver: '3.15'
         min-ver: '3.16'
     Os_Volume_ManageDetailResponse:
-      description: Response of the project_id/os-volume-manage/detail:get operation
+      description: Response of the project_id/os-volume-manage/detail:get 
+        operation
       type: object
     Os_Volume_ManageListResponse:
       description: Response of the project_id/os-volume-manage:get operation
@@ -14473,8 +14575,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -14554,8 +14656,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -14612,8 +14714,8 @@ components:
                 description: |-
                   Links for the message.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -14652,8 +14754,8 @@ components:
                 description: |-
                   Links for the message.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -14708,8 +14810,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -14813,7 +14915,8 @@ components:
           type: object
       type: object
     Qos_SpecsAssociateResponse:
-      description: Response of the project_id/qos-specs/id/associate:get operation
+      description: Response of the project_id/qos-specs/id/associate:get 
+        operation
       type: object
     Qos_SpecsAssociationsResponse:
       properties:
@@ -14903,13 +15006,16 @@ components:
         - keys
       type: object
     Qos_SpecsDelete_KeysResponse:
-      description: Response of the project_id/qos-specs/id/delete_keys:put operation
+      description: Response of the project_id/qos-specs/id/delete_keys:put 
+        operation
       type: object
     Qos_SpecsDisassociateResponse:
-      description: Response of the project_id/qos-specs/id/disassociate:get operation
+      description: Response of the project_id/qos-specs/id/disassociate:get 
+        operation
       type: object
     Qos_SpecsDisassociate_AllResponse:
-      description: Response of the project_id/qos-specs/id/disassociate_all:get operation
+      description: Response of the project_id/qos-specs/id/disassociate_all:get 
+        operation
       type: object
     Qos_SpecsListResponse:
       properties:
@@ -14971,7 +15077,8 @@ components:
       description: Response of the :get operation
       type: object
     Scheduler_StatsGet_PoolsResponse:
-      description: Response of the project_id/scheduler-stats/get_pools:get operation
+      description: Response of the project_id/scheduler-stats/get_pools:get 
+        operation
       type: object
     SnapshotShowResponse:
       additionalProperties: false
@@ -14994,8 +15101,8 @@ components:
               x-openstack:
                 min-ver: '3.65'
             count:
-              description: The total count of requested resource before pagination
-                is applied.
+              description: The total count of requested resource before 
+                pagination is applied.
               type:
                 - integer
                 - 'null'
@@ -15186,8 +15293,8 @@ components:
               x-openstack:
                 min-ver: '3.65'
             count:
-              description: The total count of requested resource before pagination
-                is applied.
+              description: The total count of requested resource before 
+                pagination is applied.
               type:
                 - integer
                 - 'null'
@@ -15335,8 +15442,8 @@ components:
       x-openstack:
         action-name: os-unmanage
     SnapshotsActionOs-Update_Snapshot_StatusResponse:
-      description: Response of the project_id/snapshots/id/action:post:os-update_snapshot_status
-        action
+      description: Response of the 
+        project_id/snapshots/id/action:post:os-update_snapshot_status action
       type: object
       x-openstack:
         action-name: os-update_snapshot_status
@@ -15474,8 +15581,8 @@ components:
               x-openstack:
                 min-ver: '3.65'
             count:
-              description: The total count of requested resource before pagination
-                is applied.
+              description: The total count of requested resource before 
+                pagination is applied.
               type:
                 - integer
                 - 'null'
@@ -15876,8 +15983,8 @@ components:
       type: object
     SnapshotsMetadataCreateRequest:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -15894,8 +16001,8 @@ components:
       type: object
     SnapshotsMetadataCreateResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -15912,8 +16019,8 @@ components:
       type: object
     SnapshotsMetadataListResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -15930,13 +16037,13 @@ components:
       type: object
     SnapshotsMetadataShowResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and value
-            pairs that are associated with the resource.
+          description: A metadata object. Contains one or more metadata key and 
+            value pairs that are associated with the resource.
           maxProperties: 1
           patternProperties:
             ^[a-zA-Z0-9-_:. /]{1,255}$:
@@ -15948,13 +16055,13 @@ components:
       type: object
     SnapshotsMetadataUpdateRequest:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and value
-            pairs that are associated with the resource.
+          description: A metadata object. Contains one or more metadata key and 
+            value pairs that are associated with the resource.
           maxProperties: 1
           patternProperties:
             ^[a-zA-Z0-9-_:. /]{1,255}$:
@@ -15966,13 +16073,13 @@ components:
       type: object
     SnapshotsMetadataUpdateResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and value
-            pairs that are associated with the resource.
+          description: A metadata object. Contains one or more metadata key and 
+            value pairs that are associated with the resource.
           maxProperties: 1
           patternProperties:
             ^[a-zA-Z0-9-_:. /]{1,255}$:
@@ -15984,8 +16091,8 @@ components:
       type: object
     SnapshotsMetadataUpdate_AllRequest:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -16002,8 +16109,8 @@ components:
       type: object
     SnapshotsMetadataUpdate_AllResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -16452,12 +16559,13 @@ components:
         encryption:
           properties:
             cipher:
-              description: The encryption algorithm or mode. For example, aes-xts-plain64.
-                The default value is None.
+              description: The encryption algorithm or mode. For example, 
+                aes-xts-plain64. The default value is None.
               type: string
             control_location:
-              description: Notional service where encryption is performed. Valid values
-                are “front-end” or “back-end”. The default value is “front-end”.
+              description: Notional service where encryption is performed. Valid
+                values are “front-end” or “back-end”. The default value is 
+                “front-end”.
               enum:
                 - back-end
                 - front-end
@@ -16480,8 +16588,8 @@ components:
               format: uuid
               type: string
             key_size:
-              description: Size of encryption key, in bits. This is usually 256. The
-                default value is None.
+              description: Size of encryption key, in bits. This is usually 256.
+                The default value is None.
               type: integer
             provider:
               description: The class that provides encryption support.
@@ -16497,12 +16605,13 @@ components:
     TypesEncryptionListResponse:
       properties:
         cipher:
-          description: The encryption algorithm or mode. For example, aes-xts-plain64.
-            The default value is None.
+          description: The encryption algorithm or mode. For example, 
+            aes-xts-plain64. The default value is None.
           type: string
         control_location:
-          description: Notional service where encryption is performed. Valid values
-            are “front-end” or “back-end”. The default value is “front-end”.
+          description: Notional service where encryption is performed. Valid 
+            values are “front-end” or “back-end”. The default value is 
+            “front-end”.
           enum:
             - back-end
             - front-end
@@ -16525,8 +16634,8 @@ components:
           format: uuid
           type: string
         key_size:
-          description: Size of encryption key, in bits. This is usually 256. The default
-            value is None.
+          description: Size of encryption key, in bits. This is usually 256. The
+            default value is None.
           type: integer
         provider:
           description: The class that provides encryption support.
@@ -16541,8 +16650,8 @@ components:
     TypesEncryptionShowResponse:
       properties:
         cipher:
-          description: The encryption algorithm or mode. For example, aes-xts-plain64.
-            The default value is None.
+          description: The encryption algorithm or mode. For example, 
+            aes-xts-plain64. The default value is None.
           type: string
       type: object
     TypesEncryptionUpdate:
@@ -16583,12 +16692,13 @@ components:
         encryption:
           properties:
             cipher:
-              description: The encryption algorithm or mode. For example, aes-xts-plain64.
-                The default value is None.
+              description: The encryption algorithm or mode. For example, 
+                aes-xts-plain64. The default value is None.
               type: string
             control_location:
-              description: Notional service where encryption is performed. Valid values
-                are “front-end” or “back-end”. The default value is “front-end”.
+              description: Notional service where encryption is performed. Valid
+                values are “front-end” or “back-end”. The default value is 
+                “front-end”.
               enum:
                 - back-end
                 - front-end
@@ -16611,8 +16721,8 @@ components:
               format: uuid
               type: string
             key_size:
-              description: Size of encryption key, in bits. This is usually 256. The
-                default value is None.
+              description: Size of encryption key, in bits. This is usually 256.
+                The default value is None.
               type: integer
             provider:
               description: The class that provides encryption support.
@@ -16677,9 +16787,10 @@ components:
       properties:
         extra_specs:
           additionalProperties: false
-          description: A key and value pair that contains additional specifications
-            that are associated with the volume type. Examples include capabilities,
-            capacity, compression, and so on, depending on the storage driver in use.
+          description: A key and value pair that contains additional 
+            specifications that are associated with the volume type. Examples 
+            include capabilities, capacity, compression, and so on, depending on
+            the storage driver in use.
           patternProperties:
             ^[a-zA-Z0-9-_:.]{1,255}$:
               maxLength: 255
@@ -16693,9 +16804,10 @@ components:
       properties:
         extra_specs:
           additionalProperties: false
-          description: A key and value pair that contains additional specifications
-            that are associated with the volume type. Examples include capabilities,
-            capacity, compression, and so on, depending on the storage driver in use.
+          description: A key and value pair that contains additional 
+            specifications that are associated with the volume type. Examples 
+            include capabilities, capacity, compression, and so on, depending on
+            the storage driver in use.
           patternProperties:
             ^[a-zA-Z0-9-_:.]{1,255}$:
               maxLength: 255
@@ -17006,8 +17118,8 @@ components:
               description: |-
                 The volume links.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -17310,8 +17422,8 @@ components:
               description: |-
                 The volume links.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -17551,6 +17663,7 @@ components:
         - volume
       type: object
       x-openstack:
+        max-ver: '3.52'
         min-ver: '3.53'
     Volume_TransferShowResponse:
       properties:
@@ -17599,8 +17712,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -17704,8 +17817,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -17799,8 +17912,8 @@ components:
               description: |-
                 Links for the message.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -17932,6 +18045,7 @@ components:
         - transfer
       type: object
       x-openstack:
+        max-ver: '3.54'
         min-ver: '3.55'
     Volume_TransfersDetailResponse:
       properties:
@@ -17983,8 +18097,8 @@ components:
                 description: |-
                   Links for the message.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -18040,8 +18154,8 @@ components:
                 description: |-
                   Links for the message.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -18114,8 +18228,8 @@ components:
       x-openstack:
         action-name: os-begin_detaching
     VolumesActionOs-Extend_Volume_CompletionResponse:
-      description: Response of the project_id/volumes/id/action:post:os-extend_volume_completion
-        action
+      description: Response of the 
+        project_id/volumes/id/action:post:os-extend_volume_completion action
       type: object
       x-openstack:
         action-name: os-extend_volume_completion
@@ -18160,8 +18274,8 @@ components:
         action-name: os-roll_detaching
     VolumesActionOs-Set_Image_MetadataResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -18186,8 +18300,8 @@ components:
         action-name: os-show_image_metadata
     VolumesActionOs-Show_Image_MetadataResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -18264,7 +18378,8 @@ components:
           format: date-time
           type: string
         visibility:
-          description: The visibility property of the new image. Default is private.
+          description: The visibility property of the new image. Default is 
+            private.
           type: string
           x-openstack:
             min-ver: '3.1'
@@ -18576,6 +18691,7 @@ components:
       type: object
       x-openstack:
         action-name: os-migrate_volume
+        max-ver: '3.15'
         min-ver: '3.16'
     VolumesAction_Migrate_Volume_Completion:
       additionalProperties: false
@@ -18954,6 +19070,7 @@ components:
       type: object
       x-openstack:
         action-name: os-volume_upload_image
+        max-ver: '3.0'
         min-ver: '3.1'
     VolumesCreateRequest:
       oneOf:
@@ -19109,8 +19226,8 @@ components:
               description: |-
                 The volume links.
               items:
-                description: Links to the resources in question. See [API Guide /
-                  Links and 
+                description: Links to the resources in question. See [API Guide 
+                  / Links and 
                   References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                   for more info.
                 properties:
@@ -19967,6 +20084,7 @@ components:
         - volume
       type: object
       x-openstack:
+        max-ver: '3.12'
         min-ver: '3.53'
     VolumesDetailResponse:
       description: A container with list of volume objects.
@@ -20115,8 +20233,8 @@ components:
                 description: |-
                   The volume links.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -20267,11 +20385,12 @@ components:
           type: array
       type: object
     VolumesEncryptionListResponse:
-      description: Response of the project_id/volumes/volume_id/encryption:get operation
+      description: Response of the project_id/volumes/volume_id/encryption:get 
+        operation
       type: object
     VolumesEncryptionShowResponse:
-      description: Response of the project_id/volumes/volume_id/encryption/id:get
-        operation
+      description: Response of the 
+        project_id/volumes/volume_id/encryption/id:get operation
       type: object
     VolumesListResponse:
       description: A container with list of volume objects.
@@ -20291,8 +20410,8 @@ components:
                 description: |-
                   The volume links.
                 items:
-                  description: Links to the resources in question. See [API Guide
-                    / Links and 
+                  description: Links to the resources in question. See [API 
+                    Guide / Links and 
                     References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
                     for more info.
                   properties:
@@ -20333,8 +20452,8 @@ components:
       type: object
     VolumesMetadataCreateResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -20351,8 +20470,8 @@ components:
       type: object
     VolumesMetadataListResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -20369,13 +20488,13 @@ components:
       type: object
     VolumesMetadataShowResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and value
-            pairs that are associated with the resource.
+          description: A metadata object. Contains one or more metadata key and 
+            value pairs that are associated with the resource.
           maxProperties: 1
           patternProperties:
             ^[a-zA-Z0-9-_:. /]{1,255}$:
@@ -20402,13 +20521,13 @@ components:
       type: object
     VolumesMetadataUpdateResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and value
-            pairs that are associated with the resource.
+          description: A metadata object. Contains one or more metadata key and 
+            value pairs that are associated with the resource.
           maxProperties: 1
           patternProperties:
             ^[a-zA-Z0-9-_:. /]{1,255}$:
@@ -20436,8 +20555,8 @@ components:
       type: object
     VolumesMetadataUpdate_AllResponse:
       additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each metadata
-        key and value pair is 255 bytes.
+      description: Metadata key and value pairs. The maximum size for each 
+        metadata key and value pair is 255 bytes.
       properties:
         metadata:
           additionalProperties: false
@@ -20455,7 +20574,7 @@ components:
     VolumesSummaryResponse:
       description: Response of the project_id/volumes/summary:get operation
       type: object
-    WorkersCleanupCleanup:
+    WorkersCleanupCleanup_324:
       additionalProperties: false
       properties:
         binary:

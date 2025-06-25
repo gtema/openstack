@@ -27,21 +27,19 @@ pub struct UserResponse {
     #[structable(optional)]
     pub default_project_id: Option<String>,
 
-    /// The resource description.
+    /// The user description
     #[serde(default)]
     #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the domain.
-    #[serde(default)]
-    #[structable(optional)]
-    pub domain_id: Option<String>,
+    #[structable()]
+    pub domain_id: String,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
-    #[serde(default)]
-    #[structable(optional)]
-    pub enabled: Option<bool>,
+    #[structable()]
+    pub enabled: bool,
 
     /// List of federated objects associated with a user. Each object in the
     /// list contains the `idp_id` and `protocols`. `protocols` is a list of
@@ -64,9 +62,8 @@ pub struct UserResponse {
     pub federated: Option<Vec<Federated>>,
 
     /// The user ID.
-    #[serde(default)]
-    #[structable(optional)]
-    pub id: Option<String>,
+    #[structable()]
+    pub id: String,
 
     /// The links for the `user` resource.
     #[serde(default)]
@@ -74,15 +71,9 @@ pub struct UserResponse {
     pub links: Option<Links>,
 
     /// The user name. Must be unique within the owning domain.
-    #[serde(default)]
-    #[structable(optional)]
-    pub name: Option<String>,
+    #[structable()]
+    pub name: String,
 
-    /// The resource options for the user. Available resource options are
-    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-    /// `ignore_lockout_failure_attempts`, `lock_password`,
-    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-    /// `ignore_user_inactivity`.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub options: Option<Options>,
@@ -124,11 +115,6 @@ pub struct Links {
     pub _self: String,
 }
 
-/// The resource options for the user. Available resource options are
-/// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
-/// `ignore_lockout_failure_attempts`, `lock_password`,
-/// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
-/// `ignore_user_inactivity`.
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
