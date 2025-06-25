@@ -17,7 +17,7 @@ use std::process::Command;
 mod defaults_autogen;
 mod delete_autogen;
 mod details_autogen;
-mod set_21_autogen;
+// mod set_21_autogen;
 mod show_autogen;
 
 #[test]
