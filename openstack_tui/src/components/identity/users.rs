@@ -187,14 +187,14 @@ impl Component for IdentityUsers<'_> {
                     // Since user update only returns some info (i.e. it doesn't contain email) we need
                     // to update record manually
                     let updated_user: UserResponse = serde_json::from_value(data.clone())?;
-                    if let Some(item_row) = self.get_item_row_by_res_id_mut(
-                        &updated_user.id.ok_or_eyre("id must be present")?,
-                    ) {
-                        item_row.enabled = updated_user.enabled;
-                        item_row.name = updated_user.name;
-                        self.sync_table_data()?;
-                    }
-                    self.set_loading(false);
+                    //if let Some(item_row) = self.get_item_row_by_res_id_mut(
+                    //    &updated_user.id.ok_or_eyre("id must be present")?,
+                    //) {
+                    //    item_row.enabled = updated_user.enabled;
+                    //    item_row.name = updated_user.name;
+                    //    self.sync_table_data()?;
+                    //}
+                    //self.set_loading(false);
                 } else if let IdentityUserApiRequest::Delete(del) = *req {
                     if let IdentityUserDelete { id, .. } = *del {
                         if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
