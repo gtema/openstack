@@ -92,7 +92,11 @@ struct QueryParameters {
     id: Option<String>,
 
     /// Page size
-    #[arg(help_heading = "Query parameters", long)]
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     /// ID of the last item in the previous list

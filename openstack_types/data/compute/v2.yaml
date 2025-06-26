@@ -2612,7 +2612,7 @@ paths:
         - os-keypairs
       x-openstack:
         max-ver: '2.9'
-        min-ver: '2.1'
+        min-ver: '2.0'
     get:
       deprecated: true
       description: |-
@@ -10494,7 +10494,20 @@ components:
       description: Response of the images:get operation
       type: object
     ImagesMetadataCreateResponse:
-      description: Response of the images/image_id/metadata:post operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          description: |-
+            Metadata key and value pairs. The maximum size for each metadata key and value
+            pair is 255 bytes.
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              maxLength: 255
+              type: string
+          type: object
+      required:
+        - metadata
       type: object
     ImagesMetadataCreate_21:
       additionalProperties: false
@@ -10516,13 +10529,54 @@ components:
         max-ver: '2.38'
         min-ver: '2.1'
     ImagesMetadataListResponse:
-      description: Response of the images/image_id/metadata:get operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          description: |-
+            Metadata key and value pairs. The maximum size for each metadata key and value
+            pair is 255 bytes.
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              maxLength: 255
+              type: string
+          type: object
+      required:
+        - metadata
       type: object
     ImagesMetadataShowResponse:
-      description: Response of the images/image_id/metadata/id:get operation
+      additionalProperties: false
+      properties:
+        meta:
+          additionalProperties: false
+          description: |-
+            The object of detailed key metadata items.
+          maxProperties: 1
+          minProperties: 1
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              maxLength: 255
+              type: string
+          type: object
+      required:
+        - meta
       type: object
     ImagesMetadataUpdateResponse:
-      description: Response of the images/image_id/metadata/id:put operation
+      additionalProperties: false
+      properties:
+        meta:
+          additionalProperties: false
+          description: |-
+            The object of detailed key metadata items.
+          maxProperties: 1
+          minProperties: 1
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              maxLength: 255
+              type: string
+          type: object
+      required:
+        - meta
       type: object
     ImagesMetadataUpdate_21:
       additionalProperties: false
@@ -10545,7 +10599,20 @@ components:
         max-ver: '2.38'
         min-ver: '2.1'
     ImagesMetadataUpdate_AllResponse:
-      description: Response of the images/image_id/metadata:put operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          description: |-
+            Metadata key and value pairs. The maximum size for each metadata key and value
+            pair is 255 bytes.
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              maxLength: 255
+              type: string
+          type: object
+      required:
+        - metadata
       type: object
     ImagesMetadataUpdate_All_21:
       additionalProperties: false
@@ -17723,8 +17790,25 @@ components:
       x-openstack:
         action-name: os-getRDPConsole
     Os_Volumes_BootActionOs-GetrdpconsoleResponse:
-      description: Response of the 
-        os-volumes_boot/id/action:post:os-getRDPConsole action
+      additionalProperties: false
+      properties:
+        console:
+          additionalProperties: false
+          properties:
+            type:
+              const: rdp
+              description: ''
+              type: string
+            url:
+              description: ''
+              format: uri
+              type: string
+          required:
+            - type
+            - url
+          type: object
+      required:
+        - console
       type: object
       x-openstack:
         action-name: os-getRDPConsole
@@ -17735,9 +17819,8 @@ components:
           additionalProperties: false
           properties:
             type:
+              const: serial
               description: ''
-              enum:
-                - serial
               type: string
             url:
               description: ''
@@ -17759,9 +17842,8 @@ components:
           additionalProperties: false
           properties:
             type:
+              const: spice-html5
               description: ''
-              enum:
-                - spice-html5
               type: string
             url:
               description: ''
@@ -17771,8 +17853,6 @@ components:
             - type
             - url
           type: object
-      required:
-        - console
       type: object
       x-openstack:
         action-name: os-getSPICEConsole

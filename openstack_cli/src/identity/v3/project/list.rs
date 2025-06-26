@@ -70,7 +70,15 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     is_domain: Option<bool>,
 
-    #[arg(help_heading = "Query parameters", long)]
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     /// ID of the last fetched entry

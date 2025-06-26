@@ -97,7 +97,11 @@ struct QueryParameters {
     lb_network_ip: Option<String>,
 
     /// Page size
-    #[arg(help_heading = "Query parameters", long)]
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     #[arg(help_heading = "Query parameters", long)]

@@ -83,7 +83,11 @@ struct QueryParameters {
 
     /// A positive integer used to limit the maximum number of allocation
     /// candidates returned in the response.
-    #[arg(help_heading = "Query parameters", long)]
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     /// A string representing an aggregate uuid; or the prefix in: followed by
