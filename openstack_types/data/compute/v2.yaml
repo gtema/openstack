@@ -11634,8 +11634,7 @@ components:
                   of host and service objects. The service object returns three parameters representing
                   the states of the service: `active`, `available`, and `updated_at`.
                 examples:
-                  JSON request:
-                    conductor:
+                  - conductor:
                       nova-conductor:
                         active: true
                         available: true
