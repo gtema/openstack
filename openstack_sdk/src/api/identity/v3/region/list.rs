@@ -30,7 +30,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a parent region, by ID.
+    /// The ID of the region.
     #[builder(default, setter(into))]
     parent_region_id: Option<Cow<'a, str>>,
 

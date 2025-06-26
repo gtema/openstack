@@ -146,6 +146,8 @@ pub struct ClustertemplateCommand {
     #[arg(help_heading = "Body parameters", long)]
     image_id: String,
 
+    /// The URL pointing to users’s own private insecure docker registry to
+    /// deploy and run docker containers.
     #[arg(help_heading = "Body parameters", long)]
     insecure_registry: Option<String>,
 

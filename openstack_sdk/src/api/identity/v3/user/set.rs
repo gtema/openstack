@@ -119,10 +119,18 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
+
+    /// The ID of the new domain for the user. The ability to change the domain
+    /// of a user is now deprecated, and will be removed in subequent release.
+    /// It is already disabled by default in most Identity service
+    /// implementations.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain_id: Option<Cow<'a, str>>,
 
     /// Enables or disables the user. An enabled user can authenticate and
     /// receive authorization. A disabled user cannot authenticate or receive

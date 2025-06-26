@@ -869,9 +869,9 @@ components:
       schema:
         type: string
     associated:
-      description: If this parameter has a true value, the returned traits will be
-        those that are associated with at least one resource provider. Available values
-        for the parameter are true and false.
+      description: If this parameter has a true value, the returned traits will 
+        be those that are associated with at least one resource provider. 
+        Available values for the parameter are true and false.
       in: query
       name: associated
       schema:
@@ -884,12 +884,12 @@ components:
       x-openstack:
         is-flag: true
     consumer_type:
-      description: A string that consists of numbers, A-Z, and _ describing the consumer
-        type by which to filter usage results. For example, to retrieve only usage
-        information for ‘INSTANCE’ type consumers a parameter of consumer_type=INSTANCE
-        should be provided. The all query parameter may be specified to group all
-        results under one key, all. The unknown query parameter may be specified to
-        group all results under one key, unknown.
+      description: A string that consists of numbers, A-Z, and _ describing the 
+        consumer type by which to filter usage results. For example, to retrieve
+        only usage information for ‘INSTANCE’ type consumers a parameter of 
+        consumer_type=INSTANCE should be provided. The all query parameter may 
+        be specified to group all results under one key, all. The unknown query 
+        parameter may be specified to group all results under one key, unknown.
       in: query
       name: consumer_type
       schema:
@@ -897,12 +897,13 @@ components:
       x-openstack:
         min-ver: '1.38'
     group_policy:
-      description: When more than one resourcesN query parameter is supplied, group_policy
-        is required to indicate how the groups should interact. With group_policy=none,
-        separate groupings - with or without a suffix - may or may not be satisfied
-        by the same provider. With group_policy=isolate, suffixed groups are guaranteed
-        to be satisfied by different providers - though there may still be overlap
-        with the suffixless group.
+      description: When more than one resourcesN query parameter is supplied, 
+        group_policy is required to indicate how the groups should interact. 
+        With group_policy=none, separate groupings - with or without a suffix - 
+        may or may not be satisfied by the same provider. With 
+        group_policy=isolate, suffixed groups are guaranteed to be satisfied by 
+        different providers - though there may still be overlap with the 
+        suffixless group.
       in: query
       name: group_policy
       schema:
@@ -910,9 +911,10 @@ components:
       x-openstack:
         min-ver: '1.25'
     in_tree:
-      description: A string representing a resource provider uuid. When supplied,
-        it will filter the returned allocation candidates to only those resource providers
-        that are in the same tree with the given resource provider.
+      description: A string representing a resource provider uuid. When 
+        supplied, it will filter the returned allocation candidates to only 
+        those resource providers that are in the same tree with the given 
+        resource provider.
       in: query
       name: in_tree
       schema:
@@ -920,8 +922,8 @@ components:
       x-openstack:
         min-ver: '1.14'
     limit:
-      description: A positive integer used to limit the maximum number of allocation
-        candidates returned in the response.
+      description: A positive integer used to limit the maximum number of 
+        allocation candidates returned in the response.
       in: query
       name: limit
       schema:
@@ -1029,16 +1031,16 @@ components:
       schema:
         type: string
     resource_providers_inventories_resource_class:
-      description: resource_class parameter for /resource_providers/{uuid}/inventories/{resource_class}
-        API
+      description: resource_class parameter for 
+        /resource_providers/{uuid}/inventories/{resource_class} API
       in: path
       name: resource_class
       required: true
       schema:
         type: string
     resource_providers_inventories_uuid:
-      description: uuid parameter for /resource_providers/{uuid}/inventories/{resource_class}
-        API
+      description: uuid parameter for 
+        /resource_providers/{uuid}/inventories/{resource_class} API
       in: path
       name: uuid
       required: true
@@ -1091,12 +1093,13 @@ components:
       x-openstack:
         min-ver: '1.35'
     same_subtree:
-      description: A comma-separated list of request group suffix strings ($S). Each
-        must exactly match a suffix on a granular group somewhere else in the request.
-        Importantly, the identified request groups need not have a resources[$S].
-        If this is provided, at least one of the resource providers satisfying a specified
-        request group must be an ancestor of the rest. The same_subtree query parameter
-        can be repeated and each repeat group is treated independently.
+      description: A comma-separated list of request group suffix strings ($S). 
+        Each must exactly match a suffix on a granular group somewhere else in 
+        the request. Importantly, the identified request groups need not have a 
+        resources[$S]. If this is provided, at least one of the resource 
+        providers satisfying a specified request group must be an ancestor of 
+        the rest. The same_subtree query parameter can be repeated and each 
+        repeat group is treated independently.
       in: query
       name: same_subtree
       schema:
@@ -1430,9 +1433,10 @@ components:
     Allocation_CandidatesList_Allocation_CandidatesResponse:
       properties:
         allocation_requests:
-          description: A list of objects that contain a serialized HTTP body that
-            a client may subsequently use in a call to PUT /allocations/{consumer_uuid}
-            to claim resources against a related set of resource providers.
+          description: A list of objects that contain a serialized HTTP body 
+            that a client may subsequently use in a call to PUT 
+            /allocations/{consumer_uuid} to claim resources against a related 
+            set of resource providers.
           items:
             additionalProperties: false
             properties:
@@ -1475,12 +1479,12 @@ components:
                     ^[A-Z0-9_]+$:
                       properties:
                         capacity:
-                          description: The amount of the resource that the provider
-                            can accommodate.
+                          description: The amount of the resource that the 
+                            provider can accommodate.
                           type: integer
                         used:
-                          description: The amount of the resource that has been already
-                            allocated.
+                          description: The amount of the resource that has been 
+                            already allocated.
                           type: integer
                       type: object
                   type: object
@@ -1739,9 +1743,9 @@ components:
                   properties:
                     allocations:
                       additionalProperties: false
-                      description: A dictionary of resource allocations keyed by resource
-                        provider uuid. If this is an empty object, allocations for
-                        this consumer will be removed.
+                      description: A dictionary of resource allocations keyed by
+                        resource provider uuid. If this is an empty object, 
+                        allocations for this consumer will be removed.
                       minProperties: 0
                       patternProperties:
                         ^[0-9a-fA-F-]{36}$:
@@ -1751,8 +1755,8 @@ components:
                               type: integer
                             resources:
                               additionalProperties: false
-                              description: A dictionary of resource records keyed
-                                by resource class name.
+                              description: A dictionary of resource records 
+                                keyed by resource class name.
                               minProperties: 1
                               patternProperties:
                                 ^[A-Z0-9_]+$:
@@ -1764,31 +1768,33 @@ components:
                           type: object
                       type: object
                     consumer_generation:
-                      description: The generation of the consumer. Should be set to
-                        null when indicating that the caller expects the consumer
-                        does not yet exist.
+                      description: The generation of the consumer. Should be set
+                        to null when indicating that the caller expects the 
+                        consumer does not yet exist.
                       type:
                         - integer
                         - 'null'
                     consumer_type:
-                      description: A string that consists of numbers, A-Z, and _ describing
-                        what kind of consumer is creating, or has created, allocations
-                        using a quantity of inventory. The string is determined by
-                        the client when writing allocations and it is up to the client
-                        to ensure correct choices amongst collaborating services.
-                        For example, the compute service may choose to type some consumers
+                      description: A string that consists of numbers, A-Z, and _
+                        describing what kind of consumer is creating, or has 
+                        created, allocations using a quantity of inventory. The 
+                        string is determined by the client when writing 
+                        allocations and it is up to the client to ensure correct
+                        choices amongst collaborating services. For example, the
+                        compute service may choose to type some consumers 
                         ‘INSTANCE’ and others ‘MIGRATION’.
                       maxLength: 255
                       minLength: 1
                       pattern: ^[A-Z0-9_]+$
                       type: string
                     mappings:
-                      description: A dictionary associating request group suffixes
-                        with a list of uuids identifying the resource providers that
-                        satisfied each group. The empty string and [a-zA-Z0-9_-]+
-                        are valid suffixes. This field may be sent when writing allocations
-                        back to the server but will be ignored; this preserves symmetry
-                        between read and write representations.
+                      description: A dictionary associating request group 
+                        suffixes with a list of uuids identifying the resource 
+                        providers that satisfied each group. The empty string 
+                        and [a-zA-Z0-9_-]+ are valid suffixes. This field may be
+                        sent when writing allocations back to the server but 
+                        will be ignored; this preserves symmetry between read 
+                        and write representations.
                       minProperties: 1
                       patternProperties:
                         '[a-zA-Z0-9_-]{1,64}':
@@ -1826,7 +1832,8 @@ components:
                   additionalProperties: false
                   properties:
                     inventories:
-                      description: A dictionary of inventories keyed by resource classes.
+                      description: A dictionary of inventories keyed by resource
+                        classes.
                       patternProperties:
                         ^[A-Z0-9_]+$:
                           additionalProperties: false
@@ -1855,8 +1862,8 @@ components:
                           type: object
                       type: object
                     resource_provider_generation:
-                      description: A consistent view marker that assists with the
-                        management of concurrent resource provider updates.
+                      description: A consistent view marker that assists with 
+                        the management of concurrent resource provider updates.
                       type: integer
                   required:
                     - inventories
@@ -1882,9 +1889,9 @@ components:
                   properties:
                     allocations:
                       additionalProperties: false
-                      description: A dictionary of resource allocations keyed by resource
-                        provider uuid. If this is an empty object, allocations for
-                        this consumer will be removed.
+                      description: A dictionary of resource allocations keyed by
+                        resource provider uuid. If this is an empty object, 
+                        allocations for this consumer will be removed.
                       minProperties: 0
                       patternProperties:
                         ^[0-9a-fA-F-]{36}$:
@@ -1894,8 +1901,8 @@ components:
                               type: integer
                             resources:
                               additionalProperties: false
-                              description: A dictionary of resource records keyed
-                                by resource class name.
+                              description: A dictionary of resource records 
+                                keyed by resource class name.
                               minProperties: 1
                               patternProperties:
                                 ^[A-Z0-9_]+$:
@@ -1907,19 +1914,20 @@ components:
                           type: object
                       type: object
                     consumer_generation:
-                      description: The generation of the consumer. Should be set to
-                        null when indicating that the caller expects the consumer
-                        does not yet exist.
+                      description: The generation of the consumer. Should be set
+                        to null when indicating that the caller expects the 
+                        consumer does not yet exist.
                       type:
                         - integer
                         - 'null'
                     mappings:
-                      description: A dictionary associating request group suffixes
-                        with a list of uuids identifying the resource providers that
-                        satisfied each group. The empty string and [a-zA-Z0-9_-]+
-                        are valid suffixes. This field may be sent when writing allocations
-                        back to the server but will be ignored; this preserves symmetry
-                        between read and write representations.
+                      description: A dictionary associating request group 
+                        suffixes with a list of uuids identifying the resource 
+                        providers that satisfied each group. The empty string 
+                        and [a-zA-Z0-9_-]+ are valid suffixes. This field may be
+                        sent when writing allocations back to the server but 
+                        will be ignored; this preserves symmetry between read 
+                        and write representations.
                       minProperties: 1
                       patternProperties:
                         '[a-zA-Z0-9_-]{1,64}':
@@ -1956,7 +1964,8 @@ components:
                   additionalProperties: false
                   properties:
                     inventories:
-                      description: A dictionary of inventories keyed by resource classes.
+                      description: A dictionary of inventories keyed by resource
+                        classes.
                       patternProperties:
                         ^[A-Z0-9_]+$:
                           additionalProperties: false
@@ -1985,8 +1994,8 @@ components:
                           type: object
                       type: object
                     resource_provider_generation:
-                      description: A consistent view marker that assists with the
-                        management of concurrent resource provider updates.
+                      description: A consistent view marker that assists with 
+                        the management of concurrent resource provider updates.
                       type: integer
                   required:
                     - inventories
@@ -2285,16 +2294,16 @@ components:
       additionalProperties: false
       properties:
         aggregates:
-          description: A list of aggregate uuids. Previously nonexistent aggregates
-            are created automatically.
+          description: A list of aggregate uuids. Previously nonexistent 
+            aggregates are created automatically.
           items:
             format: uuid
             type: string
           type: array
           uniqueItems: true
         resource_provider_generation:
-          description: A consistent view marker that assists with the management of
-            concurrent resource provider updates.
+          description: A consistent view marker that assists with the management
+            of concurrent resource provider updates.
           type: integer
           x-openstack:
             min-ver: '1.19'
@@ -2334,16 +2343,16 @@ components:
       additionalProperties: false
       properties:
         aggregates:
-          description: A list of aggregate uuids. Previously nonexistent aggregates
-            are created automatically.
+          description: A list of aggregate uuids. Previously nonexistent 
+            aggregates are created automatically.
           items:
             format: uuid
             type: string
           type: array
           uniqueItems: true
         resource_provider_generation:
-          description: A consistent view marker that assists with the management of
-            concurrent resource provider updates.
+          description: A consistent view marker that assists with the management
+            of concurrent resource provider updates.
           type: integer
           x-openstack:
             min-ver: '1.19'
@@ -2361,12 +2370,13 @@ components:
           patternProperties:
             ^[0-9a-fA-F-]{36}$:
               additionalProperties: false
-              description: A dictionary of allocation records keyed by consumer uuid.
+              description: A dictionary of allocation records keyed by consumer 
+                uuid.
               properties:
                 resources:
                   additionalProperties: false
-                  description: A dictionary of resource records keyed by resource
-                    class name.
+                  description: A dictionary of resource records keyed by 
+                    resource class name.
                   minProperties: 1
                   patternProperties:
                     ^[A-Z0-9_]+$:
@@ -3100,7 +3110,8 @@ components:
                   type: integer
               properties:
                 consumer_count:
-                  description: The number of consumers of a particular consumer_type.
+                  description: The number of consumers of a particular 
+                    consumer_type.
                   type: integer
                   x-openstack:
                     min-ver: '1.38'

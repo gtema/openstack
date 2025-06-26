@@ -1183,14 +1183,16 @@ paths:
         - metadata-definition-properties
   /v2/metadefs/namespaces/{namespace_name}/properties/{property_name}:
     delete:
-      operationId: metadefs/namespaces/namespace_name/properties/property_name:delete
+      operationId: 
+        metadefs/namespaces/namespace_name/properties/property_name:delete
       responses:
         '204':
           description: Ok
       tags:
         - metadata-definition-properties
     get:
-      operationId: metadefs/namespaces/namespace_name/properties/property_name:get
+      operationId: 
+        metadefs/namespaces/namespace_name/properties/property_name:get
       responses:
         '200':
           content:
@@ -1204,7 +1206,8 @@ paths:
       - $ref: '#/components/parameters/metadefs_namespaces_properties_namespace_name'
       - $ref: '#/components/parameters/metadefs_namespaces_properties_property_name'
     put:
-      operationId: metadefs/namespaces/namespace_name/properties/property_name:put
+      operationId: 
+        metadefs/namespaces/namespace_name/properties/property_name:put
       requestBody:
         content:
           application/json:
@@ -1251,7 +1254,8 @@ paths:
         - metadata-definition-resource-types
   /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}:
     delete:
-      operationId: metadefs/namespaces/namespace_name/resource_types/resource_type:delete
+      operationId: 
+        metadefs/namespaces/namespace_name/resource_types/resource_type:delete
       responses:
         '204':
           description: Ok
@@ -1738,7 +1742,8 @@ components:
       schema:
         type: string
     Content-Type:
-      description: The media type descriptor of the body, namely application/octet-stream
+      description: The media type descriptor of the body, namely 
+        application/octet-stream
       schema:
         type: string
     OpenStack-image-store-ids:
@@ -1756,14 +1761,15 @@ components:
       schema:
         type: string
     content-type:
-      description: The media type descriptor of the body, namely application/octet-stream
+      description: The media type descriptor of the body, namely 
+        application/octet-stream
       in: header
       name: Content-Type
       schema:
         type: string
     created_at:
-      description: Specify a comparison filter based on the date and time when the
-        resource was created.
+      description: Specify a comparison filter based on the date and time when 
+        the resource was created.
       in: query
       name: created_at
       schema:
@@ -1776,16 +1782,16 @@ components:
       schema:
         type: string
     images_actions_deactivate_image_id:
-      description: image_id parameter for /v2/images/{image_id}/actions/deactivate
-        API
+      description: image_id parameter for 
+        /v2/images/{image_id}/actions/deactivate API
       in: path
       name: image_id
       required: true
       schema:
         type: string
     images_actions_reactivate_image_id:
-      description: image_id parameter for /v2/images/{image_id}/actions/reactivate
-        API
+      description: image_id parameter for 
+        /v2/images/{image_id}/actions/reactivate API
       in: path
       name: image_id
       required: true
@@ -1820,16 +1826,16 @@ components:
       schema:
         type: string
     images_members_image_id:
-      description: image_id parameter for /v2/images/{image_id}/members/{member_id}
-        API
+      description: image_id parameter for 
+        /v2/images/{image_id}/members/{member_id} API
       in: path
       name: image_id
       required: true
       schema:
         type: string
     images_members_member_id:
-      description: member_id parameter for /v2/images/{image_id}/members/{member_id}
-        API
+      description: member_id parameter for 
+        /v2/images/{image_id}/members/{member_id} API
       in: path
       name: member_id
       required: true
@@ -1843,15 +1849,16 @@ components:
       schema:
         type: string
     images_tags_image_id:
-      description: image_id parameter for /v2/images/{image_id}/tags/{tag_value} API
+      description: image_id parameter for /v2/images/{image_id}/tags/{tag_value}
+        API
       in: path
       name: image_id
       required: true
       schema:
         type: string
     images_tags_tag_value:
-      description: tag_value parameter for /v2/images/{image_id}/tags/{tag_value}
-        API
+      description: tag_value parameter for 
+        /v2/images/{image_id}/tags/{tag_value} API
       in: path
       name: tag_value
       required: true
@@ -1865,25 +1872,25 @@ components:
       schema:
         type: string
     limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
         type: integer
     marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
         type: string
     member_status:
-      description: Filters the response by a member status. A valid value is accepted,
-        pending, rejected, or all. Default is accepted.
+      description: Filters the response by a member status. A valid value is 
+        accepted, pending, rejected, or all. Default is accepted.
       in: query
       name: member_status
       schema:
@@ -1894,47 +1901,48 @@ components:
           - rejected
         type: string
     metadefs_namespaces_namespace_name:
-      description: namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}
-        API
+      description: namespace_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name} API
       in: path
       name: namespace_name
       required: true
       schema:
         type: string
     metadefs_namespaces_objects_namespace_name:
-      description: namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name}
-        API
+      description: namespace_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
       in: path
       name: namespace_name
       required: true
       schema:
         type: string
     metadefs_namespaces_objects_object_name:
-      description: object_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name}
-        API
+      description: object_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
       in: path
       name: object_name
       required: true
       schema:
         type: string
     metadefs_namespaces_properties_namespace_name:
-      description: namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name}
-        API
+      description: namespace_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
       in: path
       name: namespace_name
       required: true
       schema:
         type: string
     metadefs_namespaces_properties_property_name:
-      description: property_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name}
-        API
+      description: property_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
       in: path
       name: property_name
       required: true
       schema:
         type: string
     metadefs_namespaces_resource_types_namespace_name:
-      description: namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
+      description: namespace_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} 
         API
       in: path
       name: namespace_name
@@ -1942,7 +1950,8 @@ components:
       schema:
         type: string
     metadefs_namespaces_resource_types_resource_type:
-      description: resource_type parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type}
+      description: resource_type parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} 
         API
       in: path
       name: resource_type
@@ -1950,32 +1959,32 @@ components:
       schema:
         type: string
     metadefs_namespaces_tags_namespace_name:
-      description: namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}
-        API
+      description: namespace_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
       in: path
       name: namespace_name
       required: true
       schema:
         type: string
     metadefs_namespaces_tags_tag_name:
-      description: tag_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}
-        API
+      description: tag_name parameter for 
+        /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
       in: path
       name: tag_name
       required: true
       schema:
         type: string
     name:
-      description: Filters the response by a name, as a string. A valid value is the
-        name of an image.
+      description: Filters the response by a name, as a string. A valid value is
+        the name of an image.
       in: query
       name: name
       schema:
         type: string
     os_hidden:
-      description: When true, filters the response to display only "hidden" images.
-        By default, "hidden" images are not included in the image-list response. (Since
-        Image API v2.7)
+      description: When true, filters the response to display only "hidden" 
+        images. By default, "hidden" images are not included in the image-list 
+        response. (Since Image API v2.7)
       in: query
       name: os_hidden
       schema:
@@ -1983,23 +1992,23 @@ components:
       x-openstack:
         min-ver: '2.7'
     owner:
-      description: Filters the response by a project (also called a “tenant”) ID.
-        Shows only images that are shared with you by the specified owner.
+      description: Filters the response by a project (also called a “tenant”) 
+        ID. Shows only images that are shared with you by the specified owner.
       in: query
       name: owner
       schema:
         type: string
     protected:
-      description: Filters the response by the ‘protected’ image property. A valid
-        value is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
-        result in a 400 response.
+      description: Filters the response by the ‘protected’ image property. A 
+        valid value is one of ‘true’, ‘false’ (must be all lowercase). Any other
+        value will result in a 400 response.
       in: query
       name: protected
       schema:
         type: boolean
     range:
-      description: The range of image data requested. Note that multi range requests
-        are not supported.
+      description: The range of image data requested. Note that multi range 
+        requests are not supported.
       in: header
       name: Range
       schema:
@@ -2026,10 +2035,10 @@ components:
       schema:
         type: string
     sort_dir:
-      description: Sorts the response by a set of one or more sort direction and attribute
-        (sort_key) combinations. A valid value for the sort direction is asc (ascending)
-        or desc (descending). If you omit the sort direction in a set, the default
-        is desc.
+      description: Sorts the response by a set of one or more sort direction and
+        attribute (sort_key) combinations. A valid value for the sort direction 
+        is asc (ascending) or desc (descending). If you omit the sort direction 
+        in a set, the default is desc.
       in: query
       name: sort_dir
       schema:
@@ -2038,9 +2047,9 @@ components:
           - desc
         type: string
     sort_key:
-      description: Sorts the response by an attribute, such as name, id, or updated_at.
-        Default is created_at. The API uses the natural sorting direction of the sort_key
-        image attribute.
+      description: Sorts the response by an attribute, such as name, id, or 
+        updated_at. Default is created_at. The API uses the natural sorting 
+        direction of the sort_key image attribute.
       in: query
       name: sort_key
       schema:
@@ -2066,9 +2075,10 @@ components:
       schema:
         type: string
     tag:
-      description: Filters the response by the specified tag value. May be repeated,
-        but keep in mind that you're making a conjunctive query, so only images containing
-        all the tags specified will appear in the response.
+      description: Filters the response by the specified tag value. May be 
+        repeated, but keep in mind that you're making a conjunctive query, so 
+        only images containing all the tags specified will appear in the 
+        response.
       explode: true
       in: query
       name: tag
@@ -2085,20 +2095,21 @@ components:
       schema:
         type: string
     updated_at:
-      description: Specify a comparison filter based on the date and time when the
-        resource was most recently modified.
+      description: Specify a comparison filter based on the date and time when 
+        the resource was most recently modified.
       in: query
       name: updated_at
       schema:
         format: date-time
         type: string
     visibility:
-      description: Filters the response by an image visibility value. A valid value
-        is public, private, community, shared, or all. (Note that if you filter on
-        shared, the images included in the response will only be those where your
-        member status is accepted unless you explicitly include a member_status filter
-        in the request.) If you omit this parameter, the response shows public, private,
-        and those shared images with a member status of accepted.
+      description: Filters the response by an image visibility value. A valid 
+        value is public, private, community, shared, or all. (Note that if you 
+        filter on shared, the images included in the response will only be those
+        where your member status is accepted unless you explicitly include a 
+        member_status filter in the request.) If you omit this parameter, the 
+        response shows public, private, and those shared images with a member 
+        status of accepted.
       in: query
       name: visibility
       schema:
@@ -2110,10 +2121,10 @@ components:
           - shared
         type: string
     x-image-meta-store:
-      description: A store identifier to upload or import image data. Should only
-        be included when making a request to a cloud that supports multiple backing
-        stores. Use the Store Discovery call to determine an appropriate store identifier.
-        Simply omit this header to use the default store.
+      description: A store identifier to upload or import image data. Should 
+        only be included when making a request to a cloud that supports multiple
+        backing stores. Use the Store Discovery call to determine an appropriate
+        store identifier. Simply omit this header to use the default store.
       in: header
       name: X-Image-Meta-Store
       schema:
@@ -2283,9 +2294,10 @@ components:
                 type: string
               validation_data:
                 additionalProperties: false
-                description: Values to be used to populate the corresponding image
-                  properties. If the image status is not 'queued', values must exactly
-                  match those already contained in the image properties.
+                description: Values to be used to populate the corresponding 
+                  image properties. If the image status is not 'queued', values 
+                  must exactly match those already contained in the image 
+                  properties.
                 properties:
                   checksum:
                     maxLength: 32
@@ -2407,8 +2419,9 @@ components:
           readOnly: true
           type: string
         stores:
-          description: Store in which image data resides.  Only present when the operator
-            has enabled multiple stores.  May be a comma-separated list of store identifiers.
+          description: Store in which image data resides.  Only present when the
+            operator has enabled multiple stores.  May be a comma-separated list
+            of store identifiers.
           readOnly: true
           type: string
         tags:
@@ -2615,9 +2628,10 @@ components:
                 type: string
               validation_data:
                 additionalProperties: false
-                description: Values to be used to populate the corresponding image
-                  properties. If the image status is not 'queued', values must exactly
-                  match those already contained in the image properties.
+                description: Values to be used to populate the corresponding 
+                  image properties. If the image status is not 'queued', values 
+                  must exactly match those already contained in the image 
+                  properties.
                 properties:
                   checksum:
                     maxLength: 32
@@ -2739,8 +2753,9 @@ components:
           readOnly: true
           type: string
         stores:
-          description: Store in which image data resides.  Only present when the operator
-            has enabled multiple stores.  May be a comma-separated list of store identifiers.
+          description: Store in which image data resides.  Only present when the
+            operator has enabled multiple stores.  May be a comma-separated list
+            of store identifiers.
           readOnly: true
           type: string
         tags:
@@ -2788,16 +2803,20 @@ components:
           type: string
       type: object
     ImagesActionsDeactivateDeactivateRequest:
-      description: Request of the images/image_id/actions/deactivate:post operation
+      description: Request of the images/image_id/actions/deactivate:post 
+        operation
       type: object
     ImagesActionsDeactivateResponse:
-      description: Response of the images/image_id/actions/deactivate:post operation
+      description: Response of the images/image_id/actions/deactivate:post 
+        operation
       type: object
     ImagesActionsReactivateReactivateRequest:
-      description: Request of the images/image_id/actions/reactivate:post operation
+      description: Request of the images/image_id/actions/reactivate:post 
+        operation
       type: object
     ImagesActionsReactivateResponse:
-      description: Response of the images/image_id/actions/reactivate:post operation
+      description: Response of the images/image_id/actions/reactivate:post 
+        operation
       type: object
     ImagesCreateRequest:
       additionalProperties:
@@ -2913,7 +2932,8 @@ components:
             ^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$
           type: string
         locations:
-          description: A set of URLs to access the image file kept in external store
+          description: A set of URLs to access the image file kept in external 
+            store
           items:
             properties:
               metadata:
@@ -2923,9 +2943,10 @@ components:
                 type: string
               validation_data:
                 additionalProperties: false
-                description: Values to be used to populate the corresponding image
-                  properties. If the image status is not 'queued', values must exactly
-                  match those already contained in the image properties.
+                description: Values to be used to populate the corresponding 
+                  image properties. If the image status is not 'queued', values 
+                  must exactly match those already contained in the image 
+                  properties.
                 properties:
                   checksum:
                     maxLength: 32
@@ -2970,15 +2991,16 @@ components:
             - 'null'
             - string
         os_hash_value:
-          description: Hexdigest of the image contents using the algorithm specified
-            by the os_hash_algo
+          description: Hexdigest of the image contents using the algorithm 
+            specified by the os_hash_algo
           maxLength: 128
           readOnly: true
           type:
             - 'null'
             - string
         os_hidden:
-          description: If true, image will not appear in default image list response.
+          description: If true, image will not appear in default image list 
+            response.
           type: boolean
         owner:
           description: Owner of the image
@@ -3020,8 +3042,9 @@ components:
           readOnly: true
           type: string
         stores:
-          description: Store in which image data resides.  Only present when the operator
-            has enabled multiple stores.  May be a comma-separated list of store identifiers.
+          description: Store in which image data resides.  Only present when the
+            operator has enabled multiple stores.  May be a comma-separated list
+            of store identifiers.
           readOnly: true
           type: string
         tags:
@@ -3213,9 +3236,10 @@ components:
                 type: string
               validation_data:
                 additionalProperties: false
-                description: Values to be used to populate the corresponding image
-                  properties. If the image status is not 'queued', values must exactly
-                  match those already contained in the image properties.
+                description: Values to be used to populate the corresponding 
+                  image properties. If the image status is not 'queued', values 
+                  must exactly match those already contained in the image 
+                  properties.
                 properties:
                   checksum:
                     maxLength: 32
@@ -3337,8 +3361,9 @@ components:
           readOnly: true
           type: string
         stores:
-          description: Store in which image data resides.  Only present when the operator
-            has enabled multiple stores.  May be a comma-separated list of store identifiers.
+          description: Store in which image data resides.  Only present when the
+            operator has enabled multiple stores.  May be a comma-separated list
+            of store identifiers.
           readOnly: true
           type: string
         tags:
@@ -3511,8 +3536,8 @@ components:
                   ^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$
                 type: string
               locations:
-                description: A set of URLs to access the image file kept in external
-                  store
+                description: A set of URLs to access the image file kept in 
+                  external store
                 items:
                   properties:
                     metadata:
@@ -3522,9 +3547,10 @@ components:
                       type: string
                     validation_data:
                       additionalProperties: false
-                      description: Values to be used to populate the corresponding
-                        image properties. If the image status is not 'queued', values
-                        must exactly match those already contained in the image properties.
+                      description: Values to be used to populate the 
+                        corresponding image properties. If the image status is 
+                        not 'queued', values must exactly match those already 
+                        contained in the image properties.
                       properties:
                         checksum:
                           maxLength: 32
@@ -3547,7 +3573,8 @@ components:
                   type: object
                 type: array
               min_disk:
-                description: Amount of disk space (in GB) required to boot image.
+                description: Amount of disk space (in GB) required to boot 
+                  image.
                 type: integer
               min_ram:
                 description: Amount of ram (in MB) required to boot image.
@@ -3566,16 +3593,16 @@ components:
                   - 'null'
                   - string
               os_hash_value:
-                description: Hexdigest of the image contents using the algorithm specified
-                  by the os_hash_algo
+                description: Hexdigest of the image contents using the algorithm
+                  specified by the os_hash_algo
                 maxLength: 128
                 readOnly: true
                 type:
                   - 'null'
                   - string
               os_hidden:
-                description: If true, image will not appear in default image list
-                  response.
+                description: If true, image will not appear in default image 
+                  list response.
                 type: boolean
               owner:
                 description: Owner of the image
@@ -3616,9 +3643,9 @@ components:
                 readOnly: true
                 type: string
               stores:
-                description: Store in which image data resides.  Only present when
-                  the operator has enabled multiple stores.  May be a comma-separated
-                  list of store identifiers.
+                description: Store in which image data resides.  Only present 
+                  when the operator has enabled multiple stores.  May be a 
+                  comma-separated list of store identifiers.
                 readOnly: true
                 type: string
               tags:
@@ -3700,9 +3727,9 @@ components:
             type: string
           validation_data:
             additionalProperties: false
-            description: Values to be used to populate the corresponding image properties.
-              If the image status is not 'queued', values must exactly match those
-              already contained in the image properties.
+            description: Values to be used to populate the corresponding image 
+              properties. If the image status is not 'queued', values must 
+              exactly match those already contained in the image properties.
             properties:
               checksum:
                 maxLength: 32
@@ -3735,9 +3762,9 @@ components:
             type: string
           validation_data:
             additionalProperties: false
-            description: Values to be used to populate the corresponding image properties.
-              If the image status is not 'queued', values must exactly match those
-              already contained in the image properties.
+            description: Values to be used to populate the corresponding image 
+              properties. If the image status is not 'queued', values must 
+              exactly match those already contained in the image properties.
             properties:
               checksum:
                 maxLength: 32
@@ -3824,7 +3851,8 @@ components:
           type: string
       type: object
     ImagesMemberUpdateRequest:
-      description: Request of the images/image_id/members/member_id:put operation
+      description: Request of the images/image_id/members/member_id:put 
+        operation
       type: object
     ImagesMemberUpdateResponse:
       additionalProperties: false
@@ -4030,7 +4058,8 @@ components:
                 description: Datetime when this resource was created
                 type: string
               expires_at:
-                description: Datetime when this resource would be subject to removal
+                description: Datetime when this resource would be subject to 
+                  removal
                 type:
                   - 'null'
                   - string
@@ -4048,8 +4077,8 @@ components:
                   - 'null'
                   - object
               message:
-                description: Human-readable informative message only included when
-                  appropriate (usually on failure)
+                description: Human-readable informative message only included 
+                  when appropriate (usually on failure)
                 type: string
               owner:
                 description: An identifier for the owner of this task
@@ -4222,7 +4251,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -4465,7 +4495,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -4708,7 +4739,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -4951,7 +4983,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -5194,7 +5227,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -5437,7 +5471,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -5680,7 +5715,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -5923,7 +5959,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -6168,12 +6205,13 @@ components:
                 readOnly: true
                 type: string
               description:
-                description: Provides a user friendly description of the namespace.
+                description: Provides a user friendly description of the 
+                  namespace.
                 maxLength: 500
                 type: string
               display_name:
-                description: The user friendly name for the namespace. Used by UI
-                  if available.
+                description: The user friendly name for the namespace. Used by 
+                  UI if available.
                 maxLength: 80
                 type: string
               namespace:
@@ -7219,7 +7257,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -7867,7 +7906,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -8703,21 +8743,23 @@ components:
           maxLength: 80
           type: string
         prefix:
-          description: Specifies the prefix to use for the given resource type. Any
-            properties in the namespace should be prefixed with this prefix when being
-            applied to the specified resource type. Must include prefix separator
-            (e.g. a colon :).
+          description: Specifies the prefix to use for the given resource type. 
+            Any properties in the namespace should be prefixed with this prefix 
+            when being applied to the specified resource type. Must include 
+            prefix separator (e.g. a colon :).
           maxLength: 80
           type: string
         properties_target:
-          description: Some resource types allow more than one key / value pair per
-            instance.  For example, Cinder allows user and image metadata on volumes.
-            Only the image properties metadata is evaluated by Nova (scheduling or
-            drivers). This property allows a namespace target to remove the ambiguity.
+          description: Some resource types allow more than one key / value pair 
+            per instance.  For example, Cinder allows user and image metadata on
+            volumes. Only the image properties metadata is evaluated by Nova 
+            (scheduling or drivers). This property allows a namespace target to 
+            remove the ambiguity.
           maxLength: 80
           type: string
         updated_at:
-          description: Date and time of the last resource type association modification
+          description: Date and time of the last resource type association 
+            modification
           format: date-time
           readOnly: true
           type: string
@@ -8738,21 +8780,23 @@ components:
           maxLength: 80
           type: string
         prefix:
-          description: Specifies the prefix to use for the given resource type. Any
-            properties in the namespace should be prefixed with this prefix when being
-            applied to the specified resource type. Must include prefix separator
-            (e.g. a colon :).
+          description: Specifies the prefix to use for the given resource type. 
+            Any properties in the namespace should be prefixed with this prefix 
+            when being applied to the specified resource type. Must include 
+            prefix separator (e.g. a colon :).
           maxLength: 80
           type: string
         properties_target:
-          description: Some resource types allow more than one key / value pair per
-            instance.  For example, Cinder allows user and image metadata on volumes.
-            Only the image properties metadata is evaluated by Nova (scheduling or
-            drivers). This property allows a namespace target to remove the ambiguity.
+          description: Some resource types allow more than one key / value pair 
+            per instance.  For example, Cinder allows user and image metadata on
+            volumes. Only the image properties metadata is evaluated by Nova 
+            (scheduling or drivers). This property allows a namespace target to 
+            remove the ambiguity.
           maxLength: 80
           type: string
         updated_at:
-          description: Date and time of the last resource type association modification
+          description: Date and time of the last resource type association 
+            modification
           format: date-time
           readOnly: true
           type: string
@@ -8773,21 +8817,23 @@ components:
           maxLength: 80
           type: string
         prefix:
-          description: Specifies the prefix to use for the given resource type. Any
-            properties in the namespace should be prefixed with this prefix when being
-            applied to the specified resource type. Must include prefix separator
-            (e.g. a colon :).
+          description: Specifies the prefix to use for the given resource type. 
+            Any properties in the namespace should be prefixed with this prefix 
+            when being applied to the specified resource type. Must include 
+            prefix separator (e.g. a colon :).
           maxLength: 80
           type: string
         properties_target:
-          description: Some resource types allow more than one key / value pair per
-            instance.  For example, Cinder allows user and image metadata on volumes.
-            Only the image properties metadata is evaluated by Nova (scheduling or
-            drivers). This property allows a namespace target to remove the ambiguity.
+          description: Some resource types allow more than one key / value pair 
+            per instance.  For example, Cinder allows user and image metadata on
+            volumes. Only the image properties metadata is evaluated by Nova 
+            (scheduling or drivers). This property allows a namespace target to 
+            remove the ambiguity.
           maxLength: 80
           type: string
         updated_at:
-          description: Date and time of the last resource type association modification
+          description: Date and time of the last resource type association 
+            modification
           format: date-time
           readOnly: true
           type: string
@@ -8808,21 +8854,23 @@ components:
           maxLength: 80
           type: string
         prefix:
-          description: Specifies the prefix to use for the given resource type. Any
-            properties in the namespace should be prefixed with this prefix when being
-            applied to the specified resource type. Must include prefix separator
-            (e.g. a colon :).
+          description: Specifies the prefix to use for the given resource type. 
+            Any properties in the namespace should be prefixed with this prefix 
+            when being applied to the specified resource type. Must include 
+            prefix separator (e.g. a colon :).
           maxLength: 80
           type: string
         properties_target:
-          description: Some resource types allow more than one key / value pair per
-            instance.  For example, Cinder allows user and image metadata on volumes.
-            Only the image properties metadata is evaluated by Nova (scheduling or
-            drivers). This property allows a namespace target to remove the ambiguity.
+          description: Some resource types allow more than one key / value pair 
+            per instance.  For example, Cinder allows user and image metadata on
+            volumes. Only the image properties metadata is evaluated by Nova 
+            (scheduling or drivers). This property allows a namespace target to 
+            remove the ambiguity.
           maxLength: 80
           type: string
         updated_at:
-          description: Date and time of the last resource type association modification
+          description: Date and time of the last resource type association 
+            modification
           format: date-time
           readOnly: true
           type: string
@@ -8851,22 +8899,23 @@ components:
                 maxLength: 80
                 type: string
               prefix:
-                description: Specifies the prefix to use for the given resource type.
-                  Any properties in the namespace should be prefixed with this prefix
-                  when being applied to the specified resource type. Must include
-                  prefix separator (e.g. a colon :).
+                description: Specifies the prefix to use for the given resource 
+                  type. Any properties in the namespace should be prefixed with 
+                  this prefix when being applied to the specified resource type.
+                  Must include prefix separator (e.g. a colon :).
                 maxLength: 80
                 type: string
               properties_target:
-                description: Some resource types allow more than one key / value pair
-                  per instance.  For example, Cinder allows user and image metadata
-                  on volumes. Only the image properties metadata is evaluated by Nova
-                  (scheduling or drivers). This property allows a namespace target
-                  to remove the ambiguity.
+                description: Some resource types allow more than one key / value
+                  pair per instance.  For example, Cinder allows user and image 
+                  metadata on volumes. Only the image properties metadata is 
+                  evaluated by Nova (scheduling or drivers). This property 
+                  allows a namespace target to remove the ambiguity.
                 maxLength: 80
                 type: string
               updated_at:
-                description: Date and time of the last resource type association modification
+                description: Date and time of the last resource type association
+                  modification
                 format: date-time
                 readOnly: true
                 type: string
@@ -9060,7 +9109,8 @@ components:
           maxLength: 500
           type: string
         display_name:
-          description: The user friendly name for the namespace. Used by UI if available.
+          description: The user friendly name for the namespace. Used by UI if 
+            available.
           maxLength: 80
           type: string
         namespace:
@@ -9353,21 +9403,23 @@ components:
           maxLength: 80
           type: string
         prefix:
-          description: Specifies the prefix to use for the given resource type. Any
-            properties in the namespace should be prefixed with this prefix when being
-            applied to the specified resource type. Must include prefix separator
-            (e.g. a colon :).
+          description: Specifies the prefix to use for the given resource type. 
+            Any properties in the namespace should be prefixed with this prefix 
+            when being applied to the specified resource type. Must include 
+            prefix separator (e.g. a colon :).
           maxLength: 80
           type: string
         properties_target:
-          description: Some resource types allow more than one key / value pair per
-            instance.  For example, Cinder allows user and image metadata on volumes.
-            Only the image properties metadata is evaluated by Nova (scheduling or
-            drivers). This property allows a namespace target to remove the ambiguity.
+          description: Some resource types allow more than one key / value pair 
+            per instance.  For example, Cinder allows user and image metadata on
+            volumes. Only the image properties metadata is evaluated by Nova 
+            (scheduling or drivers). This property allows a namespace target to 
+            remove the ambiguity.
           maxLength: 80
           type: string
         updated_at:
-          description: Date and time of the last resource type association modification
+          description: Date and time of the last resource type association 
+            modification
           format: date-time
           readOnly: true
           type: string
@@ -9375,9 +9427,9 @@ components:
         - name
       type: object
     MetadefsResource_TypesListResponse:
-      description: A list of abbreviated resource type JSON objects, where each object
-        contains the name of the resource type and its created_at and updated_at timestamps
-        in ISO 8601 Format.
+      description: A list of abbreviated resource type JSON objects, where each 
+        object contains the name of the resource type and its created_at and 
+        updated_at timestamps in ISO 8601 Format.
       properties:
         resource_types:
           items:
@@ -9472,8 +9524,8 @@ components:
             - 'null'
             - object
         message:
-          description: Human-readable informative message only included when appropriate
-            (usually on failure)
+          description: Human-readable informative message only included when 
+            appropriate (usually on failure)
           type: string
         owner:
           description: An identifier for the owner of this task
@@ -9539,8 +9591,8 @@ components:
             - 'null'
             - object
         message:
-          description: Human-readable informative message only included when appropriate
-            (usually on failure)
+          description: Human-readable informative message only included when 
+            appropriate (usually on failure)
           type: string
         owner:
           description: An identifier for the owner of this task
@@ -9707,8 +9759,8 @@ components:
             - 'null'
             - object
         message:
-          description: Human-readable informative message only included when appropriate
-            (usually on failure)
+          description: Human-readable informative message only included when 
+            appropriate (usually on failure)
           type: string
         owner:
           description: An identifier for the owner of this task
@@ -9865,8 +9917,8 @@ components:
             - 'null'
             - object
         message:
-          description: Human-readable informative message only included when appropriate
-            (usually on failure)
+          description: Human-readable informative message only included when 
+            appropriate (usually on failure)
           type: string
         owner:
           description: An identifier for the owner of this task
@@ -9933,7 +9985,8 @@ components:
                 description: Datetime when this resource was created
                 type: string
               expires_at:
-                description: Datetime when this resource would be subject to removal
+                description: Datetime when this resource would be subject to 
+                  removal
                 type:
                   - 'null'
                   - string
@@ -9951,8 +10004,8 @@ components:
                   - 'null'
                   - object
               message:
-                description: Human-readable informative message only included when
-                  appropriate (usually on failure)
+                description: Human-readable informative message only included 
+                  when appropriate (usually on failure)
                 type: string
               owner:
                 description: An identifier for the owner of this task

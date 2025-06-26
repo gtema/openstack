@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::{OptionExt, Result, WrapErr};
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -49,12 +49,8 @@ impl TryFrom<&UserResponse> for IdentityUserDelete {
     type Error = IdentityUserDeleteBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserDeleteBuilder::default();
-        //if let Some(val) = &value.id {
-        //    builder.id(val.clone());
-        //}
-        //if let Some(val) = &value.name {
-        //    builder.name(val.clone());
-        //}
+        builder.id(value.id.clone());
+        builder.name(value.name.clone());
         builder.build()
     }
 }
@@ -63,12 +59,8 @@ impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
     type Error = IdentityUserApplicationCredentialListBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserApplicationCredentialListBuilder::default();
-        // if let Some(val) = &value.id {
-        //     builder.user_id(val.clone());
-        // }
-        // if let Some(val) = &value.name {
-        //     builder.user_name(val.clone());
-        // }
+        builder.user_id(value.id.clone());
+        builder.user_name(value.name.clone());
         builder.build()
     }
 }
@@ -116,14 +108,14 @@ impl Component for IdentityUsers<'_> {
                         // and have a selected entry
                         if let Some(selected_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
-                            // command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                            //     IdentityUserApiRequest::Set(Box::new(
-                            //         IdentityUserSetBuilder::default()
-                            //             .id(selected_row.id.clone().ok_or_eyre("id must be present")?)
-                            //             .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled.ok_or_eyre("user enabled property must be preset")?).build().wrap_err("cannot prepare user data structure")?)
-                            //             .build().wrap_err("error preparing OpenStack request")?
-                            //     )))))?;
-                            // self.set_loading(true);
+                            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                                IdentityUserApiRequest::Set(Box::new(
+                                    IdentityUserSetBuilder::default()
+                                        .id(selected_row.id.clone())
+                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled).build().wrap_err("cannot prepare user data structure")?)
+                                        .build().wrap_err("error preparing OpenStack request")?
+                                )))))?;
+                            self.set_loading(true);
                         }
                     }
                 }
@@ -187,14 +179,12 @@ impl Component for IdentityUsers<'_> {
                     // Since user update only returns some info (i.e. it doesn't contain email) we need
                     // to update record manually
                     let updated_user: UserResponse = serde_json::from_value(data.clone())?;
-                    //if let Some(item_row) = self.get_item_row_by_res_id_mut(
-                    //    &updated_user.id.ok_or_eyre("id must be present")?,
-                    //) {
-                    //    item_row.enabled = updated_user.enabled;
-                    //    item_row.name = updated_user.name;
-                    //    self.sync_table_data()?;
-                    //}
-                    //self.set_loading(false);
+                    if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
+                        item_row.enabled = updated_user.enabled;
+                        item_row.name = updated_user.name;
+                        self.sync_table_data()?;
+                    }
+                    self.set_loading(false);
                 } else if let IdentityUserApiRequest::Delete(del) = *req {
                     if let IdentityUserDelete { id, .. } = *del {
                         if self.delete_item_row_by_res_id_mut(&id)?.is_none() {

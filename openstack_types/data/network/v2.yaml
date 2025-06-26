@@ -2788,7 +2788,8 @@ paths:
         - network_segment_ranges
   /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id}:
     delete:
-      operationId: network_segment_ranges/network_segment_range_id/tags/id:delete
+      operationId: 
+        network_segment_ranges/network_segment_range_id/tags/id:delete
       responses:
         '204':
           description: Ok
@@ -7954,15 +7955,16 @@ components:
           - 'null'
           - string
     agents_dhcp-networks_agent_id:
-      description: agent_id parameter for /v2.0/agents/{agent_id}/dhcp-networks/{id}
-        API
+      description: agent_id parameter for 
+        /v2.0/agents/{agent_id}/dhcp-networks/{id} API
       in: path
       name: agent_id
       required: true
       schema:
         type: string
     agents_dhcp-networks_id:
-      description: id parameter for /v2.0/agents/{agent_id}/dhcp-networks/{id} API
+      description: id parameter for /v2.0/agents/{agent_id}/dhcp-networks/{id} 
+        API
       in: path
       name: id
       required: true
@@ -7982,8 +7984,8 @@ components:
         format: uuid
         type: string
     agents_l3-routers_agent_id:
-      description: agent_id parameter for /v2.0/agents/{agent_id}/l3-routers/{id}
-        API
+      description: agent_id parameter for 
+        /v2.0/agents/{agent_id}/l3-routers/{id} API
       in: path
       name: agent_id
       required: true
@@ -8003,15 +8005,16 @@ components:
       schema:
         type: string
     alias_bandwidth_limit_rules_alias_bandwidth_limit_rule_id:
-      description: id parameter for /v2.0/qos/alias-bandwidth-limit-rules/{id} API
+      description: id parameter for /v2.0/qos/alias-bandwidth-limit-rules/{id} 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     alias_bandwidth_limit_rules_direction:
-      description: direction query parameter for /v2.0/qos/alias-bandwidth-limit-rules
-        API
+      description: direction query parameter for 
+        /v2.0/qos/alias-bandwidth-limit-rules API
       in: query
       name: direction
       schema:
@@ -8020,15 +8023,16 @@ components:
           - ingress
         type: string
     alias_bandwidth_limit_rules_id:
-      description: id query parameter for /v2.0/qos/alias-bandwidth-limit-rules API
+      description: id query parameter for /v2.0/qos/alias-bandwidth-limit-rules 
+        API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     alias_bandwidth_limit_rules_max_burst_kbps:
-      description: max_burst_kbps query parameter for /v2.0/qos/alias-bandwidth-limit-rules
-        API
+      description: max_burst_kbps query parameter for 
+        /v2.0/qos/alias-bandwidth-limit-rules API
       in: query
       name: max_burst_kbps
       schema:
@@ -8038,8 +8042,8 @@ components:
           - integer
           - string
     alias_bandwidth_limit_rules_max_kbps:
-      description: max_kbps query parameter for /v2.0/qos/alias-bandwidth-limit-rules
-        API
+      description: max_kbps query parameter for 
+        /v2.0/qos/alias-bandwidth-limit-rules API
       in: query
       name: max_kbps
       schema:
@@ -8056,8 +8060,8 @@ components:
       schema:
         type: string
     alias_dscp_marking_rules_dscp_mark:
-      description: dscp_mark query parameter for /v2.0/qos/alias-dscp-marking-rules
-        API
+      description: dscp_mark query parameter for 
+        /v2.0/qos/alias-dscp-marking-rules API
       in: query
       name: dscp_mark
       schema:
@@ -8095,15 +8099,16 @@ components:
         format: uuid
         type: string
     alias_minimum_bandwidth_rules_alias_minimum_bandwidth_rule_id:
-      description: id parameter for /v2.0/qos/alias-minimum-bandwidth-rules/{id} API
+      description: id parameter for /v2.0/qos/alias-minimum-bandwidth-rules/{id}
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     alias_minimum_bandwidth_rules_direction:
-      description: direction query parameter for /v2.0/qos/alias-minimum-bandwidth-rules
-        API
+      description: direction query parameter for 
+        /v2.0/qos/alias-minimum-bandwidth-rules API
       in: query
       name: direction
       schema:
@@ -8112,16 +8117,16 @@ components:
           - ingress
         type: string
     alias_minimum_bandwidth_rules_id:
-      description: id query parameter for /v2.0/qos/alias-minimum-bandwidth-rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/alias-minimum-bandwidth-rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     alias_minimum_bandwidth_rules_min_kbps:
-      description: min_kbps query parameter for /v2.0/qos/alias-minimum-bandwidth-rules
-        API
+      description: min_kbps query parameter for 
+        /v2.0/qos/alias-minimum-bandwidth-rules API
       in: query
       name: min_kbps
       schema:
@@ -8131,16 +8136,16 @@ components:
           - integer
           - string
     alias_minimum_packet_rate_rules_alias_minimum_packet_rate_rule_id:
-      description: id parameter for /v2.0/qos/alias-minimum-packet-rate-rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/qos/alias-minimum-packet-rate-rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     alias_minimum_packet_rate_rules_direction:
-      description: direction query parameter for /v2.0/qos/alias-minimum-packet-rate-rules
-        API
+      description: direction query parameter for 
+        /v2.0/qos/alias-minimum-packet-rate-rules API
       in: query
       name: direction
       schema:
@@ -8150,16 +8155,16 @@ components:
           - ingress
         type: string
     alias_minimum_packet_rate_rules_id:
-      description: id query parameter for /v2.0/qos/alias-minimum-packet-rate-rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/alias-minimum-packet-rate-rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     alias_minimum_packet_rate_rules_min_kpps:
-      description: min_kpps query parameter for /v2.0/qos/alias-minimum-packet-rate-rules
-        API
+      description: min_kpps query parameter for 
+        /v2.0/qos/alias-minimum-packet-rate-rules API
       in: query
       name: min_kpps
       schema:
@@ -8194,32 +8199,32 @@ components:
       schema:
         type: string
     bandwidth_limit_rules_bandwidth_limit_rule_id:
-      description: id parameter for /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     bandwidth_limit_rules_bandwidth_limit_rule_policy_id:
-      description: policy_id parameter for /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id}
-        API
+      description: policy_id parameter for 
+        /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id} API
       in: path
       name: policy_id
       required: true
       schema:
         type: string
     bandwidth_limit_rules_id:
-      description: id query parameter for /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     bandwidth_limit_rules_max_burst_kbps:
-      description: max_burst_kbps query parameter for /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules
-        API
+      description: max_burst_kbps query parameter for 
+        /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
       in: query
       name: max_burst_kbps
       schema:
@@ -8229,8 +8234,8 @@ components:
           - integer
           - string
     bandwidth_limit_rules_max_kbps:
-      description: max_kbps query parameter for /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules
-        API
+      description: max_kbps query parameter for 
+        /v2.0/qos/policies/{policy_id}/bandwidth_limit_rules API
       in: query
       name: max_kbps
       schema:
@@ -8266,13 +8271,15 @@ components:
       schema:
         type: string
     bindings_vif_type:
-      description: vif_type query parameter for /v2.0/ports/{port_id}/bindings API
+      description: vif_type query parameter for /v2.0/ports/{port_id}/bindings 
+        API
       in: query
       name: vif_type
       schema:
         type: string
     bindings_vnic_type:
-      description: vnic_type query parameter for /v2.0/ports/{port_id}/bindings API
+      description: vnic_type query parameter for /v2.0/ports/{port_id}/bindings 
+        API
       in: query
       name: vnic_type
       schema:
@@ -8290,40 +8297,40 @@ components:
           - virtio-forwarder
         type: string
     conntrack_helpers_conntrack_helper_id:
-      description: id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id}
-        API
+      description: id parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     conntrack_helpers_conntrack_helper_router_id:
-      description: router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id}
-        API
+      description: router_id parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers/{id} API
       in: path
       name: router_id
       required: true
       schema:
         type: string
     conntrack_helpers_helper:
-      description: helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-        API
+      description: helper query parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers API
       in: query
       name: helper
       schema:
         maxLength: 64
         type: string
     conntrack_helpers_id:
-      description: id query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-        API
+      description: id query parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     conntrack_helpers_port:
-      description: port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-        API
+      description: port query parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers API
       in: query
       name: port
       schema:
@@ -8333,8 +8340,8 @@ components:
           - integer
           - string
     conntrack_helpers_protocol:
-      description: protocol query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-        API
+      description: protocol query parameter for 
+        /v2.0/routers/{router_id}/conntrack_helpers API
       in: query
       name: protocol
       schema:
@@ -8354,16 +8361,16 @@ components:
       schema:
         type: string
     default_security_group_rules_description:
-      description: description query parameter for /v2.0/default-security-group-rules
-        API
+      description: description query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: description
       schema:
         maxLength: 1024
         type: string
     default_security_group_rules_direction:
-      description: direction query parameter for /v2.0/default-security-group-rules
-        API
+      description: direction query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: direction
       schema:
@@ -8372,8 +8379,8 @@ components:
           - ingress
         type: string
     default_security_group_rules_ethertype:
-      description: ethertype query parameter for /v2.0/default-security-group-rules
-        API
+      description: ethertype query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: ethertype
       schema:
@@ -8389,8 +8396,8 @@ components:
         format: uuid
         type: string
     default_security_group_rules_port_range_max:
-      description: port_range_max query parameter for /v2.0/default-security-group-rules
-        API
+      description: port_range_max query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: port_range_max
       schema:
@@ -8398,8 +8405,8 @@ components:
           - integer
           - 'null'
     default_security_group_rules_port_range_min:
-      description: port_range_min query parameter for /v2.0/default-security-group-rules
-        API
+      description: port_range_min query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: port_range_min
       schema:
@@ -8407,15 +8414,15 @@ components:
           - integer
           - 'null'
     default_security_group_rules_protocol:
-      description: protocol query parameter for /v2.0/default-security-group-rules
-        API
+      description: protocol query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: protocol
       schema:
         type: string
     default_security_group_rules_remote_address_group_id:
-      description: remote_address_group_id query parameter for /v2.0/default-security-group-rules
-        API
+      description: remote_address_group_id query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: remote_address_group_id
       schema:
@@ -8432,15 +8439,15 @@ components:
       schema:
         type: string
     default_security_group_rules_remote_ip_prefix:
-      description: remote_ip_prefix query parameter for /v2.0/default-security-group-rules
-        API
+      description: remote_ip_prefix query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: remote_ip_prefix
       schema:
         type: string
     default_security_group_rules_used_in_default_sg:
-      description: used_in_default_sg query parameter for /v2.0/default-security-group-rules
-        API
+      description: used_in_default_sg query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: used_in_default_sg
       schema:
@@ -8448,8 +8455,8 @@ components:
           - boolean
           - string
     default_security_group_rules_used_in_non_default_sg:
-      description: used_in_non_default_sg query parameter for /v2.0/default-security-group-rules
-        API
+      description: used_in_non_default_sg query parameter for 
+        /v2.0/default-security-group-rules API
       in: query
       name: used_in_non_default_sg
       schema:
@@ -8457,8 +8464,8 @@ components:
           - boolean
           - string
     dscp_marking_rules_dscp_mark:
-      description: dscp_mark query parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules
-        API
+      description: dscp_mark query parameter for 
+        /v2.0/qos/policies/{policy_id}/dscp_marking_rules API
       in: query
       name: dscp_mark
       schema:
@@ -8489,24 +8496,24 @@ components:
           - integer
           - string
     dscp_marking_rules_dscp_marking_rule_id:
-      description: id parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     dscp_marking_rules_dscp_marking_rule_policy_id:
-      description: policy_id parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id}
-        API
+      description: policy_id parameter for 
+        /v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id} API
       in: path
       name: policy_id
       required: true
       schema:
         type: string
     dscp_marking_rules_id:
-      description: id query parameter for /v2.0/qos/policies/{policy_id}/dscp_marking_rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/policies/{policy_id}/dscp_marking_rules API
       in: query
       name: id
       schema:
@@ -8693,15 +8700,16 @@ components:
         type: array
       style: form
     floatingips_tags_floatingip_id:
-      description: floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
-        API
+      description: floatingip_id parameter for 
+        /v2.0/floatingips/{floatingip_id}/tags/{id} API
       in: path
       name: floatingip_id
       required: true
       schema:
         type: string
     floatingips_tags_id:
-      description: id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+      description: id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} 
+        API
       in: path
       name: id
       required: true
@@ -8736,10 +8744,10 @@ components:
       schema:
         type: string
     limit:
-      description: Requests a page size of items. Returns a number of items up to
-        a limit value. Use the limit parameter to make an initial limited request
-        and use the ID of the last-seen item from the response as the marker parameter
-        value in a subsequent limited request.
+      description: Requests a page size of items. Returns a number of items up 
+        to a limit value. Use the limit parameter to make an initial limited 
+        request and use the ID of the last-seen item from the response as the 
+        marker parameter value in a subsequent limited request.
       in: query
       name: limit
       schema:
@@ -8909,9 +8917,9 @@ components:
           - 'null'
           - string
     marker:
-      description: The ID of the last-seen item. Use the limit parameter to make an
-        initial limited request and use the ID of the last-seen item from the response
-        as the marker parameter value in a subsequent limited request.
+      description: The ID of the last-seen item. Use the limit parameter to make
+        an initial limited request and use the ID of the last-seen item from the
+        response as the marker parameter value in a subsequent limited request.
       in: query
       name: marker
       schema:
@@ -8931,8 +8939,8 @@ components:
       schema:
         type: string
     metering_label_rules_direction:
-      description: direction query parameter for /v2.0/metering/metering-label-rules
-        API
+      description: direction query parameter for 
+        /v2.0/metering/metering-label-rules API
       in: query
       name: direction
       schema:
@@ -8941,8 +8949,8 @@ components:
           - ingress
         type: string
     metering_label_rules_excluded:
-      description: excluded query parameter for /v2.0/metering/metering-label-rules
-        API
+      description: excluded query parameter for 
+        /v2.0/metering/metering-label-rules API
       in: query
       name: excluded
       schema:
@@ -8950,14 +8958,15 @@ components:
           - boolean
           - string
     metering_label_rules_id:
-      description: id query parameter for /v2.0/metering/metering-label-rules API
+      description: id query parameter for /v2.0/metering/metering-label-rules 
+        API
       in: query
       name: id
       schema:
         type: string
     metering_label_rules_metering_label_id:
-      description: metering_label_id query parameter for /v2.0/metering/metering-label-rules
-        API
+      description: metering_label_id query parameter for 
+        /v2.0/metering/metering-label-rules API
       in: query
       name: metering_label_id
       schema:
@@ -8971,8 +8980,8 @@ components:
       schema:
         type: string
     metering_label_rules_remote_ip_prefix:
-      description: remote_ip_prefix query parameter for /v2.0/metering/metering-label-rules
-        API
+      description: remote_ip_prefix query parameter for 
+        /v2.0/metering/metering-label-rules API
       in: query
       name: remote_ip_prefix
       schema:
@@ -8991,8 +9000,8 @@ components:
       schema:
         type: string
     metering_labels_description:
-      description: description query parameter for /v2.0/metering/metering-labels
-        API
+      description: description query parameter for 
+        /v2.0/metering/metering-labels API
       in: query
       name: description
       schema:
@@ -9027,15 +9036,16 @@ components:
           - boolean
           - string
     metering_labels_tenant_id:
-      description: tenant_id query parameter for /v2.0/metering/metering-labels API
+      description: tenant_id query parameter for /v2.0/metering/metering-labels 
+        API
       in: query
       name: tenant_id
       schema:
         maxLength: 255
         type: string
     minimum_bandwidth_rules_direction:
-      description: direction query parameter for /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules
-        API
+      description: direction query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules API
       in: query
       name: direction
       schema:
@@ -9044,16 +9054,16 @@ components:
           - ingress
         type: string
     minimum_bandwidth_rules_id:
-      description: id query parameter for /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     minimum_bandwidth_rules_min_kbps:
-      description: min_kbps query parameter for /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules
-        API
+      description: min_kbps query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules API
       in: query
       name: min_kbps
       schema:
@@ -9063,24 +9073,24 @@ components:
           - integer
           - string
     minimum_bandwidth_rules_minimum_bandwidth_rule_id:
-      description: id parameter for /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     minimum_bandwidth_rules_minimum_bandwidth_rule_policy_id:
-      description: policy_id parameter for /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id}
-        API
+      description: policy_id parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API
       in: path
       name: policy_id
       required: true
       schema:
         type: string
     minimum_packet_rate_rules_direction:
-      description: direction query parameter for /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules
-        API
+      description: direction query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
       in: query
       name: direction
       schema:
@@ -9090,16 +9100,16 @@ components:
           - ingress
         type: string
     minimum_packet_rate_rules_id:
-      description: id query parameter for /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules
-        API
+      description: id query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     minimum_packet_rate_rules_min_kpps:
-      description: min_kpps query parameter for /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules
-        API
+      description: min_kpps query parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
       in: query
       name: min_kpps
       schema:
@@ -9109,16 +9119,16 @@ components:
           - integer
           - string
     minimum_packet_rate_rules_minimum_packet_rate_rule_id:
-      description: id parameter for /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     minimum_packet_rate_rules_minimum_packet_rate_rule_policy_id:
-      description: policy_id parameter for /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id}
-        API
+      description: policy_id parameter for 
+        /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
       in: path
       name: policy_id
       required: true
@@ -9152,15 +9162,15 @@ components:
       schema:
         type: string
     network_ip_availabilities_ip_version:
-      description: ip_version query parameter for /v2.0/network-ip-availabilities
-        API
+      description: ip_version query parameter for 
+        /v2.0/network-ip-availabilities API
       in: query
       name: ip_version
       schema:
         type: string
     network_ip_availabilities_network_id:
-      description: network_id query parameter for /v2.0/network-ip-availabilities
-        API
+      description: network_id query parameter for 
+        /v2.0/network-ip-availabilities API
       in: query
       name: network_id
       schema:
@@ -9173,20 +9183,22 @@ components:
       schema:
         type: string
     network_ip_availabilities_network_name:
-      description: network_name query parameter for /v2.0/network-ip-availabilities
-        API
+      description: network_name query parameter for 
+        /v2.0/network-ip-availabilities API
       in: query
       name: network_name
       schema:
         type: string
     network_ip_availabilities_tenant_id:
-      description: tenant_id query parameter for /v2.0/network-ip-availabilities API
+      description: tenant_id query parameter for /v2.0/network-ip-availabilities
+        API
       in: query
       name: tenant_id
       schema:
         type: string
     network_segment_ranges_description:
-      description: description query parameter for /v2.0/network-segment-ranges API
+      description: description query parameter for /v2.0/network-segment-ranges 
+        API
       in: query
       name: description
       schema:
@@ -9214,7 +9226,8 @@ components:
       schema:
         type: string
     network_segment_ranges_network_type:
-      description: network_type query parameter for /v2.0/network-segment-ranges API
+      description: network_type query parameter for /v2.0/network-segment-ranges
+        API
       in: query
       name: network_type
       schema:
@@ -9235,7 +9248,8 @@ components:
         type: array
       style: form
     network_segment_ranges_not-tags-any:
-      description: not-tags-any query parameter for /v2.0/network-segment-ranges API
+      description: not-tags-any query parameter for /v2.0/network-segment-ranges
+        API
       explode: false
       in: query
       name: not-tags-any
@@ -9245,23 +9259,24 @@ components:
         type: array
       style: form
     network_segment_ranges_physical_network:
-      description: physical_network query parameter for /v2.0/network-segment-ranges
-        API
+      description: physical_network query parameter for 
+        /v2.0/network-segment-ranges API
       in: query
       name: physical_network
       schema:
         maxLength: 64
         type: string
     network_segment_ranges_project_id:
-      description: project_id query parameter for /v2.0/network-segment-ranges API
+      description: project_id query parameter for /v2.0/network-segment-ranges 
+        API
       in: query
       name: project_id
       schema:
         maxLength: 255
         type: string
     network_segment_ranges_revision_number:
-      description: revision_number query parameter for /v2.0/network-segment-ranges
-        API
+      description: revision_number query parameter for 
+        /v2.0/network-segment-ranges API
       in: query
       name: revision_number
       schema:
@@ -9287,16 +9302,16 @@ components:
         type: array
       style: form
     network_segment_ranges_tags_id:
-      description: id parameter for /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id}
-        API
+      description: id parameter for 
+        /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     network_segment_ranges_tags_network_segment_range_id:
-      description: network_segment_range_id parameter for /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id}
-        API
+      description: network_segment_range_id parameter for 
+        /v2.0/network_segment_ranges/{network_segment_range_id}/tags/{id} API
       in: path
       name: network_segment_range_id
       required: true
@@ -9318,15 +9333,16 @@ components:
         maxLength: 255
         type: string
     networks_dhcp-agents_id:
-      description: id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
+      description: id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id}
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     networks_dhcp-agents_network_id:
-      description: network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id}
-        API
+      description: network_id parameter for 
+        /v2.0/networks/{network_id}/dhcp-agents/{id} API
       in: path
       name: network_id
       required: true
@@ -9398,14 +9414,16 @@ components:
         maxLength: 32
         type: string
     networks_provider_physical_network:
-      description: provider:physical_network query parameter for /v2.0/networks API
+      description: provider:physical_network query parameter for /v2.0/networks 
+        API
       in: query
       name: provider:physical_network
       schema:
         maxLength: 64
         type: string
     networks_provider_segmentation_id:
-      description: provider:segmentation_id query parameter for /v2.0/networks API
+      description: provider:segmentation_id query parameter for /v2.0/networks 
+        API
       in: query
       name: provider:segmentation_id
       schema:
@@ -9476,8 +9494,8 @@ components:
       schema:
         type: string
     networks_tags_network_id:
-      description: network_id parameter for /v2.0/networks/{network_id}/tags/{id}
-        API
+      description: network_id parameter for 
+        /v2.0/networks/{network_id}/tags/{id} API
       in: path
       name: network_id
       required: true
@@ -9499,24 +9517,24 @@ components:
           - boolean
           - string
     next_providers_next_provider_flavor_id:
-      description: flavor_id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id}
-        API
+      description: flavor_id parameter for 
+        /v2.0/flavors/{flavor_id}/next_providers/{id} API
       in: path
       name: flavor_id
       required: true
       schema:
         type: string
     next_providers_next_provider_id:
-      description: id parameter for /v2.0/flavors/{flavor_id}/next_providers/{id}
-        API
+      description: id parameter for 
+        /v2.0/flavors/{flavor_id}/next_providers/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     packet_rate_limit_rules_direction:
-      description: direction query parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules
-        API
+      description: direction query parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules API
       in: query
       name: direction
       schema:
@@ -9525,16 +9543,16 @@ components:
           - ingress
         type: string
     packet_rate_limit_rules_id:
-      description: id query parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules
-        API
+      description: id query parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     packet_rate_limit_rules_max_burst_kpps:
-      description: max_burst_kpps query parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules
-        API
+      description: max_burst_kpps query parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules API
       in: query
       name: max_burst_kpps
       schema:
@@ -9544,8 +9562,8 @@ components:
           - integer
           - string
     packet_rate_limit_rules_max_kpps:
-      description: max_kpps query parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules
-        API
+      description: max_kpps query parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules API
       in: query
       name: max_kpps
       schema:
@@ -9555,16 +9573,16 @@ components:
           - integer
           - string
     packet_rate_limit_rules_packet_rate_limit_rule_id:
-      description: id parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id}
-        API
+      description: id parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     packet_rate_limit_rules_packet_rate_limit_rule_policy_id:
-      description: policy_id parameter for /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id}
-        API
+      description: policy_id parameter for 
+        /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API
       in: path
       name: policy_id
       required: true
@@ -9674,7 +9692,8 @@ components:
       schema:
         type: string
     policies_tags_policy_id:
-      description: policy_id parameter for /v2.0/policies/{policy_id}/tags/{id} API
+      description: policy_id parameter for /v2.0/policies/{policy_id}/tags/{id} 
+        API
       in: path
       name: policy_id
       required: true
@@ -9688,8 +9707,8 @@ components:
         maxLength: 255
         type: string
     port_associations_fixed_ip:
-      description: fixed_ip query parameter for /v2.0/local_ips/{local_ip_id}/port_associations
-        API
+      description: fixed_ip query parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations API
       in: query
       name: fixed_ip
       schema:
@@ -9697,54 +9716,54 @@ components:
           - 'null'
           - string
     port_associations_fixed_port_id:
-      description: fixed_port_id query parameter for /v2.0/local_ips/{local_ip_id}/port_associations
-        API
+      description: fixed_port_id query parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations API
       in: query
       name: fixed_port_id
       schema:
         format: uuid
         type: string
     port_associations_host:
-      description: host query parameter for /v2.0/local_ips/{local_ip_id}/port_associations
-        API
+      description: host query parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations API
       in: query
       name: host
       schema:
         type: string
     port_associations_local_ip_address:
-      description: local_ip_address query parameter for /v2.0/local_ips/{local_ip_id}/port_associations
-        API
+      description: local_ip_address query parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations API
       in: query
       name: local_ip_address
       schema:
         type: string
     port_associations_port_association_id:
-      description: id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
-        API
+      description: id parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     port_associations_port_association_local_ip_id:
-      description: local_ip_id parameter for /v2.0/local_ips/{local_ip_id}/port_associations/{id}
-        API
+      description: local_ip_id parameter for 
+        /v2.0/local_ips/{local_ip_id}/port_associations/{id} API
       in: path
       name: local_ip_id
       required: true
       schema:
         type: string
     port_forwardings_description:
-      description: description query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: description query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: description
       schema:
         maxLength: 1024
         type: string
     port_forwardings_external_port:
-      description: external_port query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: external_port query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: external_port
       schema:
@@ -9754,8 +9773,8 @@ components:
           - 'null'
           - number
     port_forwardings_external_port_range:
-      description: external_port_range query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: external_port_range query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: external_port_range
       schema:
@@ -9763,40 +9782,40 @@ components:
         minimum: 1
         type: number
     port_forwardings_id:
-      description: id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: id query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: id
       schema:
         format: uuid
         type: string
     port_forwardings_internal_port_id:
-      description: internal_port_id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: internal_port_id query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: internal_port_id
       schema:
         format: uuid
         type: string
     port_forwardings_port_forwarding_floatingip_id:
-      description: floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id}
-        API
+      description: floatingip_id parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
       in: path
       name: floatingip_id
       required: true
       schema:
         type: string
     port_forwardings_port_forwarding_id:
-      description: id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id}
-        API
+      description: id parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     port_forwardings_protocol:
-      description: protocol query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings
-        API
+      description: protocol query parameter for 
+        /v2.0/floatingips/{floatingip_id}/port_forwardings API
       in: query
       name: protocol
       schema:
@@ -9849,9 +9868,10 @@ components:
       in: query
       name: fixed_ips
       schema:
-        description: The IP addresses for the port. If the port has multiple IP addresses,
-          this field has multiple entries. Each entry consists of IP address (ip_address)
-          and the subnet ID from which the IP address is assigned (subnet_id).
+        description: The IP addresses for the port. If the port has multiple IP 
+          addresses, this field has multiple entries. Each entry consists of IP 
+          address (ip_address) and the subnet ID from which the IP address is 
+          assigned (subnet_id).
         items:
           type: string
         type: array
@@ -9910,8 +9930,8 @@ components:
         type: array
       style: form
     ports_port_port_id:
-      description: port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
-        API
+      description: port_id parameter for 
+        /v2.0/ports/{port_id}/add_allowed_address_pairs API
       in: path
       name: port_id
       required: true
@@ -10087,8 +10107,8 @@ components:
       schema:
         type: string
     routers_l3-agents_router_id:
-      description: router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id}
-        API
+      description: router_id parameter for 
+        /v2.0/routers/{router_id}/l3-agents/{id} API
       in: path
       name: router_id
       required: true
@@ -10162,7 +10182,8 @@ components:
       schema:
         type: string
     routers_tags_router_id:
-      description: router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+      description: router_id parameter for /v2.0/routers/{router_id}/tags/{id} 
+        API
       in: path
       name: router_id
       required: true
@@ -10201,24 +10222,24 @@ components:
       schema:
         type: string
     security-groups_tags_id:
-      description: id parameter for /v2.0/security-groups/{security_group_id}/tags/{id}
-        API
+      description: id parameter for 
+        /v2.0/security-groups/{security_group_id}/tags/{id} API
       in: path
       name: id
       required: true
       schema:
         type: string
     security-groups_tags_security_group_id:
-      description: security_group_id parameter for /v2.0/security-groups/{security_group_id}/tags/{id}
-        API
+      description: security_group_id parameter for 
+        /v2.0/security-groups/{security_group_id}/tags/{id} API
       in: path
       name: security_group_id
       required: true
       schema:
         type: string
     security_group_rules_belongs_to_default_sg:
-      description: belongs_to_default_sg query parameter for /v2.0/security-group-rules
-        API
+      description: belongs_to_default_sg query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: belongs_to_default_sg
       schema:
@@ -10227,7 +10248,8 @@ components:
           - 'null'
           - string
     security_group_rules_description:
-      description: description query parameter for /v2.0/security-group-rules API
+      description: description query parameter for /v2.0/security-group-rules 
+        API
       in: query
       name: description
       schema:
@@ -10259,8 +10281,8 @@ components:
         format: uuid
         type: string
     security_group_rules_normalized_cidr:
-      description: normalized_cidr query parameter for /v2.0/security-group-rules
-        API
+      description: normalized_cidr query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: normalized_cidr
       schema:
@@ -10268,7 +10290,8 @@ components:
           - 'null'
           - string
     security_group_rules_port_range_max:
-      description: port_range_max query parameter for /v2.0/security-group-rules API
+      description: port_range_max query parameter for /v2.0/security-group-rules
+        API
       in: query
       name: port_range_max
       schema:
@@ -10276,7 +10299,8 @@ components:
           - integer
           - 'null'
     security_group_rules_port_range_min:
-      description: port_range_min query parameter for /v2.0/security-group-rules API
+      description: port_range_min query parameter for /v2.0/security-group-rules
+        API
       in: query
       name: port_range_min
       schema:
@@ -10290,36 +10314,36 @@ components:
       schema:
         type: string
     security_group_rules_remote_address_group_id:
-      description: remote_address_group_id query parameter for /v2.0/security-group-rules
-        API
+      description: remote_address_group_id query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: remote_address_group_id
       schema:
         type: string
     security_group_rules_remote_group_id:
-      description: remote_group_id query parameter for /v2.0/security-group-rules
-        API
+      description: remote_group_id query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: remote_group_id
       schema:
         type: string
     security_group_rules_remote_ip_prefix:
-      description: remote_ip_prefix query parameter for /v2.0/security-group-rules
-        API
+      description: remote_ip_prefix query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: remote_ip_prefix
       schema:
         type: string
     security_group_rules_revision_number:
-      description: revision_number query parameter for /v2.0/security-group-rules
-        API
+      description: revision_number query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: revision_number
       schema:
         type: string
     security_group_rules_security_group_id:
-      description: security_group_id query parameter for /v2.0/security-group-rules
-        API
+      description: security_group_id query parameter for 
+        /v2.0/security-group-rules API
       in: query
       name: security_group_id
       schema:
@@ -10518,16 +10542,16 @@ components:
         format: uuid
         type: string
     service_profiles_service_profile_flavor_id:
-      description: flavor_id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id}
-        API
+      description: flavor_id parameter for 
+        /v2.0/flavors/{flavor_id}/service_profiles/{id} API
       in: path
       name: flavor_id
       required: true
       schema:
         type: string
     service_profiles_service_profile_id:
-      description: id parameter for /v2.0/flavors/{flavor_id}/service_profiles/{id}
-        API
+      description: id parameter for 
+        /v2.0/flavors/{flavor_id}/service_profiles/{id} API
       in: path
       name: id
       required: true
@@ -10541,8 +10565,8 @@ components:
       schema:
         type: string
     sort_dir:
-      description: Sort direction. This is an optional feature and may be silently
-        ignored by the server.
+      description: Sort direction. This is an optional feature and may be 
+        silently ignored by the server.
       explode: true
       in: query
       name: sort_dir
@@ -10555,8 +10579,8 @@ components:
         type: array
       style: form
     sort_key:
-      description: Sort results by the attribute. This is an optional feature and
-        may be silently ignored by the server.
+      description: Sort results by the attribute. This is an optional feature 
+        and may be silently ignored by the server.
       explode: true
       in: query
       name: sort_key
@@ -10706,15 +10730,16 @@ components:
         type: array
       style: form
     subnetpools_tags_id:
-      description: id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+      description: id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} 
+        API
       in: path
       name: id
       required: true
       schema:
         type: string
     subnetpools_tags_subnetpool_id:
-      description: subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id}
-        API
+      description: subnetpool_id parameter for 
+        /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
       in: path
       name: subnetpool_id
       required: true
@@ -10905,7 +10930,8 @@ components:
       schema:
         type: string
     subnets_tags_subnet_id:
-      description: subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+      description: subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} 
+        API
       in: path
       name: subnet_id
       required: true
@@ -11636,13 +11662,15 @@ components:
           type: object
       type: object
     AgentsDhcp_NetworkShowResponse:
-      description: Response of the agents/agent_id/dhcp-networks/id:get operation
+      description: Response of the agents/agent_id/dhcp-networks/id:get 
+        operation
       type: object
     AgentsDhcp_NetworkUpdateRequest:
       description: Request of the agents/agent_id/dhcp-networks/id:put operation
       type: object
     AgentsDhcp_NetworkUpdateResponse:
-      description: Response of the agents/agent_id/dhcp-networks/id:put operation
+      description: Response of the agents/agent_id/dhcp-networks/id:put 
+        operation
       type: object
     AgentsDhcp_NetworksCreateRequest:
       description: Request of the agents/agent_id/dhcp-networks:post operation
@@ -12742,7 +12770,8 @@ components:
           type: array
       type: object
     FlavorsNext_ProviderShowResponse:
-      description: Response of the flavors/flavor_id/next_providers/id:get operation
+      description: Response of the flavors/flavor_id/next_providers/id:get 
+        operation
       properties:
         next_provider:
           properties:
@@ -12755,14 +12784,16 @@ components:
           type: object
       type: object
     FlavorsNext_ProviderUpdateRequest:
-      description: Request of the flavors/flavor_id/next_providers/id:put operation
+      description: Request of the flavors/flavor_id/next_providers/id:put 
+        operation
       properties:
         next_provider:
           properties: {}
           type: object
       type: object
     FlavorsNext_ProviderUpdateResponse:
-      description: Response of the flavors/flavor_id/next_providers/id:put operation
+      description: Response of the flavors/flavor_id/next_providers/id:put 
+        operation
       properties:
         next_provider:
           properties:
@@ -12775,14 +12806,16 @@ components:
           type: object
       type: object
     FlavorsNext_ProvidersCreateRequest:
-      description: Request of the flavors/flavor_id/next_providers:post operation
+      description: Request of the flavors/flavor_id/next_providers:post 
+        operation
       properties:
         next_provider:
           properties: {}
           type: object
       type: object
     FlavorsNext_ProvidersCreateResponse:
-      description: Response of the flavors/flavor_id/next_providers:post operation
+      description: Response of the flavors/flavor_id/next_providers:post 
+        operation
       properties:
         next_provider:
           properties:
@@ -12795,7 +12828,8 @@ components:
           type: object
       type: object
     FlavorsNext_ProvidersIndexResponse:
-      description: Response of the flavors/flavor_id/next_providers:get operation
+      description: Response of the flavors/flavor_id/next_providers:get 
+        operation
       properties:
         next_providers:
           items:
@@ -12810,7 +12844,8 @@ components:
           type: array
       type: object
     FlavorsService_ProfileShowResponse:
-      description: Response of the flavors/flavor_id/service_profiles/id:get operation
+      description: Response of the flavors/flavor_id/service_profiles/id:get 
+        operation
       properties:
         service_profile:
           properties:
@@ -12820,14 +12855,16 @@ components:
           type: object
       type: object
     FlavorsService_ProfileUpdateRequest:
-      description: Request of the flavors/flavor_id/service_profiles/id:put operation
+      description: Request of the flavors/flavor_id/service_profiles/id:put 
+        operation
       properties:
         service_profile:
           properties: {}
           type: object
       type: object
     FlavorsService_ProfileUpdateResponse:
-      description: Response of the flavors/flavor_id/service_profiles/id:put operation
+      description: Response of the flavors/flavor_id/service_profiles/id:put 
+        operation
       properties:
         service_profile:
           properties:
@@ -12837,7 +12874,8 @@ components:
           type: object
       type: object
     FlavorsService_ProfilesCreateRequest:
-      description: Request of the flavors/flavor_id/service_profiles:post operation
+      description: Request of the flavors/flavor_id/service_profiles:post 
+        operation
       properties:
         service_profile:
           description: |-
@@ -12851,7 +12889,8 @@ components:
           type: object
       type: object
     FlavorsService_ProfilesCreateResponse:
-      description: Response of the flavors/flavor_id/service_profiles:post operation
+      description: Response of the flavors/flavor_id/service_profiles:post 
+        operation
       properties:
         service_profile:
           description: |-
@@ -12865,7 +12904,8 @@ components:
           type: object
       type: object
     FlavorsService_ProfilesIndexResponse:
-      description: Response of the flavors/flavor_id/service_profiles:get operation
+      description: Response of the flavors/flavor_id/service_profiles:get 
+        operation
       properties:
         service_profiles:
           items:
@@ -12940,22 +12980,23 @@ components:
                 with a port, this field is `null`.
               properties:
                 admin_state_up:
-                  description: The administrative state of the resource, which is
-                    up (`true`) or down (`false`).
+                  description: The administrative state of the resource, which 
+                    is up (`true`) or down (`false`).
                   type: boolean
                 device_id:
-                  description: The ID of the device that uses this port. For example,
-                    a server instance or a logical router.
+                  description: The ID of the device that uses this port. For 
+                    example, a server instance or a logical router.
                   type: string
                 device_owner:
-                  description: The entity type that uses this port. For example, `compute:nova`
-                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
-                    (router interface).
+                  description: The entity type that uses this port. For example,
+                    `compute:nova` (server instance), `network:dhcp` (DHCP 
+                    agent) or `network:router_interface` (router interface).
                   type: string
                 mac_address:
-                  description: The MAC address of the port. If the port uses the `direct-physical`
-                    `vnic_type` then the value of this field is overwritten with the
-                    MAC address provided in the active binding:profile if any.
+                  description: The MAC address of the port. If the port uses the
+                    `direct-physical` `vnic_type` then the value of this field 
+                    is overwritten with the MAC address provided in the active 
+                    binding:profile if any.
                   type: string
                 name:
                   description: Human-readable name of the resource.
@@ -12983,44 +13024,47 @@ components:
               items:
                 properties:
                   description:
-                    description: A text describing the rule, which helps users to
-                      manage/find easily theirs rules.
+                    description: A text describing the rule, which helps users 
+                      to manage/find easily theirs rules.
                     type: string
                   external_port:
-                    description: The TCP/UDP/other protocol port number of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port number of the 
+                      port forwarding’s floating IP address.
                     type:
                       - 'null'
                       - number
                   external_port_range:
-                    description: The TCP/UDP/other protocol port range of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port range of the 
+                      port forwarding’s floating IP address.
                     type: number
                   id:
                     description: The ID of the floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_ip_address:
-                    description: The fixed IPv4 address of the Neutron port associated
-                      to the floating IP port forwarding.
+                    description: The fixed IPv4 address of the Neutron port 
+                      associated to the floating IP port forwarding.
                     type: string
                   internal_port:
-                    description: The TCP/UDP/other protocol port number of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port number of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type:
                       - 'null'
                       - number
                   internal_port_id:
-                    description: The ID of the Neutron port associated to the floating
-                      IP port forwarding.
+                    description: The ID of the Neutron port associated to the 
+                      floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_port_range:
-                    description: The TCP/UDP/other protocol port range of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port range of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type: number
                   protocol:
-                    description: The IP protocol used in the floating IP port forwarding.
+                    description: The IP protocol used in the floating IP port 
+                      forwarding.
                     type: string
                 type: object
               type: array
@@ -13174,22 +13218,23 @@ components:
                 with a port, this field is `null`.
               properties:
                 admin_state_up:
-                  description: The administrative state of the resource, which is
-                    up (`true`) or down (`false`).
+                  description: The administrative state of the resource, which 
+                    is up (`true`) or down (`false`).
                   type: boolean
                 device_id:
-                  description: The ID of the device that uses this port. For example,
-                    a server instance or a logical router.
+                  description: The ID of the device that uses this port. For 
+                    example, a server instance or a logical router.
                   type: string
                 device_owner:
-                  description: The entity type that uses this port. For example, `compute:nova`
-                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
-                    (router interface).
+                  description: The entity type that uses this port. For example,
+                    `compute:nova` (server instance), `network:dhcp` (DHCP 
+                    agent) or `network:router_interface` (router interface).
                   type: string
                 mac_address:
-                  description: The MAC address of the port. If the port uses the `direct-physical`
-                    `vnic_type` then the value of this field is overwritten with the
-                    MAC address provided in the active binding:profile if any.
+                  description: The MAC address of the port. If the port uses the
+                    `direct-physical` `vnic_type` then the value of this field 
+                    is overwritten with the MAC address provided in the active 
+                    binding:profile if any.
                   type: string
                 name:
                   description: Human-readable name of the resource.
@@ -13217,44 +13262,47 @@ components:
               items:
                 properties:
                   description:
-                    description: A text describing the rule, which helps users to
-                      manage/find easily theirs rules.
+                    description: A text describing the rule, which helps users 
+                      to manage/find easily theirs rules.
                     type: string
                   external_port:
-                    description: The TCP/UDP/other protocol port number of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port number of the 
+                      port forwarding’s floating IP address.
                     type:
                       - 'null'
                       - number
                   external_port_range:
-                    description: The TCP/UDP/other protocol port range of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port range of the 
+                      port forwarding’s floating IP address.
                     type: number
                   id:
                     description: The ID of the floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_ip_address:
-                    description: The fixed IPv4 address of the Neutron port associated
-                      to the floating IP port forwarding.
+                    description: The fixed IPv4 address of the Neutron port 
+                      associated to the floating IP port forwarding.
                     type: string
                   internal_port:
-                    description: The TCP/UDP/other protocol port number of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port number of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type:
                       - 'null'
                       - number
                   internal_port_id:
-                    description: The ID of the Neutron port associated to the floating
-                      IP port forwarding.
+                    description: The ID of the Neutron port associated to the 
+                      floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_port_range:
-                    description: The TCP/UDP/other protocol port range of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port range of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type: number
                   protocol:
-                    description: The IP protocol used in the floating IP port forwarding.
+                    description: The IP protocol used in the floating IP port 
+                      forwarding.
                     type: string
                 type: object
               type: array
@@ -13554,22 +13602,23 @@ components:
                 with a port, this field is `null`.
               properties:
                 admin_state_up:
-                  description: The administrative state of the resource, which is
-                    up (`true`) or down (`false`).
+                  description: The administrative state of the resource, which 
+                    is up (`true`) or down (`false`).
                   type: boolean
                 device_id:
-                  description: The ID of the device that uses this port. For example,
-                    a server instance or a logical router.
+                  description: The ID of the device that uses this port. For 
+                    example, a server instance or a logical router.
                   type: string
                 device_owner:
-                  description: The entity type that uses this port. For example, `compute:nova`
-                    (server instance), `network:dhcp` (DHCP agent) or `network:router_interface`
-                    (router interface).
+                  description: The entity type that uses this port. For example,
+                    `compute:nova` (server instance), `network:dhcp` (DHCP 
+                    agent) or `network:router_interface` (router interface).
                   type: string
                 mac_address:
-                  description: The MAC address of the port. If the port uses the `direct-physical`
-                    `vnic_type` then the value of this field is overwritten with the
-                    MAC address provided in the active binding:profile if any.
+                  description: The MAC address of the port. If the port uses the
+                    `direct-physical` `vnic_type` then the value of this field 
+                    is overwritten with the MAC address provided in the active 
+                    binding:profile if any.
                   type: string
                 name:
                   description: Human-readable name of the resource.
@@ -13597,44 +13646,47 @@ components:
               items:
                 properties:
                   description:
-                    description: A text describing the rule, which helps users to
-                      manage/find easily theirs rules.
+                    description: A text describing the rule, which helps users 
+                      to manage/find easily theirs rules.
                     type: string
                   external_port:
-                    description: The TCP/UDP/other protocol port number of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port number of the 
+                      port forwarding’s floating IP address.
                     type:
                       - 'null'
                       - number
                   external_port_range:
-                    description: The TCP/UDP/other protocol port range of the port
-                      forwarding’s floating IP address.
+                    description: The TCP/UDP/other protocol port range of the 
+                      port forwarding’s floating IP address.
                     type: number
                   id:
                     description: The ID of the floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_ip_address:
-                    description: The fixed IPv4 address of the Neutron port associated
-                      to the floating IP port forwarding.
+                    description: The fixed IPv4 address of the Neutron port 
+                      associated to the floating IP port forwarding.
                     type: string
                   internal_port:
-                    description: The TCP/UDP/other protocol port number of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port number of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type:
                       - 'null'
                       - number
                   internal_port_id:
-                    description: The ID of the Neutron port associated to the floating
-                      IP port forwarding.
+                    description: The ID of the Neutron port associated to the 
+                      floating IP port forwarding.
                     format: uuid
                     type: string
                   internal_port_range:
-                    description: The TCP/UDP/other protocol port range of the Neutron
-                      port fixed IP address associated to the floating ip port forwarding.
+                    description: The TCP/UDP/other protocol port range of the 
+                      Neutron port fixed IP address associated to the floating 
+                      ip port forwarding.
                     type: number
                   protocol:
-                    description: The IP protocol used in the floating IP port forwarding.
+                    description: The IP protocol used in the floating IP port 
+                      forwarding.
                     type: string
                 type: object
               type: array
@@ -13744,23 +13796,24 @@ components:
                   with a port, this field is `null`.
                 properties:
                   admin_state_up:
-                    description: The administrative state of the resource, which is
-                      up (`true`) or down (`false`).
+                    description: The administrative state of the resource, which
+                      is up (`true`) or down (`false`).
                     type: boolean
                   device_id:
-                    description: The ID of the device that uses this port. For example,
-                      a server instance or a logical router.
+                    description: The ID of the device that uses this port. For 
+                      example, a server instance or a logical router.
                     type: string
                   device_owner:
-                    description: The entity type that uses this port. For example,
-                      `compute:nova` (server instance), `network:dhcp` (DHCP agent)
-                      or `network:router_interface` (router interface).
+                    description: The entity type that uses this port. For 
+                      example, `compute:nova` (server instance), `network:dhcp` 
+                      (DHCP agent) or `network:router_interface` (router 
+                      interface).
                     type: string
                   mac_address:
-                    description: The MAC address of the port. If the port uses the
-                      `direct-physical` `vnic_type` then the value of this field is
-                      overwritten with the MAC address provided in the active binding:profile
-                      if any.
+                    description: The MAC address of the port. If the port uses 
+                      the `direct-physical` `vnic_type` then the value of this 
+                      field is overwritten with the MAC address provided in the 
+                      active binding:profile if any.
                     type: string
                   name:
                     description: Human-readable name of the resource.
@@ -13788,44 +13841,47 @@ components:
                 items:
                   properties:
                     description:
-                      description: A text describing the rule, which helps users to
-                        manage/find easily theirs rules.
+                      description: A text describing the rule, which helps users
+                        to manage/find easily theirs rules.
                       type: string
                     external_port:
-                      description: The TCP/UDP/other protocol port number of the port
-                        forwarding’s floating IP address.
+                      description: The TCP/UDP/other protocol port number of the
+                        port forwarding’s floating IP address.
                       type:
                         - 'null'
                         - number
                     external_port_range:
-                      description: The TCP/UDP/other protocol port range of the port
-                        forwarding’s floating IP address.
+                      description: The TCP/UDP/other protocol port range of the 
+                        port forwarding’s floating IP address.
                       type: number
                     id:
                       description: The ID of the floating IP port forwarding.
                       format: uuid
                       type: string
                     internal_ip_address:
-                      description: The fixed IPv4 address of the Neutron port associated
-                        to the floating IP port forwarding.
+                      description: The fixed IPv4 address of the Neutron port 
+                        associated to the floating IP port forwarding.
                       type: string
                     internal_port:
-                      description: The TCP/UDP/other protocol port number of the Neutron
-                        port fixed IP address associated to the floating ip port forwarding.
+                      description: The TCP/UDP/other protocol port number of the
+                        Neutron port fixed IP address associated to the floating
+                        ip port forwarding.
                       type:
                         - 'null'
                         - number
                     internal_port_id:
-                      description: The ID of the Neutron port associated to the floating
-                        IP port forwarding.
+                      description: The ID of the Neutron port associated to the 
+                        floating IP port forwarding.
                       format: uuid
                       type: string
                     internal_port_range:
-                      description: The TCP/UDP/other protocol port range of the Neutron
-                        port fixed IP address associated to the floating ip port forwarding.
+                      description: The TCP/UDP/other protocol port range of the 
+                        Neutron port fixed IP address associated to the floating
+                        ip port forwarding.
                       type: number
                     protocol:
-                      description: The IP protocol used in the floating IP port forwarding.
+                      description: The IP protocol used in the floating IP port 
+                        forwarding.
                       type: string
                   type: object
                 type: array
@@ -13875,8 +13931,8 @@ components:
           type: array
       type: object
     FloatingipsPort_ForwardingShowResponse:
-      description: Response of the floatingips/floatingip_id/port_forwardings/id:get
-        operation
+      description: Response of the 
+        floatingips/floatingip_id/port_forwardings/id:get operation
       properties:
         port_forwarding:
           description: |-
@@ -13949,8 +14005,8 @@ components:
           type: object
       type: object
     FloatingipsPort_ForwardingUpdateRequest:
-      description: Request of the floatingips/floatingip_id/port_forwardings/id:put
-        operation
+      description: Request of the 
+        floatingips/floatingip_id/port_forwardings/id:put operation
       properties:
         port_forwarding:
           description: |-
@@ -14015,8 +14071,8 @@ components:
           type: object
       type: object
     FloatingipsPort_ForwardingUpdateResponse:
-      description: Response of the floatingips/floatingip_id/port_forwardings/id:put
-        operation
+      description: Response of the 
+        floatingips/floatingip_id/port_forwardings/id:put operation
       properties:
         port_forwarding:
           description: |-
@@ -14089,8 +14145,8 @@ components:
           type: object
       type: object
     FloatingipsPort_ForwardingsCreateRequest:
-      description: Request of the floatingips/floatingip_id/port_forwardings:post
-        operation
+      description: Request of the 
+        floatingips/floatingip_id/port_forwardings:post operation
       properties:
         port_forwarding:
           description: |-
@@ -14161,8 +14217,8 @@ components:
           type: object
       type: object
     FloatingipsPort_ForwardingsCreateResponse:
-      description: Response of the floatingips/floatingip_id/port_forwardings:post
-        operation
+      description: Response of the 
+        floatingips/floatingip_id/port_forwardings:post operation
       properties:
         port_forwarding:
           description: |-
@@ -14235,8 +14291,8 @@ components:
           type: object
       type: object
     FloatingipsPort_ForwardingsIndexResponse:
-      description: Response of the floatingips/floatingip_id/port_forwardings:get
-        operation
+      description: Response of the 
+        floatingips/floatingip_id/port_forwardings:get operation
       properties:
         port_forwardings:
           description: |-
@@ -14311,10 +14367,12 @@ components:
           type: array
       type: object
     FloatingipsTagUpdateRequest:
-      description: Request of the floatingips/floatingip_id/tags/id:put operation
+      description: Request of the floatingips/floatingip_id/tags/id:put 
+        operation
       type: object
     FloatingipsTagUpdateResponse:
-      description: Response of the floatingips/floatingip_id/tags/id:put operation
+      description: Response of the floatingips/floatingip_id/tags/id:put 
+        operation
       type: object
     FloatingipsTagsIndexResponse:
       description: Response of the floatingips/floatingip_id/tags:get operation
@@ -14550,8 +14608,8 @@ components:
           type: array
       type: object
     Local_IpsPort_AssociationShowResponse:
-      description: Response of the local_ips/local_ip_id/port_associations/id:get
-        operation
+      description: Response of the 
+        local_ips/local_ip_id/port_associations/id:get operation
       properties:
         port_association:
           properties:
@@ -14571,15 +14629,16 @@ components:
           type: object
       type: object
     Local_IpsPort_AssociationUpdateRequest:
-      description: Request of the local_ips/local_ip_id/port_associations/id:put operation
+      description: Request of the local_ips/local_ip_id/port_associations/id:put
+        operation
       properties:
         port_association:
           properties: {}
           type: object
       type: object
     Local_IpsPort_AssociationUpdateResponse:
-      description: Response of the local_ips/local_ip_id/port_associations/id:put
-        operation
+      description: Response of the 
+        local_ips/local_ip_id/port_associations/id:put operation
       properties:
         port_association:
           properties:
@@ -14599,7 +14658,8 @@ components:
           type: object
       type: object
     Local_IpsPort_AssociationsCreateRequest:
-      description: Request of the local_ips/local_ip_id/port_associations:post operation
+      description: Request of the local_ips/local_ip_id/port_associations:post 
+        operation
       properties:
         port_association:
           properties:
@@ -14620,7 +14680,8 @@ components:
           type: object
       type: object
     Local_IpsPort_AssociationsCreateResponse:
-      description: Response of the local_ips/local_ip_id/port_associations:post operation
+      description: Response of the local_ips/local_ip_id/port_associations:post 
+        operation
       properties:
         port_association:
           properties:
@@ -14648,7 +14709,8 @@ components:
           type: object
       type: object
     Local_IpsPort_AssociationsIndexResponse:
-      description: Response of the local_ips/local_ip_id/port_associations:get operation
+      description: Response of the local_ips/local_ip_id/port_associations:get 
+        operation
       properties:
         port_associations:
           items:
@@ -15194,7 +15256,8 @@ components:
           type: object
       type: object
     MeteringMetering_Label_RuleShowResponse:
-      description: Response of the metering/metering-label-rules/id:get operation
+      description: Response of the metering/metering-label-rules/id:get 
+        operation
       properties:
         metering_label_rule:
           properties:
@@ -15235,7 +15298,8 @@ components:
           type: object
       type: object
     MeteringMetering_Label_RuleUpdateResponse:
-      description: Response of the metering/metering-label-rules/id:put operation
+      description: Response of the metering/metering-label-rules/id:put 
+        operation
       properties:
         metering_label_rule:
           properties:
@@ -16636,16 +16700,16 @@ components:
           type: array
       type: object
     Network_Segment_RangesTagUpdateRequest:
-      description: Request of the network_segment_ranges/network_segment_range_id/tags/id:put
-        operation
+      description: Request of the 
+        network_segment_ranges/network_segment_range_id/tags/id:put operation
       type: object
     Network_Segment_RangesTagUpdateResponse:
-      description: Response of the network_segment_ranges/network_segment_range_id/tags/id:put
-        operation
+      description: Response of the 
+        network_segment_ranges/network_segment_range_id/tags/id:put operation
       type: object
     Network_Segment_RangesTagsIndexResponse:
-      description: Response of the network_segment_ranges/network_segment_range_id/tags:get
-        operation
+      description: Response of the 
+        network_segment_ranges/network_segment_range_id/tags:get operation
       properties:
         tags:
           items:
@@ -16654,8 +16718,8 @@ components:
           type: array
       type: object
     Network_Segment_RangesTagsUpdate_AllRequest:
-      description: Request of the network_segment_ranges/network_segment_range_id/tags:put
-        operation
+      description: Request of the 
+        network_segment_ranges/network_segment_range_id/tags:put operation
       properties:
         tags:
           items:
@@ -16664,8 +16728,8 @@ components:
           type: array
       type: object
     Network_Segment_RangesTagsUpdate_AllResponse:
-      description: Response of the network_segment_ranges/network_segment_range_id/tags:put
-        operation
+      description: Response of the 
+        network_segment_ranges/network_segment_range_id/tags:put operation
       properties:
         tags:
           items:
@@ -17011,19 +17075,23 @@ components:
           type: object
       type: object
     NetworksDhcp_AgentShowResponse:
-      description: Response of the networks/network_id/dhcp-agents/id:get operation
+      description: Response of the networks/network_id/dhcp-agents/id:get 
+        operation
       type: object
     NetworksDhcp_AgentUpdateRequest:
-      description: Request of the networks/network_id/dhcp-agents/id:put operation
+      description: Request of the networks/network_id/dhcp-agents/id:put 
+        operation
       type: object
     NetworksDhcp_AgentUpdateResponse:
-      description: Response of the networks/network_id/dhcp-agents/id:put operation
+      description: Response of the networks/network_id/dhcp-agents/id:put 
+        operation
       type: object
     NetworksDhcp_AgentsCreateRequest:
       description: Request of the networks/network_id/dhcp-agents:post operation
       type: object
     NetworksDhcp_AgentsCreateResponse:
-      description: Response of the networks/network_id/dhcp-agents:post operation
+      description: Response of the networks/network_id/dhcp-agents:post 
+        operation
       type: object
     NetworksDhcp_AgentsIndexResponse:
       description: Response of the networks/network_id/dhcp-agents:get operation
@@ -17256,8 +17324,8 @@ components:
           type: array
       type: object
     PoliciesPacket_Rate_Limit_RuleShowResponse:
-      description: Response of the policies/policy_id/packet_rate_limit_rules/id:get
-        operation
+      description: Response of the 
+        policies/policy_id/packet_rate_limit_rules/id:get operation
       properties:
         packet_rate_limit_rule:
           properties:
@@ -17284,8 +17352,8 @@ components:
           type: object
       type: object
     PoliciesPacket_Rate_Limit_RuleUpdateRequest:
-      description: Request of the policies/policy_id/packet_rate_limit_rules/id:put
-        operation
+      description: Request of the 
+        policies/policy_id/packet_rate_limit_rules/id:put operation
       properties:
         packet_rate_limit_rule:
           properties:
@@ -17309,8 +17377,8 @@ components:
           type: object
       type: object
     PoliciesPacket_Rate_Limit_RuleUpdateResponse:
-      description: Response of the policies/policy_id/packet_rate_limit_rules/id:put
-        operation
+      description: Response of the 
+        policies/policy_id/packet_rate_limit_rules/id:put operation
       properties:
         packet_rate_limit_rule:
           properties:
@@ -17337,8 +17405,8 @@ components:
           type: object
       type: object
     PoliciesPacket_Rate_Limit_RulesCreateRequest:
-      description: Request of the policies/policy_id/packet_rate_limit_rules:post
-        operation
+      description: Request of the 
+        policies/policy_id/packet_rate_limit_rules:post operation
       properties:
         packet_rate_limit_rule:
           properties:
@@ -17362,8 +17430,8 @@ components:
           type: object
       type: object
     PoliciesPacket_Rate_Limit_RulesCreateResponse:
-      description: Response of the policies/policy_id/packet_rate_limit_rules:post
-        operation
+      description: Response of the 
+        policies/policy_id/packet_rate_limit_rules:post operation
       properties:
         packet_rate_limit_rule:
           properties:
@@ -17390,8 +17458,8 @@ components:
           type: object
       type: object
     PoliciesPacket_Rate_Limit_RulesIndexResponse:
-      description: Response of the policies/policy_id/packet_rate_limit_rules:get
-        operation
+      description: Response of the 
+        policies/policy_id/packet_rate_limit_rules:get operation
       properties:
         packet_rate_limit_rules:
           items:
@@ -17628,7 +17696,8 @@ components:
                     description: IP Address
                     type: string
                   subnet_id:
-                    description: The subnet ID from which the IP address is assigned
+                    description: The subnet ID from which the IP address is 
+                      assigned
                     type: string
                 type: object
               type: array
@@ -17913,7 +17982,8 @@ components:
                     description: IP Address
                     type: string
                   subnet_id:
-                    description: The subnet ID from which the IP address is assigned
+                    description: The subnet ID from which the IP address is 
+                      assigned
                     type: string
                 type: object
               type: array
@@ -18156,7 +18226,8 @@ components:
                     description: IP Address
                     type: string
                   subnet_id:
-                    description: The subnet ID from which the IP address is assigned
+                    description: The subnet ID from which the IP address is 
+                      assigned
                     type: string
                 type: object
               type: array
@@ -18290,10 +18361,12 @@ components:
           type: object
       type: object
     PortsAdd_Allowed_Address_PairsAdd_Allowed_Address_PairsRequest:
-      description: Request of the ports/port_id/add_allowed_address_pairs:put operation
+      description: Request of the ports/port_id/add_allowed_address_pairs:put 
+        operation
       type: object
     PortsAdd_Allowed_Address_PairsAdd_Allowed_Address_PairsResponse:
-      description: Response of the ports/port_id/add_allowed_address_pairs:put operation
+      description: Response of the ports/port_id/add_allowed_address_pairs:put 
+        operation
       type: object
     PortsBindingShowResponse:
       description: Response of the ports/port_id/bindings/id:get operation
@@ -18724,7 +18797,8 @@ components:
                     description: IP Address
                     type: string
                   subnet_id:
-                    description: The subnet ID from which the IP address is assigned
+                    description: The subnet ID from which the IP address is 
+                      assigned
                     type: string
                 type: object
               type: array
@@ -18991,7 +19065,8 @@ components:
                     description: IP Address
                     type: string
                   subnet_id:
-                    description: The subnet ID from which the IP address is assigned
+                    description: The subnet ID from which the IP address is 
+                      assigned
                     type: string
                 type: object
               type: array
@@ -19301,7 +19376,8 @@ components:
                       description: IP Address
                       type: string
                     subnet_id:
-                      description: The subnet ID from which the IP address is assigned
+                      description: The subnet ID from which the IP address is 
+                        assigned
                       type: string
                   type: object
                 type: array
@@ -19469,7 +19545,8 @@ components:
           type: array
       type: object
     QosAlias_Bandwidth_Limit_RuleShowResponse:
-      description: Response of the qos/alias-bandwidth-limit-rules/id:get operation
+      description: Response of the qos/alias-bandwidth-limit-rules/id:get 
+        operation
       properties:
         alias_bandwidth_limit_rule:
           properties:
@@ -19498,7 +19575,8 @@ components:
           type: object
       type: object
     QosAlias_Bandwidth_Limit_RuleUpdateRequest:
-      description: Request of the qos/alias-bandwidth-limit-rules/id:put operation
+      description: Request of the qos/alias-bandwidth-limit-rules/id:put 
+        operation
       properties:
         alias_bandwidth_limit_rule:
           properties:
@@ -19522,7 +19600,8 @@ components:
           type: object
       type: object
     QosAlias_Bandwidth_Limit_RuleUpdateResponse:
-      description: Response of the qos/alias-bandwidth-limit-rules/id:put operation
+      description: Response of the qos/alias-bandwidth-limit-rules/id:put 
+        operation
       properties:
         alias_bandwidth_limit_rule:
           properties:
@@ -19558,7 +19637,8 @@ components:
           type: object
       type: object
     QosAlias_Bandwidth_Limit_RulesCreateResponse:
-      description: Response of the qos/alias-bandwidth-limit-rules:post operation
+      description: Response of the qos/alias-bandwidth-limit-rules:post 
+        operation
       properties:
         alias_bandwidth_limit_rule:
           properties:
@@ -19817,7 +19897,8 @@ components:
           type: array
       type: object
     QosAlias_Minimum_Bandwidth_RuleShowResponse:
-      description: Response of the qos/alias-minimum-bandwidth-rules/id:get operation
+      description: Response of the qos/alias-minimum-bandwidth-rules/id:get 
+        operation
       properties:
         alias_minimum_bandwidth_rule:
           properties:
@@ -19840,7 +19921,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Bandwidth_RuleUpdateRequest:
-      description: Request of the qos/alias-minimum-bandwidth-rules/id:put operation
+      description: Request of the qos/alias-minimum-bandwidth-rules/id:put 
+        operation
       properties:
         alias_minimum_bandwidth_rule:
           properties:
@@ -19858,7 +19940,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Bandwidth_RuleUpdateResponse:
-      description: Response of the qos/alias-minimum-bandwidth-rules/id:put operation
+      description: Response of the qos/alias-minimum-bandwidth-rules/id:put 
+        operation
       properties:
         alias_minimum_bandwidth_rule:
           properties:
@@ -19881,14 +19964,16 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Bandwidth_RulesCreateRequest:
-      description: Request of the qos/alias-minimum-bandwidth-rules:post operation
+      description: Request of the qos/alias-minimum-bandwidth-rules:post 
+        operation
       properties:
         alias_minimum_bandwidth_rule:
           properties: {}
           type: object
       type: object
     QosAlias_Minimum_Bandwidth_RulesCreateResponse:
-      description: Response of the qos/alias-minimum-bandwidth-rules:post operation
+      description: Response of the qos/alias-minimum-bandwidth-rules:post 
+        operation
       properties:
         alias_minimum_bandwidth_rule:
           properties:
@@ -19911,7 +19996,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Bandwidth_RulesIndexResponse:
-      description: Response of the qos/alias-minimum-bandwidth-rules:get operation
+      description: Response of the qos/alias-minimum-bandwidth-rules:get 
+        operation
       properties:
         alias_minimum_bandwidth_rules:
           items:
@@ -19936,7 +20022,8 @@ components:
           type: array
       type: object
     QosAlias_Minimum_Packet_Rate_RuleShowResponse:
-      description: Response of the qos/alias-minimum-packet-rate-rules/id:get operation
+      description: Response of the qos/alias-minimum-packet-rate-rules/id:get 
+        operation
       properties:
         alias_minimum_packet_rate_rule:
           properties:
@@ -19958,7 +20045,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Packet_Rate_RuleUpdateRequest:
-      description: Request of the qos/alias-minimum-packet-rate-rules/id:put operation
+      description: Request of the qos/alias-minimum-packet-rate-rules/id:put 
+        operation
       properties:
         alias_minimum_packet_rate_rule:
           properties:
@@ -19977,7 +20065,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Packet_Rate_RuleUpdateResponse:
-      description: Response of the qos/alias-minimum-packet-rate-rules/id:put operation
+      description: Response of the qos/alias-minimum-packet-rate-rules/id:put 
+        operation
       properties:
         alias_minimum_packet_rate_rule:
           properties:
@@ -19999,14 +20088,16 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Packet_Rate_RulesCreateRequest:
-      description: Request of the qos/alias-minimum-packet-rate-rules:post operation
+      description: Request of the qos/alias-minimum-packet-rate-rules:post 
+        operation
       properties:
         alias_minimum_packet_rate_rule:
           properties: {}
           type: object
       type: object
     QosAlias_Minimum_Packet_Rate_RulesCreateResponse:
-      description: Response of the qos/alias-minimum-packet-rate-rules:post operation
+      description: Response of the qos/alias-minimum-packet-rate-rules:post 
+        operation
       properties:
         alias_minimum_packet_rate_rule:
           properties:
@@ -20028,7 +20119,8 @@ components:
           type: object
       type: object
     QosAlias_Minimum_Packet_Rate_RulesIndexResponse:
-      description: Response of the qos/alias-minimum-packet-rate-rules:get operation
+      description: Response of the qos/alias-minimum-packet-rate-rules:get 
+        operation
       properties:
         alias_minimum_packet_rate_rules:
           items:
@@ -20052,8 +20144,8 @@ components:
           type: array
       type: object
     QosPoliciesBandwidth_Limit_RuleShowResponse:
-      description: Response of the qos/policies/policy_id/bandwidth_limit_rules/id:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/bandwidth_limit_rules/id:get operation
       properties:
         bandwidth_limit_rule:
           description: |-
@@ -20095,8 +20187,8 @@ components:
           type: object
       type: object
     QosPoliciesBandwidth_Limit_RuleUpdateRequest:
-      description: Request of the qos/policies/policy_id/bandwidth_limit_rules/id:put
-        operation
+      description: Request of the 
+        qos/policies/policy_id/bandwidth_limit_rules/id:put operation
       properties:
         bandwidth_limit_rule:
           description: |-
@@ -20132,8 +20224,8 @@ components:
           type: object
       type: object
     QosPoliciesBandwidth_Limit_RuleUpdateResponse:
-      description: Response of the qos/policies/policy_id/bandwidth_limit_rules/id:put
-        operation
+      description: Response of the 
+        qos/policies/policy_id/bandwidth_limit_rules/id:put operation
       properties:
         bandwidth_limit_rule:
           description: |-
@@ -20174,8 +20266,8 @@ components:
           type: object
       type: object
     QosPoliciesBandwidth_Limit_RulesCreateRequest:
-      description: Request of the qos/policies/policy_id/bandwidth_limit_rules:post
-        operation
+      description: Request of the 
+        qos/policies/policy_id/bandwidth_limit_rules:post operation
       properties:
         bandwidth_limit_rule:
           description: |-
@@ -20212,8 +20304,8 @@ components:
           type: object
       type: object
     QosPoliciesBandwidth_Limit_RulesCreateResponse:
-      description: Response of the qos/policies/policy_id/bandwidth_limit_rules:post
-        operation
+      description: Response of the 
+        qos/policies/policy_id/bandwidth_limit_rules:post operation
       properties:
         bandwidth_limit_rule:
           description: |-
@@ -20255,8 +20347,8 @@ components:
           type: object
       type: object
     QosPoliciesBandwidth_Limit_RulesIndexResponse:
-      description: Response of the qos/policies/policy_id/bandwidth_limit_rules:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/bandwidth_limit_rules:get operation
       properties:
         bandwidth_limit_rules:
           description: |-
@@ -20404,8 +20496,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RuleShowResponse:
-      description: Response of the qos/policies/policy_id/dscp_marking_rules/id:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/dscp_marking_rules/id:get operation
       properties:
         dscp_marking_rule:
           description: |-
@@ -20448,8 +20540,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RuleUpdateRequest:
-      description: Request of the qos/policies/policy_id/dscp_marking_rules/id:put
-        operation
+      description: Request of the 
+        qos/policies/policy_id/dscp_marking_rules/id:put operation
       properties:
         dscp_marking_rule:
           description: |-
@@ -20487,8 +20579,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RuleUpdateResponse:
-      description: Response of the qos/policies/policy_id/dscp_marking_rules/id:put
-        operation
+      description: Response of the 
+        qos/policies/policy_id/dscp_marking_rules/id:put operation
       properties:
         dscp_marking_rule:
           description: |-
@@ -20531,7 +20623,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RulesCreateRequest:
-      description: Request of the qos/policies/policy_id/dscp_marking_rules:post operation
+      description: Request of the qos/policies/policy_id/dscp_marking_rules:post
+        operation
       properties:
         dscp_marking_rule:
           description: |-
@@ -20569,8 +20662,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RulesCreateResponse:
-      description: Response of the qos/policies/policy_id/dscp_marking_rules:post
-        operation
+      description: Response of the 
+        qos/policies/policy_id/dscp_marking_rules:post operation
       properties:
         dscp_marking_rule:
           description: |-
@@ -20613,7 +20706,8 @@ components:
           type: object
       type: object
     QosPoliciesDscp_Marking_RulesIndexResponse:
-      description: Response of the qos/policies/policy_id/dscp_marking_rules:get operation
+      description: Response of the qos/policies/policy_id/dscp_marking_rules:get
+        operation
       properties:
         dscp_marking_rules:
           description: |-
@@ -20724,8 +20818,8 @@ components:
           type: array
       type: object
     QosPoliciesMinimum_Bandwidth_RuleShowResponse:
-      description: Response of the qos/policies/policy_id/minimum_bandwidth_rules/id:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum_bandwidth_rules/id:get operation
       properties:
         minimum_bandwidth_rule:
           description: |-
@@ -20759,8 +20853,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Bandwidth_RuleUpdateRequest:
-      description: Request of the qos/policies/policy_id/minimum_bandwidth_rules/id:put
-        operation
+      description: Request of the 
+        qos/policies/policy_id/minimum_bandwidth_rules/id:put operation
       properties:
         minimum_bandwidth_rule:
           description: |-
@@ -20788,8 +20882,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Bandwidth_RuleUpdateResponse:
-      description: Response of the qos/policies/policy_id/minimum_bandwidth_rules/id:put
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum_bandwidth_rules/id:put operation
       properties:
         minimum_bandwidth_rule:
           description: |-
@@ -20822,8 +20916,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Bandwidth_RulesCreateRequest:
-      description: Request of the qos/policies/policy_id/minimum_bandwidth_rules:post
-        operation
+      description: Request of the 
+        qos/policies/policy_id/minimum_bandwidth_rules:post operation
       properties:
         minimum_bandwidth_rule:
           description: |-
@@ -20852,8 +20946,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Bandwidth_RulesCreateResponse:
-      description: Response of the qos/policies/policy_id/minimum_bandwidth_rules:post
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum_bandwidth_rules:post operation
       properties:
         minimum_bandwidth_rule:
           description: |-
@@ -20887,8 +20981,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Bandwidth_RulesIndexResponse:
-      description: Response of the qos/policies/policy_id/minimum_bandwidth_rules:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum_bandwidth_rules:get operation
       properties:
         minimum_bandwidth_rules:
           description: |-
@@ -20925,8 +21019,8 @@ components:
           type: array
       type: object
     QosPoliciesMinimum_Packet_Rate_RuleShowResponse:
-      description: Response of the qos/policies/policy_id/minimum-packet-rate-rules/id:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum-packet-rate-rules/id:get operation
       properties:
         minimum_packet_rate_rule:
           properties:
@@ -20948,8 +21042,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Packet_Rate_RuleUpdateRequest:
-      description: Request of the qos/policies/policy_id/minimum-packet-rate-rules/id:put
-        operation
+      description: Request of the 
+        qos/policies/policy_id/minimum-packet-rate-rules/id:put operation
       properties:
         minimum_packet_rate_rule:
           properties:
@@ -20968,8 +21062,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Packet_Rate_RuleUpdateResponse:
-      description: Response of the qos/policies/policy_id/minimum-packet-rate-rules/id:put
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum-packet-rate-rules/id:put operation
       properties:
         minimum_packet_rate_rule:
           properties:
@@ -20991,8 +21085,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Packet_Rate_RulesCreateRequest:
-      description: Request of the qos/policies/policy_id/minimum-packet-rate-rules:post
-        operation
+      description: Request of the 
+        qos/policies/policy_id/minimum-packet-rate-rules:post operation
       properties:
         minimum_packet_rate_rule:
           properties:
@@ -21011,8 +21105,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Packet_Rate_RulesCreateResponse:
-      description: Response of the qos/policies/policy_id/minimum-packet-rate-rules:post
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum-packet-rate-rules:post operation
       properties:
         minimum_packet_rate_rule:
           properties:
@@ -21034,8 +21128,8 @@ components:
           type: object
       type: object
     QosPoliciesMinimum_Packet_Rate_RulesIndexResponse:
-      description: Response of the qos/policies/policy_id/minimum-packet-rate-rules:get
-        operation
+      description: Response of the 
+        qos/policies/policy_id/minimum-packet-rate-rules:get operation
       properties:
         minimum_packet_rate_rules:
           items:
@@ -21557,7 +21651,8 @@ components:
         quota:
           properties:
             floatingip:
-              description: The number of floating IP addresses allowed for each project.
+              description: The number of floating IP addresses allowed for each 
+                project.
               properties:
                 limit:
                   description: Current quota limit
@@ -21596,8 +21691,8 @@ components:
                   type: integer
               type: object
             rbac_policy:
-              description: The number of role-based access control (RBAC) policies
-                for each project.
+              description: The number of role-based access control (RBAC) 
+                policies for each project.
               properties:
                 limit:
                   description: Current quota limit
@@ -21623,7 +21718,8 @@ components:
                   type: integer
               type: object
             security_group:
-              description: The number of security groups allowed for each project.
+              description: The number of security groups allowed for each 
+                project.
               properties:
                 limit:
                   description: Current quota limit
@@ -21636,7 +21732,8 @@ components:
                   type: integer
               type: object
             security_group_rule:
-              description: The number of security group rules allowed for each project.
+              description: The number of security group rules allowed for each 
+                project.
               properties:
                 limit:
                   description: Current quota limit
@@ -22058,7 +22155,8 @@ components:
                         description: IP Address
                         type: string
                       subnet_id:
-                        description: The subnet ID from which the IP address is assigned
+                        description: The subnet ID from which the IP address is 
+                          assigned
                         type: string
                     type: object
                   type: array
@@ -22198,7 +22296,8 @@ components:
                         description: IP Address
                         type: string
                       subnet_id:
-                        description: The subnet ID from which the IP address is assigned
+                        description: The subnet ID from which the IP address is 
+                          assigned
                         type: string
                     type: object
                   type: array
@@ -22329,7 +22428,8 @@ components:
                         description: IP Address
                         type: string
                       subnet_id:
-                        description: The subnet ID from which the IP address is assigned
+                        description: The subnet ID from which the IP address is 
+                          assigned
                         type: string
                     type: object
                   type: array
@@ -22449,9 +22549,9 @@ components:
         router:
           properties:
             routes:
-              description: The extra routes configuration for L3 router. A list of
-                dictionaries with destination and nexthop parameters. It is available
-                when extraroute extension is enabled.
+              description: The extra routes configuration for L3 router. A list 
+                of dictionaries with destination and nexthop parameters. It is 
+                available when extraroute extension is enabled.
               items:
                 properties:
                   destination:
@@ -22528,11 +22628,13 @@ components:
             - subnet_id
       properties:
         port_id:
-          description: The ID of the port. One of subnet_id or port_id must be specified.
+          description: The ID of the port. One of subnet_id or port_id must be 
+            specified.
           format: uuid
           type: string
         subnet_id:
-          description: The ID of the subnet. One of subnet_id or port_id must be specified.
+          description: The ID of the subnet. One of subnet_id or port_id must be
+            specified.
           format: uuid
           type: string
       type: object
@@ -22586,7 +22688,8 @@ components:
           type: string
       type: object
     RoutersConntrack_HelperShowResponse:
-      description: Response of the routers/router_id/conntrack_helpers/id:get operation
+      description: Response of the routers/router_id/conntrack_helpers/id:get 
+        operation
       properties:
         conntrack_helper:
           description: |-
@@ -22624,7 +22727,8 @@ components:
           type: object
       type: object
     RoutersConntrack_HelperUpdateRequest:
-      description: Request of the routers/router_id/conntrack_helpers/id:put operation
+      description: Request of the routers/router_id/conntrack_helpers/id:put 
+        operation
       properties:
         conntrack_helper:
           properties:
@@ -22655,7 +22759,8 @@ components:
           type: object
       type: object
     RoutersConntrack_HelperUpdateResponse:
-      description: Response of the routers/router_id/conntrack_helpers/id:put operation
+      description: Response of the routers/router_id/conntrack_helpers/id:put 
+        operation
       properties:
         conntrack_helper:
           description: |-
@@ -22693,7 +22798,8 @@ components:
           type: object
       type: object
     RoutersConntrack_HelpersCreateRequest:
-      description: Request of the routers/router_id/conntrack_helpers:post operation
+      description: Request of the routers/router_id/conntrack_helpers:post 
+        operation
       properties:
         conntrack_helper:
           description: |-
@@ -22729,7 +22835,8 @@ components:
           type: object
       type: object
     RoutersConntrack_HelpersCreateResponse:
-      description: Response of the routers/router_id/conntrack_helpers:post operation
+      description: Response of the routers/router_id/conntrack_helpers:post 
+        operation
       properties:
         conntrack_helper:
           description: |-
@@ -22767,7 +22874,8 @@ components:
           type: object
       type: object
     RoutersConntrack_HelpersIndexResponse:
-      description: Response of the routers/router_id/conntrack_helpers:get operation
+      description: Response of the routers/router_id/conntrack_helpers:get 
+        operation
       properties:
         conntrack_helpers:
           description: |-
@@ -22871,7 +22979,8 @@ components:
                         description: IP Address
                         type: string
                       subnet_id:
-                        description: The subnet ID from which the IP address is assigned
+                        description: The subnet ID from which the IP address is 
+                          assigned
                         type: string
                     type: object
                   type: array
@@ -23001,7 +23110,8 @@ components:
                         description: IP Address
                         type: string
                       subnet_id:
-                        description: The subnet ID from which the IP address is assigned
+                        description: The subnet ID from which the IP address is 
+                          assigned
                         type: string
                     type: object
                   type: array
@@ -23170,8 +23280,8 @@ components:
                           description: IP Address
                           type: string
                         subnet_id:
-                          description: The subnet ID from which the IP address is
-                            assigned
+                          description: The subnet ID from which the IP address 
+                            is assigned
                           type: string
                       type: object
                     type: array
@@ -23308,9 +23418,9 @@ components:
         router:
           properties:
             routes:
-              description: The extra routes configuration for L3 router. A list of
-                dictionaries with destination and nexthop parameters. It is available
-                when extraroute extension is enabled.
+              description: The extra routes configuration for L3 router. A list 
+                of dictionaries with destination and nexthop parameters. It is 
+                available when extraroute extension is enabled.
               items:
                 properties:
                   destination:
@@ -23387,11 +23497,13 @@ components:
             - subnet_id
       properties:
         port_id:
-          description: The ID of the port. One of subnet_id or port_id must be specified.
+          description: The ID of the port. One of subnet_id or port_id must be 
+            specified.
           format: uuid
           type: string
         subnet_id:
-          description: The ID of the subnet. One of subnet_id or port_id must be specified.
+          description: The ID of the subnet. One of subnet_id or port_id must be
+            specified.
           format: uuid
           type: string
       type: object
@@ -23515,9 +23627,9 @@ components:
         router:
           properties:
             routes:
-              description: The extra routes configuration for L3 router. A list of
-                dictionaries with destination and nexthop parameters. It is available
-                when extraroute extension is enabled.
+              description: The extra routes configuration for L3 router. A list 
+                of dictionaries with destination and nexthop parameters. It is 
+                available when extraroute extension is enabled.
               items:
                 properties:
                   destination:
@@ -23575,8 +23687,8 @@ components:
                       - 'null'
                       - string
                   created_at:
-                    description: Time at which the resource has been created (in UTC
-                      ISO8601 format).
+                    description: Time at which the resource has been created (in
+                      UTC ISO8601 format).
                     type: string
                   description:
                     description: A human-readable description for the resource.
@@ -23623,8 +23735,8 @@ components:
                       - integer
                       - 'null'
                   protocol:
-                    description: The IP protocol can be represented by a string, an
-                      integer, or `null`.
+                    description: The IP protocol can be represented by a string,
+                      an integer, or `null`.
                     type: string
                   remote_address_group_id:
                     description: "The remote address group UUID that is associated
@@ -23636,8 +23748,8 @@ components:
                       `remote_ip_prefix` attribute in the\nrequest body."
                     type: string
                   remote_ip_prefix:
-                    description: The remote IP prefix that is matched by this security
-                      group rule.
+                    description: The remote IP prefix that is matched by this 
+                      security group rule.
                     type:
                       - 'null'
                       - string
@@ -23753,8 +23865,8 @@ components:
                       - 'null'
                       - string
                   created_at:
-                    description: Time at which the resource has been created (in UTC
-                      ISO8601 format).
+                    description: Time at which the resource has been created (in
+                      UTC ISO8601 format).
                     type: string
                   description:
                     description: A human-readable description for the resource.
@@ -23801,8 +23913,8 @@ components:
                       - integer
                       - 'null'
                   protocol:
-                    description: The IP protocol can be represented by a string, an
-                      integer, or `null`.
+                    description: The IP protocol can be represented by a string,
+                      an integer, or `null`.
                     type: string
                   remote_address_group_id:
                     description: "The remote address group UUID that is associated
@@ -23814,8 +23926,8 @@ components:
                       `remote_ip_prefix` attribute in the\nrequest body."
                     type: string
                   remote_ip_prefix:
-                    description: The remote IP prefix that is matched by this security
-                      group rule.
+                    description: The remote IP prefix that is matched by this 
+                      security group rule.
                     type:
                       - 'null'
                       - string
@@ -24466,8 +24578,8 @@ components:
                       - 'null'
                       - string
                   created_at:
-                    description: Time at which the resource has been created (in UTC
-                      ISO8601 format).
+                    description: Time at which the resource has been created (in
+                      UTC ISO8601 format).
                     type: string
                   description:
                     description: A human-readable description for the resource.
@@ -24514,8 +24626,8 @@ components:
                       - integer
                       - 'null'
                   protocol:
-                    description: The IP protocol can be represented by a string, an
-                      integer, or `null`.
+                    description: The IP protocol can be represented by a string,
+                      an integer, or `null`.
                     type: string
                   remote_address_group_id:
                     description: "The remote address group UUID that is associated
@@ -24527,8 +24639,8 @@ components:
                       `remote_ip_prefix` attribute in the\nrequest body."
                     type: string
                   remote_ip_prefix:
-                    description: The remote IP prefix that is matched by this security
-                      group rule.
+                    description: The remote IP prefix that is matched by this 
+                      security group rule.
                     type:
                       - 'null'
                       - string
@@ -24621,11 +24733,12 @@ components:
                         - 'null'
                         - string
                     created_at:
-                      description: Time at which the resource has been created (in
-                        UTC ISO8601 format).
+                      description: Time at which the resource has been created 
+                        (in UTC ISO8601 format).
                       type: string
                     description:
-                      description: A human-readable description for the resource.
+                      description: A human-readable description for the 
+                        resource.
                       maxLength: 255
                       type: string
                     direction:
@@ -24669,8 +24782,8 @@ components:
                         - integer
                         - 'null'
                     protocol:
-                      description: The IP protocol can be represented by a string,
-                        an integer, or `null`.
+                      description: The IP protocol can be represented by a 
+                        string, an integer, or `null`.
                       type: string
                     remote_address_group_id:
                       description: "The remote address group UUID that is associated
@@ -24682,8 +24795,8 @@ components:
                         or `remote_ip_prefix` attribute in the\nrequest body."
                       type: string
                     remote_ip_prefix:
-                      description: The remote IP prefix that is matched by this security
-                        group rule.
+                      description: The remote IP prefix that is matched by this 
+                        security group rule.
                       type:
                         - 'null'
                         - string
@@ -24733,13 +24846,16 @@ components:
           type: array
       type: object
     Security_GroupsTagUpdateRequest:
-      description: Request of the security-groups/security_group_id/tags/id:put operation
+      description: Request of the security-groups/security_group_id/tags/id:put 
+        operation
       type: object
     Security_GroupsTagUpdateResponse:
-      description: Response of the security-groups/security_group_id/tags/id:put operation
+      description: Response of the security-groups/security_group_id/tags/id:put
+        operation
       type: object
     Security_GroupsTagsIndexResponse:
-      description: Response of the security-groups/security_group_id/tags:get operation
+      description: Response of the security-groups/security_group_id/tags:get 
+        operation
       properties:
         tags:
           items:
@@ -24748,7 +24864,8 @@ components:
           type: array
       type: object
     Security_GroupsTagsUpdate_AllRequest:
-      description: Request of the security-groups/security_group_id/tags:put operation
+      description: Request of the security-groups/security_group_id/tags:put 
+        operation
       properties:
         tags:
           items:
@@ -24757,7 +24874,8 @@ components:
           type: array
       type: object
     Security_GroupsTagsUpdate_AllResponse:
-      description: Response of the security-groups/security_group_id/tags:put operation
+      description: Response of the security-groups/security_group_id/tags:put 
+        operation
       properties:
         tags:
           items:
@@ -25606,9 +25724,7 @@ components:
             gateway_ip:
               description: |-
                 Gateway IP of this subnet. If the value is `null` that implies no
-                gateway is associated with the subnet. If the gateway_ip is not
-                specified, OpenStack Networking allocates an address from the CIDR
-                for the gateway for the subnet by default.
+                gateway is associated with the subnet.
               type:
                 - 'null'
                 - string
@@ -26475,10 +26591,12 @@ components:
           type: array
       type: object
     SubnetpoolsOnboard_Network_SubnetsOnboard_Network_SubnetsRequest:
-      description: Request of the subnetpools/id/onboard_network_subnets:put operation
+      description: Request of the subnetpools/id/onboard_network_subnets:put 
+        operation
       type: object
     SubnetpoolsOnboard_Network_SubnetsOnboard_Network_SubnetsResponse:
-      description: Response of the subnetpools/id/onboard_network_subnets:put operation
+      description: Response of the subnetpools/id/onboard_network_subnets:put 
+        operation
       type: object
     SubnetpoolsRemove_PrefixesRemove_PrefixesRequest:
       description: Request of the subnetpools/id/remove_prefixes:put operation
@@ -26487,10 +26605,12 @@ components:
       description: Response of the subnetpools/id/remove_prefixes:put operation
       type: object
     SubnetpoolsTagUpdateRequest:
-      description: Request of the subnetpools/subnetpool_id/tags/id:put operation
+      description: Request of the subnetpools/subnetpool_id/tags/id:put 
+        operation
       type: object
     SubnetpoolsTagUpdateResponse:
-      description: Response of the subnetpools/subnetpool_id/tags/id:put operation
+      description: Response of the subnetpools/subnetpool_id/tags/id:put 
+        operation
       type: object
     SubnetpoolsTagsIndexResponse:
       description: Response of the subnetpools/subnetpool_id/tags:get operation

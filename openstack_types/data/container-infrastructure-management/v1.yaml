@@ -560,8 +560,8 @@ paths:
 components:
   parameters:
     certificates_certificate_id:
-      description: certificate_id parameter for /v1/certificates/{certificate_id}
-        API
+      description: certificate_id parameter for 
+        /v1/certificates/{certificate_id} API
       in: path
       name: certificate_id
       required: true
@@ -575,23 +575,24 @@ components:
       schema:
         type: string
     clusters_nodegroups_nodegroup_id:
-      description: nodegroup_id parameter for /v1/clusters/nodegroups/{nodegroup_id}
-        API
+      description: nodegroup_id parameter for 
+        /v1/clusters/nodegroups/{nodegroup_id} API
       in: path
       name: nodegroup_id
       required: true
       schema:
         type: string
     clustertemplates_clustertemplate_id:
-      description: clustertemplate_id parameter for /v1/clustertemplates/{clustertemplate_id}
-        API
+      description: clustertemplate_id parameter for 
+        /v1/clustertemplates/{clustertemplate_id} API
       in: path
       name: clustertemplate_id
       required: true
       schema:
         type: string
     federations_federation_id:
-      description: federation_id parameter for /v1/federations/{federation_id} API
+      description: federation_id parameter for /v1/federations/{federation_id} 
+        API
       in: path
       name: federation_id
       required: true
@@ -1409,6 +1410,9 @@ components:
           minLength: 1
           type: string
         insecure_registry:
+          description: |-
+            The URL pointing to users’s own private insecure docker registry to
+            deploy and run docker containers.
           maxLength: 255
           minLength: 1
           type: string

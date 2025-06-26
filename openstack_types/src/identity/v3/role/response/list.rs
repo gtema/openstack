@@ -37,7 +37,7 @@ pub struct RoleResponse {
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// The resource name.
+    /// The role name.
     #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,

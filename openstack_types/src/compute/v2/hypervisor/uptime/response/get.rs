@@ -17,30 +17,86 @@
 //! Response type for the GET `os-hypervisors/{id}/uptime` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct UptimeResponse(BTreeMap<String, Value>);
+/// Uptime response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct UptimeResponse {
+    /// The hypervisor host name provided by the Nova virt driver. For the
+    /// Ironic driver, it is the Ironic node uuid.
+    #[structable()]
+    pub hypervisor_hostname: String,
 
-impl StructTable for UptimeResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The id of the hypervisor as a UUID.
+    ///
+    /// **New in version 2.53**
+    #[structable()]
+    pub id: String,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    #[serde(default)]
+    #[structable(optional, serialize)]
+    pub servers: Option<Vec<Servers>>,
+
+    /// The state of the hypervisor. One of `up` or `down`.
+    #[structable(serialize)]
+    pub state: State,
+
+    /// The status of the hypervisor. One of `enabled` or `disabled`.
+    #[structable(serialize)]
+    pub status: Status,
+
+    /// The total uptime of the hypervisor and information about average load.
+    #[structable(optional)]
+    pub uptime: Option<String>,
+}
+
+/// `Servers` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Servers {
+    pub name: String,
+    pub uuid: String,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum State {
+    // Down
+    #[serde(rename = "down")]
+    Down,
+
+    // Up
+    #[serde(rename = "up")]
+    Up,
+}
+
+impl std::str::FromStr for State {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "down" => Ok(Self::Down),
+            "up" => Ok(Self::Up),
+            _ => Err(()),
+        }
     }
 }
 
-impl StructTable for &UptimeResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Status {
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+    // Enabled
+    #[serde(rename = "enabled")]
+    Enabled,
+}
+
+impl std::str::FromStr for Status {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
     }
 }

@@ -75,14 +75,6 @@ pub struct Role {
     pub name: Option<String>,
 }
 
-/// `ScopeDomain` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ScopeDomain {
-    pub id: String,
-    #[serde(default)]
-    pub name: Option<String>,
-}
-
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {
@@ -103,7 +95,7 @@ pub struct System {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Scope {
     #[serde(default)]
-    pub domain: Option<ScopeDomain>,
+    pub domain: Option<Domain>,
     #[serde(default, rename = "OS-INHERIT:inherited_to")]
     pub os_inherit_inherited_to: Option<String>,
     #[serde(default)]

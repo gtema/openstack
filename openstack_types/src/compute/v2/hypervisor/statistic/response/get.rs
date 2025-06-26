@@ -17,30 +17,71 @@
 //! Response type for the GET `os-hypervisors/statistics` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct StatisticResponse(BTreeMap<String, Value>);
+/// Statistic response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct StatisticResponse {
+    /// The number of hypervisors.
+    #[structable()]
+    pub count: i32,
 
-impl StructTable for StatisticResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The current_workload is the number of tasks the hypervisors are
+    /// responsible for. This will be equal or greater than the number of
+    /// active VMs on the systems (it can be greater when VMs are being deleted
+    /// and a hypervisor is still cleaning up).
+    #[structable(optional)]
+    pub current_workload: Option<i32>,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
-}
+    /// The actual free disk on all hypervisors(in GiB). If allocation ratios
+    /// used for overcommit are configured, this may be negative. This is
+    /// intentional as it provides insight into the amount by which the disk is
+    /// overcommitted.
+    #[structable(optional)]
+    pub disk_available_least: Option<i32>,
 
-impl StructTable for &StatisticResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The free disk remaining on all hypervisors(in GiB). This does not take
+    /// allocation ratios used for overcommit into account so this value may be
+    /// negative.
+    #[structable(optional)]
+    pub free_disk_gb: Option<i32>,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
+    /// The free RAM on all hypervisors(in MiB). This does not take allocation
+    /// ratios used for overcommit into account so this value may be negative.
+    #[structable(optional)]
+    pub free_ram_mb: Option<i32>,
+
+    /// The disk on all hypervisors (in GiB). This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    #[structable()]
+    pub local_gb: i32,
+
+    /// The disk used on all hypervisors (in GiB).
+    #[structable()]
+    pub local_gb_used: i32,
+
+    /// The memory of all hypervisors (in MiB). This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    #[structable()]
+    pub memory_mb: i32,
+
+    /// The memory used on all hypervisors(in MiB).
+    #[structable()]
+    pub memory_mb_used: i32,
+
+    /// The total number of running VMs on all hypervisors.
+    #[structable(optional)]
+    pub running_vms: Option<i32>,
+
+    /// The number of vCPU on all hypervisors. This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    #[structable()]
+    pub vcpus: i32,
+
+    /// The number of vCPU used on all hypervisors.
+    #[structable()]
+    pub vcpus_used: i32,
 }

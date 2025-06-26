@@ -18,3 +18,5 @@
 //! `/v2.1/os-quota-class-sets/{id}` REST operations of compute
 pub mod get;
 pub mod set_21;
+pub mod set_250;
+pub mod set_257;

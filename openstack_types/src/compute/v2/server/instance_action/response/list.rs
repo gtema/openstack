@@ -36,7 +36,8 @@ pub struct InstanceActionResponse {
     #[structable(optional)]
     pub message: Option<String>,
 
-    /// The ID of the project which initiated the server action.
+    /// The ID of the project which initiated the server action. This can be
+    /// `null` for `nova-manage`-initiated actions.
     #[structable()]
     pub project_id: String,
 
@@ -77,7 +78,8 @@ pub struct InstanceActionResponse {
     #[structable(optional)]
     pub updated_at: Option<String>,
 
-    /// The ID of the user which initiated the server action.
+    /// The ID of the user which initiated the server action. This can be
+    /// `null` for `nova-manage`-initiated actions.
     #[structable(optional)]
     pub user_id: Option<String>,
 }

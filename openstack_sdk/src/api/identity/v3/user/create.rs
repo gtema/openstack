@@ -123,7 +123,7 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
-    /// The resource description.
+    /// The description of the user resource.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,

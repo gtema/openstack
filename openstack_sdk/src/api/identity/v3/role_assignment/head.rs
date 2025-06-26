@@ -58,6 +58,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     scope_system: Option<Cow<'a, str>>,
 
+    /// The ID of the user.
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 

@@ -147,6 +147,7 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     scope_system: Option<String>,
 
+    /// The ID of the user.
     #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 }

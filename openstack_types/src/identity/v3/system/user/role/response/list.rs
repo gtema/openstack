@@ -32,18 +32,16 @@ pub struct RoleResponse {
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
-    /// The role ID.
+    /// The ID of the role.
     #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// The resource name.
+    /// The name of the role.
     #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
 
-    /// The resource options for the role. Available resource options are
-    /// `immutable`.
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
@@ -57,8 +55,6 @@ pub struct Links {
     pub _self: Option<String>,
 }
 
-/// The resource options for the role. Available resource options are
-/// `immutable`.
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

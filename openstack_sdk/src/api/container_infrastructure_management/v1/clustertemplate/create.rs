@@ -168,6 +168,8 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) image_id: Cow<'a, str>,
 
+    /// The URL pointing to users’s own private insecure docker registry to
+    /// deploy and run docker containers.
     #[builder(default, setter(into))]
     pub(crate) insecure_registry: Option<Cow<'a, str>>,
 
