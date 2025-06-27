@@ -730,8 +730,8 @@ mod tests {
                   password: bar
         "#;
 
-        write!(cloud_file, "{}", CLOUD_DATA).unwrap();
-        write!(secure_file, "{}", SECURE_DATA).unwrap();
+        write!(cloud_file, "{CLOUD_DATA}").unwrap();
+        write!(secure_file, "{SECURE_DATA}").unwrap();
 
         let cfg = ConfigFile::builder()
             .add_source(cloud_file.path())
@@ -767,7 +767,7 @@ mod tests {
                   passcode: pcd
         "#;
 
-        write!(cloud_file, "{}", CLOUD_DATA).unwrap();
+        write!(cloud_file, "{CLOUD_DATA}").unwrap();
 
         let cfg = ConfigFile::builder()
             .add_source(cloud_file.path())

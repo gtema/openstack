@@ -325,7 +325,7 @@ mod tests {
             enable_hints: true
         "#;
 
-        write!(config_file, "{}", CONFIG_DATA).unwrap();
+        write!(config_file, "{CONFIG_DATA}").unwrap();
 
         let _cfg = Config::builder()
             .add_source(config_file.path())

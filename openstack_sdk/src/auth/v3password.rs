@@ -160,7 +160,7 @@ mod tests {
         match res.unwrap_err() {
             PasswordError::MissingUserId => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }
@@ -176,7 +176,7 @@ mod tests {
         match res.unwrap_err() {
             PasswordError::MissingPassword => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }

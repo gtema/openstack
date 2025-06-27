@@ -46,7 +46,7 @@ mod tests {
         let home = std::env::var("HOME").unwrap();
         assert_eq!(
             expand_tilde("~/dummy").unwrap(),
-            PathBuf::from(format!("{}/dummy", home))
+            PathBuf::from(format!("{home}/dummy"))
         );
         assert_eq!(
             expand_tilde("/root/dummy").unwrap(),

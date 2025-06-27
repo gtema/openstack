@@ -309,9 +309,9 @@ fn render_quota_gauge(quota: Option<&Quota>, title: &str, f: &mut Frame, area: R
         .label(Span::styled(
             if quota.is_some() {
                 if limit > 0 {
-                    format!("used {}/{}", used, limit)
+                    format!("used {used}/{limit}")
                 } else {
-                    format!("used {}/∞", used)
+                    format!("used {used}/∞")
                 }
             } else {
                 String::from("N/A")

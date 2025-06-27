@@ -531,7 +531,7 @@ impl App {
                 if let Err(e) = self.header.draw(f, rects[0]) {
                     self.action_tx
                         .send(Action::Error {
-                            msg: format!("Failed to draw: {:?}", e),
+                            msg: format!("Failed to draw: {e:?}"),
                             action: None,
                         })
                         .unwrap();
@@ -543,7 +543,7 @@ impl App {
                     error!("Error {:?}", e);
                     self.action_tx
                         .send(Action::Error {
-                            msg: format!("Failed to draw: {:?}", e),
+                            msg: format!("Failed to draw: {e:?}"),
                             action: None,
                         })
                         .unwrap();
@@ -554,7 +554,7 @@ impl App {
                     if let Err(e) = popup.draw(f, f.area()) {
                         self.action_tx
                             .send(Action::Error {
-                                msg: format!("Failed to draw: {:?}", e),
+                                msg: format!("Failed to draw: {e:?}"),
                                 action: None,
                             })
                             .unwrap();

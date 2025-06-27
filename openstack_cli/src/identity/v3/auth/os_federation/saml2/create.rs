@@ -308,7 +308,12 @@ impl Saml2Command {
             args.identity
                 .methods
                 .iter()
-                .map(Into::into)
+                .map(|x| match x {
+                    Methods::ApplicationCredential => create::Methods::ApplicationCredential,
+                    Methods::Password => create::Methods::Password,
+                    Methods::Token => create::Methods::Token,
+                    Methods::Totp => create::Methods::Totp,
+                })
                 .collect::<Vec<_>>(),
         );
         if let Some(val) = &&args.identity.password {

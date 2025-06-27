@@ -619,7 +619,7 @@ mod tests {
         list_mock.assert();
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
-            panic!("Unexpected error: {}", err);
+            panic!("Unexpected error: {err}");
         }
     }
 
@@ -646,7 +646,7 @@ mod tests {
         list_mock.assert();
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
-            panic!("Unexpected error: {}", err);
+            panic!("Unexpected error: {err}");
         }
     }
 
@@ -668,7 +668,7 @@ mod tests {
         list_mock.assert();
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
-            panic!("Unexpected error: {}", err);
+            panic!("Unexpected error: {err}");
         }
     }
 
@@ -690,7 +690,7 @@ mod tests {
         list_mock.assert();
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
-            panic!("Unexpected error: {}", err);
+            panic!("Unexpected error: {err}");
         }
     }
 }

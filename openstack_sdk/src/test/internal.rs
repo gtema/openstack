@@ -99,7 +99,7 @@ impl ExpectedUrl {
             });
 
             if !found {
-                panic!("unexpected query parameter `{}={}`", key, value);
+                panic!("unexpected query parameter `{key}={value}`");
             }
             count += 1;
         }

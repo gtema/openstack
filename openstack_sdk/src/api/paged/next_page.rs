@@ -134,7 +134,7 @@ pub(crate) fn next_page_from_body(
         if links.is_none() {
             if let Some(rk) = response_key {
                 // Nova has instead `<resource_key>_links`
-                links = content.get(format!("{}_links", rk));
+                links = content.get(format!("{rk}_links"));
             }
         }
         if let Some(v) = links {
@@ -260,7 +260,7 @@ mod tests {
         if let LinkHeaderParseError::NoBrackets = err {
             // expected error
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -270,7 +270,7 @@ mod tests {
         if let LinkHeaderParseError::MissingParamValue = err {
             // expected error
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 

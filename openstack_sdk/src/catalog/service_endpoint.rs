@@ -206,8 +206,7 @@ impl ServiceEndpoint {
                             .get(pid_suffix.len() + 1..)
                             .unwrap_or_else(|| {
                                 panic!(
-                                    "project_id suffix '{}' can be stripped from the endpoint '{}'",
-                                    pid_suffix, work_endpoint
+                                    "project_id suffix '{pid_suffix}' can be stripped from the endpoint '{work_endpoint}'"
                                 )
                             });
                 }
@@ -240,7 +239,7 @@ impl ServiceEndpoint {
         }
         base_url
             .join(work_endpoint)
-            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, work_endpoint)))
+            .map_err(|x| CatalogError::url_parse(x, format!("{base_url}/{work_endpoint}")))
     }
 }
 
@@ -561,10 +560,7 @@ mod tests {
                 .build_request_url(endpoint)
                 .unwrap()
                 .as_str(),
-                "ServiceEndpoint: {} with URL: {} results in {}",
-                service_url,
-                endpoint,
-                expected
+                "ServiceEndpoint: {service_url} with URL: {endpoint} results in {expected}"
             );
         }
     }

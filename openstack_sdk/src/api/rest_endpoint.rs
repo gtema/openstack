@@ -410,7 +410,7 @@ mod tests {
         if let ApiError::OpenStackService { status, .. } = err {
             assert_eq!(status, http::StatusCode::OK);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -429,7 +429,7 @@ mod tests {
         if let ApiError::OpenStackService { status, .. } = err {
             assert_eq!(status, http::StatusCode::OK);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -447,7 +447,7 @@ mod tests {
         if let ApiError::OpenStack { status, .. } = err {
             assert_eq!(status, http::StatusCode::NOT_FOUND);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -466,7 +466,7 @@ mod tests {
         if let ApiError::OpenStackService { status, .. } = err {
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -491,7 +491,7 @@ mod tests {
         {
             assert_eq!(msg, "dummy error message");
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -517,7 +517,7 @@ mod tests {
         {
             assert_eq!(obj, err_obj);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
@@ -540,7 +540,7 @@ mod tests {
                 "openstack_sdk::api::rest_endpoint::tests::DummyResult"
             );
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
         mock.assert();
     }
