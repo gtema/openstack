@@ -66,7 +66,11 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
-    #[arg(help_heading = "Query parameters", long)]
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an

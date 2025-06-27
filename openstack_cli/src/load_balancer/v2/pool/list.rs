@@ -88,7 +88,11 @@ struct QueryParameters {
     id: Option<String>,
 
     /// Page size
-    #[arg(help_heading = "Query parameters", long)]
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
     limit: Option<i32>,
 
     /// The ID of the load balancer for the pool.
