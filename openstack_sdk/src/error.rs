@@ -18,6 +18,8 @@ use std::any;
 use thiserror::Error;
 
 use crate::api;
+#[cfg(feature = "keystone_ng")]
+use crate::auth::v3federation::FederationError;
 use crate::auth::{
     authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError, v3websso::WebSsoError,
     AuthError,
@@ -208,6 +210,15 @@ impl From<AuthTokenScopeError> for OpenStackError {
 
 impl From<WebSsoError> for OpenStackError {
     fn from(source: WebSsoError) -> Self {
+        Self::AuthError {
+            source: source.into(),
+        }
+    }
+}
+
+#[cfg(feature = "keystone_ng")]
+impl From<FederationError> for OpenStackError {
+    fn from(source: FederationError) -> Self {
         Self::AuthError {
             source: source.into(),
         }
