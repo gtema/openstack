@@ -28,6 +28,7 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
+use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_group::create_215;
 use openstack_types::compute::v2::server_group::response::create::ServerGroupResponse;
@@ -61,6 +62,15 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Policies {
+    Affinity,
+    AntiAffinity,
+    SoftAffinity,
+    SoftAntiAffinity,
+}
+
 /// ServerGroup Body data
 #[derive(Args, Clone)]
 struct ServerGroup {
@@ -88,7 +98,7 @@ struct ServerGroup {
     ///
     /// Parameter is an array, may be provided multiple times.
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    policies: Vec<String>,
+    policies: Vec<Policies>,
 }
 
 impl ServerGroupCommand {
@@ -116,7 +126,17 @@ impl ServerGroupCommand {
 
         server_group_builder.name(&args.name);
 
-        server_group_builder.policies(args.policies.iter().map(Into::into).collect::<Vec<_>>());
+        server_group_builder.policies(
+            args.policies
+                .iter()
+                .map(|x| match x {
+                    Policies::Affinity => create_215::Policies::Affinity,
+                    Policies::AntiAffinity => create_215::Policies::AntiAffinity,
+                    Policies::SoftAffinity => create_215::Policies::SoftAffinity,
+                    Policies::SoftAntiAffinity => create_215::Policies::SoftAntiAffinity,
+                })
+                .collect::<Vec<_>>(),
+        );
 
         ep_builder.server_group(server_group_builder.build().unwrap());
 

@@ -148,7 +148,7 @@ impl Cloud {
                             }
                         }
                         Err(err) => app_tx.send(Action::Error {
-                            msg: format!("Failed to connect to the cloud: {:?}", err),
+                            msg: format!("Failed to connect to the cloud: {err:?}"),
                             action: Some(Box::new(ac.clone())),
                         })?,
                     }
@@ -163,7 +163,7 @@ impl Cloud {
                         }
                     }
                     Err(err) => app_tx.send(Action::Error {
-                        msg: format!("Cannot switch session scope: {:?}", err),
+                        msg: format!("Cannot switch session scope: {err:?}"),
                         action: Some(Box::new(action.clone())),
                     })?,
                 },
@@ -182,7 +182,7 @@ impl Cloud {
                             .await
                             .or_else(|err| {
                                 app_tx.send(Action::Error {
-                                    msg: format!("Error performing API request\n\n{:?}", err),
+                                    msg: format!("Error performing API request\n\n{err:?}"),
                                     action: Some(Box::new(ac.clone())),
                                 })
                             })?;

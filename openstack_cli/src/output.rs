@@ -267,7 +267,7 @@ impl OutputProcessor {
                                     })
                                     .collect(),
                             ))
-                            .unwrap_or_else(|v| format!("{:?}", v)),
+                            .unwrap_or_else(|v| format!("{v:?}")),
                         )
                     })?;
 
@@ -858,7 +858,7 @@ mod tests {
             enable_hints: true
         "#;
 
-        write!(config_file, "{}", CONFIG_DATA).unwrap();
+        write!(config_file, "{CONFIG_DATA}").unwrap();
 
         let op = OutputProcessor::from_args(
             &Cli::parse_from([

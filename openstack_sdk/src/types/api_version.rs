@@ -183,10 +183,7 @@ mod tests {
             assert_eq!(
                 (*maj, *min),
                 (ver.major, ver.minor),
-                "Major version of {} must be {}.{}",
-                url,
-                maj,
-                min
+                "Major version of {url} must be {maj}.{min}"
             );
         }
     }

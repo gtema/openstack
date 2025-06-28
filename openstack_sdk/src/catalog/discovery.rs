@@ -92,7 +92,7 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
                 base_url
                     .clone()
                     .join(path)
-                    .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, path)))?
+                    .map_err(|x| CatalogError::url_parse(x, format!("{base_url}/{path}")))?
             } else {
                 error!(
                     "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. [https://gtema.github.io/openstack/possible_errors.html#format]",
@@ -323,7 +323,7 @@ mod tests {
         if let CatalogError::VersionSelfLinkMissing { id } = err {
             assert_eq!("v2.0", id);
         } else {
-            panic!("Unexpected error: {}", err);
+            panic!("Unexpected error: {err}");
         }
     }
 

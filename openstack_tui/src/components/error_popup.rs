@@ -109,7 +109,7 @@ impl ErrorPopup {
                 Action::ApiResponsesData { request, .. }
                 | Action::ApiResponseData { request, .. } => {
                     body.push("## Request\n\n".into());
-                    body.push(format!("```\n{}\n```", request));
+                    body.push(format!("```\n{request}\n```"));
                 }
                 _ => {}
             }

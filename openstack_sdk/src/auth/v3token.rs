@@ -106,7 +106,7 @@ mod tests {
         match res.unwrap_err() {
             TokenError::MissingToken => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }

@@ -165,7 +165,7 @@ mod tests {
         match res.unwrap_err() {
             ApplicationCredentialError::MissingSecret => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }
@@ -181,7 +181,7 @@ mod tests {
         match res.unwrap_err() {
             ApplicationCredentialError::MissingIdOrName => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }
@@ -198,7 +198,7 @@ mod tests {
         match res.unwrap_err() {
             ApplicationCredentialError::MissingUser => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }

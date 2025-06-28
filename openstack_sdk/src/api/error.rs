@@ -267,7 +267,7 @@ mod tests {
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -287,7 +287,7 @@ mod tests {
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -310,7 +310,7 @@ mod tests {
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -330,7 +330,7 @@ mod tests {
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -350,7 +350,7 @@ mod tests {
             assert_eq!(msg, err_obj.to_string());
             assert_eq!(status, http::StatusCode::NOT_FOUND);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 
@@ -371,7 +371,7 @@ mod tests {
             assert_eq!(obj["faultstring"], msg);
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
-            panic!("unexpected error: {}", err);
+            panic!("unexpected error: {err}");
         }
     }
 }

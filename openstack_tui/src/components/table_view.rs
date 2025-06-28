@@ -613,7 +613,7 @@ where
         let filter = self.filter.to_string();
         if !filter.is_empty() {
             title.push(Span::styled(
-                format!(" <{}> ", filter),
+                format!(" <{filter}> "),
                 self.config.styles.title_filters_fg,
             ));
         }

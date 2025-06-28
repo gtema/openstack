@@ -31,6 +31,14 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Policies {
+    #[serde(rename = "affinity")]
+    Affinity,
+    #[serde(rename = "anti-affinity")]
+    AntiAffinity,
+}
+
 /// The server group object.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -59,7 +67,7 @@ pub struct ServerGroup<'a> {
     /// **Available until version 2.63**
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) policies: Vec<Cow<'a, str>>,
+    pub(crate) policies: Vec<Policies>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -162,7 +170,7 @@ mod tests {
                 .server_group(
                     ServerGroupBuilder::default()
                         .name("foo")
-                        .policies(Vec::from(["foo".into()]))
+                        .policies(Vec::from([Policies::Affinity]))
                         .build()
                         .unwrap()
                 )
@@ -180,7 +188,7 @@ mod tests {
                 .server_group(
                     ServerGroupBuilder::default()
                         .name("foo")
-                        .policies(Vec::from(["foo".into()]))
+                        .policies(Vec::from([Policies::Affinity]))
                         .build()
                         .unwrap()
                 )
@@ -210,7 +218,7 @@ mod tests {
             .server_group(
                 ServerGroupBuilder::default()
                     .name("foo")
-                    .policies(Vec::from(["foo".into()]))
+                    .policies(Vec::from([Policies::Affinity]))
                     .build()
                     .unwrap(),
             )
@@ -239,7 +247,7 @@ mod tests {
             .server_group(
                 ServerGroupBuilder::default()
                     .name("foo")
-                    .policies(Vec::from(["foo".into()]))
+                    .policies(Vec::from([Policies::Affinity]))
                     .build()
                     .unwrap(),
             )

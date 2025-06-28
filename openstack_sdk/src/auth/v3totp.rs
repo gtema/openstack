@@ -150,7 +150,7 @@ mod tests {
         match res.unwrap_err() {
             TotpError::MissingUserId => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }
@@ -166,7 +166,7 @@ mod tests {
         match res.unwrap_err() {
             TotpError::MissingPasscode => {}
             other => {
-                panic!("Unexpected error: {}", other)
+                panic!("Unexpected error: {other}")
             }
         }
     }
