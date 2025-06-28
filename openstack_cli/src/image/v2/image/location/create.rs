@@ -63,7 +63,7 @@ pub struct LocationCommand {
     path: PathParameters,
 
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    metadata: Vec<(String, Value)>,
+    metadata: Option<Vec<(String, Value)>>,
 
     /// The URL of the new location to be added in the image.
     #[arg(help_heading = "Body parameters", long)]
@@ -126,8 +126,9 @@ impl LocationCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.metadata data
-
-        ep_builder.metadata(self.metadata.iter().cloned());
+        if let Some(arg) = &self.metadata {
+            ep_builder.metadata(arg.iter().cloned());
+        }
 
         // Set Request.url data
         ep_builder.url(&self.url);

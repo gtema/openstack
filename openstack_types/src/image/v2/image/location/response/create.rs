@@ -24,8 +24,9 @@ use structable::{StructTable, StructTableOptions};
 /// Location response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LocationResponse {
-    #[structable(serialize)]
-    pub metadata: BTreeMap<String, Value>,
+    #[serde(default)]
+    #[structable(optional, serialize)]
+    pub metadata: Option<BTreeMap<String, Value>>,
 
     #[structable()]
     pub url: String,

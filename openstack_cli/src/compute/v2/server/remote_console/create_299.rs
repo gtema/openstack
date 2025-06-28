@@ -87,6 +87,7 @@ enum Protocol {
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
     Novnc,
+    RdpHtml5,
     Serial,
     SpiceDirect,
     SpiceHtml5,
@@ -98,15 +99,17 @@ enum Type {
 #[derive(Args, Clone)]
 struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `serial` and `mks`. The protocol `mks` is added since Microversion
-    /// `2.8`.
+    /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
+    /// Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+    /// which was removed in the 29.0.0 (Caracal) release.
     #[arg(help_heading = "Body parameters", long)]
     protocol: Protocol,
 
-    /// The type of remote console. The valid values are `novnc`,
+    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-    /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
-    /// was added in Microversion `2.99`.
+    /// `webmks` was added in Microversion `2.8` and the type `spice-direct`
+    /// was added in Microversion `2.99`. The type `rdp-html5` requires the
+    /// Hyper-V driver which was removed in the 29.0.0 (Caracal) release.
     #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 }
@@ -149,6 +152,7 @@ impl RemoteConsoleCommand {
 
         let tmp = match &args._type {
             Type::Novnc => create_299::Type::Novnc,
+            Type::RdpHtml5 => create_299::Type::RdpHtml5,
             Type::Serial => create_299::Type::Serial,
             Type::SpiceDirect => create_299::Type::SpiceDirect,
             Type::SpiceHtml5 => create_299::Type::SpiceHtml5,

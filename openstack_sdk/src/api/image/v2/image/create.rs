@@ -113,9 +113,9 @@ pub struct ValidationData<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Locations<'a> {
-    #[serde()]
-    #[builder(private, setter(into, name = "_metadata"))]
-    pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, private, setter(into, name = "_metadata"))]
+    pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Value>>,
 
     #[serde()]
     #[builder(setter(into))]
@@ -137,6 +137,7 @@ impl<'a> LocationsBuilder<'a> {
         V: Into<Value>,
     {
         self.metadata
+            .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self

@@ -23,15 +23,17 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RemoteConsoleResponse {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `serial` and `mks`. The protocol `mks` is added since Microversion
-    /// `2.8`.
+    /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
+    /// Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+    /// which was removed in the 29.0.0 (Caracal) release.
     #[structable(serialize)]
     pub protocol: Protocol,
 
-    /// The type of remote console. The valid values are `novnc`,
+    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-    /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
-    /// was added in Microversion `2.99`.
+    /// `webmks` was added in Microversion `2.8` and the type `spice-direct`
+    /// was added in Microversion `2.99`. The type `rdp-html5` requires the
+    /// Hyper-V driver which was removed in the 29.0.0 (Caracal) release.
     #[serde(rename = "type")]
     #[structable(serialize, title = "type")]
     pub _type: Type,
@@ -46,6 +48,10 @@ pub enum Protocol {
     // Mks
     #[serde(rename = "mks")]
     Mks,
+
+    // Rdp
+    #[serde(rename = "rdp")]
+    Rdp,
 
     // Serial
     #[serde(rename = "serial")]
@@ -65,6 +71,7 @@ impl std::str::FromStr for Protocol {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "mks" => Ok(Self::Mks),
+            "rdp" => Ok(Self::Rdp),
             "serial" => Ok(Self::Serial),
             "spice" => Ok(Self::Spice),
             "vnc" => Ok(Self::Vnc),
@@ -78,6 +85,10 @@ pub enum Type {
     // Novnc
     #[serde(rename = "novnc")]
     Novnc,
+
+    // RdpHtml5
+    #[serde(rename = "rdp-html5")]
+    RdpHtml5,
 
     // Serial
     #[serde(rename = "serial")]
@@ -101,6 +112,7 @@ impl std::str::FromStr for Type {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "novnc" => Ok(Self::Novnc),
+            "rdp-html5" => Ok(Self::RdpHtml5),
             "serial" => Ok(Self::Serial),
             "spice-html5" => Ok(Self::SpiceHtml5),
             "webmks" => Ok(Self::Webmks),

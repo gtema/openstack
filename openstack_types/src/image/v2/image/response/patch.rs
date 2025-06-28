@@ -273,7 +273,8 @@ pub struct ValidationData {
 /// `Locations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Locations {
-    pub metadata: BTreeMap<String, Value>,
+    #[serde(default)]
+    pub metadata: Option<BTreeMap<String, Value>>,
     pub url: String,
     #[serde(default)]
     pub validation_data: Option<ValidationData>,

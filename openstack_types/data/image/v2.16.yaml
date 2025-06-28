@@ -2315,7 +2315,6 @@ components:
                 type: object
                 writeOnly: true
             required:
-              - metadata
               - url
             type: object
           type: array
@@ -2649,7 +2648,6 @@ components:
                 type: object
                 writeOnly: true
             required:
-              - metadata
               - url
             type: object
           type: array
@@ -2964,7 +2962,6 @@ components:
                 type: object
                 writeOnly: true
             required:
-              - metadata
               - url
             type: object
           type: array
@@ -3257,7 +3254,6 @@ components:
                 type: object
                 writeOnly: true
             required:
-              - metadata
               - url
             type: object
           type: array
@@ -3568,7 +3564,6 @@ components:
                       type: object
                       writeOnly: true
                   required:
-                    - metadata
                     - url
                   type: object
                 type: array
@@ -3713,7 +3708,6 @@ components:
           type: object
           writeOnly: true
       required:
-        - metadata
         - url
       type: object
     ImagesLocationsAdd_LocationResponse:
@@ -3747,7 +3741,6 @@ components:
             type: object
             writeOnly: true
         required:
-          - metadata
           - url
         type: object
       type: array
@@ -3782,7 +3775,6 @@ components:
             type: object
             writeOnly: true
         required:
-          - metadata
           - url
         type: object
       type: array
