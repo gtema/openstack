@@ -17796,11 +17796,9 @@ components:
           additionalProperties: false
           properties:
             type:
-              const: rdp
-              description: ''
+              const: rdp-html5
               type: string
             url:
-              description: ''
               format: uri
               type: string
           required:
@@ -17820,10 +17818,8 @@ components:
           properties:
             type:
               const: serial
-              description: ''
               type: string
             url:
-              description: ''
               format: uri
               type: string
           required:
@@ -17843,10 +17839,8 @@ components:
           properties:
             type:
               const: spice-html5
-              description: ''
               type: string
             url:
-              description: ''
               format: uri
               type: string
           required:
@@ -17863,13 +17857,11 @@ components:
           additionalProperties: false
           properties:
             type:
-              description: ''
               enum:
                 - novnc
                 - xvpvnc
               type: string
             url:
-              description: ''
               format: uri
               type: string
           required:
@@ -45102,10 +45094,12 @@ components:
             protocol:
               description: |-
                 The protocol of remote console. The valid values are `vnc`, `spice`,
-                `serial` and `mks`. The protocol `mks` is added since Microversion
-                `2.8`.
+                `rdp`, `serial` and `mks`. The protocol `mks` is added since
+                Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+                which was removed in the 29.0.0 (Caracal) release.
               enum:
                 - mks
+                - rdp
                 - serial
                 - spice
                 - vnc
@@ -45113,11 +45107,14 @@ components:
             type:
               description: |-
                 The type of remote console. The valid values are `novnc`,
-                `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-                `webmks` was added in Microversion `2.8`, and the type
-                `spice-direct` was added in Microversion `2.99`.
+                `rdp-html5`, `spice-html5`, `spice-direct`, `serial`, and
+                `webmks`. The type `webmks` was added in Microversion `2.8` and the
+                type `spice-direct` was added in Microversion `2.99`. The type
+                `rdp-html5` requires the Hyper-V driver which was removed in the 29.0.0
+                (Caracal) release.
               enum:
                 - novnc
+                - rdp-html5
                 - serial
                 - spice-html5
                 - webmks
@@ -45147,9 +45144,11 @@ components:
             protocol:
               description: |-
                 The protocol of remote console. The valid values are `vnc`, `spice`,
-                `serial` and `mks`. The protocol `mks` is added since Microversion
-                `2.8`.
+                `rdp`, `serial` and `mks`. The protocol `mks` is added since
+                Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+                which was removed in the 29.0.0 (Caracal) release.
               enum:
+                - rdp
                 - serial
                 - spice
                 - vnc
@@ -45157,11 +45156,14 @@ components:
             type:
               description: |-
                 The type of remote console. The valid values are `novnc`,
-                `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-                `webmks` was added in Microversion `2.8`, and the type
-                `spice-direct` was added in Microversion `2.99`.
+                `rdp-html5`, `spice-html5`, `spice-direct`, `serial`, and
+                `webmks`. The type `webmks` was added in Microversion `2.8` and the
+                type `spice-direct` was added in Microversion `2.99`. The type
+                `rdp-html5` requires the Hyper-V driver which was removed in the 29.0.0
+                (Caracal) release.
               enum:
                 - novnc
+                - rdp-html5
                 - serial
                 - spice-html5
                 - xvpvnc
@@ -45187,10 +45189,12 @@ components:
             protocol:
               description: |-
                 The protocol of remote console. The valid values are `vnc`, `spice`,
-                `serial` and `mks`. The protocol `mks` is added since Microversion
-                `2.8`.
+                `rdp`, `serial` and `mks`. The protocol `mks` is added since
+                Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+                which was removed in the 29.0.0 (Caracal) release.
               enum:
                 - mks
+                - rdp
                 - serial
                 - spice
                 - vnc
@@ -45198,11 +45202,14 @@ components:
             type:
               description: |-
                 The type of remote console. The valid values are `novnc`,
-                `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-                `webmks` was added in Microversion `2.8`, and the type
-                `spice-direct` was added in Microversion `2.99`.
+                `rdp-html5`, `spice-html5`, `spice-direct`, `serial`, and
+                `webmks`. The type `webmks` was added in Microversion `2.8` and the
+                type `spice-direct` was added in Microversion `2.99`. The type
+                `rdp-html5` requires the Hyper-V driver which was removed in the 29.0.0
+                (Caracal) release.
               enum:
                 - novnc
+                - rdp-html5
                 - serial
                 - spice-html5
                 - webmks
@@ -45229,8 +45236,9 @@ components:
             protocol:
               description: |-
                 The protocol of remote console. The valid values are `vnc`, `spice`,
-                `serial` and `mks`. The protocol `mks` is added since Microversion
-                `2.8`.
+                `rdp`, `serial` and `mks`. The protocol `mks` is added since
+                Microversion `2.8`. The protocol `rdp` requires the Hyper-V driver
+                which was removed in the 29.0.0 (Caracal) release.
               enum:
                 - mks
                 - rdp
@@ -45241,11 +45249,14 @@ components:
             type:
               description: |-
                 The type of remote console. The valid values are `novnc`,
-                `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
-                `webmks` was added in Microversion `2.8`, and the type
-                `spice-direct` was added in Microversion `2.99`.
+                `rdp-html5`, `spice-html5`, `spice-direct`, `serial`, and
+                `webmks`. The type `webmks` was added in Microversion `2.8` and the
+                type `spice-direct` was added in Microversion `2.99`. The type
+                `rdp-html5` requires the Hyper-V driver which was removed in the 29.0.0
+                (Caracal) release.
               enum:
                 - novnc
+                - rdp-html5
                 - serial
                 - spice-direct
                 - spice-html5

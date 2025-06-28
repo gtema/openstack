@@ -67,8 +67,8 @@ pub struct ValidationData<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(private, setter(into, name = "_metadata"))]
-    pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
+    #[builder(default, private, setter(into, name = "_metadata"))]
+    pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Value>>,
 
     /// The URL of the new location to be added in the image.
     #[builder(setter(into))]
@@ -104,6 +104,7 @@ impl<'a> RequestBuilder<'a> {
         V: Into<Value>,
     {
         self.metadata
+            .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self
@@ -153,7 +154,9 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("metadata", serde_json::to_value(&self.metadata)?);
+        if let Some(val) = &self.metadata {
+            params.push("metadata", serde_json::to_value(val)?);
+        }
         params.push("url", serde_json::to_value(&self.url)?);
         if let Some(val) = &self.validation_data {
             params.push("validation_data", serde_json::to_value(val)?);
@@ -196,7 +199,6 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .metadata(BTreeMap::<String, Value>::new().into_iter())
                 .url("foo")
                 .build()
                 .unwrap()
@@ -208,7 +210,6 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .metadata(BTreeMap::<String, Value>::new().into_iter())
             .url("foo")
             .build()
             .unwrap()
@@ -234,7 +235,6 @@ mod tests {
 
         let endpoint = Request::builder()
             .image_id("image_id")
-            .metadata(BTreeMap::<String, Value>::new().into_iter())
             .url("foo")
             .build()
             .unwrap();
@@ -262,7 +262,6 @@ mod tests {
 
         let endpoint = Request::builder()
             .image_id("image_id")
-            .metadata(BTreeMap::<String, Value>::new().into_iter())
             .url("foo")
             .headers(
                 [(
