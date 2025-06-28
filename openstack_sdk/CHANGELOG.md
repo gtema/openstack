@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.4](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.3...openstack_sdk-v0.21.4) - 2025-06-28
+
+### Added
+
+- Ensure schemas are not duplicated ([#1311](https://github.com/gtema/openstack/pull/1311))
+
 ## [0.21.3](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.2...openstack_sdk-v0.21.3) - 2025-06-07
 
 ### Added
