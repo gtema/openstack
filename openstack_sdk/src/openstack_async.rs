@@ -31,6 +31,8 @@ use tracing::{debug, enabled, error, event, info, instrument, trace, warn, Level
 
 use crate::api;
 use crate::api::query;
+#[cfg(feature = "keystone_ng")]
+use crate::api::query::QueryAsync;
 use crate::api::query::RawQueryAsync;
 use crate::api::RestClient;
 use crate::auth::{
@@ -401,6 +403,42 @@ where {
                             authtoken::build_reauth_request(&token_auth, &requested_scope)?;
                         rsp = auth_ep.raw_query_async(self).await?;
                     }
+
+                    #[cfg(feature = "keystone_ng")]
+                    AuthType::V3Federation => {
+                        // Construct request for initializing authentication (POST call to keystone
+                        // `/federation/identity_providers/{idp_id}/auth`) to get the IDP url
+                        // client would need to contact.
+                        // TODO: If we know the scope we can request it from the very beginning
+                        // saving 1 call.
+                        let callback_addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8050));
+                        let init_auth_ep =
+                            auth::v3federation::get_auth_ep(&self.config, callback_addr.port())?;
+                        let auth_info: auth::v3federation::FederationAuthRequestResponse =
+                            init_auth_ep.query_async(self).await?;
+
+                        // Perform the magic directing user's browser at the IDP url and waiting
+                        // for the callback to be invoked with the authorization code
+                        let oauth2_code =
+                            auth::v3federation::get_auth_code(&auth_info.auth_url, callback_addr)
+                                .await?;
+
+                        // Construct the request to Keystone to finish the authorization exchanging
+                        // received authorization code for the (unscoped) token
+                        let mut oidc_callback_builder =
+                            auth::v3federation::OauthCallbackRequestBuilder::default();
+                        if let (Some(code), Some(state)) = (oauth2_code.code, oauth2_code.state) {
+                            oidc_callback_builder.code(code.clone());
+                            oidc_callback_builder.state(state.clone());
+                            let oidc_callback_ep = oidc_callback_builder
+                                .build()
+                                .map_err(auth::v3federation::FederationError::from)?;
+
+                            rsp = oidc_callback_ep.raw_query_async(self).await?;
+                        } else {
+                            return Err(OpenStackError::NoAuth);
+                        }
+                    }
                 }
             };
 
@@ -584,7 +622,7 @@ where {
                         .get_sensitive_values()
                         .iter()
                         .fold(rq.clone(), |sanitized, &secret| {
-                            sanitized.replace(secret, "<CENSORED")
+                            sanitized.replace(secret, "<CENSORED>")
                         });
                     trace!("Request Body: {:?}", censored);
                 });
