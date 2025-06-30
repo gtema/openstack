@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.4](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.3...openstack_sdk-v0.21.4) - 2025-06-30
+
+### Added
+
+- Add future federation login support ([#1319](https://github.com/gtema/openstack/pull/1319))
+- Make image.locations.metadata not required ([#1318](https://github.com/gtema/openstack/pull/1318))
+- Improve support for array with prefixItems ([#1317](https://github.com/gtema/openstack/pull/1317))
+- Ensure schemas are not duplicated ([#1311](https://github.com/gtema/openstack/pull/1311))
+
 ## [0.21.3](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.2...openstack_sdk-v0.21.3) - 2025-06-07
 
 ### Added

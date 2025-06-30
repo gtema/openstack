@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.12.3...openstack_tui-v0.12.4) - 2025-06-30
+
+### Added
+
+- Improve support for array with prefixItems ([#1317](https://github.com/gtema/openstack/pull/1317))
+- Ensure schemas are not duplicated ([#1311](https://github.com/gtema/openstack/pull/1311))
+
+### Other
+
+- Another missed case to disable param ([#1310](https://github.com/gtema/openstack/pull/1310))
+- Prepare update of identity schemas ([#1308](https://github.com/gtema/openstack/pull/1308))
+
 ## [0.12.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.12.2...openstack_tui-v0.12.3) - 2025-06-07
 
 ### Added

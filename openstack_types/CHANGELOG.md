@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.4](https://github.com/gtema/openstack/compare/openstack_types-v0.21.3...openstack_types-v0.21.4) - 2025-06-30
+
+### Added
+
+- Make image.locations.metadata not required ([#1318](https://github.com/gtema/openstack/pull/1318))
+- Improve UX clarity of "limit" query parameter ([#1313](https://github.com/gtema/openstack/pull/1313))
+- OpenAPI: Fix nova examples ([#1312](https://github.com/gtema/openstack/pull/1312))
+- Ensure schemas are not duplicated ([#1311](https://github.com/gtema/openstack/pull/1311))
+
+### Other
+
+- Init mock test for other services ([#1253](https://github.com/gtema/openstack/pull/1253))
+
 ## [0.21.3](https://github.com/gtema/openstack/compare/openstack_types-v0.21.2...openstack_types-v0.21.3) - 2025-06-07
 
 ### Added
