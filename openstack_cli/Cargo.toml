@@ -68,7 +68,7 @@ http = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.21", default-features = false, features = ["async", "identity"] }
 openstack_types = { path="../openstack_types", version = "^0.21" }
-indicatif = "^0.17"
+indicatif = "^0.18.0"
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
