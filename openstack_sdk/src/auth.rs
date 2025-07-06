@@ -26,10 +26,10 @@ use tracing::error;
 
 use thiserror::Error;
 
+pub mod auth_helper;
 mod auth_token_endpoint;
 pub mod authtoken;
 pub mod authtoken_scope;
-mod authtoken_utils;
 pub mod v3applicationcredential;
 #[cfg(feature = "keystone_ng")]
 pub mod v3federation;

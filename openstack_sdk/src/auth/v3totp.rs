@@ -32,10 +32,10 @@
 //! }
 //! ```
 
+use secrecy::ExposeSecret;
 use thiserror::Error;
 
-use dialoguer::Input;
-
+use crate::auth::auth_helper::{AuthHelper, AuthHelperError};
 use crate::auth::auth_token_endpoint as token_v3;
 use crate::config;
 
@@ -43,6 +43,14 @@ use crate::config;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum TotpError {
+    /// Authentication helper error
+    #[error(transparent)]
+    AuthHelper {
+        /// The error source
+        #[from]
+        source: AuthHelperError,
+    },
+
     /// UserID is required
     #[error("User id is missing")]
     MissingUserId,
@@ -77,26 +85,28 @@ pub enum TotpError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with MFA passcode
-pub fn fill_identity(
+pub async fn fill_identity<A>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
-    interactive: bool,
-) -> Result<(), TotpError> {
+    auth_helper: &mut A,
+) -> Result<(), TotpError>
+where
+    A: AuthHelper,
+{
     identity_builder.methods(Vec::from([token_v3::Methods::Totp]));
     let mut user = token_v3::TotpUserBuilder::default();
     if let Some(val) = &auth_data.user_id {
         user.id(val.clone());
     } else if let Some(val) = &auth_data.username {
         user.name(val.clone());
-    } else if interactive {
-        // Or ask user for username in interactive mode
-        let name: String = Input::new()
-            .with_prompt("Please provide the username:")
-            .interact_text()
-            .unwrap();
-        user.name(name);
     } else {
-        return Err(TotpError::MissingUserId);
+        // Or ask user for username in interactive mode
+        let name = auth_helper
+            .get("username".into(), auth_helper.get_cloud_name())
+            .await
+            .map_err(|_| TotpError::MissingUserId)?
+            .to_owned();
+        user.name(name);
     }
     // Process user domain information
     if auth_data.user_domain_id.is_some() || auth_data.user_domain_name.is_some() {
@@ -112,15 +122,15 @@ pub fn fill_identity(
 
     if let Some(passcode) = &auth_data.passcode {
         user.passcode(passcode.clone());
-    } else if interactive {
-        // Or ask user for username in interactive mode
-        let name: String = Input::new()
-            .with_prompt("Please provide the MFA passcode:")
-            .interact_text()
-            .unwrap();
-        user.passcode(name);
     } else {
-        return Err(TotpError::MissingPasscode);
+        // Or ask user for username in interactive mode
+        let passcode = auth_helper
+            .get_secret("passcode".into(), auth_helper.get_cloud_name())
+            .await
+            .map_err(|_| TotpError::MissingPasscode)?
+            .expose_secret()
+            .to_owned();
+        user.passcode(passcode);
     }
     identity_builder.totp(
         token_v3::TotpBuilder::default()
@@ -137,16 +147,17 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
+    use crate::auth::auth_helper::NonInteractive;
     use crate::config;
 
-    #[test]
-    fn test_fill_raise_no_user_id() {
+    #[tokio::test]
+    async fn test_fill_raise_no_user_id() {
         let config = config::Auth {
             passcode: Some("pass".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, false);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             TotpError::MissingUserId => {}
             other => {
@@ -155,14 +166,14 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill_raise_no_user_passcode() {
+    #[tokio::test]
+    async fn test_fill_raise_no_user_passcode() {
         let config = config::Auth {
             user_id: Some("uid".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, false);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             TotpError::MissingPasscode => {}
             other => {
@@ -171,8 +182,8 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill() {
+    #[tokio::test]
+    async fn test_fill() {
         let config = config::Auth {
             user_id: Some("uid".into()),
             username: Some("un".into()),
@@ -182,7 +193,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, false).unwrap();
+        fill_identity(&mut identity, &config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -201,9 +214,9 @@ mod tests {
         );
     }
 
-    #[test]
+    #[tokio::test]
     #[traced_test]
-    fn test_passcode_not_in_log() {
+    async fn test_passcode_not_in_log() {
         let config = config::Auth {
             user_id: Some("uid".into()),
             username: Some("un".into()),
@@ -213,7 +226,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, false).unwrap();
+        fill_identity(&mut identity, &config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret"));
