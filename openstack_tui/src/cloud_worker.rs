@@ -16,14 +16,21 @@
 //! Handle communication with the cloud including connection, re-connection (when auth expires) and
 //! all the API requests.
 
+use async_trait::async_trait;
 use chrono::TimeDelta;
 use eyre::{Report, Result, eyre};
 use openstack_sdk::{
-    AsyncOpenStack, auth::AuthState, config::ConfigFile, types::identity::v3::AuthResponse,
+    AsyncOpenStack,
+    auth::AuthState,
+    auth::auth_helper::{AuthHelper, AuthHelperError},
+    config::ConfigFile,
+    types::identity::v3::AuthResponse,
 };
+use secrecy::SecretString;
 use std::path::PathBuf;
-use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
-use tracing::debug;
+use tokio::sync::mpsc::{self, UnboundedReceiver, UnboundedSender};
+use tokio::sync::oneshot;
+use tracing::{debug, instrument, trace};
 
 use crate::action::Action;
 
@@ -46,12 +53,21 @@ use crate::error::TuiError;
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     pub(crate) cloud: Option<AsyncOpenStack>,
+    auth_helper: TuiAuthHelper,
+}
+
+#[derive(Debug)]
+pub(crate) enum AuthAction {
+    Data(String),
+    Secret(SecretString),
+    Cancel,
 }
 
 impl Cloud {
     pub fn new(
         client_config_config_file: Option<PathBuf>,
         client_secure_config_file: Option<PathBuf>,
+        auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
     ) -> Self {
         let cfg = ConfigFile::new_with_user_specified_configs(
             client_config_config_file.as_deref(),
@@ -62,6 +78,7 @@ impl Cloud {
         Self {
             cloud_configs: cfg,
             cloud: None,
+            auth_helper: TuiAuthHelper::new(auth_helper_control_tx),
         }
     }
 
@@ -71,7 +88,10 @@ impl Cloud {
             .cloud_configs
             .get_cloud_config(cloud.clone())?
             .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
-        let mut session = AsyncOpenStack::new_interactive(&profile, false).await?;
+        self.auth_helper.set_cloud_name(Some(cloud));
+        let mut session =
+            AsyncOpenStack::new_with_authentication_helper(&profile, &mut self.auth_helper, false)
+                .await?;
 
         session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
@@ -132,6 +152,7 @@ impl Cloud {
         app_tx: UnboundedSender<Action>,
         action_rx: &mut UnboundedReceiver<Action>,
     ) -> Result<(), TuiError> {
+        self.auth_helper.set_action_tx(app_tx.clone())?;
         while let Some(action) = action_rx.recv().await {
             debug!("Got action {:?}", action);
             match action {
@@ -192,6 +213,116 @@ impl Cloud {
             };
         }
         Ok(())
+    }
+}
+
+struct TuiAuthHelper {
+    cloud_name: Option<String>,
+    app_tx: Option<UnboundedSender<Action>>,
+    auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
+}
+
+impl TuiAuthHelper {
+    pub fn new(auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>) -> Self {
+        Self {
+            cloud_name: None,
+            app_tx: None,
+            auth_helper_control_tx,
+        }
+    }
+
+    pub fn set_action_tx(&mut self, app_tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.app_tx = Some(app_tx);
+        Ok(())
+    }
+
+    #[instrument(skip(self))]
+    async fn initiate(
+        &mut self,
+        prompt: String,
+        connection_name: Option<String>,
+        is_sensitive: bool,
+    ) -> Result<oneshot::Receiver<AuthAction>, TuiError> {
+        let (sender, receiver) = oneshot::channel();
+        self.auth_helper_control_tx.send(sender).await.unwrap();
+        if let Some(app_tx) = &self.app_tx {
+            trace!("Sending request to the app");
+            app_tx.send(Action::AuthDataRequired {
+                prompt,
+                connection_name,
+                is_sensitive,
+            })?;
+        } else {
+            return Err(eyre!(
+                "Channel between cloud worker and application is missing".to_string(),
+            )
+            .into());
+        }
+        Ok(receiver)
+    }
+}
+
+#[async_trait]
+impl AuthHelper for TuiAuthHelper {
+    #[instrument(skip(self))]
+    async fn get(
+        &mut self,
+        prompt: String,
+        connection_name: Option<String>,
+    ) -> Result<String, AuthHelperError> {
+        let receiver = self
+            .initiate(prompt, connection_name, true)
+            .await
+            .map_err(|e| AuthHelperError::Other(e.to_string()))?;
+        trace!("Waiting for the auth data to arrive from the UI");
+        match receiver.await {
+            Ok(AuthAction::Data(dt)) => {
+                trace!("auth data received");
+                return Ok(dt);
+            }
+            _ => {
+                trace!("auth data request cancelled");
+                return Err(AuthHelperError::Other(
+                    "error receiving the requested data".to_string(),
+                ));
+            }
+        }
+    }
+
+    #[instrument(skip(self))]
+    async fn get_secret(
+        &mut self,
+        prompt: String,
+        connection_name: Option<String>,
+    ) -> Result<SecretString, AuthHelperError> {
+        let receiver = self
+            .initiate(prompt, connection_name, true)
+            .await
+            .map_err(|e| AuthHelperError::Other(e.to_string()))?;
+        trace!("Waiting for the auth data to arrive from the UI");
+        match receiver.await {
+            Ok(AuthAction::Secret(dt)) => {
+                trace!("auth data received");
+                Ok(dt)
+            }
+            _ => {
+                trace!("auth data request cancelled");
+                return Err(AuthHelperError::Other(
+                    "error receiving the requested data".to_string(),
+                ));
+            }
+        }
+    }
+
+    #[instrument(skip(self))]
+    fn set_cloud_name(&mut self, cloud_name: Option<String>) {
+        trace!("Setting cloud name to {:?}", cloud_name);
+        self.cloud_name = cloud_name;
+    }
+
+    #[instrument(skip(self))]
+    fn get_cloud_name(&self) -> Option<String> {
+        self.cloud_name.clone()
     }
 }
 

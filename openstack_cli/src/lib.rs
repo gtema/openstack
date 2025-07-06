@@ -33,7 +33,10 @@ use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
 use openstack_sdk::{
-    AsyncOpenStack, auth::authtoken::AuthTokenScope, types::identity::v3::Project,
+    AsyncOpenStack,
+    auth::auth_helper::{AuthHelper, Dialoguer},
+    auth::authtoken::AuthTokenScope,
+    types::identity::v3::Project,
 };
 
 pub mod api;
@@ -136,7 +139,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     // Get the connection details
     let profile = cfg
         .get_cloud_config(&cloud_name)?
-        .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name))?;
+        .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name.clone()))?;
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
@@ -151,9 +154,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let mut session;
     if std::io::stdin().is_terminal() {
         // Interactive session (may ask for password/MFA/SSO)
-        session = AsyncOpenStack::new_interactive(&profile, renew_auth)
-            .await
-            .map_err(|err| OpenStackCliError::Auth { source: err })?;
+        let mut auth_helper = Dialoguer::default();
+        auth_helper.set_cloud_name(Some(cloud_name));
+        session =
+            AsyncOpenStack::new_with_authentication_helper(&profile, &mut auth_helper, renew_auth)
+                .await
+                .map_err(|err| OpenStackCliError::Auth { source: err })?;
     } else {
         // Non-interactive session if i.e. scripted with chaining
         session = AsyncOpenStack::new(&profile)

@@ -30,7 +30,7 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             test_args: ""
-            rust_ver: 1.85
+            rust_ver: 1.88
           # - target: x86_64-unknown-linux-musl
           #   os: ubuntu-latest
           # - target: x86_64-apple-darwin

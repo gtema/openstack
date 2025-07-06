@@ -16,15 +16,16 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use eyre::Result;
 use ratatui::prelude::{Rect, *};
 use std::collections::HashMap;
-use tokio::sync::mpsc;
-use tracing::{debug, error, instrument};
+use tokio::sync::{mpsc, oneshot};
+use tracing::{debug, error, info, instrument};
 
 use crate::cli::Cli;
 use crate::{
     action::Action,
-    cloud_worker::Cloud,
+    cloud_worker::{AuthAction, Cloud},
     components::{
         Component,
+        auth_helper::AuthHelper,
         block_storage::{
             backups::BlockStorageBackups, snapshots::BlockStorageSnapshots,
             volumes::BlockStorageVolumes,
@@ -70,6 +71,7 @@ use crate::{
 
 #[derive(Debug, Eq, Hash, PartialEq)]
 enum Popup {
+    AuthHelper,
     Error,
     SelectApiRequest,
     SwitchCloud,
@@ -110,13 +112,6 @@ impl App {
         let cloud_worker_app_tx = action_tx.clone();
         let client_config = args.os_client_config_file.clone();
         let client_secure_config = args.os_client_secure_file.clone();
-        tokio::spawn(async move {
-            let mut cloud = Cloud::new(client_config, client_secure_config);
-            cloud
-                .run(cloud_worker_app_tx, &mut cloud_worker_receiver)
-                .await
-                .unwrap();
-        });
 
         // Is there a way to initialize HashMap with Box<dyn Foo> as keys in one operation?
         let mut components: HashMap<Mode, Box<dyn Component>> = HashMap::new();
@@ -196,6 +191,33 @@ impl App {
         );
         components.insert(Mode::NetworkSubnets, Box::new(NetworkSubnets::new()));
 
+        let (auth_helper_control_channel_tx, auth_helper_control_channel_rx) =
+            mpsc::channel::<oneshot::Sender<AuthAction>>(10);
+
+        let mut popups: HashMap<Popup, Box<dyn Component>> = HashMap::new();
+        popups.insert(Popup::SwitchProject, Box::new(ProjectSelect::new()));
+        popups.insert(Popup::Error, Box::new(ErrorPopup::new()));
+        popups.insert(Popup::SwitchCloud, Box::new(CloudSelect::new()));
+        popups.insert(Popup::SelectApiRequest, Box::new(ApiRequestSelect::new()));
+        popups.insert(
+            Popup::AuthHelper,
+            Box::new(AuthHelper::new(auth_helper_control_channel_rx)),
+        );
+
+        let auth_helper_control_channel_tx_clone = auth_helper_control_channel_tx.clone();
+        tokio::spawn(async move {
+            let mut cloud = Cloud::new(
+                client_config,
+                client_secure_config,
+                auth_helper_control_channel_tx_clone,
+            );
+            if let Err(err) = cloud
+                .run(cloud_worker_app_tx, &mut cloud_worker_receiver)
+                .await
+            {
+                info!("Error in the cloud worker: {}", err);
+            }
+        });
         Ok(Self {
             tick_rate: args.tick_rate,
             frame_rate: args.frame_rate,
@@ -213,15 +235,7 @@ impl App {
             cloud_name: args.os_cloud.clone(),
             cloud_connected: false,
             active_popup: None,
-            popups: HashMap::from([
-                (
-                    Popup::SwitchProject,
-                    Box::new(ProjectSelect::new()) as Box<dyn Component>,
-                ),
-                (Popup::Error, Box::new(ErrorPopup::new())),
-                (Popup::SwitchCloud, Box::new(CloudSelect::new())),
-                (Popup::SelectApiRequest, Box::new(ApiRequestSelect::new())),
-            ]),
+            popups,
         })
     }
 
@@ -310,9 +324,13 @@ impl App {
     fn handle_key_event(&mut self, key: KeyEvent) -> Result<()> {
         debug!("Key event received");
         let action_tx = self.action_tx.clone();
-        if let Some(action) = self.config.global_keybindings.get(&vec![key]) {
+        if self.active_popup.is_none()
+            && let Some(action) = self.config.global_keybindings.get(&vec![key])
+        {
             // Normal global keybinding
             action_tx.send(action.action.clone())?;
+        } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
+            action_tx.send(Action::Quit)?;
         } else if key.code == KeyCode::Esc && self.active_popup.is_some() {
             if let Some(popup_type) = &self.active_popup {
                 if let Some(popup) = self.popups.get_mut(popup_type) {
@@ -349,8 +367,6 @@ impl App {
                     }
                 }
             }
-        } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
-            action_tx.send(Action::Quit)?;
         } else if key.code == KeyCode::Esc && self.mode_switch_stack.len() > 1 {
             // remove the current mode from the stack
             self.mode_switch_stack.pop();
@@ -419,6 +435,14 @@ impl App {
                     self.active_popup = Some(Popup::SwitchProject);
                     self.render(tui)?;
                 }
+                Action::AuthDataRequired { .. } => {
+                    self.active_popup = Some(Popup::AuthHelper);
+                    self.render(tui)?;
+                }
+                Action::AuthHelperCompleted => {
+                    self.active_popup = None;
+                    self.render(tui)?;
+                }
                 Action::Mode { mode, stack } => {
                     if self.mode != mode {
                         debug!("Switching from {:?} to {:?}", self.mode, mode);
@@ -469,10 +493,10 @@ impl App {
                     self.render(tui)?;
                 }
                 Action::Error { .. } => {
-                    if self.mode != Mode::Home {
-                        self.active_popup = Some(Popup::Error);
-                        self.render(tui)?;
-                    }
+                    //if self.mode != Mode::Home {
+                    self.active_popup = Some(Popup::Error);
+                    self.render(tui)?;
+                    //}
                 }
                 _ => {}
             }

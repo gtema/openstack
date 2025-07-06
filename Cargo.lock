@@ -2266,6 +2266,7 @@ dependencies = [
 name = "openstack_tui"
 version = "0.12.3"
 dependencies = [
+ "async-trait",
  "chrono",
  "clap",
  "color-eyre",
@@ -2284,6 +2285,7 @@ dependencies = [
  "openstack_types",
  "pretty_assertions",
  "ratatui",
+ "secrecy",
  "serde",
  "serde_json",
  "serde_yaml",

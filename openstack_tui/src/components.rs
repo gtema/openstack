@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use async_trait::async_trait;
 use crossterm::event::{KeyEvent, MouseEvent};
 use eyre::Result;
 use ratatui::{
@@ -22,6 +23,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{action::Action, config::Config, error::TuiError, mode::Mode, tui::Event};
 
+pub mod auth_helper;
 pub mod block_storage;
 pub mod cloud_select_popup;
 pub mod compute;
@@ -45,6 +47,7 @@ pub use fuzzy_select_list::FuzzySelectList;
 /// `Component` is a trait that represents a visual and interactive element of the user interface.
 /// Implementors of this trait can be registered with the main application loop and will be able to receive events,
 /// update state, and be rendered on the screen.
+#[async_trait]
 pub trait Component {
     /// Register an action handler that can send actions for processing if necessary.
     ///
