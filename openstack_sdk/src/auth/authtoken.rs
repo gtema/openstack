@@ -29,7 +29,8 @@ use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "keystone_ng")]
 use crate::auth::v3federation;
 use crate::auth::{
-    authtoken_scope, v3applicationcredential, v3password, v3token, v3totp, v3websso, AuthState,
+    auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3password, v3token, v3totp,
+    v3websso, AuthState,
 };
 use crate::config;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse};
@@ -303,24 +304,28 @@ impl AuthType {
 }
 
 /// Fill identity part of the v3 token auth builder using configured auth type data
-fn process_auth_type(
+async fn process_auth_type<A>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
-    interactive: bool,
+    auth_helper: &mut A,
     auth_type: &AuthType,
-) -> Result<(), AuthTokenError> {
+) -> Result<(), AuthTokenError>
+where
+    A: AuthHelper,
+{
     match auth_type {
         AuthType::V3ApplicationCredential => {
-            v3applicationcredential::fill_identity(identity_builder, auth_data)?;
+            v3applicationcredential::fill_identity(identity_builder, auth_data, auth_helper)
+                .await?;
         }
         AuthType::V3Password => {
-            v3password::fill_identity(identity_builder, auth_data, interactive)?;
+            v3password::fill_identity(identity_builder, auth_data, auth_helper).await?;
         }
         AuthType::V3Token => {
-            v3token::fill_identity(identity_builder, auth_data, interactive)?;
+            v3token::fill_identity(identity_builder, auth_data, auth_helper).await?;
         }
         AuthType::V3Totp => {
-            v3totp::fill_identity(identity_builder, auth_data, interactive)?;
+            v3totp::fill_identity(identity_builder, auth_data, auth_helper).await?;
         }
         other => {
             return Err(AuthTokenError::IdentityMethod {
@@ -332,10 +337,13 @@ fn process_auth_type(
 }
 
 /// Prepare Token endpoint filling identity data from `CloudConfig`
-pub(crate) fn build_identity_data_from_config<'a>(
+pub(crate) async fn build_identity_data_from_config<'a, A>(
     config: &config::CloudConfig,
-    interactive: bool,
-) -> Result<token_v3::Identity<'a>, AuthTokenError> {
+    auth_helper: &mut A,
+) -> Result<token_v3::Identity<'a>, AuthTokenError>
+where
+    A: AuthHelper,
+{
     let auth = config.auth.clone().ok_or(AuthTokenError::MissingAuthData)?;
     let auth_type = AuthType::from_cloud_config(config)?;
     let mut identity_builder = token_v3::IdentityBuilder::default();
@@ -348,7 +356,7 @@ pub(crate) fn build_identity_data_from_config<'a>(
                 .expect("`auth_methods` is an array of string when auth_type=`multifactor`")
             {
                 let method_type = AuthType::from_str(auth_method)?;
-                process_auth_type(&mut identity_builder, &auth, interactive, &method_type)?;
+                process_auth_type(&mut identity_builder, &auth, auth_helper, &method_type).await?;
                 // process_auth_type resets methods so we need to recover it
                 match method_type {
                     AuthType::V3Password => {
@@ -367,7 +375,7 @@ pub(crate) fn build_identity_data_from_config<'a>(
             identity_builder.methods(methods);
         }
         other => {
-            process_auth_type(&mut identity_builder, &auth, interactive, &other)?;
+            process_auth_type(&mut identity_builder, &auth, auth_helper, &other).await?;
         }
     };
     Ok(identity_builder.build()?)
@@ -419,13 +427,16 @@ pub(crate) fn build_reauth_request<'a>(
 }
 
 /// Build Auth request from `Receipt`
-pub(crate) fn build_auth_request_from_receipt<'a>(
+pub(crate) async fn build_auth_request_from_receipt<'a, A>(
     config: &config::CloudConfig,
     receipt_header: HeaderValue,
     receipt_data: &AuthReceiptResponse,
     scope: &AuthTokenScope,
-    interactive: bool,
-) -> Result<impl RestEndpoint + 'a, AuthTokenError> {
+    auth_helper: &mut A,
+) -> Result<impl RestEndpoint + 'a, AuthTokenError>
+where
+    A: AuthHelper,
+{
     let mut identity_builder = token_v3::IdentityBuilder::default();
     let auth = config.auth.clone().ok_or(AuthTokenError::MissingAuthData)?;
     // Check required_auth_methods rules
@@ -446,9 +457,10 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
                 process_auth_type(
                     &mut identity_builder,
                     &auth,
-                    interactive,
+                    auth_helper,
                     &AuthType::from_str(required_method)?,
-                )?;
+                )
+                .await?;
             }
         }
     }
@@ -494,10 +506,11 @@ mod tests {
 
     use super::*;
 
+    use crate::auth::auth_helper::NonInteractive;
     use crate::config;
 
-    #[test]
-    fn test_config_into_auth_password() -> Result<(), &'static str> {
+    #[tokio::test]
+    async fn test_config_into_auth_password() -> Result<(), &'static str> {
         let config = config::CloudConfig {
             auth: Some(config::Auth {
                 password: Some("pwd".into()),
@@ -511,7 +524,9 @@ mod tests {
             ..Default::default()
         };
 
-        let auth_data = build_identity_data_from_config(&config, false).unwrap();
+        let auth_data = build_identity_data_from_config(&config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         assert_eq!(
             json!({
               "methods": ["password"],
@@ -532,8 +547,8 @@ mod tests {
         Ok(())
     }
 
-    #[test]
-    fn test_config_into_auth_token() -> Result<(), &'static str> {
+    #[tokio::test]
+    async fn test_config_into_auth_token() -> Result<(), &'static str> {
         let config = config::CloudConfig {
             auth: Some(config::Auth {
                 token: Some("token".into()),
@@ -545,7 +560,9 @@ mod tests {
             ..Default::default()
         };
 
-        let auth_data = build_identity_data_from_config(&config, false).unwrap();
+        let auth_data = build_identity_data_from_config(&config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         assert_eq!(
             json!({
               "methods": ["token"],

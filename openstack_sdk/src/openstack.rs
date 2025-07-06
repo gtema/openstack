@@ -27,13 +27,16 @@ use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
+use tokio::runtime::Runtime;
 use tracing::{debug, error, event, info, instrument, trace, warn, Level};
 
 use crate::api;
 use crate::api::query;
 use crate::api::query::RawQuery;
 use crate::auth::{
-    self, authtoken,
+    self,
+    auth_helper::{AuthHelper, Dialoguer, NonInteractive},
+    authtoken,
     authtoken::{AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
 };
@@ -249,6 +252,25 @@ impl OpenStack {
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
+        if interactive {
+            self.authorize_with_auth_helper(scope, &mut Dialoguer::default(), renew_auth)
+        } else {
+            self.authorize_with_auth_helper(scope, &mut NonInteractive::default(), renew_auth)
+        }
+    }
+
+    /// Authorize against the cloud using provided credentials and get the session token
+    pub fn authorize_with_auth_helper<A>(
+        &mut self,
+        scope: Option<authtoken::AuthTokenScope>,
+        auth_helper: &mut A,
+        renew_auth: bool,
+    ) -> Result<(), OpenStackError>
+    where
+        A: AuthHelper,
+    {
+        // Create the runtime
+        let rt = Runtime::new().unwrap();
         let requested_scope = scope.unwrap_or(authtoken::AuthTokenScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
@@ -281,8 +303,10 @@ impl OpenStack {
 
                 match AuthType::from_cloud_config(&self.config)? {
                     AuthType::V3ApplicationCredential => {
-                        let identity =
-                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                        let identity = rt.block_on(authtoken::build_identity_data_from_config(
+                            &self.config,
+                            auth_helper,
+                        ))?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
                             &authtoken::AuthTokenScope::Unscoped,
@@ -293,8 +317,10 @@ impl OpenStack {
                     | AuthType::V3Token
                     | AuthType::V3Totp
                     | AuthType::V3Multifactor => {
-                        let identity =
-                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                        let identity = rt.block_on(authtoken::build_identity_data_from_config(
+                            &self.config,
+                            auth_helper,
+                        ))?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
                             &requested_scope,
@@ -307,13 +333,14 @@ impl OpenStack {
                                 let receipt_data: AuthReceiptResponse =
                                     serde_json::from_slice(rsp.body())
                                         .expect("A valid OpenStack Auth receipt body");
-                                let auth_endpoint = authtoken::build_auth_request_from_receipt(
-                                    &self.config,
-                                    receipt.clone(),
-                                    &receipt_data,
-                                    &requested_scope,
-                                    interactive,
-                                )?;
+                                let auth_endpoint =
+                                    rt.block_on(authtoken::build_auth_request_from_receipt(
+                                        &self.config,
+                                        receipt.clone(),
+                                        &receipt_data,
+                                        &requested_scope,
+                                        auth_helper,
+                                    ))?;
                                 rsp = auth_endpoint.raw_query(self)?;
                             }
                         }

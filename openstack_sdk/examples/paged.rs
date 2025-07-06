@@ -55,6 +55,6 @@ async fn main() -> Result<(), OpenStackError> {
         .query_async(&client)
         .await?;
 
-    println!("Flavors = {:?}", data);
+    println!("Flavors = {data:?}");
     Ok(())
 }

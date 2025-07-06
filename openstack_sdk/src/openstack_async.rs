@@ -36,7 +36,9 @@ use crate::api::query::QueryAsync;
 use crate::api::query::RawQueryAsync;
 use crate::api::RestClient;
 use crate::auth::{
-    self, authtoken,
+    self,
+    auth_helper::{AuthHelper, Dialoguer, NonInteractive},
+    authtoken,
     authtoken::{AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
 };
@@ -245,8 +247,12 @@ impl AsyncOpenStack {
     }
 
     /// Create a new OpenStack API session from CloudConfig
-    #[instrument(name = "connect", level = "trace", skip(config))]
-    pub async fn new_interactive(config: &CloudConfig, renew_auth: bool) -> OpenStackResult<Self> {
+    #[instrument(name = "connect", level = "trace", skip(config, auth_helper))]
+    pub async fn new_with_authentication_helper(
+        config: &CloudConfig,
+        auth_helper: &mut impl AuthHelper,
+        renew_auth: bool,
+    ) -> OpenStackResult<Self> {
         let mut session = Self::new_impl(config, Auth::None)?;
 
         // Ensure we resolve identity endpoint using version discovery
@@ -254,9 +260,21 @@ impl AsyncOpenStack {
             .discover_service_endpoint(&ServiceType::Identity)
             .await?;
 
-        session.authorize(None, true, renew_auth).await?;
+        session
+            .authorize_with_auth_helper(None, auth_helper, renew_auth)
+            .await?;
 
         Ok(session)
+    }
+
+    /// Create a new OpenStack API session from CloudConfig
+    #[instrument(name = "connect", level = "trace", skip(config))]
+    #[deprecated(
+        since = "0.22.0",
+        note = "please use `new_with_authentication_helper` instead"
+    )]
+    pub async fn new_interactive(config: &CloudConfig, renew_auth: bool) -> OpenStackResult<Self> {
+        Self::new_with_authentication_helper(config, &mut Dialoguer::default(), renew_auth).await
     }
 
     /// Set the authorization to be used by the client
@@ -295,14 +313,33 @@ impl AsyncOpenStack {
         self
     }
 
-    /// Authorize against the cloud using provided credentials and get the session token
+    /// Authorize against the cloud using provided credentials and get the session token.
     pub async fn authorize(
         &mut self,
         scope: Option<authtoken::AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
+    ) -> Result<(), OpenStackError> {
+        if interactive {
+            self.authorize_with_auth_helper(scope, &mut Dialoguer::default(), renew_auth)
+                .await
+        } else {
+            self.authorize_with_auth_helper(scope, &mut NonInteractive::default(), renew_auth)
+                .await
+        }
+    }
+
+    /// Authorize against the cloud using provided credentials and get the session token with the
+    /// auth helper that may be invoked to interactively ask for the credentials.
+    pub async fn authorize_with_auth_helper<A>(
+        &mut self,
+        scope: Option<authtoken::AuthTokenScope>,
+        auth_helper: &mut A,
+        renew_auth: bool,
     ) -> Result<(), OpenStackError>
-where {
+    where
+        A: AuthHelper,
+    {
         let requested_scope = scope.map_or_else(
             || authtoken::AuthTokenScope::try_from(&self.config),
             |v| Ok(v.clone()),
@@ -340,7 +377,8 @@ where {
                 match auth_type {
                     AuthType::V3ApplicationCredential => {
                         let identity =
-                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                            authtoken::build_identity_data_from_config(&self.config, auth_helper)
+                                .await?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
                             &authtoken::AuthTokenScope::Unscoped,
@@ -352,7 +390,8 @@ where {
                     | AuthType::V3Totp
                     | AuthType::V3Multifactor => {
                         let identity =
-                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                            authtoken::build_identity_data_from_config(&self.config, auth_helper)
+                                .await?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
                             &requested_scope,
@@ -370,8 +409,9 @@ where {
                                     receipt.clone(),
                                     &receipt_data,
                                     &requested_scope,
-                                    interactive,
-                                )?;
+                                    auth_helper,
+                                )
+                                .await?;
                                 rsp = auth_endpoint.raw_query_async(self).await?;
                             }
                         }

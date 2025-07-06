@@ -27,9 +27,9 @@
 //!         },
 //!     }
 //! }
-
 use thiserror::Error;
 
+use crate::auth::auth_helper::{AuthHelper, AuthHelperError};
 use crate::auth::auth_token_endpoint as token_v3;
 use crate::auth::AuthToken;
 use crate::config;
@@ -38,6 +38,14 @@ use crate::config;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum TokenError {
+    /// Authentication helper error
+    #[error(transparent)]
+    AuthHelper {
+        /// The error source
+        #[from]
+        source: AuthHelperError,
+    },
+
     /// Token is missing
     #[error("Auth token is missing")]
     MissingToken,
@@ -60,15 +68,24 @@ pub enum TokenError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user token
-pub fn fill_identity(
+pub async fn fill_identity<A>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
-    _interactive: bool,
-) -> Result<(), TokenError> {
+    auth_helper: &mut A,
+) -> Result<(), TokenError>
+where
+    A: AuthHelper,
+{
     identity_builder.methods(Vec::from([token_v3::Methods::Token]));
-    let token = token_v3::TokenBuilder::default()
-        .id(auth_data.token.clone().ok_or(TokenError::MissingToken)?)
-        .build()?;
+    let token_val = if let Some(val) = &auth_data.token {
+        val.clone()
+    } else {
+        auth_helper
+            .get_secret("token".into(), auth_helper.get_cloud_name())
+            .await
+            .map_err(|_| TokenError::MissingToken)?
+    };
+    let token = token_v3::TokenBuilder::default().id(token_val).build()?;
     identity_builder.token(token);
     Ok(())
 }
@@ -96,13 +113,14 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
+    use crate::auth::auth_helper::NonInteractive;
     use crate::config;
 
-    #[test]
-    fn test_fill_raise_no_token() {
+    #[tokio::test]
+    async fn test_fill_raise_no_token() {
         let config = config::Auth::default();
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, false);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             TokenError::MissingToken => {}
             other => {
@@ -111,14 +129,14 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill() {
+    #[tokio::test]
+    async fn test_fill() {
         let config = config::Auth {
             token: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, false).unwrap();
+        let _res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -130,15 +148,15 @@ mod tests {
         );
     }
 
-    #[test]
+    #[tokio::test]
     #[traced_test]
-    fn test_token_not_in_log() {
+    async fn test_token_not_in_log() {
         let config = config::Auth {
             token: Some("secret".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, false).unwrap();
+        let _res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret"));

@@ -55,6 +55,7 @@
 
 use thiserror::Error;
 
+use crate::auth::auth_helper::AuthHelper;
 use crate::auth::auth_token_endpoint as token_v3;
 use crate::config;
 
@@ -99,10 +100,14 @@ pub enum ApplicationCredentialError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with application credential
-pub fn fill_identity(
+pub async fn fill_identity<A>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
-) -> Result<(), ApplicationCredentialError> {
+    auth_helper: &mut A,
+) -> Result<(), ApplicationCredentialError>
+where
+    A: AuthHelper,
+{
     identity_builder.methods(Vec::from([token_v3::Methods::ApplicationCredential]));
     let mut app_cred = token_v3::ApplicationCredentialBuilder::default();
     app_cred.secret(
@@ -124,7 +129,12 @@ pub fn fill_identity(
             user.name(val.clone());
         }
         if auth_data.user_id.is_none() && auth_data.username.is_none() {
-            return Err(ApplicationCredentialError::MissingUser);
+            let name = auth_helper
+                .get("username".into(), auth_helper.get_cloud_name())
+                .await
+                .map_err(|_| ApplicationCredentialError::MissingUser)?
+                .to_owned();
+            user.name(name);
         }
         // Process user domain information
         if auth_data.user_domain_id.is_some() || auth_data.user_domain_name.is_some() {
@@ -139,7 +149,15 @@ pub fn fill_identity(
         }
         app_cred.user(user.build()?);
     } else {
-        return Err(ApplicationCredentialError::MissingIdOrName);
+        let app_cred_id = auth_helper
+            .get(
+                "application_credential_id".into(),
+                auth_helper.get_cloud_name(),
+            )
+            .await
+            .map_err(|_| ApplicationCredentialError::MissingIdOrName)?
+            .to_owned();
+        app_cred.id(app_cred_id);
     }
     identity_builder.application_credential(app_cred.build()?);
     Ok(())
@@ -152,16 +170,17 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
+    use crate::auth::auth_helper::NonInteractive;
     use crate::config;
 
-    #[test]
-    fn test_fill_raise_no_secret() {
+    #[tokio::test]
+    async fn test_fill_raise_no_secret() {
         let config = config::Auth {
             application_credential_id: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingSecret => {}
             other => {
@@ -170,14 +189,14 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill_raise_neither_id_nor_name() {
+    #[tokio::test]
+    async fn test_fill_raise_neither_id_nor_name() {
         let config = config::Auth {
             application_credential_secret: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingIdOrName => {}
             other => {
@@ -186,15 +205,15 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill_raise_no_user_when_name() {
+    #[tokio::test]
+    async fn test_fill_raise_no_user_when_name() {
         let config = config::Auth {
             application_credential_secret: Some("foo".into()),
             application_credential_name: Some("bar".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config);
+        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingUser => {}
             other => {
@@ -203,15 +222,17 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_fill_id_and_secret() {
+    #[tokio::test]
+    async fn test_fill_id_and_secret() {
         let config = config::Auth {
             application_credential_id: Some("foo".into()),
             application_credential_secret: Some("bar".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config).unwrap();
+        fill_identity(&mut identity, &config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -224,8 +245,8 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_fill_name_and_secret_and_user() {
+    #[tokio::test]
+    async fn test_fill_name_and_secret_and_user() {
         let config = config::Auth {
             application_credential_name: Some("foo".into()),
             application_credential_secret: Some("bar".into()),
@@ -236,7 +257,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config).unwrap();
+        fill_identity(&mut identity, &config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -258,8 +281,8 @@ mod tests {
     }
 
     #[traced_test]
-    #[test]
-    fn test_secret_not_in_log() {
+    #[tokio::test]
+    async fn test_secret_not_in_log() {
         let config = config::Auth {
             application_credential_name: Some("foo".into()),
             application_credential_secret: Some("secret_value".into()),
@@ -270,7 +293,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config).unwrap();
+        fill_identity(&mut identity, &config, &mut NonInteractive::default())
+            .await
+            .unwrap();
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret_value"));

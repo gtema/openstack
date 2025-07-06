@@ -50,7 +50,7 @@ async fn main() -> Result<(), OpenStackError> {
     // Execute query casting data to the Flavor type
     let find_data: Flavor = find(find_ep.clone()).query_async(&client).await?;
 
-    println!("Flavor Data = {:?}", find_data);
+    println!("Flavor Data = {find_data:?}");
 
     // Execute query keeping data as raw json_value
     let find_data_raw: Value = find(find_ep).query_async(&client).await?;
