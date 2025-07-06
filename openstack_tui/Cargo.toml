@@ -9,7 +9,7 @@ edition = "2024"
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
-rust-version = "1.85" # MSRV
+rust-version = "1.88" # MSRV
 
 [lib]
 bench = false
@@ -19,6 +19,7 @@ name = "ostui"
 path = "src/bin/ostui.rs"
 
 [dependencies]
+async-trait.workspace = true
 chrono = { workspace= true }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
@@ -37,6 +38,7 @@ openstack_sdk = { path = "../openstack_sdk", version = "^0.21", default-features
 openstack_types = { path = "../openstack_types", version = "^0.21" }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.29", features = ["serde", "macros"] }
+secrecy = "0.10.3"
 serde = { workspace = true  }
 serde_json = { workspace = true }
 serde_yaml = "^0.9"

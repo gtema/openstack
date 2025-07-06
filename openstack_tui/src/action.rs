@@ -62,6 +62,14 @@ pub enum Action {
     /// Refresh data
     Refresh,
 
+    /// AuthHelper
+    AuthDataRequired {
+        prompt: String,
+        connection_name: Option<String>,
+        is_sensitive: bool,
+    },
+    AuthHelperCompleted,
+
     /// Open describe view with the details
     SetDescribeApiResponseData(serde_json::Value),
     /// Describe resource under cursor
