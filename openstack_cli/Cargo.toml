@@ -68,7 +68,8 @@ http = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.21", default-features = false, features = ["async", "identity"] }
 openstack_types = { path="../openstack_types", version = "^0.21" }
-indicatif = "^0.17"
+owo-colors = { version = "^4.2", features = ["supports-colors"] }
+indicatif = "^0.18"
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
@@ -85,7 +86,6 @@ config.workspace = true
 dirs.workspace = true
 itertools.workspace = true
 rand = { version = "^0.9" }
-owo-colors = { version = "4.2.1", features = ["supports-colors"] }
 
 [dev-dependencies]
 assert_cmd = "^2.0"
