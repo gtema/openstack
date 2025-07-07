@@ -22,7 +22,7 @@ async-trait = { version = "^0.1" } #, optional = true }
 bytes = "^1.10"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.5", features = ["cargo", "color", "derive", "env"] }
-clap_complete = { version = "^4.5.52" }
+clap_complete = { version = "^4.5.54" }
 color-eyre = { version = "^0.6", features = ["default", "issue-url", "track-caller"] }
 config = { version = "^0.15", default-features = false }
 derive_builder = { version = "^0.20" }
@@ -33,7 +33,7 @@ futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.3"
 itertools = { version = "^0.14" }
-json-patch = { version = "^4.0.0" }
+json-patch = { version = "^4.0" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.3" }
 regex = { version = "^1.11" }
@@ -44,7 +44,7 @@ serde_bytes = "^0.11"
 strip-ansi-escapes = "^0.2"
 structable = { version = "^0.3" }
 tempfile = "^3.20"
-tokio = { version = "^1.45", features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std", "signal"]}
+tokio = { version = "^1.46", features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std", "signal"]}
 tokio-util = { version="^0.7", features = ["io", "compat"]}
 thiserror = { version = "^2.0" }
 tracing = "^0.1"
