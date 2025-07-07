@@ -39,6 +39,12 @@ Rust based tools support typical
 [`clouds.yaml`/`secure.yaml`](https://docs.openstack.org/openstacksdk/latest/user/config/configuration.html)
 files for configuration.
 
+Most authentication methods support interactive data provisioning. When certain
+required auth attributes are not provided in the configuration file or through
+the supported cli arguments (or environment variables) clients that implement 
+`AuthHelper` interface can receive such data from the user. For example when
+using the cli a prompt will appear. In the tui a popup requests the user input.
+
 ### Authentication methods
 
 Currently only a subset of all possible authentication methods is covered with
@@ -134,6 +140,19 @@ required to specify user data when using application credential name
 
 Either `application_credential_id` is required or `application_credential_name`
 in which case additionally the user information is required.
+
+#### v3OidcAccessToken
+
+Authentication with the OIDC access token is supported in the same way like it
+is done by the python OpenStack tools.
+
+Required configuration:
+
+- `auth_type` = `v3oidcaccesstoken` (or `oidaccesstoken`)
+- `identity_provider_id` - an identity provider id
+- `protocol` - identity provider protocol (usually `oidc`)
+- `access_token` - Access token of the received from the remote identity
+provider.
 
 
 ## Caching
