@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Module to handle OpenStack config
+//! OpenStack configuration handling.
 //!
 //! ```rust
 //! let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
@@ -41,6 +41,15 @@
 //!     Some("s2.yaml"),
 //! ).expect("Failed to load the configuration files");
 //! ```
+//!
+//! [CloudConfig] object can be constructed directly from environment variables with the `OS_`
+//! prefix:
+//!
+//! ```rust
+//! # use openstack_sdk::config::CloudConfig;
+//! let cfg = CloudConfig::from_env().unwrap();
+//! ```
+//!
 
 use secrecy::{ExposeSecret, SecretString};
 use std::fmt;
@@ -61,15 +70,19 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ConfigError {
+    /// Cloud configuration cannot be found in the configuration files.
     #[error("Cloud {0} not found")]
     CloudNotFound(String),
 
+    /// Cloud configuration refers to the undefined profile.
     #[error("Profile {} not found", profile_name)]
     MissingProfile { profile_name: String },
 
+    /// Unknown error.
     #[error("unknown error")]
     Unknown,
 
+    /// Configuration parsing error.
     #[error("failed to deserialize config: {}", source)]
     Parse {
         /// The source of the error.
@@ -79,6 +92,7 @@ pub enum ConfigError {
 }
 
 impl ConfigError {
+    /// Construct [ConfigError::Parse] error from [config::ConfigError]
     pub fn parse(source: config::ConfigError) -> Self {
         ConfigError::Parse { source }
     }
@@ -88,12 +102,15 @@ impl ConfigError {
 #[derive(Error)]
 #[non_exhaustive]
 pub enum ConfigFileBuilderError {
+    /// Failed to parse the configuration file.
     #[error("Failed to parse file {path:?}: {source}")]
     FileParse {
         source: Box<config::ConfigError>,
         builder: ConfigFileBuilder,
         path: PathBuf,
     },
+
+    /// Failed to deserialize the configuration file to the expected structure.
     #[error("Failed to deserialize config {path:?}: {source}")]
     ConfigDeserialize {
         source: Box<config::ConfigError>,
@@ -129,6 +146,7 @@ impl fmt::Debug for ConfigFileBuilderError {
 
 /// A builder to create a [`ConfigFile`] by specifying which files to load.
 pub struct ConfigFileBuilder {
+    /// List of the configuration sources.
     sources: Vec<config::Config>,
 }
 
@@ -177,82 +195,85 @@ impl ConfigFileBuilder {
     }
 }
 
-/// CacheConfig structure
+/// CacheConfig structure.
+///
+/// A configuration for the built-in authentication caching.
 #[derive(Deserialize, Debug, Clone)]
 pub struct CacheConfig {
+    /// Enables/disables authentication caching.
     pub auth: Option<bool>,
 }
 
-/// ConfigFile structure
+/// ConfigFile structure.
 #[derive(Deserialize, Debug, Clone)]
 pub struct ConfigFile {
-    /// Cache configuration
+    /// Cache configuration.
     pub cache: Option<CacheConfig>,
-    /// clouds configuration
+    /// clouds configuration.
     pub clouds: Option<HashMap<String, CloudConfig>>,
-    /// vendor clouds information (profiles)
+    /// vendor clouds information (profiles).
     #[serde(rename = "public-clouds")]
     pub public_clouds: Option<HashMap<String, CloudConfig>>,
 }
 
-/// Authentication data
+/// Authentication data.
 ///
 /// Sensitive fields are wrapped into the
 /// [SensitiveString](https://docs.rs/secrecy/0.10.3/secrecy/type.SecretString.html) to prevent
 /// accidental exposure in logs.
 #[derive(Clone, Default, Deserialize)]
 pub struct Auth {
-    /// Authentication URL
+    /// Authentication URL.
     pub auth_url: Option<String>,
-    /// Authentication endpoint type (public/internal/admin)
+    /// Authentication endpoint type (public/internal/admin).
     pub endpoint: Option<String>,
-    /// Auth Token
+    /// Auth Token.
     pub token: Option<SecretString>,
 
-    /// Auth User.Name
+    /// Auth User.Name.
     pub username: Option<String>,
-    /// Auth User.ID
+    /// Auth User.ID.
     pub user_id: Option<String>,
-    /// Auth User.Domain.Name
+    /// Auth User.Domain.Name.
     pub user_domain_name: Option<String>,
-    /// Auth User.Domain.ID
+    /// Auth User.Domain.ID.
     pub user_domain_id: Option<String>,
-    /// Auth User password
+    /// Auth User password.
     pub password: Option<SecretString>,
 
-    /// Auth (totp) MFA passcode
+    /// Auth (totp) MFA passcode.
     pub passcode: Option<SecretString>,
 
-    /// `Domain` scope Domain.ID
+    /// `Domain` scope Domain.ID.
     pub domain_id: Option<String>,
-    /// `Domain` scope Domain.Name
+    /// `Domain` scope Domain.Name.
     pub domain_name: Option<String>,
-    /// `Project` scope Project.ID
+    /// `Project` scope Project.ID.
     pub project_id: Option<String>,
-    /// `Project` scope Project.Name
+    /// `Project` scope Project.Name.
     pub project_name: Option<String>,
-    /// `Project` scope Project.Domain.ID
+    /// `Project` scope Project.Domain.ID.
     pub project_domain_id: Option<String>,
-    /// `Project` scope Project.Domain.Name
+    /// `Project` scope Project.Domain.Name.
     pub project_domain_name: Option<String>,
 
-    /// `Federation` protocol
+    /// `Federation` protocol.
     pub protocol: Option<String>,
-    /// `Federation` identity provider
+    /// `Federation` identity provider.
     pub identity_provider: Option<String>,
-    /// OIDC access token
+    /// OIDC access token.
     pub access_token: Option<SecretString>,
-    /// OIDC access token type (when not access_token)
+    /// OIDC access token type (when not access_token).
     pub access_token_type: Option<String>,
 
-    /// `Application Credential` ID
+    /// `Application Credential` ID.
     pub application_credential_id: Option<String>,
-    /// `Application Credential` Name
+    /// `Application Credential` Name.
     pub application_credential_name: Option<String>,
-    /// `Application Credential` Secret
+    /// `Application Credential` Secret.
     pub application_credential_secret: Option<SecretString>,
 
-    /// `System scope`
+    /// `System scope`.
     pub system_scope: Option<String>,
 }
 
@@ -282,29 +303,35 @@ impl fmt::Debug for Auth {
     }
 }
 
-/// CloudConfig structure
+/// Configuration object representing a single connection to the concrete cloud.
+///
+/// Connection to the cloud uses this object.
 #[derive(Deserialize, Default, Clone)]
 pub struct CloudConfig {
-    /// Authorization data
+    /// Authorization data.
     pub auth: Option<Auth>,
-    /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations
+    /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations.
     pub auth_type: Option<String>,
-    /// Authorization methods (in the case when auth_type = `multifactor`.
+    /// Authorization methods (in the case when auth_type = `multifactor`).
     pub auth_methods: Option<Vec<String>>,
 
-    /// Vendor Profile (by name from clouds-public.yaml or TBD: URL)
+    /// Vendor Profile (by name from clouds-public.yaml or TBD: URL).
     pub profile: Option<String>,
-    /// Interface name to be used for endpoints selection
+    /// Interface name to be used for endpoints selection.
     pub interface: Option<String>,
-    /// Region name
+    /// Region name.
     pub region_name: Option<String>,
 
-    /// Custom CA Certificate
+    /// Alternative connection name which is may be used to provide some meaningful name when
+    /// [CloudConfig] is constructed directly without `clouds.yaml` file.
+    pub name: Option<String>,
+
+    /// Custom CA Certificate.
     pub cacert: Option<String>,
-    /// Verify SSL Certificates
+    /// Verify SSL Certificates.
     pub verify: Option<bool>,
 
-    /// All other options
+    /// All other options.
     #[serde(flatten)]
     pub options: HashMap<String, config::Value>,
 }
@@ -313,11 +340,12 @@ impl fmt::Debug for CloudConfig {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("CloudConfig")
             .field("auth", &self.auth)
+            .field("auth_type", &self.auth_type)
             .finish()
     }
 }
 
-/// Get a user authentication hash
+/// Get a user authentication hash.
 pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
     // Calculate hash of the auth information
     let mut s = DefaultHasher::new();
@@ -362,9 +390,43 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
     s.finish()
 }
 
-/// CloudConfig struct implementation
+/// CloudConfig struct implementation.
 impl CloudConfig {
-    /// Update unset CloudConfig with values from the `update` var
+    /// Construct CloudConfig from environment variables.
+    ///
+    /// Historically `keystoneauth` python library parses relevant environment variables.
+    /// `OpenStackSDK` attempts to structure the cloud configuration introducing an explicit "auth"
+    /// object holding the authentication data. Pretty unfortunately this structure gets very
+    /// broken: `OS_USER_ID` is placed under the auth, `OS_AUTH_URL` is the auth_url under the
+    /// auth, `OS_AUTH_TYPE` is auth_type on the config level and so on.
+    ///
+    /// To keep this still manageable without keeping at full mapping, this function parses
+    /// environment variables with the `OS_` prefix into the [`CloudConfig`] but uses
+    /// [`auth`](CloudConfig::auth) property separately populated out of all environment variables
+    /// with the same `OS_` prefix.
+    pub fn from_env() -> Result<Self, ConfigError> {
+        let config_builder = config::Config::builder()
+            .add_source(config::Environment::with_prefix("os"))
+            .build()?;
+
+        let mut cfg = config_builder
+            .try_deserialize::<Self>()
+            .map_err(ConfigError::parse)?;
+
+        let auth_builder = config::Config::builder()
+            .add_source(config::Environment::with_prefix("os"))
+            .build()?;
+
+        cfg.auth = Some(
+            auth_builder
+                .try_deserialize::<Auth>()
+                .map_err(ConfigError::parse)?,
+        );
+
+        Ok(cfg)
+    }
+
+    /// Update unset CloudConfig with values from the `update` var.
     pub fn update(&mut self, update: &CloudConfig) {
         if let Some(update_auth) = &update.auth {
             let auth = self.auth.get_or_insert(Auth::default());
@@ -474,7 +536,7 @@ impl CloudConfig {
         );
     }
 
-    /// Get sensitive config values
+    /// Get sensitive config values.
     ///
     /// This method allows getting list of sensitive values from the config which need to be
     /// censored from logs. It is purposely only available inside the crate for now to prevent
@@ -504,7 +566,7 @@ impl CloudConfig {
 
 const CONFIG_SUFFIXES: &[&str] = &[".yaml", ".yml", ".json"];
 
-/// Get Paths in which to search for the configuration file
+/// Get Paths in which to search for the configuration file.
 fn get_config_file_search_paths<S: AsRef<str>>(filename: S) -> Vec<PathBuf> {
     let paths: Vec<PathBuf> = vec![
         env::current_dir().expect("Cannot determine current workdir"),
@@ -658,6 +720,7 @@ impl ConfigFile {
                         config.update(profile);
                     }
                 }
+                config.name = Some(cloud_name.as_ref().to_string());
 
                 return Ok(Some(config));
             }
@@ -665,12 +728,12 @@ impl ConfigFile {
         Ok(None)
     }
 
-    /// Return true if auth caching is enabled
+    /// Return true if auth caching is enabled.
     pub fn is_auth_cache_enabled(&self) -> bool {
         self.cache.as_ref().and_then(|c| c.auth).unwrap_or(true)
     }
 
-    /// Return list of available cloud connections
+    /// Return list of available cloud connections.
     pub fn get_available_clouds(&self) -> Vec<String> {
         if let Some(clouds) = &self.clouds {
             return clouds.keys().cloned().collect();
@@ -688,7 +751,7 @@ mod tests {
     use std::path::PathBuf;
     use tempfile::Builder;
 
-    use super::ConfigFile;
+    use super::*;
 
     #[test]
     fn test_get_search_paths() {
@@ -767,6 +830,7 @@ mod tests {
         assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
         assert_eq!(auth.username, Some(String::from("foo")));
         assert_eq!(auth.password.unwrap().expose_secret(), String::from("bar"));
+        assert_eq!(profile.name, Some(String::from("fake_cloud")));
     }
 
     #[test]
@@ -800,5 +864,75 @@ mod tests {
             vec!["pwd", "app_cred_secret", "tkn", "pcd"],
             profile.get_sensitive_values()
         );
+    }
+
+    #[test]
+    fn test_cloud_config_from_env() {
+        env::set_var("OS_AUTH_URL", "auth_url");
+        env::set_var("OS_ENDPOINT", "endpoint");
+        env::set_var("OS_TOKEN", "token");
+
+        env::set_var("OS_USERNAME", "username");
+        env::set_var("OS_USER_ID", "user_id");
+        env::set_var("OS_USER_DOMAIN_NAME", "user_domain_name");
+        env::set_var("OS_USER_DOMAIN_ID", "user_domain_id");
+        env::set_var("OS_PASSWORD", "password");
+
+        env::set_var("OS_PASSCODE", "passcode");
+        env::set_var("OS_DOMAIN_ID", "domain_id");
+        env::set_var("OS_DOMAIN_NAME", "domain_name");
+        env::set_var("OS_PROJECT_ID", "project_id");
+        env::set_var("OS_PROJECT_NAME", "project_name");
+        env::set_var("OS_PROJECT_DOMAIN_ID", "project_domain_id");
+        env::set_var("OS_PROJECT_DOMAIN_NAME", "project_domain_name");
+
+        env::set_var("OS_PROTOCOL", "protocol");
+        env::set_var("OS_IDENTITY_PROVIDER", "identity_provider");
+        env::set_var("OS_ACCESS_TOKEN", "access_token");
+
+        env::set_var("OS_APPLICATION_CREDENTIAL_ID", "application_credential_id");
+        env::set_var(
+            "OS_APPLICATION_CREDENTIAL_NAME",
+            "application_credential_name",
+        );
+        env::set_var(
+            "OS_APPLICATION_CREDENTIAL_SECRET",
+            "application_credential_secret",
+        );
+
+        env::set_var("OS_AUTH_TYPE", "auth_type");
+        env::set_var("OS_REGION_NAME", "region_name");
+
+        env::set_var("OS_SYSTEM_SCOPE", "system_scope");
+
+        let cc = CloudConfig::from_env().unwrap();
+        let auth = cc.auth.unwrap();
+        assert_eq!("auth_url", auth.auth_url.unwrap());
+        assert_eq!("endpoint", auth.endpoint.unwrap());
+        assert_eq!("token", auth.token.unwrap().expose_secret());
+        assert_eq!("username", auth.username.unwrap());
+        assert_eq!("user_id", auth.user_id.unwrap());
+        assert_eq!("user_domain_name", auth.user_domain_name.unwrap());
+        assert_eq!("user_domain_id", auth.user_domain_id.unwrap());
+        assert_eq!("password", auth.password.unwrap().expose_secret());
+        assert_eq!("project_id", auth.project_id.unwrap());
+        assert_eq!("project_name", auth.project_name.unwrap());
+        assert_eq!("project_domain_name", auth.project_domain_name.unwrap());
+        assert_eq!("project_domain_id", auth.project_domain_id.unwrap());
+        assert_eq!(
+            "application_credential_id",
+            auth.application_credential_id.unwrap()
+        );
+        assert_eq!(
+            "application_credential_name",
+            auth.application_credential_name.unwrap()
+        );
+        assert_eq!(
+            "application_credential_secret",
+            auth.application_credential_secret.unwrap().expose_secret()
+        );
+        assert_eq!("system_scope", auth.system_scope.unwrap());
+        assert_eq!("auth_type", cc.auth_type.unwrap());
+        assert_eq!("region_name", cc.region_name.unwrap());
     }
 }
