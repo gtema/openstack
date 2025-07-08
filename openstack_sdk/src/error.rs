@@ -21,8 +21,8 @@ use crate::api;
 #[cfg(feature = "keystone_ng")]
 use crate::auth::v3federation::FederationError;
 use crate::auth::{
-    authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError, v3websso::WebSsoError,
-    AuthError,
+    authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
+    v3oidcaccesstoken::OidcAccessTokenError, v3websso::WebSsoError, AuthError,
 };
 use crate::catalog::CatalogError;
 use crate::config::ConfigError;
@@ -210,6 +210,14 @@ impl From<AuthTokenError> for OpenStackError {
 
 impl From<AuthTokenScopeError> for OpenStackError {
     fn from(source: AuthTokenScopeError) -> Self {
+        Self::AuthError {
+            source: source.into(),
+        }
+    }
+}
+
+impl From<OidcAccessTokenError> for OpenStackError {
+    fn from(source: OidcAccessTokenError) -> Self {
         Self::AuthError {
             source: source.into(),
         }

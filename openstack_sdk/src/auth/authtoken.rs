@@ -29,8 +29,8 @@ use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "keystone_ng")]
 use crate::auth::v3federation;
 use crate::auth::{
-    auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3password, v3token, v3totp,
-    v3websso, AuthState,
+    auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3oidcaccesstoken,
+    v3password, v3token, v3totp, v3websso, AuthState,
 };
 use crate::config;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse};
@@ -116,6 +116,14 @@ pub enum AuthTokenError {
         /// The error source
         #[from]
         source: v3applicationcredential::ApplicationCredentialError,
+    },
+
+    /// Oidc Access Token autherror
+    #[error("OIDC access token authentication error: {}", source)]
+    OidcAccessToken {
+        /// The error source
+        #[from]
+        source: v3oidcaccesstoken::OidcAccessTokenError,
     },
 
     /// Password Identity error
@@ -244,6 +252,8 @@ pub enum AuthType {
     #[cfg(feature = "keystone_ng")]
     /// Federation
     V3Federation,
+    /// OIDC Access token
+    V3OidcAccessToken,
     /// v3 Password
     V3Password,
     /// v3 Token
@@ -267,6 +277,7 @@ impl FromStr for AuthType {
             "v3password" | "password" => Ok(Self::V3Password),
             #[cfg(feature = "keystone_ng")]
             "v3federation" | "federation" => Ok(Self::V3Federation),
+            "v3oidcaccesstoken" | "accesstoken" => Ok(Self::V3OidcAccessToken),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
             "v3multifactor" => Ok(Self::V3Multifactor),
@@ -295,6 +306,7 @@ impl AuthType {
             Self::V3Password => "v3password",
             #[cfg(feature = "keystone_ng")]
             Self::V3Federation => "v3federation",
+            Self::V3OidcAccessToken => "v3oidcaccesstoken",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
             Self::V3Totp => "v3totp",

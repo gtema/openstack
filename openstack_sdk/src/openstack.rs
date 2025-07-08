@@ -302,18 +302,8 @@ impl OpenStack {
                 trace!("No Auth already available. Proceeding with new login");
 
                 match AuthType::from_cloud_config(&self.config)? {
-                    AuthType::V3ApplicationCredential => {
-                        let identity = rt.block_on(authtoken::build_identity_data_from_config(
-                            &self.config,
-                            auth_helper,
-                        ))?;
-                        let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
-                            &identity,
-                            &authtoken::AuthTokenScope::Unscoped,
-                        )?;
-                        rsp = auth_ep.raw_query(self)?;
-                    }
-                    AuthType::V3Password
+                    AuthType::V3ApplicationCredential
+                    | AuthType::V3Password
                     | AuthType::V3Token
                     | AuthType::V3Totp
                     | AuthType::V3Multifactor => {
@@ -345,6 +335,33 @@ impl OpenStack {
                             }
                         }
                         api::check_response_error::<Self>(&rsp, None)?;
+                    }
+                    AuthType::V3OidcAccessToken => {
+                        let auth_ep = rt.block_on(auth::v3oidcaccesstoken::get_auth_ep(
+                            &self.config,
+                            auth_helper,
+                        ))?;
+                        rsp = auth_ep.raw_query(self)?;
+
+                        let token = rsp
+                            .headers()
+                            .get("x-subject-token")
+                            .ok_or(AuthError::AuthTokenNotInResponse)?
+                            .to_str()
+                            .expect("x-subject-token is a string");
+
+                        // Set retrieved token as current auth
+                        let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
+                        let token_auth = authtoken::AuthToken {
+                            token: token.to_string(),
+                            auth_info: Some(token_info),
+                        };
+                        self.set_auth(Auth::AuthToken(Box::new(token_auth.clone())), false);
+
+                        // And now time to rescope the token
+                        let auth_ep =
+                            authtoken::build_reauth_request(&token_auth, &requested_scope)?;
+                        rsp = auth_ep.raw_query(self)?;
                     }
                     other => {
                         return Err(AuthTokenError::IdentityMethodSync {

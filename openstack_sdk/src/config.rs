@@ -240,6 +240,10 @@ pub struct Auth {
     pub protocol: Option<String>,
     /// `Federation` identity provider
     pub identity_provider: Option<String>,
+    /// OIDC access token
+    pub access_token: Option<SecretString>,
+    /// OIDC access token type (when not access_token)
+    pub access_token_type: Option<String>,
 
     /// `Application Credential` ID
     pub application_credential_id: Option<String>,
@@ -267,6 +271,7 @@ impl fmt::Debug for Auth {
             .field("user_domain_name", &self.user_domain_name)
             .field("protocol", &self.protocol)
             .field("identity_provider", &self.identity_provider)
+            .field("access_token_type", &self.access_token_type)
             .field("application_credential_id", &self.application_credential_id)
             .field(
                 "application_credential_name",
@@ -336,6 +341,9 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.protocol {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.access_token_type {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.application_credential_name {
@@ -409,6 +417,13 @@ impl CloudConfig {
                 auth.identity_provider
                     .clone_from(&update_auth.identity_provider);
             }
+            if auth.access_token_type.is_none() && update_auth.access_token_type.is_some() {
+                auth.access_token_type
+                    .clone_from(&update_auth.access_token_type);
+            }
+            if auth.access_token.is_none() && update_auth.access_token.is_some() {
+                auth.access_token.clone_from(&update_auth.access_token);
+            }
             if auth.application_credential_id.is_none()
                 && update_auth.application_credential_id.is_some()
             {
@@ -477,6 +492,9 @@ impl CloudConfig {
                 res.push(val.expose_secret());
             }
             if let Some(val) = &auth.passcode {
+                res.push(val.expose_secret());
+            }
+            if let Some(val) = &auth.access_token {
                 res.push(val.expose_secret());
             }
         }
