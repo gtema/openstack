@@ -110,36 +110,47 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .with(rtl)
         .init();
 
-    // build configs
-    let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
-        cli.global_opts.os_client_config_file.as_deref(),
-        cli.global_opts.os_client_secure_file.as_deref(),
-    )?;
+    let cloud_config = if cli.global_opts.cloud_config_from_env {
+        // Environment variables should be used to get the cloud configuration
+        tracing::debug!("Using environment variables for the cloud connection");
+        let cloud_name = cli
+            .global_opts
+            .os_cloud_name
+            .clone()
+            .unwrap_or(String::from("envvars"));
+        let mut cloud_config = openstack_sdk::config::CloudConfig::from_env()?;
+        cloud_config.name = Some(cloud_name.clone());
+        cloud_config
+    } else {
+        // prepare cloud config parsing
+        let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
+            cli.global_opts.os_client_config_file.as_deref(),
+            cli.global_opts.os_client_secure_file.as_deref(),
+        )?;
 
-    // Identify target cloud to connect to
-    let cloud_name = match cli.global_opts.os_cloud {
-        Some(ref cloud) => cloud.clone(),
-        None => {
-            if std::io::stdin().is_terminal() {
-                // Cloud was not selected and we are in the potentially interactive mode (terminal)
-                let mut profiles = cfg.get_available_clouds();
-                profiles.sort();
-                let selected_cloud_idx = FuzzySelect::new()
+        // Identify target cloud to connect to
+        let cloud_name = match cli.global_opts.os_cloud {
+            Some(ref cloud) => cloud.clone(),
+            None => {
+                if std::io::stdin().is_terminal() {
+                    // Cloud was not selected and we are in the potentially interactive mode (terminal)
+                    let mut profiles = cfg.get_available_clouds();
+                    profiles.sort();
+                    let selected_cloud_idx = FuzzySelect::new()
                     .with_prompt("Please select cloud you want to connect to (use `--os-cloud` next time for efficiency)?")
                     .items(&profiles)
                     .interact()?;
-                profiles[selected_cloud_idx].clone()
-            } else {
-                return Err(
-                    eyre!("`--os-cloud` or `OS_CLOUD` environment variable must be given").into(),
+                    profiles[selected_cloud_idx].clone()
+                } else {
+                    return Err(
+                    eyre!("`--os-cloud` or `OS_CLOUD` environment variable must be given, or at least `--cloud-config-from-env` should be used.").into(),
                 );
+                }
             }
-        }
+        };
+        cfg.get_cloud_config(&cloud_name)?
+            .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name.clone()))?
     };
-    // Get the connection details
-    let profile = cfg
-        .get_cloud_config(&cloud_name)?
-        .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name.clone()))?;
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
@@ -155,14 +166,17 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     if std::io::stdin().is_terminal() {
         // Interactive session (may ask for password/MFA/SSO)
         let mut auth_helper = Dialoguer::default();
-        auth_helper.set_cloud_name(Some(cloud_name));
-        session =
-            AsyncOpenStack::new_with_authentication_helper(&profile, &mut auth_helper, renew_auth)
-                .await
-                .map_err(|err| OpenStackCliError::Auth { source: err })?;
+        auth_helper.set_cloud_name(cloud_config.name.clone());
+        session = AsyncOpenStack::new_with_authentication_helper(
+            &cloud_config,
+            &mut auth_helper,
+            renew_auth,
+        )
+        .await
+        .map_err(|err| OpenStackCliError::Auth { source: err })?;
     } else {
         // Non-interactive session if i.e. scripted with chaining
-        session = AsyncOpenStack::new(&profile)
+        session = AsyncOpenStack::new(&cloud_config)
             .await
             .map_err(|err| OpenStackCliError::Auth { source: err })?;
     }
