@@ -76,3 +76,30 @@ marking the whole command deprecated and/or drop it completely.
 
 `osc` supports `--timing` argument that enables capturing of all HTTP requests
 and outputs timings grouped by URL (ignoring the query parameters) and method.
+
+## Connection configuration
+
+`osc` tool supports connection configuration using the `clouds.yaml` files and
+environment variables. In difference to the `python-openstackclient` no merging
+of configuration file data with the environment variables is supported. Reason
+for that is number of errors and unexpected behavior users are experiencing due
+to that.
+
+- `--os-cloud <CLOUD_NAME>` command argument points to the connection configured
+  in the `clouds.yaml` file(s).
+
+- `$OS_CLOUD` environment variable points to the configuration in the
+  `clouds.yaml` file
+
+- `--cloud-config-from-env` flag directs cli to ignore `clouds.yaml`
+  configuration file completely and only rely on the environment variables
+  (prefixed as usual with `OS_` prefix).
+
+- `--os-cloud-name <CLOUD_NAME>` or `$OS_CLOUD_NAME` environment variable uses
+  the specified value as the reference connection name i.e when the
+  authentication helper resolves the missing authentication parameters (like
+  password or similar).
+
+- `--os-project-name` and `--os-project-id` cause the connection to be
+  established with the regular credentials, but use the different project for
+  the `scoped token.

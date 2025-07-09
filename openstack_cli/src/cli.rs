@@ -143,6 +143,16 @@ pub struct GlobalOpts {
     #[arg(long, env = "OS_CLOUD", global = true, display_order = 900)]
     pub os_cloud: Option<String>,
 
+    /// Get the cloud config from environment variables.
+    #[arg(long, global = true, action = clap::ArgAction::SetTrue, display_order = 900, conflicts_with("os_cloud"))]
+    pub cloud_config_from_env: bool,
+
+    /// Cloud name used when configuration is retrieved from environment variables. When not
+    /// specified the `envvars` would be used as a default. This value will be used eventually by
+    /// the authentication helper when data need to be provided dynamically.
+    #[arg(long, env = "OS_CLOUD_NAME", global = true, display_order = 900)]
+    pub os_cloud_name: Option<String>,
+
     /// Project ID to use instead of the one in connection profile
     #[arg(long, env = "OS_PROJECT_ID", global = true, display_order = 901)]
     pub os_project_id: Option<String>,
