@@ -146,13 +146,10 @@ impl RestEndpoint for OidcAccessTokenRequest<'_> {
 }
 
 /// Get [`RestEndpoint`] for initializing the OIDC authentication
-pub async fn get_auth_ep<A>(
+pub async fn get_auth_ep<A: AuthHelper>(
     config: &config::CloudConfig,
     auth_helper: &mut A,
-) -> Result<impl RestEndpoint, OidcAccessTokenError>
-where
-    A: AuthHelper,
-{
+) -> Result<impl RestEndpoint, OidcAccessTokenError> {
     if let Some(auth) = &config.auth {
         let mut ep = OidcAccessTokenRequest::builder();
 
@@ -160,7 +157,7 @@ where
             ep.idp_id(identity_provider.clone());
         } else {
             let idp_id = auth_helper
-                .get("idp_id".into(), auth_helper.get_cloud_name())
+                .get("idp_id".into(), config.name.clone())
                 .await
                 .map_err(|_| OidcAccessTokenError::MissingIdpId)?
                 .to_owned();
@@ -171,7 +168,7 @@ where
             ep.protocol(protocol.clone());
         } else {
             let protocol = auth_helper
-                .get("protocol".into(), auth_helper.get_cloud_name())
+                .get("protocol".into(), config.name.clone())
                 .await
                 .map_err(|_| OidcAccessTokenError::MissingProtocolId)?
                 .to_owned();
@@ -184,7 +181,7 @@ where
             ep.header(header::AUTHORIZATION, token_header_value);
         } else {
             let access_token = auth_helper
-                .get_secret("access_token".into(), auth_helper.get_cloud_name())
+                .get_secret("access_token".into(), config.name.clone())
                 .await
                 .map_err(|_| OidcAccessTokenError::MissingAccessToken)?
                 .to_owned();

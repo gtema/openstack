@@ -100,22 +100,27 @@ pub enum ApplicationCredentialError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with application credential
-pub async fn fill_identity<A>(
+pub async fn fill_identity<A: AuthHelper, S: AsRef<str>>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
+    connection_name: Option<S>,
     auth_helper: &mut A,
-) -> Result<(), ApplicationCredentialError>
-where
-    A: AuthHelper,
-{
+) -> Result<(), ApplicationCredentialError> {
     identity_builder.methods(Vec::from([token_v3::Methods::ApplicationCredential]));
     let mut app_cred = token_v3::ApplicationCredentialBuilder::default();
-    app_cred.secret(
-        auth_data
-            .application_credential_secret
-            .clone()
-            .ok_or(ApplicationCredentialError::MissingSecret)?,
-    );
+    if let Some(val) = &auth_data.application_credential_secret {
+        app_cred.secret(val.clone());
+    } else {
+        let secret = auth_helper
+            .get_secret(
+                "application_credential_secret".into(),
+                connection_name.as_ref().map(|x| x.as_ref().to_string()),
+            )
+            .await
+            .map_err(|_| ApplicationCredentialError::MissingSecret)?
+            .to_owned();
+        app_cred.secret(secret);
+    }
     if let Some(val) = &auth_data.application_credential_id {
         app_cred.id(val.clone());
     } else if let Some(val) = &auth_data.application_credential_name {
@@ -130,7 +135,10 @@ where
         }
         if auth_data.user_id.is_none() && auth_data.username.is_none() {
             let name = auth_helper
-                .get("username".into(), auth_helper.get_cloud_name())
+                .get(
+                    "username".into(),
+                    connection_name.as_ref().map(|x| x.as_ref().to_string()),
+                )
                 .await
                 .map_err(|_| ApplicationCredentialError::MissingUser)?
                 .to_owned();
@@ -152,7 +160,7 @@ where
         let app_cred_id = auth_helper
             .get(
                 "application_credential_id".into(),
-                auth_helper.get_cloud_name(),
+                connection_name.map(|x| x.as_ref().to_string()),
             )
             .await
             .map_err(|_| ApplicationCredentialError::MissingIdOrName)?
@@ -180,7 +188,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingSecret => {}
             other => {
@@ -196,7 +210,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingIdOrName => {}
             other => {
@@ -213,7 +233,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingUser => {}
             other => {
@@ -230,9 +256,14 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await
+        .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -257,9 +288,14 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await
+        .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -293,9 +329,14 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await
+        .unwrap();
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret_value"));

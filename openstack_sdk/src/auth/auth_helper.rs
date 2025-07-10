@@ -64,12 +64,6 @@ pub trait AuthHelper {
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError>;
-
-    /// Get the cloud name
-    fn get_cloud_name(&self) -> Option<String>;
-
-    /// Set the cloud name to be used as a hint in the callback
-    fn set_cloud_name(&mut self, cloud_name: Option<String>);
 }
 
 #[derive(Clone, Default)]
@@ -105,14 +99,6 @@ impl AuthHelper for Dialoguer {
         let secret = Password::new().with_prompt(prompt).interact()?;
         Ok(SecretString::from(secret))
     }
-
-    fn get_cloud_name(&self) -> Option<String> {
-        self.cloud_name.clone()
-    }
-
-    fn set_cloud_name(&mut self, cloud_name: Option<String>) {
-        self.cloud_name = cloud_name;
-    }
 }
 
 #[derive(Clone, Default)]
@@ -134,11 +120,5 @@ impl AuthHelper for NonInteractive {
         _connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
         Err(AuthHelperError::NotSupported)
-    }
-
-    fn set_cloud_name(&mut self, _cloud_name: Option<String>) {}
-
-    fn get_cloud_name(&self) -> Option<String> {
-        None
     }
 }

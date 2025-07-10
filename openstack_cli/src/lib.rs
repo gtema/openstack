@@ -33,9 +33,7 @@ use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
 use openstack_sdk::{
-    AsyncOpenStack,
-    auth::auth_helper::{AuthHelper, Dialoguer},
-    auth::authtoken::AuthTokenScope,
+    AsyncOpenStack, auth::auth_helper::Dialoguer, auth::authtoken::AuthTokenScope,
     types::identity::v3::Project,
 };
 
@@ -166,7 +164,6 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     if std::io::stdin().is_terminal() {
         // Interactive session (may ask for password/MFA/SSO)
         let mut auth_helper = Dialoguer::default();
-        auth_helper.set_cloud_name(cloud_config.name.clone());
         session = AsyncOpenStack::new_with_authentication_helper(
             &cloud_config,
             &mut auth_helper,
