@@ -87,14 +87,12 @@ pub enum PasswordError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user password data
-pub async fn fill_identity<A>(
+pub async fn fill_identity<A: AuthHelper, S: AsRef<str>>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
+    connection_name: Option<S>,
     auth_helper: &mut A,
-) -> Result<(), PasswordError>
-where
-    A: AuthHelper,
-{
+) -> Result<(), PasswordError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Password]));
     let mut user = token_v3::PasswordUserBuilder::default();
     // Set user_id or name
@@ -107,7 +105,10 @@ where
     if auth_data.user_id.is_none() && auth_data.username.is_none() {
         // Or ask user for username in interactive mode
         let name = auth_helper
-            .get("username".into(), auth_helper.get_cloud_name())
+            .get(
+                "username".into(),
+                connection_name.as_ref().map(|x| x.as_ref().to_string()),
+            )
             .await
             .map_err(|_| PasswordError::MissingUserId)?
             .to_owned();
@@ -119,7 +120,10 @@ where
     } else {
         // Or ask user for password
         let password = auth_helper
-            .get_secret("password".into(), auth_helper.get_cloud_name())
+            .get_secret(
+                "password".into(),
+                connection_name.map(|x| x.as_ref().to_string()),
+            )
             .await
             .map_err(|_| PasswordError::MissingPassword)?
             .expose_secret()
@@ -150,7 +154,6 @@ where
 mod tests {
     use secrecy::ExposeSecret;
     use serde_json::json;
-    use tracing::info;
     use tracing_test::traced_test;
 
     use super::*;
@@ -164,7 +167,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             PasswordError::MissingUserId => {}
             other => {
@@ -180,7 +189,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             PasswordError::MissingPassword => {}
             other => {
@@ -200,9 +215,14 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await
+        .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -234,11 +254,15 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(&mut identity, &config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await
+        .unwrap();
         let identity = identity.build().unwrap();
-        info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret"));
         assert_eq!(
             "secret",

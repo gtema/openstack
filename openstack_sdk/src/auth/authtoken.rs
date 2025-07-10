@@ -316,9 +316,10 @@ impl AuthType {
 }
 
 /// Fill identity part of the v3 token auth builder using configured auth type data
-async fn process_auth_type<A>(
+async fn process_auth_type<A, S: AsRef<str>>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
+    connection_name: Option<S>,
     auth_helper: &mut A,
     auth_type: &AuthType,
 ) -> Result<(), AuthTokenError>
@@ -327,17 +328,25 @@ where
 {
     match auth_type {
         AuthType::V3ApplicationCredential => {
-            v3applicationcredential::fill_identity(identity_builder, auth_data, auth_helper)
-                .await?;
+            v3applicationcredential::fill_identity(
+                identity_builder,
+                auth_data,
+                connection_name,
+                auth_helper,
+            )
+            .await?;
         }
         AuthType::V3Password => {
-            v3password::fill_identity(identity_builder, auth_data, auth_helper).await?;
+            v3password::fill_identity(identity_builder, auth_data, connection_name, auth_helper)
+                .await?;
         }
         AuthType::V3Token => {
-            v3token::fill_identity(identity_builder, auth_data, auth_helper).await?;
+            v3token::fill_identity(identity_builder, auth_data, connection_name, auth_helper)
+                .await?;
         }
         AuthType::V3Totp => {
-            v3totp::fill_identity(identity_builder, auth_data, auth_helper).await?;
+            v3totp::fill_identity(identity_builder, auth_data, connection_name, auth_helper)
+                .await?;
         }
         other => {
             return Err(AuthTokenError::IdentityMethod {
@@ -368,7 +377,14 @@ where
                 .expect("`auth_methods` is an array of string when auth_type=`multifactor`")
             {
                 let method_type = AuthType::from_str(auth_method)?;
-                process_auth_type(&mut identity_builder, &auth, auth_helper, &method_type).await?;
+                process_auth_type(
+                    &mut identity_builder,
+                    &auth,
+                    config.name.as_ref(),
+                    auth_helper,
+                    &method_type,
+                )
+                .await?;
                 // process_auth_type resets methods so we need to recover it
                 match method_type {
                     AuthType::V3Password => {
@@ -387,7 +403,14 @@ where
             identity_builder.methods(methods);
         }
         other => {
-            process_auth_type(&mut identity_builder, &auth, auth_helper, &other).await?;
+            process_auth_type(
+                &mut identity_builder,
+                &auth,
+                config.name.as_ref(),
+                auth_helper,
+                &other,
+            )
+            .await?;
         }
     };
     Ok(identity_builder.build()?)
@@ -469,6 +492,7 @@ where
                 process_auth_type(
                     &mut identity_builder,
                     &auth,
+                    config.name.as_ref(),
                     auth_helper,
                     &AuthType::from_str(required_method)?,
                 )

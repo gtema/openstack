@@ -88,7 +88,6 @@ impl Cloud {
             .cloud_configs
             .get_cloud_config(cloud.clone())?
             .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
-        self.auth_helper.set_cloud_name(Some(cloud));
         let mut session =
             AsyncOpenStack::new_with_authentication_helper(&profile, &mut self.auth_helper, false)
                 .await?;
@@ -217,7 +216,6 @@ impl Cloud {
 }
 
 struct TuiAuthHelper {
-    cloud_name: Option<String>,
     app_tx: Option<UnboundedSender<Action>>,
     auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
 }
@@ -225,7 +223,6 @@ struct TuiAuthHelper {
 impl TuiAuthHelper {
     pub fn new(auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>) -> Self {
         Self {
-            cloud_name: None,
             app_tx: None,
             auth_helper_control_tx,
         }
@@ -312,17 +309,6 @@ impl AuthHelper for TuiAuthHelper {
                 ));
             }
         }
-    }
-
-    #[instrument(skip(self))]
-    fn set_cloud_name(&mut self, cloud_name: Option<String>) {
-        trace!("Setting cloud name to {:?}", cloud_name);
-        self.cloud_name = cloud_name;
-    }
-
-    #[instrument(skip(self))]
-    fn get_cloud_name(&self) -> Option<String> {
-        self.cloud_name.clone()
     }
 }
 

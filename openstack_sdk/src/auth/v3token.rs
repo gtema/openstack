@@ -68,20 +68,21 @@ pub enum TokenError {
 }
 
 /// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user token
-pub async fn fill_identity<A>(
+pub async fn fill_identity<A: AuthHelper, S: AsRef<str>>(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
+    connection_name: Option<S>,
     auth_helper: &mut A,
-) -> Result<(), TokenError>
-where
-    A: AuthHelper,
-{
+) -> Result<(), TokenError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Token]));
     let token_val = if let Some(val) = &auth_data.token {
         val.clone()
     } else {
         auth_helper
-            .get_secret("token".into(), auth_helper.get_cloud_name())
+            .get_secret(
+                "token".into(),
+                connection_name.as_ref().map(|x| x.as_ref().to_string()),
+            )
             .await
             .map_err(|_| TokenError::MissingToken)?
     };
@@ -120,7 +121,13 @@ mod tests {
     async fn test_fill_raise_no_token() {
         let config = config::Auth::default();
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         match res.unwrap_err() {
             TokenError::MissingToken => {}
             other => {
@@ -136,7 +143,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let _res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let _res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -156,7 +169,13 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let _res = fill_identity(&mut identity, &config, &mut NonInteractive::default()).await;
+        let _res = fill_identity(
+            &mut identity,
+            &config,
+            None::<&str>,
+            &mut NonInteractive::default(),
+        )
+        .await;
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret"));

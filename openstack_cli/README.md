@@ -100,6 +100,11 @@ to that.
   authentication helper resolves the missing authentication parameters (like
   password or similar).
 
+- With no cloud being specified in any of the above ways a fuzzy select with all
+  cloud connections configured in the `clouds.yaml` file is used to get the user
+  selection interactively. This will not happen in a non-interactive mode (i.e
+  when stdin is not a terminal).
+
 - `--os-project-name` and `--os-project-id` cause the connection to be
   established with the regular credentials, but use the different project for
   the `scoped token.
