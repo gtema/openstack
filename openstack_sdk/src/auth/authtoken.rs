@@ -542,7 +542,7 @@ mod tests {
 
     use super::*;
 
-    use crate::auth::auth_helper::NonInteractive;
+    use crate::auth::auth_helper::Noop;
     use crate::config;
 
     #[tokio::test]
@@ -560,7 +560,7 @@ mod tests {
             ..Default::default()
         };
 
-        let auth_data = build_identity_data_from_config(&config, &mut NonInteractive::default())
+        let auth_data = build_identity_data_from_config(&config, &mut Noop::default())
             .await
             .unwrap();
         assert_eq!(
@@ -596,7 +596,7 @@ mod tests {
             ..Default::default()
         };
 
-        let auth_data = build_identity_data_from_config(&config, &mut NonInteractive::default())
+        let auth_data = build_identity_data_from_config(&config, &mut Noop::default())
             .await
             .unwrap();
         assert_eq!(

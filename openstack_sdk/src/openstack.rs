@@ -35,7 +35,7 @@ use crate::api::query;
 use crate::api::query::RawQuery;
 use crate::auth::{
     self,
-    auth_helper::{AuthHelper, Dialoguer, NonInteractive},
+    auth_helper::{AuthHelper, Dialoguer, Noop},
     authtoken,
     authtoken::{AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
@@ -255,7 +255,7 @@ impl OpenStack {
         if interactive {
             self.authorize_with_auth_helper(scope, &mut Dialoguer::default(), renew_auth)
         } else {
-            self.authorize_with_auth_helper(scope, &mut NonInteractive::default(), renew_auth)
+            self.authorize_with_auth_helper(scope, &mut Noop::default(), renew_auth)
         }
     }
 

@@ -51,7 +51,7 @@ fn styles() -> Styles {
 ///
 /// ## Configuration
 ///
-/// As all OpenStack tools it fully supports `clouds.yaml`
+/// As all OpenStack tools it fully supports `clouds.yaml`.
 ///
 /// Certain aspects of the CLI itself (not the cloud connection) can be configured using
 /// `$XDG_CONFIG_HOME/osc/config.yaml` file. With it it is possible, for example, to configure
@@ -135,61 +135,80 @@ pub fn parse_config(s: &str) -> Result<Config, OpenStackCliError> {
     Ok(builder.build()?)
 }
 
-/// Global CLI options
+/// Connection options.
 #[derive(Args)]
-#[command(next_display_order = 900, next_help_heading = "Global options")]
-pub struct GlobalOpts {
-    /// Name reference to the clouds.yaml entry for the cloud configuration
-    #[arg(long, env = "OS_CLOUD", global = true, display_order = 900)]
+#[command(next_display_order = 800, next_help_heading = "Connection options")]
+pub struct ConnectionOpts {
+    /// Name reference to the clouds.yaml entry for the cloud configuration.
+    #[arg(long, env = "OS_CLOUD", global = true, display_order = 801, conflicts_with_all(["cloud_config_from_env", "os_cloud_name"]))]
     pub os_cloud: Option<String>,
 
     /// Get the cloud config from environment variables.
-    #[arg(long, global = true, action = clap::ArgAction::SetTrue, display_order = 900, conflicts_with("os_cloud"))]
+    ///
+    /// Conflicts with the `--os-cloud` option. No merging of environment variables with the
+    /// options from the `clouds.yaml` file done. It is possible to rely on the `--auth-helper-cmd`
+    /// command, but than the `--os-cloud-name` should be specified to give a reasonable connection
+    /// name.
+    #[arg(long, global = true, action = clap::ArgAction::SetTrue, display_order = 802)]
     pub cloud_config_from_env: bool,
 
     /// Cloud name used when configuration is retrieved from environment variables. When not
     /// specified the `envvars` would be used as a default. This value will be used eventually by
     /// the authentication helper when data need to be provided dynamically.
-    #[arg(long, env = "OS_CLOUD_NAME", global = true, display_order = 900)]
+    #[arg(long, env = "OS_CLOUD_NAME", global = true, display_order = 802)]
     pub os_cloud_name: Option<String>,
 
-    /// Project ID to use instead of the one in connection profile
-    #[arg(long, env = "OS_PROJECT_ID", global = true, display_order = 901)]
+    /// Project ID to use instead of the one in connection profile.
+    #[arg(long, env = "OS_PROJECT_ID", global = true, display_order = 803)]
     pub os_project_id: Option<String>,
 
-    /// Project Name to use instead of the one in the connection profile
-    #[arg(long, env = "OS_PROJECT_NAME", global = true, display_order = 901)]
+    /// Project Name to use instead of the one in the connection profile.
+    #[arg(long, env = "OS_PROJECT_NAME", global = true, display_order = 803)]
     pub os_project_name: Option<String>,
 
-    /// Custom path to the `clouds.yaml` config file
+    /// Custom path to the `clouds.yaml` config file.
     #[arg(
         long,
         env = "OS_CLIENT_CONFIG_FILE",
         global = true,
         value_hint = ValueHint::FilePath,
-        display_order = 905
+        display_order = 805
     )]
     pub os_client_config_file: Option<String>,
 
-    /// Custom path to the `secure.yaml` config file
+    /// Custom path to the `secure.yaml` config file.
     #[arg(
         long,
         env = "OS_CLIENT_SECURE_FILE",
         global = true,
         value_hint = ValueHint::FilePath,
-        display_order = 905
+        display_order = 805
     )]
     pub os_client_secure_file: Option<String>,
 
-    /// Output format
+    /// External authentication helper command.
+    ///
+    /// Invoke external command to obtain necessary connection parameters. This is a path to the
+    /// executable, which is called with first parameter being the attribute key (i.e. `password`)
+    /// and a second parameter a cloud name (whatever is used in `--os-cloud` or
+    /// `--os-cloud-name`).
+    #[arg(long, global = true, value_hint = ValueHint::ExecutablePath, display_order = 810)]
+    pub auth_helper_cmd: Option<String>,
+}
+
+/// Output configuration.
+#[derive(Args)]
+#[command(next_display_order = 900, next_help_heading = "Output options")]
+pub struct OutputOpts {
+    /// Output format.
     #[arg(short, long, global = true, value_enum, display_order = 910)]
     pub output: Option<OutputFormat>,
 
-    /// Fields to return in the output (only in normal and wide mode)
+    /// Fields to return in the output (only in normal and wide mode).
     #[arg(short, long, global=true, action=clap::ArgAction::Append, display_order = 910)]
     pub fields: Vec<String>,
 
-    /// Pretty print the output
+    /// Pretty print the output.
     #[arg(short, long, global=true, action = clap::ArgAction::SetTrue, display_order = 910)]
     pub pretty: bool,
 
@@ -197,26 +216,39 @@ pub struct GlobalOpts {
     #[arg(short, long, global=true, action = clap::ArgAction::Count, display_order = 920)]
     pub verbose: u8,
 
-    /// Output Table arrangement
+    /// Output Table arrangement.
     #[arg(long, global=true, default_value_t = TableArrangement::Dynamic, value_enum, display_order = 930)]
     pub table_arrangement: TableArrangement,
 
-    /// Record HTTP request timings
+    /// Record HTTP request timings.
     #[arg(long, global=true, action = clap::ArgAction::SetTrue, display_order = 950)]
     pub timing: bool,
 }
 
-/// Output format
+/// Global CLI options.
+#[derive(Args)]
+#[command(next_display_order = 900)]
+pub struct GlobalOpts {
+    /// Connection options.
+    #[command(flatten)]
+    pub connection: ConnectionOpts,
+
+    /// Output config.
+    #[command(flatten)]
+    pub output: OutputOpts,
+}
+
+/// Output format.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum OutputFormat {
-    /// Json output
+    /// Json output.
     Json,
     /// Wide (Human readable table with extra attributes). Note: this has
-    /// effect only in list operations
+    /// effect only in list operations.
     Wide,
 }
 
-/// Table arrangement
+/// Table arrangement.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum TableArrangement {
     /// Dynamically determine the width of columns in regard to terminal width and content length.
@@ -232,7 +264,7 @@ pub enum TableArrangement {
     Disabled,
 }
 
-/// Supported Top Level commands (services)
+/// Supported Top Level commands (services).
 #[allow(missing_docs)]
 #[derive(Parser)]
 pub enum TopLevelCommands {
@@ -265,13 +297,13 @@ pub enum TopLevelCommands {
 ///
 #[derive(Parser, Debug)]
 pub struct CompletionCommand {
-    /// If provided, outputs the completion file for given shell
+    /// If provided, outputs the completion file for given shell.
     #[arg(default_value_t = Shell::Bash)]
     pub shell: Shell,
 }
 
 impl Cli {
-    /// Perform command action
+    /// Perform command action.
     pub async fn take_action(&self, client: &mut AsyncOpenStack) -> Result<(), OpenStackCliError> {
         match &self.command {
             TopLevelCommands::Api(args) => args.take_action(self, client).await,
