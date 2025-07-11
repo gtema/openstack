@@ -133,7 +133,7 @@ impl OutputProcessor {
         resource_key: Option<R>,
         action: Option<A>,
     ) -> Self {
-        let target = match args.global_opts.output {
+        let target = match args.global_opts.output.output {
             None => OutputFor::Human,
             Some(OutputFormat::Wide) => OutputFor::Human,
             _ => OutputFor::Machine,
@@ -156,10 +156,10 @@ impl OutputProcessor {
                 .as_ref()
                 .and_then(|val| args.config.views.get(val.as_ref()).cloned()),
             target,
-            table_arrangement: args.global_opts.table_arrangement,
-            fields: BTreeSet::from_iter(args.global_opts.fields.iter().cloned()),
-            wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
-            pretty: args.global_opts.pretty,
+            table_arrangement: args.global_opts.output.table_arrangement,
+            fields: BTreeSet::from_iter(args.global_opts.output.fields.iter().cloned()),
+            wide: matches!(args.global_opts.output.output, Some(OutputFormat::Wide)),
+            pretty: args.global_opts.output.pretty,
             hints: Some(hints),
         }
     }

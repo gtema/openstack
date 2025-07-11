@@ -198,7 +198,7 @@ pub async fn get_auth_ep<A: AuthHelper>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::auth::auth_helper::NonInteractive;
+    use crate::auth::auth_helper::Noop;
     use crate::config;
 
     #[tokio::test]
@@ -212,9 +212,7 @@ mod tests {
             }),
             ..Default::default()
         };
-        let ep = get_auth_ep(&config, &mut NonInteractive::default())
-            .await
-            .unwrap();
+        let ep = get_auth_ep(&config, &mut Noop::default()).await.unwrap();
         assert_eq!(
             "OS-FEDERATION/identity_providers/foo/protocols/bar/auth",
             ep.endpoint()
@@ -238,7 +236,7 @@ mod tests {
             }),
             ..Default::default()
         };
-        let res = get_auth_ep(&config, &mut NonInteractive::default()).await;
+        let res = get_auth_ep(&config, &mut Noop::default()).await;
         match res {
             Err(OidcAccessTokenError::MissingAccessToken) => {}
             _ => {
@@ -257,7 +255,7 @@ mod tests {
             }),
             ..Default::default()
         };
-        let res = get_auth_ep(&config, &mut NonInteractive::default()).await;
+        let res = get_auth_ep(&config, &mut Noop::default()).await;
         match res {
             Err(OidcAccessTokenError::MissingIdpId) => {}
             _ => {
@@ -276,7 +274,7 @@ mod tests {
             }),
             ..Default::default()
         };
-        let res = get_auth_ep(&config, &mut NonInteractive::default()).await;
+        let res = get_auth_ep(&config, &mut Noop::default()).await;
         match res {
             Err(OidcAccessTokenError::MissingProtocolId) => {}
             _ => {

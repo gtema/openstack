@@ -178,7 +178,7 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
-    use crate::auth::auth_helper::NonInteractive;
+    use crate::auth::auth_helper::Noop;
     use crate::config;
 
     #[tokio::test]
@@ -188,13 +188,7 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await;
+        let res = fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingSecret => {}
             other => {
@@ -210,13 +204,7 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await;
+        let res = fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingIdOrName => {}
             other => {
@@ -233,13 +221,7 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        let res = fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await;
+        let res = fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default()).await;
         match res.unwrap_err() {
             ApplicationCredentialError::MissingUser => {}
             other => {
@@ -256,14 +238,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await
-        .unwrap();
+        fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default())
+            .await
+            .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -288,14 +265,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await
-        .unwrap();
+        fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default())
+            .await
+            .unwrap();
         assert_eq!(
             serde_json::to_value(identity.build().unwrap()).unwrap(),
             json!({
@@ -329,14 +301,9 @@ mod tests {
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
-        fill_identity(
-            &mut identity,
-            &config,
-            None::<&str>,
-            &mut NonInteractive::default(),
-        )
-        .await
-        .unwrap();
+        fill_identity(&mut identity, &config, None::<&str>, &mut Noop::default())
+            .await
+            .unwrap();
         let identity = identity.build().unwrap();
         info!("Auth is {:?}", identity);
         assert!(!logs_contain("secret_value"));

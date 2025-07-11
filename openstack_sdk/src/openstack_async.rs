@@ -37,7 +37,7 @@ use crate::api::query::RawQueryAsync;
 use crate::api::RestClient;
 use crate::auth::{
     self,
-    auth_helper::{AuthHelper, Dialoguer, NonInteractive},
+    auth_helper::{AuthHelper, Dialoguer, Noop},
     authtoken::{self, AuthTokenError, AuthType},
     Auth, AuthError, AuthState,
 };
@@ -323,7 +323,7 @@ impl AsyncOpenStack {
             self.authorize_with_auth_helper(scope, &mut Dialoguer::default(), renew_auth)
                 .await
         } else {
-            self.authorize_with_auth_helper(scope, &mut NonInteractive::default(), renew_auth)
+            self.authorize_with_auth_helper(scope, &mut Noop::default(), renew_auth)
                 .await
         }
     }

@@ -23,7 +23,9 @@
 use async_trait::async_trait;
 use dialoguer::{Input, Password};
 use secrecy::SecretString;
+use std::process::Command;
 use thiserror::Error;
+use tracing::warn;
 
 /// Authentication helper errors
 #[derive(Debug, Error)]
@@ -36,6 +38,10 @@ pub enum AuthHelperError {
     /// No support in non-interactive mode
     #[error("auth_helper is not supported in the non interactive mode")]
     NotSupported,
+
+    /// UTF8 error
+    #[error("error parsing the data as utf8: {0}")]
+    Utf8(#[from] std::string::FromUtf8Error),
 
     /// Implementer error
     #[error("{0}")]
@@ -66,6 +72,9 @@ pub trait AuthHelper {
     ) -> Result<SecretString, AuthHelperError>;
 }
 
+/// Cli prompts AuthHelper.
+///
+/// AuthHelper based on the regular interactive prompts using the `dialoguer` crate.
 #[derive(Clone, Default)]
 pub struct Dialoguer {
     pub cloud_name: Option<String>,
@@ -101,11 +110,12 @@ impl AuthHelper for Dialoguer {
     }
 }
 
+/// A NonInteractive mode AuthHelper.
 #[derive(Clone, Default)]
-pub struct NonInteractive {}
+pub struct Noop {}
 
 #[async_trait]
-impl AuthHelper for NonInteractive {
+impl AuthHelper for Noop {
     async fn get(
         &mut self,
         _key: String,
@@ -120,5 +130,80 @@ impl AuthHelper for NonInteractive {
         _connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
         Err(AuthHelperError::NotSupported)
+    }
+}
+
+/// External command AuthHelper.
+///
+/// Invoke external command to obtain a secret.
+#[derive(Clone, Debug)]
+pub struct ExternalCmd {
+    /// External command
+    pub command: String,
+}
+
+impl ExternalCmd {
+    /// Construct new External command AuthHelper.
+    pub fn new(command: String) -> Self {
+        Self { command }
+    }
+}
+
+#[async_trait]
+impl AuthHelper for ExternalCmd {
+    async fn get(
+        &mut self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<String, AuthHelperError> {
+        let mut command = Command::new(&self.command);
+        command.arg(key);
+        if let Some(connection) = &connection_name {
+            command.arg(connection);
+        }
+        match command.output() {
+            Ok(res) => {
+                if !res.stderr.is_empty() {
+                    warn!(
+                        "{:?} written to stderr during invocation: {:?}",
+                        self.command,
+                        String::from_utf8(res.stderr)?.trim_end_matches('\n')
+                    );
+                }
+                let stdout: String = String::from_utf8(res.stdout)?;
+                Ok(stdout.trim_end_matches('\n').into())
+            }
+            Err(e) => {
+                return Err(AuthHelperError::Other(e.to_string()));
+            }
+        }
+    }
+
+    async fn get_secret(
+        &mut self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<SecretString, AuthHelperError> {
+        let mut command = Command::new(&self.command);
+        command.arg(key);
+        if let Some(connection) = &connection_name {
+            command.arg(connection);
+        }
+        match command.output() {
+            Ok(res) => {
+                if !res.stderr.is_empty() {
+                    warn!(
+                        "{:?} written to stderr during invocation: {:?}",
+                        self.command,
+                        String::from_utf8(res.stderr)?.trim_end_matches('\n')
+                    );
+                }
+                let stdout: String = String::from_utf8(res.stdout)?;
+                Ok(stdout.trim_end_matches('\n').into())
+            }
+            Err(e) => {
+                return Err(AuthHelperError::Other(e.to_string()));
+            }
+        }
     }
 }

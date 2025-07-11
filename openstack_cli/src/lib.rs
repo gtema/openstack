@@ -33,7 +33,9 @@ use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
 use openstack_sdk::{
-    AsyncOpenStack, auth::auth_helper::Dialoguer, auth::authtoken::AuthTokenScope,
+    AsyncOpenStack,
+    auth::auth_helper::{Dialoguer, ExternalCmd, Noop},
+    auth::authtoken::AuthTokenScope,
     types::identity::v3::Project,
 };
 
@@ -87,7 +89,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     // fmt for console logging
     let log_layer = tracing_subscriber::fmt::layer()
         .with_writer(io::stderr)
-        .with_filter(match cli.global_opts.verbose {
+        .with_filter(match cli.global_opts.output.verbose {
             0 => LevelFilter::WARN,
             1 => LevelFilter::INFO,
             2 => LevelFilter::DEBUG,
@@ -108,11 +110,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .with(rtl)
         .init();
 
-    let cloud_config = if cli.global_opts.cloud_config_from_env {
+    let cloud_config = if cli.global_opts.connection.cloud_config_from_env {
         // Environment variables should be used to get the cloud configuration
         tracing::debug!("Using environment variables for the cloud connection");
         let cloud_name = cli
             .global_opts
+            .connection
             .os_cloud_name
             .clone()
             .unwrap_or(String::from("envvars"));
@@ -122,12 +125,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     } else {
         // prepare cloud config parsing
         let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
-            cli.global_opts.os_client_config_file.as_deref(),
-            cli.global_opts.os_client_secure_file.as_deref(),
+            cli.global_opts.connection.os_client_config_file.as_deref(),
+            cli.global_opts.connection.os_client_secure_file.as_deref(),
         )?;
 
         // Identify target cloud to connect to
-        let cloud_name = match cli.global_opts.os_cloud {
+        let cloud_name = match cli.global_opts.connection.os_cloud {
             Some(ref cloud) => cloud.clone(),
             None => {
                 if std::io::stdin().is_terminal() {
@@ -160,25 +163,36 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         }
     }
 
-    let mut session;
-    if std::io::stdin().is_terminal() {
-        // Interactive session (may ask for password/MFA/SSO)
-        let mut auth_helper = Dialoguer::default();
-        session = AsyncOpenStack::new_with_authentication_helper(
-            &cloud_config,
-            &mut auth_helper,
-            renew_auth,
-        )
-        .await
-        .map_err(|err| OpenStackCliError::Auth { source: err })?;
-    } else {
-        // Non-interactive session if i.e. scripted with chaining
-        session = AsyncOpenStack::new(&cloud_config)
+    // Connect to the selected cloud with the possible AuthHelper
+    let mut session =
+        if let Some(external_auth_helper) = &cli.global_opts.connection.auth_helper_cmd {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                &mut ExternalCmd::new(external_auth_helper.clone()),
+                renew_auth,
+            )
             .await
-            .map_err(|err| OpenStackCliError::Auth { source: err })?;
-    }
+        } else if std::io::stdin().is_terminal() {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                &mut Dialoguer::default(),
+                renew_auth,
+            )
+            .await
+        } else {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                &mut Noop::default(),
+                renew_auth,
+            )
+            .await
+        }
+        .map_err(|err| OpenStackCliError::Auth { source: err })?;
+
     // Does the user want to connect to different project?
-    if cli.global_opts.os_project_id.is_some() || cli.global_opts.os_project_name.is_some() {
+    if cli.global_opts.connection.os_project_id.is_some()
+        || cli.global_opts.connection.os_project_name.is_some()
+    {
         warn!(
             "Cloud config is being chosen with arguments overriding project. Result may be not as expected."
         );
@@ -187,8 +201,8 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             .expect("Already authenticated")
             .token;
         let project = Project {
-            id: cli.global_opts.os_project_id.clone(),
-            name: cli.global_opts.os_project_name.clone(),
+            id: cli.global_opts.connection.os_project_id.clone(),
+            name: cli.global_opts.connection.os_project_name.clone(),
             domain: match (current_auth.project, current_auth.domain) {
                 // New project is in the same domain as the original
                 (Some(project), _) => project.domain,
@@ -213,7 +227,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let res = cli.take_action(&mut session).await;
 
     // If HTTP timing was requested dump stats into STDERR
-    if cli.global_opts.timing {
+    if cli.global_opts.output.timing {
         if let Ok(data) = request_stats.lock() {
             let table = build_http_requests_timing_table(&data);
             eprintln!("\nHTTP statistics:");

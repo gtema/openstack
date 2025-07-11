@@ -108,3 +108,26 @@ to that.
 - `--os-project-name` and `--os-project-id` cause the connection to be
   established with the regular credentials, but use the different project for
   the `scoped token.
+
+Sometimes it may be undisired to keep secrets in `clouds.yaml` or `secure.yaml`
+files. In the interactive mode such data is retrieved from the user via regular
+prompts. It is possible to specify the path to the external executable command
+that would be called with 2 parameters: the required attribute key (i.e.
+`password`) and the connection name. The executable may be called multiple times
+with different parameters when required. There is no support for passing all
+required parameters in one invocation. This executable must not write anything
+to the stdout except of the actual value. Whatever is written into the stderr
+would be included in the `osc` log in the warning level. Please note that there
+are no security guards possible for what the command actually performs. In
+future pre-built with better security handling may be added (i.e. fetching
+secrets from Vault, Bitwarden, etc).
+
+```shell
+#!/usr/bin/env bash
+
+KEY=$1
+CLOUD=$2
+
+echo -e "Requested $KEY for $CLOUD" > &2
+echo  "a_super_secret"
+```
