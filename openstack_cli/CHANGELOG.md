@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.3...openstack_cli-v0.12.4) - 2025-07-11
+
+### Added
+
+- Add `--auth-helper-cmd` for external AuthHelper ([#1343](https://github.com/gtema/openstack/pull/1343))
+- Drop connection_name from the AuthHelper ([#1342](https://github.com/gtema/openstack/pull/1342))
+- Allow cli cloud config from env vars ([#1341](https://github.com/gtema/openstack/pull/1341))
+- Use the new AuthHelper in cli and tui ([#1330](https://github.com/gtema/openstack/pull/1330))
+- Make image.locations.metadata not required ([#1318](https://github.com/gtema/openstack/pull/1318))
+- Improve support for array with prefixItems ([#1317](https://github.com/gtema/openstack/pull/1317))
+- Improve UX clarity of "limit" query parameter ([#1313](https://github.com/gtema/openstack/pull/1313))
+- Ensure schemas are not duplicated ([#1311](https://github.com/gtema/openstack/pull/1311))
+- Implement CloudConfig construction from env ([#1339](https://github.com/gtema/openstack/pull/1339))
+- Add support for the oidcaccesstoken authentication ([#1332](https://github.com/gtema/openstack/pull/1332))
+- Introduce authentication helper ([#1329](https://github.com/gtema/openstack/pull/1329))
+- Add future federation login support ([#1319](https://github.com/gtema/openstack/pull/1319))
+
+### Other
+
+- Batch update of the dependencies ([#1331](https://github.com/gtema/openstack/pull/1331))
+- Prepare update of identity schemas ([#1308](https://github.com/gtema/openstack/pull/1308))
+
 ## [0.12.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.2...openstack_cli-v0.12.3) - 2025-06-07
 
 ### Added
