@@ -41,7 +41,7 @@ pub struct Request<'a> {
     pub(crate) zone_records: Option<i32>,
 
     #[builder(default, setter(into))]
-    pub(crate) zone_recorsets: Option<i32>,
+    pub(crate) zone_recordsets: Option<i32>,
 
     #[builder(default, setter(into))]
     pub(crate) zones: Option<i32>,
@@ -110,8 +110,8 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.zone_records {
             params.push("zone_records", serde_json::to_value(val)?);
         }
-        if let Some(val) = &self.zone_recorsets {
-            params.push("zone_recorsets", serde_json::to_value(val)?);
+        if let Some(val) = &self.zone_recordsets {
+            params.push("zone_recordsets", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.zones {
             params.push("zones", serde_json::to_value(val)?);

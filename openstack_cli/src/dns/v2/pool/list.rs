@@ -65,7 +65,7 @@ impl PoolsCommand {
         let op = OutputProcessor::from_args(parsed_args, Some("dns.pool"), Some("list"));
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters

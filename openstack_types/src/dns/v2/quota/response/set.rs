@@ -36,7 +36,7 @@ pub struct QuotaResponse {
 
     #[serde(default)]
     #[structable(optional)]
-    pub zone_recorsets: Option<i32>,
+    pub zone_recordsets: Option<i32>,
 
     #[serde(default)]
     #[structable(optional)]

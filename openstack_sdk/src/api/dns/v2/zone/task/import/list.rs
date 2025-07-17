@@ -20,6 +20,8 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request {
