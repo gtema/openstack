@@ -7833,7 +7833,6 @@ components:
       name: user_id
       schema:
         description: Filters the response by a user ID.
-        format: uuid
         type: string
       x-openstack:
         resource_link: identity/v3/user.id
@@ -10835,7 +10834,6 @@ components:
             user_id:
               description: |-
                 The ID of the user who owns the credential.
-              format: uuid
               type: string
           type: object
       type: object
@@ -10866,7 +10864,6 @@ components:
             user_id:
               description: |-
                 The ID of the user who owns the credential.
-              format: uuid
               type: string
           type: object
       required:
@@ -10914,7 +10911,6 @@ components:
             user_id:
               description: |-
                 The ID of the user who owns the credential.
-              format: uuid
               type: string
           type: object
       type: object
@@ -10962,7 +10958,6 @@ components:
               user_id:
                 description: |-
                   The ID of the user who owns the credential.
-                format: uuid
                 type: string
             type: object
           type: array
@@ -11026,7 +11021,6 @@ components:
             user_id:
               description: |-
                 The ID of the user who owns the credential.
-              format: uuid
               type: string
           required:
             - blob
@@ -11085,7 +11079,6 @@ components:
             user_id:
               description: |-
                 The ID of the user who owns the credential.
-              format: uuid
               type: string
           type: object
       type: object

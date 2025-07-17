@@ -11760,6 +11760,7 @@ components:
               links:
                 description: |-
                   Links for the volume transfer.
+                items: {}
                 type: array
               name:
                 description: |-
@@ -13132,6 +13133,7 @@ components:
               description: |-
                 Rate-limit volume copy bandwidth, used to
                 mitigate slow down of data access from the instances.
+              items: {}
               type: array
           required:
             - absolute
