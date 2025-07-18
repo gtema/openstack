@@ -63,7 +63,7 @@ pub struct QuotaCommand {
     zone_records: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    zone_recorsets: Option<i32>,
+    zone_recordsets: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long)]
     zones: Option<i32>,
@@ -178,9 +178,9 @@ impl QuotaCommand {
             ep_builder.zone_records(*arg);
         }
 
-        // Set Request.zone_recorsets data
-        if let Some(arg) = &self.zone_recorsets {
-            ep_builder.zone_recorsets(*arg);
+        // Set Request.zone_recordsets data
+        if let Some(arg) = &self.zone_recordsets {
+            ep_builder.zone_recordsets(*arg);
         }
 
         // Set Request.zones data
