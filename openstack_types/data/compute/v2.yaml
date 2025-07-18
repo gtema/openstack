@@ -16571,6 +16571,7 @@ components:
                   microversion 2.15.
 
                 **Available until version 2.63**
+              items: {}
               maxItems: 1
               minItems: 1
               prefixItems:
@@ -16623,6 +16624,7 @@ components:
                   microversion 2.15.
 
                 **Available until version 2.63**
+              items: {}
               maxItems: 1
               minItems: 1
               prefixItems:
