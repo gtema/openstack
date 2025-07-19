@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.5](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.4...openstack_sdk-v0.21.5) - 2025-07-19
+
+### Added
+
+- Add header query params to dns list operations ([#1349](https://github.com/gtema/openstack/pull/1349))
+
 ## [0.21.4](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.3...openstack_sdk-v0.21.4) - 2025-07-11
 
 ### Added
