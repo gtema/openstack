@@ -451,7 +451,10 @@ impl ServerCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_263::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.63");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("compute 2.63"),
+        );
 
         // Set path parameters
         // Set query parameters

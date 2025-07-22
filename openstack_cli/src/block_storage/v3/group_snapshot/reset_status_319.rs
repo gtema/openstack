@@ -85,7 +85,10 @@ impl GroupSnapshotCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = reset_status_319::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "volume 3.19");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("volume 3.19"),
+        );
 
         // Set path parameters
         ep_builder.id(&self.path.id);

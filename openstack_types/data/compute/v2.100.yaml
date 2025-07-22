@@ -15872,6 +15872,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - accelerator-request-bound
                   - network-changed
@@ -15937,6 +15938,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - network-changed
                   - network-vif-deleted
@@ -16003,6 +16005,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - network-changed
                   - network-vif-deleted
@@ -16070,6 +16073,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - network-changed
                   - network-vif-deleted
@@ -16138,6 +16142,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - accelerator-request-bound
                   - network-changed
@@ -16207,6 +16212,7 @@ components:
                   * `volume-extended` (since microversion `2.51`)
                   * `power-update` (since microversion `2.76`)
                   * `accelerator-request-bound` (since microversion `2.82`)
+                  * `volume-reimaged` (since microversion `2.93`)
                 enum:
                   - accelerator-request-bound
                   - network-changed

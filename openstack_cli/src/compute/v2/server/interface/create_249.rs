@@ -121,7 +121,10 @@ impl InterfaceCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_249::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.49");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("compute 2.49"),
+        );
 
         // Set path parameters
         ep_builder.server_id(&self.path.server_id);

@@ -101,7 +101,10 @@ impl ResourceProviderCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_114::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "placement 1.14");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("placement 1.14"),
+        );
 
         // Set path parameters
         // Set query parameters

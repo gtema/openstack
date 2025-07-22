@@ -55,12 +55,15 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Container.
-    pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
-where {
+    pub fn header<K, V>(&mut self, header_name: K, header_value: V) -> &mut Self
+    where
+        K: Into<HeaderName>,
+        V: Into<HeaderValue>,
+    {
         self._headers
             .get_or_insert(None)
             .get_or_insert_with(HeaderMap::new)
-            .insert(header_name, HeaderValue::from_static(header_value));
+            .insert(header_name.into(), header_value.into());
         self
     }
 
@@ -194,7 +197,10 @@ mod tests {
                 )]
                 .into_iter(),
             )
-            .header("not_foo", "not_bar")
+            .header(
+                HeaderName::from_static("not_foo"),
+                HeaderValue::from_static("not_bar"),
+            )
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();

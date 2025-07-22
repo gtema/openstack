@@ -210,7 +210,10 @@ impl QuotaSetCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_20::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.0");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("compute 2.0"),
+        );
 
         // Set path parameters
         ep_builder.id(&self.path.id);

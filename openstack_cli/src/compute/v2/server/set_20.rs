@@ -129,14 +129,20 @@ impl ServerCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.id(&self.path.id);
-        find_builder.header("OpenStack-API-Version", "compute 2.0");
+        find_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("compute 2.0"),
+        );
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         let mut ep_builder = set_20::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.0");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("compute 2.0"),
+        );
 
         // Set path parameters
         let resource_id = find_data["id"]

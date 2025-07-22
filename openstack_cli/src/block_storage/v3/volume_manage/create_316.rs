@@ -182,7 +182,10 @@ impl VolumeManageCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_316::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "volume 3.16");
+        ep_builder.header(
+            http::header::HeaderName::from_static("OpenStack-API-Version"),
+            http::header::HeaderValue::from_static("volume 3.16"),
+        );
 
         // Set path parameters
         // Set query parameters

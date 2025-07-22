@@ -111,7 +111,10 @@ impl FileCommand {
         // Set query parameters
         // Set body parameters
         // The only supported media type
-        ep_builder.header("content-type", "application/octet-stream");
+        ep_builder.header(
+            http::header::CONTENT_TYPE,
+            http::header::HeaderValue::from_static("application/octet-stream"),
+        );
 
         let ep = ep_builder
             .build()
