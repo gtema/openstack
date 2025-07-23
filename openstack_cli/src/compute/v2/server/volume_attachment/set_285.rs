@@ -151,7 +151,10 @@ impl VolumeAttachmentCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_285::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.85");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("compute 2.85"),
+        );
 
         // Set path parameters
         ep_builder.id(&self.path.id);

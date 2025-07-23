@@ -97,14 +97,20 @@ impl BackupCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.id(&self.path.id);
-        find_builder.header("OpenStack-API-Version", "volume 3.9");
+        find_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("volume 3.9"),
+        );
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         let mut ep_builder = set_39::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "volume 3.9");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("volume 3.9"),
+        );
 
         // Set path parameters
         let resource_id = find_data["id"]
