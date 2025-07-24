@@ -28,13 +28,19 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::config;
-use openstack_types::load_balancer::v2::amphorae::response::config::AmphoraeResponse;
-use serde_json::Value;
 
-/// Request of the octavia/amphorae/amphora_id/config:put operation
+/// Update the amphora agent configuration. This will push the new
+/// configuration to the amphora agent and will update the configuration
+/// options that are mutable.
+///
+/// If you are not an administrative user, the service returns the HTTP
+/// `Forbidden (403)` response code.
+///
+/// This operation does not require a request body.
+///
+/// **New in version 2.7**
 #[derive(Args)]
 #[command(about = "Configure Amphora")]
 pub struct AmphoraeCommand {
@@ -45,10 +51,6 @@ pub struct AmphoraeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -84,17 +86,10 @@ impl AmphoraeCommand {
 
         ep_builder.amphora_id(&self.path.amphora_id);
 
-        // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
-
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AmphoraeResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

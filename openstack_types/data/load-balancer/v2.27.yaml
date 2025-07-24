@@ -1233,10 +1233,6 @@ paths:
               $ref: '#/components/schemas/LbaasLoadbalancersFailoverFailoverRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LbaasLoadbalancersFailoverResponse'
           description: Ok
       summary: Failover a load balancer
       tags:
@@ -1978,10 +1974,6 @@ paths:
               $ref: '#/components/schemas/OctaviaAmphoraeConfigConfigRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OctaviaAmphoraeConfigResponse'
           description: Ok
       summary: Configure Amphora
       tags:
@@ -2005,10 +1997,6 @@ paths:
               $ref: '#/components/schemas/OctaviaAmphoraeFailoverFailoverRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OctaviaAmphoraeFailoverResponse'
           description: Ok
       summary: Failover Amphora
       tags:
@@ -8189,10 +8177,8 @@ components:
       type: object
     LbaasLoadbalancersFailoverFailoverRequest:
       type: 'null'
-    LbaasLoadbalancersFailoverResponse:
-      description: Response of the 
-        lbaas/loadbalancers/loadbalancer_id/failover:put operation
-      type: object
+      x-openstack:
+        action-name: failover
     LbaasLoadbalancersListResponse:
       description: Base type for complex types
       properties:
@@ -12054,21 +12040,13 @@ components:
           type: array
       type: object
     OctaviaAmphoraeConfigConfigRequest:
-      description: Request of the octavia/amphorae/amphora_id/config:put 
-        operation
-      type: object
+      type: 'null'
       x-openstack:
         action-name: config
-    OctaviaAmphoraeConfigResponse:
-      description: Response of the octavia/amphorae/amphora_id/config:put 
-        operation
-      type: object
     OctaviaAmphoraeFailoverFailoverRequest:
       type: 'null'
-    OctaviaAmphoraeFailoverResponse:
-      description: Response of the octavia/amphorae/amphora_id/failover:put 
-        operation
-      type: object
+      x-openstack:
+        action-name: failover
     OctaviaAmphoraeListResponse:
       description: Base type for complex types
       properties:

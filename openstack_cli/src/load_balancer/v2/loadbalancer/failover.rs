@@ -30,7 +30,6 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::failover;
-use openstack_types::load_balancer::v2::loadbalancer::response::failover::LoadbalancerResponse;
 
 /// Performs a failover of a load balancer.
 ///
@@ -88,9 +87,7 @@ impl LoadbalancerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<LoadbalancerResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

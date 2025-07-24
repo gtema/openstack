@@ -30,7 +30,6 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::failover;
-use openstack_types::load_balancer::v2::amphorae::response::failover::AmphoraeResponse;
 
 /// Force an amphora to failover.
 ///
@@ -89,9 +88,7 @@ impl AmphoraeCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AmphoraeResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }
