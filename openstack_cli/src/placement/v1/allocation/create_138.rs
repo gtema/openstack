@@ -85,7 +85,10 @@ impl AllocationCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_138::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "placement 1.38");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("placement 1.38"),
+        );
 
         // Set path parameters
         // Set query parameters

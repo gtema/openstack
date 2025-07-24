@@ -90,7 +90,10 @@ impl ServerExternalEventCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_276::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.76");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("compute 2.76"),
+        );
 
         // Set path parameters
         // Set query parameters

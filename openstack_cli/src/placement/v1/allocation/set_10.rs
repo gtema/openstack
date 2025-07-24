@@ -85,7 +85,10 @@ impl AllocationCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_10::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "placement 1.0");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("placement 1.0"),
+        );
 
         // Set path parameters
         ep_builder.consumer_uuid(&self.path.consumer_uuid);

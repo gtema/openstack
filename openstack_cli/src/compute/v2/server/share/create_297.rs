@@ -96,7 +96,10 @@ impl ShareCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_297::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "compute 2.97");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("compute 2.97"),
+        );
 
         // Set path parameters
         ep_builder.server_id(&self.path.server_id);

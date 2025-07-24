@@ -92,7 +92,10 @@ impl ReshaperCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_134::Request::builder();
-        ep_builder.header("OpenStack-API-Version", "placement 1.34");
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("placement 1.34"),
+        );
 
         // Set path parameters
         // Set query parameters

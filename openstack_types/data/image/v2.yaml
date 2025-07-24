@@ -246,8 +246,8 @@ paths:
                 $ref: '#/components/schemas/ImagesCreateResponse'
           description: Ok
           headers:
-            OpenStack-image-store-ids:
-              $ref: '#/components/headers/OpenStack-image-store-ids'
+            openstack-image-store-ids:
+              $ref: '#/components/headers/openstack-image-store-ids'
       summary: Create image
       tags:
         - images
@@ -449,12 +449,12 @@ paths:
                 $ref: '#/components/schemas/ImagesFileDownloadResponse'
           description: Ok
           headers:
-            Content-Length:
-              $ref: '#/components/headers/Content-Length'
-            Content-Md5:
-              $ref: '#/components/headers/Content-Md5'
-            Content-Type:
-              $ref: '#/components/headers/Content-Type'
+            content-length:
+              $ref: '#/components/headers/content-length'
+            content-md5:
+              $ref: '#/components/headers/content-md5'
+            content-type:
+              $ref: '#/components/headers/content-type'
         '204':
           description: Ok
         '206':
@@ -464,14 +464,14 @@ paths:
                 $ref: '#/components/schemas/ImagesFileDownloadResponse'
           description: Ok
           headers:
-            Content-Length:
-              $ref: '#/components/headers/Content-Length'
-            Content-Md5:
-              $ref: '#/components/headers/Content-Md5'
-            Content-Range:
-              $ref: '#/components/headers/Content-Range'
-            Content-Type:
-              $ref: '#/components/headers/Content-Type'
+            content-length:
+              $ref: '#/components/headers/content-length'
+            content-md5:
+              $ref: '#/components/headers/content-md5'
+            content-range:
+              $ref: '#/components/headers/content-range'
+            content-type:
+              $ref: '#/components/headers/content-type'
       summary: Download binary image data
       tags:
         - images
@@ -1729,24 +1729,24 @@ paths:
       - $ref: '#/components/parameters/tasks_task_id'
 components:
   headers:
-    Content-Length:
+    content-length:
       description: The length of the body in octets (8-bit bytes)
       schema:
         type: string
-    Content-Md5:
+    content-md5:
       description: The MD5 checksum of the body
       schema:
         type: string
-    Content-Range:
+    content-range:
       description: The content range of image data
       schema:
         type: string
-    Content-Type:
+    content-type:
       description: The media type descriptor of the body, namely 
         application/octet-stream
       schema:
         type: string
-    OpenStack-image-store-ids:
+    openstack-image-store-ids:
       description: list of available stores
       schema:
         items:
