@@ -79,7 +79,6 @@ impl TraitsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.associated {
             ep_builder.associated(*val);
@@ -87,7 +86,6 @@ impl TraitsCommand {
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

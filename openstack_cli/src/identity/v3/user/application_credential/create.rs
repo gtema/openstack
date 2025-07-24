@@ -174,8 +174,6 @@ impl ApplicationCredentialCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
             // user_id is passed. No need to lookup
@@ -220,7 +218,7 @@ impl ApplicationCredentialCommand {
                     .id,
             );
         }
-        // Set query parameters
+
         // Set body parameters
         // Set Request.application_credential data
         let args = &self.application_credential;

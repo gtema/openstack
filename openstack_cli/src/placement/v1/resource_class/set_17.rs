@@ -89,10 +89,7 @@ impl ResourceClassCommand {
             http::header::HeaderValue::from_static("placement 1.7"),
         );
 
-        // Set path parameters
         ep_builder.name(&self.path.name);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

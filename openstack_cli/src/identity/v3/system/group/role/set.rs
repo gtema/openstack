@@ -89,11 +89,8 @@ impl RoleCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -182,8 +182,6 @@ impl NodegroupCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.cluster_id data
         if let Some(arg) = &self.cluster_id {

@@ -131,9 +131,8 @@ impl ServerCommand {
             http::header::HeaderValue::from_static("compute 2.30"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_migrate_live data
         let args = &self.os_migrate_live;

@@ -111,9 +111,8 @@ impl ServerCommand {
 
         let mut ep_builder = confirm_resize::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.confirm_resize data
         ep_builder.confirm_resize(self.confirm_resize.clone());

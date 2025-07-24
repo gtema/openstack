@@ -90,9 +90,8 @@ impl ServerCommand {
 
         let mut ep_builder = force_delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.force_delete data
         ep_builder.force_delete(self.force_delete.clone());

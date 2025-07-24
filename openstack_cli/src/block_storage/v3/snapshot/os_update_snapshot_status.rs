@@ -89,9 +89,8 @@ impl SnapshotCommand {
 
         let mut ep_builder = os_update_snapshot_status::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_update_snapshot_status data
         let args = &self.os_update_snapshot_status;

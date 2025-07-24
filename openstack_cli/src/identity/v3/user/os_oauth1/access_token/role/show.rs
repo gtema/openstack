@@ -117,7 +117,6 @@ impl RoleCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.access_token_id(&self.path.access_token_id);
         ep_builder.id(&self.path.id);
 
@@ -165,8 +164,6 @@ impl RoleCommand {
                     .id,
             );
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

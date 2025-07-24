@@ -130,7 +130,6 @@ impl MinimumPacketRateRulesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
         // Set query parameters
         if let Some(val) = &self.query.limit {
@@ -157,7 +156,6 @@ impl MinimumPacketRateRulesCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

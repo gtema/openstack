@@ -223,8 +223,6 @@ impl LoadbalancerCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.loadbalancer data
         let args = &self.loadbalancer;

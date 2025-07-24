@@ -75,10 +75,6 @@ impl FloatingIpsCommand {
 
         let ep_builder = list::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
-        // Set body parameters
-
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

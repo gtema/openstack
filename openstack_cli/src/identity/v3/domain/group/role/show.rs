@@ -113,8 +113,6 @@ impl RoleCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `domain_id`
         if let Some(id) = &self.path.domain.domain_id {
             // domain_id is passed. No need to lookup
@@ -170,8 +168,6 @@ impl RoleCommand {
         }
         ep_builder.group_id(&self.path.group_id);
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

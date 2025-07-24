@@ -91,10 +91,9 @@ impl ExtraSpecCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.type_id(&self.path.type_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(

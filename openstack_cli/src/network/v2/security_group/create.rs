@@ -99,8 +99,6 @@ impl SecurityGroupCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.security_group data
         let args = &self.security_group;

@@ -81,10 +81,7 @@ impl ProjectsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.endpoint_group_id(&self.path.endpoint_group_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

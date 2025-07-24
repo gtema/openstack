@@ -162,7 +162,6 @@ impl LogsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -209,7 +208,6 @@ impl LogsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

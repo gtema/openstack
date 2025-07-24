@@ -87,9 +87,8 @@ impl RouterCommand {
 
         let mut ep_builder = remove_router_interface::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.port_id data
         if let Some(arg) = &self.port_id {

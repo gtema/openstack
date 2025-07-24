@@ -100,9 +100,8 @@ impl MinimumPacketRateRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.minimum_packet_rate_rule data
         let args = &self.minimum_packet_rate_rule;

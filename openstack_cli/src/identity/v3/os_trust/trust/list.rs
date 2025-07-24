@@ -78,7 +78,6 @@ impl TrustsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.trustee_user_id {
             ep_builder.trustee_user_id(val);
@@ -86,7 +85,6 @@ impl TrustsCommand {
         if let Some(val) = &self.query.trustor_user_id {
             ep_builder.trustor_user_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

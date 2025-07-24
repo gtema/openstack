@@ -100,9 +100,8 @@ impl ResourceTypeCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.name data
         ep_builder.name(&self.name);

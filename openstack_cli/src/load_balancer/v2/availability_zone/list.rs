@@ -103,7 +103,6 @@ impl AvailabilityZonesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.availability_zone_profile_id {
             ep_builder.availability_zone_profile_id(val);
@@ -126,7 +125,6 @@ impl AvailabilityZonesCommand {
         if let Some(val) = &self.query.status {
             ep_builder.status(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

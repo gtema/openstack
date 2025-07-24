@@ -78,10 +78,7 @@ impl L7PolicyCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

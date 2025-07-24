@@ -90,11 +90,8 @@ impl TagCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.server_id(&self.path.server_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -103,7 +103,6 @@ impl HypervisorsCommand {
 
         let mut ep_builder = list_detailed::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.hypervisor_hostname_pattern {
             ep_builder.hypervisor_hostname_pattern(val);
@@ -117,7 +116,6 @@ impl HypervisorsCommand {
         if let Some(val) = &self.query.with_servers {
             ep_builder.with_servers(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

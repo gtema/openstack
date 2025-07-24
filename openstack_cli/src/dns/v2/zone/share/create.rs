@@ -96,8 +96,6 @@ impl ShareCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
             // zone_id is passed. No need to lookup
@@ -133,7 +131,7 @@ impl ShareCommand {
                 }
             };
         }
-        // Set query parameters
+
         // Set body parameters
         // Set Request.target_project_id data
         ep_builder.target_project_id(&self.target_project_id);

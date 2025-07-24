@@ -123,10 +123,9 @@ impl MinimumBandwidthRuleCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.minimum_bandwidth_rule data
         let args = &self.minimum_bandwidth_rule;

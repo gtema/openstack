@@ -86,7 +86,6 @@ impl RegisteredLimitsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.region_id {
             ep_builder.region_id(val);
@@ -97,7 +96,6 @@ impl RegisteredLimitsCommand {
         if let Some(val) = &self.query.service_id {
             ep_builder.service_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

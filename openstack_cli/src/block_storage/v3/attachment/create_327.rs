@@ -157,8 +157,6 @@ impl AttachmentCommand {
             http::header::HeaderValue::from_static("volume 3.27"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.attachment data
         let args = &self.attachment;

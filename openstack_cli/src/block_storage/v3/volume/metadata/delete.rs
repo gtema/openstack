@@ -85,11 +85,8 @@ impl MetadataCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.volume_id(&self.path.volume_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

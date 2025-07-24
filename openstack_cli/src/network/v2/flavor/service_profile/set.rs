@@ -92,10 +92,9 @@ impl ServiceProfileCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.flavor_id(&self.path.flavor_id);
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.service_profile data
 

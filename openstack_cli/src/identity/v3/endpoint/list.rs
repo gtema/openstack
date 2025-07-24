@@ -86,7 +86,6 @@ impl EndpointsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.interface {
             ep_builder.interface(val);
@@ -97,7 +96,6 @@ impl EndpointsCommand {
         if let Some(val) = &self.query.service_id {
             ep_builder.service_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

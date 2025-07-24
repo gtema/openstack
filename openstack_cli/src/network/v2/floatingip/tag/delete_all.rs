@@ -78,10 +78,7 @@ impl TagCommand {
 
         let mut ep_builder = delete_all::Request::builder();
 
-        // Set path parameters
         ep_builder.floatingip_id(&self.path.floatingip_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

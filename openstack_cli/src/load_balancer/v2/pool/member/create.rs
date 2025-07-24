@@ -193,9 +193,8 @@ impl MemberCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.pool_id(&self.path.pool_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.member data
         let args = &self.member;

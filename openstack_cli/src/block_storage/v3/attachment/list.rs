@@ -117,7 +117,6 @@ impl AttachmentsCommand {
 
         let mut ep_builder = list_detailed::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.all_tenants {
             ep_builder.all_tenants(*val);
@@ -140,7 +139,6 @@ impl AttachmentsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

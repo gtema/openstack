@@ -166,8 +166,6 @@ impl DefaultSecurityGroupRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.default_security_group_rule data
         let args = &self.default_security_group_rule;

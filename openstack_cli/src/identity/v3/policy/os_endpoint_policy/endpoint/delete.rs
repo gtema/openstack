@@ -88,11 +88,8 @@ impl EndpointCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

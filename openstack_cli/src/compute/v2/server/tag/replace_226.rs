@@ -91,9 +91,8 @@ impl TagCommand {
             http::header::HeaderValue::from_static("compute 2.26"),
         );
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.tags data
 

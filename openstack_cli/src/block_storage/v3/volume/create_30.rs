@@ -202,8 +202,6 @@ impl VolumeCommand {
             http::header::HeaderValue::from_static("volume 3.0"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.os_sch_hnt_scheduler_hints data
         if let Some(arg) = &self.os_sch_hnt_scheduler_hints {

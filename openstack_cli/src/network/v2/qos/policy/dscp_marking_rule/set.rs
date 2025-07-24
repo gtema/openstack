@@ -104,10 +104,9 @@ impl DscpMarkingRuleCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.dscp_marking_rule data
         let args = &self.dscp_marking_rule;

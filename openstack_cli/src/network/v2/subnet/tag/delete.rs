@@ -82,11 +82,8 @@ impl TagCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.subnet_id(&self.path.subnet_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

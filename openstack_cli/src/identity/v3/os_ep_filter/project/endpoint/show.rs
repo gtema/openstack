@@ -104,7 +104,6 @@ impl EndpointCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
 
         // Process path parameter `project_id`
@@ -156,8 +155,6 @@ impl EndpointCommand {
                 return Err(eyre!("Current project information can not be identified").into());
             }
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

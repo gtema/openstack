@@ -88,9 +88,8 @@ impl AggregateCommand {
 
         let mut ep_builder = set_metadata::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.set_metadata data
         let args = &self.set_metadata;

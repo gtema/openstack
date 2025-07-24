@@ -98,9 +98,8 @@ impl TypeCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.volume_type data
         let args = &self.volume_type;

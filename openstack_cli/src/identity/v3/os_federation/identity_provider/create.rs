@@ -120,9 +120,8 @@ impl IdentityProviderCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.idp_id(&self.path.idp_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.identity_provider data
         let args = &self.identity_provider;

@@ -93,13 +93,11 @@ impl AssistedVolumeSnapshotCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(val) = &self.query.delete_info {
             ep_builder.delete_info(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

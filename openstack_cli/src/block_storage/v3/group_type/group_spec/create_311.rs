@@ -89,9 +89,8 @@ impl GroupSpecCommand {
             http::header::HeaderValue::from_static("volume 3.11"),
         );
 
-        // Set path parameters
         ep_builder.group_type_id(&self.path.group_type_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.group_specs data
 

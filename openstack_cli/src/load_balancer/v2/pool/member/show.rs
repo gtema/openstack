@@ -97,6 +97,7 @@ impl MemberCommand {
 
         find_builder.id(&self.path.id);
         find_builder.pool_id(&self.path.pool_id);
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

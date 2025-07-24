@@ -162,7 +162,6 @@ impl MigrationCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.changes_before {
             ep_builder.changes_before(val);
@@ -280,7 +279,6 @@ impl MigrationCommand {
                     .id,
             );
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

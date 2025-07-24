@@ -87,9 +87,8 @@ impl SecurityGroupRuleCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.security_group_rule data
         let args = &self.security_group_rule;

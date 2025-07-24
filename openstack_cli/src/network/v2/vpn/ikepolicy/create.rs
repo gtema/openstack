@@ -206,8 +206,6 @@ impl IkepolicyCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.ikepolicy data
         let args = &self.ikepolicy;

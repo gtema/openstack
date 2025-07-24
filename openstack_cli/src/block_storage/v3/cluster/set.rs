@@ -87,9 +87,8 @@ impl ClusterCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.binary data
         if let Some(arg) = &self.binary {

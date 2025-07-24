@@ -101,7 +101,6 @@ impl CredentialsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query._type {
             ep_builder._type(val);
@@ -149,7 +148,6 @@ impl CredentialsCommand {
                     .id,
             );
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

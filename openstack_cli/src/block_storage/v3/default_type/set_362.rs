@@ -91,9 +91,8 @@ impl DefaultTypeCommand {
             http::header::HeaderValue::from_static("volume 3.62"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.default_type data
         let args = &self.default_type;

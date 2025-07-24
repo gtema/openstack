@@ -94,11 +94,8 @@ impl OptionCommand {
 
         let mut ep_builder = default::Request::builder();
 
-        // Set path parameters
         ep_builder.group(&self.path.group);
         ep_builder.option(&self.path.option);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

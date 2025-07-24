@@ -98,9 +98,8 @@ impl AliasMinimumBandwidthRuleCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.alias_minimum_bandwidth_rule data
         let args = &self.alias_minimum_bandwidth_rule;

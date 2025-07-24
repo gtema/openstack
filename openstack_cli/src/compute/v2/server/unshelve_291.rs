@@ -95,9 +95,8 @@ impl ServerCommand {
             http::header::HeaderValue::from_static("compute 2.91"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.unshelve data
         if let Some(lunshelve) = &self.unshelve {

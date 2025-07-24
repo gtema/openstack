@@ -69,10 +69,6 @@ impl PropertyCommand {
 
         let ep_builder = get::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
-        // Set body parameters
-
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

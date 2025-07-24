@@ -86,13 +86,11 @@ impl UsersCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
         // Set query parameters
         if let Some(val) = &self.query.password_expires_at {
             ep_builder.password_expires_at(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

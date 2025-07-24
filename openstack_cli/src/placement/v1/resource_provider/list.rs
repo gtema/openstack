@@ -158,7 +158,6 @@ impl ResourceProvidersCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.in_tree {
             ep_builder.in_tree(val);
@@ -178,7 +177,6 @@ impl ResourceProvidersCommand {
         if let Some(val) = &self.query.uuid {
             ep_builder.uuid(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

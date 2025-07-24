@@ -97,8 +97,6 @@ impl ReshaperCommand {
             http::header::HeaderValue::from_static("placement 1.34"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.allocations data
 

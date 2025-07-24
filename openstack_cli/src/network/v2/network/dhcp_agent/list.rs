@@ -132,7 +132,6 @@ impl DhcpAgentsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.network_id(&self.path.network_id);
         // Set query parameters
         if let Some(val) = &self.query.limit {
@@ -150,7 +149,6 @@ impl DhcpAgentsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

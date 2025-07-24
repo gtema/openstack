@@ -203,7 +203,6 @@ impl LoadbalancersCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.availability_zone {
             ep_builder.availability_zone(val);
@@ -314,7 +313,6 @@ impl LoadbalancersCommand {
         if let Some(val) = &self.query.vip_subnet_id {
             ep_builder.vip_subnet_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -122,10 +122,9 @@ impl ConntrackHelperCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.router_id(&self.path.router_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.conntrack_helper data
         let args = &self.conntrack_helper;

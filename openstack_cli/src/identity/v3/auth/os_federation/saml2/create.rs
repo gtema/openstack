@@ -274,8 +274,6 @@ impl Saml2Command {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.auth data
         let args = &self.auth;

@@ -90,10 +90,9 @@ impl BindingCommand {
 
         let mut ep_builder = activate::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.port_id(&self.path.port_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.host data
         ep_builder.host(&self.host);

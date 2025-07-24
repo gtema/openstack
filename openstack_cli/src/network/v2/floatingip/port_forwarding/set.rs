@@ -149,10 +149,9 @@ impl PortForwardingCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.floatingip_id(&self.path.floatingip_id);
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.port_forwarding data
         let args = &self.port_forwarding;

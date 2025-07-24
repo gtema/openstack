@@ -78,10 +78,7 @@ impl TagCommand {
 
         let mut ep_builder = delete_all::Request::builder();
 
-        // Set path parameters
         ep_builder.network_segment_range_id(&self.path.network_segment_range_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

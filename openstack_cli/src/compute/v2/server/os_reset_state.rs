@@ -104,9 +104,8 @@ impl ServerCommand {
 
         let mut ep_builder = os_reset_state::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_reset_state data
         let args = &self.os_reset_state;

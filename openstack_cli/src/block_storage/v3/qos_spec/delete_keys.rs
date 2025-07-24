@@ -82,9 +82,8 @@ impl QosSpecCommand {
 
         let mut ep_builder = delete_keys::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.keys data
 

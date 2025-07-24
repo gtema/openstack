@@ -89,9 +89,8 @@ impl ServerCommand {
 
         let mut ep_builder = suspend::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.suspend data
         ep_builder.suspend(self.suspend.clone());

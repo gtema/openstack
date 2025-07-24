@@ -84,10 +84,7 @@ impl TasksCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.image_id(&self.path.image_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -103,7 +103,6 @@ impl FlavorProfilesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.flavor_data {
             ep_builder.flavor_data(val);
@@ -126,7 +125,6 @@ impl FlavorProfilesCommand {
         if let Some(val) = &self.query.provider_name {
             ep_builder.provider_name(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

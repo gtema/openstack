@@ -135,8 +135,6 @@ impl FlavorCommand {
             http::header::HeaderValue::from_static("compute 2.0"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.flavor data
         let args = &self.flavor;

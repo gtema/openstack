@@ -77,10 +77,7 @@ impl IdentityProviderCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.idp_id(&self.path.idp_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

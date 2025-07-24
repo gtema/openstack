@@ -75,8 +75,6 @@ impl ServiceProviderCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.service_provider data
 

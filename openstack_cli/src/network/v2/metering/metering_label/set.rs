@@ -86,6 +86,7 @@ impl MeteringLabelCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.id(&self.path.id);
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -93,13 +94,12 @@ impl MeteringLabelCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
-        // Set query parameters
+
         // Set body parameters
         // Set Request.metering_label data
 

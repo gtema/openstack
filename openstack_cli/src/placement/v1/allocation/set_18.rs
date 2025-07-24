@@ -96,9 +96,8 @@ impl AllocationCommand {
             http::header::HeaderValue::from_static("placement 1.8"),
         );
 
-        // Set path parameters
         ep_builder.consumer_uuid(&self.path.consumer_uuid);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.allocations data
 

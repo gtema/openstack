@@ -86,9 +86,8 @@ impl TransferRequestCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.zone_transfer_request_id(&self.path.zone_transfer_request_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

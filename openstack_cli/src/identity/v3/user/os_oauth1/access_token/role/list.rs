@@ -107,7 +107,6 @@ impl RolesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.access_token_id(&self.path.access_token_id);
 
         // Process path parameter `user_id`
@@ -154,8 +153,6 @@ impl RolesCommand {
                     .id,
             );
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

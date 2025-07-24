@@ -88,10 +88,7 @@ impl AggregateCommand {
             http::header::HeaderValue::from_static("placement 1.1"),
         );
 
-        // Set path parameters
         ep_builder.uuid(&self.path.uuid);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

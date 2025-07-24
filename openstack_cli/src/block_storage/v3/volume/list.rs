@@ -139,7 +139,6 @@ impl VolumesCommand {
 
         let mut ep_builder = list_detailed::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.all_tenants {
             ep_builder.all_tenants(*val);
@@ -174,7 +173,6 @@ impl VolumesCommand {
         if let Some(val) = &self.query.with_count {
             ep_builder.with_count(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

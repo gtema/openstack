@@ -184,8 +184,6 @@ impl NetworkCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.network data
         let args = &self.network;

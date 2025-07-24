@@ -80,10 +80,7 @@ impl ResourceTypesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

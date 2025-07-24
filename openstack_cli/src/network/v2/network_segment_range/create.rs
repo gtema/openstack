@@ -110,8 +110,6 @@ impl NetworkSegmentRangeCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.network_segment_range data
         let args = &self.network_segment_range;

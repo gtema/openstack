@@ -101,7 +101,6 @@ impl KeypairCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(id) = &self.query.user.user_id {
@@ -147,7 +146,6 @@ impl KeypairCommand {
                     .id,
             );
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -212,7 +212,6 @@ impl MembersCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.pool_id(&self.path.pool_id);
         // Set query parameters
         if let Some(val) = &self.query.address {
@@ -324,7 +323,6 @@ impl MembersCommand {
         if let Some(val) = &self.query.weight {
             ep_builder.weight(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

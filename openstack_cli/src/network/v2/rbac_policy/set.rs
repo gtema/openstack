@@ -94,9 +94,8 @@ impl RbacPolicyCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.rbac_policy data
         let args = &self.rbac_policy;

@@ -90,9 +90,8 @@ impl VolumeCommand {
 
         let mut ep_builder = os_detach::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_detach data
         if let Some(los_detach) = &self.os_detach {

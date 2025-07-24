@@ -217,7 +217,6 @@ impl HealthmonitorsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
@@ -334,7 +333,6 @@ impl HealthmonitorsCommand {
         if let Some(val) = &self.query.url_path {
             ep_builder.url_path(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

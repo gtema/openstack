@@ -105,8 +105,6 @@ impl CleanupCommand {
             http::header::HeaderValue::from_static("volume 3.24"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.binary data
         if let Some(arg) = &self.binary {

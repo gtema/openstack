@@ -95,10 +95,9 @@ impl EndpointCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

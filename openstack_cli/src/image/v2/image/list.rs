@@ -273,7 +273,6 @@ impl ImagesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.created_at {
             ep_builder.created_at(val);
@@ -329,7 +328,6 @@ impl ImagesCommand {
         if let Some(val) = &self.query.visibility {
             ep_builder.visibility(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -107,7 +107,6 @@ impl ClustersCommand {
 
         let mut ep_builder = list_detailed::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.active_backend_id {
             ep_builder.active_backend_id(val);
@@ -136,7 +135,6 @@ impl ClustersCommand {
         if let Some(val) = &self.query.replication_stats {
             ep_builder.replication_stats(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

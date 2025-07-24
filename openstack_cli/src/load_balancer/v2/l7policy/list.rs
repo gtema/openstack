@@ -155,7 +155,6 @@ impl L7PoliciesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.action {
             ep_builder.action(val);
@@ -242,7 +241,6 @@ impl L7PoliciesCommand {
         if let Some(val) = &self.query.redirect_url {
             ep_builder.redirect_url(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -74,10 +74,7 @@ impl QuotaCommand {
 
         let mut ep_builder = details::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -101,8 +101,6 @@ impl GroupSnapshotCommand {
             http::header::HeaderValue::from_static("volume 3.14"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.group_snapshot data
         let args = &self.group_snapshot;

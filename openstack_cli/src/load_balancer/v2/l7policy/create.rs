@@ -189,8 +189,6 @@ impl L7PolicyCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.l7policy data
         let args = &self.l7policy;

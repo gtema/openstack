@@ -83,11 +83,8 @@ impl BindingCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.port_id(&self.path.port_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -90,10 +90,9 @@ impl MetadataCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.volume_id(&self.path.volume_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.meta data
 

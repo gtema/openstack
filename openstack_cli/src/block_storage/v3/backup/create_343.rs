@@ -131,8 +131,6 @@ impl BackupCommand {
             http::header::HeaderValue::from_static("volume 3.43"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.backup data
         let args = &self.backup;

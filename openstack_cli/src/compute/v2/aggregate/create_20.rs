@@ -100,8 +100,6 @@ impl AggregateCommand {
             http::header::HeaderValue::from_static("compute 2.0"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.aggregate data
         let args = &self.aggregate;

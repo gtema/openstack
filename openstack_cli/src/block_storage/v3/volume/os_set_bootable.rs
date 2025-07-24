@@ -86,9 +86,8 @@ impl VolumeCommand {
 
         let mut ep_builder = os_set_bootable::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_set_bootable data
         let args = &self.os_set_bootable;

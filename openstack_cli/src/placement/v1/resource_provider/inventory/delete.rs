@@ -99,11 +99,8 @@ impl InventoryCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.resource_class(&self.path.resource_class);
         ep_builder.uuid(&self.path.uuid);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

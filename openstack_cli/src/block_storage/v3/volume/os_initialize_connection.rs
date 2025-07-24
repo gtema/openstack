@@ -87,9 +87,8 @@ impl VolumeCommand {
 
         let mut ep_builder = os_initialize_connection::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_initialize_connection data
         let args = &self.os_initialize_connection;

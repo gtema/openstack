@@ -121,9 +121,8 @@ impl LocationCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.image_id(&self.path.image_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.metadata data
         if let Some(arg) = &self.metadata {

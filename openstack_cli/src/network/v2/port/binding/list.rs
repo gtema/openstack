@@ -133,7 +133,6 @@ impl BindingsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.port_id(&self.path.port_id);
         // Set query parameters
         if let Some(val) = &self.query.host {
@@ -163,7 +162,6 @@ impl BindingsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

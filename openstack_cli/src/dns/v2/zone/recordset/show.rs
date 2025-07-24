@@ -44,6 +44,10 @@ pub struct RecordsetCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -52,6 +56,18 @@ pub struct RecordsetCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {}
+
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// If enabled this will show results from all projects in Designate
+    #[arg(long)]
+    x_auth_all_projects: Option<bool>,
+
+    /// This allows a user to impersonate another project
+    #[arg(long)]
+    x_auth_sudo_project_id: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -132,6 +148,19 @@ impl RecordsetCommand {
                     ));
                 }
             };
+        }
+
+        if let Some(val) = &self.headers.x_auth_all_projects {
+            find_builder.header(
+                http::header::HeaderName::from_static("x-auth-all-projects"),
+                http::header::HeaderValue::from_static(if *val { "true" } else { "false" }),
+            );
+        }
+        if let Some(val) = &self.headers.x_auth_sudo_project_id {
+            find_builder.header(
+                http::header::HeaderName::from_static("x-auth-sudo-project-id"),
+                http::header::HeaderValue::from_str(val)?,
+            );
         }
         let find_ep = find_builder
             .build()

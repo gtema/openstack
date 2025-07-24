@@ -84,9 +84,8 @@ impl AggregateCommand {
 
         let mut ep_builder = add_host::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.add_host data
         let args = &self.add_host;

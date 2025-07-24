@@ -113,6 +113,7 @@ impl MemberCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.pool_id(&self.path.pool_id);
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -120,13 +121,12 @@ impl MemberCommand {
 
         let mut ep_builder = replace::Request::builder();
 
-        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.pool_id(resource_id.clone());
-        // Set query parameters
+
         // Set body parameters
         // Set Request.members data
 

@@ -159,7 +159,6 @@ impl AmphoraesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.cached_zone {
             ep_builder.cached_zone(val);
@@ -230,7 +229,6 @@ impl AmphoraesCommand {
         if let Some(val) = &self.query.vrrp_priority {
             ep_builder.vrrp_priority(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

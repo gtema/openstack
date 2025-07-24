@@ -97,9 +97,8 @@ impl FlavorCommand {
 
         let mut ep_builder = add_tenant_access::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.add_tenant_access data
         let args = &self.add_tenant_access;

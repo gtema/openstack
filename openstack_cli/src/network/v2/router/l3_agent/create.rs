@@ -83,9 +83,8 @@ impl L3AgentCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.router_id(&self.path.router_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

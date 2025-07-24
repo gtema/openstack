@@ -93,9 +93,8 @@ impl ServerCommand {
 
         let mut ep_builder = inject_network_info::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.inject_network_info data
         ep_builder.inject_network_info(self.inject_network_info.clone());

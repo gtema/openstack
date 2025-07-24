@@ -109,9 +109,8 @@ impl PortAssociationCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.local_ip_id(&self.path.local_ip_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.port_association data
         let args = &self.port_association;

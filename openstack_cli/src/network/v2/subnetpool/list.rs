@@ -192,7 +192,6 @@ impl SubnetpoolsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -260,7 +259,6 @@ impl SubnetpoolsCommand {
         if let Some(val) = &self.query.tenant_id {
             ep_builder.tenant_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

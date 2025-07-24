@@ -86,11 +86,8 @@ impl EncryptionCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.type_id(&self.path.type_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

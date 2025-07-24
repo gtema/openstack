@@ -288,8 +288,6 @@ impl ClustertemplateCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.apiserver_port data
         if let Some(arg) = &self.apiserver_port {

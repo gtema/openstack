@@ -60,6 +60,10 @@ pub struct FileCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -72,6 +76,15 @@ pub struct FileCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {}
+
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// The range of image data requested. Note that multi range requests are
+    /// not supported.
+    #[arg(long)]
+    range: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]

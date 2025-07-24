@@ -79,10 +79,7 @@ impl RolesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.trust_id(&self.path.trust_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()
