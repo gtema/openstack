@@ -17,7 +17,6 @@
 
 //! `response` REST operations of load_balancer
 pub mod create;
-pub mod failover;
 pub mod get;
 pub mod list;
 pub mod set;

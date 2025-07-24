@@ -16,8 +16,6 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of load_balancer
-pub mod config;
-pub mod failover;
 pub mod get;
 pub mod list;
 pub mod stats;
