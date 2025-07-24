@@ -48,6 +48,10 @@ pub struct SharesCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -83,6 +87,18 @@ struct QueryParameters {
     target_project_id: Option<String>,
 }
 
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// If enabled this will show results from all projects in Designate
+    #[arg(long)]
+    x_auth_all_projects: Option<bool>,
+
+    /// This allows a user to impersonate another project
+    #[arg(long)]
+    x_auth_sudo_project_id: Option<String>,
+}
+
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
@@ -116,7 +132,6 @@ impl SharesCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = list::Request::builder();
-
         // Set path parameters
 
         // Process path parameter `zone_id`
@@ -164,7 +179,19 @@ impl SharesCommand {
         if let Some(val) = &self.query.target_project_id {
             ep_builder.target_project_id(val);
         }
-        // Set body parameters
+        // Set header parameters
+        if let Some(val) = &self.headers.x_auth_all_projects {
+            ep_builder.header(
+                http::header::HeaderName::from_static("x-auth-all-projects"),
+                http::header::HeaderValue::from_static(if *val { "true" } else { "false" }),
+            );
+        }
+        if let Some(val) = &self.headers.x_auth_sudo_project_id {
+            ep_builder.header(
+                http::header::HeaderName::from_static("x-auth-sudo-project-id"),
+                http::header::HeaderValue::from_str(val)?,
+            );
+        }
 
         let ep = ep_builder
             .build()

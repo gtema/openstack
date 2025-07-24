@@ -133,8 +133,6 @@ impl EndpointGroupCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.endpoint_group data
         let args = &self.endpoint_group;

@@ -116,10 +116,9 @@ impl EncryptionCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.type_id(&self.path.type_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.encryption data
         let args = &self.encryption;

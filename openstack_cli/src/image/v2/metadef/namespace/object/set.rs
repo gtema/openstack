@@ -103,10 +103,9 @@ impl ObjectCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
         ep_builder.object_name(&self.path.object_name);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.description data
         if let Some(arg) = &self.description {

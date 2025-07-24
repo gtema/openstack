@@ -86,9 +86,8 @@ impl BackupCommand {
 
         let mut ep_builder = os_reset_status::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_reset_status data
         let args = &self.os_reset_status;

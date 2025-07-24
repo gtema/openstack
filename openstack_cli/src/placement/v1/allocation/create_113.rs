@@ -90,8 +90,6 @@ impl AllocationCommand {
             http::header::HeaderValue::from_static("placement 1.13"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(

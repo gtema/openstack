@@ -79,7 +79,6 @@ impl ServicesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.binary {
             ep_builder.binary(val);
@@ -87,7 +86,6 @@ impl ServicesCommand {
         if let Some(val) = &self.query.host {
             ep_builder.host(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

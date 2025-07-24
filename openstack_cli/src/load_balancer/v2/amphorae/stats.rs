@@ -84,10 +84,7 @@ impl AmphoraeCommand {
 
         let mut ep_builder = stats::Request::builder();
 
-        // Set path parameters
         ep_builder.amphora_id(&self.path.amphora_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

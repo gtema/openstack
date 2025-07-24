@@ -74,12 +74,10 @@ impl ServicesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.service {
             ep_builder.service(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -267,8 +267,6 @@ impl ClusterCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.api_address data
         if let Some(arg) = &self.api_address {

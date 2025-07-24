@@ -84,9 +84,8 @@ impl NextProviderCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.flavor_id(&self.path.flavor_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.next_provider data
 

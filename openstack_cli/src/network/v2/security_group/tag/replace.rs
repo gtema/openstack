@@ -83,9 +83,8 @@ impl TagCommand {
 
         let mut ep_builder = replace::Request::builder();
 
-        // Set path parameters
         ep_builder.security_group_id(&self.path.security_group_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.tags data
 

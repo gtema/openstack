@@ -112,9 +112,8 @@ impl ServerCommand {
 
         let mut ep_builder = revert_resize::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.revert_resize data
         ep_builder.revert_resize(self.revert_resize.clone());

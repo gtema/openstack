@@ -49,6 +49,10 @@ pub struct TokenCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -57,6 +61,15 @@ pub struct TokenCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {}
+
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// The authentication token. An authentication response returns the token
+    /// ID in this header rather than in the response body.
+    #[arg()]
+    x_subject_token: String,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -74,11 +87,15 @@ impl TokenCommand {
         let op = OutputProcessor::from_args(parsed_args, Some("identity.auth/token"), Some("get"));
         op.validate_args(parsed_args)?;
 
-        let ep_builder = get::Request::builder();
-
+        let mut ep_builder = get::Request::builder();
         // Set path parameters
-        // Set query parameters
-        // Set body parameters
+
+        // Set header parameters
+
+        ep_builder.header(
+            http::header::HeaderName::from_static("X-Subject-Token"),
+            http::header::HeaderValue::from_str(&self.headers.x_subject_token)?,
+        );
 
         let ep = ep_builder
             .build()

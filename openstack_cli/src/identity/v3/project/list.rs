@@ -138,7 +138,6 @@ impl ProjectsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(id) = &self.query.domain.domain_id {
             // domain_id is passed. No need to lookup
@@ -213,7 +212,6 @@ impl ProjectsCommand {
         if let Some(val) = &self.query.tags_any {
             ep_builder.tags_any(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

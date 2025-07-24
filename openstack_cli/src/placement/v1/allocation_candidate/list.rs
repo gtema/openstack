@@ -199,7 +199,6 @@ impl AllocationCandidateCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.group_policy {
             ep_builder.group_policy(val);
@@ -225,7 +224,6 @@ impl AllocationCandidateCommand {
         if let Some(val) = &self.query.same_subtree {
             ep_builder.same_subtree(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

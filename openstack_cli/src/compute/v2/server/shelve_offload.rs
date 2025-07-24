@@ -113,9 +113,8 @@ impl ServerCommand {
 
         let mut ep_builder = shelve_offload::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.shelve_offload data
         ep_builder.shelve_offload(self.shelve_offload.clone());

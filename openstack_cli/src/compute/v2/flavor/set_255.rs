@@ -106,6 +106,7 @@ impl FlavorCommand {
             http::header::HeaderName::from_static("openstack-api-version"),
             http::header::HeaderValue::from_static("compute 2.55"),
         );
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -117,13 +118,12 @@ impl FlavorCommand {
             http::header::HeaderValue::from_static("compute 2.55"),
         );
 
-        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
-        // Set query parameters
+
         // Set body parameters
         // Set Request.flavor data
         let args = &self.flavor;

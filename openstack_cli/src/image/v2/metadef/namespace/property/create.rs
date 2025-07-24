@@ -151,9 +151,8 @@ impl PropertyCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.additional_items data
         if let Some(arg) = &self.additional_items {

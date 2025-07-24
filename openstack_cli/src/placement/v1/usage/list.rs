@@ -126,7 +126,6 @@ impl UsagesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.consumer_type {
             ep_builder.consumer_type(val);
@@ -217,7 +216,6 @@ impl UsagesCommand {
                     .id,
             );
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

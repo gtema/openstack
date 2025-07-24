@@ -91,8 +91,6 @@ impl QuotaCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `project_id`
         if let Some(id) = &self.path.project.project_id {
             // project_id is passed. No need to lookup
@@ -142,8 +140,6 @@ impl QuotaCommand {
                 return Err(eyre!("Current project information can not be identified").into());
             }
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

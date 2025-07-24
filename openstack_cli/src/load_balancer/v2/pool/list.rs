@@ -190,7 +190,6 @@ impl PoolsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
@@ -295,7 +294,6 @@ impl PoolsCommand {
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

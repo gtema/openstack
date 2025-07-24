@@ -95,7 +95,6 @@ impl RecordsetCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
 
         // Process path parameter `zone_id`
@@ -133,8 +132,6 @@ impl RecordsetCommand {
                 }
             };
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

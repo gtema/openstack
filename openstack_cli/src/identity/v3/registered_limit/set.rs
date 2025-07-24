@@ -120,9 +120,8 @@ impl RegisteredLimitCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.registered_limit data
         let args = &self.registered_limit;

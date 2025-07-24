@@ -89,9 +89,8 @@ impl DhcpNetworkCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.agent_id(&self.path.agent_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

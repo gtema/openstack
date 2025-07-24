@@ -100,9 +100,8 @@ impl ServerCommand {
 
         let mut ep_builder = change_password::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.change_password data
         let args = &self.change_password;

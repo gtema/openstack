@@ -103,7 +103,6 @@ impl ProjectCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.endpoint_group_id(&self.path.endpoint_group_id);
 
         // Process path parameter `id`
@@ -141,8 +140,6 @@ impl ProjectCommand {
                 }
             };
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

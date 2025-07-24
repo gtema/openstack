@@ -246,8 +246,6 @@ impl SubnetCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.subnet data
         let args = &self.subnet;

@@ -96,8 +96,6 @@ impl GroupCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.group data
         let args = &self.group;

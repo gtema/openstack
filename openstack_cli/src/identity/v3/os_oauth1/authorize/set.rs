@@ -85,9 +85,8 @@ impl AuthorizeCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.request_token_id(&self.path.request_token_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

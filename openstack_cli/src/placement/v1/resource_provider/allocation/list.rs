@@ -85,10 +85,7 @@ impl AllocationCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.uuid(&self.path.uuid);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

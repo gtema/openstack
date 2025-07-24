@@ -75,8 +75,6 @@ impl AliasBandwidthLimitRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.alias_bandwidth_limit_rule data
 

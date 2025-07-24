@@ -86,8 +86,6 @@ impl ImportRecordCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.backup_record data
         let args = &self.backup_record;

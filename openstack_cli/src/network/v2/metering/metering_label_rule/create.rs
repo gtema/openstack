@@ -120,8 +120,6 @@ impl MeteringLabelRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.metering_label_rule data
         let args = &self.metering_label_rule;

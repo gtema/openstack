@@ -87,9 +87,8 @@ impl VolumeTransferCommand {
 
         let mut ep_builder = accept::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.accept data
         let args = &self.accept;

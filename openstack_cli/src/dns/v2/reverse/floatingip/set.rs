@@ -93,9 +93,8 @@ impl FloatingipCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.fip_key(&self.path.fip_key);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.address data
         if let Some(arg) = &self.address {

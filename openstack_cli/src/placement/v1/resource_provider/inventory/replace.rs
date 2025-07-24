@@ -96,9 +96,8 @@ impl InventoryCommand {
 
         let mut ep_builder = replace::Request::builder();
 
-        // Set path parameters
         ep_builder.uuid(&self.path.uuid);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.inventories data
 

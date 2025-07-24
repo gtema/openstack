@@ -117,7 +117,6 @@ impl InheritedToProjectCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `project_id`
@@ -170,8 +169,6 @@ impl InheritedToProjectCommand {
             }
         }
         ep_builder.role_id(&self.path.role_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

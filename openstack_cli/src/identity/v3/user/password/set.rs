@@ -109,8 +109,6 @@ impl PasswordCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
             // user_id is passed. No need to lookup
@@ -155,7 +153,7 @@ impl PasswordCommand {
                     .id,
             );
         }
-        // Set query parameters
+
         // Set body parameters
         // Set Request.user data
         let args = &self.user;

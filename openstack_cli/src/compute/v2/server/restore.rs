@@ -90,9 +90,8 @@ impl ServerCommand {
 
         let mut ep_builder = restore::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.restore data
         ep_builder.restore(self.restore.clone());

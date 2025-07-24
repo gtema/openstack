@@ -95,9 +95,8 @@ impl AggregateCommand {
             http::header::HeaderValue::from_static("placement 1.19"),
         );
 
-        // Set path parameters
         ep_builder.uuid(&self.path.uuid);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.aggregates data
 

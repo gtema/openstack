@@ -104,7 +104,6 @@ impl OsEc2Command {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.credential_id(&self.path.credential_id);
 
         // Process path parameter `user_id`
@@ -151,8 +150,6 @@ impl OsEc2Command {
                     .id,
             );
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -130,9 +130,8 @@ impl VolumeCommand {
             http::header::HeaderValue::from_static("volume 3.1"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_volume_upload_image data
         let args = &self.os_volume_upload_image;

@@ -93,8 +93,6 @@ impl GroupsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
             // user_id is passed. No need to lookup
@@ -139,8 +137,6 @@ impl GroupsCommand {
                     .id,
             );
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

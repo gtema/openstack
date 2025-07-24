@@ -79,10 +79,7 @@ impl GroupSpecsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.group_type_id(&self.path.group_type_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

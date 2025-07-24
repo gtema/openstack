@@ -103,7 +103,6 @@ impl VolumeAttachmentsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
         // Set query parameters
         if let Some(val) = &self.query.limit {
@@ -112,7 +111,6 @@ impl VolumeAttachmentsCommand {
         if let Some(val) = &self.query.offset {
             ep_builder.offset(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

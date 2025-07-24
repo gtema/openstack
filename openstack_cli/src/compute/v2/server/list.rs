@@ -304,7 +304,6 @@ impl ServersCommand {
 
         let mut ep_builder = list_detailed::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.access_ip_v4 {
             ep_builder.access_ip_v4(val);
@@ -557,7 +556,6 @@ impl ServersCommand {
         if let Some(val) = &self.query.vm_state {
             ep_builder.vm_state(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

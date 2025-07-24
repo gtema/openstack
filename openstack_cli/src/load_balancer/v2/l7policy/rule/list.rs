@@ -164,7 +164,6 @@ impl RulesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.l7policy_id(&self.path.l7policy_id);
         // Set query parameters
         if let Some(val) = &self.query.admin_state_up {
@@ -249,7 +248,6 @@ impl RulesCommand {
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -103,9 +103,8 @@ impl ServerCommand {
 
         let mut ep_builder = os_start::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_start data
         ep_builder.os_start(self.os_start.clone());

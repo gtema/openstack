@@ -160,8 +160,6 @@ impl ProjectCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.project data
         let args = &self.project;

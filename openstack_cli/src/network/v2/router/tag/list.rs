@@ -110,7 +110,6 @@ impl TagsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.router_id(&self.path.router_id);
         // Set query parameters
         if let Some(val) = &self.query.limit {
@@ -128,7 +127,6 @@ impl TagsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

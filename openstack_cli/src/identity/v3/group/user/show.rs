@@ -97,7 +97,6 @@ impl UserCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `id`
@@ -135,8 +134,6 @@ impl UserCommand {
                 }
             };
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

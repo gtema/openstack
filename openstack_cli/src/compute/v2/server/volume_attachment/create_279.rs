@@ -135,9 +135,8 @@ impl VolumeAttachmentCommand {
             http::header::HeaderValue::from_static("compute 2.79"),
         );
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.volume_attachment data
         let args = &self.volume_attachment;

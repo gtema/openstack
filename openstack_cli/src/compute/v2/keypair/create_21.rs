@@ -98,8 +98,6 @@ impl KeypairCommand {
             http::header::HeaderValue::from_static("compute 2.1"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.keypair data
         let args = &self.keypair;

@@ -78,10 +78,7 @@ impl ImportCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.zone_import_id(&self.path.zone_import_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

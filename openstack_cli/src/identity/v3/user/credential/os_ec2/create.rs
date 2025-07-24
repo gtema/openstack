@@ -102,8 +102,6 @@ impl OsEc2Command {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
             // user_id is passed. No need to lookup
@@ -148,7 +146,7 @@ impl OsEc2Command {
                     .id,
             );
         }
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

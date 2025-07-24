@@ -86,9 +86,8 @@ impl VolumeCommand {
 
         let mut ep_builder = os_update_readonly_flag::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_update_readonly_flag data
         let args = &self.os_update_readonly_flag;

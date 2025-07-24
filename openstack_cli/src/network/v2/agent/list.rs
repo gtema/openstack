@@ -156,7 +156,6 @@ impl AgentsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
@@ -200,7 +199,6 @@ impl AgentsCommand {
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

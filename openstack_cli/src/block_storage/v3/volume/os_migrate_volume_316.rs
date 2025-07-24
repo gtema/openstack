@@ -107,9 +107,8 @@ impl VolumeCommand {
             http::header::HeaderValue::from_static("volume 3.16"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_migrate_volume data
         let args = &self.os_migrate_volume;

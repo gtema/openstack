@@ -86,9 +86,8 @@ impl TypeCommand {
 
         let mut ep_builder = remove_project_access::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.remove_project_access data
         let args = &self.remove_project_access;

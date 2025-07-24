@@ -78,8 +78,6 @@ impl QosSpecCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.qos_specs data
         let args = &self.qos_specs;

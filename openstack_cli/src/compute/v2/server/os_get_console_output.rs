@@ -108,9 +108,8 @@ impl ServerCommand {
 
         let mut ep_builder = os_get_console_output::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_get_console_output data
         let args = &self.os_get_console_output;

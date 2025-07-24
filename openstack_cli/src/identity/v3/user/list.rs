@@ -160,7 +160,6 @@ impl UsersCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(id) = &self.query.domain.domain_id {
             // domain_id is passed. No need to lookup
@@ -235,7 +234,6 @@ impl UsersCommand {
         if let Some(val) = &self.query.unique_id {
             ep_builder.unique_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

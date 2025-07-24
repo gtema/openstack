@@ -77,10 +77,7 @@ impl VolumeCommand {
 
         let mut ep_builder = os_show_image_metadata::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

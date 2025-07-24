@@ -89,9 +89,8 @@ impl ServerCommand {
 
         let mut ep_builder = unpause::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.unpause data
         ep_builder.unpause(self.unpause.clone());

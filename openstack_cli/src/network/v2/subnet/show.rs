@@ -86,6 +86,7 @@ impl SubnetCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.id(&self.path.id);
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;

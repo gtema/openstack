@@ -30,7 +30,6 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::floating_ips_bulk::set;
-use openstack_types::compute::v2::floating_ips_bulk::response::set::FloatingIpsBulkResponse;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -75,17 +74,12 @@ impl FloatingIpsBulkCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<FloatingIpsBulkResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         Ok(())
     }
 }

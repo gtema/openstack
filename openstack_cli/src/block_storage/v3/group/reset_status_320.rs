@@ -82,8 +82,6 @@ impl GroupCommand {
             http::header::HeaderValue::from_static("volume 3.20"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.reset_status data
         let args = &self.reset_status;

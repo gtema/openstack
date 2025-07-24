@@ -420,8 +420,6 @@ impl ServerCommand {
             http::header::HeaderValue::from_static("compute 2.19"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.os_scheduler_hints data
         if let Some(args) = &self.os_scheduler_hints {

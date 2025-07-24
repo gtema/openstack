@@ -89,9 +89,8 @@ impl ServerCommand {
             http::header::HeaderValue::from_static("compute 2.73"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.lock data
         if let Some(llock) = &self.lock {

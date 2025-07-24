@@ -89,13 +89,11 @@ impl LoadbalancerCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(val) = &self.query.cascade {
             ep_builder.cascade(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

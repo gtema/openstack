@@ -79,10 +79,7 @@ impl TransferRequestCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.zone_transfer_request_id(&self.path.zone_transfer_request_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -85,8 +85,6 @@ impl UpgradeCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.cluster_template data
         if let Some(arg) = &self.cluster_template {

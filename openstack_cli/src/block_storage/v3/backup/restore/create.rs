@@ -98,9 +98,8 @@ impl RestoreCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.restore data
         if let Some(lrestore) = &self.restore {

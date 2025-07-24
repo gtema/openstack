@@ -105,6 +105,7 @@ impl GroupTypeCommand {
             http::header::HeaderName::from_static("openstack-api-version"),
             http::header::HeaderValue::from_static("volume 3.11"),
         );
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -116,13 +117,12 @@ impl GroupTypeCommand {
             http::header::HeaderValue::from_static("volume 3.11"),
         );
 
-        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
-        // Set query parameters
+
         // Set body parameters
         // Set Request.group_type data
         let args = &self.group_type;

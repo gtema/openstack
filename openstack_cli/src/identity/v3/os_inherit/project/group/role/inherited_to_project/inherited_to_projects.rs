@@ -123,7 +123,6 @@ impl InheritedToProjectCommand {
 
         let mut ep_builder = inherited_to_projects::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `project_id`
@@ -176,7 +175,7 @@ impl InheritedToProjectCommand {
             }
         }
         ep_builder.role_id(&self.path.role_id);
-        // Set query parameters
+
         // Set body parameters
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

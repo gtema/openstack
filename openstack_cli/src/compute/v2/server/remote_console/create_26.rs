@@ -133,9 +133,8 @@ impl RemoteConsoleCommand {
             http::header::HeaderValue::from_static("compute 2.6"),
         );
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.remote_console data
         let args = &self.remote_console;

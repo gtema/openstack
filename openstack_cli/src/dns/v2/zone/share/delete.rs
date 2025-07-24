@@ -98,8 +98,6 @@ impl ShareCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
             // zone_id is passed. No need to lookup
@@ -136,8 +134,6 @@ impl ShareCommand {
             };
         }
         ep_builder.zone_share_id(&self.path.zone_share_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -87,11 +87,8 @@ impl PropertyCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
         ep_builder.property_name(&self.path.property_name);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

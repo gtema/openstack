@@ -91,11 +91,8 @@ impl WebssoCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.idp_id(&self.path.idp_id);
         ep_builder.protocol_id(&self.path.protocol_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

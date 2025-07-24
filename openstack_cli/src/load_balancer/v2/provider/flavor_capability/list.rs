@@ -88,10 +88,7 @@ impl FlavorCapabilitiesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.provider(&self.path.provider);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

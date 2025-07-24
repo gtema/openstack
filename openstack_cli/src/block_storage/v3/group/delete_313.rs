@@ -79,8 +79,6 @@ impl GroupCommand {
             http::header::HeaderValue::from_static("volume 3.13"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.delete data
         let args = &self.delete;

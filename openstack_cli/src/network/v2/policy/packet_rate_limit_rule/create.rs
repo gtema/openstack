@@ -102,9 +102,8 @@ impl PacketRateLimitRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.packet_rate_limit_rule data
         let args = &self.packet_rate_limit_rule;

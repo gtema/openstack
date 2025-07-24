@@ -10701,15 +10701,9 @@ components:
               type: object
           type: object
       type: object
-    Os_AgentUpdateResponse:
-      description: Response of the os-agents/id:put operation
-      type: object
-    Os_AgentsCreateResponse:
-      description: Response of the os-agents:post operation
-      type: object
-    Os_AgentsListResponse:
-      description: Response of the os-agents:get operation
-      type: object
+    Os_AgentUpdateResponse: {}
+    Os_AgentsCreateResponse: {}
+    Os_AgentsListResponse: {}
     Os_AggregateShowResponse:
       additionalProperties: false
       properties:
@@ -11935,45 +11929,19 @@ components:
       required:
         - nodes
       type: object
-    Os_CellShowResponse:
-      description: Response of the os-cells/id:get operation
-      type: object
-    Os_CellUpdateResponse:
-      description: Response of the os-cells/id:put operation
-      type: object
-    Os_CellsCapacitiesResponse:
-      description: Response of the os-cells/capacities:get operation
-      type: object
-    Os_CellsCreateResponse:
-      description: Response of the os-cells:post operation
-      type: object
-    Os_CellsDetailResponse:
-      description: Response of the os-cells/detail:get operation
-      type: object
-    Os_CellsInfoResponse:
-      description: Response of the os-cells/info:get operation
-      type: object
-    Os_CellsListResponse:
-      description: Response of the os-cells:get operation
-      type: object
-    Os_CellsSync_InstancesResponse:
-      description: Response of the os-cells/sync_instances:post operation
-      type: object
-    Os_CertificateShowResponse:
-      description: Response of the os-certificates/id:get operation
-      type: object
-    Os_CertificatesCreateResponse:
-      description: Response of the os-certificates:post operation
-      type: object
-    Os_CloudpipeCreateResponse:
-      description: Response of the os-cloudpipe:post operation
-      type: object
-    Os_CloudpipeListResponse:
-      description: Response of the os-cloudpipe:get operation
-      type: object
-    Os_CloudpipeUpdateResponse:
-      description: Response of the os-cloudpipe/id:put operation
-      type: object
+    Os_CellShowResponse: {}
+    Os_CellUpdateResponse: {}
+    Os_CellsCapacitiesResponse: {}
+    Os_CellsCreateResponse: {}
+    Os_CellsDetailResponse: {}
+    Os_CellsInfoResponse: {}
+    Os_CellsListResponse: {}
+    Os_CellsSync_InstancesResponse: {}
+    Os_CertificateShowResponse: {}
+    Os_CertificatesCreateResponse: {}
+    Os_CloudpipeCreateResponse: {}
+    Os_CloudpipeListResponse: {}
+    Os_CloudpipeUpdateResponse: {}
     Os_Console_Auth_TokenShowResponse:
       description: Show Console Connection Information Response
       properties:
@@ -12005,9 +11973,7 @@ components:
       required:
         - console
       type: object
-    Os_Fixed_IpShowResponse:
-      description: Response of the os-fixed-ips/id:get operation
-      type: object
+    Os_Fixed_IpShowResponse: {}
     Os_Fixed_IpsActionReserveRequest:
       description: Empty body for reserve action
       properties:
@@ -12017,8 +11983,6 @@ components:
       x-openstack:
         action-name: reserve
     Os_Fixed_IpsActionReserveResponse:
-      description: Response of the os-fixed-ips/id/action:post:reserve action
-      type: object
       x-openstack:
         action-name: reserve
     Os_Fixed_IpsActionUnreserveRequest:
@@ -12030,27 +11994,15 @@ components:
       x-openstack:
         action-name: unreserve
     Os_Fixed_IpsActionUnreserveResponse:
-      description: Response of the os-fixed-ips/id/action:post:unreserve action
-      type: object
       x-openstack:
         action-name: unreserve
     Os_Floating_IpShowResponse:
       description: Response of the os-floating-ips/id:get operation
       type: object
-    Os_Floating_Ip_DnUpdateResponse:
-      description: Response of the os-floating-ip-dns/id:put operation
-      type: object
-    Os_Floating_Ip_DnsEntryShowResponse:
-      description: Response of the os-floating-ip-dns/domain_id/entries/id:get 
-        operation
-      type: object
-    Os_Floating_Ip_DnsEntryUpdateResponse:
-      description: Response of the os-floating-ip-dns/domain_id/entries/id:put 
-        operation
-      type: object
-    Os_Floating_Ip_DnsListResponse:
-      description: Response of the os-floating-ip-dns:get operation
-      type: object
+    Os_Floating_Ip_DnUpdateResponse: {}
+    Os_Floating_Ip_DnsEntryShowResponse: {}
+    Os_Floating_Ip_DnsEntryUpdateResponse: {}
+    Os_Floating_Ip_DnsListResponse: {}
     Os_Floating_Ip_PoolsListResponse:
       additionalProperties: true
       properties:
@@ -12077,24 +12029,12 @@ components:
     Os_Floating_IpsListResponse:
       description: Response of the os-floating-ips:get operation
       type: object
-    Os_Floating_Ips_BulkCreateResponse:
-      description: Response of the os-floating-ips-bulk:post operation
-      type: object
-    Os_Floating_Ips_BulkListResponse:
-      description: Response of the os-floating-ips-bulk:get operation
-      type: object
-    Os_Floating_Ips_BulkShowResponse:
-      description: Response of the os-floating-ips-bulk/id:get operation
-      type: object
-    Os_Floating_Ips_BulkUpdateResponse:
-      description: Response of the os-floating-ips-bulk/id:put operation
-      type: object
-    Os_FpingListResponse:
-      description: Response of the os-fping:get operation
-      type: object
-    Os_FpingShowResponse:
-      description: Response of the os-fping/id:get operation
-      type: object
+    Os_Floating_Ips_BulkCreateResponse: {}
+    Os_Floating_Ips_BulkListResponse: {}
+    Os_Floating_Ips_BulkShowResponse: {}
+    Os_Floating_Ips_BulkUpdateResponse: {}
+    Os_FpingListResponse: {}
+    Os_FpingShowResponse: {}
     Os_HostShowResponse:
       additionalProperties: false
       properties:
@@ -13851,9 +13791,6 @@ components:
       x-openstack:
         action-name: associate_host
     Os_NetworksActionAssociate_HostResponse:
-      description: Response of the os-networks/id/action:post:associate_host 
-        action
-      type: object
       x-openstack:
         action-name: associate_host
     Os_NetworksActionDisassociateRequest:
@@ -13865,9 +13802,6 @@ components:
       x-openstack:
         action-name: disassociate
     Os_NetworksActionDisassociateResponse:
-      description: Response of the os-networks/id/action:post:disassociate 
-        action
-      type: object
       x-openstack:
         action-name: disassociate
     Os_NetworksActionDisassociate_HostRequest:
@@ -13879,9 +13813,6 @@ components:
       x-openstack:
         action-name: disassociate_host
     Os_NetworksActionDisassociate_HostResponse:
-      description: Response of the os-networks/id/action:post:disassociate_host 
-        action
-      type: object
       x-openstack:
         action-name: disassociate_host
     Os_NetworksActionDisassociate_ProjectRequest:
@@ -13893,17 +13824,10 @@ components:
       x-openstack:
         action-name: disassociate_project
     Os_NetworksActionDisassociate_ProjectResponse:
-      description: Response of the 
-        os-networks/id/action:post:disassociate_project action
-      type: object
       x-openstack:
         action-name: disassociate_project
-    Os_NetworksAddResponse:
-      description: Response of the os-networks/add:post operation
-      type: object
-    Os_NetworksCreateResponse:
-      description: Response of the os-networks:post operation
-      type: object
+    Os_NetworksAddResponse: {}
+    Os_NetworksCreateResponse: {}
     Os_NetworksListResponse:
       description: Response of the os-networks:get operation
       type: object
@@ -15762,17 +15686,9 @@ components:
       x-openstack:
         max-ver: '2.35'
         min-ver: '2.1'
-    Os_Security_Group_Default_RuleShowResponse:
-      description: Response of the os-security-group-default-rules/id:get 
-        operation
-      type: object
-    Os_Security_Group_Default_RulesCreateResponse:
-      description: Response of the os-security-group-default-rules:post 
-        operation
-      type: object
-    Os_Security_Group_Default_RulesListResponse:
-      description: Response of the os-security-group-default-rules:get operation
-      type: object
+    Os_Security_Group_Default_RuleShowResponse: {}
+    Os_Security_Group_Default_RulesCreateResponse: {}
+    Os_Security_Group_Default_RulesListResponse: {}
     Os_Security_Group_RulesCreateResponse:
       description: Response of the os-security-group-rules:post operation
       type: object
@@ -17522,9 +17438,7 @@ components:
     Os_Tenant_NetworkShowResponse:
       description: Response of the os-tenant-networks/id:get operation
       type: object
-    Os_Tenant_NetworksCreateResponse:
-      description: Response of the os-tenant-networks:post operation
-      type: object
+    Os_Tenant_NetworksCreateResponse: {}
     Os_Tenant_NetworksListResponse:
       description: Response of the os-tenant-networks:get operation
       type: object
@@ -18353,9 +18267,6 @@ components:
       x-openstack:
         action-name: resetNetwork
     Os_Volumes_BootActionResetnetworkResponse:
-      description: Response of the os-volumes_boot/id/action:post:resetNetwork 
-        action
-      type: object
       x-openstack:
         action-name: resetNetwork
     Os_Volumes_BootActionResizeResponse:
@@ -32194,15 +32105,9 @@ components:
         action-name: unshelve
         max-ver: '2.76'
         min-ver: '2.91'
-    ServersConsoleShowResponse:
-      description: Response of the servers/server_id/consoles/id:get operation
-      type: object
-    ServersConsolesCreateResponse:
-      description: Response of the servers/server_id/consoles:post operation
-      type: object
-    ServersConsolesListResponse:
-      description: Response of the servers/server_id/consoles:get operation
-      type: object
+    ServersConsoleShowResponse: {}
+    ServersConsolesCreateResponse: {}
+    ServersConsolesListResponse: {}
     ServersCreateRequest:
       oneOf:
         - $ref: '#/components/schemas/ServersCreate_20'
@@ -44480,10 +44385,7 @@ components:
           format: password
           type: string
       type: object
-    ServersOs_Virtual_InterfacesListResponse:
-      description: Response of the servers/server_id/os-virtual-interfaces:get 
-        operation
-      type: object
+    ServersOs_Virtual_InterfacesListResponse: {}
     ServersOs_Volume_AttachmentShowResponse:
       properties:
         volumeAttachment:

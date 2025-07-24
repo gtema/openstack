@@ -180,9 +180,8 @@ impl RuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.l7policy_id(&self.path.l7policy_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.rule data
         let args = &self.rule;

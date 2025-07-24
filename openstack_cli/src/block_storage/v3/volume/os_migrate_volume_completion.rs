@@ -89,9 +89,8 @@ impl VolumeCommand {
 
         let mut ep_builder = os_migrate_volume_completion::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.os_migrate_volume_completion data
         let args = &self.os_migrate_volume_completion;

@@ -79,9 +79,8 @@ impl TagCommand {
 
         let mut ep_builder = replace::Request::builder();
 
-        // Set path parameters
         ep_builder.router_id(&self.path.router_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.tags data
 

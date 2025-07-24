@@ -107,7 +107,6 @@ impl RolesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `project_id`
@@ -159,8 +158,6 @@ impl RolesCommand {
                 return Err(eyre!("Current project information can not be identified").into());
             }
         }
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

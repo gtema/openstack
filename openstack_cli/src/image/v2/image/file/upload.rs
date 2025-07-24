@@ -67,6 +67,10 @@ pub struct FileCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -79,6 +83,22 @@ pub struct FileCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {}
+
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// The media type descriptor of the body, namely application/octet-stream
+    #[arg(long)]
+    content_type: Option<String>,
+
+    /// A store identifier to upload or import image data. Should only be
+    /// included when making a request to a cloud that supports multiple
+    /// backing stores. Use the Store Discovery call to determine an
+    /// appropriate store identifier. Simply omit this header to use the
+    /// default store.
+    #[arg(long)]
+    x_image_meta_store: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -105,11 +125,23 @@ impl FileCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = upload::Request::builder();
-
         // Set path parameters
         ep_builder.image_id(&self.path.image_id);
-        // Set query parameters
-        // Set body parameters
+
+        // Set header parameters
+        if let Some(val) = &self.headers.content_type {
+            ep_builder.header(
+                http::header::HeaderName::from_static("Content-Type"),
+                http::header::HeaderValue::from_str(val)?,
+            );
+        }
+        if let Some(val) = &self.headers.x_image_meta_store {
+            ep_builder.header(
+                http::header::HeaderName::from_static("X-Image-Meta-Store"),
+                http::header::HeaderValue::from_str(val)?,
+            );
+        }
+
         // The only supported media type
         ep_builder.header(
             http::header::CONTENT_TYPE,

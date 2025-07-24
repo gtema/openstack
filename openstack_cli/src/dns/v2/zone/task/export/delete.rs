@@ -78,10 +78,7 @@ impl ExportCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.zone_export_id(&self.path.zone_export_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

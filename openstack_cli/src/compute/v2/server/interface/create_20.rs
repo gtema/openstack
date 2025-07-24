@@ -117,9 +117,8 @@ impl InterfaceCommand {
             http::header::HeaderValue::from_static("compute 2.0"),
         );
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.interface_attachment data
         let args = &self.interface_attachment;

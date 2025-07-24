@@ -180,8 +180,6 @@ impl VolumeManageCommand {
             http::header::HeaderValue::from_static("volume 3.0"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.volume data
         let args = &self.volume;

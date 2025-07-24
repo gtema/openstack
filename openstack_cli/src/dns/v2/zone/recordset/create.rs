@@ -131,8 +131,6 @@ impl RecordsetCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `zone_id`
         if let Some(id) = &self.path.zone.zone_id {
             // zone_id is passed. No need to lookup
@@ -168,7 +166,7 @@ impl RecordsetCommand {
                 }
             };
         }
-        // Set query parameters
+
         // Set body parameters
         // Set Request.description data
         if let Some(arg) = &self.description {

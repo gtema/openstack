@@ -75,8 +75,6 @@ impl AliasDscpMarkingRuleCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.alias_dscp_marking_rule data
 

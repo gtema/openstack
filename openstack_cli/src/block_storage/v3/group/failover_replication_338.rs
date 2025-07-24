@@ -89,8 +89,6 @@ impl GroupCommand {
             http::header::HeaderValue::from_static("volume 3.38"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.failover_replication data
         let args = &self.failover_replication;

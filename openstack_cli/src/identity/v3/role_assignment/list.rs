@@ -171,7 +171,6 @@ impl RoleAssignmentsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.effective {
             ep_builder.effective(val);
@@ -203,7 +202,6 @@ impl RoleAssignmentsCommand {
         if let Some(val) = &self.query.user_id {
             ep_builder.user_id(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -87,13 +87,11 @@ impl HypervisorCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(val) = &self.query.with_servers {
             ep_builder.with_servers(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

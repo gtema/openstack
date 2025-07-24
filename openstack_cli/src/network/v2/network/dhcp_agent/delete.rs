@@ -86,11 +86,8 @@ impl DhcpAgentCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         ep_builder.network_id(&self.path.network_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

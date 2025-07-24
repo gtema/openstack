@@ -106,7 +106,6 @@ impl SimpleTenantUsageCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(val) = &self.query.end {
@@ -121,7 +120,6 @@ impl SimpleTenantUsageCommand {
         if let Some(val) = &self.query.start {
             ep_builder.start(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

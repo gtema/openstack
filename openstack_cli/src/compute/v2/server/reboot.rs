@@ -118,9 +118,8 @@ impl ServerCommand {
 
         let mut ep_builder = reboot::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.reboot data
         let args = &self.reboot;

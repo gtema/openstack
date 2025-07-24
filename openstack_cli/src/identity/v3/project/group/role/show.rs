@@ -113,7 +113,6 @@ impl RoleCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        // Set path parameters
         ep_builder.group_id(&self.path.group_id);
 
         // Process path parameter `project_id`
@@ -166,8 +165,6 @@ impl RoleCommand {
             }
         }
         ep_builder.id(&self.path.id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

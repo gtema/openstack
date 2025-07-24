@@ -100,12 +100,9 @@ impl RegionCommand {
 
         let mut ep_builder = delete::Request::builder();
 
-        // Set path parameters
         ep_builder.policy_id(&self.path.policy_id);
         ep_builder.id(&self.path.id);
         ep_builder.service_id(&self.path.service_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

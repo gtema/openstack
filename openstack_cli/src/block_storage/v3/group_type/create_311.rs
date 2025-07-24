@@ -104,8 +104,6 @@ impl GroupTypeCommand {
             http::header::HeaderValue::from_static("volume 3.11"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.group_type data
         let args = &self.group_type;

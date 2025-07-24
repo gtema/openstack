@@ -105,8 +105,6 @@ impl ConfigCommand {
 
         let mut ep_builder = replace::Request::builder();
 
-        // Set path parameters
-
         // Process path parameter `domain_id`
         if let Some(id) = &self.path.domain.domain_id {
             // domain_id is passed. No need to lookup
@@ -160,7 +158,7 @@ impl ConfigCommand {
                 return Err(eyre!("Current domain information can not be identified").into());
             }
         }
-        // Set query parameters
+
         // Set body parameters
         // Set Request.config data
         ep_builder.config(

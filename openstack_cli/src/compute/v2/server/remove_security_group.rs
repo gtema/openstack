@@ -102,9 +102,8 @@ impl ServerCommand {
 
         let mut ep_builder = remove_security_group::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.remove_security_group data
         let args = &self.remove_security_group;

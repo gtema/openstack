@@ -120,7 +120,6 @@ impl InstanceActionsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.server_id(&self.path.server_id);
         // Set query parameters
         if let Some(val) = &self.query.changes_before {
@@ -135,7 +134,6 @@ impl InstanceActionsCommand {
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

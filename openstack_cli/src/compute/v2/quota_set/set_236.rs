@@ -184,7 +184,6 @@ impl QuotaSetCommand {
             http::header::HeaderValue::from_static("compute 2.36"),
         );
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(id) = &self.query.user.user_id {
@@ -230,6 +229,7 @@ impl QuotaSetCommand {
                     .id,
             );
         }
+
         // Set body parameters
         // Set Request.quota_set data
         let args = &self.quota_set;

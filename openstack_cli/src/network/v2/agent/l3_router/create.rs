@@ -87,9 +87,8 @@ impl L3RouterCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
         ep_builder.agent_id(&self.path.agent_id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.router_id data
         ep_builder.router_id(&self.router_id);

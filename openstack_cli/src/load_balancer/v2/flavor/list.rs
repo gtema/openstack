@@ -103,7 +103,6 @@ impl FlavorsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
@@ -129,7 +128,6 @@ impl FlavorsCommand {
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -74,10 +74,7 @@ impl TagCommand {
 
         let mut ep_builder = delete_all::Request::builder();
 
-        // Set path parameters
         ep_builder.trunk_id(&self.path.trunk_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

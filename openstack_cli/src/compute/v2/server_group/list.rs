@@ -97,7 +97,6 @@ impl ServerGroupsCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.all_projects {
             ep_builder.all_projects(val);
@@ -108,7 +107,6 @@ impl ServerGroupsCommand {
         if let Some(val) = &self.query.offset {
             ep_builder.offset(*val);
         }
-        // Set body parameters
 
         let ep = ep_builder
             .build()

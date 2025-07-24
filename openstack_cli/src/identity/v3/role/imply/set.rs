@@ -88,11 +88,8 @@ impl ImplyCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        // Set path parameters
         ep_builder.implied_role_id(&self.path.implied_role_id);
         ep_builder.prior_role_id(&self.path.prior_role_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -96,8 +96,6 @@ impl CertificateCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.ca_cert_type data
         if let Some(arg) = &self.ca_cert_type {

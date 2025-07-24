@@ -79,10 +79,7 @@ impl ImpliesCommand {
 
         let mut ep_builder = list::Request::builder();
 
-        // Set path parameters
         ep_builder.prior_role_id(&self.path.prior_role_id);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

@@ -78,10 +78,7 @@ impl ObjectCommand {
 
         let mut ep_builder = delete_all::Request::builder();
 
-        // Set path parameters
         ep_builder.namespace_name(&self.path.namespace_name);
-        // Set query parameters
-        // Set body parameters
 
         let ep = ep_builder
             .build()

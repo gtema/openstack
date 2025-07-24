@@ -105,8 +105,6 @@ impl LocalIpCommand {
 
         let mut ep_builder = create::Request::builder();
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.local_ip data
         let args = &self.local_ip;

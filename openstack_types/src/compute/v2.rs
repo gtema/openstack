@@ -23,7 +23,6 @@ pub mod console_auth_token;
 pub mod extension;
 pub mod flavor;
 pub mod floating_ip;
-pub mod floating_ips_bulk;
 pub mod hypervisor;
 pub mod instance_usage_audit_log;
 pub mod keypair;

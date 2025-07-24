@@ -116,8 +116,6 @@ impl GroupCommand {
             http::header::HeaderValue::from_static("volume 3.13"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.group data
         let args = &self.group;

@@ -105,6 +105,7 @@ impl BackupCommand {
             http::header::HeaderName::from_static("openstack-api-version"),
             http::header::HeaderValue::from_static("volume 3.43"),
         );
+
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -116,13 +117,12 @@ impl BackupCommand {
             http::header::HeaderValue::from_static("volume 3.43"),
         );
 
-        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
-        // Set query parameters
+
         // Set body parameters
         // Set Request.backup data
         if let Some(lbackup) = &self.backup {

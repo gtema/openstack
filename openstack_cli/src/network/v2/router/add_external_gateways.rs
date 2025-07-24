@@ -92,9 +92,8 @@ impl RouterCommand {
 
         let mut ep_builder = add_external_gateways::Request::builder();
 
-        // Set path parameters
         ep_builder.id(&self.path.id);
-        // Set query parameters
+
         // Set body parameters
         // Set Request.router data
         let args = &self.router;

@@ -93,8 +93,6 @@ impl VolumeTransferCommand {
             http::header::HeaderValue::from_static("volume 3.0"),
         );
 
-        // Set path parameters
-        // Set query parameters
         // Set body parameters
         // Set Request.transfer data
         let args = &self.transfer;
