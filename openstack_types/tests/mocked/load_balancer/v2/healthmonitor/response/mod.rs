@@ -16,5 +16,3 @@ mod create;
 mod get;
 mod list;
 mod set;
-mod stats;
-mod status;
