@@ -12,9 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod create;
-mod get;
-mod list;
-mod set;
-mod stats;
-mod status;
+mod member;
+mod response;

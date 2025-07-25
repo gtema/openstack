@@ -12,9 +12,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod create;
-mod get;
-mod list;
-mod set;
-mod stats;
-mod status;
+use openstack_sdk::api::load_balancer::v2::listener::set::{ListenerBuilder, Request};
+use openstack_sdk::api::QueryAsync;
+use openstack_types::load_balancer::v2::listener::response::set::ListenerResponse;
+
+use crate::get_client;
+
+#[tokio::test]
+async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let client = get_client("load-balancer");
+
+    let _res: ListenerResponse = Request::builder()
+        .id("foo")
+        .listener(ListenerBuilder::default().build()?)
+        .build()?
+        .query_async(&client)
+        .await?;
+
+    Ok(())
+}
