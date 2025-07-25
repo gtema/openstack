@@ -1,7 +1,7 @@
 [package]
 name = "openstack_tui"
 description = "OpenStack Terminal User interface"
-version = "0.12.4"
+version = "0.13.0"
 keywords = ["tui", "openstack"]
 categories = ["command-line-utilities"]
 authors = ["Artem Goncharov (gtema)"]
@@ -34,8 +34,8 @@ itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"
 open.workspace = true
-openstack_sdk = { path = "../openstack_sdk", version = "^0.21", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
-openstack_types = { path = "../openstack_types", version = "^0.21" }
+openstack_sdk = { path = "../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
+openstack_types = { path = "../openstack_types", version = "^0.22" }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.29", features = ["serde", "macros"] }
 secrecy = "0.10.3"
