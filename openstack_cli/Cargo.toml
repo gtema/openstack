@@ -1,6 +1,6 @@
 [package]
 name = "openstack_cli"
-version = "0.12.4"
+version = "0.13.0"
 authors = [
     "Artem Goncharov (gtema)",
 ]
@@ -66,8 +66,8 @@ dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
 http = { workspace = true }
 json-patch = { workspace = true }
-openstack_sdk = { path="../openstack_sdk", version = "^0.21", default-features = false, features = ["async", "identity"] }
-openstack_types = { path="../openstack_types", version = "^0.21" }
+openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
+openstack_types = { path="../openstack_types", version = "^0.22" }
 owo-colors = { version = "^4.2", features = ["supports-colors"] }
 indicatif = "^0.18"
 regex = { workspace = true }
