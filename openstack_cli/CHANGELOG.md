@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.4...openstack_cli-v0.13.0) - 2025-07-28
+
+### Added
+
+- Fix octavia operations with empty response body ([#1358](https://github.com/gtema/openstack/pull/1358))
+- Set header parameters in the cli ([#1357](https://github.com/gtema/openstack/pull/1357))
+- Add header query params to dns list operations ([#1349](https://github.com/gtema/openstack/pull/1349))
+
+### Other
+
+- [**breaking**] Change signature for adding request headers ([#1356](https://github.com/gtema/openstack/pull/1356))
+
 ## [0.12.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.3...openstack_cli-v0.12.4) - 2025-07-11
 
 ### Added
