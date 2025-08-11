@@ -51,7 +51,7 @@ pub trait RestEndpoint {
     fn service_type(&self) -> ServiceType;
 
     /// Query parameters for the endpoint.
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -87,10 +87,10 @@ impl Component for LoadBalancerPoolMembers<'_> {
                 request: ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(res)),
                 data,
             } => {
-                if let LoadBalancerPoolApiRequest::Member(x) = *res {
-                    if let LoadBalancerPoolMemberApiRequest::List(_) = *x {
-                        self.set_data(data)?;
-                    }
+                if let LoadBalancerPoolApiRequest::Member(x) = *res
+                    && let LoadBalancerPoolMemberApiRequest::List(_) = *x
+                {
+                    self.set_data(data)?;
                 }
             }
             Action::SetLoadBalancerPoolMemberListFilters(filters) => {

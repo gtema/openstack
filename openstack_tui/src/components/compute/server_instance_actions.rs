@@ -89,10 +89,10 @@ impl Component for ComputeServerInstanceActions<'_> {
                 request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                if let ComputeServerApiRequest::InstanceAction(x) = *req {
-                    if let ComputeServerInstanceActionApiRequest::List(_) = *x {
-                        self.set_data(data)?;
-                    }
+                if let ComputeServerApiRequest::InstanceAction(x) = *req
+                    && let ComputeServerInstanceActionApiRequest::List(_) = *x
+                {
+                    self.set_data(data)?;
                 }
             }
             Action::SetComputeServerInstanceActionListFilters(filters) => {

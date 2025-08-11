@@ -123,22 +123,20 @@ impl Component for ProjectSelect {
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
-        if key.code == KeyCode::Enter {
-            if let Some(selected) = self.fuzzy_list.selected() {
-                if let Some(project) = self.items.iter().find(|item| item.name == *selected) {
-                    let new_project = openstack_sdk::types::identity::v3::Project {
-                        id: Some(project.id.clone()),
-                        name: Some(project.name.clone()),
-                        domain: Some(openstack_sdk::types::identity::v3::Domain {
-                            id: Some(project.domain_id.clone()),
-                            name: None,
-                        }),
-                    };
-                    let new_scope =
-                        openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
-                    return Ok(Some(Action::CloudChangeScope(new_scope)));
-                }
-            }
+        if key.code == KeyCode::Enter
+            && let Some(selected) = self.fuzzy_list.selected()
+            && let Some(project) = self.items.iter().find(|item| item.name == *selected)
+        {
+            let new_project = openstack_sdk::types::identity::v3::Project {
+                id: Some(project.id.clone()),
+                name: Some(project.name.clone()),
+                domain: Some(openstack_sdk::types::identity::v3::Domain {
+                    id: Some(project.domain_id.clone()),
+                    name: None,
+                }),
+            };
+            let new_scope = openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
+            return Ok(Some(Action::CloudChangeScope(new_scope)));
         }
         Ok(None)
     }

@@ -106,25 +106,25 @@ impl Home {
     }
 
     fn refresh_data(&mut self) -> Result<Option<Action>, TuiError> {
-        if let Some(command_tx) = &self.command_tx {
-            if let Some(project_id) = &self.project_id {
-                command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeQuotaSetApiRequest::Details(Box::new(
-                        ComputeQuotaSetShowBuilder::default()
-                            .id(project_id.clone())
-                            .build()
-                            .wrap_err("cannot prepare compute quota request")?,
-                    )),
-                )))?;
-                command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkQuotaApiRequest::Details(Box::new(
-                        NetworkQuotaShowBuilder::default()
-                            .id(project_id.clone())
-                            .build()
-                            .wrap_err("cannot prepare network quota request")?,
-                    )),
-                )))?;
-            }
+        if let Some(command_tx) = &self.command_tx
+            && let Some(project_id) = &self.project_id
+        {
+            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                ComputeQuotaSetApiRequest::Details(Box::new(
+                    ComputeQuotaSetShowBuilder::default()
+                        .id(project_id.clone())
+                        .build()
+                        .wrap_err("cannot prepare compute quota request")?,
+                )),
+            )))?;
+            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                NetworkQuotaApiRequest::Details(Box::new(
+                    NetworkQuotaShowBuilder::default()
+                        .id(project_id.clone())
+                        .build()
+                        .wrap_err("cannot prepare network quota request")?,
+                )),
+            )))?;
         }
         Ok(None)
     }
@@ -152,10 +152,10 @@ impl Component for Home {
                 self.set_loading(true);
                 self.compute_quota = None;
                 self.network_quota = None;
-                if let Some(project) = auth.project {
-                    if let Some(pid) = project.id {
-                        self.project_id = Some(pid);
-                    }
+                if let Some(project) = auth.project
+                    && let Some(pid) = project.id
+                {
+                    self.project_id = Some(pid);
                 }
 
                 if current_mode == Mode::Home {

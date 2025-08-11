@@ -56,16 +56,15 @@ impl Component for ApiRequestSelect {
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
-        if key.code == KeyCode::Enter {
-            if let Some(selected) = self.fuzzy_list.selected() {
-                if let Some(item) = self.config.mode_aliases.get(selected.as_str()) {
-                    self.fuzzy_list.reset_filter()?;
-                    return Ok(Some(Action::Mode {
-                        mode: *item,
-                        stack: false,
-                    }));
-                }
-            }
+        if key.code == KeyCode::Enter
+            && let Some(selected) = self.fuzzy_list.selected()
+            && let Some(item) = self.config.mode_aliases.get(selected.as_str())
+        {
+            self.fuzzy_list.reset_filter()?;
+            return Ok(Some(Action::Mode {
+                mode: *item,
+                stack: false,
+            }));
         }
         Ok(None)
     }

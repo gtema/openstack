@@ -303,15 +303,15 @@ impl App {
             _ => {}
         }
         if let Some(popup_type) = &self.active_popup {
-            if let Some(popup) = self.popups.get_mut(popup_type) {
-                if let Some(action) = popup.handle_events(Some(event.clone()))? {
-                    action_tx.send(action)?;
-                }
-            }
-        } else if let Some(component) = self.components.get_mut(&self.mode) {
-            if let Some(action) = component.handle_events(Some(event.clone()))? {
+            if let Some(popup) = self.popups.get_mut(popup_type)
+                && let Some(action) = popup.handle_events(Some(event.clone()))?
+            {
                 action_tx.send(action)?;
             }
+        } else if let Some(component) = self.components.get_mut(&self.mode)
+            && let Some(action) = component.handle_events(Some(event.clone()))?
+        {
+            action_tx.send(action)?;
         }
         if let Some(action) = self.header.handle_events(Some(event.clone()))? {
             action_tx.send(action)?;
@@ -332,10 +332,10 @@ impl App {
         } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
             action_tx.send(Action::Quit)?;
         } else if key.code == KeyCode::Esc && self.active_popup.is_some() {
-            if let Some(popup_type) = &self.active_popup {
-                if let Some(popup) = self.popups.get_mut(popup_type) {
-                    popup.handle_key_events(key)?;
-                }
+            if let Some(popup_type) = &self.active_popup
+                && let Some(popup) = self.popups.get_mut(popup_type)
+            {
+                popup.handle_key_events(key)?;
             }
             // Close the popup
             self.active_popup = None;
@@ -403,21 +403,21 @@ impl App {
                 }
 
                 Action::ConnectedToCloud(_) => {
-                    if let Some(popup) = &self.active_popup {
-                        if popup == &Popup::SwitchProject {
-                            // Hide popup
-                            self.active_popup = None;
-                        }
+                    if let Some(popup) = &self.active_popup
+                        && popup == &Popup::SwitchProject
+                    {
+                        // Hide popup
+                        self.active_popup = None;
                     }
                     self.cloud_connected = true;
                     self.render(tui)?;
                 }
                 Action::CloudChangeScope(ref scope) => {
-                    if let Some(popup) = &self.active_popup {
-                        if popup == &Popup::SwitchProject {
-                            // Hide popup
-                            self.active_popup = None;
-                        }
+                    if let Some(popup) = &self.active_popup
+                        && popup == &Popup::SwitchProject
+                    {
+                        // Hide popup
+                        self.active_popup = None;
                     }
                     self.render(tui)?;
                     self.cloud_worker_tx
@@ -551,39 +551,36 @@ impl App {
                     .as_ref(),
                 )
                 .split(f.area());
-            if draw_header {
-                if let Err(e) = self.header.draw(f, rects[0]) {
-                    self.action_tx
-                        .send(Action::Error {
-                            msg: format!("Failed to draw: {e:?}"),
-                            action: None,
-                        })
-                        .unwrap();
-                }
+            if draw_header && let Err(e) = self.header.draw(f, rects[0]) {
+                self.action_tx
+                    .send(Action::Error {
+                        msg: format!("Failed to draw: {e:?}"),
+                        action: None,
+                    })
+                    .unwrap();
             }
 
-            if let Some(component) = self.components.get_mut(&self.mode) {
-                if let Err(e) = component.draw(f, rects[1]) {
-                    error!("Error {:?}", e);
-                    self.action_tx
-                        .send(Action::Error {
-                            msg: format!("Failed to draw: {e:?}"),
-                            action: None,
-                        })
-                        .unwrap();
-                }
+            if let Some(component) = self.components.get_mut(&self.mode)
+                && let Err(e) = component.draw(f, rects[1])
+            {
+                error!("Error {:?}", e);
+                self.action_tx
+                    .send(Action::Error {
+                        msg: format!("Failed to draw: {e:?}"),
+                        action: None,
+                    })
+                    .unwrap();
             }
-            if let Some(popup_type) = &self.active_popup {
-                if let Some(popup) = self.popups.get_mut(popup_type) {
-                    if let Err(e) = popup.draw(f, f.area()) {
-                        self.action_tx
-                            .send(Action::Error {
-                                msg: format!("Failed to draw: {e:?}"),
-                                action: None,
-                            })
-                            .unwrap();
-                    }
-                }
+            if let Some(popup_type) = &self.active_popup
+                && let Some(popup) = self.popups.get_mut(popup_type)
+                && let Err(e) = popup.draw(f, f.area())
+            {
+                self.action_tx
+                    .send(Action::Error {
+                        msg: format!("Failed to draw: {e:?}"),
+                        action: None,
+                    })
+                    .unwrap();
             }
         })?;
         Ok(())

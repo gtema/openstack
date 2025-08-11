@@ -66,10 +66,10 @@ impl Component for CloudSelect {
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
-        if key.code == KeyCode::Enter {
-            if let Some(cloud) = self.fuzzy_list.selected() {
-                return Ok(Some(Action::ConnectToCloud(cloud.clone())));
-            }
+        if key.code == KeyCode::Enter
+            && let Some(cloud) = self.fuzzy_list.selected()
+        {
+            return Ok(Some(Action::ConnectToCloud(cloud.clone())));
         }
         Ok(None)
     }

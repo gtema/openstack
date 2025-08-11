@@ -280,7 +280,6 @@ mod tests {
         fn method(&self) -> http::Method {
             http::Method::GET
         }
-
         fn endpoint(&self) -> Cow<'static, str> {
             "dummies".into()
         }
@@ -290,7 +289,7 @@ mod tests {
         fn response_key(&self) -> Option<Cow<'static, str>> {
             Some("resources".into())
         }
-        fn parameters(&self) -> QueryParams {
+        fn parameters(&self) -> QueryParams<'_> {
             let mut params = QueryParams::default();
 
             params.push_opt("name", self.name.as_ref());

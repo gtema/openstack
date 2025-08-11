@@ -192,24 +192,24 @@ impl Component for Header {
                 self.connection_data_rows
                     .push((String::from("Cloud:"), self.cloud_name.clone()));
                 if let Some(project) = &auth_token.project {
-                    if let Some(domain) = &project.domain {
-                        if let Some(name) = &domain.name {
-                            self.domain_name = name.clone();
-                            self.connection_data_rows
-                                .push((String::from("Domain:"), self.domain_name.clone()));
-                        }
+                    if let Some(domain) = &project.domain
+                        && let Some(name) = &domain.name
+                    {
+                        self.domain_name = name.clone();
+                        self.connection_data_rows
+                            .push((String::from("Domain:"), self.domain_name.clone()));
                     }
                     if let Some(name) = &project.name {
                         self.project_name = name.clone();
                         self.connection_data_rows
                             .push((String::from("Project:"), self.project_name.clone()));
                     }
-                } else if let Some(domain) = &auth_token.domain {
-                    if let Some(name) = &domain.name {
-                        self.domain_name = name.clone();
-                        self.connection_data_rows
-                            .push((String::from("Domain:"), self.domain_name.clone()));
-                    }
+                } else if let Some(domain) = &auth_token.domain
+                    && let Some(name) = &domain.name
+                {
+                    self.domain_name = name.clone();
+                    self.connection_data_rows
+                        .push((String::from("Domain:"), self.domain_name.clone()));
                 }
             }
             _ => {}
