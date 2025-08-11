@@ -57,7 +57,6 @@ pub struct UserResponse {
     ///     ]
     ///   }
     /// ]
-    ///
     /// ```
     #[serde(default)]
     #[structable(optional, serialize)]

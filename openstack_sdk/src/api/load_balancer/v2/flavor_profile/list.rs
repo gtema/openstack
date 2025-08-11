@@ -99,7 +99,7 @@ impl RestEndpoint for Request<'_> {
         "lbaas/flavorprofiles".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("flavor_data", self.flavor_data.as_ref());
         params.push_opt("id", self.id.as_ref());

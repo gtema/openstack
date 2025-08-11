@@ -136,7 +136,7 @@ impl RestEndpoint for Request<'_> {
         "qos/alias-dscp-marking-rules".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("dscp_mark", self.dscp_mark);
         params.push_opt("id", self.id.as_ref());

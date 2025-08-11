@@ -99,7 +99,7 @@ impl RestEndpoint for Request<'_> {
         "lbaas/availabilityzoneprofiles".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt(
             "availability_zone_data",

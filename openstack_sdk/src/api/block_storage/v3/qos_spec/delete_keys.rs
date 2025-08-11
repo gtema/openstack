@@ -81,7 +81,7 @@ impl RestEndpoint for Request<'_> {
         format!("qos-specs/{id}/delete_keys", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

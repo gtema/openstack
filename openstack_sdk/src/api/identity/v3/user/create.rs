@@ -156,7 +156,6 @@ pub struct User<'a> {
     ///     ]
     ///   }
     /// ]
-    ///
     /// ```
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -254,7 +253,7 @@ impl RestEndpoint for Request<'_> {
         "users".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

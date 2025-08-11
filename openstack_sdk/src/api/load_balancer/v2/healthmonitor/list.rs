@@ -193,7 +193,7 @@ impl RestEndpoint for Request<'_> {
         "lbaas/healthmonitors".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("admin_state_up", self.admin_state_up);
         params.push_opt("created_at", self.created_at.as_ref());

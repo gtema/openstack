@@ -2194,7 +2194,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -2259,7 +2258,6 @@ components:
 
             ```
             nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-
             ```
 
             Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -2268,7 +2266,6 @@ components:
 
             ```
             b2173dd3-7ad6-4362-baa6-a68bce3565cb
-
             ```
 
             If you omit this value, the API generates a UUID for the image.
@@ -2438,7 +2435,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -2527,7 +2523,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -2592,7 +2587,6 @@ components:
 
             ```
             nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-
             ```
 
             Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -2601,7 +2595,6 @@ components:
 
             ```
             b2173dd3-7ad6-4362-baa6-a68bce3565cb
-
             ```
 
             If you omit this value, the API generates a UUID for the image.
@@ -2771,7 +2764,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -2911,7 +2903,6 @@ components:
 
             ```
             nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-
             ```
 
             Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -2920,7 +2911,6 @@ components:
 
             ```
             b2173dd3-7ad6-4362-baa6-a68bce3565cb
-
             ```
 
             If you omit this value, the API generates a UUID for the image. If you
@@ -3133,7 +3123,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3198,7 +3187,6 @@ components:
 
             ```
             nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-
             ```
 
             Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -3207,7 +3195,6 @@ components:
 
             ```
             b2173dd3-7ad6-4362-baa6-a68bce3565cb
-
             ```
 
             If you omit this value, the API generates a UUID for the image.
@@ -3377,7 +3364,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3789,7 +3775,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3830,7 +3815,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3857,7 +3841,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3898,7 +3881,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3924,7 +3906,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -3965,7 +3946,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.

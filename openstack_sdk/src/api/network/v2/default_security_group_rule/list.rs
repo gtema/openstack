@@ -208,7 +208,7 @@ impl RestEndpoint for Request<'_> {
         "default-security-group-rules".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("description", self.description.as_ref());
         params.push_opt("direction", self.direction.as_ref());

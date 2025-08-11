@@ -54,7 +54,6 @@ pub struct ServerResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
@@ -260,7 +259,6 @@ pub struct ServerResponse {
     /// 4: SHUTDOWN
     /// 6: CRASHED
     /// 7: SUSPENDED
-    ///
     /// ```
     #[serde(default, rename = "OS-EXT-STS:power_state")]
     #[structable(optional, title = "OS-EXT-STS:power_state", wide)]
@@ -293,7 +291,6 @@ pub struct ServerResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.
@@ -312,7 +309,6 @@ pub struct ServerResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
@@ -372,7 +368,6 @@ pub struct ServerResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if

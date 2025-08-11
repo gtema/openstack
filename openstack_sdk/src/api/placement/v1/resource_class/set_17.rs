@@ -87,7 +87,7 @@ impl RestEndpoint for Request<'_> {
         format!("resource_classes/{name}", name = self.name.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

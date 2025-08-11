@@ -47,7 +47,6 @@ use serde_json::Value;
 /// Required HTTP Body:
 ///
 /// ```text
-///
 /// {
 ///   "snapshot":
 ///   {
@@ -56,7 +55,6 @@ use serde_json::Value;
 ///        "<Driver-specific reference to the existing storage object>"
 ///   }
 /// }
-///
 /// ```
 ///
 /// See the appropriate Cinder drivers' implementations of the manage_snapshot
@@ -73,11 +71,9 @@ use serde_json::Value;
 /// Optional elements to 'snapshot' are:
 ///
 /// ```text
-///
 /// name           A name for the new snapshot.
 /// description    A description for the new snapshot.
 /// metadata       Key/value pairs to be associated with the new snapshot.
-///
 /// ```
 #[derive(Args)]
 pub struct SnapshotManageCommand {

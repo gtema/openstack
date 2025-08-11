@@ -112,7 +112,7 @@ impl RestEndpoint for Request<'_> {
         .into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

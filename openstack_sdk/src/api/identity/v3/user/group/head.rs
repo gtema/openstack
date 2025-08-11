@@ -80,7 +80,7 @@ impl RestEndpoint for Request<'_> {
         format!("users/{user_id}/groups", user_id = self.user_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

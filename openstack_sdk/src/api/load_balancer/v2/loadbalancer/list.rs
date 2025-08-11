@@ -179,7 +179,7 @@ impl RestEndpoint for Request<'_> {
         "lbaas/loadbalancers".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("availability_zone", self.availability_zone.as_ref());
         params.push_opt("created_at", self.created_at.as_ref());

@@ -199,7 +199,6 @@ pub struct Request<'a> {
     ///
     /// ```text
     /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-    ///
     /// ```
     ///
     /// Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -208,7 +207,6 @@ pub struct Request<'a> {
     ///
     /// ```text
     /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
-    ///
     /// ```
     ///
     /// If you omit this value, the API generates a UUID for the image. If you
@@ -321,7 +319,7 @@ impl RestEndpoint for Request<'_> {
         "images".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

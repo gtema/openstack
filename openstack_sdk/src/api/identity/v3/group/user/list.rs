@@ -89,7 +89,7 @@ impl RestEndpoint for Request<'_> {
         format!("groups/{group_id}/users", group_id = self.group_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("password_expires_at", self.password_expires_at.as_ref());
 

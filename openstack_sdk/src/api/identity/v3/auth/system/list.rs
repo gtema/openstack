@@ -78,7 +78,7 @@ impl RestEndpoint for Request {
         "auth/system".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -40,7 +40,6 @@ pub struct Request<'a> {
     /// ```text
     /// allocation_ratio = 16.0
     /// total = 8
-    ///
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.
@@ -136,7 +135,7 @@ impl RestEndpoint for Request<'_> {
         .into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

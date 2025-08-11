@@ -88,7 +88,7 @@ impl RestEndpoint for Request<'_> {
         "qos/alias-minimum-packet-rate-rules".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

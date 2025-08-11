@@ -278,7 +278,7 @@ impl RestEndpoint for Request<'_> {
         "vpn/ikepolicies".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

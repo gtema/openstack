@@ -102,7 +102,7 @@ impl RestEndpoint for Request<'_> {
         format!("lbaas/flavorprofiles/{id}", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

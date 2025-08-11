@@ -128,7 +128,7 @@ impl RestEndpoint for Request<'_> {
         "snapshots/detail".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("all_tenants", self.all_tenants);
         params.push_opt("consumes_quota", self.consumes_quota);

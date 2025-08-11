@@ -75,7 +75,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "attachment":
             {
@@ -85,13 +84,11 @@ paths:
                 "mode": "null|rw|ro"
             }
         }
-
         ```
 
         Example connector:
 
         ```
-
         {
             "connector":
             {
@@ -105,7 +102,6 @@ paths:
                 "mode": "null|rw|ro"
             }
         }
-
         ```
 
         NOTE all that's required for a reserve is volume_uuid
@@ -197,7 +193,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "attachment":
             {
@@ -214,7 +209,6 @@ paths:
                 }
             }
         }
-
         ```
       operationId: attachments/id:put
       requestBody:
@@ -731,7 +725,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "consistencygroup":
             {
@@ -741,7 +734,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: consistencygroups/id:put
       requestBody:
@@ -791,7 +783,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "consistencygroup":
             {
@@ -801,7 +792,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: consistencygroups/id/update:put
       requestBody:
@@ -1332,7 +1322,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "group":
             {
@@ -1342,7 +1331,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: groups/id:put
       requestBody:
@@ -1445,7 +1433,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "snapshot":
           {
@@ -1454,7 +1441,6 @@ paths:
                "<Driver-specific reference to the existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -1472,11 +1458,9 @@ paths:
         Optional elements to 'snapshot' are:
 
         ```
-
         name           A name for the new snapshot.
         description    A description for the new snapshot.
         metadata       Key/value pairs to be associated with the new snapshot.
-
         ```
       operationId: manageable_snapshots:post
       requestBody:
@@ -1552,7 +1536,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "volume": {
             "host": "<Cinder host on which the existing storage resides>",
@@ -1560,7 +1543,6 @@ paths:
             "ref": "<Driver-specific reference to existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -1576,7 +1558,6 @@ paths:
         Optional elements to 'volume' are:
 
         ```
-
         name               A name for the new volume.
         description        A description for the new volume.
         volume_type        ID or name of a volume type to associate with
@@ -1591,7 +1572,6 @@ paths:
         availability_zone  The availability zone to associate with the new
                            volume.
         bootable           If set to True, marks the volume as bootable.
-
         ```
       operationId: manageable_volumes:post
       requestBody:
@@ -1732,7 +1712,7 @@ paths:
         | --- | --- |
         | param req: | security context |
         | param id: | hostname |
-        | returns: | dict -- the host resources dictionary. ex.:   ```  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  ``` |
+        | returns: | dict -- the host resources dictionary. ex.:   ``` {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048} ``` |
       operationId: os-hosts/id:get
       responses:
         '200':
@@ -1935,7 +1915,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "snapshot":
           {
@@ -1944,7 +1923,6 @@ paths:
                "<Driver-specific reference to the existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -1962,11 +1940,9 @@ paths:
         Optional elements to 'snapshot' are:
 
         ```
-
         name           A name for the new snapshot.
         description    A description for the new snapshot.
         metadata       Key/value pairs to be associated with the new snapshot.
-
         ```
       operationId: os-snapshot-manage:post
       requestBody:
@@ -2029,7 +2005,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "volume": {
             "host": "<Cinder host on which the existing storage resides>",
@@ -2037,7 +2012,6 @@ paths:
             "ref": "<Driver-specific reference to existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -2053,7 +2027,6 @@ paths:
         Optional elements to 'volume' are:
 
         ```
-
         name               A name for the new volume.
         description        A description for the new volume.
         volume_type        ID or name of a volume type to associate with
@@ -2068,7 +2041,6 @@ paths:
         availability_zone  The availability zone to associate with the new
                            volume.
         bootable           If set to True, marks the volume as bootable.
-
         ```
       operationId: os-volume-manage:post
       requestBody:
@@ -3459,7 +3431,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "attachment":
             {
@@ -3476,7 +3447,6 @@ paths:
                 }
             }
         }
-
         ```
       operationId: project_id/attachments/id:put
       requestBody:
@@ -4038,7 +4008,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "consistencygroup":
             {
@@ -4048,7 +4017,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: project_id/consistencygroups/id:put
       requestBody:
@@ -4100,7 +4068,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "consistencygroup":
             {
@@ -4110,7 +4077,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: project_id/consistencygroups/id/update:put
       requestBody:
@@ -4684,7 +4650,6 @@ paths:
         Expected format of the input parameter 'body':
 
         ```
-
         {
             "group":
             {
@@ -4694,7 +4659,6 @@ paths:
                 "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
             }
         }
-
         ```
       operationId: project_id/groups/id:put
       requestBody:
@@ -5045,7 +5009,7 @@ paths:
         | --- | --- |
         | param req: | security context |
         | param id: | hostname |
-        | returns: | dict -- the host resources dictionary. ex.:   ```  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  ``` |
+        | returns: | dict -- the host resources dictionary. ex.:   ``` {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048} ``` |
       operationId: project_id/os-hosts/id:get
       responses:
         '200':
@@ -5257,7 +5221,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "snapshot":
           {
@@ -5266,7 +5229,6 @@ paths:
                "<Driver-specific reference to the existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -5284,11 +5246,9 @@ paths:
         Optional elements to 'snapshot' are:
 
         ```
-
         name           A name for the new snapshot.
         description    A description for the new snapshot.
         metadata       Key/value pairs to be associated with the new snapshot.
-
         ```
       operationId: project_id/os-snapshot-manage:post
       requestBody:
@@ -5355,7 +5315,6 @@ paths:
         Required HTTP Body:
 
         ```
-
         {
           "volume": {
             "host": "<Cinder host on which the existing storage resides>",
@@ -5363,7 +5322,6 @@ paths:
             "ref": "<Driver-specific reference to existing storage object>"
           }
         }
-
         ```
 
         See the appropriate Cinder drivers' implementations of the
@@ -5379,7 +5337,6 @@ paths:
         Optional elements to 'volume' are:
 
         ```
-
         name               A name for the new volume.
         description        A description for the new volume.
         volume_type        ID or name of a volume type to associate with
@@ -5394,7 +5351,6 @@ paths:
         availability_zone  The availability zone to associate with the new
                            volume.
         bootable           If set to True, marks the volume as bootable.
-
         ```
       operationId: project_id/os-volume-manage:post
       requestBody:
@@ -10978,7 +10934,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -11086,7 +11041,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -11485,7 +11439,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -11518,7 +11471,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -11569,7 +11521,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -11774,7 +11725,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -12124,7 +12074,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -12939,7 +12888,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -13237,7 +13185,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -13316,7 +13263,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -13585,7 +13531,6 @@ components:
                 'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
               }
             ]
-
             ```
           items:
             additionalProperties: false
@@ -13660,7 +13605,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -13793,7 +13737,6 @@ components:
 
             ```
             CCYY-MM-DDThh:mm:ss±hh:mm
-
             ```
 
             For example, `2015-08-27T09:49:58-05:00`.
@@ -13924,7 +13867,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -14016,7 +13958,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -14559,7 +14500,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -14640,7 +14580,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -14698,7 +14637,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -14794,7 +14732,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15118,7 +15055,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15197,7 +15133,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15310,7 +15245,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15389,7 +15323,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15598,7 +15531,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15677,7 +15609,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -15745,7 +15676,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -15826,7 +15756,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -15885,7 +15814,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -15948,7 +15876,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -17003,7 +16930,6 @@ components:
                     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
                   }
                 ]
-
                 ```
               items:
                 additionalProperties: false
@@ -17084,7 +17010,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17228,7 +17153,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17307,7 +17231,6 @@ components:
                     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
                   }
                 ]
-
                 ```
               items:
                 additionalProperties: false
@@ -17388,7 +17311,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17532,7 +17454,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17687,7 +17608,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17792,7 +17712,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -17887,7 +17806,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -18072,7 +17990,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -19111,7 +19028,6 @@ components:
                     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
                   }
                 ]
-
                 ```
               items:
                 additionalProperties: false
@@ -19192,7 +19108,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -19336,7 +19251,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -20118,7 +20032,6 @@ components:
                       'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
                     }
                   ]
-
                   ```
                 items:
                   additionalProperties: false
@@ -20199,7 +20112,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -20343,7 +20255,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.

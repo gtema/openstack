@@ -45,7 +45,6 @@ pub struct ExtensionResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if

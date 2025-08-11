@@ -81,7 +81,7 @@ impl RestEndpoint for Request {
         "auth/projects".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

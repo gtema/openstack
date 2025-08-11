@@ -137,7 +137,6 @@ pub struct Request<'a> {
     ///
     /// ```text
     /// https://discovery.etcd.io
-    ///
     /// ```
     ///
     /// In this case, Magnum will generate a unique url here for each uster and
@@ -395,7 +394,7 @@ impl RestEndpoint for Request<'_> {
         "clusters".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

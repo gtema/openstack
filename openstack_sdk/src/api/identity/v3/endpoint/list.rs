@@ -93,7 +93,7 @@ impl RestEndpoint for Request<'_> {
         "endpoints".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("interface", self.interface.as_ref());
         params.push_opt("region_id", self.region_id.as_ref());

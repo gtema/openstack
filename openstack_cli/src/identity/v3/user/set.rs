@@ -149,7 +149,6 @@ struct User {
     ///     ]
     ///   }
     /// ]
-    ///
     /// ```
     ///
     /// Parameter is an array, may be provided multiple times.

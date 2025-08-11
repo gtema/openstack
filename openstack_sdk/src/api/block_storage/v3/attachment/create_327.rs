@@ -42,7 +42,6 @@
 //! Expected format of the input parameter 'body':
 //!
 //! ```text
-//!
 //! {
 //!     "attachment":
 //!     {
@@ -52,13 +51,11 @@
 //!         "mode": "null|rw|ro"
 //!     }
 //! }
-//!
 //! ```
 //!
 //! Example connector:
 //!
 //! ```text
-//!
 //! {
 //!     "connector":
 //!     {
@@ -72,7 +69,6 @@
 //!         "mode": "null|rw|ro"
 //!     }
 //! }
-//!
 //! ```
 //!
 //! NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
@@ -181,7 +177,7 @@ impl RestEndpoint for Request<'_> {
         "attachments".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

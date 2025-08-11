@@ -201,7 +201,7 @@ impl RestEndpoint for Request<'_> {
         "vpn/ipsec-site-connections".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

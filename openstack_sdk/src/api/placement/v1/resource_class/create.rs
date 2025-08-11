@@ -90,7 +90,7 @@ impl RestEndpoint for Request<'_> {
         "resource_classes".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -72,7 +72,7 @@ impl RestEndpoint for Request {
         "OS-SIMPLE-CERT/certificates".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

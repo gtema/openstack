@@ -81,7 +81,7 @@ impl RestEndpoint for Request {
         "info/import".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

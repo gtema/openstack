@@ -9183,7 +9183,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -9247,7 +9246,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10485,13 +10483,564 @@ components:
         - flavor_access
       type: object
     ImageShowResponse:
-      description: Response of the images/id:get operation
+      additionalProperties: false
+      properties:
+        image:
+          additionalProperties: false
+          properties:
+            OS-DCF:diskConfig:
+              description: |-
+                Controls how the API partitions the disk when you create, rebuild, or resize servers.
+                A server inherits the `OS-DCF:diskConfig` value from the image from which it
+                was created, and an image inherits the `OS-DCF:diskConfig` value from the server
+                from which it was created. To override the inherited setting, you can include
+                this attribute in the request body of a server create, rebuild, or resize request. If
+                the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create
+                a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
+                A valid value is:
+
+                * `AUTO`. The API builds the server with a single partition the size of the
+                  target flavor disk. The API automatically adjusts the file system to fit the
+                  entire partition.
+                * `MANUAL`. The API builds the server by using whatever partition scheme and
+                  file system is in the source image. If the target flavor disk is larger, the API
+                  does not partition the remaining disk space.
+              enum:
+                - AUTO
+                - MANUAL
+              type: string
+            OS-EXT-IMG-SIZE:size:
+              description: |-
+                The size of the image.
+              type: integer
+            created:
+              description: |-
+                The date and time when the resource was created. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type: string
+            id:
+              description: |-
+                The ID of the Image.
+              format: uuid
+              type: string
+            links:
+              description: |-
+                Links to the resources in question. See [API Guide / Links and
+                References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                for more info.
+              maxItems: 3
+              minItems: 3
+              prefixItems:
+                - additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      const: alternate
+                    type:
+                      const: application/vnd.openstack.image
+                  required:
+                    - href
+                    - rel
+                    - type
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      const: bookmark
+                  required:
+                    - href
+                    - rel
+                  type: object
+                - additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      const: self
+                  required:
+                    - href
+                    - rel
+                  type: object
+              type: array
+            metadata:
+              additionalProperties: false
+              description: |-
+                Metadata key and value pairs. The maximum size for each metadata key and value
+                pair is 255 bytes.
+              patternProperties:
+                ^[a-zA-Z0-9-_:. ]{1,255}$:
+                  type:
+                    - array
+                    - boolean
+                    - integer
+                    - 'null'
+                    - number
+                    - object
+                    - string
+              type: object
+            minDisk:
+              description: |-
+                The minimum amount of disk space an image requires to boot, in GiB. For example, `100`.
+              minimum: 0
+              type: integer
+            minRam:
+              description: |-
+                The minimum amount of RAM an image requires to function, in MiB. For example, `512`.
+              minimum: 0
+              type: integer
+            name:
+              description: |-
+                The display name of an Image.
+              type:
+                - 'null'
+                - string
+            progress:
+              description: |-
+                A percentage value of the image save progress. This can be one of:
+
+                * `ACTIVE`: 100
+                * `SAVING`: 25 or 50
+              enum:
+                - 0
+                - 100
+                - 25
+                - 50
+              type: integer
+            server:
+              additionalProperties: false
+              description: |-
+                The server booted from image.
+              properties:
+                id:
+                  format: uuid
+                  type: string
+                links:
+                  maxItems: 2
+                  minItems: 2
+                  prefixItems:
+                    - additionalProperties: false
+                      properties:
+                        href:
+                          format: uri
+                          type: string
+                        rel:
+                          const: bookmark
+                      required:
+                        - href
+                        - rel
+                      type: object
+                    - additionalProperties: false
+                      properties:
+                        href:
+                          format: uri
+                          type: string
+                        rel:
+                          const: self
+                      required:
+                        - href
+                        - rel
+                      type: object
+                  type: array
+              required:
+                - id
+                - links
+              type: object
+            status:
+              description: |-
+                The status of image, as a string. This can be one of:
+
+                * `ACTIVE`: image is in active state
+                * `SAVING`: image is in queued or in saving process
+                * `DELETED`: image is deleted or in progress of deletion
+                * `ERROR`: image is in error state
+                * `UNKNOWN`: image is in unknown state
+              enum:
+                - ACTIVE
+                - DELETED
+                - ERROR
+                - SAVING
+                - UNKNOWN
+              type: string
+            updated:
+              description: |-
+                The date and time when the resource was updated. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type:
+                - 'null'
+                - string
+          required:
+            - OS-EXT-IMG-SIZE:size
+            - created
+            - id
+            - links
+            - metadata
+            - minDisk
+            - minRam
+            - name
+            - progress
+            - status
+            - updated
+          type: object
+      required: []
       type: object
     ImagesDetailResponse:
-      description: Response of the images/detail:get operation
+      additionalProperties: false
+      properties:
+        images:
+          description: |-
+            An array of Image objects.
+          items:
+            additionalProperties: false
+            properties:
+              OS-DCF:diskConfig:
+                description: |-
+                  Controls how the API partitions the disk when you create, rebuild, or resize servers.
+                  A server inherits the `OS-DCF:diskConfig` value from the image from which it
+                  was created, and an image inherits the `OS-DCF:diskConfig` value from the server
+                  from which it was created. To override the inherited setting, you can include
+                  this attribute in the request body of a server create, rebuild, or resize request. If
+                  the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create
+                  a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
+                  A valid value is:
+
+                  * `AUTO`. The API builds the server with a single partition the size of the
+                    target flavor disk. The API automatically adjusts the file system to fit the
+                    entire partition.
+                  * `MANUAL`. The API builds the server by using whatever partition scheme and
+                    file system is in the source image. If the target flavor disk is larger, the API
+                    does not partition the remaining disk space.
+                enum:
+                  - AUTO
+                  - MANUAL
+                type: string
+              OS-EXT-IMG-SIZE:size:
+                description: |-
+                  The size of the image.
+                type: integer
+              created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type: string
+              id:
+                description: |-
+                  The ID of the Image.
+                format: uuid
+                type: string
+              links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
+                maxItems: 3
+                minItems: 3
+                prefixItems:
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: alternate
+                      type:
+                        const: application/vnd.openstack.image
+                    required:
+                      - href
+                      - rel
+                      - type
+                    type: object
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: bookmark
+                    required:
+                      - href
+                      - rel
+                    type: object
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: self
+                    required:
+                      - href
+                      - rel
+                    type: object
+                type: array
+              metadata:
+                additionalProperties: false
+                description: |-
+                  Metadata key and value pairs. The maximum size for each metadata key and value
+                  pair is 255 bytes.
+                patternProperties:
+                  ^[a-zA-Z0-9-_:. ]{1,255}$:
+                    type:
+                      - array
+                      - boolean
+                      - integer
+                      - 'null'
+                      - number
+                      - object
+                      - string
+                type: object
+              minDisk:
+                description: |-
+                  The minimum amount of disk space an image requires to boot, in GiB. For example, `100`.
+                minimum: 0
+                type: integer
+              minRam:
+                description: |-
+                  The minimum amount of RAM an image requires to function, in MiB. For example, `512`.
+                minimum: 0
+                type: integer
+              name:
+                description: |-
+                  The display name of an Image.
+                type:
+                  - 'null'
+                  - string
+              progress:
+                description: |-
+                  A percentage value of the image save progress. This can be one of:
+
+                  * `ACTIVE`: 100
+                  * `SAVING`: 25 or 50
+                enum:
+                  - 0
+                  - 100
+                  - 25
+                  - 50
+                type: integer
+              server:
+                additionalProperties: false
+                description: |-
+                  The server booted from image.
+                properties:
+                  id:
+                    format: uuid
+                    type: string
+                  links:
+                    maxItems: 2
+                    minItems: 2
+                    prefixItems:
+                      - additionalProperties: false
+                        properties:
+                          href:
+                            format: uri
+                            type: string
+                          rel:
+                            const: bookmark
+                        required:
+                          - href
+                          - rel
+                        type: object
+                      - additionalProperties: false
+                        properties:
+                          href:
+                            format: uri
+                            type: string
+                          rel:
+                            const: self
+                        required:
+                          - href
+                          - rel
+                        type: object
+                    type: array
+                required:
+                  - id
+                  - links
+                type: object
+              status:
+                description: |-
+                  The status of image, as a string. This can be one of:
+
+                  * `ACTIVE`: image is in active state
+                  * `SAVING`: image is in queued or in saving process
+                  * `DELETED`: image is deleted or in progress of deletion
+                  * `ERROR`: image is in error state
+                  * `UNKNOWN`: image is in unknown state
+                enum:
+                  - ACTIVE
+                  - DELETED
+                  - ERROR
+                  - SAVING
+                  - UNKNOWN
+                type: string
+              updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+            required:
+              - OS-EXT-IMG-SIZE:size
+              - created
+              - id
+              - links
+              - metadata
+              - minDisk
+              - minRam
+              - name
+              - progress
+              - status
+              - updated
+            type: object
+          type: array
+        images_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+      required:
+        - images
       type: object
     ImagesListResponse:
-      description: Response of the images:get operation
+      additionalProperties: false
+      properties:
+        images:
+          description: |-
+            An array of Image objects.
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: |-
+                  The ID of the Image.
+                format: uuid
+                type: string
+              links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
+                maxItems: 3
+                minItems: 3
+                prefixItems:
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: alternate
+                      type:
+                        const: application/vnd.openstack.image
+                    required:
+                      - href
+                      - rel
+                      - type
+                    type: object
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: bookmark
+                    required:
+                      - href
+                      - rel
+                    type: object
+                  - additionalProperties: false
+                    properties:
+                      href:
+                        format: uri
+                        type: string
+                      rel:
+                        const: self
+                    required:
+                      - href
+                      - rel
+                    type: object
+                type: array
+              name:
+                description: |-
+                  The display name of an Image.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - links
+              - name
+            type: object
+          type: array
+        images_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+      required: []
       type: object
     ImagesMetadataCreateResponse:
       additionalProperties: false
@@ -10504,7 +11053,9 @@ components:
           patternProperties:
             ^[a-zA-Z0-9-_:. ]{1,255}$:
               maxLength: 255
-              type: string
+              type:
+                - 'null'
+                - string
           type: object
       required:
         - metadata
@@ -10539,7 +11090,9 @@ components:
           patternProperties:
             ^[a-zA-Z0-9-_:. ]{1,255}$:
               maxLength: 255
-              type: string
+              type:
+                - 'null'
+                - string
           type: object
       required:
         - metadata
@@ -10556,7 +11109,9 @@ components:
           patternProperties:
             ^[a-zA-Z0-9-_:. ]{1,255}$:
               maxLength: 255
-              type: string
+              type:
+                - 'null'
+                - string
           type: object
       required:
         - meta
@@ -10573,7 +11128,9 @@ components:
           patternProperties:
             ^[a-zA-Z0-9-_:. ]{1,255}$:
               maxLength: 255
-              type: string
+              type:
+                - 'null'
+                - string
           type: object
       required:
         - meta
@@ -10609,7 +11166,9 @@ components:
           patternProperties:
             ^[a-zA-Z0-9-_:. ]{1,255}$:
               maxLength: 255
-              type: string
+              type:
+                - 'null'
+                - string
           type: object
       required:
         - metadata
@@ -10725,7 +11284,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10746,7 +11304,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10788,7 +11345,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10847,7 +11403,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10868,7 +11423,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -10910,7 +11464,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11305,7 +11858,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11326,7 +11878,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11352,7 +11903,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11501,7 +12051,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11522,7 +12071,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -11564,7 +12112,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -13079,7 +13626,6 @@ components:
 
             ```
             M of N hosts done. K errors.
-
             ```
 
             The `M` value is the number of hosts whose instance audit tasks have
@@ -13090,7 +13636,6 @@ components:
 
             ```
             ALL hosts done. K errors.
-
             ```
           type: string
         period_beginning:
@@ -13169,7 +13714,6 @@ components:
 
             ```
             M of N hosts done. K errors.
-
             ```
 
             The `M` value is the number of hosts whose instance audit tasks have
@@ -13180,7 +13724,6 @@ components:
 
             ```
             ALL hosts done. K errors.
-
             ```
           type: string
         period_beginning:
@@ -13631,7 +14174,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -13725,7 +14267,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -13780,7 +14321,151 @@ components:
             min-ver: '2.59'
       type: object
     Os_NetworkShowResponse:
-      description: Response of the os-networks/id:get operation
+      additionalProperties: false
+      properties:
+        network:
+          additionalProperties: false
+          properties:
+            bridge:
+              type:
+                - 'null'
+                - string
+            bridge_interface:
+              type:
+                - 'null'
+                - string
+            broadcast:
+              type:
+                - 'null'
+                - string
+            cidr:
+              type:
+                - 'null'
+                - string
+            cidr_v6:
+              type:
+                - 'null'
+                - string
+            created_at:
+              type:
+                - 'null'
+                - string
+            deleted:
+              type:
+                - 'null'
+                - string
+            deleted_at:
+              type:
+                - 'null'
+                - string
+            dhcp_server:
+              type:
+                - 'null'
+                - string
+            dhcp_start:
+              type:
+                - 'null'
+                - string
+            dns1:
+              type:
+                - 'null'
+                - string
+            dns2:
+              type:
+                - 'null'
+                - string
+            enable_dhcp:
+              type:
+                - 'null'
+                - string
+            gateway:
+              type:
+                - 'null'
+                - string
+            gateway_v6:
+              type:
+                - 'null'
+                - string
+            host:
+              type:
+                - 'null'
+                - string
+            id:
+              format: string
+              type: string
+            injected:
+              type:
+                - 'null'
+                - string
+            label:
+              type: string
+            mtu:
+              type:
+                - integer
+                - 'null'
+            multi_host:
+              type:
+                - 'null'
+                - string
+            netmask:
+              type:
+                - 'null'
+                - string
+            netmask_v6:
+              type:
+                - 'null'
+                - string
+            priority:
+              type:
+                - 'null'
+                - string
+            project_id:
+              type:
+                - 'null'
+                - string
+            rxtx_base:
+              type:
+                - 'null'
+                - string
+            share_address:
+              type:
+                - 'null'
+                - string
+            updated_at:
+              type:
+                - 'null'
+                - string
+            vlan:
+              type:
+                - 'null'
+                - string
+            vpn_private_address:
+              type:
+                - 'null'
+                - string
+            vpn_public_address:
+              type:
+                - 'null'
+                - string
+            vpn_public_port:
+              type:
+                - integer
+                - 'null'
+          required:
+            - broadcast
+            - cidr
+            - cidr_v6
+            - dns1
+            - dns2
+            - gateway
+            - gateway_v6
+            - id
+            - label
+            - netmask
+            - netmask_v6
+          type: object
+      required:
+        - network
       type: object
     Os_NetworksActionAssociate_HostRequest:
       description: Empty body for associate_host action
@@ -13829,7 +14514,153 @@ components:
     Os_NetworksAddResponse: {}
     Os_NetworksCreateResponse: {}
     Os_NetworksListResponse:
-      description: Response of the os-networks:get operation
+      additionalProperties: false
+      properties:
+        networks:
+          items:
+            additionalProperties: false
+            properties:
+              bridge:
+                type:
+                  - 'null'
+                  - string
+              bridge_interface:
+                type:
+                  - 'null'
+                  - string
+              broadcast:
+                type:
+                  - 'null'
+                  - string
+              cidr:
+                type:
+                  - 'null'
+                  - string
+              cidr_v6:
+                type:
+                  - 'null'
+                  - string
+              created_at:
+                type:
+                  - 'null'
+                  - string
+              deleted:
+                type:
+                  - 'null'
+                  - string
+              deleted_at:
+                type:
+                  - 'null'
+                  - string
+              dhcp_server:
+                type:
+                  - 'null'
+                  - string
+              dhcp_start:
+                type:
+                  - 'null'
+                  - string
+              dns1:
+                type:
+                  - 'null'
+                  - string
+              dns2:
+                type:
+                  - 'null'
+                  - string
+              enable_dhcp:
+                type:
+                  - 'null'
+                  - string
+              gateway:
+                type:
+                  - 'null'
+                  - string
+              gateway_v6:
+                type:
+                  - 'null'
+                  - string
+              host:
+                type:
+                  - 'null'
+                  - string
+              id:
+                format: string
+                type: string
+              injected:
+                type:
+                  - 'null'
+                  - string
+              label:
+                type: string
+              mtu:
+                type:
+                  - integer
+                  - 'null'
+              multi_host:
+                type:
+                  - 'null'
+                  - string
+              netmask:
+                type:
+                  - 'null'
+                  - string
+              netmask_v6:
+                type:
+                  - 'null'
+                  - string
+              priority:
+                type:
+                  - 'null'
+                  - string
+              project_id:
+                type:
+                  - 'null'
+                  - string
+              rxtx_base:
+                type:
+                  - 'null'
+                  - string
+              share_address:
+                type:
+                  - 'null'
+                  - string
+              updated_at:
+                type:
+                  - 'null'
+                  - string
+              vlan:
+                type:
+                  - 'null'
+                  - string
+              vpn_private_address:
+                type:
+                  - 'null'
+                  - string
+              vpn_public_address:
+                type:
+                  - 'null'
+                  - string
+              vpn_public_port:
+                type:
+                  - integer
+                  - 'null'
+            required:
+              - broadcast
+              - cidr
+              - cidr_v6
+              - dns1
+              - dns2
+              - gateway
+              - gateway_v6
+              - id
+              - label
+              - netmask
+              - netmask_v6
+            type: object
+          type: array
+      required:
+        - networks
       type: object
     Os_Quota_Class_SetShowResponse:
       properties:
@@ -16841,7 +17672,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -17071,7 +17901,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -17160,7 +17989,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss.NNNNNN
-
                   ```
 
                   For example, `2015-08-27T09:49:58.123456`.
@@ -17173,7 +18001,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss.NNNNNN
-
                   ```
 
                   For example, `2015-08-27T09:49:58.123456`.
@@ -17296,7 +18123,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss.NNNNNN
-
                   ```
 
                   For example, `2015-08-27T09:49:58.123456`.
@@ -17309,7 +18135,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss.NNNNNN
-
                   ```
 
                   For example, `2015-08-27T09:49:58.123456`.
@@ -26708,7 +27533,6 @@ components:
                 4: SHUTDOWN
                 6: CRASHED
                 7: SUSPENDED
-
                 ```
 
                 **New in version 2.75**
@@ -26733,7 +27557,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -26751,7 +27574,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -26812,7 +27634,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -26845,7 +27666,6 @@ components:
 
                     ```
                     CCYY-MM-DDThh:mm:ss±hh:mm
-
                     ```
 
                     For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -27166,7 +27986,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -27327,7 +28146,6 @@ components:
                 4: SHUTDOWN
                 6: CRASHED
                 7: SUSPENDED
-
                 ```
 
                 **New in version 2.75**
@@ -27352,7 +28170,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -27370,7 +28187,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`.
@@ -27431,7 +28247,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -27464,7 +28279,6 @@ components:
 
                     ```
                     CCYY-MM-DDThh:mm:ss±hh:mm
-
                     ```
 
                     For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -27785,7 +28599,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -32269,7 +33082,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -32381,7 +33193,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -32545,7 +33356,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -32977,7 +33787,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -33089,7 +33898,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -33249,7 +34057,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -33667,7 +34474,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -33779,7 +34585,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -33939,7 +34744,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -34371,7 +35175,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -34483,7 +35286,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -34643,7 +35445,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -35085,7 +35886,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -35197,7 +35997,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -35357,7 +36156,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -35794,7 +36592,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -35906,7 +36703,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -36066,7 +36862,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -36500,7 +37295,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -36612,7 +37406,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -36772,7 +37565,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -37216,7 +38008,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -37328,7 +38119,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -37488,7 +38278,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -37952,7 +38741,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -38064,7 +38852,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -38224,7 +39011,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -38671,7 +39457,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -38783,7 +39568,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -38943,7 +39727,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -39408,7 +40191,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -39520,7 +40302,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -39680,7 +40461,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -40151,7 +40931,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -40263,7 +41042,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -40423,7 +41201,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -40916,7 +41693,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -41028,7 +41804,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -41188,7 +41963,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -41699,7 +42473,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -41811,7 +42584,6 @@ components:
 
                 ```
                 "query": "[\">=\",\"$free_ram_mb\",1024]"
-
                 ```
 
                 It is available when `JsonFilter` is available on cloud side.
@@ -41971,7 +42743,6 @@ components:
                 >     "delete_on_termination": true,
                 >     "tag": "disk1",
                 >     "disk_bus": "scsi"}]
-                >
                 > ```
 
                 In microversion 2.32, `tag` is an optional string attribute that can
@@ -42542,7 +43313,6 @@ components:
                   4: SHUTDOWN
                   6: CRASHED
                   7: SUSPENDED
-
                   ```
                 type: integer
               OS-EXT-STS:task_state:
@@ -42561,7 +43331,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -42577,7 +43346,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -42634,7 +43402,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -42667,7 +43434,6 @@ components:
 
                       ```
                       CCYY-MM-DDThh:mm:ss±hh:mm
-
                       ```
 
                       For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -42979,7 +43745,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43465,7 +44230,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43548,7 +44312,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43643,7 +44406,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43726,7 +44488,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43824,7 +44585,6 @@ components:
 
                       ```
                       CCYY-MM-DDThh:mm:ss±hh:mm
-
                       ```
 
                       For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43872,7 +44632,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43888,7 +44647,6 @@ components:
 
                 ```
                 CCYY-MM-DDThh:mm:ss±hh:mm
-
                 ```
 
                 For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43957,7 +44715,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
@@ -43973,7 +44730,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`

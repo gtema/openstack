@@ -81,7 +81,7 @@ impl RestEndpoint for Request<'_> {
         "limits".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("tenant_id", self.tenant_id.as_ref());
 

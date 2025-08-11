@@ -74,7 +74,7 @@ impl RestEndpoint for Request {
         "OS-FEDERATION/saml2/metadata".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

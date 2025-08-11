@@ -273,7 +273,7 @@ impl RestEndpoint for Request<'_> {
         "allocation_candidates".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("group_policy", self.group_policy.as_ref());
         params.push_opt("in_tree", self.in_tree.as_ref());

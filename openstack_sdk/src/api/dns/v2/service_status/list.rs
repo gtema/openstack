@@ -74,7 +74,7 @@ impl RestEndpoint for Request {
         "service_statuses".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

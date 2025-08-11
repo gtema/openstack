@@ -19,7 +19,7 @@
 //!
 //! | | | | --- | --- | | param req: | security context | | param id: |
 //! hostname | | returns: | dict -- the host resources dictionary. ex.:
-//! `  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  `
+//! `{'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}`
 //! |
 //!
 use derive_builder::Builder;
@@ -83,7 +83,7 @@ impl RestEndpoint for Request<'_> {
         format!("os-hosts/{id}", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

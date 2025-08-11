@@ -308,7 +308,7 @@ impl RestEndpoint for Request<'_> {
         "reshaper".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -30,7 +30,6 @@ pub struct InventoryResponse {
     /// ```text
     /// allocation_ratio = 16.0
     /// total = 8
-    ///
     /// ```
     ///
     /// Overall capacity is equal to 128 vCPUs.

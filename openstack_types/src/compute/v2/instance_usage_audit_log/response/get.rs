@@ -73,7 +73,6 @@ pub struct InstanceUsageAuditLogResponse {
     ///
     /// ```text
     /// M of N hosts done. K errors.
-    ///
     /// ```
     ///
     /// The `M` value is the number of hosts whose instance audit tasks have
@@ -84,7 +83,6 @@ pub struct InstanceUsageAuditLogResponse {
     ///
     /// ```text
     /// ALL hosts done. K errors.
-    ///
     /// ```
     #[serde(default)]
     #[structable(optional)]

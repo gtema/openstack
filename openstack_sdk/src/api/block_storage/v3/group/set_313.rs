@@ -20,7 +20,6 @@
 //! Expected format of the input parameter 'body':
 //!
 //! ```text
-//!
 //! {
 //!     "group":
 //!     {
@@ -30,7 +29,6 @@
 //!         "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
 //!     }
 //! }
-//!
 //! ```
 //!
 use derive_builder::Builder;
@@ -119,7 +117,7 @@ impl RestEndpoint for Request<'_> {
         format!("groups/{id}", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

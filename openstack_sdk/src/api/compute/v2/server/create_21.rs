@@ -109,7 +109,6 @@ pub struct OsSchHntSchedulerHints<'a> {
     ///
     /// ```text
     /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
@@ -217,7 +216,6 @@ pub struct OsSchedulerHints<'a> {
     ///
     /// ```text
     /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
@@ -484,7 +482,6 @@ pub struct Server<'a> {
     /// >     "delete_on_termination": true,
     /// >     "tag": "disk1",
     /// >     "disk_bus": "scsi"}]
-    /// >
     /// > ```
     ///
     /// In microversion 2.32, `tag` is an optional string attribute that can be
@@ -749,7 +746,7 @@ impl RestEndpoint for Request<'_> {
         "servers".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

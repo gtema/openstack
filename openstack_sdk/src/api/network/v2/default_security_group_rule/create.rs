@@ -187,7 +187,7 @@ impl RestEndpoint for Request<'_> {
         "default-security-group-rules".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -175,7 +175,7 @@ impl RestEndpoint for Request<'_> {
         .into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("helper", self.helper.as_ref());
         params.push_opt("id", self.id.as_ref());

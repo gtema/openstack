@@ -41,7 +41,6 @@ pub struct VolumeResponse {
     ///     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
     ///   }
     /// ]
-    ///
     /// ```
     #[structable(serialize)]
     pub attachments: Vec<Attachments>,
@@ -84,7 +83,6 @@ pub struct VolumeResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.
@@ -200,7 +198,6 @@ pub struct VolumeResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.

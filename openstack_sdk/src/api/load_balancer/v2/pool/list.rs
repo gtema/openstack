@@ -170,7 +170,7 @@ impl RestEndpoint for Request<'_> {
         "lbaas/pools".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("admin_state_up", self.admin_state_up);
         params.push_opt("alpn_protocols", self.alpn_protocols.as_ref());

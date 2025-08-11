@@ -77,7 +77,7 @@ impl RestEndpoint for Request {
         "federations".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

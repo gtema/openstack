@@ -84,7 +84,7 @@ impl RestEndpoint for Request<'_> {
         "OS-FEDERATION/service_providers".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("enabled", self.enabled);
         params.push_opt("id", self.id.as_ref());

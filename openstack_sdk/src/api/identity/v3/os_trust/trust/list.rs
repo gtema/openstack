@@ -85,7 +85,7 @@ impl RestEndpoint for Request<'_> {
         "OS-TRUST/trusts".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("trustee_user_id", self.trustee_user_id.as_ref());
         params.push_opt("trustor_user_id", self.trustor_user_id.as_ref());

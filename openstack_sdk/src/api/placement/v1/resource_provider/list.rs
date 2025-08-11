@@ -236,7 +236,7 @@ impl RestEndpoint for Request<'_> {
         "resource_providers".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("in_tree", self.in_tree.as_ref());
         if let Some(val) = &self.member_of {

@@ -115,7 +115,7 @@ impl RestEndpoint for Request<'_> {
         format!("routers/{id}/add_router_interface", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 
