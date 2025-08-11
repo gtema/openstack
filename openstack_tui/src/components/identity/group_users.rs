@@ -92,10 +92,10 @@ impl Component for IdentityGroupUsers<'_> {
                 request: ApiRequest::Identity(IdentityApiRequest::Group(req)),
                 data,
             } => {
-                if let IdentityGroupApiRequest::User(x) = *req {
-                    if let IdentityGroupUserApiRequest::List(_) = *x {
-                        self.set_data(data)?;
-                    }
+                if let IdentityGroupApiRequest::User(x) = *req
+                    && let IdentityGroupUserApiRequest::List(_) = *x
+                {
+                    self.set_data(data)?;
                 }
             }
             _ => {}

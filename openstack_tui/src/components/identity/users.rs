@@ -185,14 +185,14 @@ impl Component for IdentityUsers<'_> {
                         self.sync_table_data()?;
                     }
                     self.set_loading(false);
-                } else if let IdentityUserApiRequest::Delete(del) = *req {
-                    if let IdentityUserDelete { id, .. } = *del {
-                        if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
-                            return Ok(Some(Action::Refresh));
-                        }
-                        self.sync_table_data()?;
-                        self.set_loading(false);
+                } else if let IdentityUserApiRequest::Delete(del) = *req
+                    && let IdentityUserDelete { id, .. } = *del
+                {
+                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                        return Ok(Some(Action::Refresh));
                     }
+                    self.sync_table_data()?;
+                    self.set_loading(false);
                 }
             }
             _ => {}

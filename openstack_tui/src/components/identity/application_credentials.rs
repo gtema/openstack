@@ -100,10 +100,10 @@ impl Component for IdentityApplicationCredentials<'_> {
                 request: ApiRequest::Identity(IdentityApiRequest::User(req)),
                 data,
             } => {
-                if let IdentityUserApiRequest::ApplicationCredential(x) = *req {
-                    if let IdentityUserApplicationCredentialApiRequest::List(_) = *x {
-                        self.set_data(data)?;
-                    }
+                if let IdentityUserApiRequest::ApplicationCredential(x) = *req
+                    && let IdentityUserApplicationCredentialApiRequest::List(_) = *x
+                {
+                    self.set_data(data)?;
                 }
             }
             _ => {}

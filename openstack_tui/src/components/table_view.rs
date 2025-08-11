@@ -477,14 +477,14 @@ where
             .or(data.get("uuid"))
             .ok_or_else(|| TuiError::EntryIdNotPresent(data.clone()))?;
         for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
-            if let Some(row_id) = raw_item.get("id").or(raw_item.get("uuid")) {
-                if row_id == updated_entry_id {
-                    *raw_item = data.clone();
-                    if let Some(typed_row) = self.items.get_mut(idx) {
-                        *typed_row = updated_item;
-                        self.sync_table_data()?;
-                        break;
-                    }
+            if let Some(row_id) = raw_item.get("id").or(raw_item.get("uuid"))
+                && row_id == updated_entry_id
+            {
+                *raw_item = data.clone();
+                if let Some(typed_row) = self.items.get_mut(idx) {
+                    *typed_row = updated_item;
+                    self.sync_table_data()?;
+                    break;
                 }
             }
         }
@@ -651,10 +651,10 @@ where
     #[instrument(level = "debug", skip(self))]
     pub fn get_item_row_by_res_id_mut(&mut self, search_id: &String) -> Option<&mut T> {
         for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
-            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid")) {
-                if row_item_id == search_id {
-                    return self.items.get_mut(idx);
-                }
+            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid"))
+                && row_item_id == search_id
+            {
+                return self.items.get_mut(idx);
             }
         }
         None
@@ -665,11 +665,11 @@ where
     pub fn delete_item_row_by_res_id_mut(&mut self, search_id: &String) -> Result<Option<usize>> {
         let mut item_idx: Option<usize> = None;
         for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
-            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid")) {
-                if row_item_id == search_id {
-                    item_idx = Some(idx);
-                    break;
-                }
+            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid"))
+                && row_item_id == search_id
+            {
+                item_idx = Some(idx);
+                break;
             }
         }
         if let Some(idx) = item_idx {

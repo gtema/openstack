@@ -118,14 +118,12 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
                 request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                if let ComputeServerApiRequest::InstanceAction(x) = *req {
-                    if let ComputeServerInstanceActionApiRequest::Get(_) = *x {
-                        if let Some(events) = data.get("events") {
-                            if let Some(ar) = events.as_array() {
-                                self.set_data(ar.to_vec())?;
-                            }
-                        }
-                    }
+                if let ComputeServerApiRequest::InstanceAction(x) = *req
+                    && let ComputeServerInstanceActionApiRequest::Get(_) = *x
+                    && let Some(events) = data.get("events")
+                    && let Some(ar) = events.as_array()
+                {
+                    self.set_data(ar.to_vec())?;
                 }
             }
             Action::SetComputeServerInstanceActionShowFilters(req) => {
