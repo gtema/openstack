@@ -61,7 +61,6 @@ use serde_json::Value;
 /// Expected format of the input parameter 'body':
 ///
 /// ```text
-///
 /// {
 ///     "attachment":
 ///     {
@@ -71,13 +70,11 @@ use serde_json::Value;
 ///         "mode": "null|rw|ro"
 ///     }
 /// }
-///
 /// ```
 ///
 /// Example connector:
 ///
 /// ```text
-///
 /// {
 ///     "connector":
 ///     {
@@ -91,7 +88,6 @@ use serde_json::Value;
 ///         "mode": "null|rw|ro"
 ///     }
 /// }
-///
 /// ```
 ///
 /// NOTE all that's required for a reserve is volume_uuid and an instance_uuid.

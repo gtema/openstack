@@ -94,7 +94,7 @@ impl RestEndpoint for Request<'_> {
         "os-simple-tenant-usage".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("detailed", self.detailed.as_ref());
         params.push_opt("end", self.end.as_ref());

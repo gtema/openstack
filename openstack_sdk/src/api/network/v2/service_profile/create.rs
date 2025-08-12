@@ -128,7 +128,7 @@ impl RestEndpoint for Request<'_> {
         "service_profiles".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

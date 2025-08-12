@@ -768,7 +768,6 @@ components:
 
             ```
             https://discovery.etcd.io
-
             ```
 
             In this case, Magnum will generate a unique url here for each uster and
@@ -1062,7 +1061,6 @@ components:
 
             ```
             https://discovery.etcd.io
-
             ```
 
             In this case, Magnum will generate a unique url here for each uster and
@@ -1150,7 +1148,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -1173,7 +1170,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -2923,7 +2919,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -2946,7 +2941,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -3233,7 +3227,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -3256,7 +3249,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -3552,7 +3544,6 @@ components:
 
                         ```
                         CCYY-MM-DDThh:mm:ss±hh:mm
-
                         ```
 
                         For example, `2015-08-27T09:49:58-05:00`.
@@ -3575,7 +3566,6 @@ components:
 
                         ```
                         CCYY-MM-DDThh:mm:ss±hh:mm
-
                         ```
 
                         For example, `2015-08-27T09:49:58-05:00`.
@@ -3939,7 +3929,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.
@@ -3987,7 +3976,6 @@ components:
 
                   ```
                   CCYY-MM-DDThh:mm:ss±hh:mm
-
                   ```
 
                   For example, `2015-08-27T09:49:58-05:00`.

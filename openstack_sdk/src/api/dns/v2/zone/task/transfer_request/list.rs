@@ -75,7 +75,7 @@ impl RestEndpoint for Request {
         "zones/tasks/transfer_requests".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

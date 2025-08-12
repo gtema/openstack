@@ -36,7 +36,7 @@ use openstack_types::block_storage::v3::host::response::get::HostResponse;
 ///
 /// | | | | --- | --- | | param req: | security context | | param id: |
 /// hostname | | returns: | dict -- the host resources dictionary. ex.:
-/// `  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  `
+/// `{'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}`
 /// |
 #[derive(Args)]
 pub struct HostCommand {

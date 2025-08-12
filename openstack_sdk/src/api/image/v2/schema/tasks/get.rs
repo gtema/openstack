@@ -84,7 +84,7 @@ impl RestEndpoint for Request {
         "schemas/tasks".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

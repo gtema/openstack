@@ -88,7 +88,7 @@ impl RestEndpoint for Request<'_> {
         "registered_limits".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("region_id", self.region_id.as_ref());
         params.push_opt("resource_name", self.resource_name.as_ref());

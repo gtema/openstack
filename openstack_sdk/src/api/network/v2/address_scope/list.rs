@@ -171,7 +171,7 @@ impl RestEndpoint for Request<'_> {
         "address-scopes".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("id", self.id.as_ref());
         params.push_opt("ip_version", self.ip_version);

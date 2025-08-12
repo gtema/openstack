@@ -75,7 +75,7 @@ impl RestEndpoint for Request {
         "auth/tokens/OS-PKI/revoked".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

@@ -91,7 +91,7 @@ impl RestEndpoint for Request<'_> {
         "os-server-groups".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("all_projects", self.all_projects.as_ref());
         params.push_opt("limit", self.limit);

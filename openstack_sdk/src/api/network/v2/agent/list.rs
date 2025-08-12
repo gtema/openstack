@@ -183,7 +183,7 @@ impl RestEndpoint for Request<'_> {
         "agents".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("admin_state_up", self.admin_state_up);
         params.push_opt("agent_type", self.agent_type.as_ref());

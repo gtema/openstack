@@ -59,7 +59,6 @@ pub struct ImageResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.
@@ -106,7 +105,6 @@ pub struct ImageResponse {
     ///
     /// ```text
     /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-    ///
     /// ```
     ///
     /// Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -115,7 +113,6 @@ pub struct ImageResponse {
     ///
     /// ```text
     /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
-    ///
     /// ```
     ///
     /// If you omit this value, the API generates a UUID for the image.
@@ -233,7 +230,6 @@ pub struct ImageResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.

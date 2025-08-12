@@ -131,7 +131,7 @@ impl RestEndpoint for Request<'_> {
         format!("routers/{id}/remove_extraroutes", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

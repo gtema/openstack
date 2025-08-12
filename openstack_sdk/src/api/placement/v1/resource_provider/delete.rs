@@ -90,7 +90,7 @@ impl RestEndpoint for Request<'_> {
         format!("resource_providers/{uuid}", uuid = self.uuid.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

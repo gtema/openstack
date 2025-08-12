@@ -83,7 +83,7 @@ impl RestEndpoint for Request<'_> {
         format!("os-instance_usage_audit_log/{id}", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

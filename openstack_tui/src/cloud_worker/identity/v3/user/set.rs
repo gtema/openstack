@@ -212,7 +212,6 @@ pub struct User {
     ///     ]
     ///   }
     /// ]
-    ///
     /// ```
     #[builder(default, setter(into))]
     pub federated: Option<Vec<Federated>>,

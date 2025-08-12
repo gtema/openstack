@@ -113,7 +113,7 @@ impl RestEndpoint for Request<'_> {
         "registered_limits".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

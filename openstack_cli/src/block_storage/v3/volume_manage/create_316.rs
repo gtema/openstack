@@ -48,7 +48,6 @@ use serde_json::Value;
 /// Required HTTP Body:
 ///
 /// ```text
-///
 /// {
 ///   "volume": {
 ///     "host": "<Cinder host on which the existing storage resides>",
@@ -56,7 +55,6 @@ use serde_json::Value;
 ///     "ref": "<Driver-specific reference to existing storage object>"
 ///   }
 /// }
-///
 /// ```
 ///
 /// See the appropriate Cinder drivers' implementations of the manage_volume
@@ -72,7 +70,6 @@ use serde_json::Value;
 /// Optional elements to 'volume' are:
 ///
 /// ```text
-///
 /// name               A name for the new volume.
 /// description        A description for the new volume.
 /// volume_type        ID or name of a volume type to associate with
@@ -87,7 +84,6 @@ use serde_json::Value;
 /// availability_zone  The availability zone to associate with the new
 ///                    volume.
 /// bootable           If set to True, marks the volume as bootable.
-///
 /// ```
 #[derive(Args)]
 pub struct VolumeManageCommand {

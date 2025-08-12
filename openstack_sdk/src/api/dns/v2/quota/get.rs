@@ -80,7 +80,7 @@ impl RestEndpoint for Request<'_> {
         format!("quotas/{project_id}", project_id = self.project_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

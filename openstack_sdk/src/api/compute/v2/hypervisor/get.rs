@@ -90,7 +90,7 @@ impl RestEndpoint for Request<'_> {
         format!("os-hypervisors/{id}", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("with_servers", self.with_servers);
 

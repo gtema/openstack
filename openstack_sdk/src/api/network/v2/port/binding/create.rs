@@ -145,7 +145,7 @@ impl RestEndpoint for Request<'_> {
         format!("ports/{port_id}/bindings", port_id = self.port_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

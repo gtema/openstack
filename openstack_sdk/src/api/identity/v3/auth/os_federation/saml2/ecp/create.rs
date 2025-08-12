@@ -390,7 +390,7 @@ impl RestEndpoint for Request<'_> {
         "auth/OS-FEDERATION/saml2/ecp".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

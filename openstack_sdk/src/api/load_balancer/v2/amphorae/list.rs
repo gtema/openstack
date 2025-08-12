@@ -157,7 +157,7 @@ impl RestEndpoint for Request<'_> {
         "octavia/amphorae".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("cached_zone", self.cached_zone.as_ref());
         params.push_opt("cert_busy", self.cert_busy.as_ref());

@@ -29,7 +29,6 @@
 //! Required HTTP Body:
 //!
 //! ```text
-//!
 //! {
 //!   "volume": {
 //!     "host": "<Cinder host on which the existing storage resides>",
@@ -37,7 +36,6 @@
 //!     "ref": "<Driver-specific reference to existing storage object>"
 //!   }
 //! }
-//!
 //! ```
 //!
 //! See the appropriate Cinder drivers' implementations of the manage_volume
@@ -53,7 +51,6 @@
 //! Optional elements to 'volume' are:
 //!
 //! ```text
-//!
 //! name               A name for the new volume.
 //! description        A description for the new volume.
 //! volume_type        ID or name of a volume type to associate with
@@ -68,7 +65,6 @@
 //! availability_zone  The availability zone to associate with the new
 //!                    volume.
 //! bootable           If set to True, marks the volume as bootable.
-//!
 //! ```
 //!
 use derive_builder::Builder;
@@ -187,7 +183,7 @@ impl RestEndpoint for Request<'_> {
         "os-volume-manage".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

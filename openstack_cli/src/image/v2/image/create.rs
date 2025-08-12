@@ -104,7 +104,6 @@ pub struct ImageCommand {
     ///
     /// ```text
     /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-    ///
     /// ```
     ///
     /// Where **n** is a hexadecimal digit from 0 to f, or F.
@@ -113,7 +112,6 @@ pub struct ImageCommand {
     ///
     /// ```text
     /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
-    ///
     /// ```
     ///
     /// If you omit this value, the API generates a UUID for the image. If you

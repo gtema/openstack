@@ -56,7 +56,6 @@ pub struct TokenResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss.sssZ
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58.000000Z`.

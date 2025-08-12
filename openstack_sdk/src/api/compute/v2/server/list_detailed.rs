@@ -259,7 +259,7 @@ impl RestEndpoint for Request<'_> {
         "servers/detail".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("access_ip_v4", self.access_ip_v4.as_ref());
         params.push_opt("access_ip_v6", self.access_ip_v6.as_ref());

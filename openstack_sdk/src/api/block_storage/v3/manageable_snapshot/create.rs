@@ -28,7 +28,6 @@
 //! Required HTTP Body:
 //!
 //! ```text
-//!
 //! {
 //!   "snapshot":
 //!   {
@@ -37,7 +36,6 @@
 //!        "<Driver-specific reference to the existing storage object>"
 //!   }
 //! }
-//!
 //! ```
 //!
 //! See the appropriate Cinder drivers' implementations of the manage_snapshot
@@ -54,11 +52,9 @@
 //! Optional elements to 'snapshot' are:
 //!
 //! ```text
-//!
 //! name           A name for the new snapshot.
 //! description    A description for the new snapshot.
 //! metadata       Key/value pairs to be associated with the new snapshot.
-//!
 //! ```
 //!
 use derive_builder::Builder;
@@ -176,7 +172,7 @@ impl RestEndpoint for Request<'_> {
         "manageable_snapshots".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

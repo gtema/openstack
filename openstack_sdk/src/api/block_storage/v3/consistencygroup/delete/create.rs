@@ -95,7 +95,7 @@ impl RestEndpoint for Request<'_> {
         format!("consistencygroups/{id}/delete", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

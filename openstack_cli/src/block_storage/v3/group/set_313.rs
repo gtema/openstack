@@ -39,7 +39,6 @@ use openstack_types::block_storage::v3::group::response::set::GroupResponse;
 /// Expected format of the input parameter 'body':
 ///
 /// ```text
-///
 /// {
 ///     "group":
 ///     {
@@ -49,7 +48,6 @@ use openstack_types::block_storage::v3::group::response::set::GroupResponse;
 ///         "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
 ///     }
 /// }
-///
 /// ```
 #[derive(Args)]
 pub struct GroupCommand {

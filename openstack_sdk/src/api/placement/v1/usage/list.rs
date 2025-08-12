@@ -98,7 +98,7 @@ impl RestEndpoint for Request<'_> {
         "usages".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("consumer_type", self.consumer_type.as_ref());
         params.push("project_id", self.project_id.as_ref());

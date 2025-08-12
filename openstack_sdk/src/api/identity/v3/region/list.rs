@@ -81,7 +81,7 @@ impl RestEndpoint for Request<'_> {
         "regions".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("parent_region_id", self.parent_region_id.as_ref());
 

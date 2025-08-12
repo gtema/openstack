@@ -120,7 +120,7 @@ impl RestEndpoint for Request<'_> {
         "volume-transfers/detail".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("all_tenants", self.all_tenants);
         params.push_opt("is_public", self.is_public);

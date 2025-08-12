@@ -155,7 +155,7 @@ impl RestEndpoint for Request<'_> {
         format!("ports/{port_id}/bindings", port_id = self.port_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("host", self.host.as_ref());
         params.push_opt("status", self.status.as_ref());

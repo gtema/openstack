@@ -76,7 +76,7 @@ impl RestEndpoint for Request<'_> {
         format!("os-quota-sets/{id}/defaults", id = self.id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

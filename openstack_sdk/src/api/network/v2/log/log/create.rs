@@ -154,7 +154,7 @@ impl RestEndpoint for Request<'_> {
         "log/logs".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

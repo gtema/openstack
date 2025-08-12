@@ -109,7 +109,7 @@ impl RestEndpoint for Request<'_> {
         "role_assignments".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("effective", self.effective.as_ref());
         params.push_opt("group.id", self.group_id.as_ref());

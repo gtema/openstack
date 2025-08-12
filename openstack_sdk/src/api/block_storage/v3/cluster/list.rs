@@ -106,7 +106,7 @@ impl RestEndpoint for Request<'_> {
         "clusters".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("binary", self.binary.as_ref());
         params.push_opt("disabled", self.disabled);

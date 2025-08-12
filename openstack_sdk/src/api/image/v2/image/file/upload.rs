@@ -105,7 +105,7 @@ impl RestEndpoint for Request<'_> {
         format!("images/{image_id}/file", image_id = self.image_id.as_ref(),).into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

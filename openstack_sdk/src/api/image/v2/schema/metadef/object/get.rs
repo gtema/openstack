@@ -70,7 +70,7 @@ impl RestEndpoint for Request {
         "schemas/metadefs/object".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

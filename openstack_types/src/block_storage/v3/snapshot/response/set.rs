@@ -44,7 +44,6 @@ pub struct SnapshotResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.
@@ -104,7 +103,6 @@ pub struct SnapshotResponse {
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
     /// ```
     ///
     /// For example, `2015-08-27T09:49:58-05:00`.

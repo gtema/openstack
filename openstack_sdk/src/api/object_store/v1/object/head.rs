@@ -138,7 +138,7 @@ impl RestEndpoint for Request<'_> {
         .into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("multipart-manifest", self.multipart_manifest.as_ref());
         params.push_opt("temp_url_sig", self.temp_url_sig.as_ref());

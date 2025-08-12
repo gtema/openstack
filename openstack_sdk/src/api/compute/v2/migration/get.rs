@@ -122,7 +122,7 @@ impl RestEndpoint for Request<'_> {
         "os-migrations".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("changes-before", self.changes_before.as_ref());
         params.push_opt("changes-since", self.changes_since.as_ref());

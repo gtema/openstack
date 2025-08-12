@@ -147,7 +147,7 @@ impl RestEndpoint for Request<'_> {
         "OS-EP-FILTER/endpoint_groups".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

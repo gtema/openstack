@@ -42,7 +42,6 @@ use serde_json::Value;
 /// Expected format of the input parameter 'body':
 ///
 /// ```text
-///
 /// {
 ///     "attachment":
 ///     {
@@ -59,7 +58,6 @@ use serde_json::Value;
 ///         }
 ///     }
 /// }
-///
 /// ```
 #[derive(Args)]
 pub struct AttachmentCommand {

@@ -39,7 +39,6 @@ use serde_json::Value;
 /// Expected format of the input parameter 'body':
 ///
 /// ```text
-///
 /// {
 ///     "consistencygroup":
 ///     {
@@ -49,7 +48,6 @@ use serde_json::Value;
 ///         "remove_volumes": "volume-uuid-8,volume-uuid-9,..."
 ///     }
 /// }
-///
 /// ```
 #[derive(Args)]
 pub struct ConsistencygroupCommand {

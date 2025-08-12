@@ -63,7 +63,6 @@ pub struct ClusterResponse {
     ///
     /// ```text
     /// https://discovery.etcd.io
-    ///
     /// ```
     ///
     /// In this case, Magnum will generate a unique url here for each uster and

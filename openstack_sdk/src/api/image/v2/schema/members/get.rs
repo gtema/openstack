@@ -83,7 +83,7 @@ impl RestEndpoint for Request {
         "schemas/members".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

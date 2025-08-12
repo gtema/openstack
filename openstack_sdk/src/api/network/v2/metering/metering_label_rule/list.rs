@@ -192,7 +192,7 @@ impl RestEndpoint for Request<'_> {
         "metering/metering-label-rules".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());

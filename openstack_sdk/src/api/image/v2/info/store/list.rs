@@ -81,7 +81,7 @@ impl RestEndpoint for Request {
         "info/stores".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

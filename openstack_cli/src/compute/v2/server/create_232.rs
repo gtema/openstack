@@ -161,7 +161,6 @@ struct OsSchedulerHints {
     ///
     /// ```text
     /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
     /// ```
     ///
     /// It is available when `JsonFilter` is available on cloud side.
@@ -229,7 +228,6 @@ struct Server {
     /// >     "delete_on_termination": true,
     /// >     "tag": "disk1",
     /// >     "disk_bus": "scsi"}]
-    /// >
     /// > ```
     ///
     /// In microversion 2.32, `tag` is an optional string attribute that can be

@@ -95,7 +95,7 @@ impl RestEndpoint for Request<'_> {
         "os-volume-transfer".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         QueryParams::default()
     }
 

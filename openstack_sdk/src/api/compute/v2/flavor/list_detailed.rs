@@ -100,7 +100,7 @@ impl RestEndpoint for Request<'_> {
         "flavors/detail".to_string().into()
     }
 
-    fn parameters(&self) -> QueryParams {
+    fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("is_public", self.is_public.as_ref());
         params.push_opt("limit", self.limit);
