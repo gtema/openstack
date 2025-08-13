@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.0...openstack_sdk-v0.22.1) - 2025-08-13
+
+### Other
+
+- Address new linter warning (MISMATCHED_LIFETIME_SYNTAXES) ([#1371](https://github.com/gtema/openstack/pull/1371))
+- Address some 1.89 clippy warnings ([#1369](https://github.com/gtema/openstack/pull/1369))
+
 ## [0.22.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.4...openstack_sdk-v0.22.0) - 2025-07-28
 
 ### Added
