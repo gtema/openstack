@@ -2197,7 +2197,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_cli"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "assert_cmd",
  "bytes",
@@ -2236,7 +2236,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk"
-version = "0.22.0"
+version = "0.22.1"
 dependencies = [
  "async-trait",
  "bincode",
@@ -2284,7 +2284,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_tui"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "async-trait",
  "chrono",
@@ -2324,7 +2324,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_types"
-version = "0.22.0"
+version = "0.22.1"
 dependencies = [
  "chrono",
  "openstack_sdk",
