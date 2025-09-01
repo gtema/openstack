@@ -19,7 +19,7 @@ use thiserror::Error;
 
 use crate::api;
 #[cfg(feature = "keystone_ng")]
-use crate::auth::v3federation::FederationError;
+use crate::auth::v4federation::FederationError;
 use crate::auth::{
     authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
     v3oidcaccesstoken::OidcAccessTokenError, v3websso::WebSsoError, AuthError,

@@ -27,7 +27,7 @@ use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "keystone_ng")]
-use crate::auth::v3federation;
+use crate::auth::v4federation;
 use crate::auth::{
     auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3oidcaccesstoken,
     v3password, v3token, v3totp, v3websso, AuthState,
@@ -164,7 +164,7 @@ pub enum AuthTokenError {
     Federation {
         /// The error source
         #[from]
-        source: v3federation::FederationError,
+        source: v4federation::FederationError,
     },
 }
 
@@ -249,9 +249,6 @@ impl AuthToken {
 pub enum AuthType {
     /// v3 Application Credentials
     V3ApplicationCredential,
-    #[cfg(feature = "keystone_ng")]
-    /// Federation
-    V3Federation,
     /// OIDC Access token
     V3OidcAccessToken,
     /// v3 Password
@@ -264,6 +261,9 @@ pub enum AuthType {
     V3Multifactor,
     /// WebSSO
     V3WebSso,
+    /// Federation
+    #[cfg(feature = "keystone_ng")]
+    V4Federation,
 }
 
 impl FromStr for AuthType {
@@ -275,13 +275,13 @@ impl FromStr for AuthType {
                 Ok(Self::V3ApplicationCredential)
             }
             "v3password" | "password" => Ok(Self::V3Password),
-            #[cfg(feature = "keystone_ng")]
-            "v3federation" | "federation" => Ok(Self::V3Federation),
             "v3oidcaccesstoken" | "accesstoken" => Ok(Self::V3OidcAccessToken),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
             "v3multifactor" => Ok(Self::V3Multifactor),
             "v3websso" => Ok(Self::V3WebSso),
+            #[cfg(feature = "keystone_ng")]
+            "v4federation" | "federation" => Ok(Self::V4Federation),
             other => Err(Self::Err::IdentityMethod {
                 auth_type: other.into(),
             }),
@@ -304,13 +304,13 @@ impl AuthType {
         match self {
             Self::V3ApplicationCredential => "v3applicationcredential",
             Self::V3Password => "v3password",
-            #[cfg(feature = "keystone_ng")]
-            Self::V3Federation => "v3federation",
             Self::V3OidcAccessToken => "v3oidcaccesstoken",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
             Self::V3Totp => "v3totp",
             Self::V3WebSso => "v3websso",
+            #[cfg(feature = "keystone_ng")]
+            Self::V4Federation => "v4federation",
         }
     }
 }

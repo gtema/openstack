@@ -460,7 +460,7 @@ impl AsyncOpenStack {
                     }
 
                     #[cfg(feature = "keystone_ng")]
-                    AuthType::V3Federation => {
+                    AuthType::V4Federation => {
                         // Construct request for initializing authentication (POST call to keystone
                         // `/federation/identity_providers/{idp_id}/auth`) to get the IDP url
                         // client would need to contact.
@@ -468,26 +468,26 @@ impl AsyncOpenStack {
                         // saving 1 call.
                         let callback_addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8050));
                         let init_auth_ep =
-                            auth::v3federation::get_auth_ep(&self.config, callback_addr.port())?;
-                        let auth_info: auth::v3federation::FederationAuthRequestResponse =
+                            auth::v4federation::get_auth_ep(&self.config, callback_addr.port())?;
+                        let auth_info: auth::v4federation::FederationAuthRequestResponse =
                             init_auth_ep.query_async(self).await?;
 
                         // Perform the magic directing user's browser at the IDP url and waiting
                         // for the callback to be invoked with the authorization code
                         let oauth2_code =
-                            auth::v3federation::get_auth_code(&auth_info.auth_url, callback_addr)
+                            auth::v4federation::get_auth_code(&auth_info.auth_url, callback_addr)
                                 .await?;
 
                         // Construct the request to Keystone to finish the authorization exchanging
                         // received authorization code for the (unscoped) token
                         let mut oidc_callback_builder =
-                            auth::v3federation::OauthCallbackRequestBuilder::default();
+                            auth::v4federation::OauthCallbackRequestBuilder::default();
                         if let (Some(code), Some(state)) = (oauth2_code.code, oauth2_code.state) {
                             oidc_callback_builder.code(code.clone());
                             oidc_callback_builder.state(state.clone());
                             let oidc_callback_ep = oidc_callback_builder
                                 .build()
-                                .map_err(auth::v3federation::FederationError::from)?;
+                                .map_err(auth::v4federation::FederationError::from)?;
 
                             rsp = oidc_callback_ep.raw_query_async(self).await?;
                         } else {
