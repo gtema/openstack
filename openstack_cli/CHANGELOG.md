@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.0...openstack_cli-v0.13.1) - 2025-09-02
+
+### Added
+
+- Capture request-id in the OpenStack API error ([#1391](https://github.com/gtema/openstack/pull/1391))
+
+### Other
+
+- Address new linter warning (MISMATCHED_LIFETIME_SYNTAXES) ([#1371](https://github.com/gtema/openstack/pull/1371))
+- Rename the v3federation to v4federation ([#1388](https://github.com/gtema/openstack/pull/1388))
+- *(deps)* Bump hyper from 1.6.0 to 1.7.0 ([#1377](https://github.com/gtema/openstack/pull/1377))
+- Address some 1.89 clippy warnings ([#1369](https://github.com/gtema/openstack/pull/1369))
+
 ## [0.13.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.4...openstack_cli-v0.13.0) - 2025-07-28
 
 ### Added
