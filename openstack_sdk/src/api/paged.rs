@@ -155,10 +155,10 @@ where
             let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(query_uri, status, rsp.body()));
+                return Err(ApiError::server_error(query_uri, &rsp, rsp.body()));
             };
             if !status.is_success() {
-                return Err(ApiError::from_openstack(query_uri, status, v));
+                return Err(ApiError::from_openstack(query_uri, &rsp, v));
             }
 
             if use_keyset_pagination {

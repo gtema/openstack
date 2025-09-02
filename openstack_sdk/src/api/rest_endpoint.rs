@@ -166,10 +166,10 @@ where
     let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
         v
     } else {
-        return Err(ApiError::server_error(uri, status, rsp.body()));
+        return Err(ApiError::server_error(uri, rsp, rsp.body()));
     };
     if !status.is_success() {
-        return Err(ApiError::from_openstack(uri, status, v));
+        return Err(ApiError::from_openstack(uri, rsp, v));
     }
     Ok(v)
 }
@@ -187,9 +187,9 @@ where
         let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
             v
         } else {
-            return Err(ApiError::server_error(uri, status, rsp.body()));
+            return Err(ApiError::server_error(uri, rsp, rsp.body()));
         };
-        return Err(ApiError::from_openstack(uri, status, v));
+        return Err(ApiError::from_openstack(uri, rsp, v));
     }
     Ok(())
 }
@@ -487,6 +487,7 @@ mod tests {
             status: _,
             uri: _,
             msg,
+            ..
         } = err
         {
             assert_eq!(msg, "dummy error message");
@@ -513,6 +514,7 @@ mod tests {
             status: _,
             uri: _,
             obj,
+            ..
         } = err
         {
             assert_eq!(obj, err_obj);

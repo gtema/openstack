@@ -254,14 +254,14 @@ where
         } else {
             return Err(ApiError::server_error(
                 Some(query::url_to_http_uri(base)),
-                status,
+                &rsp,
                 rsp.body(),
             ));
         };
         if !status.is_success() {
             return Err(ApiError::from_openstack(
                 Some(query::url_to_http_uri(base)),
-                status,
+                &rsp,
                 v,
             ));
         }

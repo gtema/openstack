@@ -15,7 +15,8 @@
 use std::any;
 use std::error::Error;
 
-use http::Uri;
+use bytes::Bytes;
+use http::{Response, Uri};
 use thiserror::Error;
 
 use crate::api::PaginationError;
@@ -87,10 +88,11 @@ where
     },
     /// OpenStack returned understandable error message
     #[error(
-        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tmessage: `{}`",
+        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tmessage: `{}`\n\trequest-id: `{}`",
         uri,
         status,
-        msg
+        msg,
+        req_id.as_deref().unwrap_or("")
     )]
     OpenStack {
         /// The status code for the return.
@@ -99,12 +101,15 @@ where
         uri: Uri,
         /// The error message from OpenStack.
         msg: String,
+        /// Request ID
+        req_id: Option<String>,
     },
     /// OpenStack returned an error without JSON information.
     #[error(
-        "openstack internal server error:\n\turi: `{}`\n\tstatus: `{}`",
+        "openstack internal server error:\n\turi: `{}`\n\tstatus: `{}`\n\trequest-id: `{}`",
         uri,
-        status
+        status,
+        req_id.as_deref().unwrap_or("")
     )]
     OpenStackService {
         /// The status code for the return.
@@ -113,13 +118,16 @@ where
         uri: Uri,
         /// The error data from OpenStack.
         data: String,
+        /// Request ID
+        req_id: Option<String>,
     },
     /// OpenStack returned an HTTP error with JSON we did not recognize.
     #[error(
-        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tdata: `{}`",
+        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tdata: `{}`\n\trequest-id: `{}`",
         uri,
         status,
-        obj
+        obj,
+        req_id.as_deref().unwrap_or("")
     )]
     OpenStackUnrecognized {
         /// The status code for the return.
@@ -128,6 +136,8 @@ where
         uri: Uri,
         /// The full object from OpenStack.
         obj: serde_json::Value,
+        /// Request ID
+        req_id: Option<String>,
     },
     /// Failed to parse an expected data type from JSON.
     #[error("could not parse {} data from JSON: {}", typename, source)]
@@ -168,15 +178,22 @@ where
     /// Process server response with no Json body
     pub(crate) fn server_error(
         uri: Option<Uri>,
-        status: http::StatusCode,
+        rsp: &Response<Bytes>,
         body: &bytes::Bytes,
     ) -> Self {
         // Non Json body response ends in this function
+        let status = rsp.status();
+        let req_id = rsp
+            .headers()
+            .get("x-openstack-request-id")
+            .and_then(|x| x.to_str().ok().map(Into::into));
+
         if http::StatusCode::NOT_FOUND.as_u16() == status {
             return Self::OpenStack {
                 status,
                 uri: uri.unwrap_or(Uri::from_static("/")),
                 msg: String::new(),
+                req_id,
             };
         };
 
@@ -184,20 +201,28 @@ where
             status,
             uri: uri.unwrap_or(Uri::from_static("/")),
             data: String::from_utf8_lossy(body).into(),
+            req_id,
         }
     }
 
     /// Process server error response with Json body
     pub(crate) fn from_openstack(
         uri: Option<Uri>,
-        status: http::StatusCode,
+        rsp: &Response<Bytes>,
         value: serde_json::Value,
     ) -> Self {
+        let status = rsp.status();
+        let req_id = rsp
+            .headers()
+            .get("x-openstack-request-id")
+            .and_then(|x| x.to_str().ok().map(Into::into));
+
         if http::StatusCode::NOT_FOUND.as_u16() == status {
             return Self::OpenStack {
                 status,
                 uri: uri.unwrap_or(Uri::from_static("/")),
                 msg: value.to_string(),
+                req_id,
             };
         };
 
@@ -208,18 +233,20 @@ where
 
         if let Some(error_value) = error_value {
             if let Some(msg) = error_value.as_str() {
-                // Error we know how to parse
+                // Error we know how to parse (string)
                 ApiError::OpenStack {
                     status,
                     uri: uri.unwrap_or(Uri::from_static("/")),
                     msg: msg.into(),
+                    req_id,
                 }
             } else {
-                // Error we do not know how to parse
+                // Error we do not know how to parse (perhaps an object)
                 ApiError::OpenStackUnrecognized {
                     status,
                     uri: uri.unwrap_or(Uri::from_static("/")),
                     obj: error_value.clone(),
+                    req_id,
                 }
             }
         } else {
@@ -227,6 +254,7 @@ where
                 status,
                 uri: uri.unwrap_or(Uri::from_static("/")),
                 obj: value,
+                req_id,
             }
         }
     }
@@ -241,7 +269,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::Uri;
+    use bytes::Bytes;
+    use http::{Response, Uri};
     use serde_json::json;
     use thiserror::Error;
 
@@ -259,13 +288,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::CONFLICT,
+            &Response::builder()
+                .status(http::StatusCode::CONFLICT)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&obj).unwrap()))
+                .unwrap(),
             obj.clone(),
         );
-        if let ApiError::OpenStack { status, uri, msg } = err {
+        if let ApiError::OpenStack {
+            status,
+            uri,
+            msg,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
@@ -279,13 +319,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::CONFLICT,
+            &Response::builder()
+                .status(http::StatusCode::CONFLICT)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&obj).unwrap()))
+                .unwrap(),
             obj.clone(),
         );
-        if let ApiError::OpenStack { status, uri, msg } = err {
+        if let ApiError::OpenStack {
+            status,
+            uri,
+            msg,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
@@ -302,13 +353,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::CONFLICT,
+            &Response::builder()
+                .status(http::StatusCode::CONFLICT)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&obj).unwrap()))
+                .unwrap(),
             obj.clone(),
         );
-        if let ApiError::OpenStackUnrecognized { status, uri, obj } = err {
+        if let ApiError::OpenStackUnrecognized {
+            status,
+            uri,
+            obj,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
@@ -322,13 +384,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::CONFLICT,
+            &Response::builder()
+                .status(http::StatusCode::CONFLICT)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&err_obj).unwrap()))
+                .unwrap(),
             err_obj.clone(),
         );
-        if let ApiError::OpenStackUnrecognized { status, uri, obj } = err {
+        if let ApiError::OpenStackUnrecognized {
+            status,
+            uri,
+            obj,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
@@ -342,13 +415,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::NOT_FOUND,
+            &Response::builder()
+                .status(http::StatusCode::NOT_FOUND)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&err_obj).unwrap()))
+                .unwrap(),
             err_obj.clone(),
         );
-        if let ApiError::OpenStack { status, uri, msg } = err {
+        if let ApiError::OpenStack {
+            status,
+            uri,
+            msg,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, err_obj.to_string());
             assert_eq!(status, http::StatusCode::NOT_FOUND);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
@@ -363,13 +447,24 @@ mod tests {
 
         let err: ApiError<MyError> = ApiError::from_openstack(
             Some(Uri::from_static("http://foo.bar")),
-            http::StatusCode::CONFLICT,
+            &Response::builder()
+                .status(http::StatusCode::CONFLICT)
+                .header("x-openstack-request-id", "reqid")
+                .body(Bytes::from(serde_json::to_vec(&obj).unwrap()))
+                .unwrap(),
             obj.clone(),
         );
-        if let ApiError::OpenStack { status, uri, msg } = err {
+        if let ApiError::OpenStack {
+            status,
+            uri,
+            msg,
+            req_id,
+        } = err
+        {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(obj["faultstring"], msg);
             assert_eq!(status, http::StatusCode::CONFLICT);
+            assert_eq!(req_id, Some("reqid".into()));
         } else {
             panic!("unexpected error: {err}");
         }
