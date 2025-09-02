@@ -61,7 +61,7 @@ chrono = { workspace= true }
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
 color-eyre = { workspace = true }
-comfy-table = { version = "^7.1" }
+comfy-table = { version = "^7.2" }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
 http = { workspace = true }
