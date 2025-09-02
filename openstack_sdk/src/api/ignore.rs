@@ -66,9 +66,9 @@ where
             let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(query_uri, rsp.status(), rsp.body()));
+                return Err(ApiError::server_error(query_uri, &rsp, rsp.body()));
             };
-            return Err(ApiError::from_openstack(query_uri, status, v));
+            return Err(ApiError::from_openstack(query_uri, &rsp, v));
         }
 
         Ok(())
@@ -101,9 +101,9 @@ where
             let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(query_uri, rsp.status(), rsp.body()));
+                return Err(ApiError::server_error(query_uri, &rsp, rsp.body()));
             };
-            return Err(ApiError::from_openstack(query_uri, status, v));
+            return Err(ApiError::from_openstack(query_uri, &rsp, v));
         }
 
         Ok(())
