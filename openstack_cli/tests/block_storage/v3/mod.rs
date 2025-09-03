@@ -24,6 +24,8 @@ mod host;
 mod limit;
 mod message;
 mod qos_spec;
+mod quota_class_set;
+mod quota_set;
 mod resource_filter;
 mod service;
 mod snapshot;
