@@ -17,15 +17,10 @@
 
 //! Update a volume attachment.
 //!
-//! Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system,
-//! project\], which allow project members or system admins to change the
-//! fields of an attached volume of a server. Policy defaults enable only users
-//! with the administrative role to change `volumeId` via this operation. Cloud
-//! providers can change these permissions through the `policy.json` file.
-//!
-//! Updating, or what is commonly referred to as “swapping”, volume attachments
-//! with volumes that have more than one read/write attachment, is not
-//! supported.
+//! Policy default role is ‘rule:admin_or_owner’, its scope is [project], which
+//! allow project members or admins to change the fields of an attached volume
+//! of a server. Cloud providers can change these permissions through the
+//! `policy.yaml` file.
 //!
 //! Normal response codes: 202
 //!
@@ -83,7 +78,7 @@ pub struct VolumeAttachment<'a> {
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
-    /// The UUID of the volume to attach instead of the attached volume.
+    /// The UUID of the attached volume.
     #[serde(rename = "volumeId")]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,

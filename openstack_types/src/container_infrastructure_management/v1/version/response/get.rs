@@ -40,6 +40,10 @@ pub struct VersionResponse {
 
     #[serde(default)]
     #[structable(optional, serialize)]
+    pub credentials: Option<Vec<Credentials>>,
+
+    #[serde(default)]
+    #[structable(optional, serialize)]
     pub federations: Option<Vec<Federations>>,
 
     #[serde(default)]
@@ -111,6 +115,22 @@ pub struct Clusters {
 /// `Clustertemplates` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Clustertemplates {
+    #[serde(default)]
+    pub created_at: Option<String>,
+    #[serde(default)]
+    pub href: Option<String>,
+    #[serde(default)]
+    pub rel: Option<String>,
+    #[serde(default, rename = "type")]
+    pub _type: Option<String>,
+    #[serde(default)]
+    pub updated_at: Option<String>,
+}
+
+/// A link representation.
+/// `Credentials` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Credentials {
     #[serde(default)]
     pub created_at: Option<String>,
     #[serde(default)]

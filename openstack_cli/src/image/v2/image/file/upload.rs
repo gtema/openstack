@@ -46,6 +46,12 @@ use openstack_sdk::api::image::v2::image::file::upload;
 /// is returned. When the header is not present, the image data is placed into
 /// the default backing store.
 ///
+/// An optional `x-openstack-image-size` header may be added to the request.
+/// When present, the server will validate that the uploaded data size matches
+/// this value. If the actual size does not match the expected size, a 400 (Bad
+/// Request) response is returned. When not present, the server will calculate
+/// the image size based on the actual request body size.
+///
 /// Example call:
 ///
 /// **Preconditions**

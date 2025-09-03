@@ -34,15 +34,10 @@ use openstack_types::compute::v2::server::volume_attachment::response::set::Volu
 
 /// Update a volume attachment.
 ///
-/// Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system,
-/// project\], which allow project members or system admins to change the
-/// fields of an attached volume of a server. Policy defaults enable only users
-/// with the administrative role to change `volumeId` via this operation. Cloud
-/// providers can change these permissions through the `policy.json` file.
-///
-/// Updating, or what is commonly referred to as “swapping”, volume attachments
-/// with volumes that have more than one read/write attachment, is not
-/// supported.
+/// Policy default role is ‘rule:admin_or_owner’, its scope is [project], which
+/// allow project members or admins to change the fields of an attached volume
+/// of a server. Cloud providers can change these permissions through the
+/// `policy.yaml` file.
 ///
 /// Normal response codes: 202
 ///
@@ -94,7 +89,7 @@ struct PathParameters {
 /// VolumeAttachment Body data
 #[derive(Args, Clone)]
 struct VolumeAttachment {
-    /// The UUID of the volume to attach instead of the attached volume.
+    /// The UUID of the attached volume.
     #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
 }
