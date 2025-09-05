@@ -1677,6 +1677,7 @@ paths:
         - os-availability-zone
   /v3/os-hosts:
     get:
+      description: List all hosts for a project
       operationId: os-hosts:get
       responses:
         '200':
@@ -1685,6 +1686,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_HostsListResponse'
           description: Ok
+      summary: List all hosts for a project
       tags:
         - os-hosts
     put:
@@ -1703,16 +1705,9 @@ paths:
           description: Ok
       tags:
         - os-hosts
-  /v3/os-hosts/{id}:
+  /v3/os-hosts/{host_name}:
     get:
-      description: |-
-        Shows the volume usage info given by hosts.
-
-        |  |  |
-        | --- | --- |
-        | param req: | security context |
-        | param id: | hostname |
-        | returns: | dict -- the host resources dictionary. ex.:   ``` {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048} ``` |
+      description: Show Host Details for a project
       operationId: os-hosts/id:get
       responses:
         '200':
@@ -1721,6 +1716,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_HostShowResponse'
           description: Ok
+      summary: Show quota classes for a project
       tags:
         - os-hosts
     parameters:
@@ -1741,8 +1737,9 @@ paths:
           description: Ok
       tags:
         - os-hosts
-  /v3/os-quota-class-sets/{id}:
+  /v3/os-quota-class-sets/{name}:
     get:
+      description: Show quota classes for a project
       operationId: os-quota-class-sets/id:get
       responses:
         '200':
@@ -1751,11 +1748,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_Quota_Class_SetShowResponse'
           description: Ok
+      summary: Show quota classes for a project
       tags:
         - os-quota-class-sets
     parameters:
       - $ref: '#/components/parameters/os_quota_class_sets_id'
     put:
+      description: Update quota classes for a project
       operationId: os-quota-class-sets/id:put
       requestBody:
         content:
@@ -1769,32 +1768,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_Quota_Class_SetUpdateResponse'
           description: Ok
+      summary: Update quota classes for a project
       tags:
         - os-quota-class-sets
-  /v3/os-quota-sets/{id}:
+  /v3/os-quota-sets/{project_id}:
     delete:
-      description: |-
-        Delete Quota for a particular tenant.
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be deleted |
+      description: Delete quota for a particular tenant
       operationId: os-quota-sets/id:delete
       responses:
         '204':
           description: Ok
+      summary: Delete quota for a particular tenant
       tags:
         - os-quota-sets
     get:
-      description: |-
-        Show quota for a particular tenant
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be shown |
+      description: Show quota for a particular tenant
       operationId: os-quota-sets/id:get
+      parameters:
+        - $ref: '#/components/parameters/os_quota_sets_usage'
       responses:
         '200':
           content:
@@ -1802,19 +1793,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_Quota_SetShowResponse'
           description: Ok
+      summary: Show quota for a particular tenant
       tags:
         - os-quota-sets
     parameters:
       - $ref: '#/components/parameters/os_quota_sets_id'
     put:
-      description: |-
-        Update Quota for a particular tenant
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be updated |
-        | param body: | key, value pair that will be applied to the resources if the update succeeds |
+      description: Update quota for a particular tenant
       operationId: os-quota-sets/id:put
       requestBody:
         content:
@@ -1828,9 +1813,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Os_Quota_SetUpdateResponse'
           description: Ok
+      summary: Update quota for a particular tenant
       tags:
         - os-quota-sets
-  /v3/os-quota-sets/{id}/defaults:
+  /v3/os-quota-sets/{project_id}/defaults:
     get:
       operationId: os-quota-sets/id/defaults:get
       responses:
@@ -3303,6 +3289,179 @@ paths:
         - workers
       x-openstack:
         min-ver: '3.24'
+  /v3/{admin_project_id}/os-hosts:
+    get:
+      description: |-
+        Lists all hosts summary info that is not disabled.
+      operationId: project_id/os-hosts:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_HostsListResponse'
+          description: Ok
+      summary: List all hosts for a project
+      tags:
+        - os-hosts
+    parameters:
+      - $ref: '#/components/parameters/os_hosts_project_id'
+    put:
+      operationId: project_id/os-hosts:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_HostsUpdateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_HostsUpdateResponse'
+          description: Ok
+      tags:
+        - os-hosts
+  /v3/{admin_project_id}/os-hosts/{host_name}:
+    get:
+      description: |-
+        Shows volume and snapshot details for a cinder-volume host.
+
+        *Note:* This API is meant specifically for cinder-volume hosts only.
+        It is not valid against other Cinder service hosts or hosts where the
+        cinder-volume service has been disabled.
+      operationId: project_id/os-hosts/id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_HostShowResponse'
+          description: Ok
+      summary: Show Host Details for a project
+      tags:
+        - os-hosts
+    parameters:
+      - $ref: '#/components/parameters/os_hosts_id'
+      - $ref: '#/components/parameters/os_hosts_project_id'
+    put:
+      operationId: project_id/os-hosts/id:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_HostUpdateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_HostUpdateResponse'
+          description: Ok
+      tags:
+        - os-hosts
+  /v3/{admin_project_id}/os-quota-class-sets/{name}:
+    get:
+      description: Show quota classes for a project
+      operationId: project_id/os-quota-class-sets/id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_Quota_Class_SetShowResponse'
+          description: Ok
+      summary: Show quota classes for a project
+      tags:
+        - os-quota-class-sets
+    parameters:
+      - $ref: '#/components/parameters/os_quota_class_sets_id'
+      - $ref: '#/components/parameters/os_quota_class_sets_project_id'
+    put:
+      description: Update quota classes for a project
+      operationId: project_id/os-quota-class-sets/id:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_Quota_Class_SetUpdate'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_Quota_Class_SetUpdateResponse'
+          description: Ok
+      summary: Update quota classes for a project
+      tags:
+        - os-quota-class-sets
+  /v3/{admin_project_id}/os-quota-sets/{project_id}:
+    delete:
+      description: |-
+        Deletes quotas for a project so the quotas revert to default values.
+      operationId: project_id/os-quota-sets/id:delete
+      responses:
+        '204':
+          description: Ok
+      summary: Delete quotas for a project
+      tags:
+        - os-quota-sets
+    get:
+      description: |-
+        Shows quotas for a project.
+      operationId: project_id/os-quota-sets/id:get
+      parameters:
+        - $ref: '#/components/parameters/os_quota_sets_usage'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_Quota_SetShowResponse'
+          description: Ok
+      summary: Show quotas for a project
+      tags:
+        - os-quota-sets
+    parameters:
+      - $ref: '#/components/parameters/os_quota_sets_id'
+      - $ref: '#/components/parameters/os_quota_sets_project_id'
+    put:
+      description: |-
+        Updates quotas for a project.
+      operationId: project_id/os-quota-sets/id:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_Quota_SetUpdate'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_Quota_SetUpdateResponse'
+          description: Ok
+      summary: Update quotas for a project
+      tags:
+        - os-quota-sets
+  /v3/{admin_project_id}/os-quota-sets/{project_id}/defaults:
+    get:
+      description: |-
+        Gets default quotas for a project.
+      operationId: project_id/os-quota-sets/id/defaults:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_Quota_SetsDefaultsResponse'
+          description: Ok
+      summary: Get default quotas for a project
+      tags:
+        - os-quota-sets
+    parameters:
+      - $ref: '#/components/parameters/os_quota_sets_defaults_id'
+      - $ref: '#/components/parameters/os_quota_sets_defaults_project_id'
   /v3/{project_id}/attachments:
     get:
       description: |-
@@ -4970,181 +5129,6 @@ paths:
         - os-availability-zone
     parameters:
       - $ref: '#/components/parameters/os_availability_zone_project_id'
-  /v3/{project_id}/os-hosts:
-    get:
-      operationId: project_id/os-hosts:get
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_HostsListResponse'
-          description: Ok
-      tags:
-        - os-hosts
-    parameters:
-      - $ref: '#/components/parameters/os_hosts_project_id'
-    put:
-      operationId: project_id/os-hosts:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Os_HostsUpdateRequest'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_HostsUpdateResponse'
-          description: Ok
-      tags:
-        - os-hosts
-  /v3/{project_id}/os-hosts/{id}:
-    get:
-      description: |-
-        Shows the volume usage info given by hosts.
-
-        |  |  |
-        | --- | --- |
-        | param req: | security context |
-        | param id: | hostname |
-        | returns: | dict -- the host resources dictionary. ex.:   ``` {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048} ``` |
-      operationId: project_id/os-hosts/id:get
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_HostShowResponse'
-          description: Ok
-      tags:
-        - os-hosts
-    parameters:
-      - $ref: '#/components/parameters/os_hosts_id'
-      - $ref: '#/components/parameters/os_hosts_project_id'
-    put:
-      operationId: project_id/os-hosts/id:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Os_HostUpdateRequest'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_HostUpdateResponse'
-          description: Ok
-      tags:
-        - os-hosts
-  /v3/{project_id}/os-quota-class-sets/{id}:
-    get:
-      operationId: project_id/os-quota-class-sets/id:get
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_Class_SetShowResponse'
-          description: Ok
-      tags:
-        - os-quota-class-sets
-    parameters:
-      - $ref: '#/components/parameters/os_quota_class_sets_id'
-      - $ref: '#/components/parameters/os_quota_class_sets_project_id'
-    put:
-      operationId: project_id/os-quota-class-sets/id:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Os_Quota_Class_SetUpdate'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_Class_SetUpdateResponse'
-          description: Ok
-      tags:
-        - os-quota-class-sets
-  /v3/{project_id}/os-quota-sets/{id}:
-    delete:
-      description: |-
-        Delete Quota for a particular tenant.
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be deleted |
-      operationId: project_id/os-quota-sets/id:delete
-      responses:
-        '204':
-          description: Ok
-      tags:
-        - os-quota-sets
-    get:
-      description: |-
-        Show quota for a particular tenant
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be shown |
-      operationId: project_id/os-quota-sets/id:get
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetShowResponse'
-          description: Ok
-      tags:
-        - os-quota-sets
-    parameters:
-      - $ref: '#/components/parameters/os_quota_sets_id'
-      - $ref: '#/components/parameters/os_quota_sets_project_id'
-    put:
-      description: |-
-        Update Quota for a particular tenant
-
-        |  |  |
-        | --- | --- |
-        | param req: | request |
-        | param id: | target project id that needs to be updated |
-        | param body: | key, value pair that will be applied to the resources if the update succeeds |
-      operationId: project_id/os-quota-sets/id:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Os_Quota_SetUpdate'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetUpdateResponse'
-          description: Ok
-      tags:
-        - os-quota-sets
-  /v3/{project_id}/os-quota-sets/{id}/defaults:
-    get:
-      operationId: project_id/os-quota-sets/id/defaults:get
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetsDefaultsResponse'
-          description: Ok
-      tags:
-        - os-quota-sets
-    parameters:
-      - $ref: '#/components/parameters/os_quota_sets_defaults_id'
-      - $ref: '#/components/parameters/os_quota_sets_defaults_project_id'
   /v3/{project_id}/os-services:
     get:
       description: |-
@@ -8029,7 +8013,7 @@ components:
     os_hosts_id:
       description: id parameter for /v3/os-hosts/{id} API
       in: path
-      name: id
+      name: host_name
       required: true
       schema:
         type: string
@@ -8045,7 +8029,7 @@ components:
     os_hosts_project_id:
       description: project_id parameter for /v3/{project_id}/os-hosts/{id} API
       in: path
-      name: project_id
+      name: admin_project_id
       required: true
       schema:
         type: string
@@ -8122,7 +8106,7 @@ components:
     os_quota_class_sets_id:
       description: id parameter for /v3/os-quota-class-sets/{id} API
       in: path
-      name: id
+      name: name
       required: true
       schema:
         type: string
@@ -8140,24 +8124,25 @@ components:
       description: project_id parameter for 
         /v3/{project_id}/os-quota-class-sets/{id} API
       in: path
-      name: project_id
+      name: admin_project_id
       required: true
       schema:
         type: string
       x-openstack:
         resource_link: identity/v3/project.id
     os_quota_sets_defaults_id:
-      description: id parameter for /v3/os-quota-sets/{id}/defaults API
+      description: The quota-set project_id attribute
       in: path
-      name: id
+      name: project_id
       required: true
       schema:
         type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
     os_quota_sets_defaults_project_id:
-      description: project_id parameter for 
-        /v3/{project_id}/os-quota-sets/{id}/defaults API
+      description: The admin project id attribute
       in: path
-      name: project_id
+      name: admin_project_id
       required: true
       schema:
         type: string
@@ -8181,12 +8166,14 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_quota_sets_id:
-      description: id parameter for /v3/os-quota-sets/{id} API
+      description: The quota-set project_id attribute
       in: path
-      name: id
+      name: project_id
       required: true
       schema:
         type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
     os_quota_sets_new_project_id:
       description: project_id parameter for /v3/{project_id}/os-quota-sets/new 
         API
@@ -8198,15 +8185,20 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_quota_sets_project_id:
-      description: project_id parameter for /v3/{project_id}/os-quota-sets/{id} 
-        API
+      description: The admin project id attribute
       in: path
-      name: project_id
+      name: admin_project_id
       required: true
       schema:
         type: string
       x-openstack:
         resource_link: identity/v3/project.id
+    os_quota_sets_usage:
+      description: Show project’s quota usage information. Default is false.
+      in: query
+      name: usage
+      schema:
+        type: boolean
     os_services_edit_id:
       description: id parameter for /v3/os-services/{id}/edit API
       in: path
@@ -14052,6 +14044,9 @@ components:
     Os_HostShowResponse:
       properties:
         host:
+          description: |-
+            The name of the host that hosts the storage backend,
+            may take the format of `host@backend`.
           items:
             additionalProperties: false
             description: A host object.
@@ -14064,21 +14059,25 @@ components:
                       backend, may take the format of host@backend.
                     type: string
                   project:
-                    description: The Project ID which the host resource belongs 
-                      to. In the summary resource, the value is (total).
+                    description: |-
+                      The Project ID which the host resource belongs to.
+                      In the summary resource, the value is `(total)`.
                     type: string
                   snapshot_count:
-                    description: The total number of snapshots used.
+                    description: |-
+                      The total number of snapshots used.
                     type: string
                   total_snapshot_gb:
-                    description: The total number of gibibytes (GiB) used by 
-                      snapshots.
+                    description: |-
+                      The total number of gibibytes (GiB) used by snapshots.
                     type: string
                   total_volume_gb:
-                    description: The total number of gibibytes (GiB) used.
+                    description: |-
+                      The total number of gibibytes (GiB) used.
                     type: string
                   volume_count:
-                    description: Total number of volumes.
+                    description: |-
+                      Total number of volumes.
                     type: string
                 required:
                   - host
@@ -14105,6 +14104,8 @@ components:
       description: A container with list of host objects.
       properties:
         hosts:
+          description: |-
+            A OpenStack Block Storage host.
           items:
             additionalProperties: false
             description: A host object.
@@ -14188,6 +14189,8 @@ components:
       additionalProperties: false
       properties:
         quota_set:
+          description: |-
+            A `quota_set` object.
           format: quota_set
           minProperties: 1
           type: object

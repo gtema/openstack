@@ -17,7 +17,7 @@
 
 //! Show Host command
 //!
-//! Wraps invoking of the `v3/os-hosts/{id}` with `GET` method
+//! Wraps invoking of the `v3/os-hosts/{host_name}` with `GET` method
 
 use clap::Args;
 use tracing::info;
@@ -32,13 +32,9 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::host::get;
 use openstack_types::block_storage::v3::host::response::get::HostResponse;
 
-/// Shows the volume usage info given by hosts.
-///
-/// | | | | --- | --- | | param req: | security context | | param id: |
-/// hostname | | returns: | dict -- the host resources dictionary. ex.:
-/// `{'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}`
-/// |
+/// Show Host Details for a project
 #[derive(Args)]
+#[command(about = "Show quota classes for a project")]
 pub struct HostCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -59,10 +55,10 @@ struct PathParameters {
     /// id parameter for /v3/os-hosts/{id} API
     #[arg(
         help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
+        id = "path_param_host_name",
+        value_name = "HOST_NAME"
     )]
-    id: String,
+    host_name: String,
 }
 
 impl HostCommand {
@@ -79,7 +75,7 @@ impl HostCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        ep_builder.id(&self.path.id);
+        ep_builder.host_name(&self.path.host_name);
 
         let ep = ep_builder
             .build()

@@ -17,9 +17,6 @@
 
 //! Show quota for a particular tenant
 //!
-//! | | | | --- | --- | | param req: | request | | param id: | target project
-//! id that needs to be shown |
-//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -30,9 +27,13 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// id parameter for /v3/os-quota-sets/{id} API
+    /// The quota-set project_id attribute
     #[builder(default, setter(into))]
-    id: Cow<'a, str>,
+    project_id: Cow<'a, str>,
+
+    /// Show project’s quota usage information. Default is false.
+    #[builder(default)]
+    usage: Option<bool>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -78,11 +79,18 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("os-quota-sets/{id}", id = self.id.as_ref(),).into()
+        format!(
+            "os-quota-sets/{project_id}",
+            project_id = self.project_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams<'_> {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("usage", self.usage);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -137,15 +145,17 @@ mod tests {
         let server = MockServer::start();
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/os-quota-sets/{id}", id = "id",));
+            when.method(httpmock::Method::GET).path(format!(
+                "/os-quota-sets/{project_id}",
+                project_id = "project_id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "quota_set": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().project_id("project_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -157,7 +167,10 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/os-quota-sets/{id}", id = "id",))
+                .path(format!(
+                    "/os-quota-sets/{project_id}",
+                    project_id = "project_id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -166,7 +179,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .id("id")
+            .project_id("project_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

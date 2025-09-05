@@ -32,8 +32,9 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::host::list;
 use openstack_types::block_storage::v3::host::response::list::HostResponse;
 
-/// Command without description in OpenAPI
+/// List all hosts for a project
 #[derive(Args)]
+#[command(about = "List all hosts for a project")]
 pub struct HostsCommand {
     /// Request Query parameters
     #[command(flatten)]
