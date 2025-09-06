@@ -185,6 +185,8 @@ impl AddressScopesCommand {
             .query_async(client)
             .await?;
         op.output_list::<AddressScopeResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

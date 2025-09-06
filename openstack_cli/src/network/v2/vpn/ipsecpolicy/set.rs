@@ -336,6 +336,8 @@ impl IpsecpolicyCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<IpsecpolicyResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

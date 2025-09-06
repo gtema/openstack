@@ -170,6 +170,8 @@ impl AvailabilityZonesCommand {
             .query_async(client)
             .await?;
         op.output_list::<AvailabilityZoneResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

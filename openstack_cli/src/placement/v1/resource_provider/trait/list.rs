@@ -91,6 +91,8 @@ impl TraitCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<TraitResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

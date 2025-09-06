@@ -131,6 +131,8 @@ impl AttachmentCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<AttachmentResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

@@ -209,6 +209,8 @@ impl SubnetpoolCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<SubnetpoolResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

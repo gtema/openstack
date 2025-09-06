@@ -111,6 +111,8 @@ impl MeteringLabelCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<MeteringLabelResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

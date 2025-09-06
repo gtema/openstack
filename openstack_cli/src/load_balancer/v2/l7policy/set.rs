@@ -235,6 +235,8 @@ impl L7PolicyCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<L7policyResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

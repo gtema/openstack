@@ -180,6 +180,8 @@ impl NetworkIpAvailabilitiesCommand {
             .query_async(client)
             .await?;
         op.output_list::<NetworkIpAvailabilityResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

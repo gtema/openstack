@@ -158,6 +158,8 @@ impl OsEc2Command {
 
         let data = ep.query_async(client).await?;
         op.output_single::<OsEc2Response>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

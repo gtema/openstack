@@ -147,6 +147,8 @@ impl GroupsCommand {
             .query_async(client)
             .await?;
         op.output_list::<GroupResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

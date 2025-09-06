@@ -97,6 +97,8 @@ impl PolicyCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<PolicyResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

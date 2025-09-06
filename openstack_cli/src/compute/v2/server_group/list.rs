@@ -116,6 +116,8 @@ impl ServerGroupsCommand {
             .query_async(client)
             .await?;
         op.output_list::<ServerGroupResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

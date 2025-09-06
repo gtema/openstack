@@ -332,6 +332,8 @@ impl MembersCommand {
             .query_async(client)
             .await?;
         op.output_list::<MemberResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

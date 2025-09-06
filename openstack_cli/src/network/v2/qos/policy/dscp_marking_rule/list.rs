@@ -177,6 +177,8 @@ impl DscpMarkingRulesCommand {
             .query_async(client)
             .await?;
         op.output_list::<DscpMarkingRuleResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

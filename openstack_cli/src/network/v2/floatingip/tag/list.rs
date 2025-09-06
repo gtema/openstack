@@ -138,6 +138,8 @@ impl TagsCommand {
             .query_async(client)
             .await?;
         op.output_list::<TagResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

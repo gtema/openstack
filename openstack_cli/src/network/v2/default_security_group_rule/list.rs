@@ -246,6 +246,8 @@ impl DefaultSecurityGroupRulesCommand {
             .query_async(client)
             .await?;
         op.output_list::<DefaultSecurityGroupRuleResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

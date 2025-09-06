@@ -291,6 +291,8 @@ impl ImageCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let new_data = patch_ep.query_async(client).await?;
         op.output_single::<ImageResponse>(new_data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

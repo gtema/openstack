@@ -125,6 +125,8 @@ impl ProvidersCommand {
             .query_async(client)
             .await?;
         op.output_list::<ProviderResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

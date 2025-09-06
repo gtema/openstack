@@ -333,6 +333,8 @@ impl ImageCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ImageResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

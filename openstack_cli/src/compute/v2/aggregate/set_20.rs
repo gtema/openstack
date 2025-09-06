@@ -157,6 +157,8 @@ impl AggregateCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<AggregateResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

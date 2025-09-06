@@ -131,6 +131,8 @@ impl AutoAllocatedTopologiesCommand {
             .query_async(client)
             .await?;
         op.output_list::<AutoAllocatedTopologyResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

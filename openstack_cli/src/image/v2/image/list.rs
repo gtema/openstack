@@ -337,6 +337,8 @@ impl ImagesCommand {
             .query_async(client)
             .await?;
         op.output_list::<ImageResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

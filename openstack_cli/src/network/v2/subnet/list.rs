@@ -290,6 +290,8 @@ impl SubnetsCommand {
             .query_async(client)
             .await?;
         op.output_list::<SubnetResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

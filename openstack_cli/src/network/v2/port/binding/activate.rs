@@ -103,6 +103,8 @@ impl BindingCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<BindingResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

@@ -223,6 +223,8 @@ impl SecurityGroupRuleCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<SecurityGroupRuleResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

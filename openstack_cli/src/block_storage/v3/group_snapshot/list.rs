@@ -151,6 +151,8 @@ impl GroupSnapshotsCommand {
             .query_async(client)
             .await?;
         op.output_list::<GroupSnapshotResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

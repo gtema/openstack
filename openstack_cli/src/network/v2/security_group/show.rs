@@ -94,6 +94,8 @@ impl SecurityGroupCommand {
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         op.output_single::<SecurityGroupResponse>(find_data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }
