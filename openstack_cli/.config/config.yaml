@@ -18,7 +18,7 @@ views:
       - name: volume_id
         width: 38
   block-storage.snapshot:
-    default_fields: [id, name, description, os-extended-snapshot-attributes:progress, size, status, volume_id, created_at]
+    default_fields: [id, name, description, "os-extended-snapshot-attributes:progress", size, status, volume_id, created_at]
     fields:
       - name: id
         width: 38
@@ -213,7 +213,7 @@ views:
         width: 34
   # network
   network.network:
-    default_fields: [id, name, admin_state_up, dns_domain, provider:network_type, router:external, shared, status, subnets, created_at, tags]
+    default_fields: [id, name, admin_state_up, dns_domain, "provider:network_type", "router:external", shared, status, subnets, created_at, tags]
     fields:
       - name: id
         width: 38
@@ -304,6 +304,30 @@ command_hints:
       - "A full authentication response can be seen with `osc auth show -o json --pretty`"
     login:
       - "You can force new token instead of the cached one with the `--renew` argument."
+  block-storage.quota_set:
+    defaults:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --current-project`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-name <PROJECT_NAME>`"
+    show:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+      - "Block storage quota with the usage can be seen with `osc block-storage quota-set show [--current-project|--project-id <PROJECT_ID>|--project-name <PROJECT_NAME>] --usage true`"
+    set:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+    delete:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --current-project --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
   network.router:
     list:
       - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."

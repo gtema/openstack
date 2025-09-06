@@ -41,7 +41,7 @@ files for configuration.
 
 Most authentication methods support interactive data provisioning. When certain
 required auth attributes are not provided in the configuration file or through
-the supported cli arguments (or environment variables) clients that implement 
+the supported cli arguments (or environment variables) clients that implement
 `AuthHelper` interface can receive such data from the user. For example when
 using the cli a prompt will appear. In the tui a popup requests the user input.
 

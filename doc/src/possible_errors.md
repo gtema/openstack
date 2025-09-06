@@ -30,7 +30,7 @@ The URL must match the following regular expression:
 
 ### Unreachable url
 
-The URL in the version document must be a working url. 
+The URL in the version document must be a working url.
 
 - `https://example.com//v2`
 

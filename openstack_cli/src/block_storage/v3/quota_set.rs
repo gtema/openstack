@@ -41,9 +41,21 @@ pub struct QuotaSetCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum QuotaSetCommands {
+    /// Gets default quotas for a project.
+    ///
+    /// Gets default quotas for a project.
     Defaults(Box<defaults::QuotaSetCommand>),
+    /// Delete quotas for a project
+    ///
+    /// Deletes quotas for a project so the quotas revert to default values.
     Delete(Box<delete::QuotaSetCommand>),
+    /// Update quotas for a project.
+    ///
+    /// Update quotas for a project.
     Set(Box<set::QuotaSetCommand>),
+    /// Show quota usage for a project.
+    ///
+    /// Show quota usage for a project.
     Show(Box<show::QuotaSetCommand>),
 }
 
