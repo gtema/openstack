@@ -303,6 +303,8 @@ impl PoolsCommand {
             .query_async(client)
             .await?;
         op.output_list::<PoolResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

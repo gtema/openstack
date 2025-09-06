@@ -221,6 +221,8 @@ impl ProjectsCommand {
             .query_async(client)
             .await?;
         op.output_list::<ProjectResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

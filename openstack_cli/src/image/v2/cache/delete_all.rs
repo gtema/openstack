@@ -74,6 +74,8 @@ impl CacheCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         openstack_sdk::api::ignore(ep).query_async(client).await?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

@@ -175,6 +175,8 @@ impl SnapshotManageCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<SnapshotManageResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

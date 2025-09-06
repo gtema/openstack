@@ -109,6 +109,8 @@ impl TransferRequestsCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<TransferRequestResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

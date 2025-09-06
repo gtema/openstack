@@ -76,6 +76,8 @@ impl ResourceFiltersCommand {
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
         op.output_list::<ResourceFilterResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

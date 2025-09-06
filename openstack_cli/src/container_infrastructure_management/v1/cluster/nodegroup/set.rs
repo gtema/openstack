@@ -144,6 +144,8 @@ impl NodegroupCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<NodegroupResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

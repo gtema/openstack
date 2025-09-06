@@ -162,6 +162,8 @@ impl FileCommand {
 
         let _rsp = ep.raw_query_read_body_async(client, data).await?;
         // TODO: what if there is an interesting response
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

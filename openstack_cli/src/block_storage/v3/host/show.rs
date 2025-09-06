@@ -87,6 +87,8 @@ impl HostCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<HostResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

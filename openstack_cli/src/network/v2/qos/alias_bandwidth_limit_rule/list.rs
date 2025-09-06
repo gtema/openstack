@@ -160,6 +160,8 @@ impl AliasBandwidthLimitRulesCommand {
             .query_async(client)
             .await?;
         op.output_list::<AliasBandwidthLimitRuleResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

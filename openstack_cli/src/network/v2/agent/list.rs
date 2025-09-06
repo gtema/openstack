@@ -208,6 +208,8 @@ impl AgentsCommand {
             .query_async(client)
             .await?;
         op.output_list::<AgentResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

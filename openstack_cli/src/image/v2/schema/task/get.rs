@@ -82,6 +82,8 @@ impl TaskCommand {
 
         let data: serde_json::Value = ep.query_async(client).await?;
         op.output_machine(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

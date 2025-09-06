@@ -250,6 +250,8 @@ impl L7PoliciesCommand {
             .query_async(client)
             .await?;
         op.output_list::<L7policyResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

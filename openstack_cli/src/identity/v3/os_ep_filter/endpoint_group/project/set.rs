@@ -158,6 +158,8 @@ impl ProjectCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ProjectResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

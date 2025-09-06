@@ -138,6 +138,8 @@ impl FileCommand {
             .parse()
             .unwrap();
         download_file(self.file.clone().unwrap_or(image_name), size, data).await?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

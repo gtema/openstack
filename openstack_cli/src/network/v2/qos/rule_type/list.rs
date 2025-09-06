@@ -160,6 +160,8 @@ impl RuleTypesCommand {
             .query_async(client)
             .await?;
         op.output_list::<RuleTypeResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

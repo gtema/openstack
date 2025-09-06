@@ -97,6 +97,8 @@ impl DeleteCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<DeleteResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

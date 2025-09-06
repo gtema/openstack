@@ -85,6 +85,8 @@ impl Ec2TokenCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<Ec2tokenResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

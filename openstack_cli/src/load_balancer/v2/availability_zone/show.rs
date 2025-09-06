@@ -87,6 +87,8 @@ impl AvailabilityZoneCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<AvailabilityZoneResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }

@@ -72,6 +72,8 @@ impl S3TokenCommand {
 
         let data = ep.query_async(client).await?;
         op.output_single::<S3tokenResponse>(data)?;
+        // Show command specific hints
+        op.show_command_hint()?;
         Ok(())
     }
 }
