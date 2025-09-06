@@ -17,7 +17,7 @@
 
 //! Set QuotaClassSet command
 //!
-//! Wraps invoking of the `v3/os-quota-class-sets/{id}` with `PUT` method
+//! Wraps invoking of the `v3/os-quota-class-sets/{name}` with `PUT` method
 
 use clap::Args;
 use tracing::info;
@@ -33,8 +33,9 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_class_set::set;
 use openstack_types::block_storage::v3::quota_class_set::response::set::QuotaClassSetResponse;
 
-/// Command without description in OpenAPI
+/// Update quota classes for a project
 #[derive(Args)]
+#[command(about = "Update quota classes for a project")]
 pub struct QuotaClassSetCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -58,10 +59,10 @@ struct PathParameters {
     /// id parameter for /v3/os-quota-class-sets/{id} API
     #[arg(
         help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
+        id = "path_param_name",
+        value_name = "NAME"
     )]
-    id: String,
+    name: String,
 }
 
 impl QuotaClassSetCommand {
@@ -82,7 +83,7 @@ impl QuotaClassSetCommand {
 
         let mut ep_builder = set::Request::builder();
 
-        ep_builder.id(&self.path.id);
+        ep_builder.name(&self.path.name);
 
         // Set body parameters
         // Set Request.quota_class_set data

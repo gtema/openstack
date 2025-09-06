@@ -17,7 +17,7 @@
 
 //! Show QuotaSet command
 //!
-//! Wraps invoking of the `v3/os-quota-sets/{id}` with `GET` method
+//! Wraps invoking of the `v3/os-quota-sets/{project_id}` with `GET` method
 
 use clap::Args;
 use tracing::info;
@@ -28,15 +28,18 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
+use eyre::OptionExt;
+use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_set::get;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_types::block_storage::v3::quota_set::response::get::QuotaSetResponse;
+use tracing::warn;
 
 /// Show quota for a particular tenant
-///
-/// | | | | --- | --- | | param req: | request | | param id: | target project
-/// id that needs to be shown |
 #[derive(Args)]
+#[command(about = "Show quota for a particular tenant")]
 pub struct QuotaSetCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -49,18 +52,33 @@ pub struct QuotaSetCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// Show project’s quota usage information. Default is false.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    usage: Option<bool>,
+}
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// id parameter for /v3/os-quota-sets/{id} API
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
 }
 
 impl QuotaSetCommand {
@@ -78,7 +96,59 @@ impl QuotaSetCommand {
 
         let mut ep_builder = get::Request::builder();
 
-        ep_builder.id(&self.path.id);
+        // Process path parameter `project_id`
+        if let Some(id) = &self.path.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.path.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!(
+                "Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead."
+            );
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ));
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ));
+                }
+            };
+        } else if self.path.project.current_project {
+            let token = client
+                .get_auth_info()
+                .ok_or_eyre("Cannot determine current authentication information")?
+                .token;
+            if let Some(project) = token.project {
+                ep_builder.project_id(
+                    project
+                        .id
+                        .ok_or_eyre("Project ID is missing in the project auth info")?,
+                );
+            } else {
+                return Err(eyre!("Current project information can not be identified").into());
+            }
+        }
+        // Set query parameters
+        if let Some(val) = &self.query.usage {
+            ep_builder.usage(*val);
+        }
 
         let ep = ep_builder
             .build()
