@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.0...openstack_sdk-v0.22.1) - 2025-09-07
+
+### Added
+
+- Workaround BS quota api path issues ([#1404](https://github.com/gtema/openstack/pull/1404))
+- Add response key hack to the BS quota resources ([#1397](https://github.com/gtema/openstack/pull/1397))
+- Capture request-id in the OpenStack API error ([#1391](https://github.com/gtema/openstack/pull/1391))
+
+### Other
+
+- Rename the v3federation to v4federation ([#1388](https://github.com/gtema/openstack/pull/1388))
+- *(deps)* Bump hyper from 1.6.0 to 1.7.0 ([#1377](https://github.com/gtema/openstack/pull/1377))
+- Address new linter warning (MISMATCHED_LIFETIME_SYNTAXES) ([#1371](https://github.com/gtema/openstack/pull/1371))
+- Address some 1.89 clippy warnings ([#1369](https://github.com/gtema/openstack/pull/1369))
+
 ## [0.22.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.21.4...openstack_sdk-v0.22.0) - 2025-07-28
 
 ### Added

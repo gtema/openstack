@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.0...openstack_cli-v0.13.1) - 2025-09-07
+
+### Added
+
+- Workaround BS quota api path issues ([#1404](https://github.com/gtema/openstack/pull/1404))
+- Enable command hints in the cli ([#1403](https://github.com/gtema/openstack/pull/1403))
+- Add response key hack to the BS quota resources ([#1397](https://github.com/gtema/openstack/pull/1397))
+- Enable BS quota commands ([#1396](https://github.com/gtema/openstack/pull/1396))
+- Capture request-id in the OpenStack API error ([#1391](https://github.com/gtema/openstack/pull/1391))
+
+### Other
+
+- Add command hints for the BS quota set commands ([#1399](https://github.com/gtema/openstack/pull/1399))
+- Log update of comfy-table in the Cargo.toml ([#1392](https://github.com/gtema/openstack/pull/1392))
+- Address new linter warning (MISMATCHED_LIFETIME_SYNTAXES) ([#1371](https://github.com/gtema/openstack/pull/1371))
+- Rename the v3federation to v4federation ([#1388](https://github.com/gtema/openstack/pull/1388))
+- *(deps)* Bump hyper from 1.6.0 to 1.7.0 ([#1377](https://github.com/gtema/openstack/pull/1377))
+- Address some 1.89 clippy warnings ([#1369](https://github.com/gtema/openstack/pull/1369))
+
 ## [0.13.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.12.4...openstack_cli-v0.13.0) - 2025-07-28
 
 ### Added
