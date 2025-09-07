@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.0...openstack_tui-v0.13.1) - 2025-09-07
+
+### Other
+
+- Address new linter warning (MISMATCHED_LIFETIME_SYNTAXES) ([#1371](https://github.com/gtema/openstack/pull/1371))
+- Address some 1.89 clippy warnings ([#1369](https://github.com/gtema/openstack/pull/1369))
+
 ## [0.13.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.12.4...openstack_tui-v0.13.0) - 2025-07-28
 
 ### Other
