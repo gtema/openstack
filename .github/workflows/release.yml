@@ -118,17 +118,20 @@ jobs:
       - name: enable windows longpaths
         run: |
           git config --global core.longpaths true
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
+        with:
+          toolchain: stable
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
           submodules: recursive
-      - name: Install Rust non-interactively if not already installed
-        if: ${{ matrix.container }}
-        run: |
-          if ! command -v cargo > /dev/null 2>&1; then
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-            echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          fi
+      # NOTE: we need to ensure we are building artifacts with the latest rust
+      # version
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
+        with:
+          toolchain: stable
       - name: "Harden Runner"
         uses: "step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f"
         with:
@@ -142,9 +145,10 @@ jobs:
           pattern: artifacts-*
           path: target/distrib/
           merge-multiple: true
+      # cargo-auditable is not available as binary for all platforms -> install
+          # using cargo instal.
       - name: Install cargo-auditable
-        if: ${{ matrix.runner }} != 'ubuntu-24.04-arm' && ${{ matrix.runner }} != 'ubuntu-22.04-arm'
-        run: ${{ matrix.install_cargo_auditable.run }}
+        run: cargo install cargo-auditable
       - name: Install dependencies
         run: |
           ${{ matrix.packages_install }}
