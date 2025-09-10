@@ -92,7 +92,7 @@ pub struct SnapshotResponse {
 
     /// The size of the volume, in gibibytes (GiB).
     #[structable(wide)]
-    pub size: i64,
+    pub size: i32,
 
     /// The status for the snapshot.
     #[structable(serialize)]

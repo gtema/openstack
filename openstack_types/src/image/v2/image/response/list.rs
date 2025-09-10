@@ -118,7 +118,7 @@ pub struct ImageResponse {
     /// Size of image file in bytes
     #[serde(default)]
     #[structable(optional, wide)]
-    pub size: Option<i64>,
+    pub size: Option<i32>,
 
     /// Status of the image
     #[serde(default)]
@@ -145,7 +145,7 @@ pub struct ImageResponse {
     /// Virtual size of image in bytes
     #[serde(default)]
     #[structable(optional, wide)]
-    pub virtual_size: Option<i64>,
+    pub virtual_size: Option<i32>,
 
     /// Scope of image accessibility
     #[serde(default)]

@@ -45,5 +45,5 @@ pub struct ManageableVolumes {
     #[serde(default)]
     pub safe_to_manage: Option<bool>,
     #[serde(default)]
-    pub size: Option<i64>,
+    pub size: Option<i32>,
 }

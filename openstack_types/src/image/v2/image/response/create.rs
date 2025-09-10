@@ -204,7 +204,7 @@ pub struct ImageResponse {
     /// null data type).
     #[serde(default)]
     #[structable(optional)]
-    pub size: Option<i64>,
+    pub size: Option<i32>,
 
     /// The image status.
     #[serde(default)]
@@ -247,7 +247,7 @@ pub struct ImageResponse {
     /// data type).
     #[serde(default)]
     #[structable(optional)]
-    pub virtual_size: Option<i64>,
+    pub virtual_size: Option<i32>,
 
     /// Image visibility, that is, the access permission for the image.
     #[serde(default)]

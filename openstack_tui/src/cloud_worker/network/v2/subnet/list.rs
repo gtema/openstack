@@ -48,7 +48,7 @@ pub struct NetworkSubnetList {
     #[builder(default)]
     pub ipv6_ra_mode: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

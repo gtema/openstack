@@ -83,11 +83,11 @@ pub struct Properties<'a> {
 
     #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) max_items: Option<i32>,
+    pub(crate) max_items: Option<u32>,
 
     #[serde(rename = "maxLength", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) max_length: Option<i32>,
+    pub(crate) max_length: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -95,11 +95,11 @@ pub struct Properties<'a> {
 
     #[serde(rename = "minItems", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) min_items: Option<i32>,
+    pub(crate) min_items: Option<u32>,
 
     #[serde(rename = "minLength", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) min_length: Option<i32>,
+    pub(crate) min_length: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

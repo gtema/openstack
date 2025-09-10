@@ -49,6 +49,6 @@ pub struct SourceReference {
 pub struct ManageableSnapshots {
     pub reference: Reference,
     pub safe_to_manage: Option<bool>,
-    pub size: i64,
+    pub size: i32,
     pub source_reference: SourceReference,
 }

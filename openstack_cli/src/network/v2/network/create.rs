@@ -98,7 +98,7 @@ struct Network {
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     #[arg(help_heading = "Body parameters", long)]
-    mtu: Option<i32>,
+    mtu: Option<u32>,
 
     /// Human-readable name of the network.
     #[arg(help_heading = "Body parameters", long)]

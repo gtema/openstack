@@ -85,7 +85,7 @@ pub struct Network<'a> {
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) mtu: Option<i32>,
+    pub(crate) mtu: Option<u32>,
 
     /// Human-readable name of the network.
     #[serde(skip_serializing_if = "Option::is_none")]

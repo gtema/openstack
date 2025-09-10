@@ -43,7 +43,7 @@ pub struct Request<'a> {
     idp_id: Option<Cow<'a, str>>,
 
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// ID of the last fetched entry
     #[builder(default, setter(into))]

@@ -36,7 +36,7 @@ pub struct IdentityProvider<'a> {
     /// default value configured in keystone will be used, if enabled.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) authorization_ttl: Option<Option<i32>>,
+    pub(crate) authorization_ttl: Option<Option<u32>>,
 
     /// The identity provider description
     #[serde(skip_serializing_if = "Option::is_none")]

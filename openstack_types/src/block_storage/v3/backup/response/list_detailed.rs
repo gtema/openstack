@@ -103,7 +103,7 @@ pub struct BackupResponse {
 
     /// The size of the volume, in gibibytes (GiB).
     #[structable(wide)]
-    pub size: i64,
+    pub size: i32,
 
     /// The UUID of the source volume snapshot.
     #[serde(default)]

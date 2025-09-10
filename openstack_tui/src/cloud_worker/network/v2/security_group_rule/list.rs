@@ -44,7 +44,7 @@ pub struct NetworkSecurityGroupRuleList {
     #[builder(default)]
     pub name: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

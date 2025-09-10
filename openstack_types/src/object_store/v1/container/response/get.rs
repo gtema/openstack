@@ -26,7 +26,7 @@ pub struct ContainerResponse {
     /// container.
     #[serde(default)]
     #[structable(optional)]
-    pub bytes: Option<i64>,
+    pub bytes: Option<u32>,
 
     /// The content type of the object.
     #[serde(default)]

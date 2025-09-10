@@ -94,7 +94,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the

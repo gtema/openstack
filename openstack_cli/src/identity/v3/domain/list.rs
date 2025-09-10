@@ -71,7 +71,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// ID of the last fetched entry
     #[arg(help_heading = "Query parameters", long)]

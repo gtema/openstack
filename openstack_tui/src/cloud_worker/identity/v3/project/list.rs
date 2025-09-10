@@ -40,7 +40,7 @@ pub struct IdentityProjectList {
     #[builder(default)]
     pub is_domain: Option<bool>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

@@ -49,11 +49,11 @@ pub struct PropertyResponse {
 
     #[serde(default, rename = "maxItems")]
     #[structable(optional, title = "maxItems")]
-    pub max_items: Option<i32>,
+    pub max_items: Option<u32>,
 
     #[serde(default, rename = "maxLength")]
     #[structable(optional, title = "maxLength")]
-    pub max_length: Option<i32>,
+    pub max_length: Option<u32>,
 
     #[serde(default)]
     #[structable(optional)]

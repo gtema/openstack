@@ -104,7 +104,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
@@ -114,7 +114,7 @@ struct QueryParameters {
 
     /// mtu query parameter for /v2.0/networks API
     #[arg(help_heading = "Query parameters", long)]
-    mtu: Option<i32>,
+    mtu: Option<u32>,
 
     /// name query parameter for /v2.0/networks API
     #[arg(help_heading = "Query parameters", long)]

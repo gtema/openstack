@@ -167,7 +167,7 @@ pub struct VolumeResponse {
 
     /// The size of the volume, in gibibytes (GiB).
     #[structable(wide)]
-    pub size: i64,
+    pub size: i32,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and

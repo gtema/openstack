@@ -58,7 +58,7 @@ pub struct ManageableSnapshots {
     #[serde(default)]
     pub safe_to_manage: Option<bool>,
     #[serde(default)]
-    pub size: Option<i64>,
+    pub size: Option<i32>,
     #[serde(default)]
     pub source_reference: Option<SourceReference>,
 }

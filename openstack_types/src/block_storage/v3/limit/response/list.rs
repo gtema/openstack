@@ -37,21 +37,21 @@ pub struct LimitResponse {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {
     #[serde(rename = "maxTotalBackupGigabytes")]
-    pub max_total_backup_gigabytes: i64,
+    pub max_total_backup_gigabytes: i32,
     #[serde(rename = "maxTotalBackups")]
     pub max_total_backups: i32,
     #[serde(rename = "maxTotalSnapshots")]
     pub max_total_snapshots: i32,
     #[serde(rename = "maxTotalVolumeGigabytes")]
-    pub max_total_volume_gigabytes: i64,
+    pub max_total_volume_gigabytes: i32,
     #[serde(rename = "maxTotalVolumes")]
     pub max_total_volumes: i32,
     #[serde(rename = "totalBackupGigabytesUsed")]
-    pub total_backup_gigabytes_used: i64,
+    pub total_backup_gigabytes_used: i32,
     #[serde(rename = "totalBackupsUsed")]
     pub total_backups_used: i32,
     #[serde(rename = "totalGigabytesUsed")]
-    pub total_gigabytes_used: i64,
+    pub total_gigabytes_used: i32,
     #[serde(rename = "totalSnapshotsUsed")]
     pub total_snapshots_used: i32,
     #[serde(rename = "totalVolumesUsed")]

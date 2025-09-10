@@ -26,12 +26,12 @@ pub struct AccountResponse {
     /// account.
     #[serde(default)]
     #[structable(optional)]
-    pub bytes: Option<i64>,
+    pub bytes: Option<u32>,
 
     /// The number of objects in the container.
     #[serde(default)]
     #[structable(optional)]
-    pub count: Option<i64>,
+    pub count: Option<u32>,
 
     /// Last modification date of the container
     #[serde(default)]

@@ -194,7 +194,7 @@ pub struct Subnet<'a> {
     /// used.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) prefixlen: Option<i32>,
+    pub(crate) prefixlen: Option<u32>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
