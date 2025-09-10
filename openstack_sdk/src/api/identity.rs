@@ -14,3 +14,5 @@
 
 //! Identity API (Keystone) bindings
 pub mod v3;
+#[cfg(feature = "keystone_ng")]
+pub mod v4;

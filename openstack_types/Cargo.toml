@@ -36,6 +36,7 @@ object_store = []
 placement = []
 # include openapi specs
 openapi = []
+keystone_ng = []
 
 [dependencies]
 chrono = { workspace= true }

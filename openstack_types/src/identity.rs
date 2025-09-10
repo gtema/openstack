@@ -15,6 +15,8 @@
 //! Identity API types
 
 pub mod v3;
+#[cfg(feature = "keystone_ng")]
+pub mod v4;
 
 /// Get OpenAPI spec for the identity service used during the
 /// codegeneration.
