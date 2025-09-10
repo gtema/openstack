@@ -40,11 +40,11 @@ pub struct NetworkNetworkList {
     #[builder(default)]
     pub is_default: Option<bool>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]
-    pub mtu: Option<i32>,
+    pub mtu: Option<u32>,
     #[builder(default)]
     pub name: Option<String>,
     #[builder(default)]

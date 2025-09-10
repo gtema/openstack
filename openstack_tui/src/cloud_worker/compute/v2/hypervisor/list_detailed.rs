@@ -34,7 +34,7 @@ pub struct ComputeHypervisorList {
     #[builder(default)]
     pub hypervisor_hostname_pattern: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

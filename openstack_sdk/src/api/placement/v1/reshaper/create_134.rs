@@ -151,7 +151,7 @@ pub struct InventoriesItem {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) reserved: Option<i32>,
+    pub(crate) reserved: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

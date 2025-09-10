@@ -65,19 +65,19 @@ pub struct PropertyCommand {
     maximum: Option<f32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    max_items: Option<i32>,
+    max_items: Option<u32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    max_length: Option<i32>,
+    max_length: Option<u32>,
 
     #[arg(help_heading = "Body parameters", long)]
     minimum: Option<f32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    min_items: Option<i32>,
+    min_items: Option<u32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    min_length: Option<i32>,
+    min_length: Option<u32>,
 
     #[arg(help_heading = "Body parameters", long)]
     name: String,

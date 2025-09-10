@@ -56,7 +56,7 @@ pub struct Request<'a> {
 
     /// The amount of the resource a provider has reserved for its own use.
     #[builder(default, setter(into))]
-    pub(crate) reserved: Option<i32>,
+    pub(crate) reserved: Option<u32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.

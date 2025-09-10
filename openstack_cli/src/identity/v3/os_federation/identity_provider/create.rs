@@ -71,7 +71,7 @@ struct IdentityProvider {
     /// through mapping and persisted in the database. If left unset, the
     /// default value configured in keystone will be used, if enabled.
     #[arg(help_heading = "Body parameters", long)]
-    authorization_ttl: Option<Option<i32>>,
+    authorization_ttl: Option<Option<u32>>,
 
     /// The identity provider description
     #[arg(help_heading = "Body parameters", long)]

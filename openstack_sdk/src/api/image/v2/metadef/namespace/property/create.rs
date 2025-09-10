@@ -75,19 +75,19 @@ pub struct Request<'a> {
     pub(crate) maximum: Option<f32>,
 
     #[builder(default, setter(into))]
-    pub(crate) max_items: Option<i32>,
+    pub(crate) max_items: Option<u32>,
 
     #[builder(default, setter(into))]
-    pub(crate) max_length: Option<i32>,
+    pub(crate) max_length: Option<u32>,
 
     #[builder(default, setter(into))]
     pub(crate) minimum: Option<f32>,
 
     #[builder(default, setter(into))]
-    pub(crate) min_items: Option<i32>,
+    pub(crate) min_items: Option<u32>,
 
     #[builder(default, setter(into))]
-    pub(crate) min_length: Option<i32>,
+    pub(crate) min_length: Option<u32>,
 
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,

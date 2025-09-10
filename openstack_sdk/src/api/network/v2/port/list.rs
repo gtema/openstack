@@ -93,7 +93,7 @@ pub struct Request<'a> {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// mac_address query parameter for /v2.0/ports API
     #[builder(default, setter(into))]

@@ -73,7 +73,7 @@ pub struct InventoryCommand {
 
     /// The amount of the resource a provider has reserved for its own use.
     #[arg(help_heading = "Body parameters", long)]
-    reserved: Option<i32>,
+    reserved: Option<u32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.

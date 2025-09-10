@@ -155,15 +155,15 @@ pub struct Properties {
     #[serde(default)]
     pub maximum: Option<f32>,
     #[serde(default, rename = "maxItems")]
-    pub max_items: Option<i32>,
+    pub max_items: Option<u32>,
     #[serde(default, rename = "maxLength")]
-    pub max_length: Option<i32>,
+    pub max_length: Option<u32>,
     #[serde(default)]
     pub minimum: Option<f32>,
     #[serde(default, rename = "minItems")]
-    pub min_items: Option<i32>,
+    pub min_items: Option<u32>,
     #[serde(default, rename = "minLength")]
-    pub min_length: Option<i32>,
+    pub min_length: Option<u32>,
     #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]

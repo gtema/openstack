@@ -33,10 +33,10 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     #[builder(default)]
-    offset: Option<i32>,
+    offset: Option<u32>,
 
     /// server_id parameter for
     /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API

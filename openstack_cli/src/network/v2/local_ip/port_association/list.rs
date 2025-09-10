@@ -94,7 +94,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// local_ip_address query parameter for
     /// /v2.0/local_ips/{local_ip_id}/port_associations API

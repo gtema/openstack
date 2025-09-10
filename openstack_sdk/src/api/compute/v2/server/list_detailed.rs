@@ -120,7 +120,7 @@ pub struct Request<'a> {
     launched_at: Option<Cow<'a, str>>,
 
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     #[builder(default, setter(into))]
     locked: Option<Cow<'a, str>>,

@@ -34,7 +34,7 @@ pub struct ComputeFlavorList {
     #[builder(default)]
     pub is_public: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

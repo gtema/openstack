@@ -44,7 +44,7 @@ pub struct Subnetpool<'a> {
     /// `min_prefixlen`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) default_prefixlen: Option<i32>,
+    pub(crate) default_prefixlen: Option<u32>,
 
     /// A per-project quota on the prefix space that can be allocated from the
     /// subnet pool for project subnets. Default is no quota is enforced on
@@ -54,7 +54,7 @@ pub struct Subnetpool<'a> {
     /// subnet pool have the same prefix quota applied.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) default_quota: Option<i32>,
+    pub(crate) default_quota: Option<u32>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
@@ -72,13 +72,13 @@ pub struct Subnetpool<'a> {
     /// `128`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) max_prefixlen: Option<i32>,
+    pub(crate) max_prefixlen: Option<u32>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) min_prefixlen: Option<i32>,
+    pub(crate) min_prefixlen: Option<u32>,
 
     /// Human-readable name of the resource.
     #[serde(skip_serializing_if = "Option::is_none")]

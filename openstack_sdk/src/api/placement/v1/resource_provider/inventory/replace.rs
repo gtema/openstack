@@ -63,7 +63,7 @@ pub struct InventoriesItem {
     /// The amount of the resource a provider has reserved for its own use.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) reserved: Option<i32>,
+    pub(crate) reserved: Option<u32>,
 
     /// A representation of the divisible amount of the resource that may be
     /// requested. For example, step_size = 5 means that only values divisible
