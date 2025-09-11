@@ -58,7 +58,7 @@ pub struct Request<'a> {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the

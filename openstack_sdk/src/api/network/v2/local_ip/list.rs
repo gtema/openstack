@@ -43,7 +43,7 @@ pub struct Request<'a> {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// local_ip_address query parameter for /v2.0/local-ips API
     #[builder(default, setter(into))]

@@ -12948,8 +12948,10 @@ components:
               type: string
             uptime:
               description: |-
-                The total uptime of the hypervisor and information about average load. Only
-                reported for active hosts where the virt driver supports this feature.
+                The response format of this api depends on the virt driver in use on a
+                given host. The libvirt driver returns the output of the uptime command
+                directly, the z/VM driver returns the ILP time. All other drivers
+                always return null. Note this value is cached and updated periodically.
 
                 **New in version 2.88**
               type: string
@@ -13199,8 +13201,10 @@ components:
                 type: string
               uptime:
                 description: |-
-                  The total uptime of the hypervisor and information about average load. Only
-                  reported for active hosts where the virt driver supports this feature.
+                  The response format of this api depends on the virt driver in use on a
+                  given host. The libvirt driver returns the output of the uptime command
+                  directly, the z/VM driver returns the ILP time. All other drivers
+                  always return null. Note this value is cached and updated periodically.
 
                   **New in version 2.88**
                 type: string
@@ -21092,7 +21096,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -21161,7 +21165,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -21509,7 +21513,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -21578,7 +21582,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -21924,7 +21928,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -21993,7 +21997,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -22347,7 +22351,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -22416,7 +22420,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -22780,7 +22784,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -22849,7 +22853,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -23208,7 +23212,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -23277,7 +23281,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -23638,7 +23642,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -23707,7 +23711,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -24078,7 +24082,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -24147,7 +24151,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -24526,7 +24530,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -24595,7 +24599,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -24963,7 +24967,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -25032,7 +25036,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -25410,7 +25414,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -25479,7 +25483,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -25863,7 +25867,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -25932,7 +25936,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -26326,7 +26330,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -26395,7 +26399,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -26794,7 +26798,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -26863,7 +26867,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -33312,7 +33316,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -33406,7 +33410,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -34013,7 +34017,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -34107,7 +34111,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -34700,7 +34704,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -34794,7 +34798,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -35401,7 +35405,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -35495,7 +35499,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -36112,7 +36116,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -36206,7 +36210,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -36818,7 +36822,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -36912,7 +36916,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -37521,7 +37525,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -37615,7 +37619,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -38234,7 +38238,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -38328,7 +38332,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -38967,7 +38971,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -39061,7 +39065,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -39683,7 +39687,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -39777,7 +39781,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -40417,7 +40421,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -40511,7 +40515,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -41157,7 +41161,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -41251,7 +41255,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -41919,7 +41923,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -42013,7 +42017,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255
@@ -42699,7 +42703,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   no_device: {}
                   snapshot_id:
@@ -42793,7 +42797,7 @@ components:
                   device_name:
                     maxLength: 255
                     minLength: 1
-                    pattern: ^[a-zA-Z0-9._-r/]*$
+                    pattern: ^[a-zA-Z0-9._/-]*$
                     type: string
                   device_type:
                     maxLength: 255

@@ -86,7 +86,7 @@ pub struct ComputeServerList {
     #[builder(default)]
     pub launched_at: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub locked: Option<String>,
     #[builder(default)]

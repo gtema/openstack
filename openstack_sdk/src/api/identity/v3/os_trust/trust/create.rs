@@ -106,7 +106,7 @@ pub struct Trust<'a> {
     /// redelegatable, regardless of the value of allow_redelegation.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) redelegation_count: Option<Option<i32>>,
+    pub(crate) redelegation_count: Option<Option<u32>>,
 
     /// Specifies how many times the trust can be used to obtain a token. This
     /// value is decreased each time a token is issued through the trust. Once

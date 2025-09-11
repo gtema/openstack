@@ -127,7 +127,7 @@ struct Trust {
     /// resulting value is 0, this means that the new trust will not be
     /// redelegatable, regardless of the value of allow_redelegation.
     #[arg(help_heading = "Body parameters", long)]
-    redelegation_count: Option<Option<i32>>,
+    redelegation_count: Option<Option<u32>>,
 
     /// Specifies how many times the trust can be used to obtain a token. This
     /// value is decreased each time a token is issued through the trust. Once

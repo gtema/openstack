@@ -56,11 +56,11 @@ pub struct Request<'a> {
 
     /// default_prefixlen query parameter for /v2.0/subnetpools API
     #[builder(default)]
-    default_prefixlen: Option<i32>,
+    default_prefixlen: Option<u32>,
 
     /// default_quota query parameter for /v2.0/subnetpools API
     #[builder(default)]
-    default_quota: Option<i32>,
+    default_quota: Option<u32>,
 
     /// description query parameter for /v2.0/subnetpools API
     #[builder(default, setter(into))]
@@ -83,7 +83,7 @@ pub struct Request<'a> {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
@@ -93,11 +93,11 @@ pub struct Request<'a> {
 
     /// max_prefixlen query parameter for /v2.0/subnetpools API
     #[builder(default)]
-    max_prefixlen: Option<i32>,
+    max_prefixlen: Option<u32>,
 
     /// min_prefixlen query parameter for /v2.0/subnetpools API
     #[builder(default)]
-    min_prefixlen: Option<i32>,
+    min_prefixlen: Option<u32>,
 
     /// name query parameter for /v2.0/subnetpools API
     #[builder(default, setter(into))]

@@ -38,7 +38,7 @@ pub struct Request<'a> {
     enabled: Option<bool>,
 
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// ID of the last fetched entry
     #[builder(default, setter(into))]

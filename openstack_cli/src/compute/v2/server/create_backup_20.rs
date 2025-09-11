@@ -84,7 +84,7 @@ struct CreateBackup {
     /// The rotation of the back up image, the oldest image will be removed
     /// when image count exceed the rotation count.
     #[arg(help_heading = "Body parameters", long)]
-    rotation: i32,
+    rotation: u32,
 }
 
 impl ServerCommand {

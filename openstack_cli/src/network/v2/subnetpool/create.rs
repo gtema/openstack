@@ -75,7 +75,7 @@ struct Subnetpool {
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
     #[arg(help_heading = "Body parameters", long)]
-    default_prefixlen: Option<i32>,
+    default_prefixlen: Option<u32>,
 
     /// A per-project quota on the prefix space that can be allocated from the
     /// subnet pool for project subnets. Default is no quota is enforced on
@@ -84,7 +84,7 @@ struct Subnetpool {
     /// `default_quota` is measured units of /64. All projects that use the
     /// subnet pool have the same prefix quota applied.
     #[arg(help_heading = "Body parameters", long)]
-    default_quota: Option<i32>,
+    default_quota: Option<u32>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
@@ -99,12 +99,12 @@ struct Subnetpool {
     /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
     /// `128`.
     #[arg(help_heading = "Body parameters", long)]
-    max_prefixlen: Option<i32>,
+    max_prefixlen: Option<u32>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
     #[arg(help_heading = "Body parameters", long)]
-    min_prefixlen: Option<i32>,
+    min_prefixlen: Option<u32>,
 
     /// Human-readable name of the resource.
     #[arg(help_heading = "Body parameters", long)]

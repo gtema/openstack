@@ -80,11 +80,11 @@ struct QueryParameters {
 
     /// default_prefixlen query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]
-    default_prefixlen: Option<i32>,
+    default_prefixlen: Option<u32>,
 
     /// default_quota query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]
-    default_quota: Option<i32>,
+    default_quota: Option<u32>,
 
     /// description query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]
@@ -111,7 +111,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
@@ -121,11 +121,11 @@ struct QueryParameters {
 
     /// max_prefixlen query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]
-    max_prefixlen: Option<i32>,
+    max_prefixlen: Option<u32>,
 
     /// min_prefixlen query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]
-    min_prefixlen: Option<i32>,
+    min_prefixlen: Option<u32>,
 
     /// name query parameter for /v2.0/subnetpools API
     #[arg(help_heading = "Query parameters", long)]

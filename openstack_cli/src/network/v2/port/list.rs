@@ -121,7 +121,7 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// mac_address query parameter for /v2.0/ports API
     #[arg(help_heading = "Query parameters", long)]

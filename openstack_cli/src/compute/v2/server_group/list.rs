@@ -72,10 +72,10 @@ struct QueryParameters {
         long("page-size"),
         visible_alias("limit")
     )]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     #[arg(help_heading = "Query parameters", long)]
-    offset: Option<i32>,
+    offset: Option<u32>,
 }
 
 /// Path parameters

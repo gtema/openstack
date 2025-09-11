@@ -40,7 +40,7 @@ pub struct Request<'a> {
     id: Cow<'a, str>,
 
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,

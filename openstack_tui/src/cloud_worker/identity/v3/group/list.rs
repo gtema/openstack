@@ -36,7 +36,7 @@ pub struct IdentityGroupList {
     #[builder(default)]
     pub domain_name: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     #[builder(default)]

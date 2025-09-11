@@ -49,7 +49,7 @@ pub struct CreateBackup<'a> {
     /// when image count exceed the rotation count.
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) rotation: i32,
+    pub(crate) rotation: u32,
 }
 
 impl<'a> CreateBackupBuilder<'a> {
@@ -177,7 +177,7 @@ mod tests {
                     CreateBackupBuilder::default()
                         .backup_type("foo")
                         .name("foo")
-                        .rotation(123)
+                        .rotation(7_u32)
                         .build()
                         .unwrap()
                 )
@@ -196,7 +196,7 @@ mod tests {
                     CreateBackupBuilder::default()
                         .backup_type("foo")
                         .name("foo")
-                        .rotation(123)
+                        .rotation(7_u32)
                         .build()
                         .unwrap()
                 )
@@ -228,7 +228,7 @@ mod tests {
                 CreateBackupBuilder::default()
                     .backup_type("foo")
                     .name("foo")
-                    .rotation(123)
+                    .rotation(7_u32)
                     .build()
                     .unwrap(),
             )
@@ -259,7 +259,7 @@ mod tests {
                 CreateBackupBuilder::default()
                     .backup_type("foo")
                     .name("foo")
-                    .rotation(123)
+                    .rotation(7_u32)
                     .build()
                     .unwrap(),
             )

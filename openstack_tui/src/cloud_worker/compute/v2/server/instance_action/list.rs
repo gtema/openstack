@@ -36,7 +36,7 @@ pub struct ComputeServerInstanceActionList {
     #[builder(default)]
     pub changes_since: Option<String>,
     #[builder(default)]
-    pub limit: Option<i32>,
+    pub limit: Option<u32>,
     #[builder(default)]
     pub marker: Option<String>,
     pub server_id: String,

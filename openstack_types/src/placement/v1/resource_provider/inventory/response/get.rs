@@ -50,7 +50,7 @@ pub struct InventoryResponse {
     /// The amount of the resource a provider has reserved for its own use.
     #[serde(default)]
     #[structable(optional)]
-    pub reserved: Option<i32>,
+    pub reserved: Option<u32>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.

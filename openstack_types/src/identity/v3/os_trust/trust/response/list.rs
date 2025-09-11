@@ -89,7 +89,7 @@ pub struct TrustResponse {
     /// redelegatable, regardless of the value of allow_redelegation.
     #[serde(default)]
     #[structable(optional, wide)]
-    pub redelegation_count: Option<i32>,
+    pub redelegation_count: Option<u32>,
 
     /// Specifies how many times the trust can be used to obtain a token. This
     /// value is decreased each time a token is issued through the trust. Once

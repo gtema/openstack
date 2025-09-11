@@ -39,10 +39,10 @@ pub struct Request<'a> {
     all_projects: Option<Cow<'a, str>>,
 
     #[builder(default)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     #[builder(default)]
-    offset: Option<i32>,
+    offset: Option<u32>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

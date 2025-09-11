@@ -196,7 +196,7 @@ struct Subnet {
     /// not specified, the `default_prefixlen` value of the subnet pool will be
     /// used.
     #[arg(help_heading = "Body parameters", long)]
-    prefixlen: Option<i32>,
+    prefixlen: Option<u32>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
