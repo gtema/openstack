@@ -7317,6 +7317,9 @@ components:
                   ip_address:
                     format: ipaddress
                     type: string
+                  port_id:
+                    format: uuid
+                    type: string
                   subnet_id:
                     format: uuid
                     type: string
@@ -7483,6 +7486,9 @@ components:
                   ip_address:
                     format: ipaddress
                     type: string
+                  port_id:
+                    format: uuid
+                    type: string
                   subnet_id:
                     format: uuid
                     type: string
@@ -7646,6 +7652,9 @@ components:
                 properties:
                   ip_address:
                     format: ipaddress
+                    type: string
+                  port_id:
+                    format: uuid
                     type: string
                   subnet_id:
                     format: uuid
@@ -8204,6 +8213,9 @@ components:
                   properties:
                     ip_address:
                       format: ipaddress
+                      type: string
+                    port_id:
+                      format: uuid
                       type: string
                     subnet_id:
                       format: uuid
@@ -10881,6 +10893,9 @@ components:
                 properties:
                   ip_address:
                     format: ipaddress
+                    type: string
+                  port_id:
+                    format: uuid
                     type: string
                   subnet_id:
                     format: uuid

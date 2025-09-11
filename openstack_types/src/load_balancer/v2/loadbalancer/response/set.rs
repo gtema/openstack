@@ -164,6 +164,8 @@ pub struct LoadbalancerResponse {
 pub struct AdditionalVips {
     #[serde(default)]
     pub ip_address: Option<String>,
+    #[serde(default)]
+    pub port_id: Option<String>,
     pub subnet_id: String,
 }
 
