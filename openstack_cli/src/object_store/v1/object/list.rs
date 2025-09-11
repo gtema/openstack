@@ -60,7 +60,7 @@ pub struct ObjectsCommand {
 
     /// For an integer value n, limits the number of results to n.
     #[arg(long)]
-    limit: Option<i32>,
+    limit: Option<u32>,
 
     /// For a string value, x, constrains the list to items whose names are
     /// greater than x.
