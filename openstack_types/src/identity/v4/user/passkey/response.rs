@@ -16,4 +16,5 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of identity
+pub mod register_finish;
 pub mod register_start;

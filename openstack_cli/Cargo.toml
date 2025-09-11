@@ -33,7 +33,7 @@ default = [
   "load_balancer",
   "network",
   "object_store",
-  "placement"
+  "placement",
 ]
 block_storage = ["openstack_sdk/block_storage"]
 compute = ["openstack_sdk/compute"]
@@ -46,6 +46,8 @@ network = ["openstack_sdk/network"]
 object_store = ["openstack_sdk/object_store"]
 placement = ["openstack_sdk/placement"]
 keystone_ng = ["openstack_sdk/keystone_ng", "openstack_types/keystone_ng"]
+passkey = ["dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto"]
+
 _test_admin = []
 _test_net_auto-allocated-topology = []
 _test_net_dhcp_agent_scheduler = []
@@ -55,15 +57,19 @@ _test_net_logging = []
 _test_net_network-ip-availability = []
 _test_net_network-segment-range = []
 _test_net_vpn = []
+webauthn-rs-proto = ["dep:webauthn-rs-proto"]
 
 [dependencies]
-bytes = {workspace = true}
+base64 = "0.22"
+bytes = { workspace = true }
+config.workspace = true
 chrono = { workspace= true }
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
 color-eyre = { workspace = true }
 comfy-table = { version = "^7.2" }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
+dirs = { workspace = true }
 eyre = { workspace = true }
 http = { workspace = true }
 json-patch = { workspace = true }
@@ -71,6 +77,7 @@ openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features =
 openstack_types = { path="../openstack_types", version = "^0.22" }
 owo-colors = { version = "^4.2", features = ["supports-colors"] }
 indicatif = "^0.18"
+rand = { version = "^0.9" }
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
@@ -83,10 +90,10 @@ thiserror = { workspace = true }
 tracing = { workspace = true}
 tracing-subscriber = { workspace = true }
 url = { workspace = true }
-config.workspace = true
-dirs.workspace = true
-itertools.workspace = true
-rand = { version = "^0.9" }
+itertools = { workspace = true }
+webauthn-authenticator-rs = { optional = true, version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
+webauthn-rs-proto = { version = "0.5", optional = true }
+
 
 [dev-dependencies]
 assert_cmd = "^2.0"
