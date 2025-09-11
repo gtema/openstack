@@ -2570,6 +2570,7 @@ name = "openstack_sdk"
 version = "0.22.1"
 dependencies = [
  "async-trait",
+ "base64 0.22.1",
  "bincode",
  "bytes",
  "chrono",
@@ -2603,6 +2604,8 @@ dependencies = [
  "tracing",
  "tracing-test",
  "url",
+ "webauthn-authenticator-rs",
+ "webauthn-rs-proto",
 ]
 
 [[package]]

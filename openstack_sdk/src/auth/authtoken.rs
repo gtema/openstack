@@ -28,6 +28,8 @@ use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "keystone_ng")]
 use crate::auth::v4federation;
+#[cfg(feature = "passkey")]
+use crate::auth::v4passkey;
 use crate::auth::{
     auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3oidcaccesstoken,
     v3password, v3token, v3totp, v3websso, AuthState,
@@ -166,6 +168,15 @@ pub enum AuthTokenError {
         #[from]
         source: v4federation::FederationError,
     },
+
+    /// Passkey error
+    #[cfg(feature = "passkey")]
+    #[error("Passkey based authentication error: {}", source)]
+    Passkey {
+        /// The error source
+        #[from]
+        source: v4passkey::PasskeyError,
+    },
 }
 
 type AuthResult<T> = Result<T, AuthTokenError>;
@@ -261,9 +272,12 @@ pub enum AuthType {
     V3Multifactor,
     /// WebSSO
     V3WebSso,
-    /// Federation
     #[cfg(feature = "keystone_ng")]
+    /// Federation.
     V4Federation,
+    #[cfg(feature = "passkey")]
+    /// Passkey.
+    V4Passkey,
 }
 
 impl FromStr for AuthType {
@@ -282,6 +296,8 @@ impl FromStr for AuthType {
             "v3websso" => Ok(Self::V3WebSso),
             #[cfg(feature = "keystone_ng")]
             "v4federation" | "federation" => Ok(Self::V4Federation),
+            #[cfg(feature = "passkey")]
+            "v4passkey" | "passkey" => Ok(Self::V4Passkey),
             other => Err(Self::Err::IdentityMethod {
                 auth_type: other.into(),
             }),
@@ -311,6 +327,8 @@ impl AuthType {
             Self::V3WebSso => "v3websso",
             #[cfg(feature = "keystone_ng")]
             Self::V4Federation => "v4federation",
+            #[cfg(feature = "passkey")]
+            Self::V4Passkey => "v4passkey",
         }
     }
 }

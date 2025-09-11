@@ -494,6 +494,52 @@ impl AsyncOpenStack {
                             return Err(OpenStackError::NoAuth);
                         }
                     }
+
+                    #[cfg(feature = "passkey")]
+                    AuthType::V4Passkey => {
+                        let auth_ep =
+                            auth::v4passkey::get_init_auth_ep(&self.config, auth_helper).await?;
+                        let req: auth::v4passkey::PasskeyAuthenticationStartResponse =
+                            auth_ep.query_async(self).await?;
+                        use webauthn_authenticator_rs::prelude::Url;
+                        use webauthn_authenticator_rs::WebauthnAuthenticator;
+                        let mut auth = WebauthnAuthenticator::new(
+                            webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
+                        );
+                        let passkey_auth = auth
+                            .do_authentication(
+                                Url::parse("http://localhost:8080").unwrap(),
+                                req.try_into()?,
+                            )
+                            .map_err(auth::v4passkey::PasskeyError::from)?;
+                        let finish_ep = auth::v4passkey::get_finish_auth_ep(
+                            &self.config,
+                            passkey_auth,
+                            auth_helper,
+                        )
+                        .await?;
+                        rsp = finish_ep.raw_query_async(self).await?;
+
+                        let token = rsp
+                            .headers()
+                            .get("x-subject-token")
+                            .ok_or(AuthError::AuthTokenNotInResponse)?
+                            .to_str()
+                            .expect("x-subject-token is a string");
+
+                        // Set retrieved token as current auth
+                        let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
+                        let token_auth = authtoken::AuthToken {
+                            token: token.to_string(),
+                            auth_info: Some(token_info),
+                        };
+                        self.set_auth(Auth::AuthToken(Box::new(token_auth.clone())), false);
+
+                        // And now time to rescope the token
+                        let auth_ep =
+                            authtoken::build_reauth_request(&token_auth, &requested_scope)?;
+                        rsp = auth_ep.raw_query_async(self).await?;
+                    }
                 }
             };
 

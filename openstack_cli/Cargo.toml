@@ -46,7 +46,7 @@ network = ["openstack_sdk/network"]
 object_store = ["openstack_sdk/object_store"]
 placement = ["openstack_sdk/placement"]
 keystone_ng = ["openstack_sdk/keystone_ng", "openstack_types/keystone_ng"]
-passkey = ["dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto"]
+passkey = ["keystone_ng", "openstack_sdk/passkey", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto"]
 
 _test_admin = []
 _test_net_auto-allocated-topology = []
@@ -57,10 +57,9 @@ _test_net_logging = []
 _test_net_network-ip-availability = []
 _test_net_network-segment-range = []
 _test_net_vpn = []
-webauthn-rs-proto = ["dep:webauthn-rs-proto"]
 
 [dependencies]
-base64 = "0.22"
+base64 = { workspace = true }
 bytes = { workspace = true }
 config.workspace = true
 chrono = { workspace= true }
@@ -72,6 +71,7 @@ dialoguer = { workspace = true, features=["fuzzy-select"] }
 dirs = { workspace = true }
 eyre = { workspace = true }
 http = { workspace = true }
+itertools = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
 openstack_types = { path="../openstack_types", version = "^0.22" }
@@ -90,10 +90,8 @@ thiserror = { workspace = true }
 tracing = { workspace = true}
 tracing-subscriber = { workspace = true }
 url = { workspace = true }
-itertools = { workspace = true }
-webauthn-authenticator-rs = { optional = true, version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
-webauthn-rs-proto = { version = "0.5", optional = true }
-
+webauthn-authenticator-rs = { workspace = true, optional = true }
+webauthn-rs-proto = { workspace = true, optional = true }
 
 [dev-dependencies]
 assert_cmd = "^2.0"
