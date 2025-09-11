@@ -89,6 +89,10 @@ pub struct AdditionalVips<'a> {
     #[builder(default, setter(into))]
     pub(crate) ip_address: Option<Cow<'a, str>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) port_id: Option<Cow<'a, str>>,
+
     #[serde()]
     #[builder(setter(into))]
     pub(crate) subnet_id: Cow<'a, str>,
