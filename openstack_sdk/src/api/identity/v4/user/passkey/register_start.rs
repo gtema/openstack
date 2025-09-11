@@ -24,14 +24,26 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
+
+/// Passkey information.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Passkey<'a> {
+    /// Passkey description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The description for the passkey (name).
+    /// Passkey information.
     #[builder(setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) passkey: Passkey<'a>,
 
     /// The ID of the user.
     #[builder(default, setter(into))]
@@ -95,7 +107,7 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("description", serde_json::to_value(&self.description)?);
+        params.push("passkey", serde_json::to_value(&self.passkey)?);
 
         params.into_body()
     }
@@ -134,7 +146,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .description("foo")
+                .passkey(PasskeyBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -146,7 +158,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .description("foo")
+                .passkey(PasskeyBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -173,7 +185,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .user_id("user_id")
-            .description("foo")
+            .passkey(PasskeyBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -200,7 +212,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .user_id("user_id")
-            .description("foo")
+            .passkey(PasskeyBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
