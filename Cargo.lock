@@ -2603,6 +2603,8 @@ dependencies = [
  "tracing",
  "tracing-test",
  "url",
+ "webauthn-authenticator-rs",
+ "webauthn-rs-proto",
 ]
 
 [[package]]

@@ -494,6 +494,27 @@ impl AsyncOpenStack {
                             return Err(OpenStackError::NoAuth);
                         }
                     }
+
+                    #[cfg(feature = "keystone_ng")]
+                    AuthType::V4Passkey => {
+                        let auth_ep =
+                            auth::v4passkey::get_init_auth_ep(&self.config, auth_helper).await?;
+                        let req: auth::v4passkey::PasskeyAuthenticationStartResponse =
+                            auth_ep.query_async(self).await?;
+                        println!("Response is {:?}", req);
+                        use webauthn_authenticator_rs::prelude::Url;
+                        use webauthn_authenticator_rs::WebauthnAuthenticator;
+                        let mut auth = WebauthnAuthenticator::new(
+                            webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
+                        );
+                        let r = auth
+                            .do_authentication(Url::parse("http://localhost:8080").unwrap(), req)
+                            .map_err(|e| {
+                                error!("Error -> {:x?}", e);
+                                e
+                            });
+                        rsp = auth_ep.raw_query_async(self).await?;
+                    }
                 }
             };
 
