@@ -31,7 +31,7 @@ pub struct AccountResponse {
     /// The number of objects in the container.
     #[serde(default)]
     #[structable(optional)]
-    pub count: Option<u32>,
+    pub count: Option<u64>,
 
     /// Last modification date of the container
     #[serde(default)]

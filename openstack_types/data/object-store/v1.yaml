@@ -695,40 +695,48 @@ components:
         The total number of bytes that are stored in Object Storage for the account.
       schema:
         type: integer
-        format: int64
+        format: uint64
+        minimum: 0
     X-Account-Container-Count:
       description: The number of containers.
       schema:
         type: integer
-        format: int64
+        format: uint64
+        minimum: 0
     X-Account-Object-Count:
       description: The number of objects in the account.
       schema:
         type: integer
-        format: int64
+        format: uint64
+        minimum: 0
     X-Account-Storage-Policy-Bytes-Used:
       description: |
         The total number of bytes that are stored in in a given storage policy, where name is the name of the storage policy.
       schema:
         type: integer
+        format: uint64
+        minimum: 0
     X-Account-Storage-Policy-Container-Count:
       description: |
         The number of containers in the account that use the given storage policy where name is the name of the storage policy.
       schema:
         type: integer
-        format: int64
+        format: uint64
+        minimum: 0
     X-Account-Storage-Policy-Object-Count:
       description: |
         The number of objects in given storage policy where name is the name of the storage policy.
       schema:
         type: integer
         format: int64
+        minimum: 0
     X-Account-Meta-Quota-Bytes:
       description: |
         If present, this is the limit on the total size in bytes of objects stored in the account. Typically this value is set by an administrator.
       schema:
-        type: string
+        type: integer
         format: int64
+        minimum: 0
     X-Account-Access-Control:
       description: |
         Note: X-Account-Access-Control is not supported by Keystone auth.
@@ -749,11 +757,13 @@ components:
       schema:
         type: integer
         format: int64
+        minimum: 0
     X-Container-Object-Count:
       description: The number of objects.
       schema:
         type: integer
         format: int64
+        minimum: 0
     acceptRanges:
       description: The type of ranges that the object accepts.
       schema:
@@ -772,12 +782,16 @@ components:
       description: |
         The maximum object count of the container. If not set, this header is not returned by this operation.
       schema:
-        type: string
+        type: integer
+        format: uint64
+        minimum: 0
     X-Container-Meta-Quota-Bytes:
       description: |
         The maximum size of the container, in bytes. If not set, this header is not returned by this operation.
       schema:
-        type: string
+        type: integer
+        format: uint64
+        minimum: 0
     X-Storage-Policy:
       description: |
         In requests, specifies the name of the storage policy to use for the container. In responses, is the storage policy name. The storage policy of the container cannot be changed.
@@ -1054,7 +1068,8 @@ components:
       description: |
         Maximum time for the origin to hold the preflight results. A browser may make an OPTIONS call to verify the origin is allowed to make the request. Set the value to an integer number of seconds after the time that the request was received.
       schema:
-        type: string
+        type: integer
+        format: uint64
     X-Container-Meta-Access-Control-Expose-Headers:
       in: header
       name: X-Container-Meta-Access-Control-Expose-Headers
@@ -1076,14 +1091,18 @@ components:
       description: |
         Sets maximum size of the container, in bytes. Typically these values are set by an administrator. Returns a 413 response (request entity too large) when an object PUT operation exceeds this quota value. This value does not take effect immediately. see Container Quotas for more information.
       schema:
-        type: string
+        type: integer
+        format: uint64
+        minimum: 0
     X-Container-Meta-Quota-Count:
       in: header
       name: X-Container-Meta-Quota-Count
       description: |
         Sets maximum object count of the container. Typically these values are set by an administrator. Returns a 413 response (request entity too large) when an object PUT operation exceeds this quota value. This value does not take effect immediately. see Container Quotas for more information.
       schema:
-        type: string
+        type: integer
+        format: uint64
+        minimum: 0
     X-Container-Meta-Temp-Url-Key:
       in: header
       name: X-Container-Meta-Temp-URL-Key
@@ -1123,6 +1142,8 @@ components:
       description: For an integer value n, limits the number of results to n.
       schema:
         type: integer
+        format: uint32
+        minimum: 0
     marker:
       in: query
       name: marker
@@ -1354,13 +1375,13 @@ components:
         count:
           description: The number of objects in the container.
           type: integer
-          format: int64
+          format: uint64
           minimum: 0
         bytes:
           description: |
             The total number of bytes that are stored in Object Storage for the account.
           type: integer
-          format: int64
+          format: uint64
           minimum: 0
         name:
           description: The name of the container.
@@ -1386,7 +1407,7 @@ components:
           description: |
             The total number of bytes that are stored in Object Storage for the container.
           type: integer
-          format: int64
+          format: uint64
           minimum: 0
         hash:
           description: The MD5 checksum value of the object content.
