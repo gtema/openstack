@@ -39,6 +39,22 @@ Rust based tools support typical
 [`clouds.yaml`/`secure.yaml`](https://docs.openstack.org/openstacksdk/latest/user/config/configuration.html)
 files for configuration.
 
+Using traditional configuration files may become challenging when many
+connections need to be configured. For example there might be few lists of
+connections from different providers, some of them may be distributed through
+source control. It is possible to simplify such situation and let them be merged
+together into the single "virtual" configuration instead of explicitly
+specifying them as runtime parameters. The `OS_CLIENT_CONFIG_PATH` environment
+variable can point at a single file or list of files and directories.
+
+```console
+export OS_CLIENT_CONFIG_PATH=./clouds.yaml:~/.config/clouds1.yaml:~/.config/clouds2.yaml:~/.config/secure.yaml:~/.config/openstack/"
+```
+Being set like that every tool of the project will merge all individual elements
+together. When an entry is a directory traditionally `clouds.yaml`/`secure.yaml`
+files are being searched in the directory and merged into the resulting
+configuration.
+
 Most authentication methods support interactive data provisioning. When certain
 required auth attributes are not provided in the configuration file or through
 the supported cli arguments (or environment variables) clients that implement
