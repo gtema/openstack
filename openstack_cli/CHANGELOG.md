@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.1...openstack_cli-v0.13.2) - 2025-09-12
+
+### Added
+
+- Start generating keystone-ng code ([#1415](https://github.com/gtema/openstack/pull/1415))
+- Improve openapi type conversion ([#1412](https://github.com/gtema/openstack/pull/1412))
+- Enable `OS_CLIENT_CONFIG_PATH` environment variable ([#1419](https://github.com/gtema/openstack/pull/1419))
+- Add port parameter to the loadbalancer resource ([#1417](https://github.com/gtema/openstack/pull/1417))
+
+### Fixed
+
+- Fix i32/u32 types in few object-store operations ([#1413](https://github.com/gtema/openstack/pull/1413))
+
 ## [0.13.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.0...openstack_cli-v0.13.1) - 2025-09-07
 
 ### Added
