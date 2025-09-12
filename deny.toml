@@ -71,6 +71,7 @@ feature-depth = 1
 # output a note when they are encountered.
 ignore = [
     #"RUSTSEC-0000-0000",
+    "RUSTSEC-2021-0127", # serde_cbor as optional transitive dep: https://github.com/mozilla/authenticator-rs/issues/327
     "RUSTSEC-2024-0436",
     "RUSTSEC-2025-0052"  # unless low maintained httpmock uses it
     #{ id = "RUSTSEC-0000-0000", reason = "you can specify a reason the advisory is ignored" },

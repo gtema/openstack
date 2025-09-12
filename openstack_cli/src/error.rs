@@ -179,6 +179,10 @@ pub enum OpenStackCliError {
     #[error("input parameters error: {0}")]
     InputParameters(String),
 
+    /// Base64 decoding error.
+    #[error(transparent)]
+    Base64Decode(#[from] base64::DecodeError),
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),

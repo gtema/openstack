@@ -33,6 +33,8 @@ use crate::config::{Config, ConfigError};
 use crate::container_infrastructure_management::v1 as container_infra;
 use crate::dns::v2 as dns;
 use crate::identity::v3 as identity;
+#[cfg(feature = "keystone_ng")]
+use crate::identity::v4 as identity_v4;
 use crate::image::v2 as image;
 use crate::load_balancer::v2 as load_balancer;
 use crate::network::v2 as network;
@@ -277,6 +279,8 @@ pub enum TopLevelCommands {
     ContainerInfrastructure(container_infra::ContainerInfrastructureCommand),
     Dns(dns::DnsCommand),
     Identity(identity::IdentityCommand),
+    #[cfg(feature = "keystone_ng")]
+    Identity4(identity_v4::IdentityCommand),
     Image(image::ImageCommand),
     LoadBalancer(load_balancer::LoadBalancerCommand),
     Network(network::NetworkCommand),
@@ -314,6 +318,8 @@ impl Cli {
             TopLevelCommands::ContainerInfrastructure(args) => args.take_action(self, client).await,
             TopLevelCommands::Dns(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,
+            #[cfg(feature = "keystone_ng")]
+            TopLevelCommands::Identity4(args) => args.take_action(self, client).await,
             TopLevelCommands::Image(args) => args.take_action(self, client).await,
             TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
             TopLevelCommands::Network(args) => args.take_action(self, client).await,

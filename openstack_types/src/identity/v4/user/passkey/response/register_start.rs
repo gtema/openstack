@@ -71,7 +71,7 @@ pub struct RegisterStartResponse {
     #[structable(optional)]
     pub timeout: Option<u32>,
 
-    /// User information
+    /// User Entity.
     #[structable(serialize)]
     pub user: User,
 }
@@ -201,6 +201,10 @@ impl std::str::FromStr for ResidentKey {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum UserVerification {
+    // Discourageddonotuse
+    #[serde(rename = "DiscouragedDoNotUse")]
+    Discourageddonotuse,
+
     // Preferred
     #[serde(rename = "Preferred")]
     Preferred,
@@ -214,6 +218,7 @@ impl std::str::FromStr for UserVerification {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
+            "DiscouragedDoNotUse" => Ok(Self::Discourageddonotuse),
             "Preferred" => Ok(Self::Preferred),
             "Required" => Ok(Self::Required),
             _ => Err(()),
@@ -391,24 +396,11 @@ pub struct Rp {
     pub name: String,
 }
 
-/// Domain information
-/// `Domain` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Domain {
-    #[serde(default)]
-    pub id: Option<String>,
-    #[serde(default)]
-    pub name: Option<String>,
-}
-
-/// User information
+/// User Entity.
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    pub domain: Domain,
+    pub display_name: String,
     pub id: String,
-    #[serde(default)]
-    pub name: Option<String>,
-    #[serde(default)]
-    pub password_expires_at: Option<String>,
+    pub name: String,
 }

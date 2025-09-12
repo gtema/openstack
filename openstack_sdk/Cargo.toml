@@ -41,6 +41,7 @@ async = []
 client_der = []
 client_pem = []
 keystone_ng = []
+passkey = ["dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto"]
 
 [dependencies]
 async-trait = {workspace = true}
@@ -72,6 +73,8 @@ thiserror = { workspace = true }
 tokio = { workspace = true }
 tokio-util = {workspace = true}
 tracing = { workspace = true}
+webauthn-authenticator-rs = { optional = true, version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
+webauthn-rs-proto = { version = "0.5", optional = true }
 url = { workspace = true }
 
 [dev-dependencies]

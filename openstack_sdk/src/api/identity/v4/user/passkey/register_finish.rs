@@ -224,7 +224,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("passkey".into())
     }
 
     /// Returns headers to be set into the request
@@ -273,22 +273,25 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .extensions(ExtensionsBuilder::default().build().unwrap())
-            .id("foo")
-            .raw_id("foo")
-            .response(
-                ResponseBuilder::default()
-                    .attestation_object("foo")
-                    .client_data_json("foo")
-                    .build()
-                    .unwrap()
-            )
-            .type_("foo")
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert_eq!(
+            Request::builder()
+                .extensions(ExtensionsBuilder::default().build().unwrap())
+                .id("foo")
+                .raw_id("foo")
+                .response(
+                    ResponseBuilder::default()
+                        .attestation_object("foo")
+                        .client_data_json("foo")
+                        .build()
+                        .unwrap()
+                )
+                .type_("foo")
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "passkey"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -304,7 +307,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "passkey": {} }));
         });
 
         let endpoint = Request::builder()
@@ -341,7 +344,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "passkey": {} }));
         });
 
         let endpoint = Request::builder()
