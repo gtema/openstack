@@ -54,7 +54,7 @@
 use secrecy::{ExposeSecret, SecretString};
 use std::fmt;
 use std::path::{Path, PathBuf};
-use tracing::{error, trace, warn};
+use tracing::{debug, error, trace, warn};
 
 use serde::Deserialize;
 use std::collections::hash_map::DefaultHasher;
@@ -631,6 +631,40 @@ pub fn find_secure_file() -> Option<PathBuf> {
         .find(|path| path.is_file())
 }
 
+/// Returns list of all configuration files pointed at with `OS_CLIENT_CONFIG_PATH` environment
+/// variable.
+///
+/// The variable can point to the concrete file result or be a ":" separated list of the search
+/// items. Example: "~/clouds.yaml:~/secure.yaml:/etc/clouds.yaml:~/.config/openstack". When an
+/// item is a file it is being added into the resulting list. An item being a directory is used as
+/// a base to search regular `clouds.yaml` and `secure.yaml` files which are being add into the list
+/// when existing in the directory.
+///
+pub fn find_config_files_specified_in_env() -> impl IntoIterator<Item = PathBuf> {
+    let mut results: Vec<PathBuf> = Vec::new();
+    if let Ok(configs) = env::var("OS_CLIENT_CONFIG_PATH") {
+        debug!(
+            "Searching for the OpenStack client config files in {}.",
+            configs
+        );
+        for candidate in configs.split(":") {
+            let path = PathBuf::from(candidate);
+            if path.is_file() {
+                results.push(path);
+            } else if path.is_dir() {
+                for config_prefix in ["clouds", "secure"] {
+                    CONFIG_SUFFIXES
+                        .iter()
+                        .map(|y| path.join(format!("{}{}", config_prefix, y)))
+                        .find(|path| path.is_file())
+                        .inspect(|path| results.push(path.to_owned()));
+                }
+            }
+        }
+    }
+    results
+}
+
 impl ConfigFile {
     /// A builder to create a `ConfigFile` by specifying which files to load.
     pub fn builder() -> ConfigFileBuilder {
@@ -656,8 +690,9 @@ impl ConfigFile {
     ) -> Result<Self, ConfigError> {
         let mut builder = Self::builder();
 
-        for path in find_vendor_file()
+        for path in find_config_files_specified_in_env()
             .into_iter()
+            .chain(find_vendor_file())
             .chain(find_clouds_file())
             .chain(clouds.map(|path| path.as_ref().to_owned()))
             .chain(find_secure_file())
@@ -747,9 +782,10 @@ mod tests {
     use crate::config;
     use secrecy::ExposeSecret;
     use std::env;
+    use std::fs::File;
     use std::io::Write;
     use std::path::PathBuf;
-    use tempfile::Builder;
+    use tempfile::{tempdir, Builder};
 
     use super::*;
 
@@ -934,5 +970,89 @@ mod tests {
         assert_eq!("system_scope", auth.system_scope.unwrap());
         assert_eq!("auth_type", cc.auth_type.unwrap());
         assert_eq!("region_name", cc.region_name.unwrap());
+    }
+
+    #[test]
+    fn test_from_os_client_config_path_env() {
+        let mut cloud_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+        let mut secure_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CLOUD_DATA: &str = r#"
+            clouds:
+              fake_cloud:
+                auth:
+                  auth_url: http://fake.com
+                  username: override_me
+        "#;
+        const SECURE_DATA: &str = r#"
+            clouds:
+              fake_cloud:
+                auth:
+                  username: foo
+                  password: bar
+        "#;
+
+        write!(cloud_file, "{CLOUD_DATA}").unwrap();
+        write!(secure_file, "{SECURE_DATA}").unwrap();
+        let cfg = ConfigFile::new().unwrap();
+
+        assert!(cfg.get_cloud_config("fake_cloud").unwrap().is_none());
+
+        // now add both files explicitly into the env var and verify all data is fetched
+        env::set_var(
+            "OS_CLIENT_CONFIG_PATH",
+            format!(
+                "{}:{}",
+                cloud_file.path().display(),
+                secure_file.path().display()
+            ),
+        );
+
+        let cfg = ConfigFile::new().unwrap();
+        let profile = cfg
+            .get_cloud_config("fake_cloud")
+            .unwrap()
+            .expect("Profile exists");
+        let auth = profile.auth.expect("Auth defined");
+
+        assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
+        assert_eq!(auth.username, Some(String::from("foo")));
+        assert_eq!(auth.password.unwrap().expose_secret(), String::from("bar"));
+        assert_eq!(profile.name, Some(String::from("fake_cloud")));
+        // with only directory containing those files they should not be used unless they are named
+        // properly
+        env::set_var(
+            "OS_CLIENT_CONFIG_PATH",
+            format!(
+                "{}:",
+                cloud_file.path().parent().expect("no parent").display(),
+            ),
+        );
+        let cfg = ConfigFile::new().unwrap();
+        assert!(
+            cfg.get_cloud_config("fake_cloud").unwrap().is_none(),
+            "Nothing should be found in {:?}",
+            env::var("OS_CLIENT_CONFIG_PATH")
+        );
+
+        // env points at the dir and there is clouds.yaml file there
+        let tmp_dir = tempdir().unwrap();
+        env::set_var(
+            "OS_CLIENT_CONFIG_PATH",
+            format!("{}:", tmp_dir.path().display(),),
+        );
+        let file_path = tmp_dir.path().join("clouds.yml");
+        let mut tmp_file = File::create(file_path).unwrap();
+        write!(tmp_file, "{CLOUD_DATA}").unwrap();
+
+        let cfg = ConfigFile::new().unwrap();
+        let profile = cfg
+            .get_cloud_config("fake_cloud")
+            .unwrap()
+            .expect("Profile exists");
+        let auth = profile.auth.expect("Auth defined");
+
+        assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
+        assert_eq!(auth.username, Some(String::from("override_me")));
     }
 }
