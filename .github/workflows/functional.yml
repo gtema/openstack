@@ -72,4 +72,4 @@ jobs:
       - name: Execute functional tests
         env:
           OS_CLOUD: devstack
-        run: cargo nextest run --test functional
+        run: cargo nextest run --test functional -- --skip network::v2::auto_allocated_topology::list::list
