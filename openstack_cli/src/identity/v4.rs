@@ -19,6 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+pub mod federation;
 pub mod user;
 
 /// Identity (Keystone) commands
@@ -46,6 +47,7 @@ pub struct IdentityCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IdentityCommands {
+    Federation(federation::FederationCommand),
     User(user::UserCommand),
 }
 
@@ -57,6 +59,7 @@ impl IdentityCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

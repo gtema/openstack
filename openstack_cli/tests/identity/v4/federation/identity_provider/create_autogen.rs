@@ -23,6 +23,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
     cmd.arg("identity")
+        .arg("federation")
         .arg("identity-provider")
         .arg("create")
         .arg("--help");

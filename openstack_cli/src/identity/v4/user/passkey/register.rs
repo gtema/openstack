@@ -102,36 +102,33 @@ fn convert_api_response_to_public_key_credential_options(
 ) -> Result<webauthn_rs_proto::attest::PublicKeyCredentialCreationOptions, OpenStackCliError> {
     Ok(
         webauthn_rs_proto::attest::PublicKeyCredentialCreationOptions {
-            attestation: val.attestation.map(|att| convert_attestation(att)),
+            attestation: val.attestation.map(convert_attestation),
             attestation_formats: val.attestation_formats.map(|ats| {
                 ats.into_iter()
-                    .map(|at| convert_attestation_format(at))
+                    .map(convert_attestation_format)
                     .collect::<Vec<_>>()
             }),
             authenticator_selection: val
                 .authenticator_selection
-                .map(|authr| convert_authenticator_selection(authr)),
+                .map(convert_authenticator_selection),
             challenge: URL_SAFE.decode(val.challenge)?.into(),
             exclude_credentials: val
                 .exclude_credentials
                 .map(|ecs| {
                     ecs.into_iter()
-                        .map(|cred| convert_exclude_credential(cred))
+                        .map(convert_exclude_credential)
                         //.transpose()?
                         .collect::<Result<Vec<_>, _>>()
                 })
                 .transpose()?, //.collect::<Vec<_>>()
-            extensions: val.extensions.map(|ext| convert_extension(ext)),
-            hints: val.hints.map(|hints| {
-                hints
-                    .into_iter()
-                    .map(|hint| convert_hint(hint))
-                    .collect::<Vec<_>>()
-            }),
+            extensions: val.extensions.map(convert_extension),
+            hints: val
+                .hints
+                .map(|hints| hints.into_iter().map(convert_hint).collect::<Vec<_>>()),
             pub_key_cred_params: val
                 .pub_key_cred_params
                 .into_iter()
-                .map(|cp| convert_pub_key_cred_params(cp))
+                .map(convert_pub_key_cred_params)
                 .collect::<Vec<_>>(),
             rp: convert_rp(val.rp),
             timeout: val.timeout,
@@ -189,8 +186,8 @@ fn convert_authenticator_selection(
     webauthn_rs_proto::options::AuthenticatorSelectionCriteria {
         authenticator_attachment: val
             .authenticator_attachment
-            .map(|authra| convert_authenticator_attachment(authra)),
-        resident_key: val.resident_key.map(|key| convert_resident_key(key)),
+            .map(convert_authenticator_attachment),
+        resident_key: val.resident_key.map(convert_resident_key),
         require_resident_key: val.require_resident_key,
         user_verification: convert_user_verification(val.user_verification),
     }
@@ -251,11 +248,9 @@ fn convert_exclude_credential(
     Ok(webauthn_rs_proto::options::PublicKeyCredentialDescriptor {
         id: URL_SAFE.decode(val.id)?.into(),
         type_: val.type_,
-        transports: val.transports.map(|trs| {
-            trs.into_iter()
-                .map(|tr| convert_transport(tr))
-                .collect::<Vec<_>>()
-        }),
+        transports: val
+            .transports
+            .map(|trs| trs.into_iter().map(convert_transport).collect::<Vec<_>>()),
     })
 }
 
@@ -320,7 +315,7 @@ fn convert_extension(
 ) -> webauthn_rs_proto::extensions::RequestRegistrationExtensions {
     webauthn_rs_proto::extensions::RequestRegistrationExtensions {
         cred_props: val.cred_props,
-        cred_protect: val.cred_protect.map(|cp| convert_cred_protect(cp)),
+        cred_protect: val.cred_protect.map(convert_cred_protect),
         hmac_create_secret: val.hmac_create_secret,
         min_pin_length: val.min_pin_length,
         uvm: val.uvm,
@@ -401,7 +396,7 @@ fn get_finish_registration_endpoint(
         rsp.transports(
             transports
                 .into_iter()
-                .map(|tr| convert_transport_webauthn_to_keystone(tr))
+                .map(convert_transport_webauthn_to_keystone)
                 .collect::<Vec<_>>(),
         );
     }
@@ -442,9 +437,9 @@ fn get_finish_registration_endpoint(
             .wrap_err_with(|| eyre!("cannot build passkey `extensions` structure"))?,
     );
 
-    Ok(builder
+    builder
         .build()
-        .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?)
+        .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))
 }
 
 impl PasskeyCommand {

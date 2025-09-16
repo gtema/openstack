@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity User commands
+//! Federation commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,26 +20,26 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[cfg(feature = "passkey")]
-pub mod passkey;
+pub mod identity_provider;
+pub mod mapping;
 
-/// User commands
+/// Federated login commands
 ///
 #[derive(Parser)]
-pub struct UserCommand {
+pub struct FederationCommand {
     #[command(subcommand)]
-    command: UserCommands,
+    command: FederationCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum UserCommands {
-    #[cfg(feature = "passkey")]
-    Passkey(passkey::PasskeyCommand),
+pub enum FederationCommands {
+    IdentityProvider(identity_provider::IdentityProviderCommand),
+    Mapping(mapping::MappingCommand),
 }
 
-impl UserCommand {
+impl FederationCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -47,9 +47,10 @@ impl UserCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            #[cfg(feature = "passkey")]
-            UserCommands::Passkey(cmd) => cmd.take_action(parsed_args, session).await,
-            _ => todo!(),
+            FederationCommands::IdentityProvider(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            FederationCommands::Mapping(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

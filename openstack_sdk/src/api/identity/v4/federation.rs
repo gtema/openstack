@@ -17,3 +17,4 @@
 
 //! `/v4/federation/identity_providers/{idp_id}` REST operations of identity
 pub mod identity_provider;
+pub mod mapping;

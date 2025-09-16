@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity User commands
+//! IdentityProvider Identity Provider commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,26 +20,32 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[cfg(feature = "passkey")]
-pub mod passkey;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
-/// User commands
+/// Federated identity provider commands
 ///
 #[derive(Parser)]
-pub struct UserCommand {
+pub struct IdentityProviderCommand {
     #[command(subcommand)]
-    command: UserCommands,
+    command: IdentityProviderCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum UserCommands {
-    #[cfg(feature = "passkey")]
-    Passkey(passkey::PasskeyCommand),
+pub enum IdentityProviderCommands {
+    Create(create::IdentityProviderCommand),
+    Delete(delete::IdentityProviderCommand),
+    List(list::IdentityProvidersCommand),
+    Set(set::IdentityProviderCommand),
+    Show(show::IdentityProviderCommand),
 }
 
-impl UserCommand {
+impl IdentityProviderCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -47,9 +53,11 @@ impl UserCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            #[cfg(feature = "passkey")]
-            UserCommands::Passkey(cmd) => cmd.take_action(parsed_args, session).await,
-            _ => todo!(),
+            IdentityProviderCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityProviderCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityProviderCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityProviderCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityProviderCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
