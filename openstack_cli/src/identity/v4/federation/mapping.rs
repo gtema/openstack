@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity User commands
+//! Attribute Mapping commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,26 +20,32 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[cfg(feature = "passkey")]
-pub mod passkey;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
-/// User commands
+/// Federated attribute mapping commands
 ///
 #[derive(Parser)]
-pub struct UserCommand {
+pub struct MappingCommand {
     #[command(subcommand)]
-    command: UserCommands,
+    command: MappingCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum UserCommands {
-    #[cfg(feature = "passkey")]
-    Passkey(passkey::PasskeyCommand),
+pub enum MappingCommands {
+    Create(create::MappingCommand),
+    Delete(delete::MappingCommand),
+    List(list::MappingsCommand),
+    Set(set::MappingCommand),
+    Show(show::MappingCommand),
 }
 
-impl UserCommand {
+impl MappingCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -47,9 +53,11 @@ impl UserCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            #[cfg(feature = "passkey")]
-            UserCommands::Passkey(cmd) => cmd.take_action(parsed_args, session).await,
-            _ => todo!(),
+            MappingCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

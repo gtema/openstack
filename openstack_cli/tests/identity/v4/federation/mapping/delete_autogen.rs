@@ -24,7 +24,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
 
     cmd.arg("identity")
         .arg("federation")
-        .arg("identity-provider")
+        .arg("mapping")
         .arg("delete")
         .arg("--help");
     cmd.assert().success();

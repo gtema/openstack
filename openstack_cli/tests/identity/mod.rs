@@ -13,3 +13,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 mod v3;
+#[cfg(feature = "keystone_ng")]
+mod v4;
