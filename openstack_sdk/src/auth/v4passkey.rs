@@ -12,7 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity (Keystone) API bindings
-pub mod v3;
-#[cfg(feature = "keystone_ng")]
-pub mod v4;
+//! Passkey (security device) based login.
+//!
+
+mod error;
+mod finish;
+mod start;
+
+pub use error::PasskeyError;
+pub use finish::get_finish_auth_ep;
+pub use start::{get_init_auth_ep, PasskeyAuthenticationStartResponse};
