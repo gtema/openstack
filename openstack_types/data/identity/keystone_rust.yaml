@@ -464,7 +464,8 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
         required: true
       responses:
         '200':
@@ -585,17 +586,13 @@ paths:
         description: Filters the response by IDP name.
         required: false
         schema:
-          type:
-          - string
-          - 'null'
+          type: string
       - name: domain_id
         in: query
         description: Filters the response by a domain ID.
         required: false
         schema:
-          type:
-          - string
-          - 'null'
+          type: string
       responses:
         '200':
           description: List of identity providers
@@ -797,40 +794,32 @@ paths:
 
         It is expected that listing mappings belonging to the other domain is only allowed to the admin
         user.
-      operationId: /federation/identity_provider/mapping:list
+      operationId: /federation/mapping:list
       parameters:
       - name: name
         in: query
         description: Filters the response by IDP name.
         required: false
         schema:
-          type:
-          - string
-          - 'null'
+          type: string
       - name: domain_id
         in: query
         description: Filters the response by a domain ID.
         required: false
         schema:
-          type:
-          - string
-          - 'null'
+          type: string
       - name: idp_id
         in: query
         description: Filters the response by a idp ID.
         required: false
         schema:
-          type:
-          - string
-          - 'null'
+          type: string
       - name: type
         in: query
         description: Filters the response by a mapping type.
         required: false
         schema:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/MappingType'
+          $ref: '#/components/schemas/MappingType'
       responses:
         '200':
           description: List of mappings
@@ -846,7 +835,7 @@ paths:
       tags:
       - mappings
       summary: Create attribute mapping.
-      operationId: /federation/identity_provider/mapping:create
+      operationId: /federation/mapping:create
       requestBody:
         content:
           application/json:
@@ -868,7 +857,7 @@ paths:
       - mappings
       summary: Get single mapping.
       description: Show the attribute mapping attribute by the ID.
-      operationId: /federation/identity_provider/mapping:show
+      operationId: /federation/mapping:show
       parameters:
       - name: id
         in: path
@@ -892,7 +881,7 @@ paths:
       - mappings
       summary: Update attribute mapping.
       description: 'TODO: describe domain_id update rules'
-      operationId: /federation/identity_provider/mapping:update
+      operationId: /federation/mapping:update
       parameters:
       - name: id
         in: path
@@ -921,7 +910,7 @@ paths:
       tags:
       - mappings
       summary: Delete attribute mapping.
-      operationId: /federation/identity_provider/mapping:delete
+      operationId: /federation/mapping:delete
       parameters:
       - name: id
         in: path
@@ -1328,6 +1317,10 @@ paths:
       responses:
         '201':
           description: Passkey successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasskeyResponse'
         '500':
           description: Internal error
   /v4/users/{user_id}/passkeys/register_start:
@@ -1368,16 +1361,16 @@ components:
       type: object
       description: A descriptor of a credential that can be used.
       required:
-      - type_
       - id
+      - type_
       properties:
         id:
-          $ref: '#/components/schemas/Base64UrlSafeData'
+          type: string
+          format: binary
           description: The id of the credential.
+          contentEncoding: base64
         transports:
-          type:
-          - array
-          - 'null'
+          type: array
           items:
             $ref: '#/components/schemas/AuthenticatorTransport'
           description: https://www.w3.org/TR/webauthn/#transport may be usb, nfc, ble, internal
@@ -1478,6 +1471,48 @@ components:
               identify a project but if a project is specified by name, then the domain of the project
               must also be specified in order to uniquely identify the project by name. A domain scope
               may be specified by either the domain’s ID or name with equivalent results.
+    AuthenticationExtensionsClientOutputs:
+      type: object
+      description: |-
+        [AuthenticationExtensionsClientOutputs](https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs)
+
+        The default option here for Options are None, so it can be derived
+      properties:
+        appid:
+          type: boolean
+          description: Indicates whether the client used the provided appid extension.
+        hmac_get_secret:
+          $ref: '#/components/schemas/HmacGetSecretOutput'
+          description: The response to a hmac get secret request.
+    AuthenticatorAssertionResponseRaw:
+      type: object
+      description: '[AuthenticatorAssertionResponseRaw](https://w3c.github.io/webauthn/#authenticatorassertionresponse)'
+      required:
+      - authenticator_data
+      - client_data_json
+      - signature
+      - user_handle
+      properties:
+        authenticator_data:
+          type: string
+          format: binary
+          description: Raw authenticator data.
+          contentEncoding: base64
+        client_data_json:
+          type: string
+          format: binary
+          description: Signed client data.
+          contentEncoding: base64
+        signature:
+          type: string
+          format: binary
+          description: Signature.
+          contentEncoding: base64
+        user_handle:
+          type: string
+          format: binary
+          description: Optional userhandle.
+          contentEncoding: base64
     AuthenticatorAttachment:
       type: string
       description: |-
@@ -1545,30 +1580,13 @@ components:
       type: string
       description: https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport
       enum:
-      - Usb
-      - Nfc
       - Ble
-      - Internal
       - Hybrid
+      - Internal
+      - Nfc
       - Test
       - Unknown
-    Base64UrlSafeData:
-      type: array
-      items:
-        type: integer
-        format: int32
-        minimum: 0
-      description: |-
-        Serde wrapper for Vec<u8> which always emits URL-safe, non-padded Base64, and accepts Base64
-        and binary formats.
-
-          Serialisation always emits URL-safe, non-padded Base64 (per RFC 4648 §5).
-
-          Unlike HumanBinaryData, this happens regardless of whether the underlying serialisation
-          format is human readable. If you’re serialising to non-human-readable formats, you should
-          consider migrating to HumanBinaryData.
-
-        Otherwise, this type should work as much like a Vec<u8> as possible.
+      - Usb
     Catalog:
       type: array
       items:
@@ -1748,13 +1766,31 @@ components:
       - output1
       properties:
         output1:
-          $ref: '#/components/schemas/Base64UrlSafeData'
+          type: string
+          format: binary
           description: Retrieve a symmetric secrets from the authenticator with this input.
+          contentEncoding: base64
         output2:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Base64UrlSafeData'
-            description: Rotate the secret in the same operation.
+          type: string
+          format: binary
+          description: Rotate the secret in the same operation.
+          contentEncoding: base64
+    HmacGetSecretOutput:
+      type: object
+      description: The response to a hmac get secret request.
+      required:
+      - output1
+      properties:
+        output1:
+          type: string
+          format: binary
+          description: Output of HMAC(Salt 1 || Client Secret).
+          contentEncoding: base64
+        output2:
+          type: string
+          format: binary
+          description: Output of HMAC(Salt 2 || Client Secret).
+          contentEncoding: base64
     Identity:
       type: object
       description: An identity object.
@@ -2075,6 +2111,7 @@ components:
             type: string
           description: List of audiences that must be present in the token.
         bound_claims:
+          type: object
           description: Additional claims that must be present in the token.
         bound_subject:
           type:
@@ -2164,6 +2201,7 @@ components:
             type: string
           description: List of audiences that must be present in the token.
         bound_claims:
+          type: object
           description: Additional claims that must be present in the token.
         bound_subject:
           type: string
@@ -2272,6 +2310,7 @@ components:
             type: string
           description: List of audiences that must be present in the token.
         bound_claims:
+          type: object
           description: Additional claims that must be present in the token.
         bound_subject:
           type:
@@ -2333,10 +2372,8 @@ components:
           - 'null'
           description: Fixed user_id for which the keystone token would be issued.
         type:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/MappingType'
-            description: Attribute mapping type ([oidc, jwt]).
+          $ref: '#/components/schemas/MappingType'
+          description: Attribute mapping type ([oidc, jwt]).
         user_id_claim:
           type:
           - string
@@ -2371,21 +2408,67 @@ components:
       description: Request in residentkey workflows that conditional mediation should be used in the UI, or not.
       enum:
       - Conditional
-    PasskeyAuthenticationStartRequest:
+    Passkey:
       type: object
+      description: Passkey information.
       required:
+      - credential_id
+      properties:
+        credential_id:
+          type: string
+          description: Credential ID.
+        description:
+          type: string
+          description: Credential description.
+    PasskeyAuthenticationFinishRequest:
+      type: object
+      description: |-
+        A client response to an authentication challenge. This contains all required information to
+        asses and assert trust in a credentials legitimacy, followed by authentication to a user.
+
+        You should not need to handle the inner content of this structure - you should provide this to
+        the correctly handling function of Webauthn only.
+      required:
+      - id
+      - extensions
+      - raw_id
+      - response
+      - type_
       - user_id
       properties:
+        extensions:
+          $ref: '#/components/schemas/AuthenticationExtensionsClientOutputs'
+          description: Unsigned Client processed extensions.
+        id:
+          type: string
+          description: The credential Id, likely base64.
+        raw_id:
+          type: string
+          format: binary
+          description: The binary of the credential id.
+          contentEncoding: base64
+        response:
+          $ref: '#/components/schemas/AuthenticatorAssertionResponseRaw'
+          description: The authenticator response.
+        type_:
+          type: string
+          description: The authenticator type.
         user_id:
           type: string
-          description: The ID of the user that is trying to authenticate
+          description: The ID of the user.
+    PasskeyAuthenticationStartRequest:
+      type: object
+      description: Request for initialization of the passkey authentication.
+      required:
+      - passkey
+      properties:
+        passkey:
+          $ref: '#/components/schemas/PasskeyUserAuthenticationRequest'
+          description: The user authentication data
     PasskeyAuthenticationStartResponse:
       type: object
       description: |-
         Passkey Authorization challenge.
-
-        This is an embedded version of the
-        [webauthn-rs::auth::PublickeyCredentialRequest](https://docs.rs/webauthn-rs-proto/0.5.2/webauthn_rs_proto/auth/struct.PublicKeyCredentialRequestOptions.html)
 
         A JSON serializable challenge which is issued to the user’s webbrowser for handling. This is
         meant to be opaque, that is, you should not need to inspect or alter the content of the struct
@@ -2394,13 +2477,62 @@ components:
       - public_key
       properties:
         mediation:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Mediation'
-            description: The mediation requested.
+          $ref: '#/components/schemas/Mediation'
+          description: The mediation requested.
         public_key:
           $ref: '#/components/schemas/PublicKeyCredentialRequestOptions'
           description: The options.
+    PasskeyCreate:
+      type: object
+      description: Passkey information.
+      properties:
+        description:
+          type: string
+          description: Passkey description
+    PasskeyResponse:
+      type: object
+      description: |
+        Passkey.
+      required:
+      - passkey
+      properties:
+        passkey:
+          $ref: '#/components/schemas/Passkey'
+          description: The description for the passkey (name).
+    PasskeyUser:
+      type: object
+      description: User Entity.
+      required:
+      - id
+      - name
+      - display_name
+      properties:
+        display_name:
+          type: string
+          description: |-
+            The user’s preferred name for display. This value can change, so must not be used as a
+            primary key.
+        id:
+          type: string
+          format: binary
+          description: |-
+            The user’s id in base64 form. This MUST be a unique id, and must NOT contain personally
+            identifying information, as this value can NEVER be changed. If in doubt, use a UUID.
+          contentEncoding: base64
+        name:
+          type: string
+          description: |-
+            A detailed name for the account, such as an email address. This value can change, so must
+            not be used as a primary key.
+    PasskeyUserAuthenticationRequest:
+      type: object
+      description: Request for initialization of the passkey authentication.
+      required:
+      - user_id
+      properties:
+        user_id:
+          type: string
+          description: The ID of the user that is authenticating.
     PasswordAuth:
       type: object
       description: The password object, contains the authentication information.
@@ -2514,7 +2646,7 @@ components:
           description: The timeout for the authenticator in case of no interaction.
           minimum: 0
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/PasskeyUser'
           description: The user.
     PublicKeyCredentialDescriptor:
       type: object
@@ -2536,6 +2668,16 @@ components:
         type_:
           type: string
           description: The type of credential.
+    PublicKeyCredentialHint:
+      type: string
+      description: |-
+        A hint as to the class of device that is expected to fufil this operation.
+
+        https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints
+      enum:
+      - ClientDevice
+      - Hybrid
+      - SecurityKey
     PublicKeyCredentialHints:
       type: string
       description: |-
@@ -2543,16 +2685,16 @@ components:
 
         https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints
       enum:
-      - SecurityKey
       - ClientDevice
       - Hybrid
+      - SecurityKey
     PublicKeyCredentialRequestOptions:
       type: object
       description: The requested options for the authentication.
       required:
+      - allow_credentials
       - challenge
       - rp_id
-      - allow_credentials
       - user_verification
       properties:
         allow_credentials:
@@ -2561,19 +2703,17 @@ components:
             $ref: '#/components/schemas/AllowCredentials'
           description: The set of credentials that are allowed to sign this challenge.
         challenge:
-          $ref: '#/components/schemas/Base64UrlSafeData'
+          type: string
+          format: binary
           description: The challenge that should be signed by the authenticator.
+          contentEncoding: base64
         extensions:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/RequestAuthenticationExtensions'
-            description: extensions.
+          $ref: '#/components/schemas/RequestAuthenticationExtensions'
+          description: extensions.
         hints:
-          type:
-          - array
-          - 'null'
+          type: array
           items:
-            $ref: '#/components/schemas/PublicKeyCredentialHints'
+            $ref: '#/components/schemas/PublicKeyCredentialHint'
           description: Hints defining which types credentials may be used in this operation.
         rp_id:
           type: string
@@ -2634,21 +2774,15 @@ components:
         Implements [AuthenticatorExtensionsClientInputs] from the spec
       properties:
         appid:
-          type:
-          - string
-          - 'null'
+          type: string
           description: The appid extension options.
         hmac_get_secret:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/HmacGetSecretInput'
-            description: |-
-              ⚠️ - Browsers do not support this!
-              https://bugs.chromium.org/p/chromium/issues/detail?id=1023225 Hmac get secret.
+          $ref: '#/components/schemas/HmacGetSecretInput'
+          description: |-
+            ⚠️ - Browsers do not support this!
+            https://bugs.chromium.org/p/chromium/issues/detail?id=1023225 Hmac get secret.
         uvm:
-          type:
-          - boolean
-          - 'null'
+          type: boolean
           description: ⚠️ - Browsers do not support this! Uvm.
     RequestRegistrationExtensions:
       type: object
@@ -3031,11 +3165,11 @@ components:
       type: object
       description: |
         Passkey registration request.
+      required:
+      - passkey
       properties:
-        description:
-          type:
-          - string
-          - 'null'
+        passkey:
+          $ref: '#/components/schemas/PasskeyCreate'
           description: The description for the passkey (name).
     UserPasskeyRegistrationStartResponse:
       type: object
@@ -3084,7 +3218,9 @@ components:
     UserVerificationPolicy:
       type: string
       description: |
-        Defines the User Authenticator Verification policy. This is documented https://w3c.github.io/webauthn/#enumdef-userverificationrequirement, and each variant lists it’s effects.
+        Defines the User Authenticator Verification policy. This is documented
+        https://w3c.github.io/webauthn/#enumdef-userverificationrequirement, and each variant lists
+        it’s effects.
 
         To be clear, Verification means that the Authenticator perform extra or supplementary
         interaction with the user to verify who they are. An example of this is Apple Touch Id required
@@ -3115,6 +3251,7 @@ components:
       enum:
       - Required
       - Preferred
+      - DiscouragedDoNotUse
     Values:
       type: object
       required:
