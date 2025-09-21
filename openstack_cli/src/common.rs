@@ -315,10 +315,10 @@ where
     U: std::str::FromStr,
     U::Err: Error + Send + Sync + 'static,
 {
-    let pos = s
-        .find('=')
+    let (k, v) = s
+        .split_once('=')
         .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{s}`"))?;
-    Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
+    Ok((k.parse()?, v.parse()?))
 }
 
 /// Parse a single key-value pair where value can be null
@@ -331,14 +331,14 @@ where
     U: std::str::FromStr,
     U::Err: Error + Send + Sync + 'static,
 {
-    let pos = s
-        .find('=')
+    let (k, v) = s
+        .split_once('=')
         .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{s}`"))?;
-    if pos < s.len() - 1 {
-        Ok((s[..pos].parse()?, Some(s[pos + 1..].parse()?)))
-    } else {
-        Ok((s[..pos].parse()?, None))
-    }
+
+    let key = k.parse()?;
+    let val = (!v.is_empty()).then(|| v.parse()).transpose()?;
+
+    Ok((key, val))
 }
 
 pub(crate) fn parse_json(s: &str) -> Result<Value, Box<dyn Error + Send + Sync + 'static>>
