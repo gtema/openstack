@@ -648,21 +648,31 @@ pub fn find_config_files_specified_in_env() -> impl IntoIterator<Item = PathBuf>
             configs
         );
         for candidate in configs.split(":") {
-            let path = PathBuf::from(candidate);
-            if path.is_file() {
-                results.push(path);
-            } else if path.is_dir() {
-                for config_prefix in ["clouds", "secure"] {
-                    CONFIG_SUFFIXES
-                        .iter()
-                        .map(|y| path.join(format!("{}{}", config_prefix, y)))
-                        .find(|path| path.is_file())
-                        .inspect(|path| results.push(path.to_owned()));
+            if let Some(path) = expand_path(candidate) {
+                if path.is_file() {
+                    results.push(path);
+                } else if path.is_dir() {
+                    for config_prefix in ["clouds", "secure"] {
+                        CONFIG_SUFFIXES
+                            .iter()
+                            .map(|y| path.join(format!("{}{}", config_prefix, y)))
+                            .find(|path| path.is_file())
+                            .inspect(|path| results.push(path.to_owned()));
+                    }
                 }
             }
         }
     }
     results
+}
+
+/// Expand the `~` in the path with the HOME environment variable.
+fn expand_path(path: &str) -> Option<PathBuf> {
+    if path.starts_with("~/") {
+        dirs::home_dir().map(|home| home.join(&path[2..]))
+    } else {
+        Some(PathBuf::from(path))
+    }
 }
 
 impl ConfigFile {
@@ -698,6 +708,7 @@ impl ConfigFile {
             .chain(find_secure_file())
             .chain(secure.map(|path| path.as_ref().to_owned()))
         {
+            trace!("Try load configuration file {:?}", path);
             builder = match builder.add_source(&path) {
                 Ok(builder) => {
                     trace!("Using config file {path:?}");
