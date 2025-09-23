@@ -102,6 +102,19 @@ impl Component for Images<'_> {
                     self.set_data(data)?;
                 }
             }
+            Action::ApiResponseData {
+                request: ApiRequest::Image(ImageApiRequest::Image(req)),
+                ..
+            } => {
+                if let ImageImageApiRequest::Delete(del) = *req {
+                    let ImageImageDelete { ref id, .. } = *del;
+                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                        return Ok(Some(Action::Refresh));
+                    }
+                    self.sync_table_data()?;
+                    self.set_loading(false);
+                }
+            }
             Action::SetImageListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);

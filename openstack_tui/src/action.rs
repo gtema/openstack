@@ -183,6 +183,8 @@ pub enum Action {
     SetNetworkSecurityGroupListFilters(cloud_types::NetworkSecurityGroupList),
     /// Switch to NetworkSecurityGroupRules
     ShowNetworkSecurityGroupRules,
+    /// Delete the security group rule.
+    DeleteNetworkSecurityGroupRule,
     /// Switch to routers view
     ShowNetworkRouters,
     /// Set Security group rule filters
