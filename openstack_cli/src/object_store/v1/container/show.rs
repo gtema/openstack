@@ -17,14 +17,13 @@
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-
-use serde::{Deserialize, Serialize};
+use regex::Regex;
+use std::collections::HashMap;
 use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
-use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::{
     AsyncOpenStack,
@@ -35,8 +34,6 @@ use openstack_sdk::{
 use crate::common::HashMapStringString;
 use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::object_store::v1::container::head::Request;
-use regex::Regex;
-use std::collections::HashMap;
 
 /// Shows container metadata, including the number of objects and the total
 /// bytes of all objects stored in the container.
@@ -51,13 +48,6 @@ pub struct ContainerCommand {
     /// container.
     #[arg()]
     container: String,
-}
-
-/// Container
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Container {
-    #[structable(title = "metadata")]
-    metadata: HashMapStringString,
 }
 
 impl ContainerCommand {
@@ -134,11 +124,9 @@ impl ContainerCommand {
                 }
             }
         }
-        let data = Container {
-            metadata: metadata.into(),
-        };
-        // Maybe output some headers metadata
-        op.output_human::<Container>(&data)?;
+        let data = HashMapStringString(metadata);
+
+        op.output_single::<HashMapStringString>(serde_json::to_value(&data)?)?;
         op.show_command_hint()?;
         Ok(())
     }

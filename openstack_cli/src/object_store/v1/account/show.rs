@@ -21,14 +21,13 @@
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-
-use serde::{Deserialize, Serialize};
+use regex::Regex;
+use std::collections::HashMap;
 use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
-use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::{
     AsyncOpenStack,
@@ -39,8 +38,6 @@ use openstack_sdk::{
 use crate::common::HashMapStringString;
 use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::object_store::v1::account::head::Request;
-use regex::Regex;
-use std::collections::HashMap;
 
 /// Shows metadata for an account.
 /// Because the storage system can store large amounts of data, take care when
@@ -50,13 +47,6 @@ use std::collections::HashMap;
 /// Do not include metadata headers in this request.
 #[derive(Args, Clone, Debug)]
 pub struct AccountCommand {}
-
-/// Account
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Account {
-    #[structable(title = "metadata")]
-    metadata: HashMapStringString,
-}
 
 impl AccountCommand {
     /// Perform command action
@@ -129,11 +119,9 @@ impl AccountCommand {
                 }
             }
         }
-        let data = Account {
-            metadata: metadata.into(),
-        };
-        // Maybe output some headers metadata
-        op.output_human::<Account>(&data)?;
+        let data = HashMapStringString(metadata);
+
+        op.output_single::<HashMapStringString>(serde_json::to_value(&data)?)?;
         op.show_command_hint()?;
         Ok(())
     }
