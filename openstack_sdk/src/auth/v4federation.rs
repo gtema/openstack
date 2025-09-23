@@ -186,7 +186,7 @@ impl RestEndpoint for OauthAuthorizeRequest<'_> {
 
     /// Returns required API version
     fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(3, 0))
+        Some(ApiVersion::new(4, 0))
     }
 }
 
@@ -236,7 +236,7 @@ impl RestEndpoint for OauthCallbackRequest<'_> {
 
     /// Returns required API version
     fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(3, 0))
+        Some(ApiVersion::new(4, 0))
     }
 }
 
