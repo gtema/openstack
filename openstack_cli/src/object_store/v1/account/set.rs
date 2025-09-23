@@ -30,7 +30,9 @@ use bytes::Bytes;
 use clap::Args;
 use http::Response;
 use http::{HeaderName, HeaderValue};
+use regex::Regex;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use tracing::info;
 
 use crate::Cli;
@@ -44,8 +46,10 @@ use openstack_sdk::{
     types::{ApiVersion, ServiceType},
 };
 
+use crate::common::HashMapStringString;
 use crate::common::parse_key_val;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::account::head::Request as GetRequest;
 use openstack_sdk::api::object_store::v1::account::set::Request;
 
 /// Creates, updates, or deletes account metadata.
@@ -111,10 +115,59 @@ impl AccountCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = Account {};
-        // Maybe output some headers metadata
-        op.output_human::<Account>(&data)?;
 
+        // Refetch the container with the actual data
+        let mut ep_builder = GetRequest::builder();
+        if let Some(account) = account {
+            ep_builder.account(account);
+        }
+        // Set query parameters
+        // Set body parameters
+        let ep = ep_builder
+            .build()
+            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let mut metadata: HashMap<String, String> = HashMap::new();
+        let headers = rsp.headers();
+
+        let regexes: Vec<Regex> = vec![
+            Regex::new(r"(?i)X-Account-Meta-\.*").unwrap(),
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Bytes-Used").unwrap(),
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Container-Count").unwrap(),
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Object-Count").unwrap(),
+        ];
+
+        for (hdr, val) in headers.iter() {
+            if [
+                "x-account-meta-temp-url-key",
+                "x-account-meta-temp-url-key-2",
+                "x-timestamp",
+                "x-account-bytes-used",
+                "x-account-container-count",
+                "x-account-object-count",
+                "x-account-meta-quota-bytes",
+                "x-account-access-control",
+            ]
+            .contains(&hdr.as_str())
+            {
+                metadata.insert(
+                    hdr.to_string(),
+                    val.to_str().unwrap_or_default().to_string(),
+                );
+            } else if !regexes.is_empty() {
+                for rex in regexes.iter() {
+                    if rex.is_match(hdr.as_str()) {
+                        metadata.insert(
+                            hdr.to_string(),
+                            val.to_str().unwrap_or_default().to_string(),
+                        );
+                    }
+                }
+            }
+        }
+        let data = HashMapStringString(metadata);
+
+        op.output_single::<HashMapStringString>(serde_json::to_value(&data)?)?;
         op.show_command_hint()?;
         Ok(())
     }

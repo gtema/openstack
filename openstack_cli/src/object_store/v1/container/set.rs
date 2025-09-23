@@ -17,13 +17,13 @@ use bytes::Bytes;
 use clap::Args;
 use http::Response;
 use http::{HeaderName, HeaderValue};
-use serde::{Deserialize, Serialize};
+use regex::Regex;
+use std::collections::HashMap;
 use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
-use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::{
     AsyncOpenStack,
@@ -31,8 +31,10 @@ use openstack_sdk::{
     types::{ApiVersion, ServiceType},
 };
 
+use crate::common::HashMapStringString;
 use crate::common::parse_key_val;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::container::head::Request as GetRequest;
 use openstack_sdk::api::object_store::v1::container::set::Request;
 
 /// Creates, updates, or deletes custom metadata for a container.
@@ -52,10 +54,6 @@ pub struct ContainerCommand {
     #[arg(long, value_name="key=value", value_parser = parse_key_val::<String, String>)]
     property: Vec<(String, String)>,
 }
-
-/// Container
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Container {}
 
 impl ContainerCommand {
     /// Perform command action
@@ -97,9 +95,61 @@ impl ContainerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = Container {};
-        // Maybe output some headers metadata
-        op.output_human::<Container>(&data)?;
+
+        // Refetch the container with the actual data
+        let mut ep_builder = GetRequest::builder();
+        if let Some(account) = account {
+            ep_builder.account(account);
+        }
+        ep_builder.container(&self.container);
+        let ep = ep_builder
+            .build()
+            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+
+        let mut metadata: HashMap<String, String> = HashMap::new();
+        let headers = rsp.headers();
+
+        let regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Container-Meta-\.*").unwrap()];
+
+        for (hdr, val) in headers.iter() {
+            if [
+                "x-timestamp",
+                "x-container-bytes-used",
+                "x-container-object-count",
+                "accept-ranges",
+                "x-container-meta-temp-url-key",
+                "x-container-meta-temp-url-key-2",
+                "x-container-meta-quota-count",
+                "x-container-meta-quota-bytes",
+                "x-storage-policy",
+                "x-container-read",
+                "x-container-write",
+                "x-container-sync-key",
+                "x-container-sync-to",
+                "x-versions-location",
+                "x-history-location",
+            ]
+            .contains(&hdr.as_str())
+            {
+                metadata.insert(
+                    hdr.to_string(),
+                    val.to_str().unwrap_or_default().to_string(),
+                );
+            } else if !regexes.is_empty() {
+                for rex in regexes.iter() {
+                    if rex.is_match(hdr.as_str()) {
+                        metadata.insert(
+                            hdr.to_string(),
+                            val.to_str().unwrap_or_default().to_string(),
+                        );
+                    }
+                }
+            }
+        }
+        let data = HashMapStringString(metadata);
+
+        op.output_single::<HashMapStringString>(serde_json::to_value(&data)?)?;
         op.show_command_hint()?;
         Ok(())
     }

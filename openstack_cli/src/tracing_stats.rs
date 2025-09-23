@@ -94,7 +94,7 @@ impl Visit for HttpRequest {
             _ => {}
         };
     }
-    fn record_debug(&mut self, _: &Field, _: &dyn (core::fmt::Debug)) {}
+    fn record_debug(&mut self, _: &Field, _: &dyn core::fmt::Debug) {}
 }
 
 impl<C> Layer<C> for RequestTracingCollector

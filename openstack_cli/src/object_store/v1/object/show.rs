@@ -16,14 +16,13 @@
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-
-use serde::{Deserialize, Serialize};
+use regex::Regex;
+use std::collections::HashMap;
 use tracing::info;
 
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
-use structable::{StructTable, StructTableOptions};
 
 use openstack_sdk::{
     AsyncOpenStack,
@@ -34,8 +33,6 @@ use openstack_sdk::{
 use crate::common::HashMapStringString;
 use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::object_store::v1::object::head::Request;
-use regex::Regex;
-use std::collections::HashMap;
 
 /// Shows object metadata.
 #[derive(Args, Clone, Debug)]
@@ -87,13 +84,6 @@ pub struct ObjectCommand {
     /// symlink itself rather than from the target.
     #[arg(long)]
     symlink: Option<String>,
-}
-
-/// Object
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Object {
-    #[structable(title = "metadata")]
-    metadata: HashMapStringString,
 }
 
 impl ObjectCommand {
@@ -185,11 +175,9 @@ impl ObjectCommand {
                 }
             }
         }
-        let data = Object {
-            metadata: metadata.into(),
-        };
-        // Maybe output some headers metadata
-        op.output_human::<Object>(&data)?;
+        let data = HashMapStringString(metadata);
+
+        op.output_single::<HashMapStringString>(serde_json::to_value(&data)?)?;
         op.show_command_hint()?;
         Ok(())
     }

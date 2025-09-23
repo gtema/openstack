@@ -15,11 +15,10 @@
 //! Common helpers
 use crate::error::OpenStackCliError;
 
-use serde::{Deserialize, Deserializer, Serialize, de::Visitor};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::error::Error;
-use std::fmt;
 use std::io::IsTerminal;
 
 use indicatif::{ProgressBar, ProgressStyle};
@@ -30,270 +29,25 @@ use tokio_util::compat::{FuturesAsyncReadCompatExt, TokioAsyncReadCompatExt};
 use tokio_util::io::InspectReader;
 
 use openstack_sdk::types::BoxedAsyncRead;
-
-/// Newtype for the `Vec<String>`
-#[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct VecString(pub Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0.join(","))
-    }
-}
-
-/// Newtype for the `Vec<Value>`
-#[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct VecValue(pub Vec<Value>);
-impl fmt::Display for VecValue {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.0
-                .iter()
-                .map(|v| serde_json::to_string(v).unwrap_or("!SERIALIZE_ERROR!".to_string()))
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-
-impl From<Vec<Value>> for VecValue {
-    fn from(item: Vec<Value>) -> Self {
-        VecValue(item)
-    }
-}
-impl From<&Vec<Value>> for VecValue {
-    fn from(item: &Vec<Value>) -> Self {
-        VecValue(item.clone())
-    }
-}
+use structable::{StructTable, StructTableOptions};
 
 /// Newtype for the `HashMap<String, String>`
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
+pub struct HashMapStringString(pub HashMap<String, String>);
 
-impl From<HashMap<String, String>> for HashMapStringString {
-    fn from(data: HashMap<String, String>) -> Self {
-        HashMapStringString(data.clone())
+impl StructTable for HashMapStringString {
+    fn instance_headers<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> Option<::std::vec::Vec<::std::string::String>> {
+        Some(self.0.keys().map(Into::into).collect())
     }
-}
 
-// And here's the display logic.
-impl fmt::Display for HashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-
-/// Newtype for the `Option<HashMap<String, String>>`
-#[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct OptionHashMapStringString(Option<HashMap<String, String>>);
-impl fmt::Display for OptionHashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.0 {
-            Some(ref data) => write!(
-                f,
-                "{}",
-                data.iter()
-                    .map(|v| format!("{}={}", v.0, v.1))
-                    .collect::<Vec<String>>()
-                    .join(",")
-            ),
-            None => write!(f, ""),
-        }
-    }
-}
-
-/// Newtype for the `Option<Vector<HashMap<String, String>>>`
-#[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct OptionVecHashMapStringString(Option<Vec<HashMap<String, String>>>);
-impl fmt::Display for OptionVecHashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.0 {
-            Some(ref data) => write!(
-                f,
-                "{}",
-                data.iter()
-                    .map(|v| v
-                        .iter()
-                        .map(|d| format!("{}={}", d.0, d.1))
-                        .collect::<Vec<String>>()
-                        .join(","))
-                    .collect::<Vec<String>>()
-                    .join(",")
-            ),
-            None => write!(f, ""),
-        }
-    }
-}
-
-#[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct VecHashMapStringString(Vec<HashMap<String, String>>);
-impl fmt::Display for VecHashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.0
-                .iter()
-                .map(|v| v
-                    .iter()
-                    .map(|d| format!("{}={}", d.0, d.1))
-                    .collect::<Vec<String>>()
-                    .join(","))
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-
-/// IntString (Integer or Integer as string)
-#[derive(Clone, Debug, Serialize)]
-#[serde(transparent)]
-pub struct IntString(u64);
-impl fmt::Display for IntString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-impl<'de> Deserialize<'de> for IntString {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct MyVisitor;
-
-        impl Visitor<'_> for MyVisitor {
-            type Value = IntString;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-                fmt.write_str("integer or string")
-            }
-
-            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                Ok(IntString(val))
-            }
-
-            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                match val.parse::<u64>() {
-                    Ok(val) => self.visit_u64(val),
-                    Err(_) => Ok(IntString(0)),
-                }
-            }
-        }
-
-        deserializer.deserialize_any(MyVisitor)
-    }
-}
-
-/// NumString (Any number or number as string)
-#[derive(Clone, Debug, Serialize)]
-#[serde(transparent)]
-pub struct NumString(f64);
-impl fmt::Display for NumString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-impl<'de> Deserialize<'de> for NumString {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct MyVisitor;
-
-        impl Visitor<'_> for MyVisitor {
-            type Value = NumString;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-                fmt.write_str("number or string")
-            }
-
-            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                Ok(NumString(val as f64))
-            }
-
-            fn visit_f64<E>(self, val: f64) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                Ok(NumString(val))
-            }
-
-            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                match val.parse::<f64>() {
-                    Ok(val) => self.visit_f64(val),
-                    Err(_) => Ok(NumString(0.0)),
-                }
-            }
-        }
-
-        deserializer.deserialize_any(MyVisitor)
-    }
-}
-
-/// BoolString (Boolean or boolean as string)
-#[derive(Clone, Debug, Serialize)]
-#[serde(transparent)]
-pub struct BoolString(bool);
-impl fmt::Display for BoolString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-impl<'de> Deserialize<'de> for BoolString {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        struct MyVisitor;
-
-        impl Visitor<'_> for MyVisitor {
-            type Value = BoolString;
-
-            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-                fmt.write_str("boolean or string")
-            }
-
-            fn visit_bool<E>(self, val: bool) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                Ok(BoolString(val))
-            }
-
-            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                match val.parse::<bool>() {
-                    Ok(val) => self.visit_bool(val),
-                    Err(_) => Ok(BoolString(false)),
-                }
-            }
-        }
-
-        deserializer.deserialize_any(MyVisitor)
+    fn data<O: StructTableOptions>(
+        &self,
+        _options: &O,
+    ) -> ::std::vec::Vec<Option<::std::string::String>> {
+        self.0.values().map(|x| Some(x.into())).collect()
     }
 }
 
@@ -445,16 +199,16 @@ pub(crate) async fn build_upload_asyncread(
     }
 }
 
-#[derive(Debug, PartialEq, PartialOrd)]
-pub(crate) struct ServiceApiVersion(pub u8, pub u8);
-
-impl TryFrom<String> for ServiceApiVersion {
-    type Error = ();
-    fn try_from(ver: String) -> Result<Self, Self::Error> {
-        let parts: Vec<u8> = ver.split('.').flat_map(|v| v.parse::<u8>()).collect();
-        Ok(ServiceApiVersion(parts[0], parts[1]))
-    }
-}
+// #[derive(Debug, PartialEq, PartialOrd)]
+// pub(crate) struct ServiceApiVersion(pub u8, pub u8);
+//
+// impl TryFrom<String> for ServiceApiVersion {
+//     type Error = ();
+//     fn try_from(ver: String) -> Result<Self, Self::Error> {
+//         let parts: Vec<u8> = ver.split('.').flat_map(|v| v.parse::<u8>()).collect();
+//         Ok(ServiceApiVersion(parts[0], parts[1]))
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
