@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -22,7 +22,9 @@ use openstack_types::network::v2::security_group_rule::response::list::SecurityG
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleList,
+        NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleDelete,
+        NetworkSecurityGroupRuleDeleteBuilder, NetworkSecurityGroupRuleDeleteBuilderError,
+        NetworkSecurityGroupRuleList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -68,6 +70,17 @@ impl NetworkSecurityGroupRules<'_> {
     fn normalized_filters(&self) -> NetworkSecurityGroupRuleList {
         self.normalize_filters(self.get_filters().clone())
             .to_owned()
+    }
+}
+
+impl TryFrom<&SecurityGroupRuleResponse> for NetworkSecurityGroupRuleDelete {
+    type Error = NetworkSecurityGroupRuleDeleteBuilderError;
+    fn try_from(value: &SecurityGroupRuleResponse) -> Result<Self, Self::Error> {
+        let mut builder = NetworkSecurityGroupRuleDeleteBuilder::default();
+        if let Some(val) = &value.id {
+            builder.id(val.clone());
+        }
+        builder.build()
     }
 }
 
@@ -123,6 +136,37 @@ impl Component for NetworkSecurityGroupRules<'_> {
             } => {
                 if let NetworkSecurityGroupRuleApiRequest::List(_) = *req {
                     self.set_data(data)?;
+                }
+            }
+            Action::ApiResponseData {
+                request: ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)),
+                ..
+            } => {
+                if let NetworkSecurityGroupRuleApiRequest::Delete(del) = *req {
+                    let NetworkSecurityGroupRuleDelete { ref id, .. } = *del;
+                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                        return Ok(Some(Action::Refresh));
+                    }
+                    self.sync_table_data()?;
+                    self.set_loading(false);
+                }
+            }
+            Action::DeleteNetworkSecurityGroupRule => {
+                // only if we are currently in the right mode
+                if current_mode == Mode::NetworkSecurityGroupRules {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to delete the selected SecurityGroupRule
+                            command_tx.send(Action::Confirm(ApiRequest::from(
+                                NetworkSecurityGroupRuleApiRequest::Delete(Box::new(
+                                    NetworkSecurityGroupRuleDelete::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
+                                )),
+                            )))?;
+                        }
+                    }
                 }
             }
             _ => {}
