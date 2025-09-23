@@ -114,6 +114,11 @@ views:
     fields:
       - name: id
         width: 34
+  identity.endpoint:
+    default_fields: [id, url, interface, region_id, service_id, enabled]
+    fields:
+      - name: id
+        width: 34
   identity.group:
     default_fields: [id, name, domain_id, description]
     fields:
@@ -129,6 +134,27 @@ views:
       - name: domain_id
         width: 34
       - name: parent_id
+        width: 34
+  identity.region:
+    default_fields: [id, parent_id, description]
+    fields:
+      - name: id
+        width: 34
+      - name: parent_id
+        width: 34
+  identity.role:
+    default_fields: [id, name, domain_id, description, options]
+    fields:
+      - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+  identity.role_assignment:
+    default_fields: [role, group, user, scope]
+  identity.service:
+    default_fields: [id, name, type, description, enabled]
+    fields:
+      - name: id
         width: 34
   identity.user/application_credential:
     default_fields: [id, name, description, project_id, expires_at, roles, unrestricted]
