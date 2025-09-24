@@ -20,7 +20,7 @@ use comfy_table::{
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
 use owo_colors::{OwoColorize, Stream::Stderr};
-use rand::prelude::*; //seq::IndexedRandom;
+use rand::prelude::*;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
 use std::io::{self, Write};

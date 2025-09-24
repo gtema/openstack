@@ -38,6 +38,8 @@ pub mod v3totp;
 pub mod v3websso;
 #[cfg(feature = "keystone_ng")]
 pub mod v4federation;
+#[cfg(feature = "keystone_ng")]
+pub mod v4jwt;
 #[cfg(feature = "passkey")]
 pub mod v4passkey;
 
@@ -45,8 +47,6 @@ use authtoken::{AuthToken, AuthTokenError};
 use authtoken_scope::AuthTokenScopeError;
 use v3oidcaccesstoken::OidcAccessTokenError;
 use v3websso::WebSsoError;
-#[cfg(feature = "keystone_ng")]
-use v4federation::FederationError;
 
 /// Authentication error
 #[derive(Debug, Error)]
@@ -97,8 +97,17 @@ impl From<WebSsoError> for AuthError {
 }
 
 #[cfg(feature = "keystone_ng")]
-impl From<FederationError> for AuthError {
+impl From<v4federation::FederationError> for AuthError {
     fn from(source: v4federation::FederationError) -> Self {
+        Self::AuthToken {
+            source: source.into(),
+        }
+    }
+}
+
+#[cfg(feature = "keystone_ng")]
+impl From<v4jwt::JwtError> for AuthError {
+    fn from(source: v4jwt::JwtError) -> Self {
         Self::AuthToken {
             source: source.into(),
         }

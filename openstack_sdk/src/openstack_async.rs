@@ -494,6 +494,11 @@ impl AsyncOpenStack {
                             return Err(OpenStackError::NoAuth);
                         }
                     }
+                    #[cfg(feature = "keystone_ng")]
+                    AuthType::V4Jwt => {
+                        let auth_ep = auth::v4jwt::get_auth_ep(&self.config, auth_helper).await?;
+                        rsp = auth_ep.raw_query_async(self).await?;
+                    }
 
                     #[cfg(feature = "passkey")]
                     AuthType::V4Passkey => {
