@@ -26,14 +26,14 @@ use tracing::{debug, error, trace};
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
-#[cfg(feature = "keystone_ng")]
-use crate::auth::v4federation;
 #[cfg(feature = "passkey")]
 use crate::auth::v4passkey;
 use crate::auth::{
     auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3oidcaccesstoken,
     v3password, v3token, v3totp, v3websso, AuthState,
 };
+#[cfg(feature = "keystone_ng")]
+use crate::auth::{v4federation, v4jwt};
 use crate::config;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse};
 
@@ -152,7 +152,7 @@ pub enum AuthTokenError {
         source: v3totp::TotpError,
     },
 
-    /// WebSSO Identity error
+    /// WebSSO Identity error.
     #[error("SSO based authentication error: {}", source)]
     WebSso {
         /// The error source
@@ -160,7 +160,7 @@ pub enum AuthTokenError {
         source: v3websso::WebSsoError,
     },
 
-    /// Federation Identity error
+    /// Federation Identity error.
     #[cfg(feature = "keystone_ng")]
     #[error("Federation based authentication error: {}", source)]
     Federation {
@@ -169,7 +169,16 @@ pub enum AuthTokenError {
         source: v4federation::FederationError,
     },
 
-    /// Passkey error
+    /// JWT error.
+    #[cfg(feature = "keystone_ng")]
+    #[error("Jwt based authentication error: {}", source)]
+    Jwt {
+        /// The error source
+        #[from]
+        source: v4jwt::JwtError,
+    },
+
+    /// Passkey error.
     #[cfg(feature = "passkey")]
     #[error("Passkey based authentication error: {}", source)]
     Passkey {
@@ -275,6 +284,9 @@ pub enum AuthType {
     #[cfg(feature = "keystone_ng")]
     /// Federation.
     V4Federation,
+    #[cfg(feature = "keystone_ng")]
+    /// JWT.
+    V4Jwt,
     #[cfg(feature = "passkey")]
     /// Passkey.
     V4Passkey,
@@ -296,6 +308,8 @@ impl FromStr for AuthType {
             "v3websso" => Ok(Self::V3WebSso),
             #[cfg(feature = "keystone_ng")]
             "v4federation" | "federation" => Ok(Self::V4Federation),
+            #[cfg(feature = "keystone_ng")]
+            "v4jwt" | "jwt" => Ok(Self::V4Jwt),
             #[cfg(feature = "passkey")]
             "v4passkey" | "passkey" => Ok(Self::V4Passkey),
             other => Err(Self::Err::IdentityMethod {
@@ -327,6 +341,8 @@ impl AuthType {
             Self::V3WebSso => "v3websso",
             #[cfg(feature = "keystone_ng")]
             Self::V4Federation => "v4federation",
+            #[cfg(feature = "keystone_ng")]
+            Self::V4Jwt => "v4jwt",
             #[cfg(feature = "passkey")]
             Self::V4Passkey => "v4passkey",
         }

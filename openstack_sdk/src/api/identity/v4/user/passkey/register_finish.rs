@@ -121,6 +121,10 @@ pub struct Response<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// Credential description.
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
     /// https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs
     /// The default option here for Options are None, so it can be derived
     #[builder(setter(into))]
@@ -210,6 +214,7 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
+        params.push_opt("description", self.description.as_ref());
         params.push("extensions", serde_json::to_value(&self.extensions)?);
         params.push("id", serde_json::to_value(&self.id)?);
         params.push("raw_id", serde_json::to_value(&self.raw_id)?);

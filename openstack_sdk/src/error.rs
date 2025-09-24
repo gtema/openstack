@@ -18,14 +18,14 @@ use std::any;
 use thiserror::Error;
 
 use crate::api;
-#[cfg(feature = "keystone_ng")]
-use crate::auth::v4federation::FederationError;
 #[cfg(feature = "passkey")]
 use crate::auth::v4passkey::PasskeyError;
 use crate::auth::{
     authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
     v3oidcaccesstoken::OidcAccessTokenError, v3websso::WebSsoError, AuthError,
 };
+#[cfg(feature = "keystone_ng")]
+use crate::auth::{v4federation::FederationError, v4jwt::JwtError};
 use crate::catalog::CatalogError;
 use crate::config::ConfigError;
 
@@ -237,6 +237,15 @@ impl From<WebSsoError> for OpenStackError {
 #[cfg(feature = "keystone_ng")]
 impl From<FederationError> for OpenStackError {
     fn from(source: FederationError) -> Self {
+        Self::AuthError {
+            source: source.into(),
+        }
+    }
+}
+
+#[cfg(feature = "keystone_ng")]
+impl From<JwtError> for OpenStackError {
+    fn from(source: JwtError) -> Self {
         Self::AuthError {
             source: source.into(),
         }

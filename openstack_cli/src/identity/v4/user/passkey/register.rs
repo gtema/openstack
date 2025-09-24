@@ -381,8 +381,12 @@ fn convert_user(
 fn get_finish_registration_endpoint(
     user_id: String,
     register_cred: webauthn_authenticator_rs::prelude::RegisterPublicKeyCredential,
+    description: Option<String>,
 ) -> Result<register_finish::Request<'static>, OpenStackCliError> {
     let mut builder = register_finish::Request::builder();
+    if let Some(description) = description {
+        builder.description(description);
+    }
     builder.id(register_cred.id);
     builder.raw_id(URL_SAFE.encode(register_cred.raw_id));
     builder.type_(register_cred.type_);
@@ -525,7 +529,11 @@ impl PasskeyCommand {
             convert_api_parameters_to_webauthn(pk_request)?,
         ) {
             Ok(rsp) => {
-                let ep = get_finish_registration_endpoint(user_id, rsp)?;
+                let ep = get_finish_registration_endpoint(
+                    user_id,
+                    rsp,
+                    self.passkey.description.clone(),
+                )?;
                 let data = ep.query_async(client).await?;
                 op.output_single::<passkey::RegisterFinishResponse>(data)?;
             }
