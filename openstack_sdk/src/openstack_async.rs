@@ -494,6 +494,30 @@ impl AsyncOpenStack {
                             return Err(OpenStackError::NoAuth);
                         }
                     }
+                    #[cfg(feature = "keystone_ng")]
+                    AuthType::V4Jwt => {
+                        let auth_ep = auth::v4jwt::get_auth_ep(&self.config, auth_helper).await?;
+                        rsp = auth_ep.raw_query_async(self).await?;
+                        let token = rsp
+                            .headers()
+                            .get("x-subject-token")
+                            .ok_or(AuthError::AuthTokenNotInResponse)?
+                            .to_str()
+                            .expect("x-subject-token is a string");
+
+                        // Set retrieved token as current auth
+                        let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
+                        let token_auth = authtoken::AuthToken {
+                            token: token.to_string(),
+                            auth_info: Some(token_info),
+                        };
+                        self.set_auth(Auth::AuthToken(Box::new(token_auth.clone())), false);
+
+                        // And now time to rescope the token
+                        let auth_ep =
+                            authtoken::build_reauth_request(&token_auth, &requested_scope)?;
+                        rsp = auth_ep.raw_query_async(self).await?;
+                    }
 
                     #[cfg(feature = "passkey")]
                     AuthType::V4Passkey => {
