@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.1...openstack_tui-v0.13.2) - 2025-09-27
+
+### Added
+
+- Enable security group rule deletion ([#1439](https://github.com/gtema/openstack/pull/1439))
+- Improve openapi type conversion ([#1412](https://github.com/gtema/openstack/pull/1412))
+
 ## [0.13.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.0...openstack_tui-v0.13.1) - 2025-09-07
 
 ### Other
