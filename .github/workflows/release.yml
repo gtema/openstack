@@ -133,7 +133,7 @@ jobs:
         with:
           toolchain: stable
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911"
+        uses: "step-security/harden-runner@92c522aaa6f53af082553dedc1596c80b71aba33"
         with:
           "egress-policy": "audit"
       - name: Install dist
