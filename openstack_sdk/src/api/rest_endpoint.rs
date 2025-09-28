@@ -458,7 +458,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
-            then.status(http::StatusCode::CONFLICT.into());
+            then.status(http::StatusCode::CONFLICT);
         });
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
@@ -477,7 +477,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
-            then.status(http::StatusCode::CONFLICT.into())
+            then.status(http::StatusCode::CONFLICT)
                 .json_body(json!({"message": "dummy error message"}));
         });
 
@@ -504,8 +504,7 @@ mod tests {
         let err_obj = json!({"bogus": "dummy error message"});
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
-            then.status(StatusCode::CONFLICT.into())
-                .json_body(err_obj.clone());
+            then.status(StatusCode::CONFLICT).json_body(err_obj.clone());
         });
 
         let res: Result<DummyResult, _> = Dummy.query(&client);

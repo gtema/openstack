@@ -509,7 +509,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::OK.into()).body("not json");
+            then.status(StatusCode::OK).body("not json");
         });
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
@@ -531,7 +531,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::OK.into()).body("not json");
+            then.status(StatusCode::OK).body("not json");
         });
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
@@ -554,7 +554,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into());
+            then.status(StatusCode::CONFLICT);
         });
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
@@ -576,7 +576,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into());
+            then.status(StatusCode::CONFLICT);
         });
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
@@ -599,7 +599,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into())
+            then.status(StatusCode::CONFLICT)
                 .json_body(json!({"message": "dummy error message"}));
         });
         let endpoint = Dummy::default();
@@ -623,7 +623,7 @@ mod tests {
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into())
+            then.status(StatusCode::CONFLICT)
                 .json_body(json!({"message": "dummy error message"}));
         });
         let endpoint = Dummy::default();
