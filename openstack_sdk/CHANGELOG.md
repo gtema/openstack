@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.1...openstack_sdk-v0.22.2) - 2025-10-06
+
+### Added
+
+- Add keystone_ng idp and mapping ([#1427](https://github.com/gtema/openstack/pull/1427))
+- Implement passkey registration and auth ([#1418](https://github.com/gtema/openstack/pull/1418))
+- Enable `OS_CLIENT_CONFIG_PATH` environment variable ([#1419](https://github.com/gtema/openstack/pull/1419))
+- Add port parameter to the loadbalancer resource ([#1417](https://github.com/gtema/openstack/pull/1417))
+- Start generating keystone-ng code ([#1415](https://github.com/gtema/openstack/pull/1415))
+- Improve openapi type conversion ([#1412](https://github.com/gtema/openstack/pull/1412))
+
+### Fixed
+
+- Fix the federation auth url for v4 ([#1438](https://github.com/gtema/openstack/pull/1438))
+- Expand `~` in the OS_CLIENT_CONFIG_PATH ([#1435](https://github.com/gtema/openstack/pull/1435))
+- Fix i32/u32 types in few object-store operations ([#1413](https://github.com/gtema/openstack/pull/1413))
+
+### Other
+
+- Fix newly identified typos ([#1455](https://github.com/gtema/openstack/pull/1455))
+- *(deps)* Bump httpmock from 0.7.0 to 0.8.0 ([#1444](https://github.com/gtema/openstack/pull/1444))
+
 ## [0.22.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.0...openstack_sdk-v0.22.1) - 2025-09-07
 
 ### Added
