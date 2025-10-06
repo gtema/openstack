@@ -64,7 +64,7 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     consumes_quota: Option<bool>,
 
-    /// Filters reuslts by a time that resources are created at with time
+    /// Filters results by a time that resources are created at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
@@ -110,7 +110,7 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
-    /// Filters reuslts by a time that resources are updated at with time
+    /// Filters results by a time that resources are updated at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,

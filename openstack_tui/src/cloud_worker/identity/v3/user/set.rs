@@ -183,7 +183,7 @@ pub struct User {
     pub description: Option<Option<String>>,
 
     /// The ID of the new domain for the user. The ability to change the domain
-    /// of a user is now deprecated, and will be removed in subequent release.
+    /// of a user is now deprecated, and will be removed in subsequent release.
     /// It is already disabled by default in most Identity service
     /// implementations.
     #[builder(default, setter(into))]
