@@ -1,7 +1,7 @@
 # OpenStack Terminal User Interface (TUI)
 
 Exploring the cloud resources using CLI is not something very comfortable. A
-terminal user interface imroves user experience when a quick look at currently
+terminal user interface improves user experience when a quick look at currently
 present resources is required.
 
 openstack_tui (`ostui` as a binary name) is such TUI built upon

@@ -40,7 +40,7 @@ pub struct Request<'a> {
     #[builder(default)]
     consumes_quota: Option<bool>,
 
-    /// Filters reuslts by a time that resources are created at with time
+    /// Filters results by a time that resources are created at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[builder(default, setter(into))]
     created_at: Option<Cow<'a, str>>,
@@ -82,7 +82,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
-    /// Filters reuslts by a time that resources are updated at with time
+    /// Filters results by a time that resources are updated at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
