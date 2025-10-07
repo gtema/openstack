@@ -261,10 +261,14 @@ pub struct Auth {
     pub protocol: Option<String>,
     /// `Federation` identity provider.
     pub identity_provider: Option<String>,
+    /// `Federation` attribute mapping name to be applied.
+    pub attribute_mapping_name: Option<String>,
     /// OIDC access token.
     pub access_token: Option<SecretString>,
     /// OIDC access token type (when not access_token).
     pub access_token_type: Option<String>,
+    /// JWT token.
+    pub jwt: Option<SecretString>,
 
     /// `Application Credential` ID.
     pub application_credential_id: Option<String>,
@@ -292,6 +296,7 @@ impl fmt::Debug for Auth {
             .field("user_domain_name", &self.user_domain_name)
             .field("protocol", &self.protocol)
             .field("identity_provider", &self.identity_provider)
+            .field("mapping_name", &self.attribute_mapping_name)
             .field("access_token_type", &self.access_token_type)
             .field("application_credential_id", &self.application_credential_id)
             .field(
@@ -369,6 +374,9 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.protocol {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.attribute_mapping_name {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.access_token_type {
@@ -479,12 +487,20 @@ impl CloudConfig {
                 auth.identity_provider
                     .clone_from(&update_auth.identity_provider);
             }
+            if auth.attribute_mapping_name.is_none() && update_auth.attribute_mapping_name.is_some()
+            {
+                auth.attribute_mapping_name
+                    .clone_from(&update_auth.attribute_mapping_name);
+            }
             if auth.access_token_type.is_none() && update_auth.access_token_type.is_some() {
                 auth.access_token_type
                     .clone_from(&update_auth.access_token_type);
             }
             if auth.access_token.is_none() && update_auth.access_token.is_some() {
                 auth.access_token.clone_from(&update_auth.access_token);
+            }
+            if auth.jwt.is_none() && update_auth.jwt.is_some() {
+                auth.jwt.clone_from(&update_auth.jwt);
             }
             if auth.application_credential_id.is_none()
                 && update_auth.application_credential_id.is_some()

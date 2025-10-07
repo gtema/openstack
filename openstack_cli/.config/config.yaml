@@ -126,6 +126,22 @@ views:
         width: 34
       - name: domain_id
         width: 34
+  identity.federation/identity_provider:
+    default_fields: [id, name, domain_id, oidc_discovery_url, oidc_client_id, oidc_response_mode, oidc_response_types, default_mapping_name, jwks_url, jwt_validation_pubkeys, bound_issuer, provider_config]
+    fields:
+      - name: id
+        min_width: 34
+      - name: domain_id
+        min_width: 34
+  identity.federation/mapping:
+    default_fields: [id, name, idp_id, domain_id, domain_id_claim, type, oidc_scopes, allowed_redirect_uris, user_id_claim, user_name_claim, groups_claim, bound_audiences, bound_subject, bound_claims, token_user_id, token_project_id, token_role_ids]
+    fields:
+      - name: id
+        width: 38
+      - name: idp_id
+        min_width: 34
+      - name: domain_id
+        min_width: 34
   identity.project:
     default_fields: [id, name, domain_id, enabled, parent_id, description, options, tags]
     fields:
