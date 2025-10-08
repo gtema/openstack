@@ -108,7 +108,7 @@ impl Component for Images<'_> {
             } => {
                 if let ImageImageApiRequest::Delete(del) = *req {
                     let ImageImageDelete { ref id, .. } = *del;
-                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                    if self.delete_item_row_by_res_id_mut(id)?.is_none() {
                         return Ok(Some(Action::Refresh));
                     }
                     self.sync_table_data()?;

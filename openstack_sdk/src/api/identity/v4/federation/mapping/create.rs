@@ -104,15 +104,10 @@ pub struct Mapping<'a> {
     #[builder(default, setter(into))]
     pub(crate) token_project_id: Option<Cow<'a, str>>,
 
-    /// List of fixed roles that would be included in the token.
+    /// Token restrictions to be applied to the granted token.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) token_role_ids: Option<Vec<Cow<'a, str>>>,
-
-    /// Fixed user_id for which the keystone token would be issued.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) token_user_id: Option<Cow<'a, str>>,
+    pub(crate) token_restriction_id: Option<Option<Cow<'a, str>>>,
 
     /// Attribute mapping type.
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]

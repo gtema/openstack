@@ -144,7 +144,7 @@ impl Component for NetworkSecurityGroupRules<'_> {
             } => {
                 if let NetworkSecurityGroupRuleApiRequest::Delete(del) = *req {
                     let NetworkSecurityGroupRuleDelete { ref id, .. } = *del;
-                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                    if self.delete_item_row_by_res_id_mut(id)?.is_none() {
                         return Ok(Some(Action::Refresh));
                     }
                     self.sync_table_data()?;
