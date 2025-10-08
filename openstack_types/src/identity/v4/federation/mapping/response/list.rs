@@ -87,15 +87,10 @@ pub struct MappingResponse {
     #[structable(optional, wide)]
     pub token_project_id: Option<String>,
 
-    /// List of fixed roles that would be included in the token.
-    #[serde(default)]
-    #[structable(optional, serialize, wide)]
-    pub token_role_ids: Option<Vec<String>>,
-
-    /// Fixed user_id for which the keystone token would be issued.
+    /// Token restrictions to be applied to the granted token.
     #[serde(default)]
     #[structable(optional, wide)]
-    pub token_user_id: Option<String>,
+    pub token_restriction_id: Option<String>,
 
     /// Attribute mapping type.
     #[serde(rename = "type")]

@@ -160,19 +160,13 @@ struct Mapping {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "token_project_id")]
     no_token_project_id: bool,
 
-    /// List of fixed roles that would be included in the token.
-    ///
-    /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    token_role_ids: Option<Vec<String>>,
-
-    /// Fixed user_id for which the keystone token would be issued.
+    /// Token restrictions to be applied to the granted token.
     #[arg(help_heading = "Body parameters", long)]
-    token_user_id: Option<String>,
+    token_restriction_id: Option<String>,
 
-    /// Set explicit NULL for the token_user_id
-    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "token_user_id")]
-    no_token_user_id: bool,
+    /// Set explicit NULL for the token_restriction_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "token_restriction_id")]
+    no_token_restriction_id: bool,
 
     /// Attribute mapping type.
     #[arg(help_heading = "Body parameters", long)]
@@ -277,14 +271,10 @@ impl MappingCommand {
             mapping_builder.token_project_id(None);
         }
 
-        if let Some(val) = &args.token_role_ids {
-            mapping_builder.token_role_ids(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.token_user_id {
-            mapping_builder.token_user_id(Some(val.into()));
-        } else if args.no_token_user_id {
-            mapping_builder.token_user_id(None);
+        if let Some(val) = &args.token_restriction_id {
+            mapping_builder.token_restriction_id(Some(val.into()));
+        } else if args.no_token_restriction_id {
+            mapping_builder.token_restriction_id(None);
         }
 
         if let Some(val) = &args._type {
