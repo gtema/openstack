@@ -711,4 +711,15 @@ where
         }
         Ok(())
     }
+
+    /// append new row.
+    #[instrument(level = "debug", skip(self))]
+    pub fn append_new_row(&mut self, data: Value) -> Result<(), TuiError> {
+        let item = serde_json::from_value::<T>(data.clone())?;
+        self.items.push(item);
+        self.raw_items.push(data.clone());
+        self.sync_table_data()?;
+        self.set_loading(false);
+        Ok(())
+    }
 }

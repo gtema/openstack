@@ -28,14 +28,18 @@ use crate::cloud_worker::NetworkApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+pub mod create;
 pub mod delete;
 pub mod list;
 
+pub use create::*;
 pub use delete::*;
 pub use list::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NetworkSecurityGroupRuleApiRequest {
+    /// Create
+    Create(Box<NetworkSecurityGroupRuleCreate>),
     /// Delete
     Delete(Box<NetworkSecurityGroupRuleDelete>),
     /// List
@@ -56,6 +60,9 @@ impl ExecuteApiRequest for NetworkSecurityGroupRuleApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
+            NetworkSecurityGroupRuleApiRequest::Create(req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
             NetworkSecurityGroupRuleApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }

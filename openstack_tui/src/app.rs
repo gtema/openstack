@@ -55,9 +55,12 @@ use crate::{
             pools::LoadBalancerPools,
         },
         network::{
-            networks::NetworkNetworks, routers::NetworkRouters,
+            networks::NetworkNetworks,
+            routers::NetworkRouters,
+            //security_group_rule_create::CreateSecurityGroupRuleComponent,
             security_group_rules::NetworkSecurityGroupRules,
-            security_groups::NetworkSecurityGroups, subnets::NetworkSubnets,
+            security_groups::NetworkSecurityGroups,
+            subnets::NetworkSubnets,
         },
         project_select_popup::ProjectSelect,
         resource_select_popup::ApiRequestSelect,
@@ -76,6 +79,7 @@ enum Popup {
     SelectApiRequest,
     SwitchCloud,
     SwitchProject,
+    //CreateNetworkSecurityGroupRule,
     Confirm,
 }
 
@@ -437,6 +441,21 @@ impl App {
                 }
                 Action::AuthDataRequired { .. } => {
                     self.active_popup = Some(Popup::AuthHelper);
+                    self.render(tui)?;
+                }
+                Action::Edit {
+                    ref template,
+                    ref original_action,
+                } => {
+                    tui.exit()?;
+                    let edited = edit::edit(template)?;
+                    tracing::debug!("after editing: '{}'", edited);
+                    tui.enter()?;
+                    tui.terminal.clear()?;
+                    self.action_tx.send(Action::EditResult {
+                        result: serde_json::from_value(serde_yaml::from_str(&edited)?)?,
+                        original_action: original_action.clone(),
+                    })?;
                     self.render(tui)?;
                 }
                 Action::AuthHelperCompleted => {
