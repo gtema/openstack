@@ -15795,7 +15795,7 @@ components:
       description: A trust object
       properties:
         trust:
-          additionalProperties: false
+          additionalProperties: true
           description: A trust object.
           properties:
             allow_redelegation:
@@ -16032,7 +16032,7 @@ components:
         trusts:
           description: A list of trust objects.
           items:
-            additionalProperties: false
+            additionalProperties: true
             description: A trust object.
             properties:
               allow_redelegation:
@@ -16364,7 +16364,7 @@ components:
       description: A trust object
       properties:
         trust:
-          additionalProperties: false
+          additionalProperties: true
           description: A trust object.
           properties:
             allow_redelegation:
@@ -19402,7 +19402,7 @@ components:
             domain_id:
               description: |-
                 The ID of the new domain for the user. The ability to change the domain
-                of a user is now deprecated, and will be removed in subsequent release.
+                of a user is now deprecated, and will be removed in subequent release.
                 It is already disabled by default in most Identity service implementations.
               maxLength: 64
               minLength: 1
