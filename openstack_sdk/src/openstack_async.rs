@@ -23,7 +23,7 @@ use http::{header, HeaderMap, HeaderValue, Response as HttpResponse, StatusCode}
 use reqwest::{Body, Certificate, Client as AsyncClient, Request, Response};
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 use std::{fs::File, io::Read};
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
@@ -193,6 +193,19 @@ impl AsyncOpenStack {
             );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
+        client_builder = client_builder.pool_max_idle_per_host(10);
+        client_builder = client_builder.pool_idle_timeout(Duration::from_secs(30));
+        client_builder = client_builder.timeout(Duration::from_secs(
+            config
+                .options
+                .get("api_timeout")
+                .and_then(|val| val.clone().into_uint().ok())
+                .unwrap_or(30),
+        ));
+        client_builder = client_builder.connect_timeout(Duration::from_secs(5));
+        client_builder = client_builder.tcp_keepalive(Duration::from_secs(60));
+        client_builder = client_builder.gzip(true);
+        client_builder = client_builder.deflate(true);
 
         let mut session = AsyncOpenStack {
             client: client_builder.build()?,
