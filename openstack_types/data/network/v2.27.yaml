@@ -23774,7 +23774,7 @@ components:
               type: array
             shared:
               description: |-
-                Indicates whether this security group is shared to the requester’s project.
+                Indicates whether this security group is shared to the requestor’s project.
               type:
                 - boolean
                 - string
@@ -23952,7 +23952,7 @@ components:
               type: array
             shared:
               description: |-
-                Indicates whether this security group is shared to the requester’s project.
+                Indicates whether this security group is shared to the requestor’s project.
               type:
                 - boolean
                 - string
@@ -24665,7 +24665,7 @@ components:
               type: array
             shared:
               description: |-
-                Indicates whether this security group is shared to the requester’s project.
+                Indicates whether this security group is shared to the requestor’s project.
               type:
                 - boolean
                 - string
@@ -24821,7 +24821,7 @@ components:
                 type: array
               shared:
                 description: |-
-                  Indicates whether this security group is shared to the requester’s project.
+                  Indicates whether this security group is shared to the requestor’s project.
                 type:
                   - boolean
                   - string

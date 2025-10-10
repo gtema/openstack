@@ -9623,8 +9623,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the 
-                volume.
+              description: |-
+                The connection info used for server to connect the volume.
               type: object
             detached_at:
               description: |-
@@ -9692,8 +9692,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the 
-                volume.
+              description: |-
+                The connection info used for server to connect the volume.
               type: object
             detached_at:
               description: |-
@@ -9792,8 +9792,8 @@ components:
               format: date-time
               type: string
             connection_info:
-              description: The connection info used for server to connect the 
-                volume.
+              description: |-
+                The connection info used for server to connect the volume.
               type: object
             detached_at:
               description: |-
@@ -9940,8 +9940,8 @@ components:
                 format: date-time
                 type: string
               connection_info:
-                description: The connection info used for server to connect the 
-                  volume.
+                description: |-
+                  The connection info used for server to connect the volume.
                 type: object
               detached_at:
                 description: |-
