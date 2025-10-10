@@ -29,7 +29,7 @@ use openstack_sdk::api::identity::v3::user::application_credential::delete::Requ
 use openstack_sdk::api::ignore;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
-#[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityUserApplicationCredentialDelete {
     pub id: String,

@@ -29,7 +29,7 @@ use openstack_sdk::api::block_storage::v3::snapshot::delete::RequestBuilder;
 use openstack_sdk::api::ignore;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
-#[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct BlockStorageSnapshotDelete {
     pub id: String,

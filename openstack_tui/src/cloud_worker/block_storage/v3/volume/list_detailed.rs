@@ -28,7 +28,7 @@ use openstack_sdk::api::block_storage::v3::volume::list_detailed::RequestBuilder
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
-#[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct BlockStorageVolumeList {
     #[builder(default)]
