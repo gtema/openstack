@@ -13,14 +13,77 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use assert_cmd::prelude::*;
-use file_diff::diff_files;
+use futures::StreamExt;
+use md5::Context;
 use rand::distr::{Alphanumeric, SampleString};
+use reqwest::{Client, header};
 use serde_json::Value;
-use std::fs::File;
-use std::io::Cursor;
-use std::io::copy;
 use std::process::Command;
-use tempfile::Builder;
+use std::{error::Error, path::PathBuf};
+use tempfile::{Builder, TempDir};
+use tokio::{fs::File, io::AsyncReadExt, io::AsyncWriteExt};
+
+/// Downloads a file, saving it with the filename provided by the server.
+/// Returns (final_path, md5_checksum).
+pub async fn download_with_md5_and_filename(
+    url: &str,
+    tmp_dir: &TempDir,
+) -> Result<(PathBuf, String), Box<dyn Error>> {
+    let client = Client::new();
+    let response = client.get(url).send().await?;
+    response.error_for_status_ref()?; // fail fast on HTTP errors
+
+    // Try to extract filename from Content-Disposition or fallback to URL
+    let filename = response
+        .headers()
+        .get(header::CONTENT_DISPOSITION)
+        .and_then(|val| val.to_str().ok())
+        .and_then(parse_filename_from_content_disposition)
+        .or_else(|| extract_filename_from_url(url))
+        .unwrap_or_else(|| "download.bin".to_string());
+
+    let path = tmp_dir.path().join(&filename);
+    let mut file = File::create(&path).await?;
+    let mut context = Context::new();
+
+    let mut stream = response.bytes_stream();
+    while let Some(chunk_result) = stream.next().await {
+        let chunk = chunk_result?;
+        file.write_all(&chunk).await?;
+        context.consume(&chunk);
+    }
+
+    file.flush().await?;
+    let digest = context.compute();
+    let checksum = format!("{:x}", digest);
+
+    Ok((path, checksum))
+}
+
+/// Parse filename from a Content-Disposition header value.
+fn parse_filename_from_content_disposition(header_value: &str) -> Option<String> {
+    // Simple extraction for headers like: attachment; filename="example.txt"
+    header_value.split(';').find_map(|part| {
+        let part = part.trim();
+        if part.starts_with("filename=") {
+            Some(
+                part.trim_start_matches("filename=")
+                    .trim_matches('"')
+                    .to_string(),
+            )
+        } else {
+            None
+        }
+    })
+}
+
+/// Extracts filename from the URL path (fallback)
+fn extract_filename_from_url(url: &str) -> Option<String> {
+    url.split('/')
+        .filter(|s| !s.is_empty())
+        .last()
+        .map(|s| s.to_string())
+}
 
 #[tokio::test]
 async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
@@ -30,20 +93,13 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
         "http://download.cirros-cloud.net/{ver}/cirros-{ver}-x86_64-disk.img",
         ver = cirros_ver
     );
-    let response = reqwest::get(target).await?;
-    let (mut img_data, fname) = {
-        let fname = response
-            .url()
-            .path_segments()
-            .and_then(|segments| segments.last())
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("tmp.bin");
-
-        let fname = tmp_dir.path().join(fname);
-        (File::create(fname.clone())?, fname)
-    };
-    let mut content = Cursor::new(response.bytes().await?);
-    copy(&mut content, &mut img_data)?;
+    let (fname, checksum) = download_with_md5_and_filename(&target, &tmp_dir)
+        .await
+        .expect("Download failed");
+    assert_eq!(
+        "c8fc807773e5354afe61636071771906", checksum,
+        "Download checksum matches the expected"
+    );
 
     let img_name = format!(
         "test-rust-{}",
@@ -92,10 +148,18 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
         .success();
 
     // Compare files
-    diff_files(
-        &mut img_data,
-        &mut File::open(&download_data_fname).unwrap(),
-    );
+    let mut file = File::open(download_data_fname).await?;
+    let mut buffer = [0u8; 8192];
+    let mut context = Context::new();
+
+    loop {
+        let n = file.read(&mut buffer).await?;
+        if n == 0 {
+            break;
+        }
+        context.consume(&buffer[..n]);
+    }
+    let download_digest = context.compute();
 
     // Delete image
     Command::cargo_bin("osc")?
@@ -105,6 +169,12 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
         .arg(image_id)
         .assert()
         .success();
+
+    assert_eq!(
+        format!("{:x}", download_digest),
+        checksum,
+        "Checksums match"
+    );
 
     Ok(())
 }

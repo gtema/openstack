@@ -1045,12 +1045,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
-name = "file_diff"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31a7a908b8f32538a2143e59a6e4e2508988832d5d4d6f7c156b3cbc762643a5"
-
-[[package]]
 name = "find-msvc-tools"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1970,6 +1964,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "md5"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "490cc448043f947bae3cbee9c203358d62dbee0db12107a74be5c30ccfd09771"
+
+[[package]]
 name = "mdbook"
 version = "0.4.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2239,11 +2239,12 @@ dependencies = [
  "dialoguer",
  "dirs",
  "eyre",
- "file_diff",
+ "futures",
  "http",
  "indicatif",
  "itertools 0.14.0",
  "json-patch",
+ "md5",
  "openstack_sdk",
  "openstack_types",
  "owo-colors",
