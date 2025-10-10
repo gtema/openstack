@@ -78,3 +78,7 @@ jobs:
         env:
           OS_CLOUD: devstack
         run: cargo nextest run --test functional
+
+      - name: Dump glance logs on failure
+        if: failure()
+        run: journalctl -u devstack@g-api --no-pager
