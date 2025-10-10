@@ -1,9 +1,11 @@
 # Not run as part of pre-commit checks because they don't handle sending the correct commit
 # range to `committed`
 name: Lint Commits
-on: [pull_request]
+on:
+  pull_request:
 
-permissions: read-all
+permissions:
+  contents: read
 
 env:
   RUST_BACKTRACE: 1
@@ -16,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Harden Runner
-      uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
-      with:
-        egress-policy: audit
+      - name: Harden Runner
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
 
-    - name: Checkout Actions Repository
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      with:
-        fetch-depth: 0
+      - name: Checkout Actions Repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
 
-    - name: Lint Commits
-      uses: crate-ci/committed@15229711f8f597474c0b636f327cde5969f9a529 # v1.1.7
+      - name: Lint Commits
+        uses: crate-ci/committed@15229711f8f597474c0b636f327cde5969f9a529 # v1.1.7

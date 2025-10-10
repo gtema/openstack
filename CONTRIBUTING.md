@@ -48,6 +48,12 @@ if you have an idea how generated code can be improved open an issue or discussi
   fixed upstream. The only exception is that during code generation spelling
   issues are automatically addressed by `typos -w`.
 
+- Merge commits are forbidden. Whenever you open a PR please update it with
+  rebase and not a merge commit. It is also recommended to "allow edits from
+  maintainers" to help us get the quick fixes to the PR.
+
+- PRs are merged as squash commits.
+
 ## Releasing
 
 There are 2 projects being used to take care of release process:
