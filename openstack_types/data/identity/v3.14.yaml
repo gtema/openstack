@@ -15795,7 +15795,7 @@ components:
       description: A trust object
       properties:
         trust:
-          additionalProperties: false
+          additionalProperties: true
           description: A trust object.
           properties:
             allow_redelegation:
@@ -16032,7 +16032,7 @@ components:
         trusts:
           description: A list of trust objects.
           items:
-            additionalProperties: false
+            additionalProperties: true
             description: A trust object.
             properties:
               allow_redelegation:
@@ -16364,7 +16364,7 @@ components:
       description: A trust object
       properties:
         trust:
-          additionalProperties: false
+          additionalProperties: true
           description: A trust object.
           properties:
             allow_redelegation:

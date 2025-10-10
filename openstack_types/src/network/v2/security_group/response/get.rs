@@ -53,7 +53,7 @@ pub struct SecurityGroupResponse {
     #[structable(optional, serialize)]
     pub security_group_rules: Option<Vec<SecurityGroupRules>>,
 
-    /// Indicates whether this security group is shared to the requester’s
+    /// Indicates whether this security group is shared to the requestor’s
     /// project.
     #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
     #[structable(optional)]

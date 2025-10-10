@@ -27,7 +27,7 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use openstack_sdk::api::identity::v3::user::set::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
-#[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityUserSet {
     pub id: String,
@@ -38,7 +38,7 @@ pub struct IdentityUserSet {
     user: User,
 }
 /// Protocols data
-#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Protocols {
     #[builder(setter(into))]
@@ -69,7 +69,7 @@ impl TryFrom<&Protocols> for openstack_sdk::api::identity::v3::user::set::Protoc
 }
 
 /// Federated data
-#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Federated {
     #[builder(setter(into))]
@@ -106,7 +106,7 @@ impl TryFrom<&Federated> for openstack_sdk::api::identity::v3::user::set::Federa
 }
 
 /// Options data
-#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options {
     #[builder(default, setter(into))]
@@ -171,7 +171,7 @@ impl TryFrom<&Options> for openstack_sdk::api::identity::v3::user::set::Options<
 }
 
 /// User data
-#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User {
     /// The new ID of the default project for the user.
