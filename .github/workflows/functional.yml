@@ -65,7 +65,7 @@ jobs:
           log_dir: /tmp/devstack-logs
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
+        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
         with:
           toolchain: stable
 
