@@ -29,7 +29,16 @@ pub async fn download_with_md5_and_filename(
     url: &str,
     tmp_dir: &TempDir,
 ) -> Result<(PathBuf, String), Box<dyn Error>> {
-    let client = Client::new();
+    let retries = reqwest::retry::for_host("download.cirros-cloud.net")
+        .max_retries_per_request(3)
+        .classify_fn(|req_rep| {
+            if req_rep.status() == Some(http::StatusCode::FORBIDDEN) {
+                req_rep.retryable()
+            } else {
+                req_rep.success()
+            }
+        });
+    let client = Client::builder().retry(retries).gzip(true).build()?;
     let response = client.get(url).send().await?;
     response.error_for_status_ref()?; // fail fast on HTTP errors
 
@@ -88,7 +97,7 @@ fn extract_filename_from_url(url: &str) -> Option<String> {
 #[tokio::test]
 async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
     let tmp_dir = Builder::new().prefix("data").tempdir()?;
-    let cirros_ver = "0.6.2";
+    let cirros_ver = "0.6.3";
     let target = format!(
         "http://download.cirros-cloud.net/{ver}/cirros-{ver}-x86_64-disk.img",
         ver = cirros_ver
@@ -97,7 +106,7 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
         .await
         .expect("Download failed");
     assert_eq!(
-        "c8fc807773e5354afe61636071771906", checksum,
+        "87617e24a5e30cb3b87fda8c0764838f", checksum,
         "Download checksum matches the expected"
     );
 
