@@ -73,7 +73,7 @@ paths:
     post:
       tags:
       - auth
-      summary: Authenticate user issuing a new token
+      summary: Authenticate user issuing a new token.
       description: Issue token
       operationId: post
       parameters:
@@ -541,7 +541,7 @@ paths:
     post:
       tags:
       - auth
-      summary: Authenticate user issuing a new token
+      summary: Authenticate user issuing a new token.
       description: Issue token
       operationId: post
       parameters:
@@ -1182,6 +1182,31 @@ paths:
                 $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
+  /v4/tokens/restrictions/{id}:
+    get:
+      tags:
+      - token_restrictions
+      summary: Get single token restriction.
+      description: Shows details of the existing token restriction.
+      operationId: /token_restriction:show
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the token restriction
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Token restriction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRestrictionResponse'
+        '404':
+          description: Resource not found
+      security:
+      - x-auth: []
   /v4/users:
     get:
       tags:
@@ -1591,10 +1616,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/CatalogService'
-      description: A catalog object
+      description: A catalog object.
     CatalogService:
       type: object
-      description: A catalog object
+      description: A catalog object.
       required:
       - id
       - endpoints
@@ -1653,21 +1678,21 @@ components:
       - UserVerificationRequired
     Domain:
       type: object
-      description: Domain information
+      description: Domain information.
       properties:
         id:
           type:
           - string
           - 'null'
-          description: Domain ID
+          description: Domain ID.
         name:
           type:
           - string
           - 'null'
-          description: Domain Name
+          description: Domain Name.
     Endpoint:
       type: object
-      description: A Catalog Endpoint
+      description: A Catalog Endpoint.
       required:
       - id
       - url
@@ -2160,18 +2185,11 @@ components:
           - string
           - 'null'
           description: Fixed project_id for the token.
-        token_role_ids:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of fixed roles that would be included in the token.
-        token_user_id:
+        token_restriction_id:
           type:
           - string
           - 'null'
-          description: Fixed user_id for which the keystone token would be issued.
+          description: Token restrictions to be applied to the granted token.
         type:
           $ref: '#/components/schemas/MappingType'
           description: Attribute mapping type ([oidc, jwt]).
@@ -2240,14 +2258,11 @@ components:
         token_project_id:
           type: string
           description: Fixed project_id for the token.
-        token_role_ids:
-          type: array
-          items:
-            type: string
-          description: List of fixed roles that would be included in the token.
-        token_user_id:
-          type: string
-          description: Fixed user_id for which the keystone token would be issued.
+        token_restriction_id:
+          type:
+          - string
+          - 'null'
+          description: Token restrictions to be applied to the granted token.
         type:
           $ref: '#/components/schemas/MappingType'
           description: Attribute mapping type ([oidc, jwt]).
@@ -2359,18 +2374,11 @@ components:
           - string
           - 'null'
           description: Fixed project_id for the token.
-        token_role_ids:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of fixed roles that would be included in the token.
-        token_user_id:
+        token_restriction_id:
           type:
           - string
           - 'null'
-          description: Fixed user_id for which the keystone token would be issued.
+          description: Token restrictions to be applied to the granted token.
         type:
           $ref: '#/components/schemas/MappingType'
           description: Attribute mapping type ([oidc, jwt]).
@@ -2489,6 +2497,7 @@ components:
         description:
           type: string
           description: Passkey description
+          maxLength: 64
     PasskeyResponse:
       type: object
       description: |
@@ -2544,7 +2553,7 @@ components:
           description: A user object.
     Project:
       type: object
-      description: Project information
+      description: Project information.
       required:
       - id
       - name
@@ -2552,32 +2561,32 @@ components:
       properties:
         domain:
           $ref: '#/components/schemas/Domain'
-          description: project domain
+          description: project domain.
         id:
           type: string
-          description: Project ID
+          description: Project ID.
         name:
           type: string
-          description: Project Name
+          description: Project Name.
     ProjectScope:
       type: object
-      description: Project scope information
+      description: Project scope information.
       properties:
         domain:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/Domain'
-            description: project domain
+            description: project domain.
         id:
           type:
           - string
           - 'null'
-          description: Project ID
+          description: Project ID.
         name:
           type:
           - string
           - 'null'
-          description: Project Name
+          description: Project Name.
     PubKeyCredParams:
       type: object
       description: Public key cryptographic parameters
@@ -2866,37 +2875,38 @@ components:
     Scope:
       oneOf:
       - type: object
-        description: Project scope
+        description: Project scope.
         required:
         - project
         properties:
           project:
             $ref: '#/components/schemas/ProjectScope'
-            description: Project scope
+            description: Project scope.
       - type: object
-        description: Domain scope
+        description: Domain scope.
         required:
         - domain
         properties:
           domain:
             $ref: '#/components/schemas/Domain'
-            description: Domain scope
+            description: Domain scope.
       - type: object
-        description: System scope
+        description: System scope.
         required:
         - system
         properties:
           system:
             $ref: '#/components/schemas/System'
-            description: System scope
+            description: System scope.
       description: |-
-        The authorization scope, including the system (Since v3.10), a project, or a domain (Since
-        v3.4). If multiple scopes are specified in the same request (e.g. project and domain or domain
-        and system) an HTTP 400 Bad Request will be returned, as a token cannot be simultaneously
-        scoped to multiple authorization targets. An ID is sufficient to uniquely identify a project
-        but if a project is specified by name, then the domain of the project must also be specified in
-        order to uniquely identify the project by name. A domain scope may be specified by either the
-        domain’s ID or name with equivalent results.
+        The authorization scope, including the system, a project, or a domain.
+
+        If multiple scopes are specified in the same request (e.g. project and domain or domain and
+        system) an HTTP 400 Bad Request will be returned, as a token cannot be simultaneously scoped to
+        multiple authorization targets. An ID is sufficient to uniquely identify a project but if a
+        project is specified by name, then the domain of the project must also be specified in order to
+        uniquely identify the project by name. A domain scope may be specified by either the domain’s
+        ID or name with equivalent results.
     SingleVersion:
       type: object
       required:
@@ -2906,13 +2916,13 @@ components:
           $ref: '#/components/schemas/Version'
     System:
       type: object
-      description: System scope
+      description: System scope.
       properties:
         all:
           type:
           - boolean
           - 'null'
-          description: system scope
+          description: All systems access.
     Token:
       type: object
       description: Authorization token
@@ -2997,6 +3007,47 @@ components:
         token:
           $ref: '#/components/schemas/Token'
           description: Token
+    TokenRestriction:
+      type: object
+      description: Token restriction data.
+      required:
+      - allow_renew
+      - allow_rescope
+      - id
+      - roles
+      properties:
+        allow_renew:
+          type: boolean
+          description: Allow token renew.
+        allow_rescope:
+          type: boolean
+          description: Allow token rescope.
+        id:
+          type: string
+          description: Token restriction ID.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: Project ID that the token must be bound to.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+          description: Bound token roles.
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: User ID that the token must be bound to.
+    TokenRestrictionResponse:
+      type: object
+      required:
+      - restriction
+      properties:
+        restriction:
+          $ref: '#/components/schemas/TokenRestriction'
+          description: Restriction object.
     User:
       type: object
       description: User information
@@ -3136,6 +3187,10 @@ components:
       - type_
       - extensions
       properties:
+        description:
+          type: string
+          description: Optional credential description.
+          maxLength: 64
         extensions:
           $ref: '#/components/schemas/RegistrationExtensionsClientOutputs'
           description: Unsigned Client processed extensions.
@@ -3340,4 +3395,23 @@ tags:
     Mappings with an empty domain_id are considered globals and every domain may use it. Such mappings
     require the `domain_id_claim` attribute to be set to identify the domain_id for the respective
     user.
+- name: token
+  description: |+
+    Token API.
+
+- name: token_restrictions
+  description: |
+    Token restrictions API.
+
+    Token restrictions allow controlling multiple aspects of the authentication and authorization.
+
+    - `allow_rescope` controls whether it is allowed to change the scope of the token. That is by default possible for normal (i.e. password) authentication, is forbidden for the application credentials and may need to be also forbidden for the JWT based authentication.
+
+    - `allow_renew` controls whether it is possible to renew the token (get a new token from existing token). This is most likely undisired for the JWT auth.
+
+    - `project_id` may control that this token can be only issued for the fixed project scope.
+
+    - `user_id` may specify the fixed user_id that will be used when issuing the token independently of the authentication. This is useful for Service Accounts.
+
+    - `roles` binds the roles of the issued token on the scope. Using this bypasses necessity to grant the roles explicitly to the user.
 

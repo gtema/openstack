@@ -27,7 +27,7 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use openstack_sdk::api::compute::v2::server::os_get_console_output::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
-#[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ComputeServerGetConsoleOutput {
     pub id: String,
@@ -38,7 +38,7 @@ pub struct ComputeServerGetConsoleOutput {
     os_get_console_output: OsGetConsoleOutput,
 }
 /// OsGetConsoleOutput data
-#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsGetConsoleOutput {
     /// The number of lines to fetch from the end of console log. All lines
