@@ -240,6 +240,9 @@ mode_keybindings:
         SetNetworkSecurityGroupRuleListFilters: {}
       description: All
       type: Filter
+    "ctrl-n":
+      action: CreateNetworkSecurityGroupRule
+      description: Create
     "ctrl-d":
       action: DeleteNetworkSecurityGroupRule
       description: Delete

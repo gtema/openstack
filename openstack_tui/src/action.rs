@@ -92,6 +92,16 @@ pub enum Action {
     /// Close confirmation prompt
     ConfirmAccepted(cloud_types::ApiRequest),
 
+    /// Edit. Open the default editor to get the user input for the operation.
+    Edit {
+        template: String,
+        original_action: Box<Action>,
+    },
+    EditResult {
+        result: serde_json::Value,
+        original_action: Box<Action>,
+    },
+
     // Block Storage (Cinder)
     /// Delete volume
     DeleteBlockStorageVolume,
@@ -183,6 +193,9 @@ pub enum Action {
     SetNetworkSecurityGroupListFilters(cloud_types::NetworkSecurityGroupList),
     /// Switch to NetworkSecurityGroupRules
     ShowNetworkSecurityGroupRules,
+    /// Create the security group rule.
+    CreateNetworkSecurityGroupRule,
+    //CreateNetworkSecurityGroupRuleData(serde_json::Value),
     /// Delete the security group rule.
     DeleteNetworkSecurityGroupRule,
     /// Switch to routers view

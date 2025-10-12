@@ -136,11 +136,13 @@ impl Component for NetworkSecurityGroupRules<'_> {
             } => {
                 if let NetworkSecurityGroupRuleApiRequest::List(_) = *req {
                     self.set_data(data)?;
+                } else if let NetworkSecurityGroupRuleApiRequest::Create(_) = *req {
+                    self.set_data(data)?;
                 }
             }
             Action::ApiResponseData {
                 request: ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)),
-                ..
+                data,
             } => {
                 if let NetworkSecurityGroupRuleApiRequest::Delete(del) = *req {
                     let NetworkSecurityGroupRuleDelete { ref id, .. } = *del;
@@ -148,6 +150,9 @@ impl Component for NetworkSecurityGroupRules<'_> {
                         return Ok(Some(Action::Refresh));
                     }
                     self.sync_table_data()?;
+                    self.set_loading(false);
+                } else if let NetworkSecurityGroupRuleApiRequest::Create(_) = *req {
+                    self.append_new_row(data)?;
                     self.set_loading(false);
                 }
             }
@@ -166,6 +171,77 @@ impl Component for NetworkSecurityGroupRules<'_> {
                                 )),
                             )))?;
                         }
+                    }
+                }
+            }
+            Action::CreateNetworkSecurityGroupRule => {
+                if let Some(command_tx) = self.get_command_tx() {
+                    command_tx.send(Action::Edit {
+                        template: format!(
+                            r#"# Please provide the SecurityGroupRule data as YAML
+security_group_rule:
+  #  /// The security group ID to associate with this security group rule.
+  security_group_id: "{}"
+
+  #  /// The minimum port number in the range that is matched by the security
+  #  /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
+  #  /// value must be less than or equal to the `port_range_max` attribute
+  #  /// value. If the protocol is ICMP, this value must be an ICMP type.
+  # port_range_min: 
+
+  #  /// The maximum port number in the range that is matched by the security
+  #  /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
+  #  /// value must be greater than or equal to the `port_range_min` attribute
+  #  /// value. If the protocol is ICMP, this value must be an ICMP code.
+  # port_range_max: 
+
+  #  /// The IP protocol can be represented by a string, an integer, or `null`.
+  #  /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
+  #  /// or `33`, `egp` or `8`, `esp` or `50`, `gre` or `47`, `icmp` or `1`,
+  #  /// `icmpv6` or `58`, `igmp` or `2`, `ipip` or `4`, `ipv6-encap` or `41`,
+  #  /// `ipv6-frag` or `44`, `ipv6-icmp` or `58`, `ipv6-nonxt` or `59`,
+  #  /// `ipv6-opts` or `60`, `ipv6-route` or `43`, `ospf` or `89`, `pgm` or
+  #  /// `113`, `rsvp` or `46`, `sctp` or `132`, `tcp` or `6`, `udp` or `17`,
+  #  /// `udplite` or `136`, `vrrp` or `112`. Additionally, any integer value
+  #  /// between [0-255] is also valid. The string `any` (or integer `0`) means
+  #  /// `all` IP protocols. See the constants in `neutron_lib.constants` for
+  #  /// the most up-to-date list of supported strings.
+
+  # protocol: 
+  #  /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
+  #  /// ingress or egress rules.
+
+  # ethertype: 
+
+  #  /// Ingress or egress, which is the direction in which the security group
+  #  /// rule is applied.
+  # direction: 
+
+  #  /// A human-readable description for the resource. Default is an empty
+  #  /// string.
+  # description:
+"#,
+                            self.get_filters()
+                                .security_group_id
+                                .clone()
+                                .unwrap_or("<HERE>".to_string())
+                        ),
+                        original_action: Box::new(Action::CreateNetworkSecurityGroupRule),
+                    })?;
+                }
+            }
+            Action::EditResult {
+                result,
+                original_action,
+            } => {
+                if let Action::CreateNetworkSecurityGroupRule = *original_action {
+                    tracing::debug!("Would be creating sgr with {:?}", result);
+                    self.set_loading(true);
+                    if let Some(command_tx) = self.get_command_tx() {
+                        let data: crate::cloud_worker::network::v2::security_group_rule::NetworkSecurityGroupRuleCreate = serde_json::from_value(result)?;
+                        command_tx.send(Action::Confirm(ApiRequest::from(
+                            NetworkSecurityGroupRuleApiRequest::Create(Box::new(data)),
+                        )))?;
                     }
                 }
             }
