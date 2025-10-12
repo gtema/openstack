@@ -96,7 +96,7 @@ webauthn-rs-proto = { workspace = true, optional = true }
 [dev-dependencies]
 assert_cmd = "^2.0"
 futures.workspace = true
-md5 = "^0.7"
+md5 = "^0.8.0"
 rand = "^0.9"
 tempfile = { workspace = true }
 
