@@ -116,7 +116,7 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Download SARIF artifact
-        uses: actions/download-artifact@abefc31eafcfbdf6c5336127c1346fdae79ff41c # v5.0.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: rust-clippy-results
           path: .
