@@ -77,7 +77,7 @@ pub struct NetworkResponse {
     /// `network`.
     #[serde(default)]
     #[structable(optional, wide)]
-    pub l2_adjacency: Option<String>,
+    pub l2_adjacency: Option<bool>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.

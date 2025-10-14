@@ -15823,7 +15823,7 @@ components:
               description: |-
                 Indicates whether L2 connectivity is available throughout
                 the `network`.
-              type: string
+              type: boolean
             mtu:
               description: |-
                 The maximum transmission unit (MTU) value to
@@ -16129,7 +16129,7 @@ components:
               description: |-
                 Indicates whether L2 connectivity is available throughout
                 the `network`.
-              type: string
+              type: boolean
             mtu:
               description: |-
                 The maximum transmission unit (MTU) value to
@@ -16946,7 +16946,7 @@ components:
               description: |-
                 Indicates whether L2 connectivity is available throughout
                 the `network`.
-              type: string
+              type: boolean
             mtu:
               description: |-
                 The maximum transmission unit (MTU) value to
@@ -17161,7 +17161,7 @@ components:
                 description: |-
                   Indicates whether L2 connectivity is available throughout
                   the `network`.
-                type: string
+                type: boolean
               mtu:
                 description: |-
                   The maximum transmission unit (MTU) value to
