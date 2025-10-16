@@ -6,6 +6,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.1...openstack_cli-v0.13.2) - 2025-10-14
+
+### Added
+
+- Add support for token restrictions ([#1458](https://github.com/gtema/openstack/pull/1458))
+- Implement JWT login ([#1443](https://github.com/gtema/openstack/pull/1443))
+- Refetch object-storage resources ([#1441](https://github.com/gtema/openstack/pull/1441))
+- Extend default cli config for identity operations ([#1440](https://github.com/gtema/openstack/pull/1440))
+- Add keystone_ng idp and mapping ([#1427](https://github.com/gtema/openstack/pull/1427))
+- Implement passkey registration and auth ([#1418](https://github.com/gtema/openstack/pull/1418))
+- Start generating keystone-ng code ([#1415](https://github.com/gtema/openstack/pull/1415))
+- Improve openapi type conversion ([#1412](https://github.com/gtema/openstack/pull/1412))
+- Add create security group rule support ([#1470](https://github.com/gtema/openstack/pull/1470))
+- Prepare generation of create types for tui ([#1468](https://github.com/gtema/openstack/pull/1468))
+- Add socks feature to reqwest ([#1460](https://github.com/gtema/openstack/pull/1460))
+- Add connection pooling in openstack_sdk ([#1459](https://github.com/gtema/openstack/pull/1459))
+- Enable `OS_CLIENT_CONFIG_PATH` environment variable ([#1419](https://github.com/gtema/openstack/pull/1419))
+- Add port parameter to the loadbalancer resource ([#1417](https://github.com/gtema/openstack/pull/1417))
+
+### Fixed
+
+- Fix i32/u32 types in few object-store operations ([#1413](https://github.com/gtema/openstack/pull/1413))
+- Fix the federation auth url for v4 ([#1438](https://github.com/gtema/openstack/pull/1438))
+- Expand `~` in the OS_CLIENT_CONFIG_PATH ([#1435](https://github.com/gtema/openstack/pull/1435))
+
+### Other
+
+- *(deps)* update rust crate md5 to ^0.8.0 ([#1465](https://github.com/gtema/openstack/pull/1465))
+- Update image roundtrip test ([#1469](https://github.com/gtema/openstack/pull/1469))
+- *(test)* Rework image upload roundtrip test ([#1463](https://github.com/gtema/openstack/pull/1463))
+- Fix newly identified typos ([#1455](https://github.com/gtema/openstack/pull/1455))
+- Simplify parse_key_val_opt and parse_key_val ([#1425](https://github.com/gtema/openstack/pull/1425))
+- *(deps)* Bump httpmock from 0.7.0 to 0.8.0 ([#1444](https://github.com/gtema/openstack/pull/1444))
+
 ## [0.13.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.0...openstack_cli-v0.13.1) - 2025-09-07
 
 ### Added
