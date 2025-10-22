@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.3](https://github.com/gtema/openstack/compare/openstack_types-v0.22.2...openstack_types-v0.22.3) - 2025-10-22
+
+### Other
+
+- update Cargo.toml dependencies
+
 ## [0.22.2](https://github.com/gtema/openstack/compare/openstack_types-v0.22.1...openstack_types-v0.22.2) - 2025-10-14
 
 ### Added
