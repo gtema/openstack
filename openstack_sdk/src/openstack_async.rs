@@ -663,23 +663,34 @@ impl AsyncOpenStack {
                         .method(http::Method::GET)
                         .uri(query::url_to_http_uri(try_url.clone()));
 
-                    let rsp = self
-                        .rest_with_auth_async(req, Vec::new(), &self.auth)
-                        .await?;
-                    if rsp.status() != StatusCode::NOT_FOUND
-                        && self
-                            .catalog
-                            .process_endpoint_discovery(
-                                service_type,
-                                &try_url,
-                                rsp.body(),
-                                self.config.region_name.as_ref(),
-                            )
-                            .is_ok()
-                    {
-                        debug!("Finished service version discovery at {}", try_url.as_str());
-                        return Ok(());
-                    }
+                    match self.rest_with_auth_async(req, Vec::new(), &self.auth).await {
+                        Ok(rsp) => {
+                            if rsp.status() != StatusCode::NOT_FOUND
+                                && self
+                                    .catalog
+                                    .process_endpoint_discovery(
+                                        service_type,
+                                        &try_url,
+                                        rsp.body(),
+                                        self.config.region_name.as_ref(),
+                                    )
+                                    .is_ok()
+                            {
+                                debug!(
+                                    "Finished service version discovery at {}",
+                                    try_url.as_str()
+                                );
+                                return Ok(());
+                            }
+                        }
+                        Err(err) => {
+                            error!(
+                                "Error querying {} for the version discovery. It is most likely a misconfiguration on the cloud side. {}",
+                                try_url.as_str(),
+                                err
+                            );
+                        }
+                    };
                     if try_url.path() != "/" {
                         // We are not at the root yet and have not found a
                         // valid version document so far, try one level up
