@@ -15860,9 +15860,8 @@ components:
                 - 'null'
                 - string
             redelegated_trust_id:
-              description:
-                - Returned with redelegated trust provides information about the
-                  predecessor in the trust chain.
+              description: Returned with redelegated trust provides information 
+                about the predecessor in the trust chain.
               type:
                 - 'null'
                 - string
@@ -16099,9 +16098,8 @@ components:
                   - 'null'
                   - string
               redelegated_trust_id:
-                description:
-                  - Returned with redelegated trust provides information about 
-                    the predecessor in the trust chain.
+                description: Returned with redelegated trust provides 
+                  information about the predecessor in the trust chain.
                 type:
                   - 'null'
                   - string
@@ -16282,9 +16280,8 @@ components:
                 - 'null'
                 - string
             redelegated_trust_id:
-              description:
-                - Returned with redelegated trust provides information about the
-                  predecessor in the trust chain.
+              description: Returned with redelegated trust provides information 
+                about the predecessor in the trust chain.
               type:
                 - 'null'
                 - string
@@ -16429,9 +16426,8 @@ components:
                 - 'null'
                 - string
             redelegated_trust_id:
-              description:
-                - Returned with redelegated trust provides information about the
-                  predecessor in the trust chain.
+              description: Returned with redelegated trust provides information 
+                about the predecessor in the trust chain.
               type:
                 - 'null'
                 - string

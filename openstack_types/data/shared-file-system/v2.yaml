@@ -109,7 +109,6 @@ paths:
         - limits
   /messages:
     get:
-      deprecated: true
       description: |-
         Returns a list of messages, transformed through view builder.
       operationId: messages:get
@@ -136,7 +135,6 @@ paths:
       tags:
         - messages
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
   /messages/{id}:
     delete:
@@ -2628,7 +2626,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SharesExport_LocationsMetadataCreate_MetadataRequest'
+              $ref: '#/components/schemas/SharesExport_LocationsMetadataCreate_Metadata_287'
       responses:
         '201':
           content:
@@ -2648,7 +2646,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_All_MetadataRequest'
+              $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_All_Metadata_287'
       responses:
         '200':
           content:
@@ -2701,7 +2699,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_Metadata_ItemRequest'
+              $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_Metadata_Item_287'
       responses:
         '201':
           content:
@@ -3412,6 +3410,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_created_before:
       in: query
@@ -3420,6 +3419,7 @@ components:
         format: date-time
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.52'
     messages_created_since:
       in: query
@@ -3428,6 +3428,7 @@ components:
         format: date-time
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.52'
     messages_detail_id:
       in: query
@@ -3435,6 +3436,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_edit_id:
       description: id parameter for /messages/{id}/edit API
@@ -3462,6 +3464,7 @@ components:
           - integer
           - string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_message_level:
       in: query
@@ -3469,6 +3472,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_offset:
       in: query
@@ -3482,6 +3486,7 @@ components:
           - integer
           - string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_request_id:
       in: query
@@ -3489,6 +3494,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_resource_id:
       in: query
@@ -3496,6 +3502,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_resource_type:
       in: query
@@ -3503,6 +3510,7 @@ components:
       schema:
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_sort_dir:
       in: query
@@ -3511,6 +3519,7 @@ components:
         default: desc
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     messages_sort_key:
       in: query
@@ -3519,6 +3528,7 @@ components:
         default: created_at
         type: string
       x-openstack:
+        max-ver: '2.51'
         min-ver: '2.37'
     os_availability_zone_edit_id:
       description: id parameter for /os-availability-zone/{id}/edit API
@@ -6566,51 +6576,212 @@ components:
       description: Response of the shares/detail:get operation
       type: object
     SharesExport_LocationShowResponse:
-      description: Response of the 
-        shares/share_id/export_locations/export_location_uuid:get operation
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          properties:
+            created_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: created_at
+            id:
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: export_location_id
+            is_admin_only:
+              type: boolean
+              x-openstack:
+                apiref: export_location_is_admin_only
+            path:
+              type: string
+              x-openstack:
+                apiref: export_location_path
+            preferred:
+              type: boolean
+              x-openstack:
+                apiref: export_location_preferred
+            share_instance_id:
+              type: string
+              x-openstack:
+                apiref: share_instance_id
+            updated_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: updated_at
+          required:
+            - created_at
+            - id
+            - path
+            - preferred
+            - updated_at
+          type: object
+          x-openstack:
+            apiref: export_location
+      required:
+        - export_location
       type: object
     SharesExport_LocationsListResponse:
-      description: Response of the shares/share_id/export_locations:get 
-        operation
-      type: object
-    SharesExport_LocationsMetadataCreate_MetadataRequest:
-      description: Request of the 
-        shares/share_id/export_locations/resource_id/metadata:post operation
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+                x-openstack:
+                  apiref: export_location_id
+              is_admin_only:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_is_admin_only
+              path:
+                type: string
+                x-openstack:
+                  apiref: export_location_path
+              preferred:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_preferred
+              share_instance_id:
+                type: string
+                x-openstack:
+                  apiref: share_instance_id
+            required:
+              - id
+              - path
+              - preferred
+            type: object
+          type: array
+      required:
+        - export_locations
       type: object
       x-openstack:
-        action-name: create_metadata
+        apiref: export_locations
     SharesExport_LocationsMetadataCreate_MetadataResponse:
-      description: Response of the 
-        shares/share_id/export_locations/resource_id/metadata:post operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
       type: object
+    SharesExport_LocationsMetadataCreate_Metadata_287:
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
+      type: object
+      x-openstack:
+        min-ver: '2.87'
     SharesExport_LocationsMetadataList_MetadataResponse:
-      description: Response of the 
-        shares/share_id/export_locations/resource_id/metadata:get operation
+      additionalProperties: false
+      properties:
+        meta:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - meta
       type: object
     SharesExport_LocationsMetadataShow_MetadataResponse:
-      description: Response of the 
-        shares/share_id/export_locations/resource_id/metadata/key:get operation
+      additionalProperties: false
+      properties:
+        meta:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - meta
       type: object
-    SharesExport_LocationsMetadataUpdate_All_MetadataRequest:
-      description: Request of the 
-        shares/share_id/export_locations/resource_id/metadata:put operation
-      type: object
-      x-openstack:
-        action-name: update_all_metadata
     SharesExport_LocationsMetadataUpdate_All_MetadataResponse:
-      description: Response of the 
-        shares/share_id/export_locations/resource_id/metadata:put operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
       type: object
-    SharesExport_LocationsMetadataUpdate_Metadata_ItemRequest:
-      description: Request of the 
-        shares/share_id/export_locations/resource_id/metadata/key:post operation
+    SharesExport_LocationsMetadataUpdate_All_Metadata_287:
+      additionalProperties: true
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
       type: object
       x-openstack:
-        action-name: update_metadata_item
+        min-ver: '2.87'
     SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the 
-        shares/share_id/export_locations/resource_id/metadata/key:post operation
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
       type: object
+    SharesExport_LocationsMetadataUpdate_Metadata_Item_287:
+      additionalProperties: true
+      properties:
+        metadata:
+          additionalProperties: false
+          patternProperties:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              type: string
+          type:
+            - 'null'
+            - object
+      required:
+        - metadata
+      type: object
+      x-openstack:
+        min-ver: '2.87'
     SharesInstancesGet_Share_InstancesResponse:
       description: Response of the shares/share_id/instances:get operation
       type: object
