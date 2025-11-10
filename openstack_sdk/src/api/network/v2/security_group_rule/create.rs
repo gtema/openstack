@@ -30,7 +30,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-#[derive(Debug, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Direction {
     #[serde(rename = "egress")]
     Egress,
@@ -38,7 +38,7 @@ pub enum Direction {
     Ingress,
 }
 
-#[derive(Debug, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Ethertype {
     #[serde(rename = "IPv4")]
     Ipv4,

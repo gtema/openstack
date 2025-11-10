@@ -3180,8 +3180,6 @@ paths:
       - $ref: '#/components/parameters/volumes_encryption_volume_id'
   /v3/volumes/{volume_id}/metadata:
     get:
-      description: |-
-        Returns the list of metadata for a given volume.
       operationId: volumes/volume_id/metadata:get
       responses:
         '200':

@@ -1182,6 +1182,75 @@ paths:
                 $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
+  /v4/tokens/restrictions:
+    get:
+      tags:
+      - token_restrictions
+      summary: List token restrictions.
+      description: |-
+        List existing token restrictions. By default only admin user is allowed to leave `domain_id`
+        query parameter empty, what means that token restrictions for all domains should be listed.
+      operationId: /token_restriction:list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Domain id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: user_id
+        in: query
+        description: User id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: project_id
+        in: query
+        description: Project id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of token restrictions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRestrictionList'
+        '500':
+          description: Internal error.
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - token_restriction
+      summary: Create the token restriction.
+      description: |-
+        Create the token restriction with the specified properties.
+
+        It is expected that only admin user is able to create token restriction in other domain.
+      operationId: /token_restriction:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRestrictionCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: token restriction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRestrictionResponse'
+      security:
+      - x-auth: []
   /v4/tokens/restrictions/{id}:
     get:
       tags:
@@ -1205,6 +1274,59 @@ paths:
                 $ref: '#/components/schemas/TokenRestrictionResponse'
         '404':
           description: Resource not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - token_restriction
+      summary: Update existing token restriction by the ID.
+      description: |-
+        Updates the existing token restriction.
+
+        It is expected that only admin user is able to update token restriction in other domain.
+      operationId: /token_restriction:update
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the token restriction
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRestrictionUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Token restriction object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRestrictionResponse'
+        '404':
+          description: Token restriction not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - token_restrictions
+      summary: Delete Token restriction.
+      description: Deletes the existing token restriction by the ID.
+      operationId: /token_restriction:delete
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the token restriction.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted.
+        '404':
+          description: Token restriction not found
       security:
       - x-auth: []
   /v4/users:
@@ -2576,7 +2698,7 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/Domain'
-            description: project domain.
+            description: Project domain.
         id:
           type:
           - string
@@ -3013,6 +3135,7 @@ components:
       required:
       - allow_renew
       - allow_rescope
+      - domain_id
       - id
       - roles
       properties:
@@ -3022,6 +3145,9 @@ components:
         allow_rescope:
           type: boolean
           description: Allow token rescope.
+        domain_id:
+          type: string
+          description: Domain ID the token restriction belongs to.
         id:
           type: string
           description: Token restriction ID.
@@ -3040,13 +3166,107 @@ components:
           - string
           - 'null'
           description: User ID that the token must be bound to.
+    TokenRestrictionCreate:
+      type: object
+      description: New token restriction data.
+      required:
+      - allow_renew
+      - allow_rescope
+      - domain_id
+      - roles
+      properties:
+        allow_renew:
+          type: boolean
+          description: Allow token renew.
+        allow_rescope:
+          type: boolean
+          description: Allow token rescope.
+        domain_id:
+          type: string
+          description: Domain ID the token restriction belongs to.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: Project ID that the token must be bound to.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+          description: Bound token roles.
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: User ID that the token must be bound to.
+    TokenRestrictionCreateRequest:
+      type: object
+      description: Token restriction creation request.
+      required:
+      - restriction
+      properties:
+        restriction:
+          $ref: '#/components/schemas/TokenRestrictionCreate'
+          description: Restriction object.
+    TokenRestrictionList:
+      type: object
+      description: Token restrictions.
+      required:
+      - restrictions
+      properties:
+        restrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenRestriction'
+          description: Token restrictions.
     TokenRestrictionResponse:
       type: object
+      description: Token restriction data.
       required:
       - restriction
       properties:
         restriction:
           $ref: '#/components/schemas/TokenRestriction'
+          description: Restriction object.
+    TokenRestrictionUpdate:
+      type: object
+      description: New token restriction data.
+      properties:
+        allow_renew:
+          type:
+          - boolean
+          - 'null'
+          description: Allow token renew.
+        allow_rescope:
+          type:
+          - boolean
+          - 'null'
+          description: Allow token rescope.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: Project ID that the token must be bound to.
+        roles:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Role'
+          description: Bound token roles.
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: User ID that the token must be bound to.
+    TokenRestrictionUpdateRequest:
+      type: object
+      description: Token restriction update request.
+      required:
+      - restriction
+      properties:
+        restriction:
+          $ref: '#/components/schemas/TokenRestrictionUpdate'
           description: Restriction object.
     User:
       type: object

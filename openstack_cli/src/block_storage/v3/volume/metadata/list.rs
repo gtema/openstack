@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::metadata::list;
 use openstack_types::block_storage::v3::volume::metadata::response::list::MetadataResponse;
 
-/// Returns the list of metadata for a given volume.
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct MetadatasCommand {
     /// Request Query parameters
