@@ -65,3 +65,6 @@ lto = "thin"
 
 [workspace.lints.clippy]
 result_large_err = "allow"
+unwrap_used = "warn"
+expect_used = "warn"
+enum_glob_use = "deny"
