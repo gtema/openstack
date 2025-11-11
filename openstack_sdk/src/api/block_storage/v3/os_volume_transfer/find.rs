@@ -73,20 +73,21 @@ impl<'a> RequestBuilder<'a> {
 impl<'a> Findable for Request<'a> {
     type G = Get::Request<'a>;
     type L = List::Request;
-    fn get_ep(&self) -> Get::Request<'a> {
+    fn get_ep<C: RestClient>(&self) -> Result<Get::Request<'a>, ApiError<C::Error>> {
         let mut ep = Get::Request::builder();
         ep.id(self.id.clone());
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
         }
-        ep.build().unwrap()
+        ep.build().map_err(ApiError::endpoint_builder)
     }
-    fn list_ep(&self) -> List::Request {
+
+    fn list_ep<C: RestClient>(&self) -> Result<List::Request, ApiError<C::Error>> {
         let mut ep = List::Request::builder();
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
         }
-        ep.build().unwrap()
+        ep.build().map_err(ApiError::endpoint_builder)
     }
     /// Locate os_volume_transfer in a list
     fn locate_resource_in_list<C: RestClient>(

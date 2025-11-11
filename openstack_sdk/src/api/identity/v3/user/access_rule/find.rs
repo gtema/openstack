@@ -76,22 +76,22 @@ where {
 impl<'a> Findable for Request<'a> {
     type G = Get::Request<'a>;
     type L = List::Request<'a>;
-    fn get_ep(&self) -> Get::Request<'a> {
+    fn get_ep<C: crate::api::RestClient>(&self) -> Result<Get::Request<'a>, crate::api::ApiError<C::Error>> {
         let mut ep = Get::Request::builder();
         ep.id(self.id.clone());
         ep.user_id(self.user_id.clone());
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
         }
-        ep.build().unwrap()
+        ep.build().map_err(|err| ApiError::endpoint_builder(err))
     }
-    fn list_ep(&self) -> List::Request<'a> {
+    fn list_ep<C: crate::api::RestClient>(&self) -> Result<List::Request<'a>, crate::api::ApiError<C::Error>> {
         let mut ep = List::Request::builder();
         ep.user_id(self.user_id.clone());
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
         }
-        ep.build().unwrap()
+        ep.build().map_err(|err| ApiError::endpoint_builder(err))
     }
     /// Locate user/access_rule in a list
     fn locate_resource_in_list<C: RestClient>(

@@ -30,9 +30,9 @@ pub trait Findable {
     /// LIST endpoint type
     type L;
     /// return GET RestEndpoint with query parameters set
-    fn get_ep(&self) -> Self::G;
+    fn get_ep<C: RestClient>(&self) -> Result<Self::G, ApiError<C::Error>>;
     /// return LIST RestEndpoint with query parameters set
-    fn list_ep(&self) -> Self::L;
+    fn list_ep<C: RestClient>(&self) -> Result<Self::L, ApiError<C::Error>>;
     /// Locate single resource in resources list
     fn locate_resource_in_list<C: RestClient>(
         &self,
@@ -98,7 +98,7 @@ where
     fn query(&self, client: &C) -> Result<T, ApiError<C::Error>> {
         let res = match self.mode {
             FindMode::NameOrId => {
-                let get_ep = self.findable.get_ep();
+                let get_ep = self.findable.get_ep::<C>()?;
                 let get_res = get_ep.query(client);
                 match get_res {
                     Err(x) => match x {
@@ -128,7 +128,7 @@ where
                             status: http::StatusCode::BAD_REQUEST,
                             ..
                         } => {
-                            let list_ep = self.findable.list_ep();
+                            let list_ep = self.findable.list_ep::<C>()?;
                             let data: Vec<serde_json::Value> = list_ep.query(client)?;
                             self.findable.locate_resource_in_list::<C>(data)?
                         }
@@ -140,7 +140,7 @@ where
                 }
             }
             FindMode::Name => {
-                let list_ep = self.findable.list_ep();
+                let list_ep = self.findable.list_ep::<C>()?;
                 let data: Vec<serde_json::Value> = list_ep.query(client)?;
                 self.findable.locate_resource_in_list::<C>(data)?
             }
@@ -166,7 +166,7 @@ where
     async fn query_async(&self, client: &C) -> Result<T, ApiError<C::Error>> {
         let res = match self.mode {
             FindMode::NameOrId => {
-                let get_ep = self.findable.get_ep();
+                let get_ep = self.findable.get_ep::<C>()?;
                 let get_res = get_ep.query_async(client).await;
                 match get_res {
                     Err(x) => match x {
@@ -195,7 +195,7 @@ where
                             status: http::StatusCode::BAD_REQUEST,
                             ..
                         } => {
-                            let list_ep = self.findable.list_ep();
+                            let list_ep = self.findable.list_ep::<C>()?;
                             let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
                             self.findable.locate_resource_in_list::<C>(data)?
                         }
@@ -207,7 +207,7 @@ where
                 }
             }
             FindMode::Name => {
-                let list_ep = self.findable.list_ep();
+                let list_ep = self.findable.list_ep::<C>()?;
                 let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
                 self.findable.locate_resource_in_list::<C>(data)?
             }
@@ -232,13 +232,13 @@ mod tests {
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
-    use crate::api::{self, ApiError};
+    use crate::api::{self, ApiError, RestClient};
     use crate::test::client::FakeOpenStackClient;
     use derive_builder::Builder;
 
     #[derive(Debug, Builder, Clone)]
     struct GetDummy<'a> {
-        #[builder(setter(into), default)]
+        #[builder(setter(into))]
         id: Cow<'a, str>,
     }
 
@@ -305,14 +305,37 @@ mod tests {
     impl<'a> Findable for Dummy<'a> {
         type G = GetDummy<'a>;
         type L = ListDummies<'a>;
-        fn get_ep(&self) -> GetDummy<'a> {
-            GetDummy::builder().id(self.id.clone()).build().unwrap()
+        fn get_ep<C: RestClient>(&self) -> Result<GetDummy<'a>, ApiError<C::Error>> {
+            GetDummy::builder()
+                .id(self.id.clone())
+                .build()
+                .map_err(ApiError::endpoint_builder)
         }
-        fn list_ep(&self) -> ListDummies<'a> {
+        fn list_ep<C: RestClient>(&self) -> Result<ListDummies<'a>, ApiError<C::Error>> {
             ListDummies::builder()
                 .name(self.id.clone())
                 .build()
-                .unwrap()
+                .map_err(ApiError::endpoint_builder)
+        }
+    }
+
+    struct DummyBad<'a> {
+        id: Cow<'a, str>,
+    }
+
+    impl<'a> Findable for DummyBad<'a> {
+        type G = GetDummy<'a>;
+        type L = ListDummies<'a>;
+        fn get_ep<C: RestClient>(&self) -> Result<GetDummy<'a>, ApiError<C::Error>> {
+            GetDummy::builder()
+                .build()
+                .map_err(ApiError::endpoint_builder)
+        }
+        fn list_ep<C: RestClient>(&self) -> Result<ListDummies<'a>, ApiError<C::Error>> {
+            ListDummies::builder()
+                .name(self.id.clone())
+                .build()
+                .map_err(ApiError::endpoint_builder)
         }
     }
 
@@ -690,6 +713,40 @@ mod tests {
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
             panic!("Unexpected error: {err}");
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_get_builder_error() {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let ep = DummyBad { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find(ep).query(&client);
+        match res {
+            Err(ApiError::EndpointBuilder { message }) => {
+                assert_eq!("`id` must be initialized", message);
+            }
+            _ => {
+                panic!("unexpected response: {:?}", res);
+            }
+        }
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_get_builder_error_async() {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let ep = DummyBad { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
+        match res {
+            Err(ApiError::EndpointBuilder { message }) => {
+                assert_eq!("`id` must be initialized", message);
+            }
+            _ => {
+                panic!("unexpected response: {:?}", res);
+            }
         }
     }
 }
