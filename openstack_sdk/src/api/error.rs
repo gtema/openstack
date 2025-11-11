@@ -166,6 +166,13 @@ where
         /// The source of the error.
         context: String,
     },
+
+    /// Endpoint builder error.
+    #[error("endpoint builder error: {}", message)]
+    EndpointBuilder {
+        /// The error message,
+        message: String,
+    },
 }
 
 impl<E> ApiError<E>
@@ -275,6 +282,13 @@ where
     pub(crate) fn poisoned_lock<CTX: AsRef<str>>(context: CTX) -> Self {
         ApiError::PoisonedLock {
             context: context.as_ref().into(),
+        }
+    }
+
+    /// Create EndpointBuilder error with the message.
+    pub(crate) fn endpoint_builder<EX: Error + Send>(error: EX) -> Self {
+        ApiError::EndpointBuilder {
+            message: error.to_string(),
         }
     }
 }
