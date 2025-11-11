@@ -316,7 +316,7 @@ where
             let total_read_till_now = self
                 .page_state
                 .read()
-                .expect("poisoned state")
+                .map_err(|_| ApiError::poisoned_lock("locking pagination state"))?
                 .total_results;
             if total_read_till_now + page.len() > limit {
                 // Discard unnecessary data
