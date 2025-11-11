@@ -62,7 +62,6 @@ hyper = { version = "^1.7", features = ["full"] }
 hyper-util = { version = "^0.1", features = ["full"] }
 itertools = { workspace = true }
 json-patch = { workspace = true }
-lazy_static = { workspace = true }
 open.workspace = true
 regex = { workspace = true }
 reqwest = { workspace = true, features = ["gzip", "deflate", "http2",
