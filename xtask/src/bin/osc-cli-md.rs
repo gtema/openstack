@@ -17,32 +17,29 @@
 use crate::osc_cli_md_lib::App;
 use clap::builder::PossibleValue;
 use clap::{Arg, ArgMatches, Command, CommandFactory};
-use lazy_static::lazy_static;
 use mdbook::book::Book;
 use mdbook::errors::Error;
 use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
 use mdbook::{book::Chapter, BookItem};
 use openstack_cli::Cli;
-use regex::Regex;
+use regex::{Error as RegexError, Regex};
 use semver::{Version, VersionReq};
 use std::fmt::{self, Write};
 use std::process;
+use std::sync::OnceLock;
 use std::{io, path::PathBuf};
 use xtask::{get_canonical_name, indent};
 
-lazy_static! {
-    static ref OSC: Regex = Regex::new(
-        r"(?x)              # insignificant whitespace mode
-        \\\{\{\#.*\}\}      # match escaped link
-        |                   # or
-        \{\{\s*             # link opening parens and whitespace
-        \#([a-zA-Z0-9_]+)   # link type
-        \s+                 # separating whitespace
-        ([^}]+)             # link target path and space separated properties
-        \}\}                # link closing parens",
-    )
-    .unwrap();
-}
+static OSC: OnceLock<Result<Regex, RegexError>> = OnceLock::new();
+static OSC_REGEX_STR: &str = r"
+    (?x)               # insignificant whitespace mode
+    \\\{\{\#.*\}\}     # match escaped link
+    |                  # or
+    \{\{\s*            # link opening parens and whitespace
+    \#([a-zA-Z0-9_]+)  # link type
+    \s+                # separating whitespace
+    ([^}]+)            # link target path and space separated properties
+    \}\}               # link closing parens";
 
 pub fn make_app() -> Command {
     Command::new("osc-cli-md")
@@ -411,10 +408,11 @@ mod osc_cli_md_lib {
         }
 
         fn run(&self, _ctx: &PreprocessorContext, mut book: Book) -> Result<Book, Error> {
+            let re = OSC.get_or_init(|| Regex::new(OSC_REGEX_STR)).as_ref()?;
             book.for_each_mut(|item: &mut BookItem| {
                 if let BookItem::Chapter(ref mut chapter) = *item {
                     let content = &chapter.content;
-                    for cap in OSC.captures_iter(&content.clone()) {
+                    for cap in re.captures_iter(&content.clone()) {
                         if let (Some(all), Some(typ), Some(subcmd)) =
                             (cap.get(0), cap.get(1), cap.get(2))
                         {

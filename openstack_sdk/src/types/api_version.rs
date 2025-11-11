@@ -12,60 +12,78 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Service Api Version
+//! Service Api Version.
 //!
-//! Endpoint api version handling
+//! Endpoint api version handling.
 
-use lazy_static::lazy_static;
-use regex::Regex;
+use regex::{Error as RegexError, Regex};
 use std::fmt;
+use std::sync::OnceLock;
 use thiserror::Error;
 use url::Url;
 
-lazy_static! {
-    static ref API_VERSION_PREFIXED_REGEX: Regex =
-        Regex::new(r"^v(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$").unwrap();
-    static ref API_VERSION_REGEX: Regex =
-        Regex::new(r"^(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$").unwrap();
-    static ref ID_LIKE_REGEX: Regex = Regex::new(r"[0-9a-z]{32}$").unwrap();
-}
+static API_VERSION_PREFIXED_REGEX: OnceLock<Result<Regex, RegexError>> = OnceLock::new();
+static API_VERSION_REGEX: OnceLock<Result<Regex, RegexError>> = OnceLock::new();
+static ID_LIKE_REGEX: OnceLock<Result<Regex, RegexError>> = OnceLock::new();
 
-/// ApiVersion error
+/// ApiVersion error.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ApiVersionError {
+    /// Invalid URL.
     #[error("failed to parse url: {}", source)]
     UrlParse {
         #[from]
         source: url::ParseError,
     },
+
+    /// Invalid integer.
     #[error("Not a valid integer: {}", source)]
     ParseInt {
         #[from]
         source: std::num::ParseIntError,
     },
+
+    /// Invalid version.
     #[error("Not a valid version string: {0}")]
     Invalid(String),
+
+    /// Regex error.
+    #[error("invalid regex: {}", source)]
+    Regex {
+        /// The error source.
+        source: RegexError,
+    },
 }
 
-/// ApiVersion
+/// Convert RegexError wrapped under [OnceLock] to [ApiVersionError].
+impl From<&'static RegexError> for ApiVersionError {
+    fn from(err: &'static RegexError) -> Self {
+        // Clone the error reference to get an owned error
+        Self::Regex {
+            source: err.clone(),
+        }
+    }
+}
+
+/// ApiVersion.
 ///
 /// ApiVersion of the Endpoint as described in
 /// <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html>. It is a subset of a SemVer and only includes `major` and `minor` parts.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct ApiVersion {
-    /// Major version
+    /// Major version.
     pub major: u8,
-    /// Minor version
+    /// Minor version.
     pub minor: u8,
 }
 
 impl ApiVersion {
-    /// Basic constructor
+    /// Basic constructor.
     pub fn new(major: u8, minor: u8) -> Self {
         Self { major, minor }
     }
-    /// Determine Api Version based on the Endpoint URL and optional project_id
+    /// Determine Api Version based on the Endpoint URL and optional project_id.
     pub fn from_url<S: AsRef<str>>(
         url: &Url,
         project_id: Option<S>,
@@ -86,7 +104,10 @@ impl ApiVersion {
                 None => {
                     // Project_id is not known, but path_element contains something that look like
                     // ID. This is safe since this anyway doesn't look like version information.
-                    if ID_LIKE_REGEX.is_match(last) {
+                    let re = ID_LIKE_REGEX
+                        .get_or_init(|| Regex::new(r"[0-9a-z]{32}$"))
+                        .as_ref()?;
+                    if re.is_match(last) {
                         // NOTE(gtema): I don't think it is worth of logging a warning.
                         path_segments.pop();
                     }
@@ -99,17 +120,23 @@ impl ApiVersion {
         Ok(Self::default())
     }
 
-    /// Determine the api version from a single string (i.e. `v2.3` or `3.4`)
+    /// Determine the api version from a single string (i.e. `v2.3` or `3.4`).
     ///
     /// `prefixed` parameter influences string analysis enforcing presence or absence of the `v`
-    /// prefix
+    /// prefix.
     pub fn from_apiver_str<S: AsRef<str>>(
         data: S,
         prefixed: bool,
     ) -> Result<Self, ApiVersionError> {
         let captures = match prefixed {
-            true => API_VERSION_PREFIXED_REGEX.captures(data.as_ref()),
-            false => API_VERSION_REGEX.captures(data.as_ref()),
+            true => API_VERSION_PREFIXED_REGEX
+                .get_or_init(|| Regex::new(r"^v(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$"))
+                .as_ref()?
+                .captures(data.as_ref()),
+            false => API_VERSION_REGEX
+                .get_or_init(|| Regex::new(r"^(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$"))
+                .as_ref()?
+                .captures(data.as_ref()),
         };
         if let Some(cap) = captures {
             let mut res = Self { major: 0, minor: 0 };
@@ -122,7 +149,7 @@ impl ApiVersion {
         Err(ApiVersionError::Invalid(data.as_ref().into()))
     }
 
-    /// Determine the api version from the [RestEndpoint](crate::api::RestEndpoint)
+    /// Determine the api version from the [RestEndpoint](crate::api::RestEndpoint).
     ///
     /// First element of the url may be containing version information (i.e. `v2.1/servers`).
     pub fn from_endpoint_url<S: AsRef<str>>(url: S) -> Option<Self> {

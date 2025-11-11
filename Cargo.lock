@@ -2256,7 +2256,6 @@ dependencies = [
  "hyper-util",
  "itertools 0.14.0",
  "json-patch",
- "lazy_static",
  "open",
  "regex",
  "reqwest",
@@ -4497,7 +4496,6 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "clap",
- "lazy_static",
  "mdbook",
  "openstack_cli",
  "regex",
