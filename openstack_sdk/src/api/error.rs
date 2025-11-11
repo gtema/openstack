@@ -160,6 +160,12 @@ where
         #[from]
         source: crate::catalog::CatalogError,
     },
+    /// Poisoned guard lock in the internal processing.
+    #[error("internal error: poisoned lock: {}", context)]
+    PoisonedLock {
+        /// The source of the error.
+        context: String,
+    },
 }
 
 impl<E> ApiError<E>
@@ -263,6 +269,12 @@ where
         ApiError::DataType {
             source,
             typename: any::type_name::<T>(),
+        }
+    }
+
+    pub(crate) fn poisoned_lock<CTX: AsRef<str>>(context: CTX) -> Self {
+        ApiError::PoisonedLock {
+            context: context.as_ref().into(),
         }
     }
 }

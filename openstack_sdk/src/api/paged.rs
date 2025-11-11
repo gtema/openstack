@@ -136,9 +136,8 @@ where
             set_latest_microversion(&mut req, ep, &self.endpoint);
             // Set endpoint headers
             if let Some(request_headers) = self.endpoint.request_headers() {
-                let headers = req.headers_mut().unwrap();
-                for (k, v) in request_headers.iter() {
-                    headers.insert(k, v.clone());
+                if let Some(headers) = req.headers_mut() {
+                    headers.extend(request_headers.clone())
                 }
             }
 
@@ -210,7 +209,9 @@ where
                 serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;
             let page_len = page.len();
             let is_last_page = {
-                let mut locked_results = results.lock().expect("poisoned results");
+                let mut locked_results = results
+                    .lock()
+                    .map_err(|_| ApiError::poisoned_lock("locking pagination results"))?;
                 if let Pagination::Limit(limit) = self.pagination {
                     // with total limit need to check whether the page contains more data then necessary
                     let total_read_till_now = locked_results.len();
@@ -221,6 +222,7 @@ where
                 }
 
                 locked_results.extend(page);
+
                 self.pagination.is_last_page(page_len, locked_results.len())
             };
             if is_last_page {
@@ -236,7 +238,9 @@ where
             }
         }
 
-        let mut locked_results = results.lock().expect("poisoned results");
+        let mut locked_results = results
+            .lock()
+            .map_err(|_| ApiError::poisoned_lock("locking pagination results"))?;
         Ok(std::mem::take(&mut locked_results))
     }
 }

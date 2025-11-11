@@ -32,13 +32,15 @@ impl<'a> LinkHeader<'a> {
     fn parse(s: &'a str) -> Result<Self, LinkHeaderParseError> {
         let mut parts = s.split(';');
 
-        let url_part = parts.next().expect("a split always has at least one part");
+        let url_part = parts
+            .next()
+            .ok_or_else(|| LinkHeaderParseError::MalformedHeader(s.to_string()))?;
         let url = {
             let part = url_part.trim();
             if part.starts_with('<') && part.ends_with('>') {
                 &part[1..part.len() - 1]
             } else {
-                return Err(LinkHeaderParseError::NoBrackets);
+                return Err(LinkHeaderParseError::NoBrackets(url_part.to_string()));
             }
         };
 
@@ -46,7 +48,9 @@ impl<'a> LinkHeader<'a> {
             .map(|part| {
                 let part = part.trim();
                 let mut halves = part.splitn(2, '=');
-                let key = halves.next().expect("a split always has at least one part");
+                let key = halves
+                    .next()
+                    .ok_or_else(|| LinkHeaderParseError::MalformedLink(part.to_string()))?;
                 let value = if let Some(value) = halves.next() {
                     if value.starts_with('"') && value.ends_with('"') {
                         &value[1..value.len() - 1]
@@ -54,7 +58,7 @@ impl<'a> LinkHeader<'a> {
                         value
                     }
                 } else {
-                    return Err(LinkHeaderParseError::MissingParamValue);
+                    return Err(LinkHeaderParseError::MissingParamValue(part.to_string()));
                 };
 
                 Ok((key, value))
@@ -77,11 +81,17 @@ pub enum LinkHeaderParseError {
         source: reqwest::header::ToStrError,
     },
     /// The `url` for a `Link` header missing `<>` brackets.
-    #[error("missing brackets around url")]
-    NoBrackets,
+    #[error("missing '<>' brackets around url: {0}")]
+    NoBrackets(String),
     /// A parameter for a `Link` header missing a value.
-    #[error("missing parameter value")]
-    MissingParamValue,
+    #[error("missing parameter value: {0}")]
+    MissingParamValue(String),
+    /// Malformed link split - must contain at least one ';'.
+    #[error("a link header always should contain at least one ';': {0}")]
+    MalformedHeader(String),
+    /// Malformed link - has to have at least one part.
+    #[error("a split has to have at least one part: {0}")]
+    MalformedLink(String),
 }
 
 impl LinkHeaderParseError {
@@ -144,8 +154,8 @@ pub(crate) fn next_page_from_body(
             //   prev: prev_link,
             //   curr: curr_link
             // }
-            if v.is_array() {
-                for link_el in v.as_array().unwrap() {
+            if let Some(links) = v.as_array() {
+                for link_el in links {
                     if link_el.is_object() {
                         match link_el.get("rel") {
                             Some(rel) => {
@@ -182,11 +192,16 @@ pub(crate) fn next_page_from_body(
                     // domain. So we need to construct it back.
                     String::from(base_endpoint.scheme())
                         + "://"
-                        + base_endpoint.domain().expect("Domain is present")
+                        + base_endpoint.domain().ok_or_else(|| {
+                            PaginationError::MissingEndpointUrlDomain(base_endpoint.to_string())
+                        })?
                         + ":"
                         + &base_endpoint
                             .port_or_known_default()
-                            .expect("Port is unknown")
+                            .ok_or_else(|| {
+                                PaginationError::MissingEndpointUrlPort(base_endpoint.to_string())
+                            })?
+                            //.expect("Port is unknown")
                             .to_string()
                         + next_url
                 } else {
@@ -257,8 +272,9 @@ mod tests {
     #[test]
     fn test_link_header_no_brackets() {
         let err = LinkHeader::parse("url; param=value").unwrap_err();
-        if let LinkHeaderParseError::NoBrackets = err {
+        if let LinkHeaderParseError::NoBrackets(msg) = err {
             // expected error
+            assert_eq!(msg, "url");
         } else {
             panic!("unexpected error: {err}");
         }
@@ -267,8 +283,9 @@ mod tests {
     #[test]
     fn test_link_header_no_param_value() {
         let err = LinkHeader::parse("<url>; param").unwrap_err();
-        if let LinkHeaderParseError::MissingParamValue = err {
+        if let LinkHeaderParseError::MissingParamValue(msg) = err {
             // expected error
+            assert_eq!(msg, "param");
         } else {
             panic!("unexpected error: {err}");
         }

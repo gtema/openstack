@@ -40,6 +40,14 @@ pub enum PaginationError {
         #[from]
         source: LinkHeaderParseError,
     },
+
+    /// Endpoint URL does not have the domain set.
+    #[error("endpoint url must have domain set: {0}")]
+    MissingEndpointUrlDomain(String),
+
+    /// Endpoint does not have the domain set.
+    #[error("endpoint url must have port set: {0}")]
+    MissingEndpointUrlPort(String),
 }
 
 /// Pagination options
