@@ -14,9 +14,12 @@
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use derive_deref::{Deref, DerefMut};
-use eyre::Result;
+use eyre::{Result, eyre};
 use ratatui::style::{Color, palette::tailwind};
-use serde::{Deserialize, de::Deserializer};
+use serde::{
+    Deserialize,
+    de::{self, Deserializer},
+};
 use std::fmt;
 use std::{
     collections::{BTreeMap, HashMap},
@@ -41,6 +44,18 @@ pub enum ConfigError {
         #[from]
         source: config::ConfigError,
     },
+
+    /// Config dir cannot be identified.
+    #[error("config dir cannot be identified")]
+    ConfigDirCannotBeIdentified,
+
+    /// Config builder error.
+    #[error(transparent)]
+    ConfigFileBuilder {
+        /// The source of the error.
+        #[from]
+        source: ConfigFileBuilderError,
+    },
 }
 
 impl ConfigError {
@@ -53,18 +68,25 @@ impl ConfigError {
 #[derive(Error)]
 #[non_exhaustive]
 pub enum ConfigFileBuilderError {
+    /// Config file parsing error.
     #[error("Failed to parse file {path:?}: {source}")]
     FileParse {
         source: Box<config::ConfigError>,
         builder: ConfigFileBuilder,
         path: PathBuf,
     },
+
+    /// Config file deserialization error.
     #[error("Failed to deserialize config {path:?}: {source}")]
     ConfigDeserialize {
         source: Box<config::ConfigError>,
         builder: ConfigFileBuilder,
-        path: PathBuf,
+        path: Option<PathBuf>,
     },
+
+    /// Config file deserialization error.
+    #[error("Failed to build config: {source}")]
+    ConfigBuild { source: Box<config::ConfigError> },
 }
 
 /// A builder to create a [`ConfigFile`] by specifying which files to load.
@@ -96,7 +118,7 @@ impl ConfigFileBuilder {
             return Err(ConfigFileBuilderError::ConfigDeserialize {
                 source: Box::new(error),
                 builder: self,
-                path: source.as_ref().to_owned(),
+                path: Some(source.as_ref().to_owned()),
             });
         }
 
@@ -106,14 +128,22 @@ impl ConfigFileBuilder {
 
     /// This will build a [`ConfigFile`] with the previously specified sources. Since
     /// the sources have already been checked on errors, this will not fail.
-    pub fn build(self) -> Config {
+    pub fn build(self) -> Result<Config, ConfigFileBuilderError> {
         let mut config = config::Config::builder();
 
-        for source in self.sources {
-            config = config.add_source(source);
+        for source in &self.sources {
+            config = config.add_source(source.clone());
         }
 
-        config.build().unwrap().try_deserialize().unwrap()
+        config
+            .build()
+            .map_err(|err| ConfigFileBuilderError::ConfigBuild {
+                source: Box::new(err),
+            })?
+            .try_deserialize()
+            .map_err(|err| ConfigFileBuilderError::ConfigBuild {
+                source: Box::new(err),
+            })
     }
 }
 
@@ -129,6 +159,10 @@ impl fmt::Debug for ConfigFileBuilderError {
                 .debug_struct("ConfigDeserialize")
                 .field("source", source)
                 .field("path", path)
+                .finish_non_exhaustive(),
+            ConfigFileBuilderError::ConfigBuild { source, .. } => f
+                .debug_struct("ConfigBuild")
+                .field("source", source)
                 .finish_non_exhaustive(),
         }
     }
@@ -194,7 +228,8 @@ impl Config {
             .add_source(config::File::from_str(CONFIG, config::FileFormat::Yaml))
             .build()?;
 
-        let config_dir = crate::utils::get_config_dir();
+        let config_dir = crate::utils::get_config_dir()
+            .ok_or_else(|| ConfigError::ConfigDirCannotBeIdentified)?;
         let mut builder = ConfigFileBuilder {
             sources: Vec::from([default_config]),
         };
@@ -223,6 +258,9 @@ impl Config {
                         );
                         builder
                     }
+                    Err(err @ ConfigFileBuilderError::ConfigBuild { .. }) => {
+                        return Err(ConfigError::ConfigFileBuilder { source: err });
+                    }
                 }
             }
         }
@@ -230,7 +268,7 @@ impl Config {
             tracing::error!("No configuration file found. Application may not behave as expected");
         }
 
-        Ok(builder.build())
+        Ok(builder.build()?)
     }
 }
 
@@ -292,14 +330,15 @@ impl<'de> Deserialize<'de> for KeyBindings {
 
         let keybindings: HashMap<Vec<KeyEvent>, Command> = parsed_map
             .into_iter()
-            .map(|(key_str, command)| (parse_key_sequence(&key_str).unwrap(), command))
-            .collect();
+            .map(|(key_str, command)| parse_key_sequence(&key_str).map(|km| (km, command)))
+            .collect::<Result<HashMap<_, _>>>()
+            .map_err(|e| de::Error::custom(e.to_string()))?;
 
         Ok(KeyBindings(keybindings))
     }
 }
 
-fn parse_key_event(raw: &str) -> Result<KeyEvent, String> {
+fn parse_key_event(raw: &str) -> Result<KeyEvent> {
     let raw_lower = raw.to_ascii_lowercase();
     let (remaining, modifiers) = extract_modifiers(&raw_lower);
     parse_key_code_with_modifiers(remaining, modifiers)
@@ -330,10 +369,7 @@ fn extract_modifiers(raw: &str) -> (&str, KeyModifiers) {
     (current, modifiers)
 }
 
-fn parse_key_code_with_modifiers(
-    raw: &str,
-    mut modifiers: KeyModifiers,
-) -> Result<KeyEvent, String> {
+fn parse_key_code_with_modifiers(raw: &str, mut modifiers: KeyModifiers) -> Result<KeyEvent> {
     let c = match raw {
         "esc" => KeyCode::Esc,
         "enter" => KeyCode::Enter,
@@ -369,13 +405,16 @@ fn parse_key_code_with_modifiers(
         "minus" => KeyCode::Char('-'),
         "tab" => KeyCode::Tab,
         c if c.len() == 1 => {
-            let mut c = c.chars().next().unwrap();
+            let mut c = c
+                .chars()
+                .next()
+                .ok_or_else(|| eyre!("key_code `{}` should have chars", c))?;
             if modifiers.contains(KeyModifiers::SHIFT) {
                 c = c.to_ascii_uppercase();
             }
             KeyCode::Char(c)
         }
-        _ => return Err(format!("Unable to parse {raw}")),
+        _ => return Err(eyre!("Unable to parse {raw}")),
     };
     Ok(KeyEvent::new(c, modifiers))
 }
@@ -506,9 +545,9 @@ pub fn key_event_to_string(key_event: &KeyEvent) -> String {
     key
 }
 
-pub fn parse_key_sequence(raw: &str) -> Result<Vec<KeyEvent>, String> {
+pub fn parse_key_sequence(raw: &str) -> Result<Vec<KeyEvent>> {
     if raw.chars().filter(|c| *c == '>').count() != raw.chars().filter(|c| *c == '<').count() {
-        return Err(format!("Unable to parse `{raw}`"));
+        return Err(eyre!("Unable to parse `{raw}`"));
     }
     let raw = if !raw.contains("><") {
         let raw = raw.strip_prefix('<').unwrap_or(raw);

@@ -63,7 +63,7 @@ where
     raw_items: Vec<Value>,
     filter: F,
 
-    column_widths: Vec<usize>,
+    column_widths: Vec<u16>,
     content_size: Size,
     table_headers: Row<'a>,
     table_rows: Vec<Vec<String>>,
@@ -431,7 +431,8 @@ where
             .clone()
             .into_iter()
             .map(|col| col.len() + 1)
-            .collect::<Vec<usize>>();
+            .map(TryInto::<u16>::try_into)
+            .collect::<Result<Vec<u16>, _>>()?;
         self.table_headers = table_headers
             .clone()
             .into_iter()
@@ -442,8 +443,11 @@ where
         for row in &self.table_rows {
             for (i, val) in row.iter().enumerate() {
                 self.column_widths[i] = cmp::max(
-                    table_headers[i].len(),
-                    cmp::max(*self.column_widths.get(i).unwrap_or(&0), val.len()),
+                    table_headers[i].len().try_into()?,
+                    cmp::max(
+                        *self.column_widths.get(i).unwrap_or(&0),
+                        val.len().try_into()?,
+                    ),
                 );
             }
         }
@@ -506,11 +510,11 @@ where
         self.describe_enabled = area.as_size().width >= 140;
 
         self.render_content(title, f, areas[0])?;
-        self.render_footer(f, areas[1]);
+        self.render_footer(f, areas[1])?;
         Ok(())
     }
 
-    pub fn render_table(&mut self, f: &mut Frame, area: Rect) {
+    pub fn render_table(&mut self, f: &mut Frame, area: Rect) -> Result<()> {
         let block = Block::default()
             .borders(Borders::RIGHT)
             .padding(Padding::right(1))
@@ -543,11 +547,7 @@ where
             .header(header)
             .rows(rows)
             //         // + 1 is for padding.
-            .widths(
-                self.column_widths
-                    .iter()
-                    .map(|v| Constraint::Length((v + 1).try_into().unwrap())),
-            )
+            .widths(self.column_widths.iter().map(|v| Constraint::Length(v + 1)))
             .row_highlight_style(selected_style)
             .bg(self.config.styles.buffer_bg)
             .block(block)
@@ -556,11 +556,12 @@ where
         f.render_stateful_widget(t, area, &mut self.state);
 
         if usize::from(self.content_size.height) < self.items.len() {
-            self.render_scrollbar(f, area);
+            self.render_scrollbar(f, area)?;
         }
+        Ok(())
     }
 
-    pub fn render_scrollbar(&mut self, f: &mut Frame, area: Rect) {
+    pub fn render_scrollbar(&mut self, f: &mut Frame, area: Rect) -> Result<()> {
         f.render_stateful_widget(
             Scrollbar::default()
                 .orientation(ScrollbarOrientation::VerticalRight)
@@ -571,9 +572,10 @@ where
             }),
             &mut self.scroll_state,
         );
+        Ok(())
     }
 
-    pub fn render_footer(&mut self, f: &mut Frame, area: Rect) {
+    pub fn render_footer(&mut self, f: &mut Frame, area: Rect) -> Result<()> {
         let info_footer = Paragraph::new(Line::from(match self.focus {
             Focus::Table => INFO_TEXT,
             Focus::Describe => INFO_TEXT_DESCRIBE,
@@ -590,6 +592,7 @@ where
                 .border_style(Style::new().fg(self.config.styles.table.footer_border)),
         );
         f.render_widget(info_footer, area);
+        Ok(())
     }
 
     pub fn render_content<S: AsRef<str>>(
@@ -632,12 +635,12 @@ where
                 Layout::horizontal([Constraint::Ratio(1, 2), Constraint::Ratio(1, 2)]);
             let [content, describe] = content_layout.areas(inner);
 
-            self.render_table(frame, content);
+            self.render_table(frame, content)?;
             self.describe
                 .set_focus(matches!(self.focus, Focus::Describe))?;
             self.describe.draw(frame, describe)?;
         } else {
-            self.render_table(frame, inner);
+            self.render_table(frame, inner)?;
         }
 
         Ok(())

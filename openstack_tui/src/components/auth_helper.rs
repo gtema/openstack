@@ -130,17 +130,17 @@ impl Component for AuthHelper {
                 trace!("User confirmed the authentication data");
                 if let Some(command_tx) = self.auth_helper_callback_channel.take() {
                     trace!("Sending data to the auth helper");
-                    command_tx
-                        .send(if self.is_sensitive {
-                            AuthAction::Secret(SecretString::new(
-                                self.input.clone().unwrap().into(),
-                            ))
-                        } else {
-                            AuthAction::Data(self.input.clone().unwrap())
-                        })
-                        .map_err(|_| {
-                            eyre!("error sending the requested data to the auth helper")
-                        })?;
+                    if let Some(input) = &self.input {
+                        command_tx
+                            .send(if self.is_sensitive {
+                                AuthAction::Secret(SecretString::new(input.clone().into()))
+                            } else {
+                                AuthAction::Data(input.clone())
+                            })
+                            .map_err(|_| {
+                                eyre!("error sending the requested data to the auth helper")
+                            })?;
+                    }
                 }
                 self.send_complete()?;
                 self.reset_data()?;

@@ -81,42 +81,43 @@ impl ErrorPopup {
                 "# Error\n```{}```\n",
                 self.msg.clone().unwrap_or("Unknown error".into())
             )];
-            let dir = crate::utils::get_data_dir();
-            let crash_data_path = dir.join(format!(
-                "crash.{}.txt",
-                chrono::Local::now().format("%Y-%m-%dT%H%M%S")
-            ));
-            let mut crash_data_file = std::fs::File::create(&crash_data_path)?;
-            crash_data_file.write_all(b"[error]\n")?;
-            crash_data_file.write_all(
-                self.msg
-                    .clone()
-                    .unwrap_or("Unknown error".into())
-                    .as_bytes(),
-            )?;
-            crash_data_file.write_all(b"\n\n")?;
-            crash_data_file.write_all(b"[source]\n")?;
-            crash_data_file.write_all(
-                serde_json::to_string_pretty(&source)
-                    .unwrap_or_default()
-                    .as_bytes(),
-            )?;
-            crash_data_file.write_all(b"\n\n")?;
-            crash_data_file.write_all(b"[version]\n")?;
-            crash_data_file.write_all(env!("CARGO_PKG_VERSION").as_bytes())?;
+            if let Some(dir) = crate::utils::get_data_dir() {
+                let crash_data_path = dir.join(format!(
+                    "crash.{}.txt",
+                    chrono::Local::now().format("%Y-%m-%dT%H%M%S")
+                ));
+                let mut crash_data_file = std::fs::File::create(&crash_data_path)?;
+                crash_data_file.write_all(b"[error]\n")?;
+                crash_data_file.write_all(
+                    self.msg
+                        .clone()
+                        .unwrap_or("Unknown error".into())
+                        .as_bytes(),
+                )?;
+                crash_data_file.write_all(b"\n\n")?;
+                crash_data_file.write_all(b"[source]\n")?;
+                crash_data_file.write_all(
+                    serde_json::to_string_pretty(&source)
+                        .unwrap_or_default()
+                        .as_bytes(),
+                )?;
+                crash_data_file.write_all(b"\n\n")?;
+                crash_data_file.write_all(b"[version]\n")?;
+                crash_data_file.write_all(env!("CARGO_PKG_VERSION").as_bytes())?;
 
-            match &**source {
-                Action::ApiResponsesData { request, .. }
-                | Action::ApiResponseData { request, .. } => {
-                    body.push("## Request\n\n".into());
-                    body.push(format!("```\n{request}\n```"));
+                match &**source {
+                    Action::ApiResponsesData { request, .. }
+                    | Action::ApiResponseData { request, .. } => {
+                        body.push("## Request\n\n".into());
+                        body.push(format!("```\n{request}\n```"));
+                    }
+                    _ => {}
                 }
-                _ => {}
-            }
-            body.push(format!(
+                body.push(format!(
                 "<!-- Please review sensitive data in the crash information file prepared in `{}` and upload it - it helps to locate problem faster -->",
                 crash_data_path.as_os_str().to_string_lossy()
             ));
+            }
             url.query_pairs_mut().append_pair("body", &body.join("\n"));
             open::that(url.as_str())?;
         }
