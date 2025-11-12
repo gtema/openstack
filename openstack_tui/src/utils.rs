@@ -22,7 +22,6 @@ use tracing_subscriber::{
 };
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
-
 pub trait ResourceKey {
     fn get_key() -> &'static str {
         ""
@@ -74,43 +73,44 @@ pub fn initialize_panic_handler() -> Result<()> {
     Ok(())
 }
 
-pub fn get_data_dir() -> PathBuf {
-    dirs::data_dir()
-        .expect("Cannot determine users XDG_DATA_HOME")
-        .join(env!("CARGO_PKG_NAME"))
+pub fn get_data_dir() -> Option<PathBuf> {
+    dirs::data_dir().map(|val| val.join(env!("CARGO_PKG_NAME")))
 }
 
-pub fn get_config_dir() -> PathBuf {
-    dirs::config_dir()
-        .expect("Cannot determine users XDG_CONFIG_HOME")
-        .join(env!("CARGO_PKG_NAME"))
+pub fn get_config_dir() -> Option<PathBuf> {
+    dirs::config_dir().map(|val| val.join(env!("CARGO_PKG_NAME")))
 }
 
 pub fn initialize_logging() -> Result<()> {
-    let directory = get_data_dir();
-    std::fs::create_dir_all(directory.clone())?;
-    let log_path = directory.join(LOG_FILE.clone());
-    let log_file = std::fs::File::create(log_path)?;
-    // TODO: Audit that the environment access only happens in single-threaded code.
-    unsafe {
-        std::env::set_var(
-            "RUST_LOG",
-            std::env::var("RUST_LOG")
-                .or_else(|_| std::env::var(LOG_ENV.clone()))
-                .unwrap_or_else(|_| format!("{}=info", env!("CARGO_CRATE_NAME"))),
-        )
-    };
-    let file_subscriber = tracing_subscriber::fmt::layer()
-        .with_file(true)
-        .with_line_number(true)
-        .with_writer(log_file)
-        .with_target(false)
-        .with_ansi(false)
-        .with_filter(tracing_subscriber::filter::EnvFilter::from_default_env());
-    tracing_subscriber::registry()
-        .with(file_subscriber)
-        .with(ErrorLayer::default())
-        .init();
+    if let Some(directory) = get_data_dir() {
+        std::fs::create_dir_all(directory.clone())?;
+        let log_path = directory.join(LOG_FILE.clone());
+        let log_file = std::fs::File::create(log_path)?;
+        // TODO: Audit that the environment access only happens in single-threaded code.
+        unsafe {
+            std::env::set_var(
+                "RUST_LOG",
+                std::env::var("RUST_LOG")
+                    .or_else(|_| std::env::var(LOG_ENV.clone()))
+                    .unwrap_or_else(|_| format!("{}=info", env!("CARGO_CRATE_NAME"))),
+            )
+        };
+        let file_subscriber = tracing_subscriber::fmt::layer()
+            .with_file(true)
+            .with_line_number(true)
+            .with_writer(log_file)
+            .with_target(false)
+            .with_ansi(false)
+            .with_filter(tracing_subscriber::filter::EnvFilter::from_default_env());
+        tracing_subscriber::registry()
+            .with(file_subscriber)
+            .with(ErrorLayer::default())
+            .init();
+    } else {
+        tracing_subscriber::registry()
+            .with(ErrorLayer::default())
+            .init();
+    }
     Ok(())
 }
 
@@ -143,18 +143,28 @@ macro_rules! trace_dbg {
 pub fn version() -> String {
     let author = clap::crate_authors!();
 
-    let config_dir_path = get_config_dir().display().to_string();
-    let data_dir_path = get_data_dir().display().to_string();
-
-    format!(
+    let mut res = format!(
         "\
 {VERSION_MESSAGE}
 
-Authors: {author}
+Authors: {author}"
+    );
+    if let Some(cfg) = get_config_dir() {
+        res = format!(
+            "
+Config directory: {}",
+            cfg.display()
+        );
+    }
+    if let Some(data) = get_data_dir() {
+        res = format!(
+            "
+Data directory: {}",
+            data.display()
+        );
+    }
 
-Config directory: {config_dir_path}
-Data directory: {data_dir_path}"
-    )
+    res
 }
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`

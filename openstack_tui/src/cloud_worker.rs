@@ -57,7 +57,7 @@ pub(crate) struct Cloud {
 }
 
 #[derive(Debug)]
-pub(crate) enum AuthAction {
+pub enum AuthAction {
     Data(String),
     Secret(SecretString),
     Cancel,
@@ -68,18 +68,17 @@ impl Cloud {
         client_config_config_file: Option<PathBuf>,
         client_secure_config_file: Option<PathBuf>,
         auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
-    ) -> Self {
+    ) -> Result<Self, TuiError> {
         let cfg = ConfigFile::new_with_user_specified_configs(
             client_config_config_file.as_deref(),
             client_secure_config_file.as_deref(),
-        )
-        .expect("unable to load config files");
+        )?;
 
-        Self {
+        Ok(Self {
             cloud_configs: cfg,
             cloud: None,
             auth_helper: TuiAuthHelper::new(auth_helper_control_tx),
-        }
+        })
     }
 
     pub async fn connect_to_cloud(&mut self, cloud: String) -> Result<()> {
@@ -158,11 +157,8 @@ impl Cloud {
                 ref ac @ Action::ConnectToCloud(ref cloud) => {
                     match self.connect_to_cloud(cloud.clone()).await {
                         Ok(()) => {
-                            if let Some(auth_info) = self
-                                .cloud
-                                .as_ref()
-                                .expect("Connected to the cloud")
-                                .get_auth_info()
+                            if let Some(cloud) = &self.cloud
+                                && let Some(auth_info) = cloud.get_auth_info()
                             {
                                 app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
                             }
@@ -241,7 +237,7 @@ impl TuiAuthHelper {
         is_sensitive: bool,
     ) -> Result<oneshot::Receiver<AuthAction>, TuiError> {
         let (sender, receiver) = oneshot::channel();
-        self.auth_helper_control_tx.send(sender).await.unwrap();
+        self.auth_helper_control_tx.send(sender).await?;
         if let Some(app_tx) = &self.app_tx {
             trace!("Sending request to the app");
             app_tx.send(Action::AuthDataRequired {

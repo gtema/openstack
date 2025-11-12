@@ -29,11 +29,22 @@ pub enum TuiError {
         source: serde_json::Error,
     },
 
+    /// Error sending the Action.
     #[error("error sending action: {}", source)]
-    SenderError {
+    ActionSenderError {
         /// The source of the error.
         #[from]
         source: tokio::sync::mpsc::error::SendError<action::Action>,
+    },
+
+    /// Error sending the AuthAction.
+    #[error("error sending action: {}", source)]
+    AuthActionSenderError {
+        /// The source of the error.
+        #[from]
+        source: tokio::sync::mpsc::error::SendError<
+            tokio::sync::oneshot::Sender<crate::cloud_worker::AuthAction>,
+        >,
     },
 
     /// OpenStack error.
@@ -57,6 +68,22 @@ pub enum TuiError {
         /// The error source
         #[from]
         source: std::io::Error,
+    },
+
+    /// SDK config error.
+    #[error("cloud configs error: {}", source)]
+    SdkConfig {
+        /// The source of the error.
+        #[from]
+        source: openstack_sdk::config::ConfigError,
+    },
+
+    /// TryFromInt conversion error.
+    #[error("integer overflow: {}", source)]
+    TryFromInt {
+        /// The source of the error.
+        #[from]
+        source: std::num::TryFromIntError,
     },
 
     /// URL parsing error

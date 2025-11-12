@@ -104,7 +104,7 @@ impl Tui {
         self
     }
 
-    pub fn start(&mut self) {
+    pub fn start(&mut self) -> Result<()> {
         self.cancel(); // Cancel any existing task
         self.cancellation_token = CancellationToken::new();
         let event_loop = Self::event_loop(
@@ -114,8 +114,9 @@ impl Tui {
             self.frame_rate,
         );
         self.task = tokio::spawn(async {
-            event_loop.await;
+            let _ = event_loop.await;
         });
+        Ok(())
     }
 
     async fn event_loop(
@@ -123,15 +124,13 @@ impl Tui {
         cancellation_token: CancellationToken,
         tick_rate: f64,
         frame_rate: f64,
-    ) {
+    ) -> Result<()> {
         let mut event_stream = EventStream::new();
         let mut tick_interval = interval(Duration::from_secs_f64(1.0 / tick_rate));
         let mut render_interval = interval(Duration::from_secs_f64(1.0 / frame_rate));
 
         // if this fails, then it's likely a bug in the calling code
-        event_tx
-            .send(Event::Init)
-            .expect("failed to send init event");
+        event_tx.send(Event::Init)?;
         loop {
             let event = tokio::select! {
                 _ = cancellation_token.cancelled() => {
@@ -159,6 +158,7 @@ impl Tui {
             }
         }
         cancellation_token.cancel();
+        Ok(())
     }
 
     pub fn stop(&self) -> Result<()> {
@@ -187,7 +187,7 @@ impl Tui {
         if self.paste {
             crossterm::execute!(stdout(), EnableBracketedPaste)?;
         }
-        self.start();
+        self.start()?;
         Ok(())
     }
 
@@ -244,6 +244,6 @@ impl DerefMut for Tui {
 
 impl Drop for Tui {
     fn drop(&mut self) {
-        self.exit().unwrap();
+        self.exit().ok();
     }
 }

@@ -209,12 +209,12 @@ impl App {
         );
 
         let auth_helper_control_channel_tx_clone = auth_helper_control_channel_tx.clone();
+        let mut cloud = Cloud::new(
+            client_config,
+            client_secure_config,
+            auth_helper_control_channel_tx_clone,
+        )?;
         tokio::spawn(async move {
-            let mut cloud = Cloud::new(
-                client_config,
-                client_secure_config,
-                auth_helper_control_channel_tx_clone,
-            );
             if let Err(err) = cloud
                 .run(cloud_worker_app_tx, &mut cloud_worker_receiver)
                 .await
@@ -576,7 +576,7 @@ impl App {
                         msg: format!("Failed to draw: {e:?}"),
                         action: None,
                     })
-                    .unwrap();
+                    .ok();
             }
 
             if let Some(component) = self.components.get_mut(&self.mode)
@@ -588,7 +588,7 @@ impl App {
                         msg: format!("Failed to draw: {e:?}"),
                         action: None,
                     })
-                    .unwrap();
+                    .ok();
             }
             if let Some(popup_type) = &self.active_popup
                 && let Some(popup) = self.popups.get_mut(popup_type)
@@ -599,7 +599,7 @@ impl App {
                         msg: format!("Failed to draw: {e:?}"),
                         action: None,
                     })
-                    .unwrap();
+                    .ok();
             }
         })?;
         Ok(())
