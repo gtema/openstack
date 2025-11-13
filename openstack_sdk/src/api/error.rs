@@ -160,6 +160,7 @@ where
         #[from]
         source: crate::catalog::CatalogError,
     },
+
     /// Poisoned guard lock in the internal processing.
     #[error("internal error: poisoned lock: {}", context)]
     PoisonedLock {
@@ -172,6 +173,23 @@ where
     EndpointBuilder {
         /// The error message,
         message: String,
+    },
+
+    /// Invalid response header.
+    #[error("invalid header {}: {}", header, message)]
+    InvalidHeader {
+        /// The error message,
+        header: String,
+        /// The error message,
+        message: String,
+    },
+
+    /// Invalid URL.
+    #[error("invalid url: {}", source)]
+    InvalidUri {
+        /// The source of the error.
+        #[from]
+        source: http::uri::InvalidUri,
     },
 }
 

@@ -29,9 +29,9 @@ pub(crate) fn expand_tilde<P: AsRef<Path>>(path_user_input: P) -> Option<PathBuf
         if home == Path::new("/") {
             // Corner case: `home` is root directory;
             // don't prepend extra `/`, just drop the tilde.
-            path.strip_prefix("~").unwrap().to_path_buf()
+            path.strip_prefix("~").unwrap_or(path).to_path_buf()
         } else {
-            home.push(path.strip_prefix("~/").unwrap());
+            home.push(path.strip_prefix("~").unwrap_or(path));
             home
         }
     })

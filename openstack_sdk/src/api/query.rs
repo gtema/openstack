@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use http::Uri;
+use http::{uri::InvalidUri, Uri};
 
 use url::Url;
 
@@ -29,10 +29,8 @@ use crate::api::Client;
 use crate::types::BoxedAsyncRead;
 use http::{HeaderMap, Response};
 
-pub fn url_to_http_uri(url: Url) -> Uri {
-    url.as_str()
-        .parse::<Uri>()
-        .expect("failed to parse a url::Url as an http::Uri")
+pub fn url_to_http_uri(url: Url) -> Result<Uri, InvalidUri> {
+    url.as_str().parse::<Uri>()
 }
 
 /// A trait which represents a query which may be made to a OpenStack

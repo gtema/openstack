@@ -50,56 +50,86 @@ use crate::api::RestEndpoint;
 use crate::auth::authtoken::{AuthToken, AuthTokenError};
 use crate::config;
 
-/// WebSSO related errors
+/// WebSSO related errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum WebSsoError {
-    /// Auth data is missing
-    #[error("Auth data is missing")]
-    MissingAuthData,
-
-    /// Protocol is missing
-    #[error("Federation protocol information is missing")]
-    MissingProtocol,
-
-    /// Callback did not returned a token
+    /// Callback did not returned a token.
     #[error("WebSSO callback didn't return a token")]
     CallbackNoToken,
 
-    /// Some failure in the SSO flow
+    /// Some failure in the SSO flow.
     #[error("WebSSO authentication failed")]
     CallbackFailed,
 
-    /// Federation Auth builder
-    #[error("error preparing auth request: {}", source)]
-    FederationSsoBuilder {
-        /// The error source
+    /// Error during invoking the dialoguer.
+    #[error("error using the dialoguer: {}", source)]
+    Dialoguer {
+        /// The error source.
         #[from]
-        source: fed_sso_get::RequestBuilderError,
+        source: dialoguer::Error,
     },
 
-    /// Federation Auth SSO with IDP and Protocol builder
+    /// Federation Auth SSO with IDP and Protocol builder.
     #[error("error preparing auth request: {}", source)]
     FederationIdpSsoAuth {
-        /// The error source
+        /// The error source.
         #[from]
         source: fed_idp_sso_get::RequestBuilderError,
     },
 
-    /// IO communication error
+    /// Federation Auth builder.
+    #[error("error preparing auth request: {}", source)]
+    FederationSsoBuilder {
+        /// The error source.
+        #[from]
+        source: fed_sso_get::RequestBuilderError,
+    },
+
+    /// Http error.
+    #[error("http server error: {}", source)]
+    Http {
+        /// The source of the error.
+        #[from]
+        source: http::Error,
+    },
+    /// Hyper error.
+    #[error("hyper (http server) error: {}", source)]
+    Hyper {
+        /// The source of the error.
+        #[from]
+        source: hyper::Error,
+    },
+
+    /// IO communication error.
     #[error("`IO` error: {}", source)]
     IO {
-        /// The error source
+        /// The error source.
         #[from]
         source: IoError,
     },
 
-    /// Thread join error
+    /// Thread join error.
     #[error("`Join` error: {}", source)]
     Join {
-        /// The error source
+        /// The error source.
         #[from]
         source: tokio::task::JoinError,
+    },
+
+    /// Auth data is missing.
+    #[error("Auth data is missing")]
+    MissingAuthData,
+
+    /// Protocol is missing.
+    #[error("Federation protocol information is missing")]
+    MissingProtocol,
+
+    /// Poisoned guard lock in the internal processing.
+    #[error("internal error: poisoned lock: {}", context)]
+    PoisonedLock {
+        /// The source of the error.
+        context: String,
     },
 }
 
@@ -150,8 +180,7 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
             "A default browser is going to be opened at `{}`. Do you want to continue?",
             url.as_str()
         ))
-        .interact()
-        .unwrap();
+        .interact()?;
     if confirmation {
         info!("Opening browser at {:?}", url.as_str());
         let addr = socket_addr.unwrap_or(SocketAddr::from(([127, 0, 0, 1], 8050)));
@@ -177,7 +206,9 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
 
         let _res = websso_handle.await?;
 
-        let guard = state.lock().expect("poisoned guard");
+        let guard = state.lock().map_err(|_| WebSsoError::PoisonedLock {
+            context: "locking WebSSO authentication state".to_string(),
+        })?;
         guard.clone().ok_or(WebSsoError::CallbackNoToken)
     } else {
         Err(WebSsoError::CallbackFailed)
@@ -235,7 +266,8 @@ async fn handle_request(
     req: Request<IncomingBody>,
     state: Arc<Mutex<Option<String>>>,
     cancel_token: CancellationToken,
-) -> Result<Response<BoxBody<Bytes, Infallible>>, hyper::Error> {
+    //) -> Result<Response<BoxBody<Bytes, Infallible>>, hyper::Error> {
+) -> Result<Response<BoxBody<Bytes, Infallible>>, WebSsoError> {
     match (req.method(), req.uri().path()) {
         (&Method::POST, "/callback") => {
             let b = req.collect().await?.to_bytes();
@@ -245,22 +277,22 @@ async fn handle_request(
                 .collect::<HashMap<String, String>>();
             trace!("Params = {:?}", params);
 
-            let mut data = state.lock().expect("state lock can be obtained");
+            let mut data = state.lock().map_err(|_| WebSsoError::PoisonedLock {
+                context: "locking WebSSO authentication state".to_string(),
+            })?;
             if let Some(token) = params.get("token") {
                 *data = Some(token.clone());
             }
             cancel_token.cancel();
 
             Ok(Response::builder()
-                .body(Full::new(Bytes::from(include_str!("../../static/callback.html"))).boxed())
-                .unwrap())
+                .body(Full::new(Bytes::from(include_str!("../../static/callback.html"))).boxed())?)
         }
         _ => {
             // Return 404 not found response.
             Ok(Response::builder()
                 .status(StatusCode::NOT_FOUND)
-                .body(Empty::<Bytes>::new().boxed())
-                .unwrap())
+                .body(Empty::<Bytes>::new().boxed())?)
         }
     }
 }

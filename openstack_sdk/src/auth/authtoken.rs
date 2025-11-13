@@ -128,6 +128,10 @@ pub enum AuthTokenError {
         source: v3oidcaccesstoken::OidcAccessTokenError,
     },
 
+    /// Multifactor `auth_type` requires `auth_methods` to be an array of strings.
+    #[error("`auth_methods` must be an array of string when `auth_type=multifactor`")]
+    MultifactorAuthMethodsList,
+
     /// Password Identity error
     #[error("Password based authentication error: {}", source)]
     Password {
@@ -408,7 +412,7 @@ where
             for auth_method in config
                 .auth_methods
                 .as_ref()
-                .expect("`auth_methods` is an array of string when auth_type=`multifactor`")
+                .ok_or_else(|| AuthTokenError::MultifactorAuthMethodsList)?
             {
                 let method_type = AuthType::from_str(auth_method)?;
                 process_auth_type(
@@ -563,7 +567,7 @@ pub(crate) fn build_token_info_endpoint<S: AsRef<str>>(
         .headers(
             [(
                 Some(HeaderName::from_static("x-subject-token")),
-                HeaderValue::from_str(subject_token.as_ref()).expect("Valid string"),
+                HeaderValue::from_str(subject_token.as_ref())?,
             )]
             .into_iter(),
         )
