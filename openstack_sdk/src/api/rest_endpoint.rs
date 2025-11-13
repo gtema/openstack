@@ -137,13 +137,12 @@ where
     endpoint.parameters().add_to_url(&mut url);
     let mut req = Request::builder()
         .method(endpoint.method())
-        .uri(query::url_to_http_uri(url))
+        .uri(query::url_to_http_uri(url)?)
         .header(header::ACCEPT, HeaderValue::from_static("application/json"));
     set_latest_microversion(&mut req, service_endpoint, endpoint);
     if let Some(request_headers) = endpoint.request_headers() {
-        let headers = req.headers_mut().unwrap();
-        for (k, v) in request_headers.iter() {
-            headers.insert(k, v.clone());
+        if let Some(headers) = req.headers_mut() {
+            headers.extend(request_headers.clone())
         }
     }
     if let Some((mime, data)) = endpoint.body()? {
@@ -221,7 +220,15 @@ where
         for (header_key, target_val) in self.response_headers().iter() {
             if let Some(val) = headers.get(*header_key) {
                 trace!("Registered Header {} was found", header_key);
-                v[*target_val] = json!(val.to_str().unwrap());
+                match val.to_str() {
+                    Ok(header_str) => v[*target_val] = json!(header_str),
+                    Err(e) => {
+                        return Err(ApiError::InvalidHeader {
+                            header: header_key.to_string(),
+                            message: e.to_string(),
+                        })
+                    }
+                };
             }
         }
         match serde_json::from_value::<T>(v) {
@@ -258,7 +265,15 @@ where
         for (header_key, target_val) in self.response_headers().iter() {
             if let Some(val) = headers.get(*header_key) {
                 trace!("Registered Header {} was found", header_key);
-                v[*target_val] = json!(val.to_str().unwrap());
+                match val.to_str() {
+                    Ok(header_str) => v[*target_val] = json!(header_str),
+                    Err(e) => {
+                        return Err(ApiError::InvalidHeader {
+                            header: header_key.to_string(),
+                            message: e.to_string(),
+                        })
+                    }
+                };
             }
         }
         match serde_json::from_value::<T>(v) {
@@ -329,12 +344,11 @@ where
         self.parameters().add_to_url(&mut url);
         let mut req = Request::builder()
             .method(self.method())
-            .uri(query::url_to_http_uri(url));
+            .uri(query::url_to_http_uri(url)?);
         set_latest_microversion(&mut req, ep, self);
         if let Some(request_headers) = self.request_headers() {
-            let headers = req.headers_mut().unwrap();
-            for (k, v) in request_headers.iter() {
-                headers.insert(k, v.clone());
+            if let Some(headers) = req.headers_mut() {
+                headers.extend(request_headers.clone())
             }
         }
 

@@ -48,28 +48,41 @@ use authtoken_scope::AuthTokenScopeError;
 use v3oidcaccesstoken::OidcAccessTokenError;
 use v3websso::WebSsoError;
 
-/// Authentication error
+/// Authentication error.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum AuthError {
-    /// Header error
+    /// Header error.
     #[error("header value error: {}", source)]
     HeaderValue {
-        /// Error source
+        /// The source of the error.
         #[from]
         source: http::header::InvalidHeaderValue,
     },
 
-    /// AuthToken error
+    /// AuthToken error.
     #[error("AuthToken error: {}", source)]
     AuthToken {
-        /// Error source
+        /// The source of the error.
         #[from]
         source: AuthTokenError,
     },
 
+    /// Token is missing in the authentication response.
     #[error("token missing in the response")]
     AuthTokenNotInResponse,
+
+    /// X-Subject-Token cannot be converted to string.
+    #[error("token missing cannot be converted to string")]
+    AuthTokenNotString,
+
+    /// (De)Serialization error.
+    #[error("failed to deserialize response body: {}", source)]
+    DeserializeResponse {
+        /// The source of the error.
+        #[from]
+        source: serde_json::Error,
+    },
 }
 
 // Explicitly implement From to easier propagate nested errors

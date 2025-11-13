@@ -23,31 +23,31 @@ use std::collections::HashMap;
 use std::fs::{DirBuilder, File};
 use std::io::prelude::*;
 use std::path::PathBuf;
+//use thiserror::Error;
 use tracing::{debug, info, trace, warn};
 
 use crate::auth::{
     authtoken::{AuthToken, AuthTokenScope},
     AuthState,
 };
-use thiserror::Error;
 
-/// Errors which may occur when creating connection state data.
-#[derive(Debug, Error)]
-#[non_exhaustive]
-pub enum StateError {
-    #[error("failed to deserialize config: {}", source)]
-    Parse {
-        /// The source of the error.
-        #[from]
-        source: config::ConfigError,
-    },
-    #[error("IO error: {}", source)]
-    IO {
-        /// The source of the error.
-        #[from]
-        source: std::io::Error,
-    },
-}
+// /// Errors which may occur when creating connection state data.
+// #[derive(Debug, Error)]
+// #[non_exhaustive]
+// pub enum StateError {
+//     #[error("failed to deserialize config: {}", source)]
+//     Parse {
+//         /// The source of the error.
+//         #[from]
+//         source: config::ConfigError,
+//     },
+//     #[error("IO error: {}", source)]
+//     IO {
+//         /// The source of the error.
+//         #[from]
+//         source: std::io::Error,
+//     },
+// }
 
 /// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]
@@ -100,7 +100,8 @@ impl State {
             auth_state: Default::default(),
             auth_cache_enabled: false,
             base_dir: dirs::home_dir()
-                .expect("Cannot determine users XDG_HOME")
+                .unwrap_or_default()
+                //.expect("Cannot determine users XDG_HOME")
                 .join(".osc"),
         };
         DirBuilder::new()

@@ -131,7 +131,7 @@ where
 
             let mut req = Request::builder()
                 .method(self.endpoint.method())
-                .uri(query::url_to_http_uri(page_url.clone()))
+                .uri(query::url_to_http_uri(page_url.clone())?)
                 .header(header::ACCEPT, HeaderValue::from_static("application/json"));
             set_latest_microversion(&mut req, ep, &self.endpoint);
             // Set endpoint headers

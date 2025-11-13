@@ -140,12 +140,12 @@ impl OpenStack {
         if let Some(cacert) = &config.cacert {
             let mut buf = Vec::new();
             File::open(expand_tilde(cacert).unwrap_or(cacert.into()))
-                .map_err(|e| OpenStackError::IO {
+                .map_err(|e| OpenStackError::IOWithPath {
                     source: e,
                     path: cacert.into(),
                 })?
                 .read_to_end(&mut buf)
-                .map_err(|e| OpenStackError::IO {
+                .map_err(|e| OpenStackError::IOWithPath {
                     source: e,
                     path: cacert.into(),
                 })?;
@@ -270,7 +270,7 @@ impl OpenStack {
         A: AuthHelper,
     {
         // Create the runtime
-        let rt = Runtime::new().unwrap();
+        let rt = Runtime::new()?;
         let requested_scope = scope.unwrap_or(authtoken::AuthTokenScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
@@ -321,8 +321,7 @@ impl OpenStack {
                         if let StatusCode::UNAUTHORIZED = rsp.status() {
                             if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
                                 let receipt_data: AuthReceiptResponse =
-                                    serde_json::from_slice(rsp.body())
-                                        .expect("A valid OpenStack Auth receipt body");
+                                    serde_json::from_slice(rsp.body())?;
                                 let auth_endpoint =
                                     rt.block_on(authtoken::build_auth_request_from_receipt(
                                         &self.config,
@@ -348,7 +347,7 @@ impl OpenStack {
                             .get("x-subject-token")
                             .ok_or(AuthError::AuthTokenNotInResponse)?
                             .to_str()
-                            .expect("x-subject-token is a string");
+                            .map_err(|_| AuthError::AuthTokenNotString)?;
 
                         // Set retrieved token as current auth
                         let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
@@ -379,7 +378,7 @@ impl OpenStack {
                 .get("x-subject-token")
                 .ok_or(AuthError::AuthTokenNotInResponse)?
                 .to_str()
-                .expect("x-subject-token is a string");
+                .map_err(|_| AuthError::AuthTokenNotString)?;
 
             self.set_token_auth(token.into(), Some(data));
         }
@@ -432,7 +431,7 @@ impl OpenStack {
                 loop {
                     let req = http::Request::builder()
                         .method(http::Method::GET)
-                        .uri(query::url_to_http_uri(try_url.clone()));
+                        .uri(query::url_to_http_uri(try_url.clone())?);
 
                     match self.rest_with_auth(req, Vec::new(), &self.auth) {
                         Ok(rsp) => {
@@ -546,7 +545,9 @@ impl OpenStack {
         auth: &Auth,
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
         let call = || -> Result<_, RestError> {
-            auth.set_header(request.headers_mut().unwrap())?;
+            if let Some(headers) = request.headers_mut() {
+                auth.set_header(headers)?;
+            }
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
 
@@ -555,10 +556,11 @@ impl OpenStack {
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())
                 .version(rsp.version());
-            let headers = http_rsp.headers_mut().unwrap();
-            for (key, value) in rsp.headers() {
-                headers.insert(key, value.clone());
+
+            if let Some(headers) = http_rsp.headers_mut() {
+                headers.extend(rsp.headers().clone())
             }
+
             Ok(http_rsp.body(rsp.bytes()?)?)
         };
         call().map_err(api::ApiError::client)

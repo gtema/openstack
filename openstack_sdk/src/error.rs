@@ -167,12 +167,29 @@ pub enum OpenStackError {
         #[from]
         source: serde_json::Error,
     },
-    /// IO error.
-    #[error("IO error: {}\n\tPath: {}", source, path)]
+
+    /// General IO error.
+    #[error("general IO error: {}", source)]
     IO {
+        /// The source of the error.
+        #[from]
+        source: std::io::Error,
+    },
+
+    /// IO error with associated with path processing.
+    #[error("IO error: {}\n\tPath: {}", source, path)]
+    IOWithPath {
         /// The source of the error.
         source: std::io::Error,
         path: String,
+    },
+
+    /// Invalid URL.
+    #[error("invalid url: {}", source)]
+    InvalidUri {
+        /// The source of the error.
+        #[from]
+        source: http::uri::InvalidUri,
     },
 
     /// Endpoint builder error

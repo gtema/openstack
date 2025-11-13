@@ -104,13 +104,17 @@ pub struct FakeOpenStackClient {
 
 impl FakeOpenStackClient {
     /// Instantiate new Fake OpenStack Client with a url pointing to the base url of a server (i.e.
-    /// `http://localhost:1234`)
+    /// `http://localhost:1234`).
+    #[allow(clippy::expect_used)]
     pub fn new<S: AsRef<str>>(url: S) -> Self {
         let mut slf = Self {
             endpoints: HashMap::new(),
             auth: None,
         };
-        slf.add_endpoint("default", Url::parse(url.as_ref()).unwrap());
+        slf.add_endpoint(
+            "default",
+            Url::parse(url.as_ref()).expect("valid test url is used"),
+        );
         slf
     }
 
@@ -161,7 +165,9 @@ impl Client for FakeOpenStackClient {
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         let call = || -> Result<_, Self::Error> {
             if let Some(auth) = &self.auth {
-                auth.set_header(request.headers_mut().unwrap())?;
+                if let Some(headers) = request.headers_mut() {
+                    auth.set_header(headers)?;
+                }
             }
             let http_request = request.body(body.clone())?;
             let request = http_request.try_into()?;
@@ -173,9 +179,8 @@ impl Client for FakeOpenStackClient {
                 .status(rsp.status())
                 .version(rsp.version());
 
-            let headers = http_rsp.headers_mut().unwrap();
-            for (key, value) in rsp.headers() {
-                headers.insert(key, value.clone());
+            if let Some(headers) = http_rsp.headers_mut() {
+                headers.extend(rsp.headers().clone())
             }
 
             Ok(http_rsp.body(rsp.bytes()?)?)
@@ -195,7 +200,9 @@ impl AsyncClient for FakeOpenStackClient {
         use futures_util::TryFutureExt;
         let call = || async {
             if let Some(auth) = &self.auth {
-                auth.set_header(request.headers_mut().unwrap())?;
+                if let Some(headers) = request.headers_mut() {
+                    auth.set_header(headers)?;
+                }
             }
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
@@ -206,10 +213,11 @@ impl AsyncClient for FakeOpenStackClient {
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())
                 .version(rsp.version());
-            let headers = http_rsp.headers_mut().unwrap();
-            for (key, value) in rsp.headers() {
-                headers.insert(key, value.clone());
+
+            if let Some(headers) = http_rsp.headers_mut() {
+                headers.extend(rsp.headers().clone())
             }
+
             Ok(http_rsp.body(rsp.bytes().await?)?)
         };
         call().map_err(ApiError::client).await

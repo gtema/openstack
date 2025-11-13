@@ -174,12 +174,12 @@ impl AsyncOpenStack {
         if let Some(cacert) = &config.cacert {
             let mut buf = Vec::new();
             File::open(expand_tilde(cacert).unwrap_or(cacert.into()))
-                .map_err(|e| OpenStackError::IO {
+                .map_err(|e| OpenStackError::IOWithPath {
                     source: e,
                     path: cacert.into(),
                 })?
                 .read_to_end(&mut buf)
-                .map_err(|e| OpenStackError::IO {
+                .map_err(|e| OpenStackError::IOWithPath {
                     source: e,
                     path: cacert.into(),
                 })?;
@@ -405,8 +405,7 @@ impl AsyncOpenStack {
                         if let StatusCode::UNAUTHORIZED = rsp.status() {
                             if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
                                 let receipt_data: AuthReceiptResponse =
-                                    serde_json::from_slice(rsp.body())
-                                        .expect("A valid OpenStack Auth receipt body");
+                                    serde_json::from_slice(rsp.body())?;
                                 let auth_endpoint = authtoken::build_auth_request_from_receipt(
                                     &self.config,
                                     receipt.clone(),
@@ -430,7 +429,7 @@ impl AsyncOpenStack {
                             .get("x-subject-token")
                             .ok_or(AuthError::AuthTokenNotInResponse)?
                             .to_str()
-                            .expect("x-subject-token is a string");
+                            .map_err(|_| AuthError::AuthTokenNotString)?;
 
                         // Set retrieved token as current auth
                         let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
@@ -607,7 +606,7 @@ impl AsyncOpenStack {
                 .get("x-subject-token")
                 .ok_or(AuthError::AuthTokenNotInResponse)?
                 .to_str()
-                .expect("x-subject-token is a string");
+                .map_err(|_| AuthError::AuthTokenNotString)?;
 
             self.set_token_auth(token.into(), Some(data));
         }
@@ -661,7 +660,7 @@ impl AsyncOpenStack {
                 loop {
                     let req = http::Request::builder()
                         .method(http::Method::GET)
-                        .uri(query::url_to_http_uri(try_url.clone()));
+                        .uri(query::url_to_http_uri(try_url.clone())?);
 
                     match self.rest_with_auth_async(req, Vec::new(), &self.auth).await {
                         Ok(rsp) => {
@@ -822,7 +821,9 @@ impl AsyncOpenStack {
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
         use futures_util::TryFutureExt;
         let call = || async {
-            auth.set_header(request.headers_mut().unwrap())?;
+            if let Some(headers) = request.headers_mut() {
+                auth.set_header(headers)?;
+            }
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
 
@@ -831,10 +832,11 @@ impl AsyncOpenStack {
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())
                 .version(rsp.version());
-            let headers = http_rsp.headers_mut().unwrap();
-            for (key, value) in rsp.headers() {
-                headers.insert(key, value.clone());
+
+            if let Some(headers) = http_rsp.headers_mut() {
+                headers.extend(rsp.headers().clone())
             }
+
             Ok(http_rsp.body(rsp.bytes().await?)?)
         };
         call().map_err(api::ApiError::client).await
@@ -849,7 +851,9 @@ impl AsyncOpenStack {
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
         use futures_util::TryFutureExt;
         let call = || async {
-            auth.set_header(request.headers_mut().unwrap())?;
+            if let Some(headers) = request.headers_mut() {
+                auth.set_header(headers)?;
+            }
             let stream = codec::FramedRead::new(body_read.compat(), codec::BytesCodec::new())
                 .map_ok(|b| b.freeze());
             let http_request = request.body(Body::wrap_stream(stream))?;
@@ -860,10 +864,11 @@ impl AsyncOpenStack {
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())
                 .version(rsp.version());
-            let headers = http_rsp.headers_mut().unwrap();
-            for (key, value) in rsp.headers() {
-                headers.insert(key, value.clone());
+
+            if let Some(headers) = http_rsp.headers_mut() {
+                headers.extend(rsp.headers().clone())
             }
+
             Ok(http_rsp.body(rsp.bytes().await?)?)
         };
         call().map_err(api::ApiError::client).await
@@ -878,7 +883,9 @@ impl AsyncOpenStack {
     ) -> Result<(HeaderMap, BoxedAsyncRead), api::ApiError<<Self as api::RestClient>::Error>> {
         use futures_util::TryFutureExt;
         let call = || async {
-            auth.set_header(request.headers_mut().unwrap())?;
+            if let Some(headers) = request.headers_mut() {
+                auth.set_header(headers)?;
+            }
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
             let rsp = self.execute_request(request).await?;

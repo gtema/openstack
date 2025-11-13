@@ -162,8 +162,19 @@ where
 }
 
 impl<E> PagedState<'_, E> {
-    fn next_page(&self, last_page_size: usize, next_url: Option<Url>, marker: Option<String>) {
-        let mut page_state = self.page_state.write().expect("poisoned next_page");
+    fn next_page<C>(
+        &self,
+        last_page_size: usize,
+        next_url: Option<Url>,
+        marker: Option<String>,
+    ) -> Result<(), ApiError<C::Error>>
+    where
+        C: RestClient,
+    {
+        let mut page_state = self
+            .page_state
+            .write()
+            .map_err(|_| ApiError::poisoned_lock("locking page state"))?;
         page_state.total_results += last_page_size;
 
         if self
@@ -175,6 +186,7 @@ impl<E> PagedState<'_, E> {
         } else {
             page_state.next_page.next_page(next_url, marker);
         }
+        Ok(())
     }
 }
 
@@ -182,12 +194,18 @@ impl<E> PagedState<'_, E>
 where
     E: RestEndpoint,
 {
-    fn page_url(&self, endpoint_url: Url) -> Option<Url> {
-        let page_state = self.page_state.read().expect("poisoned next_page");
+    fn page_url<C>(&self, endpoint_url: Url) -> Result<Option<Url>, ApiError<C::Error>>
+    where
+        C: RestClient,
+    {
+        let page_state = self
+            .page_state
+            .read()
+            .map_err(|_| ApiError::poisoned_lock("locking page state"))?;
         let next_page = &page_state.next_page;
 
         if *next_page == Page::Done {
-            return None;
+            return Ok(None);
         }
 
         let url = if let Some(next_url) = next_page.next_url() {
@@ -208,7 +226,7 @@ where
             url
         };
 
-        Some(url)
+        Ok(Some(url))
     }
 
     fn build_request<C>(&self, url: Url) -> Result<(RequestBuilder, Vec<u8>), ApiError<C::Error>>
@@ -219,14 +237,13 @@ where
 
         let mut req = Request::builder()
             .method(self.paged.endpoint.method())
-            .uri(query::url_to_http_uri(url))
+            .uri(query::url_to_http_uri(url)?)
             .header(header::ACCEPT, HeaderValue::from_static("application/json"));
 
         // Set endpoint headers
         if let Some(request_headers) = self.paged.endpoint.request_headers() {
-            let headers = req.headers_mut().unwrap();
-            for (k, v) in request_headers.iter() {
-                headers.insert(k, v.clone());
+            if let Some(headers) = req.headers_mut() {
+                headers.extend(request_headers.clone())
             }
         }
 
@@ -253,14 +270,14 @@ where
             v
         } else {
             return Err(ApiError::server_error(
-                Some(query::url_to_http_uri(base)),
+                Some(query::url_to_http_uri(base)?),
                 &rsp,
                 rsp.body(),
             ));
         };
         if !status.is_success() {
             return Err(ApiError::from_openstack(
-                Some(query::url_to_http_uri(base)),
+                Some(query::url_to_http_uri(base)?),
                 &rsp,
                 v,
             ));
@@ -323,7 +340,7 @@ where
                 page.truncate(limit - total_read_till_now);
             }
         }
-        self.next_page(page.len(), next_url, marker);
+        self.next_page::<C>(page.len(), next_url, marker)?;
 
         Ok(page)
     }
@@ -344,7 +361,7 @@ where
             self.paged.endpoint.api_version().as_ref(),
         )?;
         let url = if let Some(url) =
-            self.page_url(ep.build_request_url(&self.paged.endpoint.endpoint())?)
+            self.page_url::<C>(ep.build_request_url(&self.paged.endpoint.endpoint())?)?
         {
             url
         } else {
@@ -372,7 +389,7 @@ where
             self.paged.endpoint.api_version().as_ref(),
         )?;
         let url = if let Some(url) =
-            self.page_url(ep.build_request_url(&self.paged.endpoint.endpoint())?)
+            self.page_url::<C>(ep.build_request_url(&self.paged.endpoint.endpoint())?)?
         {
             url
         } else {

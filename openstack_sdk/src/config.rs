@@ -89,6 +89,14 @@ pub enum ConfigError {
         #[from]
         source: config::ConfigError,
     },
+
+    /// Config builder error.
+    #[error(transparent)]
+    ConfigFileBuilder {
+        /// The source of the error.
+        #[from]
+        source: ConfigFileBuilderError,
+    },
 }
 
 impl ConfigError {
@@ -117,6 +125,10 @@ pub enum ConfigFileBuilderError {
         builder: ConfigFileBuilder,
         path: PathBuf,
     },
+
+    /// Config file deserialization error.
+    #[error("Failed to build config: {source}")]
+    ConfigBuild { source: Box<config::ConfigError> },
 }
 
 impl fmt::Debug for ConfigFileBuilderError {
@@ -139,6 +151,10 @@ impl fmt::Debug for ConfigFileBuilderError {
                 .debug_struct("ConfigDeserialize")
                 .field("source", source)
                 .field("path", path)
+                .finish_non_exhaustive(),
+            ConfigFileBuilderError::ConfigBuild { source, .. } => f
+                .debug_struct("ConfigBuild")
+                .field("source", source)
                 .finish_non_exhaustive(),
         }
     }
@@ -184,14 +200,22 @@ impl ConfigFileBuilder {
 
     /// This will build a [`ConfigFile`] with the previously specified sources. Since
     /// the sources have already been checked on errors, this will not fail.
-    pub fn build(self) -> ConfigFile {
+    pub fn build(self) -> Result<ConfigFile, ConfigFileBuilderError> {
         let mut config = config::Config::builder();
 
         for source in self.sources {
             config = config.add_source(source);
         }
 
-        config.build().unwrap().try_deserialize().unwrap()
+        config
+            .build()
+            .map_err(|err| ConfigFileBuilderError::ConfigBuild {
+                source: Box::new(err),
+            })?
+            .try_deserialize()
+            .map_err(|err| ConfigFileBuilderError::ConfigBuild {
+                source: Box::new(err),
+            })
     }
 }
 
@@ -585,15 +609,26 @@ const CONFIG_SUFFIXES: &[&str] = &[".yaml", ".yml", ".json"];
 /// Get Paths in which to search for the configuration file.
 fn get_config_file_search_paths<S: AsRef<str>>(filename: S) -> Vec<PathBuf> {
     let paths: Vec<PathBuf> = vec![
-        env::current_dir().expect("Cannot determine current workdir"),
+        env::current_dir()
+            .inspect_err(|e| warn!("Cannot determine current workdir: {}", e))
+            .ok(),
         dirs::config_dir()
-            .expect("Cannot determine users XDG_CONFIG_HOME")
-            .join("openstack"),
+            .or_else(|| {
+                warn!("Cannot determine users XDG_CONFIG_HOME");
+                None
+            })
+            .map(|val| val.join("openstack")),
         dirs::home_dir()
-            .expect("Cannot determine users XDG_HOME")
-            .join(".config/openstack"),
-        PathBuf::from("/etc/openstack"),
-    ];
+            .or_else(|| {
+                warn!("Cannot determine users XDG_HOME");
+                None
+            })
+            .map(|val| val.join(".config/openstack")),
+        Some(PathBuf::from("/etc/openstack")),
+    ]
+    .into_iter()
+    .flatten()
+    .collect();
 
     paths
         .iter()
@@ -743,10 +778,13 @@ impl ConfigFile {
                     );
                     builder
                 }
+                Err(err @ ConfigFileBuilderError::ConfigBuild { .. }) => {
+                    return Err(ConfigError::ConfigFileBuilder { source: err });
+                }
             };
         }
 
-        Ok(builder.build())
+        Ok(builder.build()?)
     }
 
     /// A convenience function which calls [`new_with_user_specified_configs`](ConfigFile::new_with_user_specified_configs) without an
@@ -882,7 +920,8 @@ mod tests {
             .unwrap()
             .add_source(secure_file.path())
             .unwrap()
-            .build();
+            .build()
+            .unwrap();
 
         let profile = cfg
             .get_cloud_config("fake_cloud")
@@ -917,7 +956,8 @@ mod tests {
         let cfg = ConfigFile::builder()
             .add_source(cloud_file.path())
             .unwrap()
-            .build();
+            .build()
+            .unwrap();
 
         let profile = cfg
             .get_cloud_config("fake_cloud")

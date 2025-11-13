@@ -89,17 +89,18 @@ where
             .iter_async::<C, Object>(self)
             .map(Ok)
             .try_for_each_concurrent(DELETE_CONCURRENCY, |item| async {
-                let object: Object = item.expect("Object is available");
-                let object_name = object.name.clone();
-                debug!("Deleting object {:?}", object_name);
-                let mut delete_builder = DeleteRequest::builder();
-                delete_builder.account(account.as_ref());
-                delete_builder.container(container.as_ref());
-                delete_builder.object(object.name);
-                let delete_ep = delete_builder
-                    .build()
-                    .map_err(|x| OpenStackError::EndpointBuild(x.to_string()))?;
-                ignore(delete_ep).query_async(self).await?;
+                if let Ok(object) = item {
+                    let object_name = object.name.clone();
+                    debug!("Deleting object {:?}", object_name);
+                    let mut delete_builder = DeleteRequest::builder();
+                    delete_builder.account(account.as_ref());
+                    delete_builder.container(container.as_ref());
+                    delete_builder.object(object.name);
+                    let delete_ep = delete_builder
+                        .build()
+                        .map_err(|x| OpenStackError::EndpointBuild(x.to_string()))?;
+                    ignore(delete_ep).query_async(self).await?;
+                }
                 Ok::<(), OpenStackError>(())
             })
             .await?;
