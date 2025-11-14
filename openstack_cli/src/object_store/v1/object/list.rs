@@ -20,7 +20,7 @@
 //! is configurable. To view the value for the cluster, issue a GET /info
 //! request.
 use clap::Args;
-
+use eyre::eyre;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -156,7 +156,7 @@ impl ObjectsCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {

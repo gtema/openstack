@@ -28,6 +28,7 @@
 //! the arbitrary value.
 use bytes::Bytes;
 use clap::Args;
+use eyre::{WrapErr, eyre};
 use http::Response;
 use http::{HeaderName, HeaderValue};
 use regex::Regex;
@@ -97,7 +98,7 @@ impl AccountCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {
@@ -105,12 +106,23 @@ impl AccountCommand {
         }
         // Set query parameters
         // Set body parameters
-        ep_builder.headers(self.property.iter().map(|(k, v)| {
-            (
-                Some(HeaderName::from_bytes(k.as_bytes()).expect("HeaderName is a string")),
-                HeaderValue::from_str(v.as_str()).expect("Header Value is a string"),
-            )
-        }));
+        ep_builder.headers(
+            self.property
+                .iter()
+                .map(|(k, v)| {
+                    Ok::<(Option<HeaderName>, HeaderValue), eyre::Report>((
+                        Some(
+                            HeaderName::from_bytes(k.as_bytes())
+                                .wrap_err_with(|| format!("{} cannot be used as header name", k))?,
+                        ),
+                        HeaderValue::from_str(v.as_str()).wrap_err_with(|| {
+                            format!("{} cannot be used as the header value", v)
+                        })?,
+                    ))
+                })
+                .collect::<Result<Vec<(_, _)>, _>>()?
+                .into_iter(),
+        );
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
@@ -131,10 +143,13 @@ impl AccountCommand {
         let headers = rsp.headers();
 
         let regexes: Vec<Regex> = vec![
-            Regex::new(r"(?i)X-Account-Meta-\.*").unwrap(),
-            Regex::new(r"(?i)X-Account-Storage-Policy\.*Bytes-Used").unwrap(),
-            Regex::new(r"(?i)X-Account-Storage-Policy\.*Container-Count").unwrap(),
-            Regex::new(r"(?i)X-Account-Storage-Policy\.*Object-Count").unwrap(),
+            Regex::new(r"(?i)X-Account-Meta-\.*").wrap_err("failed to compile the regex")?,
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Bytes-Used")
+                .wrap_err("failed to compile the regex")?,
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Container-Count")
+                .wrap_err("failed to compile the regex")?,
+            Regex::new(r"(?i)X-Account-Storage-Policy\.*Object-Count")
+                .wrap_err("failed to compile the regex")?,
         ];
 
         for (hdr, val) in headers.iter() {

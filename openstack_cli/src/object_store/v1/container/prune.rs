@@ -14,6 +14,7 @@
 
 //! Prune objects in a container.
 use clap::Args;
+use eyre::eyre;
 use tracing::info;
 
 use crate::Cli;
@@ -64,10 +65,10 @@ impl ContainerCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back()
-            .expect("Object Store endpoint must end with project id");
+            .ok_or_else(|| eyre!("Object Store endpoint must end with project id"))?;
         client
             .object_store_container_prune_async(account, &self.container, self.prefix.as_ref())
             .await?;

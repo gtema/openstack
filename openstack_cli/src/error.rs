@@ -183,6 +183,10 @@ pub enum OpenStackCliError {
     #[error(transparent)]
     Base64Decode(#[from] base64::DecodeError),
 
+    /// Re-authorization not possible without active authentication.
+    #[error("valid authentication is missing to be able to rescope the session")]
+    MissingValidAuthenticationForRescope,
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),

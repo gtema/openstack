@@ -110,7 +110,9 @@ where
         {
             let mut record = HttpRequest::default();
             event.record(&mut record);
-            self.stats.lock().unwrap().requests.push(record);
+            if let Ok(mut lock) = self.stats.lock() {
+                lock.requests.push(record);
+            }
         }
     }
 }
