@@ -15,7 +15,7 @@
 //! Shows details for an account and lists containers, sorted by name, in the
 //! account.
 use clap::Args;
-
+use eyre::eyre;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -127,7 +127,7 @@ impl ContainersCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {

@@ -24,8 +24,8 @@
 //! with the bulk-delete query parameter.
 use bytes::Bytes;
 use clap::Args;
+use eyre::eyre;
 use http::Response;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -98,7 +98,7 @@ impl ObjectCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {

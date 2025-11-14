@@ -15,6 +15,7 @@
 //! Shows object metadata.
 use bytes::Bytes;
 use clap::Args;
+use eyre::{WrapErr, eyre};
 use http::Response;
 use regex::Regex;
 use std::collections::HashMap;
@@ -106,7 +107,7 @@ impl ObjectCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {
@@ -138,7 +139,8 @@ impl ObjectCommand {
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
-        let regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Object-Meta-\.*").unwrap()];
+        let regexes: Vec<Regex> =
+            vec![Regex::new(r"(?i)X-Object-Meta-\.*").wrap_err("failed to compile the regex")?];
 
         for (hdr, val) in headers.iter() {
             if [

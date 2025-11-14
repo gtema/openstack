@@ -198,7 +198,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         );
         let current_auth = session
             .get_auth_info()
-            .expect("Already authenticated")
+            .ok_or(OpenStackCliError::MissingValidAuthenticationForRescope)?
             .token;
         let project = Project {
             id: cli.global_opts.connection.os_project_id.clone(),

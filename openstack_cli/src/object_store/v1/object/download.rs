@@ -17,9 +17,9 @@
 //! object content in the response body.
 
 use clap::Args;
-
+use eyre::eyre;
 use serde::{Deserialize, Serialize};
-use tracing::info;
+use tracing::{info, warn};
 
 use crate::Cli;
 use crate::OpenStackCliError;
@@ -119,7 +119,7 @@ impl ObjectCommand {
         let account = ep
             .url()
             .path_segments()
-            .expect("Object Store endpoint must not point to a bare domain")
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
             .filter(|x| !x.is_empty())
             .next_back();
         if let Some(account) = account {
@@ -152,10 +152,17 @@ impl ObjectCommand {
 
         let size: u64 = headers
             .get("content-length")
-            .map(|x| x.to_str().expect("Header is a string"))
+            .and_then(|x| {
+                x.to_str()
+                    .inspect_err(|e| {
+                        warn!("content-length header cannot be treated as string: {}", e)
+                    })
+                    .ok()
+            })
             .unwrap_or("0")
             .parse()
-            .unwrap();
+            .inspect_err(|e| warn!("content-length header mut represent u64 number: {}", e))
+            .unwrap_or_default();
         download_file(self.file.clone().unwrap_or(self.object.clone()), size, data).await?;
         op.show_command_hint()?;
         Ok(())
