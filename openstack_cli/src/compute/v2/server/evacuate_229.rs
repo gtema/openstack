@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -146,7 +147,11 @@ impl ServerCommand {
             evacuate_builder.host(val);
         }
 
-        ep_builder.evacuate(evacuate_builder.build().unwrap());
+        ep_builder.evacuate(
+            evacuate_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

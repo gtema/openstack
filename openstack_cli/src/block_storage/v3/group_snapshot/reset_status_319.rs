@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/group_snapshots/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -99,7 +100,11 @@ impl GroupSnapshotCommand {
 
         reset_status_builder.status(&args.status);
 
-        ep_builder.reset_status(reset_status_builder.build().unwrap());
+        ep_builder.reset_status(
+            reset_status_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/groups/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -104,7 +105,11 @@ impl GroupCommand {
             failover_replication_builder.secondary_backend_id(None);
         }
 
-        ep_builder.failover_replication(failover_replication_builder.build().unwrap());
+        ep_builder.failover_replication(
+            failover_replication_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

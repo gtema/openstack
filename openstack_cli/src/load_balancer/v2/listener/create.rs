@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/listeners` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -447,7 +448,11 @@ impl ListenerCommand {
             listener_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.listener(listener_builder.build().unwrap());
+        ep_builder.listener(
+            listener_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

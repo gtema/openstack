@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/qos/policies` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -137,7 +138,11 @@ impl PolicyCommand {
             policy_builder.tenant_id(val);
         }
 
-        ep_builder.policy(policy_builder.build().unwrap());
+        ep_builder.policy(
+            policy_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

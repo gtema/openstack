@@ -133,10 +133,19 @@ impl FileCommand {
 
         let size: u64 = headers
             .get("content-length")
-            .map(|x| x.to_str().expect("Header is a string"))
+            .and_then(|x| {
+                x.to_str()
+                    .inspect_err(|e| {
+                        tracing::warn!("content-length header cannot be treated as string: {}", e)
+                    })
+                    .ok()
+            })
             .unwrap_or("0")
             .parse()
-            .unwrap();
+            .inspect_err(|e| {
+                tracing::warn!("content-length header mut represent u64 number: {}", e)
+            })
+            .unwrap_or_default();
         download_file(self.file.clone().unwrap_or(image_name), size, data).await?;
         // Show command specific hints
         op.show_command_hint()?;

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -126,7 +127,11 @@ impl ServerCommand {
         };
         os_get_serial_console_builder._type(tmp);
 
-        ep_builder.os_get_serial_console(os_get_serial_console_builder.build().unwrap());
+        ep_builder.os_get_serial_console(
+            os_get_serial_console_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

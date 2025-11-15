@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -119,7 +120,11 @@ impl ServerCommand {
             os_get_console_output_builder.length(*val);
         }
 
-        ep_builder.os_get_console_output(os_get_console_output_builder.build().unwrap());
+        ep_builder.os_get_console_output(
+            os_get_console_output_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

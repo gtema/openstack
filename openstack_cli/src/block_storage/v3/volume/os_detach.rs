@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/volumes/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -99,7 +100,11 @@ impl VolumeCommand {
             if let Some(val) = &los_detach.attachment_id {
                 os_detach_builder.attachment_id(Some(val.into()));
             }
-            ep_builder.os_detach(os_detach_builder.build().expect("A valid object"));
+            ep_builder.os_detach(
+                os_detach_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

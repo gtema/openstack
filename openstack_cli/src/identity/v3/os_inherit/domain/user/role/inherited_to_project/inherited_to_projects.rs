@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/{role_id}/inherited_to_projects` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -30,7 +31,6 @@ use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use eyre::eyre;
-use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::os_inherit::domain::user::role::inherited_to_project::inherited_to_projects;

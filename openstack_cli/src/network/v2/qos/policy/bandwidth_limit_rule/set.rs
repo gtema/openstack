@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/bandwidth_limit_rules/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -146,7 +147,11 @@ impl BandwidthLimitRuleCommand {
             bandwidth_limit_rule_builder.max_kbps(*val);
         }
 
-        ep_builder.bandwidth_limit_rule(bandwidth_limit_rule_builder.build().unwrap());
+        ep_builder.bandwidth_limit_rule(
+            bandwidth_limit_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/floatingips/{floatingip_id}/port_forwardings/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -196,7 +197,11 @@ impl PortForwardingCommand {
             port_forwarding_builder.protocol(tmp);
         }
 
-        ep_builder.port_forwarding(port_forwarding_builder.build().unwrap());
+        ep_builder.port_forwarding(
+            port_forwarding_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

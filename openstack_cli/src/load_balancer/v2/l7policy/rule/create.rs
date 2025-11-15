@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/l7policies/{l7policy_id}/rules` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -233,7 +234,11 @@ impl RuleCommand {
 
         rule_builder.value(&args.value);
 
-        ep_builder.rule(rule_builder.build().unwrap());
+        ep_builder.rule(
+            rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

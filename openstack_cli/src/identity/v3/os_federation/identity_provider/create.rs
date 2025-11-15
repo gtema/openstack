@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -150,7 +151,11 @@ impl IdentityProviderCommand {
             identity_provider_builder.remote_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.identity_provider(identity_provider_builder.build().unwrap());
+        ep_builder.identity_provider(
+            identity_provider_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

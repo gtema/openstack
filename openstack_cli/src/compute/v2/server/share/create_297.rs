@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/shares` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -114,7 +115,11 @@ impl ShareCommand {
             share_builder.tag(val);
         }
 
-        ep_builder.share(share_builder.build().unwrap());
+        ep_builder.share(
+            share_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

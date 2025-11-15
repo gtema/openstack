@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/groups/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -87,7 +88,11 @@ impl GroupCommand {
             delete_builder.delete_volumes(*val);
         }
 
-        ep_builder.delete(delete_builder.build().unwrap());
+        ep_builder.delete(
+            delete_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

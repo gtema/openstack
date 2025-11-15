@@ -2453,8 +2453,8 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/SnapshotsActionOs-Force_DeleteRequest'
-                - $ref: '#/components/schemas/SnapshotsActionOs-Reset_StatusRequest'
                 - $ref: '#/components/schemas/SnapshotsActionOs-UnmanageRequest'
+                - $ref: '#/components/schemas/SnapshotsAction_Reset_Status'
                 - $ref: '#/components/schemas/SnapshotsAction_Update_Snapshot_Status'
               x-openstack:
                 discriminator: action
@@ -3103,7 +3103,6 @@ paths:
                 - $ref: '#/components/schemas/VolumesActionOs-Force_DeleteRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Migrate_VolumeRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-ReserveRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Reset_StatusRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Roll_DetachingRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Show_Image_MetadataRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-UnmanageRequest'
@@ -3118,6 +3117,7 @@ paths:
                 - $ref: '#/components/schemas/VolumesAction_Initialize_Connection'
                 - $ref: '#/components/schemas/VolumesAction_Migrate_Volume_Completion'
                 - $ref: '#/components/schemas/VolumesAction_Reimage_368'
+                - $ref: '#/components/schemas/VolumesAction_Reset_Status'
                 - $ref: '#/components/schemas/VolumesAction_Retype'
                 - $ref: '#/components/schemas/VolumesAction_Set_Bootable'
                 - $ref: '#/components/schemas/VolumesAction_Terminate_Connection'
@@ -5813,8 +5813,8 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/SnapshotsActionOs-Force_DeleteRequest'
-                - $ref: '#/components/schemas/SnapshotsActionOs-Reset_StatusRequest'
                 - $ref: '#/components/schemas/SnapshotsActionOs-UnmanageRequest'
+                - $ref: '#/components/schemas/SnapshotsAction_Reset_Status'
                 - $ref: '#/components/schemas/SnapshotsAction_Update_Snapshot_Status'
               x-openstack:
                 discriminator: action
@@ -6551,7 +6551,6 @@ paths:
                 - $ref: '#/components/schemas/VolumesActionOs-Force_DeleteRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Migrate_VolumeRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-ReserveRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Reset_StatusRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Roll_DetachingRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Show_Image_MetadataRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-UnmanageRequest'
@@ -6566,6 +6565,7 @@ paths:
                 - $ref: '#/components/schemas/VolumesAction_Initialize_Connection'
                 - $ref: '#/components/schemas/VolumesAction_Migrate_Volume_Completion'
                 - $ref: '#/components/schemas/VolumesAction_Reimage_368'
+                - $ref: '#/components/schemas/VolumesAction_Reset_Status'
                 - $ref: '#/components/schemas/VolumesAction_Retype'
                 - $ref: '#/components/schemas/VolumesAction_Set_Bootable'
                 - $ref: '#/components/schemas/VolumesAction_Terminate_Connection'
@@ -7523,23 +7523,6 @@ components:
       name: sort_key
       schema:
         type: string
-    group_types_action_id:
-      description: id parameter for /v3/group_types/{id}/action API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    group_types_action_project_id:
-      description: project_id parameter for 
-        /v3/{project_id}/group_types/{id}/action API
-      in: path
-      name: project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
     group_types_edit_id:
       description: id parameter for /v3/group_types/{id}/edit API
       in: path
@@ -7889,15 +7872,6 @@ components:
       schema:
         format: uuid
         type: string
-    messages_detail_project_id:
-      description: project_id parameter for /v3/{project_id}/messages/detail API
-      in: path
-      name: project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
     messages_edit_id:
       description: id parameter for /v3/messages/{id}/edit API
       in: path
@@ -8028,57 +8002,6 @@ components:
       description: project_id parameter for /v3/{project_id}/os-hosts/{id} API
       in: path
       name: admin_project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
-    os_hosts_reboot_id:
-      description: id parameter for /v3/os-hosts/{id}/reboot API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    os_hosts_reboot_project_id:
-      description: project_id parameter for 
-        /v3/{project_id}/os-hosts/{id}/reboot API
-      in: path
-      name: project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
-    os_hosts_shutdown_id:
-      description: id parameter for /v3/os-hosts/{id}/shutdown API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    os_hosts_shutdown_project_id:
-      description: project_id parameter for 
-        /v3/{project_id}/os-hosts/{id}/shutdown API
-      in: path
-      name: project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
-    os_hosts_startup_id:
-      description: id parameter for /v3/os-hosts/{id}/startup API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    os_hosts_startup_project_id:
-      description: project_id parameter for 
-        /v3/{project_id}/os-hosts/{id}/startup API
-      in: path
-      name: project_id
       required: true
       schema:
         type: string
@@ -15361,14 +15284,6 @@ components:
       type: object
       x-openstack:
         action-name: os-force_delete
-    SnapshotsActionOs-Reset_StatusRequest:
-      description: Empty body for os-reset_status action
-      properties:
-        os-reset_status:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reset_status
     SnapshotsActionOs-UnmanageRequest:
       description: Empty body for os-unmanage action
       properties:
@@ -15383,6 +15298,23 @@ components:
       type: object
       x-openstack:
         action-name: os-update_snapshot_status
+    SnapshotsAction_Reset_Status:
+      additionalProperties: false
+      properties:
+        os-reset_status:
+          additionalProperties: false
+          properties:
+            status:
+              format: snapshot_status
+              type: string
+          required:
+            - status
+          type: object
+      required:
+        - os-reset_status
+      type: object
+      x-openstack:
+        action-name: os-reset_status
     SnapshotsAction_Update_Snapshot_Status:
       additionalProperties: false
       properties:
@@ -18176,14 +18108,6 @@ components:
       type: object
       x-openstack:
         action-name: os-reserve
-    VolumesActionOs-Reset_StatusRequest:
-      description: Empty body for os-reset_status action
-      properties:
-        os-reset_status:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reset_status
     VolumesActionOs-Roll_DetachingRequest:
       description: Empty body for os-roll_detaching action
       properties:
@@ -18684,6 +18608,34 @@ components:
       x-openstack:
         action-name: os-reimage
         min-ver: '3.68'
+    VolumesAction_Reset_Status:
+      additionalProperties: false
+      properties:
+        os-reset_status:
+          additionalProperties: false
+          format: validate_volume_reset_body
+          properties:
+            attach_status:
+              format: volume_attach_status
+              type:
+                - 'null'
+                - string
+            migration_status:
+              format: volume_migration_status
+              type:
+                - 'null'
+                - string
+            status:
+              format: volume_status
+              type:
+                - 'null'
+                - string
+          type: object
+      required:
+        - os-reset_status
+      type: object
+      x-openstack:
+        action-name: os-reset_status
     VolumesAction_Retype:
       additionalProperties: false
       properties:

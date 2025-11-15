@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/images/{image_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -223,7 +224,7 @@ impl ImageCommand {
         // Patching resource requires fetching and calculating diff
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
 
         let data: ImageResponse = serde_json::from_value(find_data)?;
@@ -272,8 +273,10 @@ impl ImageCommand {
             );
         }
 
-        let curr_json = serde_json::to_value(&data).unwrap();
-        let mut new_json = serde_json::to_value(&new).unwrap();
+        let curr_json =
+            serde_json::to_value(&data).wrap_err("current state must be a valid json object")?;
+        let mut new_json =
+            serde_json::to_value(&new).wrap_err("new state must be a valid json object")?;
         if let Some(properties) = &self.properties {
             for (key, val) in properties {
                 new_json[key] = json!(val);

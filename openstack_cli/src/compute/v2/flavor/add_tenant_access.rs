@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/flavors/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -106,7 +107,11 @@ impl FlavorCommand {
 
         add_tenant_access_builder.tenant(&args.tenant);
 
-        ep_builder.add_tenant_access(add_tenant_access_builder.build().unwrap());
+        ep_builder.add_tenant_access(
+            add_tenant_access_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

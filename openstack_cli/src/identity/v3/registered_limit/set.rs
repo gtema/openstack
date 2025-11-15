@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/registered_limits/{registered_limit_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -150,7 +151,11 @@ impl RegisteredLimitCommand {
             registered_limit_builder.service_id(val);
         }
 
-        ep_builder.registered_limit(registered_limit_builder.build().unwrap());
+        ep_builder.registered_limit(
+            registered_limit_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

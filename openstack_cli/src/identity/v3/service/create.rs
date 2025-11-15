@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/services` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -107,7 +108,11 @@ impl ServiceCommand {
 
         service_builder._type(&args._type);
 
-        ep_builder.service(service_builder.build().unwrap());
+        ep_builder.service(
+            service_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

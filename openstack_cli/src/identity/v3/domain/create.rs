@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/domains` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -148,14 +149,22 @@ impl DomainCommand {
             if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-            domain_builder.options(options_builder.build().expect("A valid object"));
+            domain_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.tags {
             domain_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.domain(domain_builder.build().unwrap());
+        ep_builder.domain(
+            domain_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

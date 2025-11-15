@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/remote-consoles` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -163,7 +164,11 @@ impl RemoteConsoleCommand {
         };
         remote_console_builder._type(tmp);
 
-        ep_builder.remote_console(remote_console_builder.build().unwrap());
+        ep_builder.remote_console(
+            remote_console_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

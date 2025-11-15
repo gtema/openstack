@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/os-quota-class-sets/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -201,7 +202,11 @@ impl QuotaClassSetCommand {
             quota_class_set_builder.server_groups(*val);
         }
 
-        ep_builder.quota_class_set(quota_class_set_builder.build().unwrap());
+        ep_builder.quota_class_set(
+            quota_class_set_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

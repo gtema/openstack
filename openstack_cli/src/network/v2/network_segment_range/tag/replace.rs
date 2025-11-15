@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/network_segment_ranges/{network_segment_range_id}/tags` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

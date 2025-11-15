@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/roles` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -133,10 +134,18 @@ impl RoleCommand {
             if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-            role_builder.options(options_builder.build().expect("A valid object"));
+            role_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
-        ep_builder.role(role_builder.build().unwrap());
+        ep_builder.role(
+            role_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/os-server-groups` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -156,10 +157,18 @@ impl ServerGroupCommand {
             if let Some(val) = &val.max_server_per_host {
                 rules_builder.max_server_per_host(*val);
             }
-            server_group_builder.rules(rules_builder.build().expect("A valid object"));
+            server_group_builder.rules(
+                rules_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
-        ep_builder.server_group(server_group_builder.build().unwrap());
+        ep_builder.server_group(
+            server_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-volume_attachments` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -128,7 +129,11 @@ impl VolumeAttachmentCommand {
 
         volume_attachment_builder.volume_id(&args.volume_id);
 
-        ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());
+        ep_builder.volume_attachment(
+            volume_attachment_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

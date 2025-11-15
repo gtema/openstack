@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/volumes/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -31,7 +32,7 @@ use crate::output::OutputProcessor;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::os_reset_status;
 
-/// Empty body for os-reset_status action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct VolumeCommand {
     /// Request Query parameters
@@ -41,6 +42,9 @@ pub struct VolumeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[command(flatten)]
+    os_reset_status: OsResetStatus,
 }
 
 /// Query parameters
@@ -57,6 +61,30 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+}
+/// OsResetStatus Body data
+#[derive(Args, Clone)]
+struct OsResetStatus {
+    #[arg(help_heading = "Body parameters", long)]
+    attach_status: Option<String>,
+
+    /// Set explicit NULL for the attach_status
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "attach_status")]
+    no_attach_status: bool,
+
+    #[arg(help_heading = "Body parameters", long)]
+    migration_status: Option<String>,
+
+    /// Set explicit NULL for the migration_status
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "migration_status")]
+    no_migration_status: bool,
+
+    #[arg(help_heading = "Body parameters", long)]
+    status: Option<String>,
+
+    /// Set explicit NULL for the status
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "status")]
+    no_status: bool,
 }
 
 impl VolumeCommand {
@@ -78,6 +106,34 @@ impl VolumeCommand {
         let mut ep_builder = os_reset_status::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_reset_status data
+        let args = &self.os_reset_status;
+        let mut os_reset_status_builder = os_reset_status::OsResetStatusBuilder::default();
+        if let Some(val) = &args.attach_status {
+            os_reset_status_builder.attach_status(Some(val.into()));
+        } else if args.no_attach_status {
+            os_reset_status_builder.attach_status(None);
+        }
+
+        if let Some(val) = &args.migration_status {
+            os_reset_status_builder.migration_status(Some(val.into()));
+        } else if args.no_migration_status {
+            os_reset_status_builder.migration_status(None);
+        }
+
+        if let Some(val) = &args.status {
+            os_reset_status_builder.status(Some(val.into()));
+        } else if args.no_status {
+            os_reset_status_builder.status(None);
+        }
+
+        ep_builder.os_reset_status(
+            os_reset_status_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

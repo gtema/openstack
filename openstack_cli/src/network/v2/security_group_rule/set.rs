@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/security-group-rules/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -97,7 +98,11 @@ impl SecurityGroupRuleCommand {
             security_group_rule_builder.description(val);
         }
 
-        ep_builder.security_group_rule(security_group_rule_builder.build().unwrap());
+        ep_builder.security_group_rule(
+            security_group_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

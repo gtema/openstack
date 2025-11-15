@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -311,7 +312,11 @@ impl LoadbalancerCommand {
             loadbalancer_builder.vip_subnet_id(val);
         }
 
-        ep_builder.loadbalancer(loadbalancer_builder.build().unwrap());
+        ep_builder.loadbalancer(
+            loadbalancer_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

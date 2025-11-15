@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-EP-FILTER/endpoint_groups` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -161,11 +162,19 @@ impl EndpointGroupCommand {
         if let Some(val) = &&args.filters.service_id {
             filters_builder.service_id(val);
         }
-        endpoint_group_builder.filters(filters_builder.build().expect("A valid object"));
+        endpoint_group_builder.filters(
+            filters_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         endpoint_group_builder.name(&args.name);
 
-        ep_builder.endpoint_group(endpoint_group_builder.build().unwrap());
+        ep_builder.endpoint_group(
+            endpoint_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

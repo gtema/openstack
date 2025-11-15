@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/backups/{id}/restore` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -110,7 +111,11 @@ impl RestoreCommand {
             if let Some(val) = &lrestore.volume_id {
                 restore_builder.volume_id(Some(val.into()));
             }
-            ep_builder.restore(restore_builder.build().expect("A valid object"));
+            ep_builder.restore(
+                restore_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

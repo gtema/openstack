@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/rbac-policies` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -134,7 +135,11 @@ impl RbacPolicyCommand {
             rbac_policy_builder.tenant_id(val);
         }
 
-        ep_builder.rbac_policy(rbac_policy_builder.build().unwrap());
+        ep_builder.rbac_policy(
+            rbac_policy_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

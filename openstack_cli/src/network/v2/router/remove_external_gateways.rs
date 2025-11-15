@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/routers/{id}/remove_external_gateways` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -110,7 +111,11 @@ impl RouterCommand {
             router_builder.external_gateways(external_gateways_builder);
         }
 
-        ep_builder.router(router_builder.build().unwrap());
+        ep_builder.router(
+            router_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

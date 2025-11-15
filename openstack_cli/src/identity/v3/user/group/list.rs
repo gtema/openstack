@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/users/{user_id}/groups` with `GET` method
 
 use clap::Args;
+use eyre::OptionExt;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -28,7 +29,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;

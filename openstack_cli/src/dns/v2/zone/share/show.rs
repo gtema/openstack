@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/shares/{zone_share_id}` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -28,7 +29,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;

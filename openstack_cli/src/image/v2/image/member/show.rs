@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/images/{image_id}/members/{member_id}` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

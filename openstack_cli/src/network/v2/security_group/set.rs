@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/security-groups/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -112,7 +113,7 @@ impl SecurityGroupCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -132,7 +133,11 @@ impl SecurityGroupCommand {
             security_group_builder.stateful(*val);
         }
 
-        ep_builder.security_group(security_group_builder.build().unwrap());
+        ep_builder.security_group(
+            security_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

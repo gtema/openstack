@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/images/{image_id}/stage` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

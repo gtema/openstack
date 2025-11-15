@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/volumes/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -148,7 +149,11 @@ impl VolumeCommand {
 
         os_volume_upload_image_builder.image_name(&args.image_name);
 
-        ep_builder.os_volume_upload_image(os_volume_upload_image_builder.build().unwrap());
+        ep_builder.os_volume_upload_image(
+            os_volume_upload_image_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

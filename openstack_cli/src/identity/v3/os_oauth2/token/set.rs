@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-OAUTH2/token` with `PATCH` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

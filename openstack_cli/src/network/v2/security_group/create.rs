@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/security-groups` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -119,7 +120,11 @@ impl SecurityGroupCommand {
             security_group_builder.tenant_id(val);
         }
 
-        ep_builder.security_group(security_group_builder.build().unwrap());
+        ep_builder.security_group(
+            security_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

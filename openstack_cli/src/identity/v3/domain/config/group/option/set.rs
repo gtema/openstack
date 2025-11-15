@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/domains/{domain_id}/config/{group}/{option}` with `PATCH` method
 
 use clap::Args;
+use eyre::OptionExt;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -29,7 +30,6 @@ use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
-use eyre::OptionExt;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;

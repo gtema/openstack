@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/projects` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -191,7 +192,11 @@ impl ProjectCommand {
             if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-            project_builder.options(options_builder.build().expect("A valid object"));
+            project_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.parent_id {
@@ -204,7 +209,11 @@ impl ProjectCommand {
             project_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.project(project_builder.build().unwrap());
+        ep_builder.project(
+            project_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

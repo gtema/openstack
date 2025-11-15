@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/images/{image_id}/import` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -220,7 +221,11 @@ impl ImportCommand {
                 method_builder.uri(val);
             }
 
-            ep_builder.method(method_builder.build().unwrap());
+            ep_builder.method(
+                method_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         // Set Request.stores data

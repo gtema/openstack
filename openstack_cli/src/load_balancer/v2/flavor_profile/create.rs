@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/flavorprofiles` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -97,7 +98,11 @@ impl FlavorProfileCommand {
 
         flavorprofile_builder.provider_name(&args.provider_name);
 
-        ep_builder.flavorprofile(flavorprofile_builder.build().unwrap());
+        ep_builder.flavorprofile(
+            flavorprofile_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

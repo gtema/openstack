@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/snapshots/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -102,7 +103,11 @@ impl SnapshotCommand {
 
         os_update_snapshot_status_builder.status(&args.status);
 
-        ep_builder.os_update_snapshot_status(os_update_snapshot_status_builder.build().unwrap());
+        ep_builder.os_update_snapshot_status(
+            os_update_snapshot_status_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

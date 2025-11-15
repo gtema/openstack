@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/ports` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -355,12 +356,14 @@ impl PortCommand {
                 val.iter()
                     .map(|v| {
                         v.as_object()
-                            .expect("Is a valid Json object")
-                            .into_iter()
-                            .map(|(k, v)| (k.into(), v.clone()))
-                            .collect::<BTreeMap<_, Value>>()
+                            .ok_or_eyre("extra_dhcp_opts must be a valid json object")
+                            .map(|obj| {
+                                obj.into_iter()
+                                    .map(|(k, v)| (k.into(), v.clone()))
+                                    .collect::<BTreeMap<_, Value>>()
+                            })
                     })
-                    .collect::<Vec<_>>(),
+                    .collect::<Result<Vec<_>, _>>()?,
             );
         }
 
@@ -424,7 +427,11 @@ impl PortCommand {
             port_builder.tenant_id(val);
         }
 
-        ep_builder.port(port_builder.build().unwrap());
+        ep_builder.port(
+            port_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

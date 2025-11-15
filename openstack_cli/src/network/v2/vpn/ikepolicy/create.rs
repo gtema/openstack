@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/vpn/ikepolicies` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -311,7 +312,11 @@ impl IkepolicyCommand {
             ikepolicy_builder.tenant_id(val);
         }
 
-        ep_builder.ikepolicy(ikepolicy_builder.build().unwrap());
+        ep_builder.ikepolicy(
+            ikepolicy_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

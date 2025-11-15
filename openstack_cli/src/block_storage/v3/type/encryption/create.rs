@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/types/{type_id}/encryption` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -132,7 +133,11 @@ impl EncryptionCommand {
 
         encryption_builder.provider(&args.provider);
 
-        ep_builder.encryption(encryption_builder.build().unwrap());
+        ep_builder.encryption(
+            encryption_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/vpn/ipsecpolicies` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -317,7 +318,11 @@ impl IpsecpolicyCommand {
             ipsecpolicy_builder.transform_protocol(tmp);
         }
 
-        ep_builder.ipsecpolicy(ipsecpolicy_builder.build().unwrap());
+        ep_builder.ipsecpolicy(
+            ipsecpolicy_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/quotas/{project_id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -28,7 +29,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
@@ -244,7 +244,11 @@ impl QuotaCommand {
             quota_builder.pool(*val);
         }
 
-        ep_builder.quota(quota_builder.build().unwrap());
+        ep_builder.quota(
+            quota_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

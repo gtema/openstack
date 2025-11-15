@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/agents/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -115,7 +116,11 @@ impl AgentCommand {
             agent_builder.description(None);
         }
 
-        ep_builder.agent(agent_builder.build().unwrap());
+        ep_builder.agent(
+            agent_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

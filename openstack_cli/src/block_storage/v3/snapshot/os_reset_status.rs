@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/snapshots/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -31,7 +32,7 @@ use crate::output::OutputProcessor;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot::os_reset_status;
 
-/// Empty body for os-reset_status action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct SnapshotCommand {
     /// Request Query parameters
@@ -41,6 +42,9 @@ pub struct SnapshotCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[command(flatten)]
+    os_reset_status: OsResetStatus,
 }
 
 /// Query parameters
@@ -57,6 +61,12 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+}
+/// OsResetStatus Body data
+#[derive(Args, Clone)]
+struct OsResetStatus {
+    #[arg(help_heading = "Body parameters", long)]
+    status: String,
 }
 
 impl SnapshotCommand {
@@ -78,6 +88,19 @@ impl SnapshotCommand {
         let mut ep_builder = os_reset_status::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_reset_status data
+        let args = &self.os_reset_status;
+        let mut os_reset_status_builder = os_reset_status::OsResetStatusBuilder::default();
+
+        os_reset_status_builder.status(&args.status);
+
+        ep_builder.os_reset_status(
+            os_reset_status_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

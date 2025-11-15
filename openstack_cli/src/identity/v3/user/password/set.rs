@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/users/{user_id}/password` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -29,7 +30,6 @@ use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
 use dialoguer::Password;
-use eyre::OptionExt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
@@ -163,8 +163,7 @@ impl PasswordCommand {
         } else {
             let secret = Password::new()
                 .with_prompt("The original password for the user")
-                .interact()
-                .unwrap();
+                .interact()?;
             user_builder.original_password(secret.to_string());
         }
 
@@ -173,12 +172,15 @@ impl PasswordCommand {
         } else {
             let secret = Password::new()
                 .with_prompt("The new password for the user")
-                .interact()
-                .unwrap();
+                .interact()?;
             user_builder.password(secret.to_string());
         }
 
-        ep_builder.user(user_builder.build().unwrap());
+        ep_builder.user(
+            user_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

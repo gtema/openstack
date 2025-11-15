@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/qos/alias-minimum-packet-rate-rules/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -120,7 +121,9 @@ impl AliasMinimumPacketRateRuleCommand {
         }
 
         ep_builder.alias_minimum_packet_rate_rule(
-            alias_minimum_packet_rate_rule_builder.build().unwrap(),
+            alias_minimum_packet_rate_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
         );
 
         let ep = ep_builder

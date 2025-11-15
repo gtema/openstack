@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/routers` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -205,7 +206,7 @@ impl RouterCommand {
             router_builder.external_gateway_info(
                 external_gateway_info_builder
                     .build()
-                    .expect("A valid object"),
+                    .wrap_err("error preparing the request data")?,
             );
         }
 
@@ -225,7 +226,11 @@ impl RouterCommand {
             router_builder.tenant_id(val);
         }
 
-        ep_builder.router(router_builder.build().unwrap());
+        ep_builder.router(
+            router_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

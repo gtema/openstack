@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/consistencygroups/{id}/update` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

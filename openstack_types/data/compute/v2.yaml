@@ -18265,10 +18265,294 @@ components:
       description: Response of the os-tenant-networks:get operation
       type: object
     Os_VolumeShowResponse:
-      description: Response of the os-volumes/id:get operation
+      additionalProperties: false
+      properties:
+        volume:
+          additionalProperties: false
+          description: |-
+            The `volume` object.
+          properties:
+            attachments:
+              additionalItems: false
+              description: |-
+                The list of volume attachments.
+              oneOf:
+                - items:
+                    additionalProperties: false
+                    properties:
+                      device:
+                        type: string
+                      id:
+                        format: uuid
+                        type: string
+                      serverId:
+                        format: uuid
+                        type: string
+                      volumeId:
+                        format: uuid
+                        type: string
+                    required:
+                      - id
+                      - serverId
+                      - volumeId
+                    type: object
+                - prefixItems:
+                    - additionalProperties: false
+                      properties: {}
+                      required: []
+                      type: object
+              type: array
+            availabilityZone:
+              description: |-
+                The availability zone name.
+              type:
+                - 'null'
+                - string
+            createdAt:
+              description: |-
+                The date and time when the resource was created. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type: string
+            displayDescription:
+              description: |-
+                The volume description.
+              type:
+                - 'null'
+                - string
+            displayName:
+              description: |-
+                The volume name.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The UUID of the volume.
+              format: uuid
+              type: string
+            metadata:
+              additionalProperties: false
+              description: |-
+                Metadata key and value pairs. The maximum size for each metadata key and value
+                pair is 255 bytes.
+              patternProperties:
+                ^[a-zA-Z0-9-_:. ]{1,255}$:
+                  maxLength: 255
+                  type:
+                    - 'null'
+                    - string
+              type: object
+            size:
+              description: |-
+                The size of the volume, in gibibytes (GiB).
+              type: integer
+            snapshotId:
+              description: |-
+                The UUID for a snapshot.
+              oneOf:
+                - type: 'null'
+                - format: uuid
+                  type: string
+            status:
+              description: |-
+                The status of the volume.
+              enum:
+                - attaching
+                - available
+                - awaiting-transfer
+                - backing-up
+                - creating
+                - deleting
+                - detaching
+                - downloading
+                - error
+                - error_backing-up
+                - error_deleting
+                - error_extending
+                - error_restoring
+                - extending
+                - in-use
+                - maintenance
+                - reserved
+                - restoring-backup
+                - retyping
+                - uploading
+              type: string
+            volumeType:
+              description: |-
+                The name or unique identifier for a volume type.
+              type:
+                - 'null'
+                - string
+          required:
+            - attachments
+            - availabilityZone
+            - createdAt
+            - displayDescription
+            - displayName
+            - id
+            - metadata
+            - size
+            - snapshotId
+            - status
+            - volumeType
+          type: object
+      required:
+        - volume
       type: object
     Os_VolumesCreateResponse:
-      description: Response of the os-volumes:post operation
+      additionalProperties: false
+      properties:
+        volume:
+          additionalProperties: false
+          description: |-
+            The `volume` object.
+          properties:
+            attachments:
+              additionalItems: false
+              description: |-
+                The list of volume attachments.
+              oneOf:
+                - items:
+                    additionalProperties: false
+                    properties:
+                      device:
+                        type: string
+                      id:
+                        format: uuid
+                        type: string
+                      serverId:
+                        format: uuid
+                        type: string
+                      volumeId:
+                        format: uuid
+                        type: string
+                    required:
+                      - id
+                      - serverId
+                      - volumeId
+                    type: object
+                - prefixItems:
+                    - additionalProperties: false
+                      properties: {}
+                      required: []
+                      type: object
+              type: array
+            availabilityZone:
+              description: |-
+                The availability zone name.
+              type:
+                - 'null'
+                - string
+            createdAt:
+              description: |-
+                The date and time when the resource was created. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type: string
+            displayDescription:
+              description: |-
+                The volume description.
+              type:
+                - 'null'
+                - string
+            displayName:
+              description: |-
+                The volume name.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The UUID of the volume.
+              format: uuid
+              type: string
+            metadata:
+              additionalProperties: false
+              description: |-
+                Metadata key and value pairs. The maximum size for each metadata key and value
+                pair is 255 bytes.
+              patternProperties:
+                ^[a-zA-Z0-9-_:. ]{1,255}$:
+                  maxLength: 255
+                  type:
+                    - 'null'
+                    - string
+              type: object
+            size:
+              description: |-
+                The size of the volume, in gibibytes (GiB).
+              type: integer
+            snapshotId:
+              description: |-
+                The UUID for a snapshot.
+              oneOf:
+                - type: 'null'
+                - format: uuid
+                  type: string
+            status:
+              description: |-
+                The status of the volume.
+              enum:
+                - attaching
+                - available
+                - awaiting-transfer
+                - backing-up
+                - creating
+                - deleting
+                - detaching
+                - downloading
+                - error
+                - error_backing-up
+                - error_deleting
+                - error_extending
+                - error_restoring
+                - extending
+                - in-use
+                - maintenance
+                - reserved
+                - restoring-backup
+                - retyping
+                - uploading
+              type: string
+            volumeType:
+              description: |-
+                The name or unique identifier for a volume type.
+              type:
+                - 'null'
+                - string
+          required:
+            - attachments
+            - availabilityZone
+            - createdAt
+            - displayDescription
+            - displayName
+            - id
+            - metadata
+            - size
+            - snapshotId
+            - status
+            - volumeType
+          type: object
+      required:
+        - volume
       type: object
     Os_VolumesCreate_21:
       additionalProperties: false
@@ -18321,10 +18605,302 @@ components:
         max-ver: '2.35'
         min-ver: '2.1'
     Os_VolumesDetailResponse:
-      description: Response of the os-volumes/detail:get operation
+      additionalProperties: false
+      properties:
+        volumes:
+          description: |-
+            The list of `volume` objects.
+          items:
+            additionalProperties: false
+            description: |-
+              The `volume` object.
+            properties:
+              attachments:
+                additionalItems: false
+                description: |-
+                  The list of volume attachments.
+                oneOf:
+                  - items:
+                      additionalProperties: false
+                      properties:
+                        device:
+                          type: string
+                        id:
+                          format: uuid
+                          type: string
+                        serverId:
+                          format: uuid
+                          type: string
+                        volumeId:
+                          format: uuid
+                          type: string
+                      required:
+                        - id
+                        - serverId
+                        - volumeId
+                      type: object
+                  - prefixItems:
+                      - additionalProperties: false
+                        properties: {}
+                        required: []
+                        type: object
+                type: array
+              availabilityZone:
+                description: |-
+                  The availability zone name.
+                type:
+                  - 'null'
+                  - string
+              createdAt:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type: string
+              displayDescription:
+                description: |-
+                  The volume description.
+                type:
+                  - 'null'
+                  - string
+              displayName:
+                description: |-
+                  The volume name.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The UUID of the volume.
+                format: uuid
+                type: string
+              metadata:
+                additionalProperties: false
+                description: |-
+                  Metadata key and value pairs. The maximum size for each metadata key and value
+                  pair is 255 bytes.
+                patternProperties:
+                  ^[a-zA-Z0-9-_:. ]{1,255}$:
+                    maxLength: 255
+                    type:
+                      - 'null'
+                      - string
+                type: object
+              size:
+                description: |-
+                  The size of the volume, in gibibytes (GiB).
+                type: integer
+              snapshotId:
+                description: |-
+                  The UUID for a snapshot.
+                oneOf:
+                  - type: 'null'
+                  - format: uuid
+                    type: string
+              status:
+                description: |-
+                  The status of the volume.
+                enum:
+                  - attaching
+                  - available
+                  - awaiting-transfer
+                  - backing-up
+                  - creating
+                  - deleting
+                  - detaching
+                  - downloading
+                  - error
+                  - error_backing-up
+                  - error_deleting
+                  - error_extending
+                  - error_restoring
+                  - extending
+                  - in-use
+                  - maintenance
+                  - reserved
+                  - restoring-backup
+                  - retyping
+                  - uploading
+                type: string
+              volumeType:
+                description: |-
+                  The name or unique identifier for a volume type.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - attachments
+              - availabilityZone
+              - createdAt
+              - displayDescription
+              - displayName
+              - id
+              - metadata
+              - size
+              - snapshotId
+              - status
+              - volumeType
+            type: object
+          type: array
+      required:
+        - volumes
       type: object
     Os_VolumesListResponse:
-      description: Response of the os-volumes:get operation
+      additionalProperties: false
+      properties:
+        volumes:
+          description: |-
+            The list of `volume` objects.
+          items:
+            additionalProperties: false
+            description: |-
+              The `volume` object.
+            properties:
+              attachments:
+                additionalItems: false
+                description: |-
+                  The list of volume attachments.
+                oneOf:
+                  - items:
+                      additionalProperties: false
+                      properties:
+                        device:
+                          type: string
+                        id:
+                          format: uuid
+                          type: string
+                        serverId:
+                          format: uuid
+                          type: string
+                        volumeId:
+                          format: uuid
+                          type: string
+                      required:
+                        - id
+                        - serverId
+                        - volumeId
+                      type: object
+                  - prefixItems:
+                      - additionalProperties: false
+                        properties: {}
+                        required: []
+                        type: object
+                type: array
+              availabilityZone:
+                description: |-
+                  The availability zone name.
+                type:
+                  - 'null'
+                  - string
+              createdAt:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type: string
+              displayDescription:
+                description: |-
+                  The volume description.
+                type:
+                  - 'null'
+                  - string
+              displayName:
+                description: |-
+                  The volume name.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The UUID of the volume.
+                format: uuid
+                type: string
+              metadata:
+                additionalProperties: false
+                description: |-
+                  Metadata key and value pairs. The maximum size for each metadata key and value
+                  pair is 255 bytes.
+                patternProperties:
+                  ^[a-zA-Z0-9-_:. ]{1,255}$:
+                    maxLength: 255
+                    type:
+                      - 'null'
+                      - string
+                type: object
+              size:
+                description: |-
+                  The size of the volume, in gibibytes (GiB).
+                type: integer
+              snapshotId:
+                description: |-
+                  The UUID for a snapshot.
+                oneOf:
+                  - type: 'null'
+                  - format: uuid
+                    type: string
+              status:
+                description: |-
+                  The status of the volume.
+                enum:
+                  - attaching
+                  - available
+                  - awaiting-transfer
+                  - backing-up
+                  - creating
+                  - deleting
+                  - detaching
+                  - downloading
+                  - error
+                  - error_backing-up
+                  - error_deleting
+                  - error_extending
+                  - error_restoring
+                  - extending
+                  - in-use
+                  - maintenance
+                  - reserved
+                  - restoring-backup
+                  - retyping
+                  - uploading
+                type: string
+              volumeType:
+                description: |-
+                  The name or unique identifier for a volume type.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - attachments
+              - availabilityZone
+              - createdAt
+              - displayDescription
+              - displayName
+              - id
+              - metadata
+              - size
+              - snapshotId
+              - status
+              - volumeType
+            type: object
+          type: array
+      required:
+        - volumes
       type: object
     Os_Volumes_BootActionAddfixedipResponse:
       type: 'null'

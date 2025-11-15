@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -116,7 +117,11 @@ impl ServerCommand {
             if let Some(val) = &lrescue.rescue_image_ref {
                 rescue_builder.rescue_image_ref(val);
             }
-            ep_builder.rescue(rescue_builder.build().expect("A valid object"));
+            ep_builder.rescue(
+                rescue_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

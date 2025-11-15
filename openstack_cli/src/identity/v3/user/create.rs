@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/users` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -237,7 +238,11 @@ impl UserCommand {
             if let Some(val) = &val.multi_factor_auth_rules {
                 options_builder.multi_factor_auth_rules(val.iter());
             }
-            user_builder.options(options_builder.build().expect("A valid object"));
+            user_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.password {
@@ -246,7 +251,11 @@ impl UserCommand {
             user_builder.password(None);
         }
 
-        ep_builder.user(user_builder.build().unwrap());
+        ep_builder.user(
+            user_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

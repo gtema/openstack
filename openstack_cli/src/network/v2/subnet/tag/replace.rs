@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/subnets/{subnet_id}/tags` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

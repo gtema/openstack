@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/attachments` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -190,7 +191,11 @@ impl AttachmentCommand {
 
         attachment_builder.volume_uuid(&args.volume_uuid);
 
-        ep_builder.attachment(attachment_builder.build().unwrap());
+        ep_builder.attachment(
+            attachment_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()
