@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
+        uses: dtolnay/rust-toolchain@0f44b27771c32bda9f458f75a1e241b09791b331 # stable
         with:
           toolchain: stable
           components: rustfmt
@@ -73,7 +73,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y bash
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
+        uses: dtolnay/rust-toolchain@0f44b27771c32bda9f458f75a1e241b09791b331 # stable
         with:
           toolchain: stable
           components: rustfmt, clippy
