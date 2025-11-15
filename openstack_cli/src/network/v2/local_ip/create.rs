@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/local-ips` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -143,7 +144,11 @@ impl LocalIpCommand {
             local_ip_builder.project_id(val);
         }
 
-        ep_builder.local_ip(local_ip_builder.build().unwrap());
+        ep_builder.local_ip(
+            local_ip_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

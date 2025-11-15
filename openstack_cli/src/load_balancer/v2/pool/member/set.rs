@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}/members/{member_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -161,12 +162,12 @@ impl MemberCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.pool_id(resource_id.clone());
 
@@ -202,7 +203,11 @@ impl MemberCommand {
             member_builder.weight(*val);
         }
 
-        ep_builder.member(member_builder.build().unwrap());
+        ep_builder.member(
+            member_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

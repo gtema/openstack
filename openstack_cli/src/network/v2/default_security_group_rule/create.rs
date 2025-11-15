@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/default-security-group-rules` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -227,8 +228,11 @@ impl DefaultSecurityGroupRuleCommand {
             default_security_group_rule_builder.used_in_non_default_sg(*val);
         }
 
-        ep_builder
-            .default_security_group_rule(default_security_group_rule_builder.build().unwrap());
+        ep_builder.default_security_group_rule(
+            default_security_group_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

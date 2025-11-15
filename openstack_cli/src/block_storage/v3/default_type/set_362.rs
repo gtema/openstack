@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/default-types/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -100,7 +101,11 @@ impl DefaultTypeCommand {
 
         default_type_builder.volume_type(&args.volume_type);
 
-        ep_builder.default_type(default_type_builder.build().unwrap());
+        ep_builder.default_type(
+            default_type_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

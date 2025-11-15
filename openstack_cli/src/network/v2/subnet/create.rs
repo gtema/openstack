@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/subnets` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -348,7 +349,11 @@ impl SubnetCommand {
             subnet_builder.use_default_subnetpool(*val);
         }
 
-        ep_builder.subnet(subnet_builder.build().unwrap());
+        ep_builder.subnet(
+            subnet_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

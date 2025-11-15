@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/flavors/{flavor_id}/service_profiles` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -109,7 +110,11 @@ impl ServiceProfileCommand {
             service_profile_builder.id(val);
         }
 
-        ep_builder.service_profile(service_profile_builder.build().unwrap());
+        ep_builder.service_profile(
+            service_profile_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/ports/{port_id}/add_allowed_address_pairs` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

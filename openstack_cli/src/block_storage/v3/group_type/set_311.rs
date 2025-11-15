@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/group_types/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -119,7 +120,7 @@ impl GroupTypeCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -143,7 +144,11 @@ impl GroupTypeCommand {
             group_type_builder.name(None);
         }
 
-        ep_builder.group_type(group_type_builder.build().unwrap());
+        ep_builder.group_type(
+            group_type_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

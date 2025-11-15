@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/images/{image_id}/locations` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -143,7 +144,11 @@ impl LocationCommand {
 
             validation_data_builder.os_hash_value(&args.os_hash_value);
 
-            ep_builder.validation_data(validation_data_builder.build().unwrap());
+            ep_builder.validation_data(
+                validation_data_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/volumes` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -302,7 +303,11 @@ impl VolumeCommand {
             volume_builder.volume_type(None);
         }
 
-        ep_builder.volume(volume_builder.build().unwrap());
+        ep_builder.volume(
+            volume_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

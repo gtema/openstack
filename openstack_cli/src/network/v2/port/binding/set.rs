@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/ports/{port_id}/bindings/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -148,7 +149,11 @@ impl BindingCommand {
             binding_builder.vnic_type(tmp);
         }
 
-        ep_builder.binding(binding_builder.build().unwrap());
+        ep_builder.binding(
+            binding_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

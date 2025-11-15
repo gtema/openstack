@@ -20,12 +20,32 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
+use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct OsResetStatus<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) attach_status: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) migration_status: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) status: Option<Option<Cow<'a, str>>>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(setter(into))]
+    pub(crate) os_reset_status: OsResetStatus<'a>,
+
     /// id parameter for /v3/volumes/{id}/action API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
@@ -84,7 +104,10 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("os-reset_status", Value::Null);
+        params.push(
+            "os-reset_status",
+            serde_json::to_value(&self.os_reset_status)?,
+        );
 
         params.into_body()
     }
@@ -122,14 +145,23 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .os_reset_status(OsResetStatusBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::BlockStorage
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder()
+            .os_reset_status(OsResetStatusBuilder::default().build().unwrap())
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -146,7 +178,11 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .os_reset_status(OsResetStatusBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -168,6 +204,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
+            .os_reset_status(OsResetStatusBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

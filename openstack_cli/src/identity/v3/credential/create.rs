@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/credentials` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -130,7 +131,11 @@ impl CredentialCommand {
 
         credential_builder.user_id(&args.user_id);
 
-        ep_builder.credential(credential_builder.build().unwrap());
+        ep_builder.credential(
+            credential_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

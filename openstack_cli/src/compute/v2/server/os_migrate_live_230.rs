@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -146,7 +147,11 @@ impl ServerCommand {
 
         os_migrate_live_builder.host(args.host.clone());
 
-        ep_builder.os_migrate_live(os_migrate_live_builder.build().unwrap());
+        ep_builder.os_migrate_live(
+            os_migrate_live_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

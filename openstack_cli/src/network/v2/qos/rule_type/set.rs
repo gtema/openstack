@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/qos/rule-types/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -101,7 +102,11 @@ impl RuleTypeCommand {
             rule_type_builder.all_supported(*val);
         }
 
-        ep_builder.rule_type(rule_type_builder.build().unwrap());
+        ep_builder.rule_type(
+            rule_type_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

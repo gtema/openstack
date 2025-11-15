@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/address-groups/{id}/remove_addresses` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -100,7 +101,11 @@ impl AddressGroupCommand {
             address_group_builder.addresses(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.address_group(address_group_builder.build().unwrap());
+        ep_builder.address_group(
+            address_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

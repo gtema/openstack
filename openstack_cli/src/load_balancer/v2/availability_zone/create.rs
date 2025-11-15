@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/availabilityzones` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -106,7 +107,11 @@ impl AvailabilityZoneCommand {
 
         availability_zone_builder.name(&args.name);
 
-        ep_builder.availability_zone(availability_zone_builder.build().unwrap());
+        ep_builder.availability_zone(
+            availability_zone_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

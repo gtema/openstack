@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -123,7 +124,11 @@ impl ProtocolCommand {
             protocol_builder.remote_id_attribute(None);
         }
 
-        ep_builder.protocol(protocol_builder.build().unwrap());
+        ep_builder.protocol(
+            protocol_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

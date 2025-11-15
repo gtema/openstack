@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/segments` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -148,7 +149,11 @@ impl SegmentCommand {
             segment_builder.tenant_id(val);
         }
 
-        ep_builder.segment(segment_builder.build().unwrap());
+        ep_builder.segment(
+            segment_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

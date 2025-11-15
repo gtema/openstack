@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/routers/{router_id}/conntrack_helpers/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -149,7 +150,11 @@ impl ConntrackHelperCommand {
             conntrack_helper_builder.protocol(tmp);
         }
 
-        ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());
+        ep_builder.conntrack_helper(
+            conntrack_helper_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/metering/metering-label-rules` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -156,7 +157,11 @@ impl MeteringLabelRuleCommand {
             metering_label_rule_builder.tenant_id(val);
         }
 
-        ep_builder.metering_label_rule(metering_label_rule_builder.build().unwrap());
+        ep_builder.metering_label_rule(
+            metering_label_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

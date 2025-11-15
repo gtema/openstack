@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/volume-transfers/{id}/accept` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -96,7 +97,11 @@ impl VolumeTransferCommand {
 
         accept_builder.auth_key(&args.auth_key);
 
-        ep_builder.accept(accept_builder.build().unwrap());
+        ep_builder.accept(
+            accept_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

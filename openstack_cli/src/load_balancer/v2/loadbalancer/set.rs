@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/loadbalancers/{loadbalancer_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -137,7 +138,7 @@ impl LoadbalancerCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -169,7 +170,11 @@ impl LoadbalancerCommand {
             loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.loadbalancer(loadbalancer_builder.build().unwrap());
+        ep_builder.loadbalancer(
+            loadbalancer_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

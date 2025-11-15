@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/types/{type_id}/os-volume-type-access` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

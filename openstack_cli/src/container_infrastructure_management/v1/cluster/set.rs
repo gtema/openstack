@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v1/clusters/{cluster_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

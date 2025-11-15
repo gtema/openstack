@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/backups/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -119,7 +120,7 @@ impl BackupCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -136,7 +137,11 @@ impl BackupCommand {
             if let Some(val) = &lbackup.name {
                 backup_builder.name(Some(val.into()));
             }
-            ep_builder.backup(backup_builder.build().expect("A valid object"));
+            ep_builder.backup(
+                backup_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

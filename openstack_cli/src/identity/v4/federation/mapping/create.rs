@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/mappings` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -240,7 +241,11 @@ impl MappingCommand {
 
         mapping_builder.user_name_claim(&args.user_name_claim);
 
-        ep_builder.mapping(mapping_builder.build().unwrap());
+        ep_builder.mapping(
+            mapping_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

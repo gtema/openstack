@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/qos-specs` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -85,7 +86,11 @@ impl QosSpecCommand {
 
         qos_specs_builder.name(&args.name);
 
-        ep_builder.qos_specs(qos_specs_builder.build().unwrap());
+        ep_builder.qos_specs(
+            qos_specs_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

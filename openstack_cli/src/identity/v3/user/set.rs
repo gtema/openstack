@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/users/{user_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -201,7 +202,7 @@ impl UserCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -264,7 +265,11 @@ impl UserCommand {
             if let Some(val) = &val.multi_factor_auth_rules {
                 options_builder.multi_factor_auth_rules(val.iter());
             }
-            user_builder.options(options_builder.build().expect("A valid object"));
+            user_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.password {
@@ -273,7 +278,11 @@ impl UserCommand {
             user_builder.password(None);
         }
 
-        ep_builder.user(user_builder.build().unwrap());
+        ep_builder.user(
+            user_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

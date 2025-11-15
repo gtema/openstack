@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/local_ips/{local_ip_id}/port_associations/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

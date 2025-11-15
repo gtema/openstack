@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/service-providers/{id}` with `DELETE` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

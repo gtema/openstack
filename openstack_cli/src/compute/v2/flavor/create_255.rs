@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/flavors` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -186,7 +187,11 @@ impl FlavorCommand {
 
         flavor_builder.vcpus(args.vcpus);
 
-        ep_builder.flavor(flavor_builder.build().unwrap());
+        ep_builder.flavor(
+            flavor_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

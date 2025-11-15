@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/mappings/{mapping_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -113,7 +114,11 @@ impl MappingCommand {
             mapping_builder.schema_version(val);
         }
 
-        ep_builder.mapping(mapping_builder.build().unwrap());
+        ep_builder.mapping(
+            mapping_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

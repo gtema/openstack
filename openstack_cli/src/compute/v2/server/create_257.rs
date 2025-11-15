@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -481,7 +482,11 @@ impl ServerCommand {
                 os_scheduler_hints_builder.target_cell(val);
             }
 
-            ep_builder.os_scheduler_hints(os_scheduler_hints_builder.build().unwrap());
+            ep_builder.os_scheduler_hints(
+                os_scheduler_hints_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         // Set Request.server data
@@ -604,7 +609,11 @@ impl ServerCommand {
             server_builder.user_data(val);
         }
 
-        ep_builder.server(server_builder.build().unwrap());
+        ep_builder.server(
+            server_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

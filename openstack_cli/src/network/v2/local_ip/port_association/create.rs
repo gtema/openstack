@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/local_ips/{local_ip_id}/port_associations` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -129,7 +130,11 @@ impl PortAssociationCommand {
             port_association_builder.project_id(val);
         }
 
-        ep_builder.port_association(port_association_builder.build().unwrap());
+        ep_builder.port_association(
+            port_association_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

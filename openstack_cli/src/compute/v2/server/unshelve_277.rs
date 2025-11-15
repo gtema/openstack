@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -96,7 +97,11 @@ impl ServerCommand {
             let mut unshelve_builder = unshelve_277::UnshelveBuilder::default();
 
             unshelve_builder.availability_zone(&lunshelve.availability_zone);
-            ep_builder.unshelve(unshelve_builder.build().expect("A valid object"));
+            ep_builder.unshelve(
+                unshelve_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

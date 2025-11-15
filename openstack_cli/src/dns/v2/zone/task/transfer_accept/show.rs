@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/zones/tasks/transfer_accepts/{transfer_accept_id}` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

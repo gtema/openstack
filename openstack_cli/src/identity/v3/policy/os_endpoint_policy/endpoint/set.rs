@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

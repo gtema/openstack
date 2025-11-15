@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/groups/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -123,7 +124,11 @@ impl GroupCommand {
             create_from_src_builder.source_group_id(val);
         }
 
-        ep_builder.create_from_src(create_from_src_builder.build().unwrap());
+        ep_builder.create_from_src(
+            create_from_src_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

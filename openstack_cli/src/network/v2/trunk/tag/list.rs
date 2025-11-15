@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/trunks/{trunk_id}/tags` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

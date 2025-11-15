@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/roles/{role_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -131,7 +132,7 @@ impl RoleCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -160,10 +161,18 @@ impl RoleCommand {
             if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-            role_builder.options(options_builder.build().expect("A valid object"));
+            role_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
-        ep_builder.role(role_builder.build().unwrap());
+        ep_builder.role(
+            role_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

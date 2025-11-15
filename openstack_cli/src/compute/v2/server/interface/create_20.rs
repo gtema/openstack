@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{server_id}/os-interface` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -139,7 +140,11 @@ impl InterfaceCommand {
             interface_attachment_builder.port_id(val);
         }
 
-        ep_builder.interface_attachment(interface_attachment_builder.build().unwrap());
+        ep_builder.interface_attachment(
+            interface_attachment_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

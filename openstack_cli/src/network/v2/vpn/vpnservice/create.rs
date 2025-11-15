@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/vpn/vpnservices` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -164,7 +165,11 @@ impl VpnserviceCommand {
             vpnservice_builder.tenant_id(val);
         }
 
-        ep_builder.vpnservice(vpnservice_builder.build().unwrap());
+        ep_builder.vpnservice(
+            vpnservice_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

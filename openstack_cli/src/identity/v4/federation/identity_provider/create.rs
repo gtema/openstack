@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -194,7 +195,11 @@ impl IdentityProviderCommand {
             identity_provider_builder.provider_config(val.iter().cloned());
         }
 
-        ep_builder.identity_provider(identity_provider_builder.build().unwrap());
+        ep_builder.identity_provider(
+            identity_provider_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

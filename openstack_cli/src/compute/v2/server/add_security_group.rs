@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -111,7 +112,11 @@ impl ServerCommand {
 
         add_security_group_builder.name(&args.name);
 
-        ep_builder.add_security_group(add_security_group_builder.build().unwrap());
+        ep_builder.add_security_group(
+            add_security_group_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

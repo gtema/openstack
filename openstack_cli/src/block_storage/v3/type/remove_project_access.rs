@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/types/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -96,7 +97,11 @@ impl TypeCommand {
 
         remove_project_access_builder.project(&args.project);
 
-        ep_builder.remove_project_access(remove_project_access_builder.build().unwrap());
+        ep_builder.remove_project_access(
+            remove_project_access_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

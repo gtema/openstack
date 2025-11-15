@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/auth/tokens/OS-PKI/revoked` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

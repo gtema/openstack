@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/address-scopes` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -118,7 +119,11 @@ impl AddressScopeCommand {
             address_scope_builder.tenant_id(val);
         }
 
-        ep_builder.address_scope(address_scope_builder.build().unwrap());
+        ep_builder.address_scope(
+            address_scope_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

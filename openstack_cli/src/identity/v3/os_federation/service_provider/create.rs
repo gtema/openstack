@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{service_provider_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -142,7 +143,11 @@ impl ServiceProviderCommand {
 
         service_provider_builder.sp_url(&args.sp_url);
 
-        ep_builder.service_provider(service_provider_builder.build().unwrap());
+        ep_builder.service_provider(
+            service_provider_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

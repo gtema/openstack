@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/servers/{id}/action` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -127,7 +128,11 @@ impl ServerCommand {
             if let Some(val) = &lmigrate.host {
                 migrate_builder.host(Some(val.into()));
             }
-            ep_builder.migrate(migrate_builder.build().expect("A valid object"));
+            ep_builder.migrate(
+                migrate_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         let ep = ep_builder

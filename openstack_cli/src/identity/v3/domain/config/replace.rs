@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/domains/{domain_id}/config` with `PUT` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -28,8 +29,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
-use eyre::WrapErr;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;

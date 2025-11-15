@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/backups/import_record` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -95,7 +96,11 @@ impl ImportRecordCommand {
 
         backup_record_builder.backup_url(&args.backup_url);
 
-        ep_builder.backup_record(backup_record_builder.build().unwrap());
+        ep_builder.backup_record(
+            backup_record_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

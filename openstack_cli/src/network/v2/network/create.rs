@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/networks` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -270,7 +271,11 @@ impl NetworkCommand {
             network_builder.vlan_transparent(*val);
         }
 
-        ep_builder.network(network_builder.build().unwrap());
+        ep_builder.network(
+            network_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

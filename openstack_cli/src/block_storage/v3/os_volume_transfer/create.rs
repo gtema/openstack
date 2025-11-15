@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/os-volume-transfer` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -101,7 +102,11 @@ impl OsVolumeTransferCommand {
 
         transfer_builder.volume_id(&args.volume_id);
 
-        ep_builder.transfer(transfer_builder.build().unwrap());
+        ep_builder.transfer(
+            transfer_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

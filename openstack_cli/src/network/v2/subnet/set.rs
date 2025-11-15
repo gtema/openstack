@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/subnets/{subnet_id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -169,7 +170,7 @@ impl SubnetCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -229,7 +230,11 @@ impl SubnetCommand {
             subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.subnet(subnet_builder.build().unwrap());
+        ep_builder.subnet(
+            subnet_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

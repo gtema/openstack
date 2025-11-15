@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v1/clusters/actions/upgrade` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;

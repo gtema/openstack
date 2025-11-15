@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.0/qos/policies/{policy_id}/dscp_marking_rules/{id}` with `PUT` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -115,7 +116,11 @@ impl DscpMarkingRuleCommand {
             dscp_marking_rule_builder.dscp_mark(*val);
         }
 
-        ep_builder.dscp_marking_rule(dscp_marking_rule_builder.build().unwrap());
+        ep_builder.dscp_marking_rule(
+            dscp_marking_rule_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

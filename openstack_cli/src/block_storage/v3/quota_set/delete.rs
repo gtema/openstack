@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/os-quota-sets/{project_id}` with `DELETE` method
 
 use clap::Args;
+use eyre::OptionExt;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -28,7 +29,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use eyre::OptionExt;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_set::delete;

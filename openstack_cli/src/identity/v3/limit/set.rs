@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/limits/{limit_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -114,7 +115,11 @@ impl LimitCommand {
             limit_builder.resource_limit(*val);
         }
 
-        ep_builder.limit(limit_builder.build().unwrap());
+        ep_builder.limit(
+            limit_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

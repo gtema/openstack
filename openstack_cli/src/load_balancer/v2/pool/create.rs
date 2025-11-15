@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/pools` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -365,8 +366,11 @@ impl PoolCommand {
                 SessionPersistenceType::SourceIp => create::SessionPersistenceType::SourceIp,
             };
             session_persistence_builder._type(tmp);
-            pool_builder
-                .session_persistence(session_persistence_builder.build().expect("A valid object"));
+            pool_builder.session_persistence(
+                session_persistence_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.tags {
@@ -393,7 +397,11 @@ impl PoolCommand {
             pool_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.pool(pool_builder.build().unwrap());
+        ep_builder.pool(
+            pool_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

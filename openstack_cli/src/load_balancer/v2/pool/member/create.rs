@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/lbaas/pools/{pool_id}/members` with `POST` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -248,7 +249,11 @@ impl MemberCommand {
             member_builder.weight(*val);
         }
 
-        ep_builder.member(member_builder.build().unwrap());
+        ep_builder.member(
+            member_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

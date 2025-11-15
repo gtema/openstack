@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/OS-TRUST/trusts` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -218,7 +219,11 @@ impl TrustCommand {
 
         trust_builder.trustor_user_id(&args.trustor_user_id);
 
-        ep_builder.trust(trust_builder.build().unwrap());
+        ep_builder.trust(
+            trust_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

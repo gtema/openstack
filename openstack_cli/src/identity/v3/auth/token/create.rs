@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/auth/tokens` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -303,7 +304,7 @@ impl TokenCommand {
             identity_builder.application_credential(
                 application_credential_builder
                     .build()
-                    .expect("A valid object"),
+                    .wrap_err("error preparing the request data")?,
             );
         }
 
@@ -335,15 +336,27 @@ impl TokenCommand {
                 if let Some(val) = &val.password {
                     user_builder.password(val);
                 }
-                password_builder.user(user_builder.build().expect("A valid object"));
+                password_builder.user(
+                    user_builder
+                        .build()
+                        .wrap_err("error preparing the request data")?,
+                );
             }
-            identity_builder.password(password_builder.build().expect("A valid object"));
+            identity_builder.password(
+                password_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
         if let Some(val) = &&args.identity.token {
             let mut token_builder = create::TokenBuilder::default();
 
             token_builder.id(&val.id);
-            identity_builder.token(token_builder.build().expect("A valid object"));
+            identity_builder.token(
+                token_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
         if let Some(val) = &&args.identity.totp {
             let mut totp_builder = create::TotpBuilder::default();
@@ -360,10 +373,22 @@ impl TokenCommand {
             }
 
             user_builder.passcode(&val.user.passcode);
-            totp_builder.user(user_builder.build().expect("A valid object"));
-            identity_builder.totp(totp_builder.build().expect("A valid object"));
+            totp_builder.user(
+                user_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
+            identity_builder.totp(
+                totp_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
-        auth_builder.identity(identity_builder.build().expect("A valid object"));
+        auth_builder.identity(
+            identity_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         if let Some(val) = &args.scope {
             let mut scope_builder = create::ScopeBuilder::default();
@@ -372,8 +397,11 @@ impl TokenCommand {
                 if let Some(val) = &val.id {
                     os_trust_trust_builder.id(val);
                 }
-                scope_builder
-                    .os_trust_trust(os_trust_trust_builder.build().expect("A valid object"));
+                scope_builder.os_trust_trust(
+                    os_trust_trust_builder
+                        .build()
+                        .wrap_err("error preparing the request data")?,
+                );
             }
             if let Some(val) = &val.domain {
                 let mut domain_builder = create::ScopeDomainBuilder::default();
@@ -383,7 +411,11 @@ impl TokenCommand {
                 if let Some(val) = &val.name {
                     domain_builder.name(val);
                 }
-                scope_builder.domain(domain_builder.build().expect("A valid object"));
+                scope_builder.domain(
+                    domain_builder
+                        .build()
+                        .wrap_err("error preparing the request data")?,
+                );
             }
             if let Some(val) = &val.project {
                 scope_builder.project(serde_json::from_value::<create::Project>(val.to_owned())?);
@@ -393,12 +425,24 @@ impl TokenCommand {
                 if let Some(val) = &val.all {
                     system_builder.all(*val);
                 }
-                scope_builder.system(system_builder.build().expect("A valid object"));
+                scope_builder.system(
+                    system_builder
+                        .build()
+                        .wrap_err("error preparing the request data")?,
+                );
             }
-            auth_builder.scope(scope_builder.build().expect("A valid object"));
+            auth_builder.scope(
+                scope_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
-        ep_builder.auth(auth_builder.build().unwrap());
+        ep_builder.auth(
+            auth_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

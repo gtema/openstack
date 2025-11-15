@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/zones/{zone_id}/tasks/pool_move` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -29,7 +30,6 @@ use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
-use eyre::OptionExt;
 use eyre::eyre;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;

@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2.1/os-aggregates` with `POST` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -112,7 +113,11 @@ impl AggregateCommand {
 
         aggregate_builder.name(&args.name);
 
-        ep_builder.aggregate(aggregate_builder.build().unwrap());
+        ep_builder.aggregate(
+            aggregate_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()

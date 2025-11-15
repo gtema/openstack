@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v3/projects/{project_id}` with `PATCH` method
 
 use clap::Args;
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
@@ -136,7 +137,7 @@ impl ProjectCommand {
 
         let resource_id = find_data["id"]
             .as_str()
-            .expect("Resource ID is a string")
+            .ok_or_else(|| eyre::eyre!("resource ID must be a string"))?
             .to_string();
         ep_builder.id(resource_id.clone());
 
@@ -163,14 +164,22 @@ impl ProjectCommand {
             if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-            project_builder.options(options_builder.build().expect("A valid object"));
+            project_builder.options(
+                options_builder
+                    .build()
+                    .wrap_err("error preparing the request data")?,
+            );
         }
 
         if let Some(val) = &args.tags {
             project_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
-        ep_builder.project(project_builder.build().unwrap());
+        ep_builder.project(
+            project_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
 
         let ep = ep_builder
             .build()
