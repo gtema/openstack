@@ -72,8 +72,8 @@ impl ShowCommand {
                 });
                 eps
             })
-            .map(|x| serde_json::to_value(x).unwrap())
-            .collect();
+            .map(serde_json::to_value)
+            .collect::<Result<Vec<_>, _>>()?;
 
         if data.is_empty() {
             return Err(openstack_sdk::catalog::CatalogError::ServiceNotConfigured(
@@ -82,7 +82,7 @@ impl ShowCommand {
             .into());
         }
 
-        op.output_list::<CatalogEndpoint>(data).unwrap();
+        op.output_list::<CatalogEndpoint>(data)?;
         op.show_command_hint()?;
         Ok(())
     }

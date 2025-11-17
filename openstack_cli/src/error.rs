@@ -167,6 +167,14 @@ pub enum OpenStackCliError {
         source: http::header::InvalidHeaderValue,
     },
 
+    /// Invalid URL.
+    #[error("invalid url: {}", source)]
+    InvalidUri {
+        /// The source of the error.
+        #[from]
+        source: http::uri::InvalidUri,
+    },
+
     /// User interaction using dialoguer crate failed
     #[error("dialoguer error `{}`", source)]
     DialoguerError {

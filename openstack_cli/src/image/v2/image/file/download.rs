@@ -118,11 +118,11 @@ impl FileCommand {
 
         let image_id = image_data["id"]
             .as_str()
-            .expect("Image ID is a string")
+            .ok_or_else(|| eyre::eyre!("image ID must be a string"))?
             .to_string();
         let image_name = image_data["name"]
             .as_str()
-            .expect("Image name is a string")
+            .ok_or_else(|| eyre::eyre!("image name must be a string"))?
             .to_string();
 
         let ep = download::Request::builder()

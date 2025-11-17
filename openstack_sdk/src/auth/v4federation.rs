@@ -96,6 +96,14 @@ pub enum FederationError {
         source: serde_urlencoded::de::Error,
     },
 
+    /// Http error.
+    #[error("http server error: {}", source)]
+    Http {
+        /// The source of the error.
+        #[from]
+        source: http::Error,
+    },
+
     #[error("hyper error: {}", source)]
     Hyper {
         /// The source of the error.
@@ -109,6 +117,21 @@ pub enum FederationError {
         /// The error source
         #[from]
         source: tokio::task::JoinError,
+    },
+
+    /// Dialoguer error.
+    #[error("error reading the user input: {}", source)]
+    Dialoguer {
+        /// The source of the error
+        #[from]
+        source: dialoguer::Error,
+    },
+
+    /// Poisoned guard lock in the internal processing.
+    #[error("internal error: poisoned lock: {}", context)]
+    PoisonedLock {
+        /// The source of the error.
+        context: String,
     },
 }
 
@@ -274,8 +297,7 @@ pub async fn get_auth_code(
             "A default browser is going to be opened at `{}`. Do you want to continue?",
             url.as_str()
         ))
-        .interact()
-        .unwrap();
+        .interact()?;
     if confirmation {
         info!("Opening browser at {:?}", url.as_str());
         let cancel_token = CancellationToken::new();
@@ -301,7 +323,9 @@ pub async fn get_auth_code(
 
         let _res = handle.await?;
 
-        let guard = state.lock().expect("poisoned guard");
+        let guard = state.lock().map_err(|_| FederationError::PoisonedLock {
+            context: "getting auth_code guard lock".to_string(),
+        })?;
         guard.clone().ok_or(FederationError::CallbackNoToken)
     } else {
         Err(FederationError::CallbackFailed)
@@ -386,21 +410,21 @@ async fn handle_request(
                                 .into(),
                             )
                             .boxed(),
-                        )
-                        .unwrap());
+                        )?);
                 }
-                let mut data = state.lock().expect("state lock can not be obtained");
+                let mut data = state.lock().map_err(|_| FederationError::PoisonedLock {
+                    context: "getting auth_code guard lock in handle_request".to_string(),
+                })?;
+
                 *data = Some(res);
                 cancel_token.cancel();
 
                 Ok(Response::builder()
-                    .body(Full::new(include_str!("../../static/callback.html").into()).boxed())
-                    .unwrap())
+                    .body(Full::new(include_str!("../../static/callback.html").into()).boxed())?)
             } else {
                 Ok(Response::builder()
                     .status(StatusCode::NOT_FOUND)
-                    .body(Empty::<Bytes>::new().boxed())
-                    .unwrap())
+                    .body(Empty::<Bytes>::new().boxed())?)
             }
         }
         (&Method::POST, "/oidc/callback") => {
@@ -419,16 +443,19 @@ async fn handle_request(
                             error = Some("Identity Provider returned error".into());
                             error_description = Some(error_descr);
                         } else if res.code.is_some() {
-                            let mut data = state.lock().expect("state lock can not be obtained");
+                            let mut data =
+                                state.lock().map_err(|_| FederationError::PoisonedLock {
+                                    context: "getting auth_code guard lock in handle_request"
+                                        .to_string(),
+                                })?;
+
                             *data = Some(res);
                             cancel_token.cancel();
 
-                            return Ok(Response::builder()
-                                .body(
-                                    Full::new(include_str!("../../static/callback.html").into())
-                                        .boxed(),
-                                )
-                                .unwrap());
+                            return Ok(Response::builder().body(
+                                Full::new(include_str!("../../static/callback.html").into())
+                                    .boxed(),
+                            )?);
                         }
                     }
                 }
@@ -447,14 +474,13 @@ async fn handle_request(
                     )
                     .boxed(),
                 )
-                .unwrap())
+                ?)
         }
         _ => {
             // Return 404 not found response.
             Ok(Response::builder()
                 .status(StatusCode::NOT_FOUND)
-                .body(Empty::<Bytes>::new().boxed())
-                .unwrap())
+                .body(Empty::<Bytes>::new().boxed())?)
         }
     }
 }

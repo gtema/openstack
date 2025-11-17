@@ -524,7 +524,7 @@ impl AsyncOpenStack {
                             .get("x-subject-token")
                             .ok_or(AuthError::AuthTokenNotInResponse)?
                             .to_str()
-                            .expect("x-subject-token is a string");
+                            .map_err(|_| AuthError::AuthTokenNotString)?;
 
                         // Set retrieved token as current auth
                         let token_auth = authtoken::AuthToken {
@@ -563,7 +563,7 @@ impl AsyncOpenStack {
                         );
                         let passkey_auth = auth
                             .do_authentication(
-                                Url::parse("http://localhost:8080").unwrap(),
+                                Url::parse("http://localhost:8080")?,
                                 req.try_into()?,
                             )
                             .map_err(auth::v4passkey::PasskeyError::from)?;
@@ -580,7 +580,7 @@ impl AsyncOpenStack {
                             .get("x-subject-token")
                             .ok_or(AuthError::AuthTokenNotInResponse)?
                             .to_str()
-                            .expect("x-subject-token is a string");
+                            .map_err(|_| AuthError::AuthTokenNotString)?;
 
                         // Set retrieved token as current auth
                         let token_info: AuthResponse = serde_json::from_slice(rsp.body())?;
