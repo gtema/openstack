@@ -24,7 +24,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension
+/// <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct CredProps {
@@ -49,7 +49,7 @@ pub enum CredProtect {
     Userverificationrequired,
 }
 
-/// https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs
+/// <https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs>
 /// The default option here for Options are None, so it can be derived
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -59,7 +59,7 @@ pub struct Extensions {
     #[builder(default, setter(into))]
     pub(crate) appid: Option<bool>,
 
-    /// https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension
+    /// <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cred_props: Option<CredProps>,
@@ -98,21 +98,21 @@ pub enum Transports {
     Usb,
 }
 
-/// https://w3c.github.io/webauthn/#authenticatorattestationresponse
+/// <https://w3c.github.io/webauthn/#authenticatorattestationresponse>
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Response<'a> {
-    /// https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject.
+    /// <https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject>.
     #[serde()]
     #[builder(setter(into))]
     pub(crate) attestation_object: Cow<'a, str>,
 
-    /// https://w3c.github.io/webauthn/#dom-authenticatorresponse-clientdatajson.
+    /// <https://w3c.github.io/webauthn/#dom-authenticatorresponse-clientdatajson>.
     #[serde()]
     #[builder(setter(into))]
     pub(crate) client_data_json: Cow<'a, str>,
 
-    /// https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-gettransports.
+    /// <https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-gettransports>.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) transports: Option<Vec<Transports>>,
@@ -125,7 +125,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs
+    /// <https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs>
     /// The default option here for Options are None, so it can be derived
     #[builder(setter(into))]
     pub(crate) extensions: Extensions,
@@ -144,7 +144,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) raw_id: Cow<'a, str>,
 
-    /// https://w3c.github.io/webauthn/#authenticatorattestationresponse
+    /// <https://w3c.github.io/webauthn/#authenticatorattestationresponse>
     #[builder(setter(into))]
     pub(crate) response: Response<'a>,
 
