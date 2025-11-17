@@ -130,7 +130,7 @@ pub struct Cli {
 
 /// Parse config file
 pub fn parse_config(s: &str) -> Result<Config, OpenStackCliError> {
-    let mut builder = Config::builder();
+    let mut builder = Config::builder()?;
     if !s.is_empty() {
         builder = builder.add_source(s).map_err(ConfigError::builder)?;
     }

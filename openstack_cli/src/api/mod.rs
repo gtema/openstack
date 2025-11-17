@@ -15,11 +15,11 @@
 //! Direct API command implementation
 
 use clap::{Parser, ValueEnum};
-use http::Uri;
+use eyre::WrapErr;
+use http::{HeaderName, HeaderValue, Uri};
 use serde_json::Value;
 use std::io::{self, Write};
 use tracing::info;
-use url::Url;
 
 use openstack_sdk::{
     AsyncOpenStack,
@@ -31,12 +31,6 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::common::parse_key_val;
 use crate::output::OutputProcessor;
-
-fn url_to_http_uri(url: Url) -> Uri {
-    url.as_str()
-        .parse::<Uri>()
-        .expect("failed to parse a url::Url as an http::Uri")
-}
 
 /// Supported http methods
 #[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
@@ -127,18 +121,30 @@ impl ApiCommand {
 
         let mut req = http::Request::builder()
             .method::<http::Method>(self.method.clone().into())
-            .uri(url_to_http_uri(endpoint))
+            .uri(endpoint.as_str().parse::<Uri>()?)
             .header(
                 http::header::ACCEPT,
-                http::HeaderValue::from_static("application/json"),
+                HeaderValue::from_static("application/json"),
             );
 
-        let headers = req.headers_mut().unwrap();
-        for (name, val) in &self.header {
-            headers.insert(
-                http::HeaderName::from_lowercase(name.to_lowercase().as_bytes()).unwrap(),
-                http::HeaderValue::from_str(val.as_str()).unwrap(),
-            );
+        if let Some(headers) = req.headers_mut() {
+            headers.extend(
+                self.header
+                    .iter()
+                    .map(|(name, val)| {
+                        Ok::<(HeaderName, HeaderValue), OpenStackCliError>((
+                            HeaderName::from_lowercase(name.to_lowercase().as_bytes())
+                                .wrap_err_with(|| {
+                                    format!("{} cannot be used as header name", name)
+                                })?,
+                            HeaderValue::from_str(val.as_str()).wrap_err_with(|| {
+                                format!("{} cannot be used as the header value", val)
+                            })?,
+                        ))
+                    })
+                    .collect::<Result<Vec<(_, _)>, _>>()?
+                    .into_iter(),
+            )
         }
 
         let rsp = client

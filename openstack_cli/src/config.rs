@@ -46,14 +46,19 @@ const CONFIG: &str = include_str!("../.config/config.yaml");
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ConfigError {
-    /// Parsing error
+    /// Parsing error.
     #[error("failed to parse config: {}", source)]
     Parse {
         /// The source of the error.
         #[from]
         source: config::ConfigError,
     },
-    /// Parsing error
+
+    /// Config dir cannot be identified.
+    #[error("config dir cannot be identified")]
+    ConfigDirCannotBeIdentified,
+
+    /// Parsing error.
     #[error("failed to parse config: {}", source)]
     Builder {
         /// The source of the error.
@@ -227,15 +232,14 @@ impl fmt::Debug for ConfigBuilderError {
 
 impl Config {
     /// Get the config builder
-    pub fn builder() -> ConfigBuilder {
+    pub fn builder() -> Result<ConfigBuilder, ConfigError> {
         let default_config: config::Config = config::Config::builder()
             .add_source(config::File::from_str(CONFIG, config::FileFormat::Yaml))
-            .build()
-            .expect("default config must be valid");
+            .build()?;
 
-        ConfigBuilder {
+        Ok(ConfigBuilder {
             sources: Vec::from([default_config]),
-        }
+        })
     }
 
     /// Instantiate new config reading default config updating it with local configuration
@@ -244,7 +248,8 @@ impl Config {
             .add_source(config::File::from_str(CONFIG, config::FileFormat::Yaml))
             .build()?;
 
-        let config_dir = get_config_dir();
+        let config_dir =
+            get_config_dir().ok_or_else(|| ConfigError::ConfigDirCannotBeIdentified)?;
         let mut builder = ConfigBuilder {
             sources: Vec::from([default_config]),
         };
@@ -284,10 +289,8 @@ impl Config {
     }
 }
 
-fn get_config_dir() -> PathBuf {
-    dirs::config_dir()
-        .expect("Cannot determine users XDG_CONFIG_HOME")
-        .join("osc")
+fn get_config_dir() -> Option<PathBuf> {
+    dirs::config_dir().map(|val| val.join("osc"))
 }
 
 impl fmt::Display for Config {
@@ -328,6 +331,7 @@ mod tests {
         write!(config_file, "{CONFIG_DATA}").unwrap();
 
         let _cfg = Config::builder()
+            .unwrap()
             .add_source(config_file.path())
             .unwrap()
             .build();

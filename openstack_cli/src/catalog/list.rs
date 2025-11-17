@@ -107,10 +107,10 @@ impl ListCommand {
             .get_token_catalog()
             .unwrap_or_default()
             .into_iter()
-            .map(|x| serde_json::to_value(x).unwrap())
-            .collect();
+            .map(serde_json::to_value)
+            .collect::<Result<Vec<_>, _>>()?;
 
-        op.output_list::<Catalog>(data).unwrap();
+        op.output_list::<Catalog>(data)?;
         op.show_command_hint()?;
         Ok(())
     }

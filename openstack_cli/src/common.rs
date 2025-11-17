@@ -12,9 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Common helpers
-use crate::error::OpenStackCliError;
-
+//! Common helpers.
+use eyre::OptionExt;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -30,6 +29,8 @@ use tokio_util::io::InspectReader;
 
 use openstack_sdk::types::BoxedAsyncRead;
 use structable::{StructTable, StructTableOptions};
+
+use crate::error::OpenStackCliError;
 
 /// Newtype for the `HashMap<String, String>`
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -124,7 +125,11 @@ pub(crate) async fn download_file(
         io::copy(&mut inspect_reader, &mut writer).await?;
     } else {
         let path = Path::new(&dst_name);
-        let fname = path.file_name().unwrap().to_str().unwrap();
+        let fname = path
+            .file_name()
+            .ok_or_eyre("download file name must be known")?
+            .to_str()
+            .ok_or_eyre("download file name must be a string")?;
         progress_bar.set_message(String::from(fname));
         progress_bar.set_style(
             ProgressStyle::default_bar()
