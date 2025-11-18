@@ -13,6 +13,7 @@ jobs:
     name: Release-plz
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       pull-requests: write
 
     steps:
