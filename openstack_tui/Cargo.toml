@@ -23,7 +23,7 @@ async-trait.workspace = true
 chrono = { workspace= true }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
-config = { workspace = true, features = ["json", "json5", "yaml"] }
+config = { workspace = true, features = ["json", "yaml"] }
 # edtui MUST use the same version as ratatui otherwise the Into does not work
 crossterm = { version = "0.28.1", features = ["serde", "event-stream"] }
 derive_builder = { workspace = true }
@@ -34,7 +34,6 @@ edit = "0.1.5"
 eyre = { workspace = true }
 futures = { workspace = true }
 itertools = { workspace = true }
-json5 = "^0.4"
 lazy_static = "^1.5"
 open.workspace = true
 openstack_sdk = { path = "../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
