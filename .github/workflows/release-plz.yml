@@ -13,7 +13,7 @@ jobs:
     name: Release-plz
     environment: release
     runs-on: ubuntu-latest
-    if: github.repository_owner == "gtema"
+    if: github.repository_owner == 'gtema'
     permissions:
       id-token: write
       pull-requests: write
