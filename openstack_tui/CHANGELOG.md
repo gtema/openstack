@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.2...openstack_tui-v0.13.3) - 2025-11-19
+
+### Added
+
+- Cleanup openstack_tui from unwrap and expect use ([#1508](https://github.com/gtema/openstack/pull/1508))
+
+### Other
+
+- Drop json5 feature of config crate ([#1525](https://github.com/gtema/openstack/pull/1525))
+- Periodic content sync ([#1501](https://github.com/gtema/openstack/pull/1501))
+
 ## [0.13.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.1...openstack_tui-v0.13.2) - 2025-10-14
 
 ### Added
