@@ -98,10 +98,11 @@ fn extract_filename_from_url(url: &str) -> Option<String> {
 async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
     let tmp_dir = Builder::new().prefix("data").tempdir()?;
     let cirros_ver = "0.6.3";
-    let target = format!(
-        "http://download.cirros-cloud.net/{ver}/cirros-{ver}-x86_64-disk.img",
-        ver = cirros_ver
-    );
+    // let target = format!(
+    //     "http://download.cirros-cloud.net/{ver}/cirros-{ver}-x86_64-disk.img",
+    //     ver = cirros_ver
+    // );
+    let target = "https://github.com/gtema/openstack/releases/download/internal/cirros-0.6.3-x86_64-disk.img";
     let (fname, checksum) = download_with_md5_and_filename(&target, &tmp_dir)
         .await
         .expect("Download failed");
