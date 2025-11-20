@@ -2,6 +2,7 @@
 allow_dirty = true
 # dependencies_update = false # run `cargo update`
 git_release_enable = false
+git_release_latest = false
 
 [[package]]
 name = "openstack_sdk"
