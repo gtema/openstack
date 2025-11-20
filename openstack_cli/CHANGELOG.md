@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.2...openstack_cli-v0.13.3) - 2025-11-19
+
+### Added
+
+- Complete removing `unwrap` and `expect` use ([#1516](https://github.com/gtema/openstack/pull/1516))
+- No `unwrap` and `expect` in generated code ([#1511](https://github.com/gtema/openstack/pull/1511))
+- Address some `unwrap`s in `openstack_cli` ([#1510](https://github.com/gtema/openstack/pull/1510))
+- Clean use of `uwrap` and `expect` in `openstack_sdk` ([#1509](https://github.com/gtema/openstack/pull/1509))
+- Replace unwrap in `api_version` and `xtask` ([#1507](https://github.com/gtema/openstack/pull/1507))
+- Make `Findable` trait using `Result` consistently ([#1506](https://github.com/gtema/openstack/pull/1506))
+- Cleanup some potential panics in pagination ([#1504](https://github.com/gtema/openstack/pull/1504))
+
+### Fixed
+
+- Do not stop version discovery on unreachable url ([#1495](https://github.com/gtema/openstack/pull/1495))
+
+### Other
+
+- *(ci)* Vendor cirros image under GitHub releases ([#1527](https://github.com/gtema/openstack/pull/1527))
+- Periodic content sync ([#1501](https://github.com/gtema/openstack/pull/1501))
+- Update keystone-ng doc links ([#1519](https://github.com/gtema/openstack/pull/1519))
+- *(deps)* Bump hyper from 1.7.0 to 1.8.1 ([#1518](https://github.com/gtema/openstack/pull/1518))
+
 ## [0.13.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.1...openstack_cli-v0.13.2) - 2025-10-14
 
 ### Added
