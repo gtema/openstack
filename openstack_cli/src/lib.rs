@@ -110,7 +110,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .with(rtl)
         .init();
 
-    let cloud_config = if cli.global_opts.connection.cloud_config_from_env {
+    let mut cloud_config = if cli.global_opts.connection.cloud_config_from_env {
         // Environment variables should be used to get the cloud configuration
         tracing::debug!("Using environment variables for the cloud connection");
         let cloud_name = cli
@@ -152,6 +152,10 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         cfg.get_cloud_config(&cloud_name)?
             .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name.clone()))?
     };
+    if let Some(region_name) = &cli.global_opts.connection.os_region_name {
+        cloud_config.region_name = Some(region_name.clone());
+    }
+
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization

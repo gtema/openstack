@@ -168,6 +168,10 @@ pub struct ConnectionOpts {
     #[arg(long, env = "OS_PROJECT_NAME", global = true, display_order = 803)]
     pub os_project_name: Option<String>,
 
+    /// Region Name to use instead of the one in the connection profile.
+    #[arg(long, env = "OS_REGION_NAME", global = true, display_order = 804)]
+    pub os_region_name: Option<String>,
+
     /// Custom path to the `clouds.yaml` config file.
     #[arg(
         long,
