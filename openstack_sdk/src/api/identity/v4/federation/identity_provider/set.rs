@@ -44,6 +44,12 @@ pub struct IdentityProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) default_mapping_name: Option<Option<Cow<'a, str>>>,
 
+    /// Identity provider enabled property. Inactive Identity Providers can not
+    /// be used for login.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) enabled: Option<Option<bool>>,
+
     /// New URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when
     /// the provider does not provide discovery endpoint or when it is not
     /// standard compliant.

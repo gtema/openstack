@@ -43,6 +43,11 @@ pub struct IdentityProviderResponse {
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
+    /// Identity provider enabled prperty. Inactive Identity Providers can not
+    /// be used for login.
+    #[structable(wide)]
+    pub enabled: bool,
+
     /// The ID of the federated identity provider.
     #[structable()]
     pub id: String,

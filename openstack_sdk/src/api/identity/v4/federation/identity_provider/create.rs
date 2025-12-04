@@ -54,6 +54,12 @@ pub struct IdentityProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
+    /// Identity provider enabled property. Inactive Identity Providers can not
+    /// be used for login.
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) enabled: bool,
+
     /// Optional URL to fetch JsonWebKeySet. Must be specified for JWT
     /// authentication when discovery for the provider is not available or not
     /// standard compliant.
@@ -224,6 +230,7 @@ mod tests {
             Request::builder()
                 .identity_provider(
                     IdentityProviderBuilder::default()
+                        .enabled(false)
                         .name("foo")
                         .build()
                         .unwrap()
@@ -241,6 +248,7 @@ mod tests {
             Request::builder()
                 .identity_provider(
                     IdentityProviderBuilder::default()
+                        .enabled(false)
                         .name("foo")
                         .build()
                         .unwrap()
@@ -270,6 +278,7 @@ mod tests {
         let endpoint = Request::builder()
             .identity_provider(
                 IdentityProviderBuilder::default()
+                    .enabled(false)
                     .name("foo")
                     .build()
                     .unwrap(),
@@ -298,6 +307,7 @@ mod tests {
         let endpoint = Request::builder()
             .identity_provider(
                 IdentityProviderBuilder::default()
+                    .enabled(false)
                     .name("foo")
                     .build()
                     .unwrap(),

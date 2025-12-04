@@ -81,6 +81,11 @@ struct IdentityProvider {
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
+    /// Identity provider enabled property. Inactive Identity Providers can not
+    /// be used for login.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    enabled: bool,
+
     /// Optional URL to fetch JsonWebKeySet. Must be specified for JWT
     /// authentication when discovery for the provider is not available or not
     /// standard compliant.
@@ -158,6 +163,8 @@ impl IdentityProviderCommand {
         if let Some(val) = &args.domain_id {
             identity_provider_builder.domain_id(val);
         }
+
+        identity_provider_builder.enabled(args.enabled);
 
         if let Some(val) = &args.jwks_url {
             identity_provider_builder.jwks_url(val);

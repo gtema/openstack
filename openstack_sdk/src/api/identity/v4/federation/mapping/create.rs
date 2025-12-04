@@ -73,6 +73,11 @@ pub struct Mapping<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id_claim: Option<Cow<'a, str>>,
 
+    /// Mapping enabled property. Inactive mappings can not be used for login.
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) enabled: bool,
+
     /// `groups` claim name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -243,6 +248,7 @@ mod tests {
             Request::builder()
                 .mapping(
                     MappingBuilder::default()
+                        .enabled(false)
                         .idp_id("foo")
                         .name("foo")
                         .user_id_claim("foo")
@@ -263,6 +269,7 @@ mod tests {
             Request::builder()
                 .mapping(
                     MappingBuilder::default()
+                        .enabled(false)
                         .idp_id("foo")
                         .name("foo")
                         .user_id_claim("foo")
@@ -295,6 +302,7 @@ mod tests {
         let endpoint = Request::builder()
             .mapping(
                 MappingBuilder::default()
+                    .enabled(false)
                     .idp_id("foo")
                     .name("foo")
                     .user_id_claim("foo")
@@ -326,6 +334,7 @@ mod tests {
         let endpoint = Request::builder()
             .mapping(
                 MappingBuilder::default()
+                    .enabled(false)
                     .idp_id("foo")
                     .name("foo")
                     .user_id_claim("foo")
