@@ -103,6 +103,10 @@ struct Mapping {
     #[arg(help_heading = "Body parameters", long)]
     domain_id_claim: Option<String>,
 
+    /// Mapping enabled property. Inactive mappings can not be used for login.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    enabled: Option<bool>,
+
     /// `groups` claim name.
     #[arg(help_heading = "Body parameters", long)]
     groups_claim: Option<String>,
@@ -199,6 +203,10 @@ impl MappingCommand {
 
         if let Some(val) = &args.domain_id_claim {
             mapping_builder.domain_id_claim(val);
+        }
+
+        if let Some(val) = &args.enabled {
+            mapping_builder.enabled(*val);
         }
 
         if let Some(val) = &args.groups_claim {

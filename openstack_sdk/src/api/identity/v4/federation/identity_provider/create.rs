@@ -54,6 +54,12 @@ pub struct IdentityProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
+    /// Identity provider `enabled` property. Inactive Identity Providers can
+    /// not be used for login.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) enabled: Option<bool>,
+
     /// Optional URL to fetch JsonWebKeySet. Must be specified for JWT
     /// authentication when discovery for the provider is not available or not
     /// standard compliant.
