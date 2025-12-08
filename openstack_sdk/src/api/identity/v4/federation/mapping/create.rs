@@ -73,6 +73,11 @@ pub struct Mapping<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id_claim: Option<Cow<'a, str>>,
 
+    /// Mapping enabled property. Inactive mappings can not be used for login.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) enabled: Option<bool>,
+
     /// `groups` claim name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
