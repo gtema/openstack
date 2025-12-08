@@ -55,7 +55,7 @@ RUN cargo build --target x86_64-unknown-linux-musl --release --bin osc
 
 ################
 ##### Runtime
-FROM alpine:3.22.0@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715 AS runtime
+FROM alpine:3.23.0@sha256:51183f2cfa6320055da30872f211093f9ff1d3cf06f39a0bdb212314c5dc7375 AS runtime
 
 LABEL maintainer="Artem Goncharov"
 
