@@ -49,7 +49,7 @@ openstack_sdk = { path = "../openstack_sdk" }
 reqwest.workspace = true
 tokio.workspace = true
 url.workspace = true
-uuid = { version = "1.18", features = ["v4"] }
+uuid = { version = "1.19", features = ["v4"] }
 
 [[test]]
 name = "mocked"
