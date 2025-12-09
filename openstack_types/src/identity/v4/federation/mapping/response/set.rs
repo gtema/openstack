@@ -59,6 +59,10 @@ pub struct MappingResponse {
     #[structable(optional)]
     pub domain_id_claim: Option<String>,
 
+    /// Mapping enabled property. Inactive mappings can not be used for login.
+    #[structable()]
+    pub enabled: bool,
+
     /// `groups` claim name.
     #[serde(default)]
     #[structable(optional)]
