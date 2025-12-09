@@ -88,6 +88,11 @@ struct IdentityProvider {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "default_mapping_name")]
     no_default_mapping_name: bool,
 
+    /// Identity provider `enabled` property. Inactive Identity Providers can
+    /// not be used for login.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    enabled: Option<Option<bool>>,
+
     /// New URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when
     /// the provider does not provide discovery endpoint or when it is not
     /// standard compliant.
@@ -189,6 +194,10 @@ impl IdentityProviderCommand {
             identity_provider_builder.default_mapping_name(Some(val.into()));
         } else if args.no_default_mapping_name {
             identity_provider_builder.default_mapping_name(None);
+        }
+
+        if let Some(val) = &args.enabled {
+            identity_provider_builder.enabled(*val);
         }
 
         if let Some(val) = &args.jwks_url {
