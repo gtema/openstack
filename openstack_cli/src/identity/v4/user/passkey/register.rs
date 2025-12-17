@@ -117,10 +117,9 @@ fn convert_api_response_to_public_key_credential_options(
                 .map(|ecs| {
                     ecs.into_iter()
                         .map(convert_exclude_credential)
-                        //.transpose()?
                         .collect::<Result<Vec<_>, _>>()
                 })
-                .transpose()?, //.collect::<Vec<_>>()
+                .transpose()?,
             extensions: val.extensions.map(convert_extension),
             hints: val
                 .hints
@@ -337,13 +336,13 @@ fn convert_credential_protection_policy(
     val: register::CredentialProtectionPolicy,
 ) -> webauthn_rs_proto::extensions::CredentialProtectionPolicy {
     match val {
-            register::CredentialProtectionPolicy::Userverificationoptional => {
+            register::CredentialProtectionPolicy::Optional => {
                 webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptional
             }
-            register::CredentialProtectionPolicy::Userverificationoptionalwithcredentialidlist => {
+            register::CredentialProtectionPolicy::Optionalwithcredentialidlist => {
                 webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptionalWithCredentialIDList
             }
-            register::CredentialProtectionPolicy::Userverificationrequired => {
+            register::CredentialProtectionPolicy::Required => {
                 webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationRequired
             }
         }
@@ -424,9 +423,9 @@ fn get_finish_registration_endpoint(
     }
     if let Some(val) = register_cred.extensions.cred_protect {
         extensions.cred_protect(match val {
-            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptional => register_finish::CredProtect::Userverificationoptional,
-            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptionalWithCredentialIDList => register_finish::CredProtect::Userverificationoptionalwithcredentialidlist,
-            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationRequired => register_finish::CredProtect::Userverificationrequired,
+            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptional => register_finish::CredProtect::Optional,
+            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationOptionalWithCredentialIDList => register_finish::CredProtect::Optionalwithcredentialidlist,
+            webauthn_rs_proto::extensions::CredentialProtectionPolicy::UserVerificationRequired => register_finish::CredProtect::Required,
         });
     }
     if let Some(val) = register_cred.extensions.hmac_secret {

@@ -21,7 +21,7 @@ use std::str::FromStr;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tracing::{debug, error, trace};
+use tracing::{debug, trace};
 
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;

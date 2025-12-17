@@ -21,7 +21,6 @@ use http::{header, HeaderMap, HeaderName, HeaderValue};
 use secrecy::{ExposeSecret, SecretString};
 use std::borrow::Cow;
 use thiserror::Error;
-use tracing::error;
 
 use crate::api::rest_endpoint_prelude::*;
 use crate::api::RestEndpoint;

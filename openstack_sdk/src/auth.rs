@@ -22,7 +22,6 @@
 use http::{HeaderMap, HeaderValue};
 
 use std::fmt::{self, Debug};
-use tracing::error;
 
 use thiserror::Error;
 
