@@ -40,7 +40,7 @@ impl fmt::Display for IdentityAuthProjectList {
 
 impl TryFrom<&IdentityAuthProjectList> for RequestBuilder {
     type Error = Report;
-    fn try_from(value: &IdentityAuthProjectList) -> Result<Self, Self::Error> {
+    fn try_from(_value: &IdentityAuthProjectList) -> Result<Self, Self::Error> {
         let ep_builder = Self::default();
 
         Ok(ep_builder)
