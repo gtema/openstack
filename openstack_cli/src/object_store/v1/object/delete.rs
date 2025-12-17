@@ -99,8 +99,7 @@ impl ObjectCommand {
             .url()
             .path_segments()
             .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
-            .filter(|x| !x.is_empty())
-            .next_back();
+            .rfind(|x| !x.is_empty());
         if let Some(account) = account {
             ep_builder.account(account);
         }

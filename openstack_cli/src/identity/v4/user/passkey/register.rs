@@ -524,7 +524,7 @@ impl PasskeyCommand {
             webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
         );
         match auth.do_registration(
-            Url::parse("http://localhost:8080").unwrap(),
+            Url::parse("http://localhost:8080")?,
             convert_api_parameters_to_webauthn(pk_request)?,
         ) {
             Ok(rsp) => {

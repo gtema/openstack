@@ -195,6 +195,14 @@ pub enum OpenStackCliError {
     #[error("valid authentication is missing to be able to rescope the session")]
     MissingValidAuthenticationForRescope,
 
+    /// URL parsing error
+    #[error(transparent)]
+    UrlParse {
+        /// The source of the error.
+        #[from]
+        source: url::ParseError,
+    },
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
