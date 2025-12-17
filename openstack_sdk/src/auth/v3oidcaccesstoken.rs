@@ -20,7 +20,6 @@ use http::{header, HeaderMap, HeaderName, HeaderValue};
 use secrecy::ExposeSecret;
 use std::borrow::Cow;
 use thiserror::Error;
-use tracing::error;
 
 use crate::api::RestEndpoint;
 use crate::auth::auth_helper::AuthHelper;

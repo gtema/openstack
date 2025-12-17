@@ -41,12 +41,12 @@ pub struct CredProps {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum CredProtect {
-    #[serde(rename = "UserVerificationOptional")]
-    Userverificationoptional,
-    #[serde(rename = "UserVerificationOptionalWithCredentialIDList")]
-    Userverificationoptionalwithcredentialidlist,
-    #[serde(rename = "UserVerificationRequired")]
-    Userverificationrequired,
+    #[serde(rename = "Optional")]
+    Optional,
+    #[serde(rename = "OptionalWithCredentialIDList")]
+    Optionalwithcredentialidlist,
+    #[serde(rename = "Required")]
+    Required,
 }
 
 /// <https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs>
@@ -237,11 +237,6 @@ impl RestEndpoint for Request<'_> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
-    }
-
-    /// Returns required API version
-    fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(4, 0))
     }
 }
 

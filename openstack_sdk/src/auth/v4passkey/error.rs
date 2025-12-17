@@ -16,7 +16,6 @@
 //!
 
 use thiserror::Error;
-use tracing::error;
 
 use super::finish;
 use super::start;

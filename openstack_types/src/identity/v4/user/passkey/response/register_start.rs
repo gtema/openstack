@@ -297,28 +297,26 @@ pub struct ExcludeCredentials {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum CredentialProtectionPolicy {
-    // Userverificationoptional
-    #[serde(rename = "UserVerificationOptional")]
-    Userverificationoptional,
+    // Optional
+    #[serde(rename = "Optional")]
+    Optional,
 
-    // Userverificationoptionalwithcredentialidlist
-    #[serde(rename = "UserVerificationOptionalWithCredentialIDList")]
-    Userverificationoptionalwithcredentialidlist,
+    // Optionalwithcredentialidlist
+    #[serde(rename = "OptionalWithCredentialIDList")]
+    Optionalwithcredentialidlist,
 
-    // Userverificationrequired
-    #[serde(rename = "UserVerificationRequired")]
-    Userverificationrequired,
+    // Required
+    #[serde(rename = "Required")]
+    Required,
 }
 
 impl std::str::FromStr for CredentialProtectionPolicy {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "UserVerificationOptional" => Ok(Self::Userverificationoptional),
-            "UserVerificationOptionalWithCredentialIDList" => {
-                Ok(Self::Userverificationoptionalwithcredentialidlist)
-            }
-            "UserVerificationRequired" => Ok(Self::Userverificationrequired),
+            "Optional" => Ok(Self::Optional),
+            "OptionalWithCredentialIDList" => Ok(Self::Optionalwithcredentialidlist),
+            "Required" => Ok(Self::Required),
             _ => Err(()),
         }
     }

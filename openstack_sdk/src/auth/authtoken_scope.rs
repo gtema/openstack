@@ -24,7 +24,6 @@ use std::fmt::Debug;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tracing::error;
 
 use crate::auth::auth_token_endpoint as token_v3;
 use crate::auth::authtoken::AuthTokenError;
