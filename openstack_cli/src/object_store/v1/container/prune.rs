@@ -65,9 +65,7 @@ impl ContainerCommand {
         let account = ep
             .url()
             .path_segments()
-            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?
-            .filter(|x| !x.is_empty())
-            .next_back()
+            .ok_or_else(|| eyre!("Object Store endpoint must not point to a bare domain"))?.rfind(|x| !x.is_empty())
             .ok_or_else(|| eyre!("Object Store endpoint must end with project id"))?;
         client
             .object_store_container_prune_async(account, &self.container, self.prefix.as_ref())
