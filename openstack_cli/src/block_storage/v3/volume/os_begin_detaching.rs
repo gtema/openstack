@@ -31,8 +31,9 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::os_begin_detaching;
+use serde_json::Value;
 
-/// Empty body for os-begin_detaching action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct VolumeCommand {
     /// Request Query parameters
@@ -42,6 +43,9 @@ pub struct VolumeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    os_begin_detaching: Value,
 }
 
 /// Query parameters
@@ -79,6 +83,10 @@ impl VolumeCommand {
         let mut ep_builder = os_begin_detaching::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_begin_detaching data
+        ep_builder.os_begin_detaching(self.os_begin_detaching.clone());
 
         let ep = ep_builder
             .build()

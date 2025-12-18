@@ -49,6 +49,10 @@ pub struct CreateFromSrcCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The consistency group from source object.
+    #[command(flatten)]
+    consistencygroup_from_src: ConsistencygroupFromSrc,
+    /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
@@ -61,6 +65,33 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// ConsistencygroupFromSrc Body data
+#[derive(Args, Clone)]
+struct ConsistencygroupFromSrc {
+    /// The UUID of the consistency group snapshot.
+    #[arg(help_heading = "Body parameters", long)]
+    cgsnapshot_id: Option<String>,
+
+    /// The consistency group description.
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
+    /// The name of the object.
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
+    /// The UUID of the source consistency group.
+    #[arg(help_heading = "Body parameters", long)]
+    source_cgid: Option<String>,
+}
 
 impl CreateFromSrcCommand {
     /// Perform command action
@@ -81,6 +112,36 @@ impl CreateFromSrcCommand {
         let mut ep_builder = create::Request::builder();
 
         // Set body parameters
+        // Set Request.consistencygroup_from_src data
+        let args = &self.consistencygroup_from_src;
+        let mut consistencygroup_from_src_builder =
+            create::ConsistencygroupFromSrcBuilder::default();
+        if let Some(val) = &args.cgsnapshot_id {
+            consistencygroup_from_src_builder.cgsnapshot_id(val);
+        }
+
+        if let Some(val) = &args.description {
+            consistencygroup_from_src_builder.description(Some(val.into()));
+        } else if args.no_description {
+            consistencygroup_from_src_builder.description(None);
+        }
+
+        if let Some(val) = &args.name {
+            consistencygroup_from_src_builder.name(Some(val.into()));
+        } else if args.no_name {
+            consistencygroup_from_src_builder.name(None);
+        }
+
+        if let Some(val) = &args.source_cgid {
+            consistencygroup_from_src_builder.source_cgid(val);
+        }
+
+        ep_builder.consistencygroup_from_src(
+            consistencygroup_from_src_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
+
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());
         }

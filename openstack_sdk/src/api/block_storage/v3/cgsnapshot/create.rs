@@ -22,15 +22,59 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde::Deserialize;
+use serde::Serialize;
 use serde_json::Value;
+use std::borrow::Cow;
 use std::collections::BTreeMap;
+
+/// A consistency group snapshot object.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Cgsnapshot<'a> {
+    /// The UUID of the consistency group.
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) consistencygroup_id: Cow<'a, str>,
+
+    /// The consistency group snapshot description.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// The name of the snapshot. Default is `None`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> CgsnapshotBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// A consistency group snapshot object.
+    #[builder(setter(into))]
+    pub(crate) cgsnapshot: Cgsnapshot<'a>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-
     #[builder(setter(name = "_properties"), default, private)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
@@ -97,6 +141,7 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
+        params.push("cgsnapshot", serde_json::to_value(&self.cgsnapshot)?);
         for (key, val) in &self._properties {
             params.push(key.clone(), val.clone());
         }
@@ -137,14 +182,33 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .cgsnapshot(
+                    CgsnapshotBuilder::default()
+                        .consistencygroup_id("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::BlockStorage
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder()
+            .cgsnapshot(
+                CgsnapshotBuilder::default()
+                    .consistencygroup_id("foo")
+                    .build()
+                    .unwrap()
+            )
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -161,7 +225,15 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().build().unwrap();
+        let endpoint = Request::builder()
+            .cgsnapshot(
+                CgsnapshotBuilder::default()
+                    .consistencygroup_id("foo")
+                    .build()
+                    .unwrap(),
+            )
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -182,6 +254,12 @@ mod tests {
         });
 
         let endpoint = Request::builder()
+            .cgsnapshot(
+                CgsnapshotBuilder::default()
+                    .consistencygroup_id("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

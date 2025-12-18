@@ -29,11 +29,9 @@ use crate::Cli;
 use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::consistencygroup::delete::create;
 use openstack_types::block_storage::v3::consistencygroup::delete::response::create::DeleteResponse;
-use serde_json::Value;
 
 /// Delete a consistency group.
 #[derive(Args)]
@@ -45,10 +43,6 @@ pub struct DeleteCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -86,11 +80,6 @@ impl DeleteCommand {
         let mut ep_builder = create::Request::builder();
 
         ep_builder.id(&self.path.id);
-
-        // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()

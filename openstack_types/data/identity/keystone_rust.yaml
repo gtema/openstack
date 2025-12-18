@@ -13,7 +13,7 @@ paths:
     get:
       tags:
       - version
-      summary: Versions
+      summary: Version discovery endpoint.
       description: Version discovery
       operationId: version
       responses:
@@ -23,6 +23,120 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Versions'
+  /auth/passkey/finish:
+    post:
+      tags:
+      - passkey
+      - auth
+      summary: Finish user passkey authentication.
+      description: |-
+        Exchange the challenge signed with one of the users passkeys or security
+        devices for the unscoped Keystone API token.
+      operationId: /auth/passkey/finish:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
+        required: true
+      responses:
+        '200':
+          description: Authentication Token object
+          headers:
+            x-subject-token:
+              schema:
+                type: string
+              description: Keystone token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /auth/passkey/start:
+    post:
+      tags:
+      - passkey
+      - auth
+      summary: Start passkey authentication for the user.
+      description: |-
+        Initiate a passkey login for the user. The user must have at least one
+        passkey previously registered. When the user does not exist a fake challenge
+        is being returned to prevent id scanning.
+      operationId: /auth/passkey/start:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationStartRequest'
+        required: true
+      responses:
+        '200':
+          description: Challenge that must be signed with any of the user passkeys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasskeyAuthenticationStartResponse'
+        '500':
+          description: Internal error
+  /users/{user_id}/passkeys/register_finish:
+    post:
+      tags:
+      - passkey
+      summary: Finish passkey registration for the user.
+      operationId: /user/passkey/register:finish
+      parameters:
+      - name: user_id
+        in: path
+        description: The ID of the user.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasskeyRegistrationFinishRequest'
+        required: true
+      responses:
+        '201':
+          description: Passkey successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasskeyResponse'
+        '500':
+          description: Internal error
+  /users/{user_id}/passkeys/register_start:
+    post:
+      tags:
+      - passkey
+      summary: Start passkey registration for the user.
+      description: |-
+        Generate a challenge that the user must sign with the passkey or security
+        device. Signed challenge must be sent to the
+        `/v4/users/{user_id}/passkey/register_finish` endpoint.
+      operationId: /user/passkey/register:start
+      parameters:
+      - name: user_id
+        in: path
+        description: The ID of the user.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasskeyRegistrationStartRequest'
+        required: true
+      responses:
+        '201':
+          description: Passkey successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
+        '500':
+          description: Internal error
   /v3:
     get:
       tags:
@@ -41,15 +155,22 @@ paths:
     get:
       tags:
       - auth
-      summary: Validate token
-      description: Validate token
+      summary: Validate and show information for token.
+      description: |-
+        Validates and shows information for a token, including its expiration date
+        and authorization scope.
+
+        Pass your own token in the X-Auth-Token request header.
+
+        Pass the token that you want to validate in the X-Subject-Token request
+        header.
       operationId: show
       parameters:
       - name: nocatalog
         in: query
         description: |-
-          The authentication response excludes the service catalog. By default, the response includes
-          the service catalog.
+          The authentication response excludes the service catalog. By default,
+          the response includes the service catalog.
         required: false
         schema:
           type:
@@ -57,7 +178,9 @@ paths:
           - 'null'
       - name: allow_expired
         in: query
-        description: Allow fetching a token that has expired. By default expired tokens return a 404 exception.
+        description: |-
+          Allow fetching a token that has expired. By default expired tokens
+          return a 404 exception.
         required: false
         schema:
           type:
@@ -75,13 +198,13 @@ paths:
       - auth
       summary: Authenticate user issuing a new token.
       description: Issue token
-      operationId: post
+      operationId: create
       parameters:
       - name: nocatalog
         in: query
         description: |-
-          The authentication response excludes the service catalog. By default, the response includes
-          the service catalog.
+          The authentication response excludes the service catalog. By default,
+          the response includes the service catalog.
         required: false
         schema:
           type:
@@ -100,6 +223,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+    delete:
+      tags:
+      - auth
+      summary: Revoke token.
+      description: |-
+        Revokes a token.
+
+        This call is similar to the HEAD /auth/tokens call except that the
+        `X-Subject-Token` token is immediately not valid, regardless of the
+        expires_at attribute value. An additional `X-Auth-Token` is not required.
+      operationId: delete
+      responses:
+        '204':
+          description: Token has been revoked.
   /v3/groups:
     get:
       tags:
@@ -218,8 +355,8 @@ paths:
       - name: effective
         in: query
         description: |-
-          Returns the effective assignments, including any assignments gained by virtue of group
-          membership.
+          Returns the effective assignments, including any assignments gained by
+          virtue of group membership.
         required: false
         schema:
           type:
@@ -252,8 +389,9 @@ paths:
       - name: include_names
         in: query
         description: |-
-          If set to true, then the names of any entities returned will be include as well as their
-          IDs. Any value other than 0 (including no value) will be interpreted as true.
+          If set to true, then the names of any entities returned will be include
+          as well as their IDs. Any value other than 0 (including no value)
+          will be interpreted as true.
 
           New in version 3.6
         required: false
@@ -303,6 +441,29 @@ paths:
                 $ref: '#/components/schemas/RoleList'
         '500':
           description: Internal error
+    post:
+      tags:
+      - roles
+      summary: Create Role
+      description: Create a new role
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreate'
+        required: true
+      responses:
+        '201':
+          description: Role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
   /v3/roles/{role_id}:
     get:
       tags:
@@ -335,7 +496,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -343,7 +504,15 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: unique_id
+        in: query
+        description: Filter users by the federated unique ID.
         required: false
         schema:
           type:
@@ -451,73 +620,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleVersion'
-  /v4/auth/passkey/finish:
-    post:
-      tags:
-      - passkey
-      - auth
-      summary: Finish user passkey authentication.
-      description: |-
-        Exchange the challenge signed with one of the users passkeys or security devices for the
-        unscoped Keystone API token.
-      operationId: /auth/passkey/finish:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
-        required: true
-      responses:
-        '200':
-          description: Authentication Token object
-          headers:
-            x-subject-token:
-              schema:
-                type: string
-              description: Keystone token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenResponse'
-  /v4/auth/passkey/start:
-    post:
-      tags:
-      - passkey
-      - auth
-      summary: Start passkey authentication for the user.
-      description: |-
-        Initiate a passkey login for the user. The user must have at least one passkey previously
-        registered. When the user does not exist a fake challenge is being returned to prevent id
-        scanning.
-      operationId: /auth/passkey/start:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasskeyAuthenticationStartRequest'
-        required: true
-      responses:
-        '200':
-          description: Challenge that must be signed with any of the user passkeys
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasskeyAuthenticationStartResponse'
-        '500':
-          description: Internal error
   /v4/auth/tokens:
     get:
       tags:
       - auth
-      summary: Validate token
-      description: Validate token
+      summary: Validate and show information for token.
+      description: |-
+        Validates and shows information for a token, including its expiration date
+        and authorization scope.
+
+        Pass your own token in the X-Auth-Token request header.
+
+        Pass the token that you want to validate in the X-Subject-Token request
+        header.
       operationId: show
       parameters:
       - name: nocatalog
         in: query
         description: |-
-          The authentication response excludes the service catalog. By default, the response includes
-          the service catalog.
+          The authentication response excludes the service catalog. By default,
+          the response includes the service catalog.
         required: false
         schema:
           type:
@@ -525,7 +647,9 @@ paths:
           - 'null'
       - name: allow_expired
         in: query
-        description: Allow fetching a token that has expired. By default expired tokens return a 404 exception.
+        description: |-
+          Allow fetching a token that has expired. By default expired tokens
+          return a 404 exception.
         required: false
         schema:
           type:
@@ -543,13 +667,13 @@ paths:
       - auth
       summary: Authenticate user issuing a new token.
       description: Issue token
-      operationId: post
+      operationId: create
       parameters:
       - name: nocatalog
         in: query
         description: |-
-          The authentication response excludes the service catalog. By default, the response includes
-          the service catalog.
+          The authentication response excludes the service catalog. By default,
+          the response includes the service catalog.
         required: false
         schema:
           type:
@@ -568,17 +692,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+    delete:
+      tags:
+      - auth
+      summary: Revoke token.
+      description: |-
+        Revokes a token.
+
+        This call is similar to the HEAD /auth/tokens call except that the
+        `X-Subject-Token` token is immediately not valid, regardless of the
+        expires_at attribute value. An additional `X-Auth-Token` is not required.
+      operationId: delete
+      responses:
+        '204':
+          description: Token has been revoked.
   /v4/federation/identity_providers:
     get:
       tags:
       - identity_providers
       summary: List identity providers.
       description: |-
-        List identity providers. Without any filters only global identity providers are returned.
-        With the `domain_id` identity providers owned by the specified identity provider are returned.
+        List identity providers. Without any filters only global identity providers
+        are returned. With the `domain_id` identity providers owned by the specified
+        identity provider are returned.
 
-        It is expected that only global or owned identity providers can be returned, while an admin
-        user is able to list all providers.
+        It is expected that only global or owned identity providers can be returned,
+        while an admin user is able to list all providers.
       operationId: /federation/identity_provider:list
       parameters:
       - name: name
@@ -593,6 +732,24 @@ paths:
         required: false
         schema:
           type: string
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry on the previous page.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       responses:
         '200':
           description: List of identity providers
@@ -611,7 +768,8 @@ paths:
       description: |-
         Create the identity provider with the specified properties.
 
-        It is expected that only admin user is able to create global identity providers.
+        It is expected that only admin user is able to create global identity
+        providers.
       operationId: /federation/identity_provider:create
       requestBody:
         content:
@@ -690,7 +848,8 @@ paths:
       description: |-
         Deletes the existing identity provider.
 
-        It is expected that only admin user is allowed to delete the global identity provider
+        It is expected that only admin user is allowed to delete the global identity
+        provider
       operationId: /federation/identity_provider:delete
       parameters:
       - name: idp_id
@@ -712,20 +871,23 @@ paths:
       - identity_providers
       summary: Authenticate using identity provider.
       description: |-
-        Initiate the authentication for the given identity provider. Mapping can be passed, otherwise
-        the one which is set as a default on the identity provider level is used.
+        Initiate the authentication for the given identity provider. Mapping can be
+        passed, otherwise the one which is set as a default on the identity provider
+        level is used.
 
-        The API returns the link to the identity provider which must be open in the web browser. Once
-        user authenticates in the identity provider UI a redirect to the url passed as a callback in
-        the request is being done as a typical oauth2 authorization code callback. The client is
-        responsible for serving this callback server and use received authorization code and state to
-        exchange it for the Keystone token passing it to the `/v4/federation/oidc/callback`.
+        The API returns the link to the identity provider which must be open in the
+        web browser. Once user authenticates in the identity provider UI a redirect
+        to the url passed as a callback in the request is being done as a typical
+        oauth2 authorization code callback. The client is responsible for serving
+        this callback server and use received authorization code and state to
+        exchange it for the Keystone token passing it to the
+        `/v4/federation/oidc/callback`.
 
-        Desired scope (OpenStack) can be also passed to get immediately scoped token after the
-        authentication completes instead of the unscoped token.
+        Desired scope (OpenStack) can be also passed to get immediately scoped token
+        after the authentication completes instead of the unscoped token.
 
-        This is an unauthenticated API call. User, mapping, scope validation will happen when the
-        callback is invoked.
+        This is an unauthenticated API call. User, mapping, scope validation will
+        happen when the callback is invoked.
       operationId: federation/identity_provider/auth:post
       parameters:
       - name: idp_id
@@ -752,9 +914,10 @@ paths:
       - identity_providers
       summary: Authentication using the JWT.
       description: |-
-        This operation allows user to exchange the JWT issued by the trusted identity provider for the
-        regular Keystone session token. Request specifies the necessary authentication mapping, which
-        is also used to validate expected claims.
+        This operation allows user to exchange the JWT issued by the trusted
+        identity provider for the regular Keystone session token. Request specifies
+        the necessary authentication mapping, which is also used to validate
+        expected claims.
       operationId: /federation/identity_provider/jwt:login
       parameters:
       - name: openstack-mapping
@@ -792,8 +955,8 @@ paths:
 
         Without `domain_id` specified global mappings are returned.
 
-        It is expected that listing mappings belonging to the other domain is only allowed to the admin
-        user.
+        It is expected that listing mappings belonging to the other domain is only
+        allowed to the admin user.
       operationId: /federation/mapping:list
       parameters:
       - name: name
@@ -931,10 +1094,12 @@ paths:
       - identity_providers
       summary: Authentication callback.
       description: |-
-        This operation allows user to exchange the authorization code retrieved from the identity
-        provider after calling the `/v4/federation/identity_providers/{idp_id}/auth` for the Keystone
-        token. When desired scope was passed in that auth initialization call the scoped token is
-        returned (assuming the user is having roles assigned on that scope).
+        This operation allows user to exchange the authorization code retrieved from
+        the identity provider after calling the
+        `/v4/federation/identity_providers/{idp_id}/auth` for the Keystone
+        token. When desired scope was passed in that auth initialization call the
+        scoped token is returned (assuming the user is having roles assigned on that
+        scope).
       operationId: /federation/oidc:callback
       requestBody:
         content:
@@ -1075,8 +1240,8 @@ paths:
       - name: effective
         in: query
         description: |-
-          Returns the effective assignments, including any assignments gained by virtue of group
-          membership.
+          Returns the effective assignments, including any assignments gained by
+          virtue of group membership.
         required: false
         schema:
           type:
@@ -1109,8 +1274,9 @@ paths:
       - name: include_names
         in: query
         description: |-
-          If set to true, then the names of any entities returned will be include as well as their
-          IDs. Any value other than 0 (including no value) will be interpreted as true.
+          If set to true, then the names of any entities returned will be include
+          as well as their IDs. Any value other than 0 (including no value)
+          will be interpreted as true.
 
           New in version 3.6
         required: false
@@ -1160,6 +1326,29 @@ paths:
                 $ref: '#/components/schemas/RoleList'
         '500':
           description: Internal error
+    post:
+      tags:
+      - roles
+      summary: Create Role
+      description: Create a new role
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreate'
+        required: true
+      responses:
+        '201':
+          description: Role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
   /v4/roles/{role_id}:
     get:
       tags:
@@ -1185,11 +1374,12 @@ paths:
   /v4/tokens/restrictions:
     get:
       tags:
-      - token_restrictions
+      - token_restriction
       summary: List token restrictions.
       description: |-
-        List existing token restrictions. By default only admin user is allowed to leave `domain_id`
-        query parameter empty, what means that token restrictions for all domains should be listed.
+        List existing token restrictions. By default only admin user is allowed to
+        leave `domain_id` query parameter empty, what means that token restrictions
+        for all domains should be listed.
       operationId: /token_restriction:list
       parameters:
       - name: domain_id
@@ -1234,7 +1424,8 @@ paths:
       description: |-
         Create the token restriction with the specified properties.
 
-        It is expected that only admin user is able to create token restriction in other domain.
+        It is expected that only admin user is able to create token restriction in
+        other domain.
       operationId: /token_restriction:create
       requestBody:
         content:
@@ -1254,7 +1445,7 @@ paths:
   /v4/tokens/restrictions/{id}:
     get:
       tags:
-      - token_restrictions
+      - token_restriction
       summary: Get single token restriction.
       description: Shows details of the existing token restriction.
       operationId: /token_restriction:show
@@ -1283,7 +1474,8 @@ paths:
       description: |-
         Updates the existing token restriction.
 
-        It is expected that only admin user is able to update token restriction in other domain.
+        It is expected that only admin user is able to update token restriction in
+        other domain.
       operationId: /token_restriction:update
       parameters:
       - name: id
@@ -1311,7 +1503,7 @@ paths:
       - x-auth: []
     delete:
       tags:
-      - token_restrictions
+      - token_restriction
       summary: Delete Token restriction.
       description: Deletes the existing token restriction by the ID.
       operationId: /token_restriction:delete
@@ -1339,7 +1531,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -1347,7 +1539,15 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: unique_id
+        in: query
+        description: Filter users by the federated unique ID.
         required: false
         schema:
           type:
@@ -1441,67 +1641,6 @@ paths:
                 $ref: '#/components/schemas/GroupList'
         '500':
           description: Internal error
-  /v4/users/{user_id}/passkeys/register_finish:
-    post:
-      tags:
-      - users
-      - passkey
-      summary: Finish passkey registration for the user.
-      operationId: /user/passkey/register:finish
-      parameters:
-      - name: user_id
-        in: path
-        description: The ID of the user.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPasskeyRegistrationFinishRequest'
-        required: true
-      responses:
-        '201':
-          description: Passkey successfully registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasskeyResponse'
-        '500':
-          description: Internal error
-  /v4/users/{user_id}/passkeys/register_start:
-    post:
-      tags:
-      - users
-      - passkey
-      summary: Start passkey registration for the user.
-      description: |-
-        Generate a challenge that the user must sign with the passkey or security device. Signed
-        challenge must be sent to the `/v4/users/{user_id}/passkey/register_finish` endpoint.
-      operationId: /user/passkey/register:start
-      parameters:
-      - name: user_id
-        in: path
-        description: The ID of the user.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPasskeyRegistrationStartRequest'
-        required: true
-      responses:
-        '201':
-          description: Passkey successfully registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
-        '500':
-          description: Internal error
 components:
   schemas:
     AllowCredentials:
@@ -1520,7 +1659,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuthenticatorTransport'
-          description: https://www.w3.org/TR/webauthn/#transport may be usb, nfc, ble, internal
+          description: <https://www.w3.org/TR/webauthn/#transport> may be usb, nfc, ble, internal
         type_:
           type: string
           description: The type of credential.
@@ -1556,7 +1695,7 @@ components:
           description: Collection of role assignment objects
     AttestationConveyancePreference:
       type: string
-      description: https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference
+      description: <https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference>
       enum:
       - None
       - Indirect
@@ -1566,7 +1705,7 @@ components:
       description: |-
         The type of attestation on the credential.
 
-        https://www.iana.org/assignments/webauthn/webauthn.xhtml
+        <https://www.iana.org/assignments/webauthn/webauthn.xhtml>
       enum:
       - Packed
       - Tpm
@@ -1577,7 +1716,9 @@ components:
       - None
     AuthCallbackParameters:
       type: object
-      description: Authentication callback request the user is sending to complete the authentication request.
+      description: |-
+        Authentication callback request the user is sending to complete the
+        authentication request.
       required:
       - state
       - code
@@ -1611,13 +1752,16 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/Scope'
             description: |-
-              The authorization scope, including the system (Since v3.10), a project, or a domain (Since
-              v3.4). If multiple scopes are specified in the same request (e.g. project and domain or
-              domain and system) an HTTP 400 Bad Request will be returned, as a token cannot be
-              simultaneously scoped to multiple authorization targets. An ID is sufficient to uniquely
-              identify a project but if a project is specified by name, then the domain of the project
-              must also be specified in order to uniquely identify the project by name. A domain scope
-              may be specified by either the domain’s ID or name with equivalent results.
+              The authorization scope, including the system (Since v3.10), a project,
+              or a domain (Since v3.4). If multiple scopes are specified in the
+              same request (e.g. project and domain or domain and system) an HTTP
+              400 Bad Request will be returned, as a token cannot be
+              simultaneously scoped to multiple authorization targets. An ID is
+              sufficient to uniquely identify a project but if a project is
+              specified by name, then the domain of the project must also be
+              specified in order to uniquely identify the project by name. A domain
+              scope may be specified by either the domain’s ID or name with
+              equivalent results.
     AuthenticationExtensionsClientOutputs:
       type: object
       description: |-
@@ -1663,16 +1807,16 @@ components:
     AuthenticatorAttachment:
       type: string
       description: |-
-        The authenticator attachment hint. This is NOT enforced, and is only used to help a user select
-        a relevant authenticator type.
+        The authenticator attachment hint. This is NOT enforced, and is only used to
+        help a user select a relevant authenticator type.
 
-        https://www.w3.org/TR/webauthn/#attachment
+        <https://www.w3.org/TR/webauthn/#attachment>
       enum:
       - Platform
       - CrossPlatform
     AuthenticatorAttestationResponseRaw:
       type: object
-      description: https://w3c.github.io/webauthn/#authenticatorattestationresponse
+      description: <https://w3c.github.io/webauthn/#authenticatorattestationresponse>
       required:
       - attestation_object
       - client_data_json
@@ -1680,21 +1824,21 @@ components:
         attestation_object:
           type: string
           format: binary
-          description: https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject.
+          description: <https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-attestationobject>.
           contentEncoding: base64
         client_data_json:
           type: string
           format: binary
-          description: https://w3c.github.io/webauthn/#dom-authenticatorresponse-clientdatajson.
+          description: <https://w3c.github.io/webauthn/#dom-authenticatorresponse-clientdatajson>.
           contentEncoding: base64
         transports:
           type: array
           items:
             $ref: '#/components/schemas/AuthenticatorTransport'
-          description: https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-gettransports.
+          description: <https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-gettransports>.
     AuthenticatorSelectionCriteria:
       type: object
-      description: https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria
+      description: <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>
       required:
       - require_resident_key
       - user_verification
@@ -1702,30 +1846,31 @@ components:
         authenticator_attachment:
           $ref: '#/components/schemas/AuthenticatorAttachment'
           description: |-
-            How the authenticator should be attached to the client machine. Note this is only a hint.
-            It is not enforced in anyway shape or form. https://www.w3.org/TR/webauthn/#attachment.
+            How the authenticator should be attached to the client machine. Note
+            this is only a hint. It is not enforced in anyway shape or form. <https://www.w3.org/TR/webauthn/#attachment>.
         require_resident_key:
           type: boolean
           description: |-
-            Hint to the credential to create a resident key. Note this can not be enforced or
-            validated, so the authenticator may choose to ignore this parameter.
-            https://www.w3.org/TR/webauthn/#resident-credential.
+            Hint to the credential to create a resident key. Note this can not be
+            enforced or validated, so the authenticator may choose to ignore
+            this parameter. <https://www.w3.org/TR/webauthn/#resident-credential>.
         resident_key:
           $ref: '#/components/schemas/ResidentKeyRequirement'
           description: |-
-            Hint to the credential to create a resident key. Note this value should be a member of
-            ResidentKeyRequirement, but client must ignore unknown values, treating an unknown value as
-            if the member does not exist.
-            https://www.w3.org/TR/webauthn-2/#dom-authenticatorselectioncriteria-residentkey.
+            Hint to the credential to create a resident key. Note this value should
+            be a member of ResidentKeyRequirement, but client must ignore
+            unknown values, treating an unknown value as if the member does not
+            exist. <https://www.w3.org/TR/webauthn-2/#dom-authenticatorselectioncriteria-residentkey>.
         user_verification:
           $ref: '#/components/schemas/UserVerificationPolicy'
           description: |-
-            The user verification level to request during registration. Depending on if this
-            authenticator provides verification may affect future interactions as this is associated to
-            the credential during registration.
+            The user verification level to request during registration. Depending on
+            if this authenticator provides verification may affect future
+            interactions as this is associated to the credential during
+            registration.
     AuthenticatorTransport:
       type: string
-      description: https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport
+      description: <https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport>
       enum:
       - Ble
       - Hybrid
@@ -1762,24 +1907,25 @@ components:
           - 'null'
     CredProps:
       type: object
-      description: https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension
+      description: <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>
       required:
       - rk
       properties:
         rk:
           type: boolean
           description: |-
-            A user agent supplied hint that this credential may have created a resident key. It is
-            returned from the user agent, not the authenticator meaning that this is an unreliable
-            signal.
+            A user agent supplied hint that this credential may have created a
+            resident key. It is returned from the user agent, not the
+            authenticator meaning that this is an unreliable signal.
 
-            Note that this extension is UNSIGNED and may have been altered by page javascript.
+            Note that this extension is UNSIGNED and may have been altered by page
+            javascript.
     CredProtect:
       type: object
       description: |-
         The desired options for the client’s use of the credProtect extension
 
-        https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension
+        <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>
       required:
       - credential_protection_policy
       properties:
@@ -1789,15 +1935,16 @@ components:
         enforce_credential_protection_policy:
           type: boolean
           description: |-
-            Whether it is better for the authenticator to fail to create a credential rather than
-            ignore the protection policy If no value is provided, the client treats it as false.
+            Whether it is better for the authenticator to fail to create a
+            credential rather than ignore the protection policy If no value is
+            provided, the client treats it as false.
     CredentialProtectionPolicy:
       type: string
       description: Valid credential protection policies
       enum:
-      - UserVerificationOptional
-      - UserVerificationOptionalWithCredentialIDList
-      - UserVerificationRequired
+      - Optional
+      - OptionalWithCredentialIDList
+      - Required
     Domain:
       type: object
       description: Domain information.
@@ -1834,6 +1981,34 @@ components:
           - 'null'
         url:
           type: string
+    Federation:
+      type: object
+      description: User federation data.
+      required:
+      - idp_id
+      - protocols
+      properties:
+        idp_id:
+          type: string
+          description: Identity provider ID.
+        protocols:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationProtocol'
+          description: Protocols.
+    FederationProtocol:
+      type: object
+      description: Federation protocol data.
+      required:
+      - protocol_id
+      - unique_id
+      properties:
+        protocol_id:
+          type: string
+          description: Federation protocol ID
+        unique_id:
+          type: string
+          description: Unique ID of the associated user
     Group:
       allOf:
       - {}
@@ -1908,7 +2083,7 @@ components:
       description: |-
         The inputs to the hmac secret if it was created during registration.
 
-        https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html#sctn-hmac-secret-extension
+        <https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html#sctn-hmac-secret-extension>
       required:
       - output1
       properties:
@@ -1948,7 +2123,9 @@ components:
           type: array
           items:
             type: string
-          description: The authentication method. For password authentication, specify password.
+          description: |-
+            The authentication method. For password authentication, specify
+            password.
         password:
           oneOf:
           - type: 'null'
@@ -1965,6 +2142,7 @@ components:
       required:
       - id
       - name
+      - enabled
       properties:
         bound_issuer:
           type:
@@ -1976,15 +2154,22 @@ components:
           - string
           - 'null'
           description: |-
-            Default attribute mapping name which is automatically used when no mapping is explicitly
-            requested. The referred attribute mapping must exist.
+            Default attribute mapping name which is automatically used when no
+            mapping is explicitly requested. The referred attribute mapping must
+            exist.
         domain_id:
           type:
           - string
           - 'null'
           description: |-
-            The ID of the domain this identity provider belongs to. Empty value identifies that the
-            identity provider can be used by other domains as well.
+            The ID of the domain this identity provider belongs to. Empty value
+            identifies that the identity provider can be used by other domains
+            as well.
+        enabled:
+          type: boolean
+          description: |-
+            Identity provider `enabled` property. Inactive Identity Providers can
+            not be used for login.
         id:
           type: string
           description: The ID of the federated identity provider.
@@ -1993,8 +2178,9 @@ components:
           - string
           - 'null'
           description: |-
-            URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when the provider does not
-            provide discovery endpoint or when it is not standard compliant.
+            URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when the
+            provider does not provide discovery endpoint or when it is not
+            standard compliant.
         jwt_validation_pubkeys:
           type:
           - array
@@ -2010,8 +2196,8 @@ components:
           - string
           - 'null'
           description: |-
-            The oidc `client_id` to use for the private client. The `client_secret` is never returned
-            and can be only overwritten.
+            The oidc `client_id` to use for the private client. The `client_secret`
+            is never returned and can be only overwritten.
         oidc_discovery_url:
           type:
           - string
@@ -2077,18 +2263,26 @@ components:
         default_mapping_name:
           type: string
           description: |-
-            Default attribute mapping name which is automatically used when no mapping is explicitly
-            requested. The referred attribute mapping must exist.
+            Default attribute mapping name which is automatically used when no
+            mapping is explicitly requested. The referred attribute mapping must
+            exist.
         domain_id:
           type: string
           description: |-
-            The ID of the domain this identity provider belongs to. Empty value identifies that the
-            identity provider can be used by other domains as well.
+            The ID of the domain this identity provider belongs to. Empty value
+            identifies that the identity provider can be used by other domains
+            as well.
+        enabled:
+          type: boolean
+          description: |-
+            Identity provider `enabled` property. Inactive Identity Providers can
+            not be used for login.
         jwks_url:
           type: string
           description: |-
-            Optional URL to fetch JsonWebKeySet. Must be specified for JWT authentication when
-            discovery for the provider is not available or not standard compliant.
+            Optional URL to fetch JsonWebKeySet. Must be specified for JWT
+            authentication when discovery for the provider is not available or
+            not standard compliant.
         jwt_validation_pubkeys:
           type: array
           items:
@@ -2102,7 +2296,9 @@ components:
           description: The oidc `client_id` to use for the private client.
         oidc_client_secret:
           type: string
-          description: The oidc `client_secret` to use for the private client. It is never returned back.
+          description: |-
+            The oidc `client_secret` to use for the private client. It is never
+            returned back.
         oidc_discovery_url:
           type: string
           description: OIDC discovery endpoint for the identity provider.
@@ -2125,7 +2321,7 @@ components:
       properties:
         identity_provider:
           $ref: '#/components/schemas/IdentityProviderCreate'
-          description: Identity provider object
+          description: Identity provider object.
     IdentityProviderList:
       type: object
       description: List of Identity Providers.
@@ -2162,15 +2358,24 @@ components:
           - string
           - 'null'
           description: |-
-            New default attribute mapping name which is automatically used when no mapping is explicitly
-            requested. The referred attribute mapping must exist.
+            New default attribute mapping name which is automatically used when no
+            mapping is explicitly requested. The referred attribute mapping must
+            exist.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            Identity provider `enabled` property. Inactive Identity Providers can
+            not be used for login.
         jwks_url:
           type:
           - string
           - 'null'
           description: |-
-            New URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when the provider does not
-            provide discovery endpoint or when it is not standard compliant.
+            New URL to fetch JsonWebKeySet. This must be set for "jwt" mapping when
+            the provider does not provide discovery endpoint or when it is not
+            standard compliant.
         jwt_validation_pubkeys:
           type:
           - array
@@ -2221,17 +2426,20 @@ components:
       properties:
         identity_provider:
           $ref: '#/components/schemas/IdentityProviderUpdate'
-          description: Identity provider object
+          description: Identity provider object.
     Link:
       type: object
+      description: Link object.
       required:
       - rel
       - href
       properties:
         href:
           type: string
+          description: link href attribute.
         rel:
           type: string
+          description: Link rel attribute.
     Mapping:
       type: object
       description: OIDC/JWT mapping data.
@@ -2240,6 +2448,7 @@ components:
       - name
       - idp_id
       - type
+      - enabled
       - user_id_claim
       - user_name_claim
       properties:
@@ -2272,15 +2481,18 @@ components:
           description: |-
             `domain_id` owning the attribute mapping.
 
-            Unset `domain_id` means the attribute mapping is shared and can be used by different
-            domains. This requires `domain_id_claim` to be present. Attribute mapping can be only
-            shared when the referred identity provider is also shared (does not set the `domain_id`
-            attribute).
+            Unset `domain_id` means the attribute mapping is shared and can be used
+            by different domains. This requires `domain_id_claim` to be present.
+            Attribute mapping can be only shared when the referred identity
+            provider is also shared (does not set the `domain_id` attribute).
         domain_id_claim:
           type:
           - string
           - 'null'
           description: '`domain_id` claim name.'
+        enabled:
+          type: boolean
+          description: Mapping enabled property. Inactive mappings can not be used for login.
         groups_claim:
           type:
           - string
@@ -2291,7 +2503,9 @@ components:
           description: Attribute mapping ID for federated logins.
         idp_id:
           type: string
-          description: ID of the federated identity provider for which this attribute mapping can be used.
+          description: |-
+            ID of the federated identity provider for which this attribute mapping
+            can be used.
         name:
           type: string
           description: Attribute mapping name for federated logins.
@@ -2351,13 +2565,16 @@ components:
           description: |-
             `domain_id` owning the attribute mapping.
 
-            Unset `domain_id` means the attribute mapping is shared and can be used by different
-            domains. This requires `domain_id_claim` to be present. Attribute mapping can be only
-            shared when the referred identity provider is also shared (does not set the `domain_id`
-            attribute).
+            Unset `domain_id` means the attribute mapping is shared and can be used
+            by different domains. This requires `domain_id_claim` to be present.
+            Attribute mapping can be only shared when the referred identity
+            provider is also shared (does not set the `domain_id` attribute).
         domain_id_claim:
           type: string
           description: '`domain_id` claim name.'
+        enabled:
+          type: boolean
+          description: Mapping enabled property. Inactive mappings can not be used for login.
         groups_claim:
           type: string
           description: '`groups` claim name.'
@@ -2368,7 +2585,9 @@ components:
           description: Attribute mapping ID for federated logins.
         idp_id:
           type: string
-          description: ID of the federated identity provider for which this attribute mapping can be used.
+          description: |-
+            ID of the federated identity provider for which this attribute mapping
+            can be used.
         name:
           type: string
           description: Attribute mapping name for federated logins.
@@ -2461,14 +2680,17 @@ components:
           description: |-
             `domain_id` owning the attribute mapping.
 
-            Unset `domain_id` means the attribute mapping is shared and can be used by different
-            domains. This requires `domain_id_claim` to be present. Attribute mapping can be only
-            shared when the referred identity provider is also shared (does not set the `domain_id`
-            attribute).
+            Unset `domain_id` means the attribute mapping is shared and can be used
+            by different domains. This requires `domain_id_claim` to be present.
+            Attribute mapping can be only shared when the referred identity
+            provider is also shared (does not set the `domain_id` attribute).
         domain_id_claim:
           type:
           - string
           - 'null'
+        enabled:
+          type: boolean
+          description: Mapping enabled property. Inactive mappings can not be used for login.
         groups_claim:
           type:
           - string
@@ -2478,7 +2700,9 @@ components:
           type:
           - string
           - 'null'
-          description: ID of the federated identity provider for which this attribute mapping can be used.
+          description: |-
+            ID of the federated identity provider for which this attribute mapping
+            can be used.
         name:
           type:
           - string
@@ -2535,7 +2759,9 @@ components:
           type: string
     Mediation:
       type: string
-      description: Request in residentkey workflows that conditional mediation should be used in the UI, or not.
+      description: |-
+        Request in residentkey workflows that conditional mediation should be used
+        in the UI, or not.
       enum:
       - Conditional
     Passkey:
@@ -2553,11 +2779,12 @@ components:
     PasskeyAuthenticationFinishRequest:
       type: object
       description: |-
-        A client response to an authentication challenge. This contains all required information to
-        asses and assert trust in a credentials legitimacy, followed by authentication to a user.
+        A client response to an authentication challenge. This contains all required
+        information to asses and assert trust in a credentials legitimacy, followed
+        by authentication to a user.
 
-        You should not need to handle the inner content of this structure - you should provide this to
-        the correctly handling function of Webauthn only.
+        You should not need to handle the inner content of this structure - you
+        should provide this to the correctly handling function of Webauthn only.
       required:
       - id
       - extensions
@@ -2594,14 +2821,15 @@ components:
       properties:
         passkey:
           $ref: '#/components/schemas/PasskeyUserAuthenticationRequest'
-          description: The user authentication data
+          description: The user authentication data.
     PasskeyAuthenticationStartResponse:
       type: object
       description: |-
         Passkey Authorization challenge.
 
-        A JSON serializable challenge which is issued to the user’s webbrowser for handling. This is
-        meant to be opaque, that is, you should not need to inspect or alter the content of the struct
+        A JSON serializable challenge which is issued to the user’s webbrowser for
+        handling. This is meant to be opaque, that is, you should not need to
+        inspect or alter the content of the struct
         - you should serialise it and transmit it to the client only.
       required:
       - public_key
@@ -2622,8 +2850,7 @@ components:
           maxLength: 64
     PasskeyResponse:
       type: object
-      description: |
-        Passkey.
+      description: Passkey.
       required:
       - passkey
       properties:
@@ -2641,20 +2868,21 @@ components:
         display_name:
           type: string
           description: |-
-            The user’s preferred name for display. This value can change, so must not be used as a
-            primary key.
+            The user’s preferred name for display. This value can change, so must
+            not be used as a primary key.
         id:
           type: string
           format: binary
           description: |-
-            The user’s id in base64 form. This MUST be a unique id, and must NOT contain personally
-            identifying information, as this value can NEVER be changed. If in doubt, use a UUID.
+            The user’s id in base64 form. This MUST be a unique id, and must NOT
+            contain personally identifying information, as this value can NEVER
+            be changed. If in doubt, use a UUID.
           contentEncoding: base64
         name:
           type: string
           description: |-
-            A detailed name for the account, such as an email address. This value can change, so must
-            not be used as a primary key.
+            A detailed name for the account, such as an email address. This value
+            can change, so must not be used as a primary key.
     PasskeyUserAuthenticationRequest:
       type: object
       description: Request for initialization of the passkey authentication.
@@ -2689,25 +2917,6 @@ components:
           description: Project ID.
         name:
           type: string
-          description: Project Name.
-    ProjectScope:
-      type: object
-      description: Project scope information.
-      properties:
-        domain:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Domain'
-            description: Project domain.
-        id:
-          type:
-          - string
-          - 'null'
-          description: Project ID.
-        name:
-          type:
-          - string
-          - 'null'
           description: Project Name.
     PubKeyCredParams:
       type: object
@@ -2781,7 +2990,7 @@ components:
           description: The user.
     PublicKeyCredentialDescriptor:
       type: object
-      description: https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor
+      description: <https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor>
       required:
       - type_
       - id
@@ -2795,7 +3004,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuthenticatorTransport'
-          description: The allowed transports for this credential. Note this is a hint, and is NOT enforced.
+          description: |-
+            The allowed transports for this credential. Note this is a hint, and is
+            NOT enforced.
         type_:
           type: string
           description: The type of credential.
@@ -2804,7 +3015,7 @@ components:
       description: |-
         A hint as to the class of device that is expected to fufil this operation.
 
-        https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints
+        <https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints>
       enum:
       - ClientDevice
       - Hybrid
@@ -2814,7 +3025,7 @@ components:
       description: |-
         A hint as to the class of device that is expected to fufil this operation.
 
-        https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints
+        <https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints>
       enum:
       - ClientDevice
       - Hybrid
@@ -2862,7 +3073,7 @@ components:
     RegistrationExtensionsClientOutputs:
       type: object
       description: |-
-        https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs The default
+        <https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs> The default
         option here for Options are None, so it can be derived
       properties:
         appid:
@@ -2871,11 +3082,14 @@ components:
         cred_props:
           $ref: '#/components/schemas/CredProps'
           description: |-
-            Indicates if the client believes it created a resident key. This property is managed by the
-            webbrowser, and is NOT SIGNED and CAN NOT be trusted!
+            Indicates if the client believes it created a resident key. This
+            property is managed by the webbrowser, and is NOT SIGNED and CAN NOT
+            be trusted!
         cred_protect:
           $ref: '#/components/schemas/CredentialProtectionPolicy'
-          description: Indicates if the client successfully applied a credential protection policy.
+          description: |-
+            Indicates if the client successfully applied a credential protection
+            policy.
         hmac_secret:
           type: boolean
           description: Indicates if the client successfully applied a HMAC Secret.
@@ -2902,7 +3116,7 @@ components:
       description: |-
         Extension option inputs for PublicKeyCredentialRequestOptions
 
-        Implements [AuthenticatorExtensionsClientInputs] from the spec
+        Implements AuthenticatorExtensionsClientInputs from the spec
       properties:
         appid:
           type: string
@@ -2911,7 +3125,7 @@ components:
           $ref: '#/components/schemas/HmacGetSecretInput'
           description: |-
             ⚠️ - Browsers do not support this!
-            https://bugs.chromium.org/p/chromium/issues/detail?id=1023225 Hmac get secret.
+            <https://bugs.chromium.org/p/chromium/issues/detail?id=1023225> Hmac get secret.
         uvm:
           type: boolean
           description: ⚠️ - Browsers do not support this! Uvm.
@@ -2920,21 +3134,22 @@ components:
       description: |-
         Extension option inputs for PublicKeyCredentialCreationOptions.
 
-        Implements [AuthenticatorExtensionsClientInputs] from the spec.
+        Implements `AuthenticatorExtensionsClientInputs` from the spec.
       properties:
         cred_props:
           type: boolean
           description: |-
-            ⚠️ - This extension result is always unsigned, and only indicates if the browser requests a
-            residentKey to be created. It has no bearing on the true rk state of the credential.
+            ⚠️ - This extension result is always unsigned, and only indicates if the
+            browser requests a residentKey to be created. It has no bearing on
+            the true rk state of the credential.
         cred_protect:
           $ref: '#/components/schemas/CredProtect'
           description: The credProtect extension options.
         hmac_create_secret:
           type: boolean
           description: |-
-            ⚠️ - Browsers support the creation of the secret, but not the retrieval of it. CTAP2.1
-            create hmac secret.
+            ⚠️ - Browsers support the creation of the secret, but not the retrieval
+            of it. CTAP2.1 create hmac secret.
         min_pin_length:
           type: boolean
           description: CTAP2.1 Minimum pin length.
@@ -2946,7 +3161,7 @@ components:
       description: |-
         The Relying Party’s requirements for client-side discoverable credentials.
 
-        https://www.w3.org/TR/webauthn-2/#enumdef-residentkeyrequirement
+        <https://www.w3.org/TR/webauthn-2/#enumdef-residentkeyrequirement>
       enum:
       - Discouraged
       - Preferred
@@ -2975,6 +3190,27 @@ components:
           name:
             type: string
             description: Role name
+    RoleCreate:
+      allOf:
+      - description: Extra attributes for the role.
+      - type: object
+        required:
+        - name
+        properties:
+          description:
+            type:
+            - string
+            - 'null'
+            description: The role description.
+          domain_id:
+            type:
+            - string
+            - 'null'
+            description: The domain ID of the role.
+          name:
+            type: string
+            description: The role name.
+      description: Role create request body.
     RoleList:
       type: object
       description: Roles
@@ -3002,7 +3238,7 @@ components:
         - project
         properties:
           project:
-            $ref: '#/components/schemas/ProjectScope'
+            $ref: '#/components/schemas/ScopeProject'
             description: Project scope.
       - type: object
         description: Domain scope.
@@ -3023,19 +3259,41 @@ components:
       description: |-
         The authorization scope, including the system, a project, or a domain.
 
-        If multiple scopes are specified in the same request (e.g. project and domain or domain and
-        system) an HTTP 400 Bad Request will be returned, as a token cannot be simultaneously scoped to
-        multiple authorization targets. An ID is sufficient to uniquely identify a project but if a
-        project is specified by name, then the domain of the project must also be specified in order to
-        uniquely identify the project by name. A domain scope may be specified by either the domain’s
-        ID or name with equivalent results.
+        If multiple scopes are specified in the same request (e.g. project and
+        domain or domain and system) an HTTP 400 Bad Request will be returned, as a
+        token cannot be simultaneously scoped to multiple authorization targets. An
+        ID is sufficient to uniquely identify a project but if a project is
+        specified by name, then the domain of the project must also be specified in
+        order to uniquely identify the project by name. A domain scope may be
+        specified by either the domain’s ID or name with equivalent results.
+    ScopeProject:
+      type: object
+      description: Project scope information.
+      properties:
+        domain:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Domain'
+            description: Project domain.
+        id:
+          type:
+          - string
+          - 'null'
+          description: Project ID.
+        name:
+          type:
+          - string
+          - 'null'
+          description: Project Name.
     SingleVersion:
       type: object
+      description: Single API version container.
       required:
       - version
       properties:
         version:
           $ref: '#/components/schemas/Version'
+          description: The version.
     System:
       type: object
       description: System scope.
@@ -3059,12 +3317,14 @@ components:
           items:
             type: string
           description: |-
-            A list of one or two audit IDs. An audit ID is a unique, randomly generated, URL-safe
-            string that you can use to track a token. The first audit ID is the current audit ID for
-            the token. The second audit ID is present for only re-scoped tokens and is the audit ID
-            from the token before it was re-scoped. A re- scoped token is one that was exchanged for
-            another token of the same or different scope. You can use these audit IDs to track the use
-            of a token or chain of tokens across multiple requests and endpoints without exposing the
+            A list of one or two audit IDs. An audit ID is a unique, randomly
+            generated, URL-safe string that you can use to track a token. The
+            first audit ID is the current audit ID for the token. The second
+            audit ID is present for only re-scoped tokens and is the audit ID
+            from the token before it was re-scoped. A re- scoped token is one that
+            was exchanged for another token of the same or different scope. You
+            can use these audit IDs to track the use of a token or chain of
+            tokens across multiple requests and endpoints without exposing the
             token ID to non-privileged users.
         catalog:
           oneOf:
@@ -3076,8 +3336,9 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/Domain'
             description: |-
-              A domain object including the id and name representing the domain the token is scoped to.
-              This is only included in tokens that are scoped to a domain.
+              A domain object including the id and name representing the domain the
+              token is scoped to. This is only included in tokens that are scoped
+              to a domain.
         expires_at:
           type: string
           format: date-time
@@ -3087,21 +3348,25 @@ components:
           items:
             type: string
           description: |-
-            The authentication methods, which are commonly password, token, or other methods. Indicates
-            the accumulated set of authentication methods that were used to obtain the token. For
-            example, if the token was obtained by password authentication, it contains password. Later,
-            if the token is exchanged by using the token authentication method one or more times, the
-            subsequently created tokens contain both password and token in their methods attribute.
-            Unlike multi-factor authentication, the methods attribute merely indicates the methods that
-            were used to authenticate the user in exchange for a token. The client is responsible for
-            determining the total number of authentication factors.
+            The authentication methods, which are commonly password, token, or other
+            methods. Indicates the accumulated set of authentication methods
+            that were used to obtain the token. For example, if the token was
+            obtained by password authentication, it contains password. Later, if
+            the token is exchanged by using the token authentication method one or
+            more times, the subsequently created tokens contain both password
+            and token in their methods attribute. Unlike multi-factor
+            authentication, the methods attribute merely indicates the methods that
+            were used to authenticate the user in exchange for a token. The client
+            is responsible for determining the total number of authentication
+            factors.
         project:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/Project'
             description: |-
-              A project object including the id, name and domain object representing the project the
-              token is scoped to. This is only included in tokens that are scoped to a project.
+              A project object including the id, name and domain object representing
+              the project the token is scoped to. This is only included in tokens
+              that are scoped to a project.
         roles:
           type:
           - array
@@ -3270,7 +3535,7 @@ components:
           description: Restriction object.
     User:
       type: object
-      description: User information
+      description: User information.
       required:
       - id
       - domain
@@ -3305,21 +3570,24 @@ components:
             - string
             - 'null'
             description: |-
-              The ID of the default project for the user. A user’s default project must not be a domain.
-              Setting this attribute does not grant any actual authorization on the project, and is
-              merely provided for convenience. Therefore, the referenced project does not need to exist
-              within the user domain. (Since v3.1) If the user does not have authorization to their
-              default project, the default project is ignored at token creation. (Since v3.1)
-              Additionally, if your default project is not valid, a token is issued without an explicit
-              scope of authorization.
+              The ID of the default project for the user. A user’s default project
+              must not be a domain. Setting this attribute does not grant any actual
+              authorization on the project, and is merely provided for convenience.
+              Therefore, the referenced project does not need to exist within the user
+              domain. If the user does not have authorization to their default
+              project, the default project is ignored at token creation. Additionally,
+              if your default project is not valid, a token is issued without an
+              explicit scope of authorization.
           domain_id:
             type: string
-            description: User domain ID
+            description: User domain ID.
           enabled:
             type:
             - boolean
             - 'null'
-            description: If the user is enabled, this value is true. If the user is disabled, this value is false.
+            description: |-
+              If the user is enabled, this value is true. If the user is disabled,
+              this value is false.
           name:
             type: string
             description: The user name. Must be unique within the owning domain.
@@ -3330,24 +3598,27 @@ components:
               description: |-
                 The resource options for the user. Available resource options are
                 ignore_change_password_upon_first_use, ignore_password_expiry,
-                ignore_lockout_failure_attempts, lock_password, multi_factor_auth_enabled, and
-                multi_factor_auth_rules ignore_user_inactivity.
+                ignore_lockout_failure_attempts, lock_password,
+                multi_factor_auth_enabled, and multi_factor_auth_rules
+                ignore_user_inactivity.
           password:
             type:
             - string
             - 'null'
             description: The password for the user.
+      description: Create user data.
     UserCreateRequest:
       type: object
+      description: Complete create user request.
       required:
       - user
       properties:
         user:
           $ref: '#/components/schemas/UserCreate'
-          description: User object
+          description: User object.
     UserList:
       type: object
-      description: Users
+      description: List of users.
       required:
       - users
       properties:
@@ -3358,6 +3629,7 @@ components:
           description: Collection of user objects
     UserOptions:
       type: object
+      description: User options.
       properties:
         ignore_change_password_upon_first_use:
           type:
@@ -3394,12 +3666,13 @@ components:
     UserPasskeyRegistrationFinishRequest:
       type: object
       description: |-
-        A client response to a registration challenge. This contains all required information to assess
-        and assert trust in a credential’s legitimacy, followed by registration to a user.
+        A client response to a registration challenge. This contains all required
+        information to assess and assert trust in a credential’s legitimacy,
+        followed by registration to a user.
 
-        You should not need to handle the inner content of this structure - you should provide this to
-        the correctly handling function of Webauthn only.
-        https://w3c.github.io/webauthn/#iface-pkcredential
+        You should not need to handle the inner content of this structure - you
+        should provide this to the correctly handling function of Webauthn only.
+        <https://w3c.github.io/webauthn/#iface-pkcredential>
       required:
       - id
       - raw_id
@@ -3419,27 +3692,26 @@ components:
           description: |-
             The id of the PublicKey credential, likely in base64.
 
-            This is NEVER actually used in a real registration, because the true credential ID is taken
-            from the attestation data.
+            This is NEVER actually used in a real registration, because the true
+            credential ID is taken from the attestation data.
         raw_id:
           type: string
           format: binary
           description: |-
             The id of the credential, as binary.
 
-            This is NEVER actually used in a real registration, because the true credential ID is taken
-            from the attestation data.
+            This is NEVER actually used in a real registration, because the true
+            credential ID is taken from the attestation data.
           contentEncoding: base64
         response:
           $ref: '#/components/schemas/AuthenticatorAttestationResponseRaw'
-          description: https://w3c.github.io/webauthn/#dom-publickeycredential-response.
+          description: <https://w3c.github.io/webauthn/#dom-publickeycredential-response>.
         type_:
           type: string
           description: The type of credential.
     UserPasskeyRegistrationStartRequest:
       type: object
-      description: |
-        Passkey registration request.
+      description: Passkey registration request.
       required:
       - passkey
       properties:
@@ -3451,7 +3723,8 @@ components:
       description: |-
         Passkey challenge.
 
-        This is the WebauthN challenge that need to be signed by the passkey/security device.
+        This is the WebauthN challenge that need to be signed by the
+        passkey/security device.
       required:
       - public_key
       properties:
@@ -3460,7 +3733,7 @@ components:
           description: The options.
     UserPassword:
       type: object
-      description: User password information
+      description: User password information.
       required:
       - password
       properties:
@@ -3468,22 +3741,23 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/Domain'
-            description: User domain
+            description: User domain.
         id:
           type:
           - string
           - 'null'
-          description: User ID
+          description: User ID.
         name:
           type:
           - string
           - 'null'
-          description: User Name
+          description: User Name.
         password:
           type: string
-          description: User password expiry date
+          description: User password.
     UserResponse:
       type: object
+      description: Complete response with the user data.
       required:
       - user
       properties:
@@ -3492,36 +3766,40 @@ components:
           description: User object
     UserVerificationPolicy:
       type: string
-      description: |
+      description: |-
         Defines the User Authenticator Verification policy. This is documented
-        https://w3c.github.io/webauthn/#enumdef-userverificationrequirement, and each variant lists
+        <https://w3c.github.io/webauthn/#enumdef-userverificationrequirement>, and each variant lists
         it’s effects.
 
-        To be clear, Verification means that the Authenticator perform extra or supplementary
-        interaction with the user to verify who they are. An example of this is Apple Touch Id required
-        a fingerprint to be verified, or a yubico device requiring a pin in addition to a touch event.
+        To be clear, Verification means that the Authenticator perform extra or
+        supplementary interaction with the user to verify who they are. An example
+        of this is Apple Touch Id required a fingerprint to be verified, or a yubico
+        device requiring a pin in addition to a touch event.
 
-        An example of a non-verified interaction is a yubico device with no pin where touch is the only
-        interaction - we only verify a user is present, but we don’t have extra details to the
-        legitimacy of that user.
+        An example of a non-verified interaction is a yubico device with no pin
+        where touch is the only interaction - we only verify a user is present, but
+        we don’t have extra details to the legitimacy of that user.
 
-        As UserVerificationPolicy is only used in credential registration, this stores the verification
-        state of the credential in the persisted credential. These persisted credentials define which
-        UserVerificationPolicy is issued during authentications.
+        As UserVerificationPolicy is only used in credential registration, this
+        stores the verification state of the credential in the persisted credential.
+        These persisted credentials define which UserVerificationPolicy is issued
+        during authentications.
 
-        IMPORTANT - Due to limitations of the webauthn specification, CTAP devices, and browser
-        implementations, the only secure choice as an RP is required.
+        IMPORTANT - Due to limitations of the webauthn specification, CTAP devices,
+        and browser implementations, the only secure choice as an RP is required.
 
-          ⚠️ WARNING - discouraged is marked with a warning, as some authenticators will FORCE
-          verification during registration but NOT during authentication. This makes it impossible
-          for a relying party to consistently enforce user verification, which can confuse users and
-          lead them to distrust user verification is being enforced.
+          ⚠️ WARNING - discouraged is marked with a warning, as some authenticators
+        will FORCE   verification during registration but NOT during authentication.
+        This makes it impossible   for a relying party to consistently enforce user
+        verification, which can confuse users and   lead them to distrust user
+        verification is being enforced.
 
-          ⚠️ WARNING - preferred can lead to authentication errors in some cases due to browser
-          peripheral exchange allowing authentication verification bypass. Webauthn RS is not
-          vulnerable to these bypasses due to our tracking of UV during registration through
-          authentication, however preferred can cause legitimate credentials to not prompt for UV
-          correctly due to browser perhipheral exchange leading Webauthn RS to deny them in what
+          ⚠️ WARNING - preferred can lead to authentication errors in some cases due
+        to browser   peripheral exchange allowing authentication verification
+        bypass. Webauthn RS is not   vulnerable to these bypasses due to our
+        tracking of UV during registration through   authentication, however
+        preferred can cause legitimate credentials to not prompt for UV   correctly
+        due to browser perhipheral exchange leading Webauthn RS to deny them in what
           should otherwise be legitimate operations.
       enum:
       - Required
@@ -3529,6 +3807,7 @@ components:
       - DiscouragedDoNotUse
     Values:
       type: object
+      description: A container with the [Version] list.
       required:
       - values
       properties:
@@ -3538,43 +3817,52 @@ components:
             $ref: '#/components/schemas/Version'
     Version:
       type: object
+      description: Single API version.
       required:
       - id
       - status
       properties:
         id:
           type: string
+          description: Version id.
         links:
           type:
           - array
           - 'null'
           items:
             $ref: '#/components/schemas/Link'
+          description: Links to the API version.
         media_types:
           type:
           - array
           - 'null'
           items:
             $ref: '#/components/schemas/MediaType'
+          description: Supported media types.
         status:
           $ref: '#/components/schemas/VersionStatus'
+          description: Version status.
         updated:
           type:
           - string
           - 'null'
           format: date-time
+          description: Date of the version update.
     VersionStatus:
       type: string
+      description: Version status.
       enum:
       - stable
       - experimental
     Versions:
       type: object
+      description: List of the supported API versionts as [Values].
       required:
       - versions
       properties:
         versions:
           $ref: '#/components/schemas/Values'
+          description: List of the versions.
   securitySchemes:
     jwt:
       type: http
@@ -3595,7 +3883,7 @@ components:
       name: x-auth-token
 tags:
 - name: identity_providers
-  description: |
+  description: |-
     Identity providers API.
 
     Identity provider resource allows to federate users from an external Identity Provider (i.e.
@@ -3607,7 +3895,7 @@ tags:
     Identity provider with an empty domain_id are considered globals and every domain may use it with
     appropriate mapping.
 - name: mappings
-  description: |
+  description: |-
     Federation mappings API.
 
     Mappings define how the user attributes on the remote IDP are mapped to the local user.
@@ -3616,22 +3904,9 @@ tags:
     require the `domain_id_claim` attribute to be set to identify the domain_id for the respective
     user.
 - name: token
-  description: |+
-    Token API.
-
-- name: token_restrictions
-  description: |
-    Token restrictions API.
-
-    Token restrictions allow controlling multiple aspects of the authentication and authorization.
-
-    - `allow_rescope` controls whether it is allowed to change the scope of the token. That is by default possible for normal (i.e. password) authentication, is forbidden for the application credentials and may need to be also forbidden for the JWT based authentication.
-
-    - `allow_renew` controls whether it is possible to renew the token (get a new token from existing token). This is most likely undisired for the JWT auth.
-
-    - `project_id` may control that this token can be only issued for the fixed project scope.
-
-    - `user_id` may specify the fixed user_id that will be used when issuing the token independently of the authentication. This is useful for Service Accounts.
-
-    - `roles` binds the roles of the issued token on the scope. Using this bypasses necessity to grant the roles explicitly to the user.
+  description: Token API
+- name: token_restriction
+  description: "Token restrictions API.\n\nToken restrictions allow controlling multiple aspects of the authentication and authorization.\n\n- `allow_rescope` controls whether it is allowed to change the scope of the token. That is by default possible for normal (i.e. password) authentication, is forbidden for the application credentials and may need to be also forbidden for the JWT based authentication.\n\n- `allow_renew` controls whether it is possible to renew the token (get a new token from existing token). This is most likely undisired for the JWT auth.\n\n- `project_id` may control that this token can be only issued for the fixed project scope.\n\n- `user_id` may specify the fixed user_id that will be used when issuing the token independently of the authentication. This is useful for Service Accounts.\n\n- `roles` binds the roles of the issued token on the scope. Using this bypasses necessity to grant the roles explicitly to the user.\n\n        "
+- name: passkey
+  description: Passkey API.
 

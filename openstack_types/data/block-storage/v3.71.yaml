@@ -237,7 +237,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/AttachmentsActionOs-CompleteRequest'
+                - $ref: '#/components/schemas/AttachmentsActionComplete_344'
               x-openstack:
                 discriminator: action
       responses:
@@ -387,7 +387,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/BackupsActionOs-Force_DeleteRequest'
+                - $ref: '#/components/schemas/BackupsAction_Force_Delete'
                 - $ref: '#/components/schemas/BackupsAction_Reset_Status'
               x-openstack:
                 discriminator: action
@@ -473,7 +473,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CgsnapshotsCreateRequest'
+              $ref: '#/components/schemas/CgsnapshotsCreate'
       responses:
         '202':
           content:
@@ -579,6 +579,44 @@ paths:
         - clusters
       x-openstack:
         min-ver: '3.7'
+  /v3/clusters/disable:
+    put:
+      operationId: clusters/disable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClustersDisableDisable_37'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersDisableResponse'
+          description: Ok
+      tags:
+        - clusters
+      x-openstack:
+        min-ver: '3.7'
+  /v3/clusters/enable:
+    put:
+      operationId: clusters/enable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClustersEnableEnable_37'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersEnableResponse'
+          description: Ok
+      tags:
+        - clusters
+      x-openstack:
+        min-ver: '3.7'
   /v3/clusters/{id}:
     get:
       description: |-
@@ -597,26 +635,6 @@ paths:
         min-ver: '3.7'
     parameters:
       - $ref: '#/components/parameters/clusters_id'
-    put:
-      description: |-
-        Enable/Disable scheduling for a cluster.
-      operationId: clusters/id:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClusterUpdateRequest'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClusterUpdateResponse'
-          description: Ok
-      tags:
-        - clusters
-      x-openstack:
-        min-ver: '3.7'
   /v3/consistencygroups:
     get:
       deprecated: true
@@ -641,7 +659,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsCreateRequest'
+              $ref: '#/components/schemas/ConsistencygroupsCreate'
       responses:
         '202':
           content:
@@ -665,7 +683,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsCreate_From_SrcCreate_From_SrcRequest'
+              $ref: '#/components/schemas/ConsistencygroupsCreate_From_SrcCreate_From_Src'
       responses:
         '202':
           content:
@@ -740,7 +758,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupUpdateRequest'
+              $ref: '#/components/schemas/ConsistencygroupUpdate'
       responses:
         '200':
           content:
@@ -758,11 +776,6 @@ paths:
       description: |-
         Delete a consistency group.
       operationId: consistencygroups/id/delete:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConsistencygroupsDeleteDeleteRequest'
       responses:
         '201':
           content:
@@ -798,7 +811,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsUpdateUpdateRequest'
+              $ref: '#/components/schemas/ConsistencygroupsUpdateUpdate'
       responses:
         '200':
           content:
@@ -1467,7 +1480,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Manageable_SnapshotsCreateRequest'
+              $ref: '#/components/schemas/Manageable_SnapshotsCreate'
       responses:
         '202':
           content:
@@ -1520,6 +1533,7 @@ paths:
       tags:
         - manageable_volumes
     post:
+      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -1588,6 +1602,9 @@ paths:
           description: Ok
       tags:
         - manageable_volumes
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.0'
   /v3/manageable_volumes/detail:
     get:
       description: |-
@@ -1695,7 +1712,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_HostsUpdateRequest'
+              $ref: '#/components/schemas/Os_HostsUpdate'
       responses:
         '200':
           content:
@@ -1727,7 +1744,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_HostUpdateRequest'
+              $ref: '#/components/schemas/Os_HostUpdate'
       responses:
         '200':
           content:
@@ -1846,29 +1863,147 @@ paths:
           description: Ok
       tags:
         - os-services
-  /v3/os-services/{id}:
-    parameters:
-      - $ref: '#/components/parameters/os_services_id'
+  /v3/os-services/disable:
     put:
-      description: |-
-        Enable/Disable scheduling for a service.
-
-        Includes Freeze/Thaw which sends call down to drivers
-        and allows volume.manager for the specified host to
-        disable the service rather than accessing the service
-        directly in this API layer.
-      operationId: os-services/id:put
+      operationId: os-services/disable:put
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_ServiceUpdateRequest'
+              $ref: '#/components/schemas/Os_ServicesDisableDisable'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Os_ServiceUpdateResponse'
+                $ref: '#/components/schemas/Os_ServicesDisableResponse'
+          description: Ok
+      tags:
+        - os-services
+  /v3/os-services/disable-log-reason:
+    put:
+      operationId: os-services/disable-log-reason:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesDisable_Log_ReasonDisable_Log_Reason'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesDisable_Log_ReasonResponse'
+          description: Ok
+      tags:
+        - os-services
+  /v3/os-services/enable:
+    put:
+      operationId: os-services/enable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesEnableEnable'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesEnableResponse'
+          description: Ok
+      tags:
+        - os-services
+  /v3/os-services/failover_host:
+    put:
+      operationId: os-services/failover_host:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesFailover_HostFailover_Host'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesFailover_HostResponse'
+          description: Ok
+      tags:
+        - os-services
+  /v3/os-services/freeze:
+    put:
+      operationId: os-services/freeze:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesFreezeFreeze'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesFreezeResponse'
+          description: Ok
+      tags:
+        - os-services
+  /v3/os-services/get-log:
+    put:
+      description: |-
+        Get current log levels for services.
+      operationId: os-services/get-log:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesGet_LogGet_Log_332'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesGet_LogResponse'
+          description: Ok
+      tags:
+        - os-services
+      x-openstack:
+        min-ver: '3.32'
+  /v3/os-services/set-log:
+    put:
+      description: |-
+        Set log levels of services dynamically.
+      operationId: os-services/set-log:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesSet_LogSet_Log_332'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesSet_LogResponse'
+          description: Ok
+      tags:
+        - os-services
+      x-openstack:
+        min-ver: '3.32'
+  /v3/os-services/thaw:
+    put:
+      operationId: os-services/thaw:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesThawThaw'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesThawResponse'
           description: Ok
       tags:
         - os-services
@@ -2452,8 +2587,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/SnapshotsActionOs-Force_DeleteRequest'
-                - $ref: '#/components/schemas/SnapshotsActionOs-UnmanageRequest'
+                - $ref: '#/components/schemas/SnapshotsActionUnmanage'
+                - $ref: '#/components/schemas/SnapshotsAction_Force_Delete'
                 - $ref: '#/components/schemas/SnapshotsAction_Reset_Status'
                 - $ref: '#/components/schemas/SnapshotsAction_Update_Snapshot_Status'
               x-openstack:
@@ -2491,7 +2626,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataCreateRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataCreate'
       responses:
         '201':
           content:
@@ -2507,7 +2642,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataUpdate_AllRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataUpdate_All'
       responses:
         '200':
           content:
@@ -2549,7 +2684,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataUpdateRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataUpdate'
       responses:
         '200':
           content:
@@ -3099,28 +3234,28 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/VolumesActionCreate'
                 - $ref: '#/components/schemas/VolumesActionDelete'
-                - $ref: '#/components/schemas/VolumesActionOs-Begin_DetachingRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Force_DeleteRequest'
+                - $ref: '#/components/schemas/VolumesActionIndex'
                 - $ref: '#/components/schemas/VolumesActionOs-Migrate_VolumeRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-ReserveRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Roll_DetachingRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Show_Image_MetadataRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-UnmanageRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-UnreserveRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Volume_Upload_ImageRequest'
-                - $ref: '#/components/schemas/VolumesActionRevertRequest'
+                - $ref: '#/components/schemas/VolumesActionRevert_340'
+                - $ref: '#/components/schemas/VolumesActionUnmanage'
                 - $ref: '#/components/schemas/VolumesAction_Attach'
+                - $ref: '#/components/schemas/VolumesAction_Begin_Detaching'
                 - $ref: '#/components/schemas/VolumesAction_Detach'
                 - $ref: '#/components/schemas/VolumesAction_Extend'
                 - $ref: '#/components/schemas/VolumesAction_Extend_Volume_Completion'
+                - $ref: '#/components/schemas/VolumesAction_Force_Delete'
                 - $ref: '#/components/schemas/VolumesAction_Force_Detach'
                 - $ref: '#/components/schemas/VolumesAction_Initialize_Connection'
                 - $ref: '#/components/schemas/VolumesAction_Migrate_Volume_Completion'
                 - $ref: '#/components/schemas/VolumesAction_Reimage_368'
+                - $ref: '#/components/schemas/VolumesAction_Reserve'
                 - $ref: '#/components/schemas/VolumesAction_Reset_Status'
                 - $ref: '#/components/schemas/VolumesAction_Retype'
+                - $ref: '#/components/schemas/VolumesAction_Roll_Detaching'
                 - $ref: '#/components/schemas/VolumesAction_Set_Bootable'
                 - $ref: '#/components/schemas/VolumesAction_Terminate_Connection'
+                - $ref: '#/components/schemas/VolumesAction_Unreserve'
                 - $ref: '#/components/schemas/VolumesAction_Volume_Readonly_Update'
               x-openstack:
                 discriminator: action
@@ -3310,7 +3445,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_HostsUpdateRequest'
+              $ref: '#/components/schemas/Os_HostsUpdate'
       responses:
         '200':
           content:
@@ -3348,7 +3483,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_HostUpdateRequest'
+              $ref: '#/components/schemas/Os_HostUpdate'
       responses:
         '200':
           content:
@@ -3633,7 +3768,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/AttachmentsActionOs-CompleteRequest'
+                - $ref: '#/components/schemas/AttachmentsActionComplete_344'
               x-openstack:
                 discriminator: action
       responses:
@@ -3802,7 +3937,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/BackupsActionOs-Force_DeleteRequest'
+                - $ref: '#/components/schemas/BackupsAction_Force_Delete'
                 - $ref: '#/components/schemas/BackupsAction_Reset_Status'
               x-openstack:
                 discriminator: action
@@ -3894,7 +4029,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CgsnapshotsCreateRequest'
+              $ref: '#/components/schemas/CgsnapshotsCreate'
       responses:
         '202':
           content:
@@ -4011,6 +4146,60 @@ paths:
         min-ver: '3.7'
     parameters:
       - $ref: '#/components/parameters/clusters_detail_project_id'
+  /v3/{project_id}/clusters/disable:
+    parameters:
+      - $ref: '#/components/parameters/clusters_disable_project_id'
+    put:
+      description: |-
+        Disables a cluster. Specify the cluster by its name and optionally the
+        binary name in the request body.
+
+        Available starting in the 3.7 microversion.
+      operationId: project_id/clusters/disable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClustersDisableDisable_37'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersDisableResponse'
+          description: Ok
+      summary: Disable cluster
+      tags:
+        - clusters
+      x-openstack:
+        min-ver: '3.7'
+  /v3/{project_id}/clusters/enable:
+    parameters:
+      - $ref: '#/components/parameters/clusters_enable_project_id'
+    put:
+      description: |-
+        Enables a cluster. Specify the cluster by its name and optionally the
+        binary name in the request body.
+
+        Available starting in the 3.7 microversion.
+      operationId: project_id/clusters/enable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClustersEnableEnable_37'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersEnableResponse'
+          description: Ok
+      summary: Enable cluster
+      tags:
+        - clusters
+      x-openstack:
+        min-ver: '3.7'
   /v3/{project_id}/clusters/{id}:
     get:
       description: |-
@@ -4030,26 +4219,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/clusters_id'
       - $ref: '#/components/parameters/clusters_project_id'
-    put:
-      description: |-
-        Enable/Disable scheduling for a cluster.
-      operationId: project_id/clusters/id:put
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClusterUpdateRequest'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClusterUpdateResponse'
-          description: Ok
-      tags:
-        - clusters
-      x-openstack:
-        min-ver: '3.7'
   /v3/{project_id}/consistencygroups:
     get:
       deprecated: true
@@ -4077,7 +4246,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsCreateRequest'
+              $ref: '#/components/schemas/ConsistencygroupsCreate'
       responses:
         '202':
           content:
@@ -4100,7 +4269,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsCreate_From_SrcCreate_From_SrcRequest'
+              $ref: '#/components/schemas/ConsistencygroupsCreate_From_SrcCreate_From_Src'
       responses:
         '202':
           content:
@@ -4180,7 +4349,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupUpdateRequest'
+              $ref: '#/components/schemas/ConsistencygroupUpdate'
       responses:
         '200':
           content:
@@ -4199,11 +4368,6 @@ paths:
       description: |-
         Delete a consistency group.
       operationId: project_id/consistencygroups/id/delete:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConsistencygroupsDeleteDeleteRequest'
       responses:
         '201':
           content:
@@ -4240,7 +4404,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsistencygroupsUpdateUpdateRequest'
+              $ref: '#/components/schemas/ConsistencygroupsUpdateUpdate'
       responses:
         '200':
           content:
@@ -4932,7 +5096,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Manageable_SnapshotsCreateRequest'
+              $ref: '#/components/schemas/Manageable_SnapshotsCreate'
       responses:
         '202':
           content:
@@ -4994,6 +5158,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/manageable_volumes_project_id'
     post:
+      deprecated: true
       description: |-
         Creates a Block Storage volume by using existing storage rather than allocating
         new storage.
@@ -5028,6 +5193,9 @@ paths:
       summary: Manage an existing volume
       tags:
         - manageable_volumes
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.0'
   /v3/{project_id}/manageable_volumes/detail:
     get:
       description: |-
@@ -5145,31 +5313,195 @@ paths:
         - os-services
     parameters:
       - $ref: '#/components/parameters/os_services_project_id'
-  /v3/{project_id}/os-services/{id}:
+  /v3/{project_id}/os-services/disable:
     parameters:
-      - $ref: '#/components/parameters/os_services_id'
-      - $ref: '#/components/parameters/os_services_project_id'
+      - $ref: '#/components/parameters/os_services_disable_project_id'
     put:
       description: |-
-        Enable/Disable scheduling for a service.
-
-        Includes Freeze/Thaw which sends call down to drivers
-        and allows volume.manager for the specified host to
-        disable the service rather than accessing the service
-        directly in this API layer.
-      operationId: project_id/os-services/id:put
+        Disables a Cinder service. Specify the service by its host name
+        and binary name.
+      operationId: project_id/os-services/disable:put
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_ServiceUpdateRequest'
+              $ref: '#/components/schemas/Os_ServicesDisableDisable'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Os_ServiceUpdateResponse'
+                $ref: '#/components/schemas/Os_ServicesDisableResponse'
           description: Ok
+      summary: Disable a Cinder Service
+      tags:
+        - os-services
+  /v3/{project_id}/os-services/disable-log-reason:
+    parameters:
+      - $ref: '#/components/parameters/os_services_disable_log_reason_project_id'
+    put:
+      description: |-
+        Logs information to the Cinder service table about why a Cinder service was
+        disabled.
+
+        Specify the service by its host name and binary name.
+      operationId: project_id/os-services/disable-log-reason:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesDisable_Log_ReasonDisable_Log_Reason'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesDisable_Log_ReasonResponse'
+          description: Ok
+      summary: Log Disabled Cinder Service Information
+      tags:
+        - os-services
+  /v3/{project_id}/os-services/enable:
+    parameters:
+      - $ref: '#/components/parameters/os_services_enable_project_id'
+    put:
+      description: |-
+        Enables a Cinder service. Specify the service by its host name
+        and binary name.
+      operationId: project_id/os-services/enable:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesEnableEnable'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesEnableResponse'
+          description: Ok
+      summary: Enable a Cinder Service
+      tags:
+        - os-services
+  /v3/{project_id}/os-services/failover_host:
+    parameters:
+      - $ref: '#/components/parameters/os_services_failover_host_project_id'
+    put:
+      description: |-
+        Failover a replicating cinder-volume host. Since Cinder Volume API Version
+        3.26, you can use `failover` in request URL instead of `failover_host`,
+        and the cluster name in request body is supported.
+      operationId: project_id/os-services/failover_host:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesFailover_HostFailover_Host'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesFailover_HostResponse'
+          description: Ok
+      summary: Failover a Cinder Backend Host
+      tags:
+        - os-services
+  /v3/{project_id}/os-services/freeze:
+    parameters:
+      - $ref: '#/components/parameters/os_services_freeze_project_id'
+    put:
+      description: |-
+        Freeze and disable the specified cinder-volume host, and set
+        `Disabled Reason` of Cinder service table to `frozen`.
+      operationId: project_id/os-services/freeze:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesFreezeFreeze'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesFreezeResponse'
+          description: Ok
+      summary: Freeze a Cinder Backend Host
+      tags:
+        - os-services
+  /v3/{project_id}/os-services/get-log:
+    parameters:
+      - $ref: '#/components/parameters/os_services_get_log_project_id'
+    put:
+      description: |-
+        Get current log levels for services, supported since v3.32. Filter the
+        services by binary, server name and prefix for the log path.
+      operationId: project_id/os-services/get-log:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesGet_LogGet_Log_332'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesGet_LogResponse'
+          description: Ok
+      summary: Get Current Log Levels for Cinder Services
+      tags:
+        - os-services
+      x-openstack:
+        min-ver: '3.32'
+  /v3/{project_id}/os-services/set-log:
+    parameters:
+      - $ref: '#/components/parameters/os_services_set_log_project_id'
+    put:
+      description: |-
+        Set log levels of services dynamically, supported since v3.32. Filter the
+        services by binary, server name and prefix for the log path.
+      operationId: project_id/os-services/set-log:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesSet_LogSet_Log_332'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesSet_LogResponse'
+          description: Ok
+      summary: Set Log Levels of Cinder Services Dynamically
+      tags:
+        - os-services
+      x-openstack:
+        min-ver: '3.32'
+  /v3/{project_id}/os-services/thaw:
+    parameters:
+      - $ref: '#/components/parameters/os_services_thaw_project_id'
+    put:
+      description: |-
+        Thaw and enable the specified cinder-volume host, and clean
+        `Disabled Reason` of Cinder service table.
+      operationId: project_id/os-services/thaw:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Os_ServicesThawThaw'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Os_ServicesThawResponse'
+          description: Ok
+      summary: Thaw a Cinder Backend Host
       tags:
         - os-services
   /v3/{project_id}/os-snapshot-manage:
@@ -5812,8 +6144,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/SnapshotsActionOs-Force_DeleteRequest'
-                - $ref: '#/components/schemas/SnapshotsActionOs-UnmanageRequest'
+                - $ref: '#/components/schemas/SnapshotsActionUnmanage'
+                - $ref: '#/components/schemas/SnapshotsAction_Force_Delete'
                 - $ref: '#/components/schemas/SnapshotsAction_Reset_Status'
                 - $ref: '#/components/schemas/SnapshotsAction_Update_Snapshot_Status'
               x-openstack:
@@ -5858,7 +6190,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataCreateRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataCreate'
       responses:
         '201':
           content:
@@ -5877,7 +6209,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataUpdate_AllRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataUpdate_All'
       responses:
         '200':
           content:
@@ -5921,7 +6253,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SnapshotsMetadataUpdateRequest'
+              $ref: '#/components/schemas/SnapshotsMetadataUpdate'
       responses:
         '200':
           content:
@@ -6547,28 +6879,28 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/VolumesActionCreate'
                 - $ref: '#/components/schemas/VolumesActionDelete'
-                - $ref: '#/components/schemas/VolumesActionOs-Begin_DetachingRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Force_DeleteRequest'
+                - $ref: '#/components/schemas/VolumesActionIndex'
                 - $ref: '#/components/schemas/VolumesActionOs-Migrate_VolumeRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-ReserveRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Roll_DetachingRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-Show_Image_MetadataRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-UnmanageRequest'
-                - $ref: '#/components/schemas/VolumesActionOs-UnreserveRequest'
                 - $ref: '#/components/schemas/VolumesActionOs-Volume_Upload_ImageRequest'
-                - $ref: '#/components/schemas/VolumesActionRevertRequest'
+                - $ref: '#/components/schemas/VolumesActionRevert_340'
+                - $ref: '#/components/schemas/VolumesActionUnmanage'
                 - $ref: '#/components/schemas/VolumesAction_Attach'
+                - $ref: '#/components/schemas/VolumesAction_Begin_Detaching'
                 - $ref: '#/components/schemas/VolumesAction_Detach'
                 - $ref: '#/components/schemas/VolumesAction_Extend'
                 - $ref: '#/components/schemas/VolumesAction_Extend_Volume_Completion'
+                - $ref: '#/components/schemas/VolumesAction_Force_Delete'
                 - $ref: '#/components/schemas/VolumesAction_Force_Detach'
                 - $ref: '#/components/schemas/VolumesAction_Initialize_Connection'
                 - $ref: '#/components/schemas/VolumesAction_Migrate_Volume_Completion'
                 - $ref: '#/components/schemas/VolumesAction_Reimage_368'
+                - $ref: '#/components/schemas/VolumesAction_Reserve'
                 - $ref: '#/components/schemas/VolumesAction_Reset_Status'
                 - $ref: '#/components/schemas/VolumesAction_Retype'
+                - $ref: '#/components/schemas/VolumesAction_Roll_Detaching'
                 - $ref: '#/components/schemas/VolumesAction_Set_Bootable'
                 - $ref: '#/components/schemas/VolumesAction_Terminate_Connection'
+                - $ref: '#/components/schemas/VolumesAction_Unreserve'
                 - $ref: '#/components/schemas/VolumesAction_Volume_Readonly_Update'
               x-openstack:
                 discriminator: action
@@ -7191,16 +7523,18 @@ components:
         type: string
       x-openstack:
         resource_link: identity/v3/project.id
-    clusters_edit_id:
-      description: id parameter for /v3/clusters/{id}/edit API
+    clusters_disable_project_id:
+      description: project_id parameter for /v3/{project_id}/clusters/disable 
+        API
       in: path
-      name: id
+      name: project_id
       required: true
       schema:
         type: string
-    clusters_edit_project_id:
-      description: project_id parameter for /v3/{project_id}/clusters/{id}/edit 
-        API
+      x-openstack:
+        resource_link: identity/v3/project.id
+    clusters_enable_project_id:
+      description: project_id parameter for /v3/{project_id}/clusters/enable API
       in: path
       name: project_id
       required: true
@@ -7215,15 +7549,6 @@ components:
       required: true
       schema:
         type: string
-    clusters_new_project_id:
-      description: project_id parameter for /v3/{project_id}/clusters/new API
-      in: path
-      name: project_id
-      required: true
-      schema:
-        type: string
-      x-openstack:
-        resource_link: identity/v3/project.id
     clusters_project_id:
       description: project_id parameter for /v3/{project_id}/clusters/{id} API
       in: path
@@ -8120,16 +8445,9 @@ components:
       name: usage
       schema:
         type: boolean
-    os_services_edit_id:
-      description: id parameter for /v3/os-services/{id}/edit API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    os_services_edit_project_id:
+    os_services_disable_log_reason_project_id:
       description: project_id parameter for 
-        /v3/{project_id}/os-services/{id}/edit API
+        /v3/{project_id}/os-services/disable-log-reason API
       in: path
       name: project_id
       required: true
@@ -8137,15 +8455,49 @@ components:
         type: string
       x-openstack:
         resource_link: identity/v3/project.id
-    os_services_id:
-      description: id parameter for /v3/os-services/{id} API
+    os_services_disable_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/disable
+        API
       in: path
-      name: id
+      name: project_id
       required: true
       schema:
         type: string
-    os_services_new_project_id:
-      description: project_id parameter for /v3/{project_id}/os-services/new API
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_enable_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/enable 
+        API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_failover_host_project_id:
+      description: project_id parameter for 
+        /v3/{project_id}/os-services/failover_host API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_freeze_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/freeze 
+        API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_get_log_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/get-log
+        API
       in: path
       name: project_id
       required: true
@@ -8154,7 +8506,26 @@ components:
       x-openstack:
         resource_link: identity/v3/project.id
     os_services_project_id:
-      description: project_id parameter for /v3/{project_id}/os-services/{id} 
+      description: project_id parameter for /v3/{project_id}/os-services API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_set_log_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/set-log
+        API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    os_services_thaw_project_id:
+      description: project_id parameter for /v3/{project_id}/os-services/thaw 
         API
       in: path
       name: project_id
@@ -9676,14 +10047,16 @@ components:
       type: object
       x-openstack:
         min-ver: '3.27'
-    AttachmentsActionOs-CompleteRequest:
-      description: Empty body for os-complete action
+    AttachmentsActionComplete_344:
+      additionalProperties: false
       properties:
-        os-complete:
-          type: 'null'
+        os-complete: {}
+      required:
+        - os-complete
       type: object
       x-openstack:
         action-name: os-complete
+        min-ver: '3.44'
     AttachmentsCreateRequest:
       oneOf:
         - $ref: '#/components/schemas/AttachmentsCreate_327'
@@ -10253,11 +10626,12 @@ components:
       x-openstack:
         max-ver: '3.42'
         min-ver: '3.9'
-    BackupsActionOs-Force_DeleteRequest:
-      description: Empty body for os-force_delete action
+    BackupsAction_Force_Delete:
+      additionalProperties: false
       properties:
-        os-force_delete:
-          type: 'null'
+        os-force_delete: {}
+      required:
+        - os-force_delete
       type: object
       x-openstack:
         action-name: os-force_delete
@@ -11147,11 +11521,32 @@ components:
     CgsnapshotShowResponse:
       description: Response of the project_id/cgsnapshots/id:get operation
       type: object
-    CgsnapshotsCreateRequest:
-      description: Request of the project_id/cgsnapshots:post operation
+    CgsnapshotsCreate:
+      additionalProperties: true
+      properties:
+        cgsnapshot:
+          additionalProperties: true
+          description: |-
+            A consistency group snapshot object.
+          properties:
+            consistencygroup_id:
+              description: |-
+                The UUID of the consistency group.
+              type: string
+            description:
+              description: |-
+                The consistency group snapshot description.
+              type: string
+            name:
+              description: |-
+                The name of the snapshot. Default is `None`.
+              type: string
+          required:
+            - consistencygroup_id
+          type: object
+      required:
+        - cgsnapshot
       type: object
-      x-openstack:
-        action-name: create
     CgsnapshotsCreateResponse:
       description: Response of the project_id/cgsnapshots:post operation
       type: object
@@ -11162,99 +11557,6 @@ components:
       description: Response of the project_id/cgsnapshots:get operation
       type: object
     ClusterShowResponse:
-      properties:
-        cluster:
-          properties:
-            active_backend_id:
-              description: The ID of active storage backend. Only in 
-                cinder-volume service.
-              type:
-                - 'null'
-                - string
-              x-openstack:
-                min-ver: '3.26'
-            binary:
-              description: The binary name of the services in the cluster.
-              type: string
-            created_at:
-              description: The date and time when the resource was created.
-              format: date-time
-              type: string
-            disabled_reason:
-              description: The reason for disabling a resource.
-              type:
-                - 'null'
-                - string
-            frozen:
-              description: Whether the cluster is frozen or not.
-              type:
-                - boolean
-                - 'null'
-              x-openstack:
-                min-ver: '3.26'
-            last_heartbeat:
-              description: The last periodic heartbeat received.
-              format: date-time
-              type: string
-            name:
-              description: The name of the service cluster.
-              type: string
-            num_down_hosts:
-              description: The number of down hosts in the cluster.
-              type: integer
-            num_hosts:
-              description: The number of hosts in the cluster.
-              type: integer
-            replication_status:
-              description: The cluster replication status. Only included in 
-                responses if configured.
-              enum:
-                - disabled
-                - enabled
-              type: string
-            state:
-              description: The state of the cluster.
-              enum:
-                - down
-                - up
-              type: string
-            status:
-              description: The status of the cluster.
-              enum:
-                - disabled
-                - enabled
-              type: string
-            updated_at:
-              description: The date and time when the resource was updated.
-              format: date-time
-              type: string
-          type: object
-      type: object
-    ClusterUpdateRequest:
-      additionalProperties: false
-      properties:
-        binary:
-          description: The binary name of the services in the cluster.
-          maxLength: 255
-          minLength: 0
-          type:
-            - 'null'
-            - string
-        disabled_reason:
-          description: The reason for disabling a resource.
-          type:
-            - 'null'
-            - string
-        name:
-          description: The name to identify the service cluster.
-          format: name
-          maxLength: 255
-          minLength: 1
-          type: string
-      required:
-        - name
-      type: object
-    ClusterUpdateResponse:
       properties:
         cluster:
           properties:
@@ -11448,6 +11750,65 @@ components:
             type: object
           type: array
       type: object
+    ClustersDisableDisable_37:
+      additionalProperties: false
+      properties:
+        binary:
+          description: |-
+            The binary name of the services in the cluster.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        disabled_reason:
+          description: |-
+            The reason for disabling a resource.
+          format: disabled_reason
+          type:
+            - 'null'
+            - string
+        name:
+          description: |-
+            The name to identify the service cluster.
+          format: name
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+        - name
+      type: object
+      x-openstack:
+        min-ver: '3.7'
+    ClustersDisableResponse:
+      description: Response of the project_id/clusters/disable:put operation
+      type: object
+    ClustersEnableEnable_37:
+      additionalProperties: false
+      properties:
+        binary:
+          description: |-
+            The binary name of the services in the cluster.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        name:
+          description: |-
+            The name to identify the service cluster.
+          format: name
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+        - name
+      type: object
+      x-openstack:
+        min-ver: '3.7'
+    ClustersEnableResponse:
+      description: Response of the project_id/clusters/enable:put operation
+      type: object
     ClustersListResponse:
       properties:
         clusters:
@@ -11491,38 +11852,122 @@ components:
     ConsistencygroupShowResponse:
       description: Response of the project_id/consistencygroups/id:get operation
       type: object
-    ConsistencygroupUpdateRequest:
-      description: Request of the project_id/consistencygroups/id:put operation
+    ConsistencygroupUpdate:
+      additionalProperties: true
+      properties:
+        consistencygroup:
+          additionalProperties: true
+          properties:
+            add_volumes:
+              type:
+                - 'null'
+                - string
+            description:
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            name:
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            remove_volumes:
+              type:
+                - 'null'
+                - string
+          required: []
+          type: object
+      required:
+        - consistencygroup
       type: object
-      x-openstack:
-        action-name: update
     ConsistencygroupUpdateResponse:
       description: Response of the project_id/consistencygroups/id:put operation
       type: object
-    ConsistencygroupsCreateRequest:
-      description: Request of the project_id/consistencygroups:post operation
+    ConsistencygroupsCreate:
+      additionalProperties: true
+      properties:
+        consistencygroup:
+          additionalProperties: true
+          description: |-
+            A consistency group.
+          properties:
+            availability_zone: {}
+            description:
+              description: |-
+                The consistency group description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            name:
+              description: |-
+                The consistency group name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            volume_types: {}
+          required:
+            - volume_types
+          type: object
+      required:
+        - consistencygroup
       type: object
-      x-openstack:
-        action-name: create
     ConsistencygroupsCreateResponse:
       description: Response of the project_id/consistencygroups:post operation
       type: object
-    ConsistencygroupsCreate_From_SrcCreate_From_SrcRequest:
-      description: Request of the 
-        project_id/consistencygroups/create_from_src:post operation
+    ConsistencygroupsCreate_From_SrcCreate_From_Src:
+      additionalProperties: true
+      properties:
+        consistencygroup-from-src:
+          additionalProperties: true
+          description: |-
+            The consistency group from source object.
+          properties:
+            cgsnapshot_id:
+              description: |-
+                The UUID of the consistency group snapshot.
+              type: string
+            description:
+              description: |-
+                The consistency group description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            name:
+              description: |-
+                The name of the object.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            source_cgid:
+              description: |-
+                The UUID of the source consistency group.
+              type: string
+          required: []
+          type: object
+      required:
+        - consistencygroup-from-src
       type: object
-      x-openstack:
-        action-name: create_from_src
     ConsistencygroupsCreate_From_SrcResponse:
       description: Response of the 
         project_id/consistencygroups/create_from_src:post operation
       type: object
-    ConsistencygroupsDeleteDeleteRequest:
-      description: Request of the project_id/consistencygroups/id/delete:post 
-        operation
-      type: object
-      x-openstack:
-        action-name: delete
     ConsistencygroupsDeleteResponse:
       description: Response of the project_id/consistencygroups/id/delete:post 
         operation
@@ -11538,12 +11983,39 @@ components:
       description: Response of the project_id/consistencygroups/id/update:put 
         operation
       type: object
-    ConsistencygroupsUpdateUpdateRequest:
-      description: Request of the project_id/consistencygroups/id/update:put 
-        operation
+    ConsistencygroupsUpdateUpdate:
+      additionalProperties: true
+      properties:
+        consistencygroup:
+          additionalProperties: true
+          properties:
+            add_volumes:
+              type:
+                - 'null'
+                - string
+            description:
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            name:
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            remove_volumes:
+              type:
+                - 'null'
+                - string
+          required: []
+          type: object
+      required:
+        - consistencygroup
       type: object
-      x-openstack:
-        action-name: update
     Default_TypeCreate_UpdateResponse:
       properties:
         default_type:
@@ -13001,7 +13473,7 @@ components:
             - rate
           type: object
       type: object
-    Manageable_SnapshotsCreateRequest:
+    Manageable_SnapshotsCreate:
       additionalProperties: false
       properties:
         snapshot:
@@ -13307,119 +13779,11 @@ components:
           type: array
       type: object
     Manageable_VolumesCreateRequest:
-      additionalProperties: false
-      properties:
-        volume:
-          additionalProperties: false
-          description: |-
-            A `volume` object.
-          properties:
-            availability_zone:
-              description: |-
-                The volume name.
-              maxLength: 255
-              minLength: 0
-              type:
-                - 'null'
-                - string
-            bootable:
-              description: |-
-                Enables or disables the bootable attribute. You
-                can boot an instance from a bootable volume.
-                See [valid boolean values](#valid-boolean-values)
-              enum:
-                - '0'
-                - '1'
-                - 'FALSE'
-                - false
-                - 'False'
-                - NO
-                - No
-                - OFF
-                - ON
-                - Off
-                - On
-                - 'TRUE'
-                - true
-                - 'True'
-                - YES
-                - Yes
-                - f
-                - 'false'
-                - n
-                - no
-                - off
-                - on
-                - t
-                - 'true'
-                - y
-                - yes
-              type:
-                - boolean
-                - string
-            description:
-              description: |-
-                The volume description.
-              maxLength: 255
-              minLength: 0
-              pattern: ^[\ 
-                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
-              type:
-                - 'null'
-                - string
-            host:
-              description: |-
-                The OpenStack Block Storage host where the existing resource resides.
-                Optional only if cluster field is provided.
-              maxLength: 255
-              minLength: 1
-              pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
-              type:
-                - 'null'
-                - string
-            metadata:
-              additionalProperties: false
-              description: |-
-                One or more metadata key and value pairs to be associated
-                with the new volume.
-              patternProperties:
-                ^[a-zA-Z0-9-_:. /]{1,255}$:
-                  maxLength: 255
-                  type: string
-              type:
-                - 'null'
-                - object
-            name:
-              description: |-
-                The volume name.
-              maxLength: 255
-              minLength: 0
-              type:
-                - 'null'
-                - string
-            ref:
-              description: |-
-                A reference to the existing volume. The internal
-                structure of this reference depends on the volume driver
-                implementation. For details about the required elements in the
-                structure, see the documentation for the volume driver.
-              type:
-                - object
-                - string
-            volume_type:
-              description: |-
-                The volume name.
-              maxLength: 255
-              minLength: 0
-              type:
-                - 'null'
-                - string
-          required:
-            - ref
-          type: object
-      required:
-        - volume
-      type: object
+      oneOf:
+        - $ref: '#/components/schemas/Manageable_VolumesCreate_30'
+        - $ref: '#/components/schemas/Manageable_VolumesCreate_316'
+      x-openstack:
+        discriminator: microversion
     Manageable_VolumesCreateResponse:
       additionalProperties: true
       description: A volume object.
@@ -13687,6 +14051,249 @@ components:
         - status
         - user_id
       type: object
+    Manageable_VolumesCreate_30:
+      additionalProperties: false
+      properties:
+        volume:
+          additionalProperties: false
+          description: |-
+            A `volume` object.
+          properties:
+            availability_zone:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            bootable:
+              description: |-
+                Enables or disables the bootable attribute. You
+                can boot an instance from a bootable volume.
+                See [valid boolean values](#valid-boolean-values)
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            description:
+              description: |-
+                The volume description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            host:
+              description: |-
+                The OpenStack Block Storage host where the existing resource resides.
+                Optional only if cluster field is provided.
+              maxLength: 255
+              minLength: 1
+              pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+              type:
+                - 'null'
+                - string
+            metadata:
+              additionalProperties: false
+              description: |-
+                One or more metadata key and value pairs to be associated
+                with the new volume.
+              patternProperties:
+                ^[a-zA-Z0-9-_:. /]{1,255}$:
+                  maxLength: 255
+                  type: string
+              type:
+                - 'null'
+                - object
+            name:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            ref:
+              description: |-
+                A reference to the existing volume. The internal
+                structure of this reference depends on the volume driver
+                implementation. For details about the required elements in the
+                structure, see the documentation for the volume driver.
+              type:
+                - object
+                - string
+            volume_type:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+          required:
+            - ref
+          type: object
+      required:
+        - volume
+      type: object
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.0'
+    Manageable_VolumesCreate_316:
+      additionalProperties: false
+      properties:
+        volume:
+          additionalProperties: false
+          description: |-
+            A `volume` object.
+          properties:
+            availability_zone:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            bootable:
+              description: |-
+                Enables or disables the bootable attribute. You
+                can boot an instance from a bootable volume.
+                See [valid boolean values](#valid-boolean-values)
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            cluster:
+              description: |-
+                The OpenStack Block Storage cluster where the resource resides. Optional
+                only if host field is provided.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            description:
+              description: |-
+                The volume description.
+              maxLength: 255
+              minLength: 0
+              pattern: ^[\ 
+                -\~ -¬®-ͷͺ-Ϳ΄-ΊΌΎ-ΡΣ-ԯԱ-Ֆՙ-֊֍-֏֑-ׇא-תׯ-״؆-؛؝-ۜ۞-܍ܐ-݊ݍ-ޱ߀-ߺ߽-࠭࠰-࠾ࡀ-࡛࡞ࡠ-ࡪࡰ-ࢎ࢘-ࣣ࣡-ঃঅ-ঌএ-ঐও-নপ-রলশ-হ়-ৄে-ৈো-ৎৗড়-ঢ়য়-ৣ০-৾ਁ-ਃਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹ਼ਾ-ੂੇ-ੈੋ-੍ੑਖ਼-ੜਫ਼੦-੶ઁ-ઃઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હ઼-ૅે-ૉો-્ૐૠ-ૣ૦-૱ૹ-૿ଁ-ଃଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହ଼-ୄେ-ୈୋ-୍୕-ୗଡ଼-ଢ଼ୟ-ୣ୦-୷ஂ-ஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹா-ூெ-ைொ-்ௐௗ௦-௺ఀ-ఌఎ-ఐఒ-నప-హ఼-ౄె-ైొ-్ౕ-ౖౘ-ౚౝౠ-ౣ౦-౯౷-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹ಼-ೄೆ-ೈೊ-್ೕ-ೖೝ-ೞೠ-ೣ೦-೯ೱ-ೳഀ-ഌഎ-ഐഒ-ൄെ-ൈൊ-൏ൔ-ൣ൦-ൿඁ-ඃඅ-ඖක-නඳ-රලව-ෆ්ා-ුූෘ-ෟ෦-෯ෲ-෴ก-ฺ฿-๛ກ-ຂຄຆ-ຊຌ-ຣລວ-ຽເ-ໄໆ່-໎໐-໙ໜ-ໟༀ-ཇཉ-ཬཱ-ྗྙ-ྼ྾-࿌࿎-࿚က-ჅჇჍა-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚ፝-፼ᎀ-᎙Ꭰ-Ᏽᏸ-ᏽ᐀-᚜ᚠ-ᛸᜀ-᜕ᜟ-᜶ᝀ-ᝓᝠ-ᝬᝮ-ᝰᝲ-ᝳក-៝០-៩៰-៹᠀-᠍᠏-᠙ᠠ-ᡸᢀ-ᢪᢰ-ᣵᤀ-ᤞᤠ-ᤫᤰ-᤻᥀᥄-ᥭᥰ-ᥴᦀ-ᦫᦰ-ᧉ᧐-᧚᧞-ᨛ᨞-ᩞ᩠-᩿᩼-᪉᪐-᪙᪠-᪭᪰-ᫎᬀ-ᭌ᭐-᭾ᮀ-᯳᯼-᰷᰻-᱉ᱍ-ᲈᲐ-ᲺᲽ-᳇᳐-ᳺᴀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ῄῆ-ΐῖ-Ί῝-`ῲ-ῴῶ-῾ - ‐-‧ - ⁰-ⁱ⁴-₎ₐ-ₜ₠-⃀⃐-⃰℀-↋←-␦⑀-⑊①-⭳⭶-⮕⮗-ⳳ⳹-ⴥⴧⴭⴰ-ⵧⵯ-⵰⵿-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⷠ-⹝⺀-⺙⺛-⻳⼀-⿕⿰-⿻　-〿ぁ-ゖ゙-ヿㄅ-ㄯㄱ-ㆎ㆐-㇣ㇰ-㈞㈠-ꒌ꒐-꓆ꓐ-ꘫꙀ-꛷꜀-ꟊꟐ-ꟑꟓꟕ-ꟙꟲ-꠬꠰-꠹ꡀ-꡷ꢀ-ꣅ꣎-꣙꣠-꥓꥟-ꥼꦀ-꧍ꧏ-꧙꧞-ꧾꨀ-ꨶꩀ-ꩍ꩐-꩙꩜-ꫂꫛ-꫶ꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꬰ-꭫ꭰ-꯭꯰-꯹가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִ-זּטּ-לּמּנּ-סּףּ-פּצּ-﯂ﯓ-ﶏﶒ-ﷇ﷏ﷰ-︙︠-﹒﹔-﹦﹨-﹫ﹰ-ﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦￨-￮￼-�]*$
+              type:
+                - 'null'
+                - string
+            host:
+              description: |-
+                The OpenStack Block Storage host where the existing resource resides.
+                Optional only if cluster field is provided.
+              maxLength: 255
+              minLength: 1
+              pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+              type:
+                - 'null'
+                - string
+            metadata:
+              additionalProperties: false
+              description: |-
+                One or more metadata key and value pairs to be associated
+                with the new volume.
+              patternProperties:
+                ^[a-zA-Z0-9-_:. /]{1,255}$:
+                  maxLength: 255
+                  type: string
+              type:
+                - 'null'
+                - object
+            name:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+            ref:
+              description: |-
+                A reference to the existing volume. The internal
+                structure of this reference depends on the volume driver
+                implementation. For details about the required elements in the
+                structure, see the documentation for the volume driver.
+              type:
+                - object
+                - string
+            volume_type:
+              description: |-
+                The volume name.
+              maxLength: 255
+              minLength: 0
+              type:
+                - 'null'
+                - string
+          required:
+            - ref
+          type: object
+      required:
+        - volume
+      type: object
+      x-openstack:
+        max-ver: '3.15'
+        min-ver: '3.16'
     Manageable_VolumesDetailResponse:
       properties:
         manageable-volumes:
@@ -14013,11 +14620,16 @@ components:
             type: object
           type: array
       type: object
-    Os_HostUpdateRequest:
-      description: Request of the project_id/os-hosts/id:put operation
+    Os_HostUpdate:
+      additionalProperties: true
+      properties:
+        status:
+          enum:
+            - disable
+            - enable
+          type: string
+      required: []
       type: object
-      x-openstack:
-        action-name: update
     Os_HostUpdateResponse:
       description: Response of the project_id/os-hosts/id:put operation
       type: object
@@ -14068,11 +14680,16 @@ components:
             type: object
           type: array
       type: object
-    Os_HostsUpdateRequest:
-      description: Request of the project_id/os-hosts:put operation
+    Os_HostsUpdate:
+      additionalProperties: true
+      properties:
+        status:
+          enum:
+            - disable
+            - enable
+          type: string
+      required: []
       type: object
-      x-openstack:
-        action-name: update
     Os_HostsUpdateResponse:
       description: Response of the project_id/os-hosts:put operation
       type: object
@@ -14125,16 +14742,297 @@ components:
       description: Response of the project_id/os-quota-sets/id/defaults:get 
         operation
       type: object
-    Os_ServiceUpdateRequest:
-      description: Request of the project_id/os-services/id:put operation
+    Os_ServicesDisableDisable:
+      additionalProperties: false
+      anyOf:
+        - required:
+            - binary
+        - required:
+            - service
+      properties:
+        binary:
+          description: |-
+            The binary name of the service.
+          maxLength: 255
+          minLength: 1
+          type: string
+        cluster:
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
+        service:
+          maxLength: 255
+          minLength: 1
+          type: string
+      type: object
+    Os_ServicesDisableResponse:
+      description: Response of the project_id/os-services/disable:put operation
+      type: object
+    Os_ServicesDisable_Log_ReasonDisable_Log_Reason:
+      additionalProperties: false
+      anyOf:
+        - required:
+            - binary
+        - required:
+            - service
+      properties:
+        binary:
+          description: |-
+            The binary name of the service.
+          maxLength: 255
+          minLength: 1
+          type: string
+        cluster:
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        disabled_reason:
+          description: |-
+            The reason for disabling a resource.
+          format: disabled_reason
+          maxLength: 255
+          minLength: 1
+          type: string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
+        service:
+          maxLength: 255
+          minLength: 1
+          type: string
+      type: object
+    Os_ServicesDisable_Log_ReasonResponse:
+      description: Response of the project_id/os-services/disable-log-reason:put
+        operation
+      type: object
+    Os_ServicesEnableEnable:
+      additionalProperties: false
+      anyOf:
+        - required:
+            - binary
+        - required:
+            - service
+      properties:
+        binary:
+          description: |-
+            The binary name of the service.
+          maxLength: 255
+          minLength: 1
+          type: string
+        cluster:
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
+        service:
+          maxLength: 255
+          minLength: 1
+          type: string
+      type: object
+    Os_ServicesEnableResponse:
+      description: Response of the project_id/os-services/enable:put operation
+      type: object
+    Os_ServicesFailover_HostFailover_Host:
+      additionalProperties: false
+      properties:
+        backend_id:
+          description: |-
+            The cluster name. Only in `cinder-volume` service.
+
+            **New in version 3.7**
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        cluster:
+          description: |-
+            The cluster name. Only in `cinder-volume` service.
+
+            **New in version 3.7**
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
+      type: object
+    Os_ServicesFailover_HostResponse:
+      description: Response of the project_id/os-services/failover_host:put 
+        operation
+      type: object
+    Os_ServicesFreezeFreeze:
+      additionalProperties: false
+      properties:
+        cluster:
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
+      type: object
+    Os_ServicesFreezeResponse:
+      description: Response of the project_id/os-services/freeze:put operation
+      type: object
+    Os_ServicesGet_LogGet_Log_332:
+      additionalProperties: false
+      properties:
+        binary:
+          description: |-
+            The binary name of the service.
+          enum:
+            - ''
+            - '*'
+            - cinder-api
+            - cinder-backup
+            - cinder-scheduler
+            - cinder-volume
+          type: string
+        prefix:
+          description: |-
+            The prefix for the log path we are querying,
+            for example `cinder.` or `sqlalchemy.engine`.
+            When not present or the empty string is passed all
+            log levels will be retrieved.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        server:
+          description: |-
+            The prefix for the log path we are querying,
+            for example `cinder.` or `sqlalchemy.engine`.
+            When not present or the empty string is passed all
+            log levels will be retrieved.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
       type: object
       x-openstack:
-        action-name: update
-    Os_ServiceUpdateResponse:
-      description: Response of the project_id/os-services/id:put operation
+        min-ver: '3.32'
+    Os_ServicesGet_LogResponse:
+      description: Response of the project_id/os-services/get-log:put operation
       type: object
     Os_ServicesListResponse:
       description: Response of the project_id/os-services:get operation
+      type: object
+    Os_ServicesSet_LogResponse:
+      description: Response of the project_id/os-services/set-log:put operation
+      type: object
+    Os_ServicesSet_LogSet_Log_332:
+      additionalProperties: false
+      properties:
+        binary:
+          description: |-
+            The binary name of the service.
+          enum:
+            - ''
+            - '*'
+            - cinder-api
+            - cinder-backup
+            - cinder-scheduler
+            - cinder-volume
+          type: string
+        level:
+          format: level
+          type:
+            - 'null'
+            - string
+        prefix:
+          description: |-
+            The prefix for the log path we are querying,
+            for example `cinder.` or `sqlalchemy.engine`.
+            When not present or the empty string is passed all
+            log levels will be retrieved.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        server:
+          description: |-
+            The prefix for the log path we are querying,
+            for example `cinder.` or `sqlalchemy.engine`.
+            When not present or the empty string is passed all
+            log levels will be retrieved.
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+      type: object
+      x-openstack:
+        min-ver: '3.32'
+    Os_ServicesThawResponse:
+      description: Response of the project_id/os-services/thaw:put operation
+      type: object
+    Os_ServicesThawThaw:
+      additionalProperties: false
+      properties:
+        cluster:
+          maxLength: 255
+          minLength: 0
+          type:
+            - 'null'
+            - string
+        host:
+          description: |-
+            The name of the host.
+          maxLength: 255
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-._#@:/+\[\]]*$
+          type:
+            - 'null'
+            - string
       type: object
     Os_Snapshot_ManageCreate:
       additionalProperties: false
@@ -15276,28 +16174,30 @@ components:
       required:
         - snapshot
       type: object
-    SnapshotsActionOs-Force_DeleteRequest:
-      description: Empty body for os-force_delete action
-      properties:
-        os-force_delete:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-force_delete
-    SnapshotsActionOs-UnmanageRequest:
-      description: Empty body for os-unmanage action
-      properties:
-        os-unmanage:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-unmanage
     SnapshotsActionOs-Update_Snapshot_StatusResponse:
       description: Response of the 
         project_id/snapshots/id/action:post:os-update_snapshot_status action
       type: object
       x-openstack:
         action-name: os-update_snapshot_status
+    SnapshotsActionUnmanage:
+      additionalProperties: false
+      properties:
+        os-unmanage: {}
+      required:
+        - os-unmanage
+      type: object
+      x-openstack:
+        action-name: os-unmanage
+    SnapshotsAction_Force_Delete:
+      additionalProperties: false
+      properties:
+        os-force_delete: {}
+      required:
+        - os-force_delete
+      type: object
+      x-openstack:
+        action-name: os-force_delete
     SnapshotsAction_Reset_Status:
       additionalProperties: false
       properties:
@@ -15843,10 +16743,8 @@ components:
       required:
         - snapshots
       type: object
-    SnapshotsMetadataCreateRequest:
-      additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each 
-        metadata key and value pair is 255 bytes.
+    SnapshotsMetadataCreate:
+      additionalProperties: true
       properties:
         metadata:
           additionalProperties: false
@@ -15854,7 +16752,8 @@ components:
             One or more metadata key and value pairs for the
             snapshot, if any.
           patternProperties:
-            ^[a-zA-Z0-9-_:. /]{1,255}$:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              description: The snapshot metadata value.
               maxLength: 255
               type: string
           type: object
@@ -15915,18 +16814,16 @@ components:
       required:
         - meta
       type: object
-    SnapshotsMetadataUpdateRequest:
-      additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each 
-        metadata key and value pair is 255 bytes.
+    SnapshotsMetadataUpdate:
+      additionalProperties: true
       properties:
         meta:
           additionalProperties: false
-          description: A metadata object. Contains one or more metadata key and 
-            value pairs that are associated with the resource.
           maxProperties: 1
+          minProperties: 1
           patternProperties:
-            ^[a-zA-Z0-9-_:. /]{1,255}$:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              description: The snapshot metadata value.
               maxLength: 255
               type: string
           type: object
@@ -15951,10 +16848,8 @@ components:
       required:
         - meta
       type: object
-    SnapshotsMetadataUpdate_AllRequest:
-      additionalProperties: false
-      description: Metadata key and value pairs. The maximum size for each 
-        metadata key and value pair is 255 bytes.
+    SnapshotsMetadataUpdate_All:
+      additionalProperties: true
       properties:
         metadata:
           additionalProperties: false
@@ -15962,7 +16857,8 @@ components:
             One or more metadata key and value pairs for the
             snapshot, if any.
           patternProperties:
-            ^[a-zA-Z0-9-_:. /]{1,255}$:
+            ^[a-zA-Z0-9-_:. ]{1,255}$:
+              description: The snapshot metadata value.
               maxLength: 255
               type: string
           type: object
@@ -18071,28 +18967,21 @@ components:
       type: object
       x-openstack:
         action-name: os-unset_image_metadata
-    VolumesActionOs-Begin_DetachingRequest:
-      description: Empty body for os-begin_detaching action
+    VolumesActionIndex:
+      additionalProperties: false
       properties:
-        os-begin_detaching:
-          type: 'null'
+        os-show_image_metadata: {}
+      required:
+        - os-show_image_metadata
       type: object
       x-openstack:
-        action-name: os-begin_detaching
+        action-name: os-show_image_metadata
     VolumesActionOs-Extend_Volume_CompletionResponse:
       description: Response of the 
         project_id/volumes/id/action:post:os-extend_volume_completion action
       type: object
       x-openstack:
         action-name: os-extend_volume_completion
-    VolumesActionOs-Force_DeleteRequest:
-      description: Empty body for os-force_delete action
-      properties:
-        os-force_delete:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-force_delete
     VolumesActionOs-Migrate_VolumeRequest:
       oneOf:
         - $ref: '#/components/schemas/VolumesAction_Migrate_Volume_30'
@@ -18100,22 +18989,6 @@ components:
       x-openstack:
         action-name: os-migrate_volume
         discriminator: microversion
-    VolumesActionOs-ReserveRequest:
-      description: Empty body for os-reserve action
-      properties:
-        os-reserve:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reserve
-    VolumesActionOs-Roll_DetachingRequest:
-      description: Empty body for os-roll_detaching action
-      properties:
-        os-roll_detaching:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-roll_detaching
     VolumesActionOs-Set_Image_MetadataResponse:
       additionalProperties: false
       description: Metadata key and value pairs. The maximum size for each 
@@ -18134,14 +19007,6 @@ components:
       required:
         - metadata
       type: object
-    VolumesActionOs-Show_Image_MetadataRequest:
-      description: Empty body for os-show_image_metadata action
-      properties:
-        os-show_image_metadata:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-show_image_metadata
     VolumesActionOs-Show_Image_MetadataResponse:
       additionalProperties: false
       description: Metadata key and value pairs. The maximum size for each 
@@ -18160,22 +19025,6 @@ components:
       required:
         - metadata
       type: object
-    VolumesActionOs-UnmanageRequest:
-      description: Empty body for os-unmanage action
-      properties:
-        os-unmanage:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-unmanage
-    VolumesActionOs-UnreserveRequest:
-      description: Empty body for os-unreserve action
-      properties:
-        os-unreserve:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-unreserve
     VolumesActionOs-Volume_Upload_ImageRequest:
       oneOf:
         - $ref: '#/components/schemas/VolumesAction_Volume_Upload_Image_30'
@@ -18231,14 +19080,32 @@ components:
           description: The associated volume type name for the volume.
           type: string
       type: object
-    VolumesActionRevertRequest:
-      description: Empty body for revert action
+    VolumesActionRevert_340:
+      additionalProperties: false
       properties:
         revert:
-          type: 'null'
+          additionalProperties: true
+          properties:
+            snapshot_id:
+              type:
+                - 'null'
+                - string
+          type: object
+      required:
+        - revert
       type: object
       x-openstack:
         action-name: revert
+        min-ver: '3.40'
+    VolumesActionUnmanage:
+      additionalProperties: false
+      properties:
+        os-unmanage: {}
+      required:
+        - os-unmanage
+      type: object
+      x-openstack:
+        action-name: os-unmanage
     VolumesAction_Attach:
       additionalProperties: false
       properties:
@@ -18273,6 +19140,15 @@ components:
       type: object
       x-openstack:
         action-name: os-attach
+    VolumesAction_Begin_Detaching:
+      additionalProperties: false
+      properties:
+        os-begin_detaching: {}
+      required:
+        - os-begin_detaching
+      type: object
+      x-openstack:
+        action-name: os-begin_detaching
     VolumesAction_Detach:
       additionalProperties: false
       properties:
@@ -18330,6 +19206,15 @@ components:
       type: object
       x-openstack:
         action-name: os-extend_volume_completion
+    VolumesAction_Force_Delete:
+      additionalProperties: false
+      properties:
+        os-force_delete: {}
+      required:
+        - os-force_delete
+      type: object
+      x-openstack:
+        action-name: os-force_delete
     VolumesAction_Force_Detach:
       additionalProperties: false
       properties:
@@ -18608,6 +19493,15 @@ components:
       x-openstack:
         action-name: os-reimage
         min-ver: '3.68'
+    VolumesAction_Reserve:
+      additionalProperties: false
+      properties:
+        os-reserve: {}
+      required:
+        - os-reserve
+      type: object
+      x-openstack:
+        action-name: os-reserve
     VolumesAction_Reset_Status:
       additionalProperties: false
       properties:
@@ -18659,6 +19553,15 @@ components:
       type: object
       x-openstack:
         action-name: os-retype
+    VolumesAction_Roll_Detaching:
+      additionalProperties: false
+      properties:
+        os-roll_detaching: {}
+      required:
+        - os-roll_detaching
+      type: object
+      x-openstack:
+        action-name: os-roll_detaching
     VolumesAction_Set_Bootable:
       additionalProperties: false
       properties:
@@ -18723,6 +19626,15 @@ components:
       type: object
       x-openstack:
         action-name: os-terminate_connection
+    VolumesAction_Unreserve:
+      additionalProperties: false
+      properties:
+        os-unreserve: {}
+      required:
+        - os-unreserve
+      type: object
+      x-openstack:
+        action-name: os-unreserve
     VolumesAction_Volume_Readonly_Update:
       additionalProperties: false
       properties:

@@ -11796,7 +11796,9 @@ components:
           minProperties: 1
           properties:
             description:
-              description: A description of the endpoint.
+              description: |-
+                The endpoint description. It is returned only when set on the
+                resource.
               type:
                 - 'null'
                 - string
@@ -11819,7 +11821,13 @@ components:
                 - public
               type: string
             name:
-              description: The name of the endpoint.
+              description: |-
+                (Deprecated) The endpoint name. The field will only be returned in responses
+                when set on the resource.
+
+                This field is deprecated as it provides no value. Endpoints are better
+                described by the combination of service, region and interface they describe
+                or by their ID.
               type: string
             region:
               description: |-
@@ -11932,7 +11940,9 @@ components:
             An `endpoint` object.
           properties:
             description:
-              description: A description of the endpoint.
+              description: |-
+                The endpoint description. It is returned only when set on the
+                resource.
               type:
                 - 'null'
                 - string
@@ -11960,7 +11970,13 @@ components:
                 - public
               type: string
             name:
-              description: The name of the endpoint.
+              description: |-
+                (Deprecated) The endpoint name. The field will only be returned in responses
+                when set on the resource.
+
+                This field is deprecated as it provides no value. Endpoints are better
+                described by the combination of service, region and interface they describe
+                or by their ID.
               type: string
             region:
               description: (Deprecated in v3.2) The geographic location of the 

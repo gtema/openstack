@@ -31,8 +31,9 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::os_show_image_metadata;
+use serde_json::Value;
 
-/// Empty body for os-show_image_metadata action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct VolumeCommand {
     /// Request Query parameters
@@ -42,6 +43,9 @@ pub struct VolumeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    os_show_image_metadata: Value,
 }
 
 /// Query parameters
@@ -79,6 +83,10 @@ impl VolumeCommand {
         let mut ep_builder = os_show_image_metadata::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_show_image_metadata data
+        ep_builder.os_show_image_metadata(self.os_show_image_metadata.clone());
 
         let ep = ep_builder
             .build()

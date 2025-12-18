@@ -46,6 +46,10 @@ pub struct CgsnapshotCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A consistency group snapshot object.
+    #[command(flatten)]
+    cgsnapshot: Cgsnapshot,
+    /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
@@ -58,6 +62,21 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// Cgsnapshot Body data
+#[derive(Args, Clone)]
+struct Cgsnapshot {
+    /// The UUID of the consistency group.
+    #[arg(help_heading = "Body parameters", long)]
+    consistencygroup_id: String,
+
+    /// The consistency group snapshot description.
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// The name of the snapshot. Default is `None`.
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+}
 
 impl CgsnapshotCommand {
     /// Perform command action
@@ -78,6 +97,26 @@ impl CgsnapshotCommand {
         let mut ep_builder = create::Request::builder();
 
         // Set body parameters
+        // Set Request.cgsnapshot data
+        let args = &self.cgsnapshot;
+        let mut cgsnapshot_builder = create::CgsnapshotBuilder::default();
+
+        cgsnapshot_builder.consistencygroup_id(&args.consistencygroup_id);
+
+        if let Some(val) = &args.description {
+            cgsnapshot_builder.description(val);
+        }
+
+        if let Some(val) = &args.name {
+            cgsnapshot_builder.name(val);
+        }
+
+        ep_builder.cgsnapshot(
+            cgsnapshot_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
+
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());
         }

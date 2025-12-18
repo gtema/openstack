@@ -17,4 +17,3 @@
 
 //! `response` REST operations of block_storage
 pub mod list;
-pub mod set;

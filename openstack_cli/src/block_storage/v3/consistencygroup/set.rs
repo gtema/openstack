@@ -60,6 +60,9 @@ pub struct ConsistencygroupCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    #[command(flatten)]
+    consistencygroup: Consistencygroup,
+    /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
@@ -79,6 +82,37 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+}
+/// Consistencygroup Body data
+#[derive(Args, Clone)]
+struct Consistencygroup {
+    #[arg(help_heading = "Body parameters", long)]
+    add_volumes: Option<String>,
+
+    /// Set explicit NULL for the add_volumes
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "add_volumes")]
+    no_add_volumes: bool,
+
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
+    #[arg(help_heading = "Body parameters", long)]
+    remove_volumes: Option<String>,
+
+    /// Set explicit NULL for the remove_volumes
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "remove_volumes")]
+    no_remove_volumes: bool,
 }
 
 impl ConsistencygroupCommand {
@@ -102,6 +136,39 @@ impl ConsistencygroupCommand {
         ep_builder.id(&self.path.id);
 
         // Set body parameters
+        // Set Request.consistencygroup data
+        let args = &self.consistencygroup;
+        let mut consistencygroup_builder = set::ConsistencygroupBuilder::default();
+        if let Some(val) = &args.add_volumes {
+            consistencygroup_builder.add_volumes(Some(val.into()));
+        } else if args.no_add_volumes {
+            consistencygroup_builder.add_volumes(None);
+        }
+
+        if let Some(val) = &args.description {
+            consistencygroup_builder.description(Some(val.into()));
+        } else if args.no_description {
+            consistencygroup_builder.description(None);
+        }
+
+        if let Some(val) = &args.name {
+            consistencygroup_builder.name(Some(val.into()));
+        } else if args.no_name {
+            consistencygroup_builder.name(None);
+        }
+
+        if let Some(val) = &args.remove_volumes {
+            consistencygroup_builder.remove_volumes(Some(val.into()));
+        } else if args.no_remove_volumes {
+            consistencygroup_builder.remove_volumes(None);
+        }
+
+        ep_builder.consistencygroup(
+            consistencygroup_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
+
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());
         }

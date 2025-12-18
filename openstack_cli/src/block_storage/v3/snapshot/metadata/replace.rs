@@ -33,6 +33,7 @@ use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot::metadata::replace;
 use openstack_types::block_storage::v3::snapshot::metadata::response::replace::MetadataResponse;
+use serde_json::Value;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -48,6 +49,10 @@ pub struct MetadataCommand {
     /// One or more metadata key and value pairs for the snapshot, if any.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Vec<(String, String)>,
+    /// Additional properties to be sent with the request
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -90,6 +95,10 @@ impl MetadataCommand {
         // Set Request.metadata data
 
         ep_builder.metadata(self.metadata.iter().cloned());
+
+        if let Some(properties) = &self.properties {
+            ep_builder.properties(properties.iter().cloned());
+        }
 
         let ep = ep_builder
             .build()
