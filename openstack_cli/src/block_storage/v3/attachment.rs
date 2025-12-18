@@ -25,7 +25,7 @@ pub mod create_327;
 pub mod create_354;
 pub mod delete;
 pub mod list;
-pub mod os_complete;
+pub mod os_complete_344;
 pub mod set_327;
 pub mod show;
 
@@ -63,7 +63,8 @@ pub struct AttachmentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AttachmentCommands {
-    Complete(Box<os_complete::AttachmentCommand>),
+    #[command(visible_alias = "complete")]
+    Complete344(Box<os_complete_344::AttachmentCommand>),
     #[command(visible_alias = "create")]
     Create354(Box<create_354::AttachmentCommand>),
     Create327(Box<create_327::AttachmentCommand>),
@@ -82,7 +83,7 @@ impl AttachmentCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            AttachmentCommands::Complete(cmd) => cmd.take_action(parsed_args, session).await,
+            AttachmentCommands::Complete344(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Create354(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Create327(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,

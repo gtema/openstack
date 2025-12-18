@@ -22,5 +22,5 @@ pub mod delete;
 pub mod get;
 pub mod list;
 pub mod list_detailed;
-pub mod os_complete;
+pub mod os_complete_344;
 pub mod set_327;
