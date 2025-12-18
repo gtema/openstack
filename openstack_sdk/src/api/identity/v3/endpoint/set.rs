@@ -45,7 +45,7 @@ pub enum Interface {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Endpoint<'a> {
-    /// A description of the endpoint.
+    /// The endpoint description. It is returned only when set on the resource.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -66,7 +66,12 @@ pub struct Endpoint<'a> {
     #[builder(default)]
     pub(crate) interface: Option<Interface>,
 
-    /// The name of the endpoint.
+    /// (Deprecated) The endpoint name. The field will only be returned in
+    /// responses when set on the resource.
+    ///
+    /// This field is deprecated as it provides no value. Endpoints are better
+    /// described by the combination of service, region and interface they
+    /// describe or by their ID.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,

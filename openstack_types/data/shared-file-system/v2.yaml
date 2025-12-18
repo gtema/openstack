@@ -2331,7 +2331,6 @@ paths:
         min-ver: '2.0'
   /shares/manage:
     post:
-      deprecated: true
       operationId: shares/manage:post
       requestBody:
         content:
@@ -2348,7 +2347,6 @@ paths:
       tags:
         - shares
       x-openstack:
-        max-ver: '2.48'
         min-ver: '2.7'
   /shares/{id}:
     delete:
@@ -2407,7 +2405,7 @@ paths:
                 - $ref: '#/components/schemas/SharesActionAllow_AccessRequest'
                 - $ref: '#/components/schemas/SharesActionDeny_AccessRequest'
                 - $ref: '#/components/schemas/SharesActionExtendRequest'
-                - $ref: '#/components/schemas/SharesActionForce_DeleteRequest'
+                - $ref: '#/components/schemas/SharesActionExtend_Legacy_20'
                 - $ref: '#/components/schemas/SharesActionMigration_CancelRequest'
                 - $ref: '#/components/schemas/SharesActionMigration_CompleteRequest'
                 - $ref: '#/components/schemas/SharesActionMigration_Get_ProgressRequest'
@@ -2415,17 +2413,17 @@ paths:
                 - $ref: '#/components/schemas/SharesActionOs-Access_ListRequest'
                 - $ref: '#/components/schemas/SharesActionOs-Allow_AccessRequest'
                 - $ref: '#/components/schemas/SharesActionOs-Deny_AccessRequest'
-                - $ref: '#/components/schemas/SharesActionOs-ExtendRequest'
-                - $ref: '#/components/schemas/SharesActionOs-Force_DeleteRequest'
-                - $ref: '#/components/schemas/SharesActionOs-Reset_StatusRequest'
-                - $ref: '#/components/schemas/SharesActionOs-ShrinkRequest'
-                - $ref: '#/components/schemas/SharesActionReset_StatusRequest'
-                - $ref: '#/components/schemas/SharesActionReset_Task_StateRequest'
-                - $ref: '#/components/schemas/SharesActionRestoreRequest'
+                - $ref: '#/components/schemas/SharesActionReset_Task_State_222'
                 - $ref: '#/components/schemas/SharesActionRevertRequest'
-                - $ref: '#/components/schemas/SharesActionShrinkRequest'
-                - $ref: '#/components/schemas/SharesActionSoft_DeleteRequest'
-                - $ref: '#/components/schemas/SharesActionUnmanageRequest'
+                - $ref: '#/components/schemas/SharesActionShare_Force_Delete_27'
+                - $ref: '#/components/schemas/SharesActionShare_Force_Delete_Legacy_20'
+                - $ref: '#/components/schemas/SharesActionShare_Reset_Status_27'
+                - $ref: '#/components/schemas/SharesActionShare_Reset_Status_Legacy_20'
+                - $ref: '#/components/schemas/SharesActionShare_Restore_269'
+                - $ref: '#/components/schemas/SharesActionShare_Soft_Delete_269'
+                - $ref: '#/components/schemas/SharesActionShrink_27'
+                - $ref: '#/components/schemas/SharesActionShrink_Legacy_20'
+                - $ref: '#/components/schemas/SharesActionUnmanage_27'
               x-openstack:
                 discriminator: action
       responses:
@@ -2836,6 +2834,22 @@ paths:
       description: |-
         Returns a summary list of shares.
       operationId: snapshots:get
+      parameters:
+        - $ref: '#/components/parameters/snapshots_all_tenants'
+        - $ref: '#/components/parameters/snapshots_description'
+        - $ref: '#/components/parameters/snapshots_description_'
+        - $ref: '#/components/parameters/snapshots_limit'
+        - $ref: '#/components/parameters/snapshots_metadata'
+        - $ref: '#/components/parameters/snapshots_name'
+        - $ref: '#/components/parameters/snapshots_name_'
+        - $ref: '#/components/parameters/snapshots_offset'
+        - $ref: '#/components/parameters/snapshots_project_id'
+        - $ref: '#/components/parameters/snapshots_share_id'
+        - $ref: '#/components/parameters/snapshots_size'
+        - $ref: '#/components/parameters/snapshots_sort_dir'
+        - $ref: '#/components/parameters/snapshots_sort_key'
+        - $ref: '#/components/parameters/snapshots_status'
+        - $ref: '#/components/parameters/snapshots_with_count'
       responses:
         '200':
           content:
@@ -4414,6 +4428,43 @@ components:
       required: true
       schema:
         type: string
+    snapshots_all_tenants:
+      description: Set 1 to list resources for all projects;set 0 to list 
+        resources only for the current project
+      in: query
+      name: all_tenants
+      schema:
+        description: Set 1 to list resources for all projects;set 0 to list 
+          resources only for the current project
+        enum:
+          - 0
+          - 1
+        type:
+          - boolean
+          - string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_description:
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_description_:
+      in: query
+      name: description~
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
     snapshots_edit_id:
       description: id parameter for /snapshots/{id}/edit API
       in: path
@@ -4444,6 +4495,30 @@ components:
       required: true
       schema:
         type: string
+    snapshots_limit:
+      in: query
+      name: limit
+      schema:
+        maximum: 2147483647
+        minLength: 1
+        minimum: 0
+        pattern: ^[0-9]*$
+        type:
+          - integer
+          - string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_metadata:
+      in: query
+      name: metadata
+      schema:
+        maxLength: 4096
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
     snapshots_metadata_key:
       description: key parameter for /snapshots/{resource_id}/metadata/{key} API
       in: path
@@ -4459,6 +4534,144 @@ components:
       required: true
       schema:
         type: string
+    snapshots_name:
+      in: query
+      name: name
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_name_:
+      in: query
+      name: name~
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_offset:
+      in: query
+      name: offset
+      schema:
+        maximum: 2147483647
+        minLength: 1
+        minimum: 0
+        pattern: ^[0-9]*$
+        type:
+          - integer
+          - string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_project_id:
+      in: query
+      name: project_id
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+        resource_link: identity/v3/project.id
+    snapshots_share_id:
+      in: query
+      name: share_id
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_size:
+      in: query
+      name: size
+      schema:
+        maximum: 2147483647
+        minLength: 1
+        minimum: 0
+        pattern: ^[0-9]*$
+        type:
+          - integer
+          - string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_sort_dir:
+      in: query
+      name: sort_dir
+      schema:
+        default: desc
+        description: Sort direction
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_sort_key:
+      in: query
+      name: sort_key
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_status:
+      in: query
+      name: status
+      schema:
+        maxLength: 255
+        minLength: 1
+        type: string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
+    snapshots_with_count:
+      in: query
+      name: with_count
+      schema:
+        default: false
+        description: Show count in share snapshot list API response
+        enum:
+          - '0'
+          - '1'
+          - 'FALSE'
+          - false
+          - 'False'
+          - NO
+          - No
+          - OFF
+          - ON
+          - Off
+          - On
+          - 'TRUE'
+          - true
+          - 'True'
+          - YES
+          - Yes
+          - f
+          - 'false'
+          - n
+          - no
+          - off
+          - on
+          - t
+          - 'true'
+          - y
+          - yes
+        type:
+          - boolean
+          - string
+      x-openstack:
+        max-ver: '2.35'
+        max_ver: '2.78'
     types_action_id:
       description: id parameter for /types/{id}/action API
       in: path
@@ -6303,29 +6516,121 @@ components:
       x-openstack:
         action-name: deny_access
     SharesActionExtendRequest:
-      description: Empty body for extend action
+      oneOf:
+        - $ref: '#/components/schemas/SharesActionExtend_264'
+        - $ref: '#/components/schemas/SharesActionExtend_27'
+      x-openstack:
+        action-name: extend
+        discriminator: microversion
+    SharesActionExtendResponse:
+      type: 'null'
+      x-openstack:
+        action-name: extend
+    SharesActionExtend_264:
+      additionalProperties: false
       properties:
         extend:
-          type: 'null'
+          additionalProperties: true
+          properties:
+            force:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            new_size:
+              maximum: 2147483647
+              minLength: 1
+              minimum: 0
+              pattern: ^[0-9]*$
+              type:
+                - integer
+                - string
+          required:
+            - new_size
+          type: object
+      required:
+        - extend
       type: object
       x-openstack:
         action-name: extend
-    SharesActionExtendResponse:
-      description: Response of the shares/id/action:post:extend action
-      type: object
-      x-openstack:
-        action-name: extend
-    SharesActionForce_DeleteRequest:
-      description: Empty body for force_delete action
+        max-ver: '2.63'
+        min-ver: '2.64'
+    SharesActionExtend_27:
+      additionalProperties: false
       properties:
-        force_delete:
-          type: 'null'
+        extend:
+          additionalProperties: true
+          properties:
+            new_size:
+              maximum: 2147483647
+              minLength: 1
+              minimum: 0
+              pattern: ^[0-9]*$
+              type:
+                - integer
+                - string
+          required:
+            - new_size
+          type: object
+      required:
+        - extend
       type: object
       x-openstack:
-        action-name: force_delete
-    SharesActionForce_DeleteResponse:
-      description: Response of the shares/id/action:post:force_delete action
+        action-name: extend
+        max-ver: '2.63'
+        min-ver: '2.7'
+    SharesActionExtend_Legacy_20:
+      additionalProperties: false
+      properties:
+        os-extend:
+          additionalProperties: true
+          properties:
+            new_size:
+              maximum: 2147483647
+              minLength: 1
+              minimum: 0
+              pattern: ^[0-9]*$
+              type:
+                - integer
+                - string
+          required:
+            - new_size
+          type: object
+      required:
+        - os-extend
       type: object
+      x-openstack:
+        action-name: os-extend
+        max-ver: '2.6'
+        min-ver: '2.0'
+    SharesActionForce_DeleteResponse:
+      type: 'null'
       x-openstack:
         action-name: force_delete
     SharesActionMigration_CancelRequest:
@@ -6421,95 +6726,86 @@ components:
       type: object
       x-openstack:
         action-name: os-deny_access
-    SharesActionOs-ExtendRequest:
-      description: Empty body for os-extend action
-      properties:
-        os-extend:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-extend
     SharesActionOs-ExtendResponse:
-      description: Response of the shares/id/action:post:os-extend action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: os-extend
-    SharesActionOs-Force_DeleteRequest:
-      description: Empty body for os-force_delete action
-      properties:
-        os-force_delete:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-force_delete
     SharesActionOs-Force_DeleteResponse:
-      description: Response of the shares/id/action:post:os-force_delete action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: os-force_delete
-    SharesActionOs-Reset_StatusRequest:
-      description: Empty body for os-reset_status action
-      properties:
-        os-reset_status:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reset_status
     SharesActionOs-Reset_StatusResponse:
-      description: Response of the shares/id/action:post:os-reset_status action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: os-reset_status
-    SharesActionOs-ShrinkRequest:
-      description: Empty body for os-shrink action
-      properties:
-        os-shrink:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-shrink
     SharesActionOs-ShrinkResponse:
-      description: Response of the shares/id/action:post:os-shrink action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: os-shrink
-    SharesActionReset_StatusRequest:
-      description: Empty body for reset_status action
-      properties:
-        reset_status:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: reset_status
     SharesActionReset_StatusResponse:
-      description: Response of the shares/id/action:post:reset_status action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: reset_status
-    SharesActionReset_Task_StateRequest:
-      description: Empty body for reset_task_state action
+    SharesActionReset_Task_StateResponse:
+      type: 'null'
+      x-openstack:
+        action-name: reset_task_state
+    SharesActionReset_Task_State_222:
+      additionalProperties: false
       properties:
         reset_task_state:
-          type: 'null'
+          additionalProperties: true
+          properties:
+            os-task_state:
+              enum:
+                - 
+                - data_copying_cancelled
+                - data_copying_completed
+                - data_copying_completing
+                - data_copying_error
+                - data_copying_in_progress
+                - data_copying_starting
+                - migration_cancelled
+                - migration_completing
+                - migration_driver_in_progress
+                - migration_driver_phase1_done
+                - migration_error
+                - migration_in_progress
+                - migration_starting
+                - migration_success
+              type:
+                - 'null'
+                - string
+            task_state:
+              enum:
+                - 
+                - data_copying_cancelled
+                - data_copying_completed
+                - data_copying_completing
+                - data_copying_error
+                - data_copying_in_progress
+                - data_copying_starting
+                - migration_cancelled
+                - migration_completing
+                - migration_driver_in_progress
+                - migration_driver_phase1_done
+                - migration_error
+                - migration_in_progress
+                - migration_starting
+                - migration_success
+              type:
+                - 'null'
+                - string
+          required: []
+          type: object
+      required:
+        - reset_task_state
       type: object
       x-openstack:
         action-name: reset_task_state
-    SharesActionReset_Task_StateResponse:
-      description: Response of the shares/id/action:post:reset_task_state action
-      type: object
-      x-openstack:
-        action-name: reset_task_state
-    SharesActionRestoreRequest:
-      description: Empty body for restore action
-      properties:
-        restore:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: restore
+        min-ver: '2.22'
     SharesActionRestoreResponse:
-      description: Response of the shares/id/action:post:restore action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: restore
     SharesActionRevertRequest:
@@ -6525,45 +6821,289 @@ components:
       type: object
       x-openstack:
         action-name: revert
-    SharesActionShrinkRequest:
-      description: Empty body for shrink action
+    SharesActionShare_Force_Delete_27:
+      additionalProperties: false
+      properties:
+        force_delete: {}
+      required:
+        - force_delete
+      type: object
+      x-openstack:
+        action-name: force_delete
+        min-ver: '2.7'
+    SharesActionShare_Force_Delete_Legacy_20:
+      additionalProperties: false
+      properties:
+        os-force_delete: {}
+      required:
+        - os-force_delete
+      type: object
+      x-openstack:
+        action-name: os-force_delete
+        max-ver: '2.6'
+        min-ver: '2.0'
+    SharesActionShare_Reset_Status_27:
+      additionalProperties: false
+      properties:
+        reset_status:
+          additionalProperties: true
+          properties:
+            os-status:
+              enum:
+                - available
+                - awaiting_transfer
+                - backup_creating
+                - backup_restoring
+                - backup_restoring_error
+                - creating
+                - creating_from_snapshot
+                - deferred_deleting
+                - deleted
+                - deleting
+                - ensuring
+                - error
+                - error_deferred_deleting
+                - error_deleting
+                - extending
+                - extending_error
+                - manage_error
+                - manage_error_unmanage_starting
+                - manage_starting
+                - migrating
+                - migrating_to
+                - replication_change
+                - restoring
+                - reverting
+                - reverting_error
+                - server_migrating
+                - server_migrating_to
+                - shrinking
+                - shrinking_error
+                - shrinking_possible_data_loss_error
+                - unmanage_error
+                - unmanage_starting
+                - unmanaged
+              type: string
+            status:
+              enum:
+                - available
+                - awaiting_transfer
+                - backup_creating
+                - backup_restoring
+                - backup_restoring_error
+                - creating
+                - creating_from_snapshot
+                - deferred_deleting
+                - deleted
+                - deleting
+                - ensuring
+                - error
+                - error_deferred_deleting
+                - error_deleting
+                - extending
+                - extending_error
+                - manage_error
+                - manage_error_unmanage_starting
+                - manage_starting
+                - migrating
+                - migrating_to
+                - replication_change
+                - restoring
+                - reverting
+                - reverting_error
+                - server_migrating
+                - server_migrating_to
+                - shrinking
+                - shrinking_error
+                - shrinking_possible_data_loss_error
+                - unmanage_error
+                - unmanage_starting
+                - unmanaged
+              type: string
+          required: []
+          type: object
+      required:
+        - reset_status
+      type: object
+      x-openstack:
+        action-name: reset_status
+        min-ver: '2.7'
+    SharesActionShare_Reset_Status_Legacy_20:
+      additionalProperties: false
+      properties:
+        os-reset_status:
+          additionalProperties: true
+          properties:
+            os-status:
+              enum:
+                - available
+                - awaiting_transfer
+                - backup_creating
+                - backup_restoring
+                - backup_restoring_error
+                - creating
+                - creating_from_snapshot
+                - deferred_deleting
+                - deleted
+                - deleting
+                - ensuring
+                - error
+                - error_deferred_deleting
+                - error_deleting
+                - extending
+                - extending_error
+                - manage_error
+                - manage_error_unmanage_starting
+                - manage_starting
+                - migrating
+                - migrating_to
+                - replication_change
+                - restoring
+                - reverting
+                - reverting_error
+                - server_migrating
+                - server_migrating_to
+                - shrinking
+                - shrinking_error
+                - shrinking_possible_data_loss_error
+                - unmanage_error
+                - unmanage_starting
+                - unmanaged
+              type: string
+            status:
+              enum:
+                - available
+                - awaiting_transfer
+                - backup_creating
+                - backup_restoring
+                - backup_restoring_error
+                - creating
+                - creating_from_snapshot
+                - deferred_deleting
+                - deleted
+                - deleting
+                - ensuring
+                - error
+                - error_deferred_deleting
+                - error_deleting
+                - extending
+                - extending_error
+                - manage_error
+                - manage_error_unmanage_starting
+                - manage_starting
+                - migrating
+                - migrating_to
+                - replication_change
+                - restoring
+                - reverting
+                - reverting_error
+                - server_migrating
+                - server_migrating_to
+                - shrinking
+                - shrinking_error
+                - shrinking_possible_data_loss_error
+                - unmanage_error
+                - unmanage_starting
+                - unmanaged
+              type: string
+          required: []
+          type: object
+      required:
+        - os-reset_status
+      type: object
+      x-openstack:
+        action-name: os-reset_status
+        max-ver: '2.6'
+        min-ver: '2.0'
+    SharesActionShare_Restore_269:
+      additionalProperties: false
+      properties:
+        restore: {}
+      required:
+        - restore
+      type: object
+      x-openstack:
+        action-name: restore
+        min-ver: '2.69'
+    SharesActionShare_Soft_Delete_269:
+      additionalProperties: false
+      properties:
+        soft_delete: {}
+      required:
+        - soft_delete
+      type: object
+      x-openstack:
+        action-name: soft_delete
+        min-ver: '2.69'
+    SharesActionShrinkResponse:
+      type: 'null'
+      x-openstack:
+        action-name: shrink
+    SharesActionShrink_27:
+      additionalProperties: false
       properties:
         shrink:
-          type: 'null'
+          additionalProperties: true
+          properties:
+            new_size:
+              maximum: 2147483647
+              minLength: 1
+              minimum: 0
+              pattern: ^[0-9]*$
+              type:
+                - integer
+                - string
+          required:
+            - new_size
+          type: object
+      required:
+        - shrink
       type: object
       x-openstack:
         action-name: shrink
-    SharesActionShrinkResponse:
-      description: Response of the shares/id/action:post:shrink action
-      type: object
-      x-openstack:
-        action-name: shrink
-    SharesActionSoft_DeleteRequest:
-      description: Empty body for soft_delete action
+        min-ver: '2.7'
+    SharesActionShrink_Legacy_20:
+      additionalProperties: false
       properties:
-        soft_delete:
-          type: 'null'
+        os-shrink:
+          additionalProperties: true
+          properties:
+            new_size:
+              maximum: 2147483647
+              minLength: 1
+              minimum: 0
+              pattern: ^[0-9]*$
+              type:
+                - integer
+                - string
+          required:
+            - new_size
+          type: object
+      required:
+        - os-shrink
       type: object
       x-openstack:
-        action-name: soft_delete
+        action-name: os-shrink
+        max-ver: '2.6'
+        min-ver: '2.0'
     SharesActionSoft_DeleteResponse:
-      description: Response of the shares/id/action:post:soft_delete action
-      type: object
+      type: 'null'
       x-openstack:
         action-name: soft_delete
-    SharesActionUnmanageRequest:
-      description: Empty body for unmanage action
-      properties:
-        unmanage:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: unmanage
     SharesActionUnmanageResponse:
-      description: Response of the shares/id/action:post:unmanage action
+      type: 'null'
+      x-openstack:
+        action-name: unmanage
+    SharesActionUnmanage_27:
+      additionalProperties: false
+      properties:
+        unmanage: {}
+      required:
+        - unmanage
       type: object
       x-openstack:
         action-name: unmanage
+        min-ver: '2.7'
     SharesCreateRequest:
       description: Request of the shares:post operation
       type: object
@@ -6987,7 +7527,66 @@ components:
         operation
       type: object
     SnapshotsListResponse:
-      description: Response of the snapshots:get operation
+      additionalProperties: false
+      properties:
+        count:
+          minimum: 0
+          type: integer
+        share_snapshots_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+        snapshots:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: The UUID of the snapshot.
+                type:
+                  - integer
+                  - string
+              links:
+                items:
+                  additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      enum:
+                        - bookmark
+                        - self
+                      type: string
+                  required:
+                    - href
+                    - rel
+                  type: object
+                type: array
+              name:
+                description: The user-defined name of the snapshot.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - links
+              - name
+            type: object
+          type: array
+      required:
+        - snapshots
       type: object
     SnapshotsManageManageRequest:
       description: Request of the snapshots/manage:post operation

@@ -53,7 +53,7 @@ pub mod os_unset_image_metadata;
 pub mod os_update_readonly_flag;
 pub mod os_volume_upload_image_30;
 pub mod os_volume_upload_image_31;
-pub mod revert;
+pub mod revert_340;
 pub mod set_30;
 pub mod set_353;
 pub mod summary;

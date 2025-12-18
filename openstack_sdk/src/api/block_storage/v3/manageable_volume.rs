@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v3/manageable_volumes` REST operations of block_storage
-pub mod create;
+pub mod create_30;
+pub mod create_316;
 pub mod get;
 pub mod list_detailed;

@@ -46,6 +46,10 @@ pub struct ConsistencygroupCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A consistency group.
+    #[command(flatten)]
+    consistencygroup: Consistencygroup,
+    /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
@@ -58,6 +62,31 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// Consistencygroup Body data
+#[derive(Args, Clone)]
+struct Consistencygroup {
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    availability_zone: Option<Value>,
+
+    /// The consistency group description.
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Set explicit NULL for the description
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
+    no_description: bool,
+
+    /// The consistency group name.
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+
+    /// Set explicit NULL for the name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
+    no_name: bool,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    volume_types: Value,
+}
 
 impl ConsistencygroupCommand {
     /// Perform command action
@@ -78,6 +107,33 @@ impl ConsistencygroupCommand {
         let mut ep_builder = create::Request::builder();
 
         // Set body parameters
+        // Set Request.consistencygroup data
+        let args = &self.consistencygroup;
+        let mut consistencygroup_builder = create::ConsistencygroupBuilder::default();
+        if let Some(val) = &args.availability_zone {
+            consistencygroup_builder.availability_zone(val.clone());
+        }
+
+        if let Some(val) = &args.description {
+            consistencygroup_builder.description(Some(val.into()));
+        } else if args.no_description {
+            consistencygroup_builder.description(None);
+        }
+
+        if let Some(val) = &args.name {
+            consistencygroup_builder.name(Some(val.into()));
+        } else if args.no_name {
+            consistencygroup_builder.name(None);
+        }
+
+        consistencygroup_builder.volume_types(args.volume_types.clone());
+
+        ep_builder.consistencygroup(
+            consistencygroup_builder
+                .build()
+                .wrap_err("error preparing the request data")?,
+        );
+
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());
         }

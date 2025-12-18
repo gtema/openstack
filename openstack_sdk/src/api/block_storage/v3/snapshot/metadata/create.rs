@@ -20,6 +20,7 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde_json::Value;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
@@ -36,6 +37,8 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
+    #[builder(setter(name = "_properties"), default, private)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -83,6 +86,18 @@ impl<'a> RequestBuilder<'a> {
             .extend(iter.map(Into::into));
         self
     }
+
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 impl RestEndpoint for Request<'_> {
@@ -106,6 +121,9 @@ impl RestEndpoint for Request<'_> {
         let mut params = JsonBodyParams::default();
 
         params.push("metadata", serde_json::to_value(&self.metadata)?);
+        for (key, val) in &self._properties {
+            params.push(key.clone(), val.clone());
+        }
 
         params.into_body()
     }

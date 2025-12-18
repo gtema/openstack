@@ -17,30 +17,33 @@
 //! Response type for the POST `os-floating-ips` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct FloatingIpResponse(BTreeMap<String, Value>);
+/// FloatingIp response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct FloatingIpResponse {
+    /// Fixed IP associated with floating IP network.
+    #[structable(optional)]
+    pub fixed_ip: Option<String>,
 
-impl StructTable for FloatingIpResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The floating IP id value.
+    ///
+    /// Note
+    ///
+    /// For nova-network, the value will be of type integer, whereas for
+    /// neutron, the value will be of type string.
+    #[structable()]
+    pub id: String,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
-}
+    /// The UUID of the server.
+    #[structable(optional)]
+    pub instance_id: Option<String>,
 
-impl StructTable for &FloatingIpResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The floating ip address.
+    #[structable()]
+    pub ip: String,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
+    /// The name or ID of the floating IP pool.
+    #[structable()]
+    pub pool: String,
 }

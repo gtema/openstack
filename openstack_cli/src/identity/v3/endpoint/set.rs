@@ -80,7 +80,7 @@ enum Interface {
 /// Endpoint Body data
 #[derive(Args, Clone)]
 struct Endpoint {
-    /// A description of the endpoint.
+    /// The endpoint description. It is returned only when set on the resource.
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
@@ -102,7 +102,12 @@ struct Endpoint {
     #[arg(help_heading = "Body parameters", long)]
     interface: Option<Interface>,
 
-    /// The name of the endpoint.
+    /// (Deprecated) The endpoint name. The field will only be returned in
+    /// responses when set on the resource.
+    ///
+    /// This field is deprecated as it provides no value. Endpoints are better
+    /// described by the combination of service, region and interface they
+    /// describe or by their ID.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 

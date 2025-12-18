@@ -20,14 +20,43 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde::Deserialize;
+use serde::Serialize;
 use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Revert<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> RevertBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    pub(crate) os_force_delete: Value,
+    pub(crate) revert: Revert<'a>,
 
     /// id parameter for /v3/volumes/{id}/action API
     #[builder(default, setter(into))]
@@ -87,10 +116,7 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push(
-            "os-force_delete",
-            serde_json::to_value(&self.os_force_delete)?,
-        );
+        params.push("revert", serde_json::to_value(&self.revert)?);
 
         params.into_body()
     }
@@ -110,7 +136,7 @@ impl RestEndpoint for Request<'_> {
 
     /// Returns required API version
     fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(3, 0))
+        Some(ApiVersion::new(3, 40))
     }
 }
 
@@ -129,7 +155,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .os_force_delete(json!({}))
+                .revert(RevertBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -140,7 +166,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .os_force_delete(json!({}))
+            .revert(RevertBuilder::default().build().unwrap())
             .build()
             .unwrap()
             .response_key()
@@ -163,7 +189,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .os_force_delete(json!({}))
+            .revert(RevertBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -187,7 +213,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .os_force_delete(json!({}))
+            .revert(RevertBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

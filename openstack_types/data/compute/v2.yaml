@@ -12537,7 +12537,59 @@ components:
       x-openstack:
         action-name: unreserve
     Os_Floating_IpShowResponse:
-      description: Response of the os-floating-ips/id:get operation
+      additionalProperties: false
+      properties:
+        floating_ip:
+          additionalProperties: false
+          description: |-
+            A floating IP address object.
+          properties:
+            fixed_ip:
+              anyOf:
+                - format: ipv4
+                - format: ipv6
+              description: |-
+                Fixed IP associated with floating IP network.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The floating IP id value.
+
+                Note
+
+                For nova-network, the value will be of type integer, whereas for
+                neutron, the value will be of type string.
+              format: uuid
+              type: string
+            instance_id:
+              description: |-
+                The UUID of the server.
+              format: uuid
+              type:
+                - 'null'
+                - string
+            ip:
+              anyOf:
+                - format: ipv4
+                - format: ipv6
+              description: |-
+                The floating ip address.
+              type: string
+            pool:
+              description: |-
+                The name or ID of the floating IP pool.
+              type: string
+          required:
+            - fixed_ip
+            - id
+            - instance_id
+            - ip
+            - pool
+          type: object
+      required:
+        - floating_ip
       type: object
     Os_Floating_Ip_DnUpdateResponse: {}
     Os_Floating_Ip_DnsEntryShowResponse: {}
@@ -12564,10 +12616,118 @@ components:
         - floating_ip_pools
       type: object
     Os_Floating_IpsCreateResponse:
-      description: Response of the os-floating-ips:post operation
+      additionalProperties: false
+      properties:
+        floating_ip:
+          additionalProperties: false
+          description: |-
+            A floating IP address object.
+          properties:
+            fixed_ip:
+              anyOf:
+                - format: ipv4
+                - format: ipv6
+              description: |-
+                Fixed IP associated with floating IP network.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The floating IP id value.
+
+                Note
+
+                For nova-network, the value will be of type integer, whereas for
+                neutron, the value will be of type string.
+              format: uuid
+              type: string
+            instance_id:
+              description: |-
+                The UUID of the server.
+              format: uuid
+              type:
+                - 'null'
+                - string
+            ip:
+              anyOf:
+                - format: ipv4
+                - format: ipv6
+              description: |-
+                The floating ip address.
+              type: string
+            pool:
+              description: |-
+                The name or ID of the floating IP pool.
+              type: string
+          required:
+            - fixed_ip
+            - id
+            - instance_id
+            - ip
+            - pool
+          type: object
+      required:
+        - floating_ip
       type: object
     Os_Floating_IpsListResponse:
-      description: Response of the os-floating-ips:get operation
+      additionalProperties: false
+      properties:
+        floating_ips:
+          description: |-
+            An array of floating ip objects.
+          items:
+            additionalProperties: false
+            description: |-
+              A floating IP address object.
+            properties:
+              fixed_ip:
+                anyOf:
+                  - format: ipv4
+                  - format: ipv6
+                description: |-
+                  Fixed IP associated with floating IP network.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The floating IP id value.
+
+                  Note
+
+                  For nova-network, the value will be of type integer, whereas for
+                  neutron, the value will be of type string.
+                format: uuid
+                type: string
+              instance_id:
+                description: |-
+                  The UUID of the server.
+                format: uuid
+                type:
+                  - 'null'
+                  - string
+              ip:
+                anyOf:
+                  - format: ipv4
+                  - format: ipv6
+                description: |-
+                  The floating ip address.
+                type: string
+              pool:
+                description: |-
+                  The name or ID of the floating IP pool.
+                type: string
+            required:
+              - fixed_ip
+              - id
+              - instance_id
+              - ip
+              - pool
+            type: object
+          type: array
+      required:
+        - floating_ips
       type: object
     Os_Floating_Ips_BulkCreateResponse: {}
     Os_Floating_Ips_BulkListResponse: {}
@@ -16481,10 +16641,221 @@ components:
         - quota_set
       type: object
     Os_Security_GroupShowResponse:
-      description: Response of the os-security-groups/id:get operation
+      additionalProperties: false
+      properties:
+        security_group:
+          additionalProperties: false
+          description: |-
+            Specify the `security_group` action in the request body.
+          properties:
+            description:
+              description: |-
+                Security group description.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The ID of the security group.
+              format: uuid
+              type: string
+            name:
+              description: |-
+                The security group name.
+              type: string
+            rules:
+              description: |-
+                The list of security group rules.
+              items:
+                additionalProperties: false
+                description: |-
+                  A `security_group_rule` object.
+                properties:
+                  from_port:
+                    description: |-
+                      The port at start of range.
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                  group:
+                    additionalProperties: false
+                    description: |-
+                      A `group` object. Includes the `tenant_id` and the source security
+                      group `name`.
+                    properties:
+                      name:
+                        description: |-
+                          The security group name.
+                        type: string
+                      tenant_id:
+                        description: |-
+                          The UUID of the tenant that owns this security group.
+                        maxLength: 255
+                        minLength: 1
+                        pattern: ^[a-zA-Z0-9-]*$
+                        type: string
+                    required: []
+                    type: object
+                  id:
+                    description: |-
+                      The security group rule ID.
+                    format: uuid
+                    type: string
+                  ip_protocol:
+                    description: |-
+                      The IP protocol. A valid value is ICMP, TCP, or UDP.
+                    type:
+                      - 'null'
+                      - string
+                  ip_range:
+                    additionalProperties: false
+                    description: |-
+                      An IP range object. Includes the security group rule `cidr`.
+                    properties:
+                      cidr:
+                        description: |-
+                          The CIDR for address range.
+                        format: cidr
+                        type: string
+                    required: []
+                    type: object
+                  parent_group_id:
+                    description: |-
+                      Security group ID.
+                    format: uuid
+                    type: string
+                  to_port:
+                    description: |-
+                      The port at end of range.
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                required:
+                  - from_port
+                  - group
+                  - id
+                  - ip_protocol
+                  - ip_range
+                  - parent_group_id
+                  - to_port
+                type: object
+              type: array
+            tenant_id:
+              description: |-
+                The UUID of the tenant that owns this security group.
+              maxLength: 255
+              minLength: 1
+              pattern: ^[a-zA-Z0-9-]*$
+              type: string
+          required:
+            - description
+            - id
+            - name
+            - rules
+            - tenant_id
+          type: object
+      required:
+        - security_group
       type: object
     Os_Security_GroupUpdateResponse:
-      description: Response of the os-security-groups/id:put operation
+      additionalProperties: false
+      properties:
+        security_group:
+          additionalProperties: false
+          description: |-
+            Specify the `security_group` action in the request body.
+          properties:
+            description:
+              description: |-
+                Security group description.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The ID of the security group.
+              format: uuid
+              type: string
+            name:
+              description: |-
+                The security group name.
+              type: string
+            rules:
+              description: |-
+                The list of security group rules.
+              items:
+                additionalProperties: false
+                properties:
+                  from_port:
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                  group:
+                    additionalProperties: false
+                    properties:
+                      name:
+                        type: string
+                      tenant_id:
+                        description: |-
+                          The UUID of the tenant in a multi-tenancy cloud.
+                        maxLength: 255
+                        minLength: 1
+                        pattern: ^[a-zA-Z0-9-]*$
+                        type: string
+                    required: []
+                    type: object
+                  id:
+                    format: uuid
+                    type: string
+                  ip_protocol:
+                    type:
+                      - 'null'
+                      - string
+                  ip_range:
+                    additionalProperties: false
+                    properties:
+                      cidr:
+                        format: cidr
+                        type: string
+                    required: []
+                    type: object
+                  parent_group_id:
+                    format: uuid
+                    type: string
+                  to_port:
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                required:
+                  - from_port
+                  - group
+                  - id
+                  - ip_protocol
+                  - ip_range
+                  - parent_group_id
+                  - to_port
+                type: object
+              type: array
+            tenant_id:
+              description: |-
+                The UUID of the tenant in a multi-tenancy cloud.
+              maxLength: 255
+              minLength: 1
+              pattern: ^[a-zA-Z0-9-]*$
+              type: string
+          required:
+            - description
+            - id
+            - name
+            - rules
+            - tenant_id
+          type: object
+      required:
+        - security_group
       type: object
     Os_Security_GroupUpdate_21:
       additionalProperties: true
@@ -16518,7 +16889,85 @@ components:
     Os_Security_Group_Default_RulesCreateResponse: {}
     Os_Security_Group_Default_RulesListResponse: {}
     Os_Security_Group_RulesCreateResponse:
-      description: Response of the os-security-group-rules:post operation
+      additionalProperties: false
+      properties:
+        security_group_rule:
+          additionalProperties: false
+          description: |-
+            A `security_group_rule` object.
+          properties:
+            from_port:
+              description: |-
+                The port at start of range.
+              minimum: -1
+              type:
+                - integer
+                - 'null'
+            group:
+              additionalProperties: false
+              description: |-
+                A `group` object. Includes the `tenant_id` and the source security
+                group `name`.
+              properties:
+                name:
+                  description: |-
+                    The security group name.
+                  type: string
+                tenant_id:
+                  description: |-
+                    The UUID of the tenant that owns this security group.
+                  maxLength: 255
+                  minLength: 1
+                  pattern: ^[a-zA-Z0-9-]*$
+                  type: string
+              required: []
+              type: object
+            id:
+              description: |-
+                The security group rule ID.
+              format: uuid
+              type: string
+            ip_protocol:
+              description: |-
+                The IP protocol. A valid value is ICMP, TCP, or UDP.
+              type:
+                - 'null'
+                - string
+            ip_range:
+              additionalProperties: false
+              description: |-
+                An IP range object. Includes the security group rule `cidr`.
+              properties:
+                cidr:
+                  description: |-
+                    The CIDR for address range.
+                  format: cidr
+                  type: string
+              required: []
+              type: object
+            parent_group_id:
+              description: |-
+                Security group ID.
+              format: uuid
+              type: string
+            to_port:
+              description: |-
+                The port at end of range.
+              minimum: -1
+              type:
+                - integer
+                - 'null'
+          required:
+            - from_port
+            - group
+            - id
+            - ip_protocol
+            - ip_range
+            - parent_group_id
+            - to_port
+          type: object
+      required:
+        - security_group_rule
       type: object
     Os_Security_Group_RulesCreate_21:
       additionalProperties: true
@@ -16554,7 +17003,102 @@ components:
         max-ver: '2.35'
         min-ver: '2.1'
     Os_Security_GroupsCreateResponse:
-      description: Response of the os-security-groups:post operation
+      additionalProperties: false
+      properties:
+        security_group:
+          additionalProperties: false
+          description: |-
+            Specify the `security_group` action in the request body.
+          properties:
+            description:
+              description: |-
+                Security group description.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The ID of the security group.
+              format: uuid
+              type: string
+            name:
+              description: |-
+                The security group name.
+              type: string
+            rules:
+              description: |-
+                The list of security group rules.
+              items:
+                additionalProperties: false
+                properties:
+                  from_port:
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                  group:
+                    additionalProperties: false
+                    properties:
+                      name:
+                        type: string
+                      tenant_id:
+                        description: |-
+                          The UUID of the tenant in a multi-tenancy cloud.
+                        maxLength: 255
+                        minLength: 1
+                        pattern: ^[a-zA-Z0-9-]*$
+                        type: string
+                    required: []
+                    type: object
+                  id:
+                    format: uuid
+                    type: string
+                  ip_protocol:
+                    type:
+                      - 'null'
+                      - string
+                  ip_range:
+                    additionalProperties: false
+                    properties:
+                      cidr:
+                        format: cidr
+                        type: string
+                    required: []
+                    type: object
+                  parent_group_id:
+                    format: uuid
+                    type: string
+                  to_port:
+                    minimum: -1
+                    type:
+                      - integer
+                      - 'null'
+                required:
+                  - from_port
+                  - group
+                  - id
+                  - ip_protocol
+                  - ip_range
+                  - parent_group_id
+                  - to_port
+                type: object
+              type: array
+            tenant_id:
+              description: |-
+                The UUID of the tenant in a multi-tenancy cloud.
+              maxLength: 255
+              minLength: 1
+              pattern: ^[a-zA-Z0-9-]*$
+              type: string
+          required:
+            - description
+            - id
+            - name
+            - rules
+            - tenant_id
+          type: object
+      required:
+        - security_group
       type: object
     Os_Security_GroupsCreate_21:
       additionalProperties: true
@@ -16587,7 +17131,127 @@ components:
         max-ver: '2.35'
         min-ver: '2.1'
     Os_Security_GroupsListResponse:
-      description: Response of the os-security-groups:get operation
+      additionalProperties: false
+      properties:
+        security_groups:
+          description: |-
+            One or more security groups objects.
+          items:
+            additionalProperties: false
+            description: |-
+              Specify the `security_group` action in the request body.
+            properties:
+              description:
+                description: |-
+                  Security group description.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The ID of the security group.
+                format: uuid
+                type: string
+              name:
+                description: |-
+                  The security group name.
+                type: string
+              rules:
+                description: |-
+                  The list of security group rules.
+                items:
+                  additionalProperties: false
+                  description: |-
+                    A `security_group_rule` object.
+                  properties:
+                    from_port:
+                      description: |-
+                        The port at start of range.
+                      minimum: -1
+                      type:
+                        - integer
+                        - 'null'
+                    group:
+                      additionalProperties: false
+                      description: |-
+                        A `group` object. Includes the `tenant_id` and the source security
+                        group `name`.
+                      properties:
+                        name:
+                          description: |-
+                            The security group name.
+                          type: string
+                        tenant_id:
+                          description: |-
+                            The UUID of the tenant that owns this security group.
+                          maxLength: 255
+                          minLength: 1
+                          pattern: ^[a-zA-Z0-9-]*$
+                          type: string
+                      required: []
+                      type: object
+                    id:
+                      description: |-
+                        The security group rule ID.
+                      format: uuid
+                      type: string
+                    ip_protocol:
+                      description: |-
+                        The IP protocol. A valid value is ICMP, TCP, or UDP.
+                      type:
+                        - 'null'
+                        - string
+                    ip_range:
+                      additionalProperties: false
+                      description: |-
+                        An IP range object. Includes the security group rule `cidr`.
+                      properties:
+                        cidr:
+                          description: |-
+                            The CIDR for address range.
+                          format: cidr
+                          type: string
+                      required: []
+                      type: object
+                    parent_group_id:
+                      description: |-
+                        Security group ID.
+                      format: uuid
+                      type: string
+                    to_port:
+                      description: |-
+                        The port at end of range.
+                      minimum: -1
+                      type:
+                        - integer
+                        - 'null'
+                  required:
+                    - from_port
+                    - group
+                    - id
+                    - ip_protocol
+                    - ip_range
+                    - parent_group_id
+                    - to_port
+                  type: object
+                type: array
+              tenant_id:
+                description: |-
+                  The UUID of the tenant that owns this security group.
+                maxLength: 255
+                minLength: 1
+                pattern: ^[a-zA-Z0-9-]*$
+                type: string
+            required:
+              - description
+              - id
+              - name
+              - rules
+              - tenant_id
+            type: object
+          type: array
+      required:
+        - security_groups
       type: object
     Os_Server_External_EventsCreateRequest:
       oneOf:
@@ -18188,10 +18852,164 @@ components:
           type: array
       type: object
     Os_SnapshotShowResponse:
-      description: Response of the os-snapshots/id:get operation
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          description: |-
+            A partial representation of a snapshot that is used to create a snapshot.
+          properties:
+            createdAt:
+              description: |-
+                The date and time when the resource was created. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type: string
+            displayDescription:
+              description: |-
+                The snapshot description.
+              type:
+                - 'null'
+                - string
+            displayName:
+              description: |-
+                The snapshot name.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The UUID for a snapshot.
+              format: uuid
+              type: string
+            size:
+              description: |-
+                The size of the volume, in gibibytes (GiB).
+              type: integer
+            status:
+              description: |-
+                The status of the snapshot. Valid status values are:
+
+                * `available`
+                * `creating`
+                * `deleting`
+                * `error`
+                * `error_deleting`
+              enum:
+                - available
+                - backing-up
+                - creating
+                - deleted
+                - deleting
+                - error
+                - error_deleting
+                - restoring
+                - unmanaging
+              type: string
+            volumeId:
+              description: |-
+                The source volume ID.
+              format: uuid
+              type: string
+          required:
+            - createdAt
+            - displayDescription
+            - displayName
+            - id
+            - size
+            - status
+            - volumeId
+          type: object
+      required:
+        - snapshot
       type: object
     Os_SnapshotsCreateResponse:
-      description: Response of the os-snapshots:post operation
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          description: |-
+            A partial representation of a snapshot that is used to create a snapshot.
+          properties:
+            createdAt:
+              description: |-
+                The date and time when the resource was created. The date and time
+                stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                ```
+                CCYY-MM-DDThh:mm:ss±hh:mm
+                ```
+
+                For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                value, if included, is the time zone as an offset from UTC. In
+                the previous example, the offset value is `-05:00`.
+              format: date-time
+              type: string
+            displayDescription:
+              description: |-
+                The snapshot description.
+              type:
+                - 'null'
+                - string
+            displayName:
+              description: |-
+                The snapshot name.
+              type:
+                - 'null'
+                - string
+            id:
+              description: |-
+                The UUID for a snapshot.
+              format: uuid
+              type: string
+            size:
+              description: |-
+                The size of the volume, in gibibytes (GiB).
+              type: integer
+            status:
+              description: |-
+                The status of the snapshot. Valid status values are:
+
+                * `available`
+                * `creating`
+                * `deleting`
+                * `error`
+                * `error_deleting`
+              enum:
+                - available
+                - backing-up
+                - creating
+                - deleted
+                - deleting
+                - error
+                - error_deleting
+                - restoring
+                - unmanaging
+              type: string
+            volumeId:
+              description: |-
+                The source volume ID.
+              format: uuid
+              type: string
+          required:
+            - createdAt
+            - displayDescription
+            - displayName
+            - id
+            - size
+            - status
+            - volumeId
+          type: object
+      required:
+        - snapshot
       type: object
     Os_SnapshotsCreate_21:
       additionalProperties: false
@@ -18252,17 +19070,223 @@ components:
         max-ver: '2.35'
         min-ver: '2.1'
     Os_SnapshotsDetailResponse:
-      description: Response of the os-snapshots/detail:get operation
+      additionalProperties: false
+      properties:
+        snapshots:
+          description: |-
+            A list of snapshot objects.
+          items:
+            additionalProperties: false
+            description: |-
+              A partial representation of a snapshot that is used to create a snapshot.
+            properties:
+              createdAt:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type: string
+              displayDescription:
+                description: |-
+                  The snapshot description.
+                type:
+                  - 'null'
+                  - string
+              displayName:
+                description: |-
+                  The snapshot name.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The UUID for a snapshot.
+                format: uuid
+                type: string
+              size:
+                description: |-
+                  The size of the volume, in gibibytes (GiB).
+                type: integer
+              status:
+                description: |-
+                  The status of the snapshot. Valid status values are:
+
+                  * `available`
+                  * `creating`
+                  * `deleting`
+                  * `error`
+                  * `error_deleting`
+                enum:
+                  - available
+                  - backing-up
+                  - creating
+                  - deleted
+                  - deleting
+                  - error
+                  - error_deleting
+                  - restoring
+                  - unmanaging
+                type: string
+              volumeId:
+                description: |-
+                  The source volume ID.
+                format: uuid
+                type: string
+            required:
+              - createdAt
+              - displayDescription
+              - displayName
+              - id
+              - size
+              - status
+              - volumeId
+            type: object
+          type: array
+      required:
+        - snapshots
       type: object
     Os_SnapshotsListResponse:
-      description: Response of the os-snapshots:get operation
+      additionalProperties: false
+      properties:
+        snapshots:
+          description: |-
+            A list of snapshot objects.
+          items:
+            additionalProperties: false
+            description: |-
+              A partial representation of a snapshot that is used to create a snapshot.
+            properties:
+              createdAt:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
+                format: date-time
+                type: string
+              displayDescription:
+                description: |-
+                  The snapshot description.
+                type:
+                  - 'null'
+                  - string
+              displayName:
+                description: |-
+                  The snapshot name.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: |-
+                  The UUID for a snapshot.
+                format: uuid
+                type: string
+              size:
+                description: |-
+                  The size of the volume, in gibibytes (GiB).
+                type: integer
+              status:
+                description: |-
+                  The status of the snapshot. Valid status values are:
+
+                  * `available`
+                  * `creating`
+                  * `deleting`
+                  * `error`
+                  * `error_deleting`
+                enum:
+                  - available
+                  - backing-up
+                  - creating
+                  - deleted
+                  - deleting
+                  - error
+                  - error_deleting
+                  - restoring
+                  - unmanaging
+                type: string
+              volumeId:
+                description: |-
+                  The source volume ID.
+                format: uuid
+                type: string
+            required:
+              - createdAt
+              - displayDescription
+              - displayName
+              - id
+              - size
+              - status
+              - volumeId
+            type: object
+          type: array
+      required:
+        - snapshots
       type: object
     Os_Tenant_NetworkShowResponse:
-      description: Response of the os-tenant-networks/id:get operation
+      additionalProperties: false
+      properties:
+        network:
+          additionalProperties: false
+          properties:
+            cidr:
+              oneOf:
+                - const: None
+                - format: cidr
+                  type: string
+            id:
+              format: uuid
+              type: string
+            label:
+              type: string
+          required:
+            - cidr
+            - id
+            - label
+          type: object
+      required:
+        - network
       type: object
     Os_Tenant_NetworksCreateResponse: {}
     Os_Tenant_NetworksListResponse:
-      description: Response of the os-tenant-networks:get operation
+      additionalProperties: false
+      properties:
+        networks:
+          items:
+            additionalProperties: false
+            properties:
+              cidr:
+                oneOf:
+                  - const: None
+                  - format: cidr
+                    type: string
+              id:
+                format: uuid
+                type: string
+              label:
+                type: string
+            required:
+              - cidr
+              - id
+              - label
+            type: object
+          type: array
+      required:
+        - networks
       type: object
     Os_VolumeShowResponse:
       additionalProperties: false

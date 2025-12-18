@@ -31,8 +31,9 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::os_force_delete;
+use serde_json::Value;
 
-/// Empty body for os-force_delete action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct VolumeCommand {
     /// Request Query parameters
@@ -42,6 +43,9 @@ pub struct VolumeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    os_force_delete: Value,
 }
 
 /// Query parameters
@@ -79,6 +83,10 @@ impl VolumeCommand {
         let mut ep_builder = os_force_delete::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_force_delete data
+        ep_builder.os_force_delete(self.os_force_delete.clone());
 
         let ep = ep_builder
             .build()

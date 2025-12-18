@@ -30,8 +30,9 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot::os_unmanage;
+use serde_json::Value;
 
-/// Empty body for os-unmanage action
+/// Command without description in OpenAPI
 #[derive(Args)]
 pub struct SnapshotCommand {
     /// Request Query parameters
@@ -41,6 +42,9 @@ pub struct SnapshotCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    os_unmanage: Value,
 }
 
 /// Query parameters
@@ -78,6 +82,10 @@ impl SnapshotCommand {
         let mut ep_builder = os_unmanage::Request::builder();
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_unmanage data
+        ep_builder.os_unmanage(self.os_unmanage.clone());
 
         let ep = ep_builder
             .build()
