@@ -22,7 +22,6 @@ use crate::{Cli, OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
 pub mod list;
-pub mod set;
 pub mod show;
 
 /// Clusters (clusters)
@@ -58,7 +57,6 @@ pub struct ClusterCommand {
 #[derive(Subcommand)]
 pub enum ClusterCommands {
     List(Box<list::ClustersCommand>),
-    Set(Box<set::ClusterCommand>),
     Show(Box<show::ClusterCommand>),
 }
 
@@ -71,7 +69,6 @@ impl ClusterCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             ClusterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ClusterCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             ClusterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

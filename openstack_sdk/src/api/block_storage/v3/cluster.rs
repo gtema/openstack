@@ -19,4 +19,3 @@
 pub mod get;
 pub mod list;
 pub mod list_detailed;
-pub mod set;

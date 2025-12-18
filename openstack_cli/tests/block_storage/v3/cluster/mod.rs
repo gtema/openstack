@@ -13,7 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 mod list_autogen;
-mod set_autogen;
 mod show_autogen;
 
 use assert_cmd::prelude::*;

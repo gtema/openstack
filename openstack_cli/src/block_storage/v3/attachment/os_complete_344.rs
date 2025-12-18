@@ -29,7 +29,8 @@ use crate::OpenStackCliError;
 use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::block_storage::v3::attachment::os_complete;
+use openstack_sdk::api::block_storage::v3::attachment::os_complete_344;
+use serde_json::Value;
 
 /// Empty body for os-complete action
 #[derive(Args)]
@@ -41,6 +42,9 @@ pub struct AttachmentCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    os_complete: Value,
 }
 
 /// Query parameters
@@ -75,9 +79,17 @@ impl AttachmentCommand {
         );
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = os_complete::Request::builder();
+        let mut ep_builder = os_complete_344::Request::builder();
+        ep_builder.header(
+            http::header::HeaderName::from_static("openstack-api-version"),
+            http::header::HeaderValue::from_static("volume 3.44"),
+        );
 
         ep_builder.id(&self.path.id);
+
+        // Set body parameters
+        // Set Request.os_complete data
+        ep_builder.os_complete(self.os_complete.clone());
 
         let ep = ep_builder
             .build()
