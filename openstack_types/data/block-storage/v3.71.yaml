@@ -2459,6 +2459,8 @@ paths:
       description: |-
         List all active pools in scheduler.
       operationId: scheduler-stats/get_pools:get
+      parameters:
+        - $ref: '#/components/parameters/detail'
       responses:
         '200':
           content:
@@ -7712,6 +7714,14 @@ components:
         type: string
       x-openstack:
         resource_link: identity/v3/project.id
+    detail:
+      description: Indicates whether to show pool details or only pool names in 
+        the response. Set to true to show pool details. Set to false to show 
+        only pool names. Default is false.
+      in: query
+      name: detail
+      schema:
+        type: boolean
     extensions_project_id:
       description: project_id parameter for /v3/{project_id}/extensions API
       in: path
@@ -15838,8 +15848,71 @@ components:
       description: Response of the :get operation
       type: object
     Scheduler_StatsGet_PoolsResponse:
-      description: Response of the project_id/scheduler-stats/get_pools:get 
-        operation
+      properties:
+        pools:
+          description: |-
+            List of storage pools.
+          items:
+            properties:
+              capabilities:
+                description: |-
+                  The capabilities for the back end. The value is
+                  either `null` or a string value that indicates the capabilities
+                  for each pool. For example, `total_capacity_gb` or `QoS_support`.
+                properties:
+                  QoS_support:
+                    description: |-
+                      The quality of service (QoS) support.
+                    type: boolean
+                  driver_version:
+                    description: |-
+                      The driver version.
+                    type: string
+                  free_capacity_gb:
+                    description: |-
+                      The amount of free capacity for the back-end
+                      volume, in GBs. A valid value is a string, such as `unknown`, or
+                      a number (integer or floating point).
+                    minimum: 0
+                    type:
+                      - integer
+                      - string
+                  reserved_percentage:
+                    description: |-
+                      The percentage of the total capacity that is
+                      reserved for the internal use by the back end.
+                    type: integer
+                  storage_protocol:
+                    description: |-
+                      The storage back end for the back-end volume. For
+                      example, `iSCSI` or `FC`.
+                    type: string
+                  total_capacity_gb:
+                    description: |-
+                      The total capacity for the back-end volume, in
+                      GBs. A valid value is a string, such as `unknown`, or a
+                      number (integer or floating point).
+                    minimum: 0
+                    type:
+                      - integer
+                      - string
+                  updated:
+                    description: |-
+                      The date and time stamp when the extension was
+                      last updated.
+                    format: date-time
+                    type: string
+                  volume_backend_name:
+                    description: |-
+                      The name of the back-end volume.
+                    type: string
+                type: object
+              name:
+                description: |-
+                  The name of the backend pool.
+                type: string
+            type: object
+          type: array
       type: object
     SnapshotShowResponse:
       additionalProperties: false

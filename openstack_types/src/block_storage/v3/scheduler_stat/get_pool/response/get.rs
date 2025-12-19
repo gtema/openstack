@@ -17,30 +17,45 @@
 //! Response type for the GET `scheduler-stats/get_pools` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct GetPoolResponse(BTreeMap<String, Value>);
-
-impl StructTable for GetPoolResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
-
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
+/// GetPool response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct GetPoolResponse {
+    /// List of storage pools.
+    #[structable(serialize)]
+    pub pools: Vec<Pools>,
 }
 
-impl StructTable for &GetPoolResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+/// The capabilities for the back end. The value is either `null` or a string
+/// value that indicates the capabilities for each pool. For example,
+/// `total_capacity_gb` or `QoS_support`.
+/// `Capabilities` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Capabilities {
+    #[serde(default)]
+    pub driver_version: Option<String>,
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
+    pub free_capacity_gb: Option<i64>,
+    #[serde(default, rename = "QoS_support")]
+    pub qo_s_support: Option<bool>,
+    #[serde(default)]
+    pub reserved_percentage: Option<i32>,
+    #[serde(default)]
+    pub storage_protocol: Option<String>,
+    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
+    pub total_capacity_gb: Option<i64>,
+    #[serde(default)]
+    pub updated: Option<String>,
+    #[serde(default)]
+    pub volume_backend_name: Option<String>,
+}
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
+/// `Pools` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Pools {
+    #[serde(default)]
+    pub capabilities: Option<Capabilities>,
+    #[serde(default)]
+    pub name: Option<String>,
 }

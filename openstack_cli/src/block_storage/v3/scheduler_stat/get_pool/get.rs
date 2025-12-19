@@ -47,7 +47,13 @@ pub struct GetPoolCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// Indicates whether to show pool details or only pool names in the
+    /// response. Set to true to show pool details. Set to false to show only
+    /// pool names. Default is false.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    detail: Option<bool>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -69,14 +75,19 @@ impl GetPoolCommand {
         );
         op.validate_args(parsed_args)?;
 
-        let ep_builder = get::Request::builder();
+        let mut ep_builder = get::Request::builder();
+
+        // Set query parameters
+        if let Some(val) = &self.query.detail {
+            ep_builder.detail(*val);
+        }
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<GetPoolResponse>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        op.output_list::<GetPoolResponse>(data)?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

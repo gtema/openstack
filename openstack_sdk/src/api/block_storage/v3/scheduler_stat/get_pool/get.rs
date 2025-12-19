@@ -25,6 +25,12 @@ use crate::api::rest_endpoint_prelude::*;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request {
+    /// Indicates whether to show pool details or only pool names in the
+    /// response. Set to true to show pool details. Set to false to show only
+    /// pool names. Default is false.
+    #[builder(default)]
+    detail: Option<bool>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
@@ -73,7 +79,10 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams<'_> {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("detail", self.detail);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
