@@ -29,6 +29,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -43,6 +44,14 @@ pub struct Request<'a> {
     /// Filters the response by a idp ID.
     #[builder(default, setter(into))]
     idp_id: Option<Cow<'a, str>>,
+
+    /// Limit number of entries on the single response page (Maximal 100)
+    #[builder(default)]
+    limit: Option<u32>,
+
+    /// Page marker (id of the last entry on the previous page.
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
 
     /// Filters the response by IDP name.
     #[builder(default, setter(into))]
@@ -97,9 +106,11 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
-        params.push_opt("name", self.name.as_ref());
         params.push_opt("domain_id", self.domain_id.as_ref());
         params.push_opt("idp_id", self.idp_id.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("type", self._type.as_ref());
 
         params
@@ -123,6 +134,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(4, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

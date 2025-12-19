@@ -30,6 +30,7 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::mapping::list;
+use openstack_sdk::api::{Pagination, paged};
 use openstack_types::identity::v4::federation::mapping::response::list::MappingResponse;
 
 /// List available federation mappings.
@@ -48,6 +49,10 @@ pub struct MappingsCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -64,6 +69,18 @@ struct QueryParameters {
     /// Filters the response by a idp ID.
     #[arg(help_heading = "Query parameters", long)]
     idp_id: Option<String>,
+
+    /// Limit number of entries on the single response page (Maximal 100)
+    #[arg(
+        help_heading = "Query parameters",
+        long("page-size"),
+        visible_alias("limit")
+    )]
+    limit: Option<u32>,
+
+    /// Page marker (id of the last entry on the previous page.
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
 
     /// Filters the response by IDP name.
     #[arg(help_heading = "Query parameters", long)]
@@ -93,14 +110,20 @@ impl MappingsCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
-        if let Some(val) = &self.query.name {
-            ep_builder.name(val);
-        }
         if let Some(val) = &self.query.domain_id {
             ep_builder.domain_id(val);
         }
         if let Some(val) = &self.query.idp_id {
             ep_builder.idp_id(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query._type {
             ep_builder._type(val);
@@ -110,7 +133,9 @@ impl MappingsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
         op.output_list::<MappingResponse>(data)?;
         // Show command specific hints
         op.show_command_hint()?;
