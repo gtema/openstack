@@ -8,6 +8,7 @@
 [![crates.io](https://img.shields.io/crates/v/openstack_cli.svg)](https://crates.io/crates/openstack_cli)
 [![docs](https://docs.rs/openstack_cli/badge.svg)](https://docs.rs/openstack_cli)
 [![Rust](https://img.shields.io/badge/rust-1.76%2B-blue.svg?maxAge=3600)](https://github.com/rust-lang/rust/blob/master/RELEASES.md#version-1760-2024-02-08)
+[![dependency status](https://deps.rs/repo/github/gtema/openstack/status.svg)](https://deps.rs/repo/github/gtema/openstack)
 
 
 # OpenStack Client Tools

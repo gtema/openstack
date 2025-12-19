@@ -24,13 +24,11 @@ chrono = { workspace= true }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
 config = { workspace = true, features = ["json", "yaml"] }
-# edtui MUST use the same version as ratatui otherwise the Into does not work
-crossterm = { version = "0.28.1", features = ["serde", "event-stream"] }
+crossterm = { version = "0.29", features = ["serde", "event-stream"] }
 derive_builder = { workspace = true }
 derive_deref = "^1.1"
 dirs = { workspace = true }
 edit = "0.1.5"
-#edtui = { version = "0.9" }
 eyre = { workspace = true }
 futures = { workspace = true }
 itertools = { workspace = true }
