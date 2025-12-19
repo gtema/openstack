@@ -54,8 +54,8 @@ pub struct PolicyResponse {
 
     /// A set of zero or more policy rules.
     #[serde(default)]
-    #[structable(optional, wide)]
-    pub rules: Option<String>,
+    #[structable(optional, serialize, wide)]
+    pub rules: Option<Vec<Rules>>,
 
     /// Indicates whether this policy is shared across all projects.
     #[serde(default, deserialize_with = "crate::common::deser_bool_str_opt")]
@@ -76,4 +76,31 @@ pub struct PolicyResponse {
     #[serde(default)]
     #[structable(optional)]
     pub updated_at: Option<String>,
+}
+
+/// `Rules` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Rules {
+    #[serde(default)]
+    pub direction: Option<String>,
+    #[serde(default)]
+    pub dscp_mark: Option<String>,
+    #[serde(default)]
+    pub id: Option<String>,
+    #[serde(default)]
+    pub max_burst_kbps: Option<u32>,
+    #[serde(default)]
+    pub max_burst_kpps: Option<u32>,
+    #[serde(default)]
+    pub max_kbps: Option<u32>,
+    #[serde(default)]
+    pub max_kpps: Option<u32>,
+    #[serde(default)]
+    pub min_kbps: Option<u32>,
+    #[serde(default)]
+    pub min_kpps: Option<u32>,
+    #[serde(default)]
+    pub qos_policy_id: Option<String>,
+    #[serde(default, rename = "type")]
+    pub _type: Option<String>,
 }

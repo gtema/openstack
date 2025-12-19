@@ -959,12 +959,6 @@ paths:
         allowed to the admin user.
       operationId: /federation/mapping:list
       parameters:
-      - name: name
-        in: query
-        description: Filters the response by IDP name.
-        required: false
-        schema:
-          type: string
       - name: domain_id
         in: query
         description: Filters the response by a domain ID.
@@ -977,6 +971,30 @@ paths:
         required: false
         schema:
           type: string
+      - name: name
+        in: query
+        description: Filters the response by IDP name.
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page (Maximal 100)
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry on the previous page.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       - name: type
         in: query
         description: Filters the response by a mapping type.
@@ -1665,6 +1683,7 @@ components:
           description: The type of credential.
     Assignment:
       type: object
+      description: Assignment.
       required:
       - role
       - scope
@@ -1673,18 +1692,21 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/Group'
+            description: Group.
         role:
           $ref: '#/components/schemas/Role'
-          description: Role ID
+          description: Role.
         scope:
           $ref: '#/components/schemas/Scope'
+          description: Target scope.
         user:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/User'
+            description: User.
     AssignmentList:
       type: object
-      description: Assignments
+      description: Assignments.
       required:
       - role_assignments
       properties:
@@ -3856,7 +3878,7 @@ components:
       - experimental
     Versions:
       type: object
-      description: List of the supported API versionts as [Values].
+      description: List of the supported API versions as [Values].
       required:
       - versions
       properties:

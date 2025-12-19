@@ -20472,7 +20472,54 @@ components:
             rules:
               description: |-
                 A set of zero or more policy rules.
-              type: string
+              items:
+                properties:
+                  direction:
+                    description: The direction of the traffic to which the QoS 
+                      rule is applied, as seen from the point of view of the 
+                      port. Valid values are `egress` and `ingress`. Default 
+                      value is `egress`.
+                    type: string
+                  dscp_mark:
+                    type: string
+                  id:
+                    description: The rule ID
+                    type: string
+                  max_burst_kbps:
+                    description: The maximum burst size (in kilobits).
+                    minimum: 0
+                    type: integer
+                  max_burst_kpps:
+                    description: The max burst kpps (kilo packets per second) 
+                      value.
+                    minimum: 0
+                    type: integer
+                  max_kbps:
+                    description: The maximum KBPS (kilobits per second) value. 
+                      If you specify this value, must be greater than 0 
+                      otherwise max_kbps will have no value
+                    minimum: 0
+                    type: integer
+                  max_kpps:
+                    description: The max kpps (kilo packets per second) value.
+                    minimum: 0
+                    type: integer
+                  min_kbps:
+                    description: The minimum KBPS (kilobits per second) value 
+                      which should be available for port.
+                    minimum: 0
+                    type: integer
+                  min_kpps:
+                    description: The minimum kilo (1000) packets per second 
+                      (kpps) value.
+                    minimum: 0
+                    type: integer
+                  qos_policy_id:
+                    type: string
+                  type:
+                    type: string
+                type: object
+              type: array
             shared:
               description: |-
                 Indicates whether this policy is shared across
@@ -20791,7 +20838,54 @@ components:
               rules:
                 description: |-
                   A set of zero or more policy rules.
-                type: string
+                items:
+                  properties:
+                    direction:
+                      description: The direction of the traffic to which the QoS
+                        rule is applied, as seen from the point of view of the 
+                        port. Valid values are `egress` and `ingress`. Default 
+                        value is `egress`.
+                      type: string
+                    dscp_mark:
+                      type: string
+                    id:
+                      description: The rule ID
+                      type: string
+                    max_burst_kbps:
+                      description: The maximum burst size (in kilobits).
+                      minimum: 0
+                      type: integer
+                    max_burst_kpps:
+                      description: The max burst kpps (kilo packets per second) 
+                        value.
+                      minimum: 0
+                      type: integer
+                    max_kbps:
+                      description: The maximum KBPS (kilobits per second) value.
+                        If you specify this value, must be greater than 0 
+                        otherwise max_kbps will have no value
+                      minimum: 0
+                      type: integer
+                    max_kpps:
+                      description: The max kpps (kilo packets per second) value.
+                      minimum: 0
+                      type: integer
+                    min_kbps:
+                      description: The minimum KBPS (kilobits per second) value 
+                        which should be available for port.
+                      minimum: 0
+                      type: integer
+                    min_kpps:
+                      description: The minimum kilo (1000) packets per second 
+                        (kpps) value.
+                      minimum: 0
+                      type: integer
+                    qos_policy_id:
+                      type: string
+                    type:
+                      type: string
+                  type: object
+                type: array
               shared:
                 description: |-
                   Indicates whether this policy is shared across
@@ -21191,7 +21285,54 @@ components:
             rules:
               description: |-
                 A set of zero or more policy rules.
-              type: string
+              items:
+                properties:
+                  direction:
+                    description: The direction of the traffic to which the QoS 
+                      rule is applied, as seen from the point of view of the 
+                      port. Valid values are `egress` and `ingress`. Default 
+                      value is `egress`.
+                    type: string
+                  dscp_mark:
+                    type: string
+                  id:
+                    description: The rule ID
+                    type: string
+                  max_burst_kbps:
+                    description: The maximum burst size (in kilobits).
+                    minimum: 0
+                    type: integer
+                  max_burst_kpps:
+                    description: The max burst kpps (kilo packets per second) 
+                      value.
+                    minimum: 0
+                    type: integer
+                  max_kbps:
+                    description: The maximum KBPS (kilobits per second) value. 
+                      If you specify this value, must be greater than 0 
+                      otherwise max_kbps will have no value
+                    minimum: 0
+                    type: integer
+                  max_kpps:
+                    description: The max kpps (kilo packets per second) value.
+                    minimum: 0
+                    type: integer
+                  min_kbps:
+                    description: The minimum KBPS (kilobits per second) value 
+                      which should be available for port.
+                    minimum: 0
+                    type: integer
+                  min_kpps:
+                    description: The minimum kilo (1000) packets per second 
+                      (kpps) value.
+                    minimum: 0
+                    type: integer
+                  qos_policy_id:
+                    type: string
+                  type:
+                    type: string
+                type: object
+              type: array
             shared:
               description: |-
                 Indicates whether this policy is shared across
@@ -21286,7 +21427,54 @@ components:
             rules:
               description: |-
                 A set of zero or more policy rules.
-              type: string
+              items:
+                properties:
+                  direction:
+                    description: The direction of the traffic to which the QoS 
+                      rule is applied, as seen from the point of view of the 
+                      port. Valid values are `egress` and `ingress`. Default 
+                      value is `egress`.
+                    type: string
+                  dscp_mark:
+                    type: string
+                  id:
+                    description: The rule ID
+                    type: string
+                  max_burst_kbps:
+                    description: The maximum burst size (in kilobits).
+                    minimum: 0
+                    type: integer
+                  max_burst_kpps:
+                    description: The max burst kpps (kilo packets per second) 
+                      value.
+                    minimum: 0
+                    type: integer
+                  max_kbps:
+                    description: The maximum KBPS (kilobits per second) value. 
+                      If you specify this value, must be greater than 0 
+                      otherwise max_kbps will have no value
+                    minimum: 0
+                    type: integer
+                  max_kpps:
+                    description: The max kpps (kilo packets per second) value.
+                    minimum: 0
+                    type: integer
+                  min_kbps:
+                    description: The minimum KBPS (kilobits per second) value 
+                      which should be available for port.
+                    minimum: 0
+                    type: integer
+                  min_kpps:
+                    description: The minimum kilo (1000) packets per second 
+                      (kpps) value.
+                    minimum: 0
+                    type: integer
+                  qos_policy_id:
+                    type: string
+                  type:
+                    type: string
+                type: object
+              type: array
             shared:
               description: |-
                 Indicates whether this policy is shared across
@@ -23680,8 +23868,8 @@ components:
               items:
                 properties:
                   belongs_to_default_sg:
-                    description: "Indicates if the security group rule belongs to
-                      the default security\ngroup of the project or not."
+                    description: Indicates if the security group rule belongs to
+                      the default security group of the project or not.
                     type:
                       - boolean
                       - 'null'
@@ -23739,8 +23927,8 @@ components:
                       an integer, or `null`.
                     type: string
                   remote_address_group_id:
-                    description: "The remote address group UUID that is associated
-                      with this\nsecurity group rule."
+                    description: The remote address group UUID that is 
+                      associated with this security group rule.
                     type: string
                   remote_group_id:
                     description: "The remote group UUID to associate with this\nsecurity
@@ -23858,8 +24046,8 @@ components:
               items:
                 properties:
                   belongs_to_default_sg:
-                    description: "Indicates if the security group rule belongs to
-                      the default security\ngroup of the project or not."
+                    description: Indicates if the security group rule belongs to
+                      the default security group of the project or not.
                     type:
                       - boolean
                       - 'null'
@@ -23917,8 +24105,8 @@ components:
                       an integer, or `null`.
                     type: string
                   remote_address_group_id:
-                    description: "The remote address group UUID that is associated
-                      with this\nsecurity group rule."
+                    description: The remote address group UUID that is 
+                      associated with this security group rule.
                     type: string
                   remote_group_id:
                     description: "The remote group UUID to associate with this\nsecurity
@@ -24571,8 +24759,8 @@ components:
               items:
                 properties:
                   belongs_to_default_sg:
-                    description: "Indicates if the security group rule belongs to
-                      the default security\ngroup of the project or not."
+                    description: Indicates if the security group rule belongs to
+                      the default security group of the project or not.
                     type:
                       - boolean
                       - 'null'
@@ -24630,8 +24818,8 @@ components:
                       an integer, or `null`.
                     type: string
                   remote_address_group_id:
-                    description: "The remote address group UUID that is associated
-                      with this\nsecurity group rule."
+                    description: The remote address group UUID that is 
+                      associated with this security group rule.
                     type: string
                   remote_group_id:
                     description: "The remote group UUID to associate with this\nsecurity
@@ -24726,8 +24914,8 @@ components:
                 items:
                   properties:
                     belongs_to_default_sg:
-                      description: "Indicates if the security group rule belongs to
-                        the default security\ngroup of the project or not."
+                      description: Indicates if the security group rule belongs 
+                        to the default security group of the project or not.
                       type:
                         - boolean
                         - 'null'
@@ -24786,8 +24974,8 @@ components:
                         string, an integer, or `null`.
                       type: string
                     remote_address_group_id:
-                      description: "The remote address group UUID that is associated
-                        with this\nsecurity group rule."
+                      description: The remote address group UUID that is 
+                        associated with this security group rule.
                       type: string
                     remote_group_id:
                       description: "The remote group UUID to associate with this\n\
