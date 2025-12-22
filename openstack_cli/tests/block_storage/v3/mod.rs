@@ -27,6 +27,7 @@ mod qos_spec;
 mod quota_class_set;
 mod quota_set;
 mod resource_filter;
+mod scheduler_stat;
 mod service;
 mod snapshot;
 mod snapshot_manage;

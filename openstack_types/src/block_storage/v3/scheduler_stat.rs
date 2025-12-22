@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `block_storage/v3/worker/cleanup` REST operations of block_storage
-pub mod get_pool;
+pub mod pool;

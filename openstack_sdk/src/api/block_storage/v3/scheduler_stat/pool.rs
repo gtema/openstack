@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v3/scheduler-stats/get_pools` REST operations of block_storage
-pub mod get;
+pub mod list;

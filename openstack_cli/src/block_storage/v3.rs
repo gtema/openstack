@@ -36,6 +36,7 @@ pub mod qos_spec;
 pub mod quota_class_set;
 pub mod quota_set;
 pub mod resource_filter;
+pub mod scheduler_stat;
 pub mod service;
 pub mod snapshot;
 pub mod snapshot_manage;
@@ -72,6 +73,7 @@ pub enum BlockStorageCommands {
     QosSpec(Box<qos_spec::QosSpecCommand>),
     QuotaClassSet(Box<quota_class_set::QuotaClassSetCommand>),
     QuotaSet(Box<quota_set::QuotaSetCommand>),
+    SchedulerStat(Box<scheduler_stat::SchedulerStatCommand>),
     Service(Box<service::ServiceCommand>),
     Snapshot(Box<snapshot::SnapshotCommand>),
     SnapshotManage(Box<snapshot_manage::SnapshotManageCommand>),
@@ -114,6 +116,7 @@ impl BlockStorageCommand {
             BlockStorageCommands::QosSpec(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::QuotaClassSet(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::QuotaSet(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::SchedulerStat(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Service(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::SnapshotManage(cmd) => {
