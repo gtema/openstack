@@ -25,6 +25,12 @@ use crate::api::rest_endpoint_prelude::*;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request {
+    /// Indicates whether to show pool details or only pool names in the
+    /// response. Set to true to show pool details. Set to false to show only
+    /// pool names. Default is false.
+    #[builder(default)]
+    detail: Option<bool>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
@@ -36,7 +42,7 @@ impl Request {
 }
 
 impl RequestBuilder {
-    /// Add a single header to the Get_Pool.
+    /// Add a single header to the Pool.
     pub fn header<K, V>(&mut self, header_name: K, header_value: V) -> &mut Self
     where
         K: Into<HeaderName>,
@@ -73,7 +79,10 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams<'_> {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("detail", self.detail);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -81,7 +90,7 @@ impl RestEndpoint for Request {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("pools".into())
     }
 
     /// Returns headers to be set into the request
@@ -116,7 +125,10 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder().build().unwrap().response_key().unwrap(),
+            "pools"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -130,7 +142,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "pools": {} }));
         });
 
         let endpoint = Request::builder().build().unwrap();
@@ -150,7 +162,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "pools": {} }));
         });
 
         let endpoint = Request::builder()
