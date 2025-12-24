@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.3...openstack_tui-v0.13.4) - 2025-12-24
+
+### Other
+
+- Add dependency badge to readme ([#1578](https://github.com/gtema/openstack/pull/1578))
+- Apply new clippy fixes ([#1574](https://github.com/gtema/openstack/pull/1574))
+
 ## [0.13.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.2...openstack_tui-v0.13.3) - 2025-11-19
 
 ### Added
