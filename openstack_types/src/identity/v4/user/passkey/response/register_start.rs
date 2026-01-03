@@ -41,7 +41,7 @@ pub struct RegisterStartResponse {
     #[structable()]
     pub challenge: String,
 
-    /// Credential ID’s that are excluded from being able to be registered.
+    /// Credential ID's that are excluded from being able to be registered.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub exclude_credentials: Option<Vec<ExcludeCredentials>>,
@@ -322,7 +322,7 @@ impl std::str::FromStr for CredentialProtectionPolicy {
     }
 }
 
-/// The desired options for the client’s use of the credProtect extension
+/// The desired options for the client's use of the credProtect extension
 ///
 /// <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>
 /// `CredProtect` type
