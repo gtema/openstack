@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.4](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.3...openstack_sdk-v0.22.4) - 2026-01-03
+
+### Added
+
+- Normalize bs.scheduler-stat naming ([#1585](https://github.com/gtema/openstack/pull/1585))
+- Add pagination to the attribute mappings ([#467](https://github.com/gtema/openstack/pull/467)) ([#1577](https://github.com/gtema/openstack/pull/1577))
+- New generated content ([#1575](https://github.com/gtema/openstack/pull/1575))
+- Add identity.idp pagination ([#1563](https://github.com/gtema/openstack/pull/1563))
+
+### Fixed
+
+- Adapt to the keystone-ng changes ([#1567](https://github.com/gtema/openstack/pull/1567))
+- User expiring membership for federated users ([#425](https://github.com/gtema/openstack/pull/425)) ([#1554](https://github.com/gtema/openstack/pull/1554))
+
+### Other
+
+- Prepare update of the block-storage data ([#1572](https://github.com/gtema/openstack/pull/1572))
+
 ## [0.22.3](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.2...openstack_sdk-v0.22.3) - 2025-11-19
 
 ### Added
