@@ -413,10 +413,12 @@ fn get_finish_registration_endpoint(
     if let Some(val) = register_cred.extensions.appid {
         extensions.appid(val);
     }
-    if let Some(val) = register_cred.extensions.cred_props {
+    if let Some(val) = register_cred.extensions.cred_props
+        && let Some(flag) = val.rk
+    {
         extensions.cred_props(
             register_finish::CredPropsBuilder::default()
-                .rk(val.rk)
+                .rk(flag)
                 .build()
                 .wrap_err_with(|| eyre!("cannot build passkey `cred_props` structure"))?,
         );
