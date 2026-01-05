@@ -94,7 +94,7 @@ webauthn-authenticator-rs = { workspace = true, optional = true }
 webauthn-rs-proto = { workspace = true, optional = true }
 
 [dev-dependencies]
-assert_cmd = "^2.0"
+assert_cmd = "^2.1"
 futures.workspace = true
 md5 = "^0.8.0"
 rand = "^0.9"

@@ -64,7 +64,7 @@ itertools = { workspace = true }
 json-patch = { workspace = true }
 open.workspace = true
 regex = { workspace = true }
-reqwest = { workspace = true, features = ["gzip", "deflate", "http2",
+reqwest = { workspace = true, features = ["gzip", "deflate", "form", "http2",
   "socks", "system-proxy"] }
 secrecy = { version = "0.10", features = ["serde"] }
 serde = { workspace = true }
@@ -79,7 +79,7 @@ webauthn-authenticator-rs = { workspace = true, optional = true }
 webauthn-rs-proto = { workspace = true, optional = true }
 
 [dev-dependencies]
-httpmock = "^0.8"
+httpmock = { version = "0.8" }
 reserve-port = "^2.2"
 tempfile = { workspace = true }
 tracing-test = { version = "^0.2" }
