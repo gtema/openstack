@@ -59,7 +59,7 @@ jobs:
           toolchain: ${{ matrix.rust_ver }}
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@f37a1e4d34f3e1c6a571e294b0258f2805eab48d # v2.58.4
+        uses: taiki-e/install-action@83961fc0a2afe7f045535b5741d9a6418d7e1168 # v2.66.0
         with:
           tool: cargo-nextest
 
