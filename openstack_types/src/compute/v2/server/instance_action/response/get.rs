@@ -31,7 +31,7 @@ pub struct InstanceActionResponse {
     ///
     /// Policy defaults enable only users with the administrative role or the
     /// owner of the server to see instance action event information. Cloud
-    /// providers can change these permissions through the `policy.json` file.
+    /// providers can change these permissions through the `policy.yaml` file.
     ///
     /// **New in version 2.51**
     #[structable(serialize)]

@@ -52,7 +52,7 @@ use openstack_sdk::api::compute::v2::server::migrate_256;
 /// There are two different policies for this action, depending on whether the
 /// host parameter is set. Both defaults enable only users with the
 /// administrative role to perform this operation. Cloud providers can change
-/// these permissions through the `policy.json` file.
+/// these permissions through the `policy.yaml` file.
 ///
 /// Normal response codes: 202
 ///

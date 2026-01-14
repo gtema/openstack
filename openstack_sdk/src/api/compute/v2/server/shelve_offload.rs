@@ -26,6 +26,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// OpenAPI specifies the field as '{}'.
     #[builder(setter(into))]
     pub(crate) shelve_offload: Value,
 

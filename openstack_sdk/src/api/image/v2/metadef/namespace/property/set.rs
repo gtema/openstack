@@ -59,6 +59,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) additional_items: Option<bool>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[builder(default, setter(into))]
     pub(crate) _default: Option<Value>,
 

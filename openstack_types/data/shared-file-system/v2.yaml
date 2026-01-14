@@ -2406,10 +2406,10 @@ paths:
                 - $ref: '#/components/schemas/SharesActionDeny_AccessRequest'
                 - $ref: '#/components/schemas/SharesActionExtendRequest'
                 - $ref: '#/components/schemas/SharesActionExtend_Legacy_20'
-                - $ref: '#/components/schemas/SharesActionMigration_CancelRequest'
-                - $ref: '#/components/schemas/SharesActionMigration_CompleteRequest'
-                - $ref: '#/components/schemas/SharesActionMigration_Get_ProgressRequest'
-                - $ref: '#/components/schemas/SharesActionMigration_StartRequest'
+                - $ref: '#/components/schemas/SharesActionMigration_Cancel_222'
+                - $ref: '#/components/schemas/SharesActionMigration_Complete_222'
+                - $ref: '#/components/schemas/SharesActionMigration_Get_Progress_222'
+                - $ref: '#/components/schemas/SharesActionMigration_Start_229'
                 - $ref: '#/components/schemas/SharesActionOs-Access_ListRequest'
                 - $ref: '#/components/schemas/SharesActionOs-Allow_AccessRequest'
                 - $ref: '#/components/schemas/SharesActionOs-Deny_AccessRequest'
@@ -4429,16 +4429,38 @@ components:
       schema:
         type: string
     snapshots_all_tenants:
-      description: Set 1 to list resources for all projects;set 0 to list 
-        resources only for the current project
       in: query
       name: all_tenants
       schema:
         description: Set 1 to list resources for all projects;set 0 to list 
           resources only for the current project
         enum:
-          - 0
-          - 1
+          - '0'
+          - '1'
+          - 'FALSE'
+          - false
+          - 'False'
+          - NO
+          - No
+          - OFF
+          - ON
+          - Off
+          - On
+          - 'TRUE'
+          - true
+          - 'True'
+          - YES
+          - Yes
+          - f
+          - 'false'
+          - n
+          - no
+          - off
+          - on
+          - t
+          - 'true'
+          - y
+          - yes
         type:
           - boolean
           - string
@@ -6633,60 +6655,248 @@ components:
       type: 'null'
       x-openstack:
         action-name: force_delete
-    SharesActionMigration_CancelRequest:
-      description: Empty body for migration_cancel action
-      properties:
-        migration_cancel:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_cancel
     SharesActionMigration_CancelResponse:
-      description: Response of the shares/id/action:post:migration_cancel action
+      type: 'null'
+      x-openstack:
+        action-name: migration_cancel
+    SharesActionMigration_Cancel_222:
+      additionalProperties: false
+      properties:
+        migration_cancel: {}
+      required:
+        - migration_cancel
       type: object
       x-openstack:
         action-name: migration_cancel
-    SharesActionMigration_CompleteRequest:
-      description: Empty body for migration_complete action
-      properties:
-        migration_complete:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_complete
+        min-ver: '2.22'
     SharesActionMigration_CompleteResponse:
-      description: Response of the shares/id/action:post:migration_complete 
-        action
+      type: 'null'
+      x-openstack:
+        action-name: migration_complete
+    SharesActionMigration_Complete_222:
+      additionalProperties: false
+      properties:
+        migration_complete: {}
+      required:
+        - migration_complete
       type: object
       x-openstack:
         action-name: migration_complete
-    SharesActionMigration_Get_ProgressRequest:
-      description: Empty body for migration_get_progress action
-      properties:
-        migration_get_progress:
-          type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_get_progress
+        min-ver: '2.22'
     SharesActionMigration_Get_ProgressResponse:
-      description: Response of the shares/id/action:post:migration_get_progress 
-        action
+      additionalProperties: false
+      properties:
+        details: {}
+        task_state: {}
+        total_progress:
+          max: 100
+          min: 0
+          type: integer
+      required:
+        - details
+        - task_state
+        - total_progress
       type: object
       x-openstack:
         action-name: migration_get_progress
-    SharesActionMigration_StartRequest:
-      description: Empty body for migration_start action
+    SharesActionMigration_Get_Progress_222:
+      additionalProperties: false
+      properties:
+        migration_get_progress: {}
+      required:
+        - migration_get_progress
+      type: object
+      x-openstack:
+        action-name: migration_get_progress
+        min-ver: '2.22'
+    SharesActionMigration_StartResponse:
+      type: 'null'
+      x-openstack:
+        action-name: migration_start
+    SharesActionMigration_Start_229:
+      additionalProperties: false
       properties:
         migration_start:
-          type: 'null'
+          additionalProperties: true
+          properties:
+            force_host_assisted_migration:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            host:
+              type: string
+            new_share_network_id:
+              type:
+                - 'null'
+                - string
+            new_share_type_id:
+              type:
+                - 'null'
+                - string
+            nondisruptive:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            preserve_metadata:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            preserve_snapshots:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+            writable:
+              enum:
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - NO
+                - No
+                - OFF
+                - ON
+                - Off
+                - On
+                - 'TRUE'
+                - true
+                - 'True'
+                - YES
+                - Yes
+                - f
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - t
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - string
+          required:
+            - host
+            - nondisruptive
+            - preserve_metadata
+            - preserve_snapshots
+            - writable
+          type: object
+      required:
+        - migration_start
       type: object
       x-openstack:
         action-name: migration_start
-    SharesActionMigration_StartResponse:
-      description: Response of the shares/id/action:post:migration_start action
-      type: object
-      x-openstack:
-        action-name: migration_start
+        min-ver: '2.29'
     SharesActionOs-Access_ListRequest:
       description: Empty body for os-access_list action
       properties:

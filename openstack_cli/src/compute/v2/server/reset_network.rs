@@ -37,7 +37,7 @@ use openstack_sdk::api::compute::v2::server::reset_network;
 ///
 /// Policy defaults enable only users with the administrative role to perform
 /// this operation. Cloud providers can change these permissions through the
-/// `policy.json` file.
+/// `policy.yaml` file.
 ///
 /// Normal response codes: 202
 ///

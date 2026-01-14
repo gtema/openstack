@@ -37,7 +37,7 @@ use openstack_types::compute::v2::hypervisor::search::response::get::SearchRespo
 ///
 /// Policy defaults enable only users with the administrative role to perform
 /// this operation. Cloud providers can change these permissions through the
-/// `policy.json` file.
+/// `policy.yaml` file.
 ///
 /// Normal response code: 200
 ///

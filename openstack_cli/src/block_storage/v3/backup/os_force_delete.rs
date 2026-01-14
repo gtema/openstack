@@ -43,7 +43,8 @@ pub struct BackupCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    /// OpenAPI specifies the field as '{}'.
+    #[arg(default_value_t=Value::Null, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     os_force_delete: Value,
 }
 

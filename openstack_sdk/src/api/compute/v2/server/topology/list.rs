@@ -19,7 +19,7 @@
 //!
 //! Policy defaults enable only users with the administrative role or the
 //! owners of the server to perform this operation. Cloud providers can change
-//! these permissions through the `policy.json` file.
+//! these permissions through the `policy.yaml` file.
 //!
 //! Normal response codes: 200
 //!
