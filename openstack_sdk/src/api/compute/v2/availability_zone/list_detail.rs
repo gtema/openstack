@@ -17,7 +17,7 @@
 
 //! Gets detailed availability zone information. Policy defaults enable only
 //! users with the administrative role to perform this operation. Cloud
-//! providers can change these permissions through the `policy.json` file.
+//! providers can change these permissions through the `policy.yaml` file.
 //!
 //! Normal response codes: 200
 //!

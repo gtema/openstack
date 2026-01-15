@@ -62,6 +62,7 @@ pub struct FlavorResponse {
     #[structable()]
     pub name: String,
 
+    /// OpenAPI specifies the field as '{}'.
     #[serde(rename = "os-flavor-access:is_public")]
     #[structable(serialize, title = "os-flavor-access:is_public")]
     pub os_flavor_access_is_public: Value,
@@ -85,6 +86,7 @@ pub struct FlavorResponse {
     #[structable()]
     pub ram: i32,
 
+    /// OpenAPI specifies the field as '{}'.
     #[structable(serialize)]
     pub rxtx_factor: Value,
 

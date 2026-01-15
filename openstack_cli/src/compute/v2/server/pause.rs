@@ -38,7 +38,7 @@ use serde_json::Value;
 ///
 /// Policy defaults enable only users with the administrative role or the owner
 /// of the server to perform this operation. Cloud providers can change these
-/// permissions through the `policy.json` file.
+/// permissions through the `policy.yaml` file.
 ///
 /// Normal response codes: 202
 ///
@@ -55,7 +55,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    /// OpenAPI specifies the field as '{}'.
+    #[arg(default_value_t=Value::Null, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     pause: Value,
 }
 

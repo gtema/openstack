@@ -27,6 +27,7 @@ pub struct PropertyResponse {
     #[structable(optional, title = "additionalItems")]
     pub additional_items: Option<bool>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[serde(default, rename = "default")]
     #[structable(optional, serialize, title = "default")]
     pub _default: Option<Value>,

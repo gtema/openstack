@@ -48,6 +48,7 @@ pub struct PropertyCommand {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     additional_items: Option<bool>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     _default: Option<Value>,
 

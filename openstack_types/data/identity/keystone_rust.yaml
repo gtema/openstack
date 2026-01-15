@@ -151,6 +151,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleVersion'
+  /v3/auth/projects:
+    get:
+      tags:
+      - auth
+      summary: Get available project scopes.
+      description: |-
+        This call returns the list of projects that are available to be scoped to
+        based on the X-Auth-Token provided in the request.
+      operationId: list
+      responses:
+        '200':
+          description: Project list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectShortList'
   /v3/auth/tokens:
     get:
       tags:
@@ -328,11 +344,44 @@ paths:
           description: Deleted
         '404':
           description: group not found
+  /v3/projects/{project_id}/users/{user_id}/roles/{role_id}:
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on project
+      description: Validates that a user has a role on a project.
+      operationId: /project/user/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v3/role_assignments:
     get:
       tags:
-      - roles
-      summary: List role assignments
+      - role_assignments
+      summary: List role assignments.
       description: List roles
       operationId: list
       parameters:
@@ -1231,11 +1280,44 @@ paths:
           description: Deleted
         '404':
           description: group not found
-  /v4/role_assignments:
+  /v4/role_assignments/projects/{project_id}/users/{user_id}/roles/{role_id}:
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on project
+      description: Validates that a user has a role on a project.
+      operationId: /project/user/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+  /v4/role_assignments/role_assignments:
     get:
       tags:
-      - roles
-      summary: List role assignments
+      - role_assignments
+      summary: List role assignments.
       description: List roles
       operationId: list
       parameters:
@@ -1782,7 +1864,7 @@ components:
               sufficient to uniquely identify a project but if a project is
               specified by name, then the domain of the project must also be
               specified in order to uniquely identify the project by name. A domain
-              scope may be specified by either the domain’s ID or name with
+              scope may be specified by either the domain's ID or name with
               equivalent results.
     AuthenticationExtensionsClientOutputs:
       type: object
@@ -1945,7 +2027,7 @@ components:
     CredProtect:
       type: object
       description: |-
-        The desired options for the client’s use of the credProtect extension
+        The desired options for the client's use of the credProtect extension
 
         <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>
       required:
@@ -2355,6 +2437,13 @@ components:
           items:
             $ref: '#/components/schemas/IdentityProvider'
           description: Collection of identity provider objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     IdentityProviderResponse:
       type: object
       description: Identity provider response.
@@ -2650,6 +2739,13 @@ components:
       required:
       - mappings
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         mappings:
           type: array
           items:
@@ -2849,7 +2945,7 @@ components:
       description: |-
         Passkey Authorization challenge.
 
-        A JSON serializable challenge which is issued to the user’s webbrowser for
+        A JSON serializable challenge which is issued to the user's webbrowser for
         handling. This is meant to be opaque, that is, you should not need to
         inspect or alter the content of the struct
         - you should serialise it and transmit it to the client only.
@@ -2890,13 +2986,13 @@ components:
         display_name:
           type: string
           description: |-
-            The user’s preferred name for display. This value can change, so must
+            The user's preferred name for display. This value can change, so must
             not be used as a primary key.
         id:
           type: string
           format: binary
           description: |-
-            The user’s id in base64 form. This MUST be a unique id, and must NOT
+            The user's id in base64 form. This MUST be a unique id, and must NOT
             contain personally identifying information, as this value can NEVER
             be changed. If in doubt, use a UUID.
           contentEncoding: base64
@@ -2940,6 +3036,40 @@ components:
         name:
           type: string
           description: Project Name.
+    ProjectShort:
+      type: object
+      description: Short Project representation.
+      required:
+      - domain_id
+      - enabled
+      - id
+      - name
+      properties:
+        domain_id:
+          type: string
+          description: The ID of the domain for the project.
+        enabled:
+          type: boolean
+          description: |-
+            If set to true, project is enabled. If set to false, project is
+            disabled.
+        id:
+          type: string
+          description: The ID for the project.
+        name:
+          type: string
+          description: The name of the project.
+    ProjectShortList:
+      type: object
+      description: List of projects.
+      required:
+      - projects
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectShort'
+          description: Collection of project objects.
     PubKeyCredParams:
       type: object
       description: Public key cryptographic parameters
@@ -2983,7 +3113,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PublicKeyCredentialDescriptor'
-          description: Credential ID’s that are excluded from being able to be registered.
+          description: Credential ID's that are excluded from being able to be registered.
         extensions:
           $ref: '#/components/schemas/RequestRegistrationExtensions'
           description: extensions.
@@ -3181,7 +3311,7 @@ components:
     ResidentKeyRequirement:
       type: string
       description: |-
-        The Relying Party’s requirements for client-side discoverable credentials.
+        The Relying Party's requirements for client-side discoverable credentials.
 
         <https://www.w3.org/TR/webauthn-2/#enumdef-residentkeyrequirement>
       enum:
@@ -3212,6 +3342,7 @@ components:
           name:
             type: string
             description: Role name
+      description: The role data.
     RoleCreate:
       allOf:
       - description: Extra attributes for the role.
@@ -3243,7 +3374,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
-          description: Collection of role objects
+          description: Collection of role objects.
     RoleResponse:
       type: object
       required:
@@ -3287,7 +3418,7 @@ components:
         ID is sufficient to uniquely identify a project but if a project is
         specified by name, then the domain of the project must also be specified in
         order to uniquely identify the project by name. A domain scope may be
-        specified by either the domain’s ID or name with equivalent results.
+        specified by either the domain's ID or name with equivalent results.
     ScopeProject:
       type: object
       description: Project scope information.
@@ -3318,13 +3449,13 @@ components:
           description: The version.
     System:
       type: object
-      description: System scope.
+      description: System information.
+      required:
+      - all
       properties:
         all:
-          type:
-          - boolean
-          - 'null'
-          description: All systems access.
+          type: boolean
+          description: All
     Token:
       type: object
       description: Authorization token
@@ -3332,8 +3463,14 @@ components:
       - audit_ids
       - methods
       - expires_at
+      - issued_at
       - user
       properties:
+        OS-TRUST:trust:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TokenTrustRepr'
+            description: A trust object.
         audit_ids:
           type: array
           items:
@@ -3365,6 +3502,10 @@ components:
           type: string
           format: date-time
           description: The date and time when the token expires.
+        issued_at:
+          type: string
+          format: date-time
+          description: The date and time when the token was issued.
         methods:
           type: array
           items:
@@ -3396,6 +3537,11 @@ components:
           items:
             $ref: '#/components/schemas/Role'
           description: A list of role objects
+        system:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/System'
+            description: A system object.
         user:
           $ref: '#/components/schemas/User'
           description: A user object.
@@ -3555,6 +3701,101 @@ components:
         restriction:
           $ref: '#/components/schemas/TokenRestrictionUpdate'
           description: Restriction object.
+    TokenTrustRepr:
+      type: object
+      description: A trust object returned in the token.
+      required:
+      - id
+      - impersonation
+      - trustor_user
+      - trustee_user
+      properties:
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            Specifies the expiration time of the trust. A trust may be revoked ahead
+            of expiration. If the value represents a time in the past, the trust is
+            deactivated. In the redelegation case it must not exceed the value of
+            the corresponding `expires_at` field of the redelegated trust or it may
+            be omitted, then the `expires_at` value is copied from the
+            redelegated trust.
+        id:
+          type: string
+          description: The ID of the trust.
+        impersonation:
+          type: boolean
+          description: |-
+            If set to `true`, then the user attribute of tokens generated based on
+            the trust will represent that of the `trustor` rather than the
+            `trustee`, thus allowing the `trustee` to impersonate the `trustor`.
+            If impersonation is set to `false`, then the token's user attribute
+            will represent that of the `trustee`.
+        redelegated_trust_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Returned with redelegated trust provides information about the
+            predecessor in the trust chain.
+        redelegation_count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: |-
+            Specifies the maximum remaining depth of the redelegated trust chain.
+            Each subsequent trust has this field decremented by 1 automatically. The
+            initial trustor issuing new trust that can be redelegated, must set
+            allow_redelegation to true and may set `redelegation_count` to an
+            integer value less than or equal to `max_redelegation_count`
+            configuration parameter in order to limit the possible length of
+            derived trust chains. The trust issued by the `trustor` using a
+            project-scoped token (not redelegating), in which
+            `allow_redelegation` is set to true (the new
+            trust is redelegatable), will be populated with the value specified in
+            the `max_redelegation_count` configuration parameter if
+            `redelegation_count` is not set or set to `null`. If
+            `allow_redelegation` is set to `false` then `redelegation_count`
+            will be set to 0 in the trust. If the trust is being issued by the
+            `trustee` of a redelegatable trust-scoped token (redelegation case)
+            then `redelegation_count` should not be set, as it
+            will automatically be set to the value in the redelegatable
+            trust-scoped token decremented by 1. Note, if the resulting value is
+            0, this means that the new trust will not be redelegatable,
+            regardless of the value of `allow_redelegation`.
+          minimum: 0
+        remaining_uses:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: |-
+            Specifies how many times the trust can be used to obtain a token. This
+            value is decreased each time a token is issued through the trust. Once
+            it reaches 0, no further tokens will be issued through the trust. The
+            default value is null, meaning there is no limit on the number of tokens
+            issued through the trust. If redelegation is enabled it must not be set.
+          minimum: 0
+        trustee_user:
+          $ref: '#/components/schemas/TokenTrustUser'
+          description: Represents the user who is capable of consuming the trust.
+        trustor_user:
+          $ref: '#/components/schemas/TokenTrustUser'
+          description: |-
+            Represents the user who created the trust, and who's authorization is
+            being delegated.
+    TokenTrustUser:
+      type: object
+      description: A trust object returned in the token.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The ID of the user.
     User:
       type: object
       description: User information.
@@ -3592,7 +3833,7 @@ components:
             - string
             - 'null'
             description: |-
-              The ID of the default project for the user. A user’s default project
+              The ID of the default project for the user. A user's default project
               must not be a domain. Setting this attribute does not grant any actual
               authorization on the project, and is merely provided for convenience.
               Therefore, the referenced project does not need to exist within the user
@@ -3689,7 +3930,7 @@ components:
       type: object
       description: |-
         A client response to a registration challenge. This contains all required
-        information to assess and assert trust in a credential’s legitimacy,
+        information to assess and assert trust in a credential's legitimacy,
         followed by registration to a user.
 
         You should not need to handle the inner content of this structure - you
@@ -3791,7 +4032,7 @@ components:
       description: |-
         Defines the User Authenticator Verification policy. This is documented
         <https://w3c.github.io/webauthn/#enumdef-userverificationrequirement>, and each variant lists
-        it’s effects.
+        it's effects.
 
         To be clear, Verification means that the Authenticator perform extra or
         supplementary interaction with the user to verify who they are. An example
@@ -3800,7 +4041,7 @@ components:
 
         An example of a non-verified interaction is a yubico device with no pin
         where touch is the only interaction - we only verify a user is present, but
-        we don’t have extra details to the legitimacy of that user.
+        we don't have extra details to the legitimacy of that user.
 
         As UserVerificationPolicy is only used in credential registration, this
         stores the verification state of the credential in the persisted credential.

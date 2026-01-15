@@ -286,6 +286,7 @@ pub struct BlockDeviceMapping<'a> {
     #[builder(default, setter(into))]
     pub(crate) device_name: Option<Cow<'a, str>>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) no_device: Option<Value>,
@@ -366,6 +367,7 @@ pub struct BlockDeviceMappingV2<'a> {
     #[builder(default, setter(into))]
     pub(crate) image_id: Option<Cow<'a, str>>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) no_device: Option<Value>,

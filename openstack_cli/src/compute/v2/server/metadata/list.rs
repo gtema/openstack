@@ -36,7 +36,7 @@ use openstack_types::compute::v2::server::metadata::response::list::MetadataResp
 ///
 /// Policy defaults enable only users with the administrative role or the owner
 /// of the server to perform this operation. Cloud providers can change these
-/// permissions through the `policy.json` file.
+/// permissions through the `policy.yaml` file.
 ///
 /// Normal response codes: 200
 ///

@@ -65,6 +65,7 @@ struct PathParameters {}
 /// Consistencygroup Body data
 #[derive(Args, Clone)]
 struct Consistencygroup {
+    /// OpenAPI specifies the field as '{}'.
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     availability_zone: Option<Value>,
 
@@ -84,6 +85,7 @@ struct Consistencygroup {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
     no_name: bool,
 
+    /// OpenAPI specifies the field as '{}'.
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
     volume_types: Value,
 }

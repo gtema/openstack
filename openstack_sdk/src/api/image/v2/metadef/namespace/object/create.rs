@@ -61,6 +61,7 @@ pub struct Properties<'a> {
     #[builder(default, setter(into))]
     pub(crate) additional_items: Option<bool>,
 
+    /// OpenAPI specifies the field as '{}'.
     #[serde(rename = "default", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) _default: Option<Value>,
