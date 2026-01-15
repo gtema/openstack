@@ -46,7 +46,7 @@ passkey = ["keystone_ng", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-prot
 [dependencies]
 async-trait = {workspace = true}
 base64 = { workspace = true }
-bincode = { version = "^2.0", default-features = false, features = ["serde", "std"] }
+bincode = { version = "^3.0.0", default-features = false, features = ["serde", "std"] }
 bytes = {workspace = true}
 chrono = { workspace= true }
 config = { workspace = true, features = ["yaml"] }
