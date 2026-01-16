@@ -15,10 +15,7 @@
 use super::{Component, Frame};
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use eyre::{OptionExt, Result};
-use ratatui::{
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{prelude::*, widgets::*};
 use serde_json::Value;
 use std::cmp;
 
@@ -179,7 +176,7 @@ impl Describe {
             ));
         }
         let block = Block::default()
-            .title(Title::from(title))
+            .title(title)
             .title_alignment(Alignment::Center)
             .title_style(match self.is_focused {
                 true => Style::new().white(),

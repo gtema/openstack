@@ -14,10 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
-use ratatui::{
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{prelude::*, widgets::*};
 
 use crate::{
     action::Action,

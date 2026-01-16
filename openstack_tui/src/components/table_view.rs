@@ -16,10 +16,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
-use ratatui::{
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{prelude::*, widgets::*};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
