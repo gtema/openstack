@@ -22,32 +22,14 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::{DirBuilder, File};
 use std::io::prelude::*;
+use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
-//use thiserror::Error;
 use tracing::{debug, info, trace, warn};
 
 use crate::auth::{
     authtoken::{AuthToken, AuthTokenScope},
     AuthState,
 };
-
-// /// Errors which may occur when creating connection state data.
-// #[derive(Debug, Error)]
-// #[non_exhaustive]
-// pub enum StateError {
-//     #[error("failed to deserialize config: {}", source)]
-//     Parse {
-//         /// The source of the error.
-//         #[from]
-//         source: config::ConfigError,
-//     },
-//     #[error("IO error: {}", source)]
-//     IO {
-//         /// The source of the error.
-//         #[from]
-//         source: std::io::Error,
-//     },
-// }
 
 /// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]
@@ -246,18 +228,15 @@ impl State {
             Ok(mut file) => {
                 let mut contents = vec![];
                 match file.read_to_end(&mut contents) {
-                    Ok(_) => match bincode::serde::decode_from_slice(
-                        &contents,
-                        bincode::config::legacy(),
-                    ) {
-                        Ok::<(ScopeAuths, usize), _>((mut auth, _)) => {
+                    Ok(_) => match postcard::from_bytes::<ScopeAuths>(&contents) {
+                        Ok(mut auth) => {
                             auth.filter_invalid_auths();
                             trace!("Cached Auth info: {:?}", auth);
                             Some(auth)
                         }
                         Err(x) => {
                             info!(
-                                "Corrupted cache file {}: {:?}. Removing ",
+                                "Corrupted cache file `{}`: {:?}. Removing ",
                                 fname.display(),
                                 x
                             );
@@ -265,18 +244,18 @@ impl State {
                             None
                         }
                     },
-                    _ => {
+                    Err(e) => {
                         // Not able to read file, maybe it is corrupted. There is nothing user can
                         // or is expected to do about it, but it make sense to make user aware of.
-                        info!("Error reading file {}", fname.display());
+                        info!("Error reading file `{}`: {:?}", fname.display(), e);
                         None
                     }
                 }
             }
-            _ => {
+            Err(e) => {
                 // Not able to open file, maybe it is missing. There is nothing user can or is
                 // expected to do about it.
-                debug!("Error opening file {}", fname.display());
+                debug!("Error opening file `{}`: {:?}", fname.display(), e);
                 None
             }
         }
@@ -291,17 +270,25 @@ impl State {
 
         let _ = state.0.insert(scope.clone(), data.clone());
 
-        match bincode::serde::encode_to_vec(&state, bincode::config::legacy()) {
-            Ok(ser_data) => match File::create(fname.as_path()) {
-                Ok(mut file) => {
-                    let _ = file.write_all(&ser_data);
+        match File::create(fname.as_path()) {
+            Ok(mut file) => {
+                match file.metadata() {
+                    Ok(metadata) => {
+                        let mut permissions = metadata.permissions();
+                        permissions.set_mode(0o600);
+                        let _ = file.set_permissions(permissions);
+                    }
+                    Err(_) => {
+                        warn!("Cannot set permissions for the cache file");
+                        return;
+                    }
                 }
-                _ => {
-                    warn!("Error writing state file");
+                if let Err(e) = postcard::to_io(&state, &mut file) {
+                    warn!("Error serializing state: {:?}", e);
                 }
-            },
-            Err(e) => {
-                warn!("Error serializing state, {:?}", e);
+            }
+            _ => {
+                warn!("Error writing state file");
             }
         }
     }
