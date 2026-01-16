@@ -20,7 +20,7 @@ use ratatui::{
         Flex, Layout, Rect,
     },
     prelude::*,
-    widgets::{block::*, *},
+    widgets::*,
 };
 use serde::Deserialize;
 use serde_json::Value;

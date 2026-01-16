@@ -14,10 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::{Result, WrapErr};
-use ratatui::{
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{prelude::*, widgets::*};
 use serde::Deserialize;
 use serde_json::Value;
 use structable::{StructTable, StructTableOptions};

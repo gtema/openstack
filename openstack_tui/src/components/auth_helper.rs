@@ -17,11 +17,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::{Result, eyre};
 use openstack_sdk::auth::auth_helper::{AuthHelper as SdkAuthHelper, AuthHelperError};
-use ratatui::{
-    layout::Rect,
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{layout::Rect, prelude::*, widgets::*};
 use secrecy::SecretString;
 use std::time::Duration;
 use tokio::sync::{

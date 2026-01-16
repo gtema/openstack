@@ -14,11 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
-use ratatui::{
-    layout::Rect,
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{layout::Rect, prelude::*, widgets::*};
 use std::io::Write;
 
 use crate::{

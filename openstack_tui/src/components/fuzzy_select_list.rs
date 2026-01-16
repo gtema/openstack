@@ -14,10 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
-use ratatui::{
-    prelude::*,
-    widgets::{block::*, *},
-};
+use ratatui::{prelude::*, widgets::*};
 use std::cmp;
 
 use crate::{action::Action, components::Component, config::Config, error::TuiError};
