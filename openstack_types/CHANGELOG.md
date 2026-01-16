@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.4](https://github.com/gtema/openstack/compare/openstack_types-v0.22.3...openstack_types-v0.22.4) - 2026-01-16
+
+### Added
+
+- Normalize bs.scheduler-stat naming ([#1585](https://github.com/gtema/openstack/pull/1585))
+- New generated content ([#1575](https://github.com/gtema/openstack/pull/1575))
+
+### Fixed
+
+- Fix neutron qos/policies.rules definition ([#1579](https://github.com/gtema/openstack/pull/1579))
+- Adapt to the keystone-ng changes ([#1567](https://github.com/gtema/openstack/pull/1567))
+- User expiring membership for federated users ([#425](https://github.com/gtema/openstack/pull/425)) ([#1554](https://github.com/gtema/openstack/pull/1554))
+
+### Other
+
+- Try to improve handling for '{}' schemas ([#1607](https://github.com/gtema/openstack/pull/1607))
+- Switch more integration tests to use API ([#487](https://github.com/gtema/openstack/pull/487)) ([#1598](https://github.com/gtema/openstack/pull/1598))
+- Prepare update of the block-storage data ([#1572](https://github.com/gtema/openstack/pull/1572))
+- *(deps)* Bump uuid from 1.18.1 to 1.19.0 ([#1551](https://github.com/gtema/openstack/pull/1551))
+
 ## [0.22.3](https://github.com/gtema/openstack/compare/openstack_types-v0.22.2...openstack_types-v0.22.3) - 2025-11-19
 
 ### Added
