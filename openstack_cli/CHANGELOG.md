@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.4...openstack_cli-v0.13.5) - 2026-01-17
+
+### Fixed
+
+- Ensure OS is considered for auth cache file ([#1613](https://github.com/gtema/openstack/pull/1613))
+
+### Other
+
+- Fix passkey resource api version ([#1611](https://github.com/gtema/openstack/pull/1611))
+
 ## [0.13.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.3...openstack_cli-v0.13.4) - 2026-01-16
 
 ### Added
