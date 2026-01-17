@@ -1,6 +1,6 @@
 ################
 ##### Builder
-FROM rust:1.92.0-slim@sha256:973c5191dd2613f5caa07cdfd9f94b8b0b4bbfa10bc21f0073ffc115ff04c701 AS builder
+FROM rust:1.92.0-slim@sha256:82dcd8ffae4a456f02582c457f87c35c189fe8cd381c0d76d81b95a1c324b440 AS builder
 
 RUN rustup target add x86_64-unknown-linux-musl &&\
     apt update && \
