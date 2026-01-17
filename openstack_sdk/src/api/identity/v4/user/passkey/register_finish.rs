@@ -238,6 +238,11 @@ impl RestEndpoint for Request<'_> {
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
     }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(4, 0))
+    }
 }
 
 #[cfg(test)]
