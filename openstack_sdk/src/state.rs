@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::{DirBuilder, File};
 use std::io::prelude::*;
+#[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 use tracing::{debug, info, trace, warn};
@@ -275,8 +276,19 @@ impl State {
                 match file.metadata() {
                     Ok(metadata) => {
                         let mut permissions = metadata.permissions();
-                        permissions.set_mode(0o600);
-                        let _ = file.set_permissions(permissions);
+                        #[cfg(unix)]
+                        {
+                            // This code only exists on Linux/macOS/etc.
+                            permissions.set_mode(0o600);
+                            let _ = file.set_permissions(permissions);
+                        }
+
+                        #[cfg(windows)]
+                        {
+                            // On Windows, only readonly is possible and reasonable.
+                            permissions.set_readonly(true);
+                            let _ = file.set_permissions(permissions);
+                        }
                     }
                     Err(_) => {
                         warn!("Cannot set permissions for the cache file");
