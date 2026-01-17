@@ -1,7 +1,7 @@
 [package]
 name = "openstack_types"
 description = "OpenStack API Types"
-version = "0.22.4"
+version = "0.22.5"
 keywords = ["api", "openstack"]
 categories = ["api-bindings"]
 authors = ["Artem Goncharov (gtema)"]
