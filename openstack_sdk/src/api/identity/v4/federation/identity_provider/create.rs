@@ -103,14 +103,14 @@ pub struct IdentityProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) oidc_response_types: Option<Vec<Cow<'a, str>>>,
 
-    /// Additional special provider specific configuration
+    /// Additional special provider specific configuration.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(into, name = "_provider_config"))]
     pub(crate) provider_config: Option<BTreeMap<Cow<'a, str>, Value>>,
 }
 
 impl<'a> IdentityProviderBuilder<'a> {
-    /// Additional special provider specific configuration
+    /// Additional special provider specific configuration.
     pub fn provider_config<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
