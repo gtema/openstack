@@ -32,7 +32,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Passkey<'a> {
-    /// Passkey description
+    /// Passkey description.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,

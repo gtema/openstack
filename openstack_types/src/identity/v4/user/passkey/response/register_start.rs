@@ -22,7 +22,7 @@ use structable::{StructTable, StructTableOptions};
 /// RegisterStart response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RegisterStartResponse {
-    /// <https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference>
+    /// <https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference>.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub attestation: Option<Attestation>,
@@ -32,7 +32,7 @@ pub struct RegisterStartResponse {
     #[structable(optional, serialize)]
     pub attestation_formats: Option<Vec<AttestationFormats>>,
 
-    /// <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>
+    /// <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub authenticator_selection: Option<AuthenticatorSelection>,
@@ -226,7 +226,7 @@ impl std::str::FromStr for UserVerification {
     }
 }
 
-/// <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>
+/// <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>.
 /// `AuthenticatorSelection` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AuthenticatorSelection {
@@ -285,7 +285,7 @@ impl std::str::FromStr for Transports {
     }
 }
 
-/// <https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor>
+/// <https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor>.
 /// `ExcludeCredentials` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExcludeCredentials {
@@ -322,9 +322,9 @@ impl std::str::FromStr for CredentialProtectionPolicy {
     }
 }
 
-/// The desired options for the client's use of the credProtect extension
+/// The desired options for the client's use of the credProtect extension.
 ///
-/// <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>
+/// <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>.
 /// `CredProtect` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CredProtect {
@@ -378,7 +378,7 @@ impl std::str::FromStr for Hints {
     }
 }
 
-/// Public key cryptographic parameters
+/// Public key cryptographic parameters.
 /// `PubKeyCredParams` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PubKeyCredParams {

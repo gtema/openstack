@@ -70,7 +70,7 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     idp_id: Option<String>,
 
-    /// Limit number of entries on the single response page (Maximal 100)
+    /// Limit number of entries on the single response page (Maximal 100).
     #[arg(
         help_heading = "Query parameters",
         long("page-size"),
