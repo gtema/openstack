@@ -34,9 +34,9 @@ pub struct CredProps {
     ///
     /// Note that this extension is UNSIGNED and may have been altered by page
     /// javascript.
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) rk: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) rk: Option<Option<bool>>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
