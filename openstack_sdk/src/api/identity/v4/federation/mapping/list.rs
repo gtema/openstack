@@ -45,7 +45,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     idp_id: Option<Cow<'a, str>>,
 
-    /// Limit number of entries on the single response page (Maximal 100)
+    /// Limit number of entries on the single response page (Maximal 100).
     #[builder(default)]
     limit: Option<u32>,
 

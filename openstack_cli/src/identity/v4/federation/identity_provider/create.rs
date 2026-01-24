@@ -125,7 +125,7 @@ struct IdentityProvider {
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     oidc_response_types: Option<Vec<String>>,
 
-    /// Additional special provider specific configuration
+    /// Additional special provider specific configuration.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     provider_config: Option<Vec<(String, Value)>>,
 }
