@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack_types-v0.22.5...openstack_types-v0.22.6) - 2026-01-24
+
+### Other
+
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+
 ## [0.22.4](https://github.com/gtema/openstack/compare/openstack_types-v0.22.3...openstack_types-v0.22.4) - 2026-01-16
 
 ### Added

@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.6](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.5...openstack_cli-v0.13.6) - 2026-01-24
+
+### Other
+
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+- Changes from Keystone webauthn api tests ([#1615](https://github.com/gtema/openstack/pull/1615))
+
 ## [0.13.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.4...openstack_cli-v0.13.5) - 2026-01-17
 
 ### Fixed
