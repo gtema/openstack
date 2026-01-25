@@ -23,7 +23,7 @@ base64 = "0.22"
 bytes = "^1.11"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.5", features = ["cargo", "color", "derive", "env"] }
-clap_complete = { version = "^4.5" }
+clap_complete = { version = "^4.5", features = ["unstable-dynamic"] }
 color-eyre = { version = "^0.6", features = ["default", "issue-url", "track-caller"] }
 config = { version = "^0.15", default-features = false }
 derive_builder = { version = "^0.20" }
