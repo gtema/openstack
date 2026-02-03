@@ -49,7 +49,7 @@ struct Quota {
     limit: i32,
 }
 
-/// Copmute quota details
+/// Compute quota details
 #[derive(Deserialize, Debug, Default, Clone)]
 struct ComputeQuota {
     instances: Option<Quota>,
