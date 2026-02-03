@@ -17,6 +17,8 @@
 //! The binary of the CLI
 #![deny(missing_docs)]
 
+use clap::CommandFactory;
+use clap_complete::CompleteEnv;
 use color_eyre::eyre::{Report, Result};
 use color_eyre::owo_colors::OwoColorize;
 use color_eyre::section::PanicMessage;
@@ -28,7 +30,17 @@ use openstack_cli::error::OpenStackCliError;
 #[tokio::main]
 async fn main() -> Result<(), Report> {
     initialize_panic_handler()?;
-    openstack_cli::entry_point().await?;
+
+    let args = env::args_os();
+    match CompleteEnv::with_factory(openstack_cli::Cli::command).try_complete(args, None) {
+        Ok(true) => {
+            return Ok(());
+        }
+        Ok(false) | Err(_) => {
+            openstack_cli::entry_point().await?;
+        }
+    }
+
     Ok(())
 }
 
