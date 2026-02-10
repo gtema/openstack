@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.5...openstack_tui-v0.13.6) - 2026-02-10
+
+### Other
+
+- Adapt to the newer release of typos ([#1639](https://github.com/gtema/openstack/pull/1639))
+
 ## [0.13.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.3...openstack_tui-v0.13.4) - 2026-01-16
 
 ### Other
