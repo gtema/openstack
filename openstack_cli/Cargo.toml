@@ -77,7 +77,7 @@ openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features =
 openstack_types = { path="../openstack_types", version = "^0.22" }
 owo-colors = { version = "^4.2", features = ["supports-colors"] }
 indicatif = "^0.18"
-rand = { version = "^0.9" }
+rand = { version = "^0.10" }
 regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
@@ -97,7 +97,7 @@ webauthn-rs-proto = { workspace = true, optional = true }
 assert_cmd = "^2.1"
 futures.workspace = true
 md5 = "^0.8.0"
-rand = "^0.9"
+rand = "^0.10"
 tempfile = { workspace = true }
 
 [[test]]
