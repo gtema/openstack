@@ -5,7 +5,13 @@ git_release_enable = false
 git_release_latest = false
 
 [[package]]
+name = "openstack_sdk_core"
+git_release_enable = true
+version_group = "sdks"
+
+[[package]]
 name = "openstack_sdk"
+changelog_include = ["openstack_sdk_core"]
 git_release_enable = true
 version_group = "sdks"
 
