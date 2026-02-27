@@ -13,10 +13,10 @@
 // SPDX-License-Identifier: Apache-2.0
 use uuid::Uuid;
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::listener::create::{
     ListenerBuilder, ListenerProtocol, Request,
 };
-use openstack_sdk::api::QueryAsync;
 use openstack_types::load_balancer::v2::listener::response::create::ListenerResponse;
 
 use crate::get_client;

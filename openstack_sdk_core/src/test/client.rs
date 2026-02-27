@@ -20,13 +20,13 @@
 #[cfg(feature = "async")]
 use async_trait::async_trait;
 use bytes::Bytes;
-use http::request::Builder as RequestBuilder;
 use http::Response;
+use http::request::Builder as RequestBuilder;
 use http::{HeaderMap, Response as HttpResponse};
-#[cfg(feature = "sync")]
-use reqwest::blocking::Client as HttpClient;
 #[cfg(feature = "async")]
 use reqwest::Client as AsyncHttpClient;
+#[cfg(feature = "sync")]
+use reqwest::blocking::Client as HttpClient;
 use std::collections::HashMap;
 use url::Url;
 
@@ -37,10 +37,10 @@ use crate::api::Client;
 use crate::api::{ApiError, RestClient};
 use crate::auth::Auth;
 
+use crate::RestError;
 use crate::catalog::{CatalogError, ServiceEndpoint};
 use crate::types::identity::v3::Project;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
-use crate::RestError;
 
 /// Fake (test) OpenStack client
 ///

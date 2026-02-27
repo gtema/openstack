@@ -19,7 +19,7 @@ use bytes::Bytes;
 use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
-use http::{header, HeaderMap, HeaderValue, Response as HttpResponse, StatusCode};
+use http::{HeaderMap, HeaderValue, Response as HttpResponse, StatusCode, header};
 use reqwest::{Body, Certificate, Client as AsyncClient, Request, Response};
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
@@ -27,23 +27,22 @@ use std::time::{Duration, SystemTime};
 use std::{fs::File, io::Read};
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
-use tracing::{debug, enabled, error, event, info, instrument, trace, warn, Level};
+use tracing::{Level, debug, enabled, error, event, info, instrument, trace, warn};
 
 use crate::api;
+use crate::api::RestClient;
 use crate::api::query;
 #[cfg(feature = "keystone_ng")]
 use crate::api::query::QueryAsync;
 use crate::api::query::RawQueryAsync;
-use crate::api::RestClient;
 use crate::auth::{
-    self,
+    self, Auth, AuthError, AuthState,
     auth_helper::{AuthHelper, Dialoguer, Noop},
     authtoken::{self, AuthTokenError, AuthType},
-    Auth, AuthError, AuthState,
 };
 use crate::catalog::{Catalog, CatalogError, ServiceEndpoint};
 use crate::config::CloudConfig;
-use crate::config::{get_config_identity_hash, ConfigFile};
+use crate::config::{ConfigFile, get_config_identity_hash};
 use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints};
@@ -583,8 +582,8 @@ impl AsyncOpenStack {
                             auth::v4passkey::get_init_auth_ep(&self.config, auth_helper).await?;
                         let req: auth::v4passkey::PasskeyAuthenticationStartResponse =
                             auth_ep.query_async(self).await?;
-                        use webauthn_authenticator_rs::prelude::Url;
                         use webauthn_authenticator_rs::WebauthnAuthenticator;
+                        use webauthn_authenticator_rs::prelude::Url;
                         let mut auth = WebauthnAuthenticator::new(
                             webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
                         );

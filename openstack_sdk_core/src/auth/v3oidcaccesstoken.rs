@@ -16,7 +16,7 @@
 //!
 
 use derive_builder::Builder;
-use http::{header, HeaderMap, HeaderName, HeaderValue};
+use http::{HeaderMap, HeaderName, HeaderValue, header};
 use secrecy::ExposeSecret;
 use std::borrow::Cow;
 use thiserror::Error;
@@ -148,7 +148,7 @@ impl RestEndpoint for OidcAccessTokenRequest<'_> {
 pub async fn get_auth_ep<A: AuthHelper>(
     config: &config::CloudConfig,
     auth_helper: &mut A,
-) -> Result<impl RestEndpoint, OidcAccessTokenError> {
+) -> Result<impl RestEndpoint + use<A>, OidcAccessTokenError> {
     if let Some(auth) = &config.auth {
         let mut ep = OidcAccessTokenRequest::builder();
 

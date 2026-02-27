@@ -168,17 +168,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .os_set_image_metadata(
-                OsSetImageMetadataBuilder::default()
-                    .metadata(BTreeMap::<String, String>::new().into_iter())
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .os_set_image_metadata(
+                    OsSetImageMetadataBuilder::default()
+                        .metadata(BTreeMap::<String, String>::new().into_iter())
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

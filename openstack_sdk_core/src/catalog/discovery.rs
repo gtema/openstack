@@ -176,8 +176,8 @@ impl EndpointVersion {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::identity::v3::version::{EndpointVersionStatus, Link};
     use crate::types::ApiVersion;
+    use crate::types::identity::v3::version::{EndpointVersionStatus, Link};
     use serde_json::json;
     use url::Url;
 

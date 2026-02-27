@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use openstack_sdk::api::load_balancer::v2::pool::member::get::Request;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::load_balancer::v2::pool::member::get::Request;
 use openstack_types::load_balancer::v2::pool::member::response::get::MemberResponse;
 
 use crate::get_client;

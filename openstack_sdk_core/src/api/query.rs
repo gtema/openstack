@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use http::{uri::InvalidUri, Uri};
+use http::{Uri, uri::InvalidUri};
 
 use url::Url;
 

@@ -21,4 +21,4 @@ mod start;
 
 pub use error::PasskeyError;
 pub use finish::get_finish_auth_ep;
-pub use start::{get_init_auth_ep, PasskeyAuthenticationStartResponse};
+pub use start::{PasskeyAuthenticationStartResponse, get_init_auth_ep};

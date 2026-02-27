@@ -28,8 +28,8 @@ use std::path::PathBuf;
 use tracing::{debug, info, trace, warn};
 
 use crate::auth::{
-    authtoken::{AuthToken, AuthTokenScope},
     AuthState,
+    authtoken::{AuthToken, AuthTokenScope},
 };
 
 /// A HashMap of Scope to Token

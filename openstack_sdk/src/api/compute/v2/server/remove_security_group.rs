@@ -175,17 +175,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .remove_security_group(
-                RemoveSecurityGroupBuilder::default()
-                    .name("foo")
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .remove_security_group(
+                    RemoveSecurityGroupBuilder::default()
+                        .name("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

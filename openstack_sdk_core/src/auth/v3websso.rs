@@ -31,10 +31,10 @@ use thiserror::Error;
 
 use bytes::Bytes;
 use futures::io::Error as IoError;
-use http_body_util::{combinators::BoxBody, BodyExt, Empty, Full};
+use http_body_util::{BodyExt, Empty, Full, combinators::BoxBody};
 use hyper::server::conn::http1;
 use hyper::service::service_fn;
-use hyper::{body::Incoming as IncomingBody, Method, Request, Response, StatusCode};
+use hyper::{Method, Request, Response, StatusCode, body::Incoming as IncomingBody};
 use hyper_util::rt::TokioIo;
 use tokio::net::TcpListener;
 use tokio::signal;

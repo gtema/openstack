@@ -194,21 +194,23 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .allocations(Vec::from([AllocationsBuilder::default()
-                .resource_provider(
-                    ResourceProviderBuilder::default()
-                        .uuid("foo")
-                        .build()
-                        .unwrap()
-                )
-                .resources(BTreeMap::<String, i32>::new().into_iter())
+        assert!(
+            Request::builder()
+                .allocations(Vec::from([AllocationsBuilder::default()
+                    .resource_provider(
+                        ResourceProviderBuilder::default()
+                            .uuid("foo")
+                            .build()
+                            .unwrap()
+                    )
+                    .resources(BTreeMap::<String, i32>::new().into_iter())
+                    .build()
+                    .unwrap()]))
                 .build()
-                .unwrap()]))
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

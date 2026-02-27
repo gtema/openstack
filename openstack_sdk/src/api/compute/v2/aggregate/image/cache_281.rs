@@ -159,15 +159,17 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .cache(Vec::from([CacheBuilder::default()
-                .id("foo")
+        assert!(
+            Request::builder()
+                .cache(Vec::from([CacheBuilder::default()
+                    .id("foo")
+                    .build()
+                    .unwrap()]))
                 .build()
-                .unwrap()]))
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

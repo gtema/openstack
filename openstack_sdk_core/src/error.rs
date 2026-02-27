@@ -21,8 +21,8 @@ use crate::api;
 #[cfg(feature = "passkey")]
 use crate::auth::v4passkey::PasskeyError;
 use crate::auth::{
-    authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
-    v3oidcaccesstoken::OidcAccessTokenError, v3websso::WebSsoError, AuthError,
+    AuthError, authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
+    v3oidcaccesstoken::OidcAccessTokenError, v3websso::WebSsoError,
 };
 #[cfg(feature = "keystone_ng")]
 use crate::auth::{v4federation::FederationError, v4jwt::JwtError};

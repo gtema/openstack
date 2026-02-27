@@ -28,8 +28,8 @@ use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "passkey")]
 use crate::auth::v4passkey;
 use crate::auth::{
-    auth_helper::AuthHelper, authtoken_scope, v3_token_info, v3applicationcredential,
-    v3oidcaccesstoken, v3password, v3token, v3totp, v3websso, AuthState,
+    AuthState, auth_helper::AuthHelper, authtoken_scope, v3_token_info, v3applicationcredential,
+    v3oidcaccesstoken, v3password, v3token, v3totp, v3websso,
 };
 #[cfg(feature = "keystone_ng")]
 use crate::auth::{v4federation, v4jwt};
@@ -260,7 +260,7 @@ impl AuthToken {
     /// Get Token scope information
     pub fn get_scope(&self) -> AuthTokenScope {
         match &self.auth_info {
-            Some(ref data) => AuthTokenScope::from(data),
+            Some(data) => AuthTokenScope::from(data),
             _ => AuthTokenScope::Unscoped,
         }
     }

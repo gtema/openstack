@@ -14,13 +14,13 @@
 
 //! Finish passkey (security device) auth: exchange signed challenge with Keystone token.
 
-use base64::{engine::general_purpose::URL_SAFE, Engine as _};
+use base64::{Engine as _, engine::general_purpose::URL_SAFE};
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-use crate::api::rest_endpoint_prelude::*;
 use crate::api::RestEndpoint;
+use crate::api::rest_endpoint_prelude::*;
 use crate::auth::auth_helper::AuthHelper;
 use crate::config;
 use crate::types::{ApiVersion, ServiceType};

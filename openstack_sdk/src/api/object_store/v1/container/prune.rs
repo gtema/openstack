@@ -27,11 +27,11 @@ use crate::api::{AsyncClient, QueryAsync};
 // use crate::api::Client;
 
 use crate::api::{
-    ignore,
+    Pagination, ignore,
     object_store::v1::{
         container::get::Request as ListRequest, object::delete::Request as DeleteRequest,
     },
-    paged, Pagination,
+    paged,
 };
 
 /// Delete concurrency

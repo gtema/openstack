@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use openstack_sdk::api::load_balancer::v2::listener::set::{ListenerBuilder, Request};
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::load_balancer::v2::listener::set::{ListenerBuilder, Request};
 use openstack_types::load_balancer::v2::listener::response::set::ListenerResponse;
 
 use crate::get_client;

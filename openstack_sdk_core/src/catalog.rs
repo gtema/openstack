@@ -30,7 +30,7 @@ pub use crate::catalog::service_endpoint::ServiceEndpoint;
 use crate::catalog::{service_authority::ServiceAuthority, service_endpoint::ServiceEndpoints};
 use crate::config::CloudConfig;
 use crate::types::{
-    api_version::ApiVersion, identity::v3::ServiceEndpoints as ApiServiceEndpoints, ServiceType,
+    ServiceType, api_version::ApiVersion, identity::v3::ServiceEndpoints as ApiServiceEndpoints,
 };
 
 mod discovery;

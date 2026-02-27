@@ -57,9 +57,9 @@ use std::path::{Path, PathBuf};
 use tracing::{debug, error, trace, warn};
 
 use serde::Deserialize;
-use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::collections::hash_map::DefaultHasher;
 use std::env;
 use std::hash::{Hash, Hasher};
 
@@ -134,20 +134,12 @@ pub enum ConfigFileBuilderError {
 impl fmt::Debug for ConfigFileBuilderError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ConfigFileBuilderError::FileParse {
-                ref source,
-                ref path,
-                ..
-            } => f
+            ConfigFileBuilderError::FileParse { source, path, .. } => f
                 .debug_struct("FileParse")
                 .field("source", source)
                 .field("path", path)
                 .finish_non_exhaustive(),
-            ConfigFileBuilderError::ConfigDeserialize {
-                ref source,
-                ref path,
-                ..
-            } => f
+            ConfigFileBuilderError::ConfigDeserialize { source, path, .. } => f
                 .debug_struct("ConfigDeserialize")
                 .field("source", source)
                 .field("path", path)
@@ -850,7 +842,7 @@ mod tests {
     use std::fs::File;
     use std::io::Write;
     use std::path::PathBuf;
-    use tempfile::{tempdir, Builder};
+    use tempfile::{Builder, tempdir};
 
     use super::*;
 

@@ -13,10 +13,10 @@
 // SPDX-License-Identifier: Apache-2.0
 use uuid::Uuid;
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::create::{
     HealthmonitorBuilder, Request, Type,
 };
-use openstack_sdk::api::QueryAsync;
 use openstack_types::load_balancer::v2::healthmonitor::response::create::HealthmonitorResponse;
 
 use crate::get_client;

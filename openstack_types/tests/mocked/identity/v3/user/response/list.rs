@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use openstack_sdk::api::identity::v3::user::list::Request;
-use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::identity::v3::user::response::list::UserResponse;
 
 use crate::get_client;

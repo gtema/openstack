@@ -226,12 +226,12 @@ mod tests {
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
-    use crate::api::find::Findable;
-    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
+    use crate::api::find::Findable;
+    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, RestClient};
     use crate::test::client::FakeOpenStackClient;
     use derive_builder::Builder;

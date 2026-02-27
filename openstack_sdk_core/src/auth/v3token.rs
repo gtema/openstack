@@ -29,9 +29,9 @@
 //! }
 use thiserror::Error;
 
+use crate::auth::AuthToken;
 use crate::auth::auth_helper::{AuthHelper, AuthHelperError};
 use crate::auth::auth_token_endpoint as token_v3;
-use crate::auth::AuthToken;
 use crate::config;
 
 /// User name/pass related errors
