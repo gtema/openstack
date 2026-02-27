@@ -14,6 +14,7 @@ RUN USER=root cargo new openstack
 
 # We want dependencies cached, so copy those first.
 COPY Cargo.toml Cargo.lock /usr/src/openstack/
+COPY openstack_sdk_core/Cargo.toml /usr/src/openstack/openstack_sdk_core/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
@@ -25,14 +26,19 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p openstack/openstack_tui/src/bin && touch openstack/openstack_tui/src/lib.rs &&\
     cp openstack/src/main.rs openstack/openstack_tui/src/bin/ostui.rs &&\
     mkdir -p openstack/openstack_sdk/src && touch openstack/openstack_sdk/src/lib.rs &&\
+    mkdir -p openstack/openstack_sdk_core/src && touch openstack/openstack_sdk_core/src/lib.rs &&\
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
     mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs &&\
     mkdir -p openstack/openstack_sdk/examples &&\
+    mkdir -p openstack/openstack_sdk_core/examples &&\
     mkdir -p openstack/openstack_types/src && touch openstack/openstack_types/src/lib.rs &&\
     touch openstack/openstack_sdk/examples/query_find.rs &&\
     touch openstack/openstack_sdk/examples/paged.rs &&\
     touch openstack/openstack_sdk/examples/query.rs &&\
-    touch openstack/openstack_sdk/examples/ignore.rs
+    touch openstack/openstack_sdk/examples/ignore.rs &&\
+    touch openstack/openstack_sdk_core/examples/ignore.rs &&\
+    touch openstack/openstack_sdk_core/examples/paged.rs &&\
+    touch openstack/openstack_sdk_core/examples/query.rs
 
 # Set the working directory
 WORKDIR /usr/src/openstack

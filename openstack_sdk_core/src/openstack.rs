@@ -66,14 +66,41 @@ enum ClientCert {
 ///
 /// Separate Identity (not the scope) should use separate instances of this.
 /// ```rust
-/// use openstack_sdk::api::{paged, Pagination, Query};
-/// use openstack_sdk::{OpenStack, config::ConfigFile, OpenStackError};
-/// use openstack_sdk::types::ServiceType;
-/// use openstack_sdk::api::compute::v2::flavor::list;
+/// use openstack_sdk_core::api::{paged, Pagination, Query, Pageable, RestEndpoint};
+/// use openstack_sdk_core::{OpenStack, config::ConfigFile, OpenStackError};
+/// use openstack_sdk_core::types::ServiceType;
+/// # use std::borrow::Cow;
+///
+/// #[derive(derive_builder::Builder)]
+/// #[builder(setter(strip_option))]
+/// pub struct Request<'a> {
+///     id: Cow<'a, str>,
+///     #[builder(default, setter(into))]
+///     min_disk: Option<Cow<'a, str>>,
+/// }
+///
+/// impl RestEndpoint for Request<'_> {
+///     fn method(&self) -> http::Method {
+///         http::Method::GET
+///     }
+///
+///     fn endpoint(&self) -> Cow<'static, str> {
+///         "flavors".to_string().into()
+///     }
+///
+///     fn service_type(&self) -> ServiceType {
+///         ServiceType::Compute
+///     }
+///
+///     fn response_key(&self) -> Option<Cow<'static, str>> {
+///         Some("flavor".into())
+///     }
+/// }
+/// impl Pageable for Request<'_> {}
 ///
 /// fn list_flavors() -> Result<(), OpenStackError> {
 ///     // Get the builder for the listing Flavors Endpoint
-///     let mut ep_builder = list::Request::builder();
+///     let mut ep_builder = RequestBuilder::default();
 ///     // Set the `min_disk` query param
 ///     ep_builder.min_disk("15");
 ///     let ep = ep_builder.build().unwrap();

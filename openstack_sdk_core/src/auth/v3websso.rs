@@ -43,11 +43,9 @@ use url::Url;
 
 use dialoguer::Confirm;
 
-use crate::api::identity::v3::auth::os_federation::{
-    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
-};
 use crate::api::RestEndpoint;
 use crate::auth::authtoken::{AuthToken, AuthTokenError};
+use crate::auth::v3_os_federation::{fed_idp_sso_get, fed_sso_get};
 use crate::config;
 
 /// WebSSO related errors.

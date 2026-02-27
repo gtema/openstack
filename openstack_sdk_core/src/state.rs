@@ -34,7 +34,7 @@ use crate::auth::{
 
 /// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]
-pub(crate) struct ScopeAuths(HashMap<AuthTokenScope, AuthToken>);
+struct ScopeAuths(HashMap<AuthTokenScope, AuthToken>);
 
 impl ScopeAuths {
     /// Filter out all invalid auth data keeping only valid ones
@@ -68,7 +68,7 @@ impl ScopeAuths {
 
 /// OSC state
 #[derive(Clone, Default, Deserialize, Serialize)]
-pub(crate) struct State {
+pub struct State {
     /// Auth/Authz state
     auth_state: ScopeAuths,
     base_dir: PathBuf,
@@ -133,7 +133,7 @@ impl State {
         }
     }
 
-    pub fn find_valid_auth(&self, state: &ScopeAuths) -> Option<AuthToken> {
+    fn find_valid_auth(&self, state: &ScopeAuths) -> Option<AuthToken> {
         if let Some(unscoped) = state.find_valid_unscoped_auth() {
             return Some(unscoped);
         }

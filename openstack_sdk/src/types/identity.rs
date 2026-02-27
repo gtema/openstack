@@ -13,4 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Identity data types
-pub mod v3;
+pub use openstack_sdk_core::types::identity::*;
+
+//pub mod v3;

@@ -1,0 +1,91 @@
+[package]
+name = "openstack_sdk_core"
+description = "OpenStack SDK core"
+version = "0.22.5"
+keywords = ["api", "openstack"]
+categories = ["api-bindings"]
+authors = ["Artem Goncharov (gtema)"]
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[features]
+default = [
+  "async",
+  "sync",
+]
+block_storage = []
+compute = []
+container_infra = []
+dns = []
+identity = []
+image = []
+load_balancer = []
+network = []
+object_store = []
+placement = []
+sync = []
+async = []
+client_der = []
+client_pem = []
+keystone_ng = []
+passkey = ["keystone_ng", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto"]
+
+[dependencies]
+async-trait.workspace = true
+base64.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+config = { workspace = true, features = ["yaml"] }
+derive_builder.workspace = true
+dialoguer.workspace = true
+dirs.workspace = true
+form_urlencoded = "^1.2"
+futures.workspace = true
+futures-util.workspace = true
+http.workspace = true
+http-body-util = "^0.1"
+hyper = { version = "^1.8", features = ["full"] }
+hyper-util = { version = "^0.1", features = ["full"] }
+itertools.workspace = true
+json-patch.workspace = true
+open.workspace = true
+postcard = { version = "1.1", default-features = false, features = ["use-std"] }
+regex.workspace = true
+reqwest = { workspace = true, features = ["gzip", "deflate", "form", "http2",
+  "socks", "system-proxy"] }
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_urlencoded = "^0.7"
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+url.workspace = true
+webauthn-authenticator-rs = { workspace = true, optional = true }
+webauthn-rs-proto = { workspace = true, optional = true }
+
+[dev-dependencies]
+httpmock.workspace = true
+reserve-port = "^2.2"
+tempfile.workspace = true
+tracing-test.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[[example]]
+name = "paged"
+required-features = ["async"]
+
+[[example]]
+name = "query"
+required-features = ["async"]
+
+[[example]]
+name = "ignore"
+required-features = ["async"]
+
+[lints]
+workspace = true

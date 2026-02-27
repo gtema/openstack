@@ -12,4 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub use openstack_sdk_core::api::*;
+#[cfg(feature = "async")]
+mod r#async;
+#[cfg(feature = "sync")]
+mod sync;

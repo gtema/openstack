@@ -1,6 +1,7 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 members = [
+  "openstack_sdk_core",
   "openstack_sdk",
   "openstack_cli",
   "openstack_tui",
@@ -33,12 +34,14 @@ eyre = { version = "^0.6" }
 futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.4"
+httpmock = { version = "0.8" }
 itertools = { version = "^0.14" }
 json-patch = { version = "^4.1" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.3" }
 regex = { version = "^1.12" }
 reqwest = { version = "^0.13", features = ["blocking", "stream", "rustls"], default-features = false }
+secrecy = { version = "0.10", features = ["serde"] }
 serde = { version="^1.0", features=["derive"] }
 serde_json = "^1.0"
 serde_bytes = "^0.11"
@@ -51,6 +54,7 @@ thiserror = { version = "^2.0" }
 tracing = "^0.1"
 tracing-error = { version = "^0.2" }
 tracing-subscriber = { version = "^0.3", features = ["env-filter", "serde"] }
+tracing-test = { version = "^0.2" }
 url = { version = "^2.5", features = ["serde"] }
 webauthn-authenticator-rs = { version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "0.5" }

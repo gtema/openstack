@@ -19,7 +19,7 @@ use futures::stream::{StreamExt, TryStreamExt};
 use serde::Deserialize;
 use tracing::debug;
 
-use crate::error::{OpenStackError, RestError};
+use crate::{OpenStackError, RestError};
 
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
