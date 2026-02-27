@@ -9,11 +9,11 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::env;
 
-use openstack_sdk::api::paged;
+use openstack_sdk::OpenStackError;
 use openstack_sdk::api::Pagination;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::OpenStackError;
-use openstack_sdk::{config::ConfigFile, AsyncOpenStack};
+use openstack_sdk::api::paged;
+use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 
 use openstack_sdk::api::compute::v2::flavor::list_detailed;
 

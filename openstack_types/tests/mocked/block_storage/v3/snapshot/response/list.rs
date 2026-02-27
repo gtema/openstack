@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use openstack_sdk::api::block_storage::v3::snapshot::list::Request;
-use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::block_storage::v3::snapshot::response::list::SnapshotResponse;
 
 use crate::get_client;

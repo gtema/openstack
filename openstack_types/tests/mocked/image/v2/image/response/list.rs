@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use openstack_sdk::api::image::v2::image::list::Request;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::image::v2::image::list::Request;
 use openstack_types::image::v2::image::response::list::ImageResponse;
 
 use crate::get_client;

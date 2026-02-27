@@ -456,22 +456,24 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .auth(
-                AuthBuilder::default()
-                    .identity(
-                        IdentityBuilder::default()
-                            .methods(Vec::from([Methods::ApplicationCredential]))
-                            .build()
-                            .unwrap()
-                    )
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .auth(
+                    AuthBuilder::default()
+                        .identity(
+                            IdentityBuilder::default()
+                                .methods(Vec::from([Methods::ApplicationCredential]))
+                                .build()
+                                .unwrap()
+                        )
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

@@ -157,17 +157,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .os_update_snapshot_status(
-                OsUpdateSnapshotStatusBuilder::default()
-                    .status("foo")
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .os_update_snapshot_status(
+                    OsUpdateSnapshotStatusBuilder::default()
+                        .status("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

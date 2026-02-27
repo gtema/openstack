@@ -17,13 +17,13 @@
 //! This module implements login using the JWT token by exchanging it for a regular Keystone token.
 
 use derive_builder::Builder;
-use http::{header, HeaderMap, HeaderName, HeaderValue};
+use http::{HeaderMap, HeaderName, HeaderValue, header};
 use secrecy::{ExposeSecret, SecretString};
 use std::borrow::Cow;
 use thiserror::Error;
 
-use crate::api::rest_endpoint_prelude::*;
 use crate::api::RestEndpoint;
+use crate::api::rest_endpoint_prelude::*;
 use crate::auth::auth_helper::AuthHelper;
 use crate::config;
 use crate::types::{ApiVersion, ServiceType};
@@ -144,7 +144,7 @@ impl RestEndpoint for JwtRequest<'_> {
 pub async fn get_auth_ep<A>(
     config: &config::CloudConfig,
     auth_helper: &mut A,
-) -> Result<impl RestEndpoint, JwtError>
+) -> Result<impl RestEndpoint + use<A>, JwtError>
 where
     A: AuthHelper,
 {

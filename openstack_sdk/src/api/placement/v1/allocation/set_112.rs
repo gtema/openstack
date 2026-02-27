@@ -199,14 +199,16 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
+                .project_id("foo")
+                .user_id("foo")
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

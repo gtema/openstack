@@ -8,11 +8,11 @@ use std::env;
 
 use derive_builder::Builder;
 
+use openstack_sdk_core::OpenStackError;
+use openstack_sdk_core::api::QueryAsync;
 use openstack_sdk_core::api::ignore;
 use openstack_sdk_core::api::rest_endpoint_prelude::*;
-use openstack_sdk_core::api::QueryAsync;
-use openstack_sdk_core::OpenStackError;
-use openstack_sdk_core::{config::ConfigFile, AsyncOpenStack};
+use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile};
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]

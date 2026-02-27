@@ -11,12 +11,12 @@ use serde_json::Value;
 use std::borrow::Cow;
 use std::env;
 
-use openstack_sdk_core::api::paged;
-use openstack_sdk_core::api::rest_endpoint_prelude::*;
+use openstack_sdk_core::OpenStackError;
 use openstack_sdk_core::api::Pagination;
 use openstack_sdk_core::api::QueryAsync;
-use openstack_sdk_core::OpenStackError;
-use openstack_sdk_core::{config::ConfigFile, AsyncOpenStack};
+use openstack_sdk_core::api::paged;
+use openstack_sdk_core::api::rest_endpoint_prelude::*;
+use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile};
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]

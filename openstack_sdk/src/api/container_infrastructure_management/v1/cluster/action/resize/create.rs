@@ -155,12 +155,14 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .node_count(123)
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .node_count(123)
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

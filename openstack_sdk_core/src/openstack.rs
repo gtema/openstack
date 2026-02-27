@@ -20,29 +20,28 @@ use bytes::Bytes;
 use chrono::TimeDelta;
 use http::{Response as HttpResponse, StatusCode};
 use reqwest::{
-    blocking::{Client, Request, Response},
     Certificate, Url,
+    blocking::{Client, Request, Response},
 };
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
 use tokio::runtime::Runtime;
-use tracing::{debug, error, event, info, instrument, trace, warn, Level};
+use tracing::{Level, debug, error, event, info, instrument, trace, warn};
 
 use crate::api;
 use crate::api::query;
 use crate::api::query::RawQuery;
 use crate::auth::{
-    self,
+    self, Auth, AuthError, AuthState,
     auth_helper::{AuthHelper, Dialoguer, Noop},
     authtoken,
     authtoken::{AuthTokenError, AuthType},
-    Auth, AuthError, AuthState,
 };
 use crate::catalog::{Catalog, CatalogError, ServiceEndpoint};
 use crate::config::CloudConfig;
-use crate::config::{get_config_identity_hash, ConfigFile};
+use crate::config::{ConfigFile, get_config_identity_hash};
 use crate::error::{OpenStackError, OpenStackResult, RestError};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project};

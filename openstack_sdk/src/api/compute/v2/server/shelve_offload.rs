@@ -137,12 +137,14 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .shelve_offload(json!({}))
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .shelve_offload(json!({}))
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

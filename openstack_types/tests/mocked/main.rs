@@ -16,7 +16,7 @@
 use std::env;
 use url::Url;
 
-use openstack_sdk::auth::{authtoken::AuthToken, Auth};
+use openstack_sdk::auth::{Auth, authtoken::AuthToken};
 use openstack_sdk::test::client::FakeOpenStackClient;
 
 #[cfg(feature = "block_storage")]

@@ -116,11 +116,11 @@ mod tests {
     use httpmock::MockServer;
     use serde_json::json;
 
-    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
+    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError};
     use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;

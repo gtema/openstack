@@ -15,7 +15,7 @@
 use std::env;
 
 use openstack_sdk::types::ServiceType;
-use openstack_sdk::{config::ConfigFile, AsyncOpenStack};
+use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 
 #[tokio::test]
 async fn async_connection() -> Result<(), Box<dyn std::error::Error>> {

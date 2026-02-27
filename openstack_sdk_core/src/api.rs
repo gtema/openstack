@@ -438,8 +438,8 @@ pub use self::error::BodyError;
 
 pub use self::client::RestClient;
 
-pub use self::rest_endpoint::check_response_error;
 pub use self::rest_endpoint::RestEndpoint;
+pub use self::rest_endpoint::check_response_error;
 
 #[cfg(feature = "async")]
 pub use self::client::AsyncClient;
@@ -456,17 +456,17 @@ pub use self::query::RawQueryAsync;
 
 pub mod rest_endpoint_prelude;
 
-pub use self::paged::paged;
 pub use self::paged::Pageable;
 pub use self::paged::Paged;
 pub use self::paged::Pagination;
 pub use self::paged::PaginationError;
+pub use self::paged::paged;
 
-pub use self::find::{find, find_by_name, Findable};
+pub use self::find::{Findable, find, find_by_name};
 
 pub use self::params::JsonBodyParams;
 pub use self::params::ParamValue;
 pub use self::params::QueryParams;
 
-pub use self::ignore::ignore;
 pub use self::ignore::Ignore;
+pub use self::ignore::ignore;

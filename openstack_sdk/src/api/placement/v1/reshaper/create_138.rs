@@ -366,13 +366,15 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
-            .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .allocations(BTreeMap::<String, AllocationsItemStruct<'_>>::new().into_iter())
+                .inventories(BTreeMap::<String, InventoriesItemStruct<'_>>::new().into_iter())
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

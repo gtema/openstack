@@ -21,13 +21,13 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use futures_util::Stream;
 use http::request::Builder as RequestBuilder;
-use http::{header, HeaderValue, Request, Response};
+use http::{HeaderValue, Request, Response, header};
 use serde::de::DeserializeOwned;
 use url::Url;
 
-use crate::api::paged::{next_page, Pageable, Paged, Pagination};
+use crate::api::paged::{Pageable, Paged, Pagination, next_page};
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{query, ApiError, RestClient, RestEndpoint};
+use crate::api::{ApiError, RestClient, RestEndpoint, query};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
 #[cfg(feature = "sync")]

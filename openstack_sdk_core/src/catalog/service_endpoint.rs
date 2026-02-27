@@ -21,8 +21,8 @@ use tracing::trace;
 use url::Url;
 
 use crate::catalog::CatalogError;
-use crate::types::identity::v3::version::EndpointVersionStatus;
 use crate::types::ApiVersion;
+use crate::types::identity::v3::version::EndpointVersionStatus;
 
 /// Service endpoint
 ///

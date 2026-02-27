@@ -263,12 +263,14 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .rebuild(RebuildBuilder::default().image_ref("foo").build().unwrap())
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .rebuild(RebuildBuilder::default().image_ref("foo").build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

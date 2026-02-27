@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use openstack_sdk::api::load_balancer::v2::loadbalancer::list::Request;
-use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::load_balancer::v2::loadbalancer::response::list::LoadbalancerResponse;
 
 use crate::get_client;

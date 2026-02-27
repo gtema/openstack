@@ -165,17 +165,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .add_floating_ip(
-                AddFloatingIpBuilder::default()
-                    .address("foo")
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .add_floating_ip(
+                    AddFloatingIpBuilder::default()
+                        .address("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

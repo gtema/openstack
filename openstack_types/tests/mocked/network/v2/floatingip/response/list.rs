@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use openstack_sdk::api::network::v2::floatingip::list::Request;
-use openstack_sdk::api::{paged, Pagination, QueryAsync};
+use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::network::v2::floatingip::response::list::FloatingipResponse;
 
 use crate::get_client;

@@ -145,12 +145,14 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .os_extend(OsExtendBuilder::default().new_size(123).build().unwrap())
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .os_extend(OsExtendBuilder::default().new_size(123).build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

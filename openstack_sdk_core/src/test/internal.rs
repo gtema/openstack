@@ -16,9 +16,9 @@
 use async_trait::async_trait;
 use bytes::Bytes;
 use derive_builder::Builder;
-use http::request::Builder as RequestBuilder;
 use http::HeaderMap;
-use http::{header, Method, Response, StatusCode};
+use http::request::Builder as RequestBuilder;
+use http::{Method, Response, StatusCode, header};
 use serde::ser::Serialize;
 use serde_json::json;
 use std::borrow::Cow;

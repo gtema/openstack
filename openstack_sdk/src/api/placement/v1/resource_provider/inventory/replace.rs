@@ -215,13 +215,15 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
-            .resource_provider_generation(123)
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
+                .resource_provider_generation(123)
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

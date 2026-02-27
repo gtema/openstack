@@ -226,16 +226,18 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .events(Vec::from([EventsBuilder::default()
-                .name(Name::AcceleratorRequestBound)
-                .server_uuid("foo")
+        assert!(
+            Request::builder()
+                .events(Vec::from([EventsBuilder::default()
+                    .name(Name::AcceleratorRequestBound)
+                    .server_uuid("foo")
+                    .build()
+                    .unwrap()]))
                 .build()
-                .unwrap()]))
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

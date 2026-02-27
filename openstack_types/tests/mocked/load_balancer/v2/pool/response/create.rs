@@ -11,10 +11,10 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::pool::create::{
     LbAlgorithm, PoolBuilder, Protocol, Request,
 };
-use openstack_sdk::api::QueryAsync;
 use openstack_types::load_balancer::v2::pool::response::create::PoolResponse;
 
 use crate::get_client;

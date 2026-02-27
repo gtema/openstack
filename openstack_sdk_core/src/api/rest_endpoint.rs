@@ -24,14 +24,14 @@ use tracing::{instrument, trace};
 use url::Url;
 
 use http::{
-    self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response, Uri,
+    self, HeaderMap, HeaderValue, Method, Request, Response, Uri, header, request::Builder,
 };
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
 
 use serde_json::json;
 
-use crate::api::{query, ApiError, BodyError, QueryParams, RestClient};
+use crate::api::{ApiError, BodyError, QueryParams, RestClient, query};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
 #[cfg(feature = "sync")]
@@ -226,7 +226,7 @@ where
                         return Err(ApiError::InvalidHeader {
                             header: header_key.to_string(),
                             message: e.to_string(),
-                        })
+                        });
                     }
                 };
             }
@@ -271,7 +271,7 @@ where
                         return Err(ApiError::InvalidHeader {
                             header: header_key.to_string(),
                             message: e.to_string(),
-                        })
+                        });
                     }
                 };
             }

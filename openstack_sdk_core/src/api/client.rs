@@ -23,7 +23,7 @@ use http::{HeaderMap, Response};
 use crate::api::ApiError;
 use crate::catalog::ServiceEndpoint;
 //use crate::types::api_version::ApiVersion;
-use crate::types::{identity::v3::Project, ApiVersion, BoxedAsyncRead, ServiceType};
+use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType, identity::v3::Project};
 
 /// A trait representing a client which can communicate with a OpenStack service API via REST API.
 pub trait RestClient {

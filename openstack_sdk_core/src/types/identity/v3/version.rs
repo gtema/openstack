@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use serde::de::Deserializer;
 use serde::Deserialize;
+use serde::de::Deserializer;
 
 /// Endpoint version status
 #[derive(Debug, Clone, PartialEq, Deserialize)]

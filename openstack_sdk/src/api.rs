@@ -173,8 +173,8 @@ pub use self::error::BodyError;
 
 pub use self::client::RestClient;
 
-pub use self::rest_endpoint::check_response_error;
 pub use self::rest_endpoint::RestEndpoint;
+pub use self::rest_endpoint::check_response_error;
 
 #[cfg(feature = "async")]
 pub use self::client::AsyncClient;

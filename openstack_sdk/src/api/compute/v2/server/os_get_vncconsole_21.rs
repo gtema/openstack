@@ -164,17 +164,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .os_get_vncconsole(
-                OsGetVncconsoleBuilder::default()
-                    ._type(Type::Novnc)
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(
+            Request::builder()
+                .os_get_vncconsole(
+                    OsGetVncconsoleBuilder::default()
+                        ._type(Type::Novnc)
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]

@@ -15,7 +15,7 @@
 use std::env;
 
 use openstack_sdk::types::ServiceType;
-use openstack_sdk::{config::ConfigFile, OpenStack};
+use openstack_sdk::{OpenStack, config::ConfigFile};
 
 #[test]
 fn sync_connection() -> Result<(), Box<dyn std::error::Error>> {

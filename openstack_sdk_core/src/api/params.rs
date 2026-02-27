@@ -20,7 +20,7 @@ use std::borrow::Cow;
 use chrono::{DateTime, NaiveDate, Utc};
 use url::Url;
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use crate::api::BodyError;
 
@@ -33,11 +33,7 @@ pub trait ParamValue<'a> {
 
 impl ParamValue<'static> for bool {
     fn as_value(&self) -> Cow<'static, str> {
-        if *self {
-            "true".into()
-        } else {
-            "false".into()
-        }
+        if *self { "true".into() } else { "false".into() }
     }
 }
 

@@ -23,11 +23,11 @@ pub mod catalog {
 
 pub mod types;
 
-pub use openstack_sdk_core::auth::AuthError;
 #[cfg(feature = "async")]
 pub use openstack_sdk_core::AsyncOpenStack;
 #[cfg(feature = "sync")]
 pub use openstack_sdk_core::OpenStack;
+pub use openstack_sdk_core::auth::AuthError;
 pub use openstack_sdk_core::{OpenStackError, RestError};
 
 #[allow(dead_code)]

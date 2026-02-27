@@ -35,7 +35,9 @@ pub enum CatalogError {
     },
 
     /// Invalid URL
-    #[error("Url `{0}` cannot be base. [https://gtema.github.io/openstack/possible_errors.html#version-url-cannot-be-a-base]")]
+    #[error(
+        "Url `{0}` cannot be base. [https://gtema.github.io/openstack/possible_errors.html#version-url-cannot-be-a-base]"
+    )]
     UrlCannotBeBase(String),
 
     /// Invalid URL
