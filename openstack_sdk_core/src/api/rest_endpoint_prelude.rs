@@ -12,4 +12,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub use openstack_sdk_core::api::*;
+//! Endpoint prelude
+//!
+//! This module re-exports all of the types needed for endpoints to implement the
+//! [`RestEndpoint`](../trait.RestEndpoint.html) trait.
+
+pub use std::borrow::Cow;
+
+pub use crate::api::BodyError;
+//pub use crate::api::Client;
+pub use crate::api::JsonBodyParams;
+pub use crate::api::Pageable;
+pub use crate::api::QueryParams;
+pub use crate::api::RestEndpoint;
+pub use crate::types::ApiVersion;
+pub use crate::types::ServiceType;

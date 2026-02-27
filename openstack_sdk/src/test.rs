@@ -15,7 +15,4 @@
 //!
 //! Utilities for testing `openstack_sdk` or resources based on the `openstack_sdk` in external
 //! crates.
-
-pub mod client;
-#[cfg(test)]
-pub mod internal;
+pub use openstack_sdk_core::test::*;

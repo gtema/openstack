@@ -16,24 +16,19 @@
 
 pub mod api;
 pub mod auth;
-pub mod catalog;
 pub mod config;
-mod error;
-#[cfg(feature = "sync")]
-mod openstack;
-#[cfg(feature = "async")]
-mod openstack_async;
-mod state;
-mod utils;
+pub mod catalog {
+    pub use openstack_sdk_core::catalog::CatalogError;
+}
 
 pub mod types;
 
-pub use crate::auth::AuthError;
-pub use crate::error::{OpenStackError, RestError};
-#[cfg(feature = "sync")]
-pub use crate::openstack::OpenStack;
+pub use openstack_sdk_core::auth::AuthError;
 #[cfg(feature = "async")]
-pub use crate::openstack_async::AsyncOpenStack;
+pub use openstack_sdk_core::AsyncOpenStack;
+#[cfg(feature = "sync")]
+pub use openstack_sdk_core::OpenStack;
+pub use openstack_sdk_core::{OpenStackError, RestError};
 
 #[allow(dead_code)]
 pub mod test;

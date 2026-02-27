@@ -2763,6 +2763,35 @@ name = "openstack_sdk"
 version = "0.22.5"
 dependencies = [
  "async-trait",
+ "bytes",
+ "chrono",
+ "derive_builder",
+ "futures",
+ "http",
+ "httpmock",
+ "json-patch",
+ "openstack_sdk_core",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "openstack_sdk-fuzz"
+version = "0.0.0"
+dependencies = [
+ "libfuzzer-sys",
+ "openstack_sdk",
+]
+
+[[package]]
+name = "openstack_sdk_core"
+version = "0.22.5"
+dependencies = [
+ "async-trait",
  "base64 0.22.1",
  "bytes",
  "chrono",
@@ -2798,14 +2827,6 @@ dependencies = [
  "url",
  "webauthn-authenticator-rs",
  "webauthn-rs-proto",
-]
-
-[[package]]
-name = "openstack_sdk-fuzz"
-version = "0.0.0"
-dependencies = [
- "libfuzzer-sys",
- "openstack_sdk",
 ]
 
 [[package]]
@@ -4696,9 +4717,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-test"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "557b891436fe0d5e0e363427fc7f217abf9ccd510d5136549847bdcbcd011d68"
+checksum = "19a4c448db514d4f24c5ddb9f73f2ee71bfb24c526cf0c570ba142d1119e0051"
 dependencies = [
  "tracing-core",
  "tracing-subscriber",
@@ -4707,9 +4728,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-test-macro"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04659ddb06c87d233c566112c1c9c5b9e98256d9af50ec3bc9c8327f873a7568"
+checksum = "ad06847b7afb65c7866a36664b75c40b895e318cea4f71299f013fb22965329d"
 dependencies = [
  "quote",
  "syn 2.0.113",

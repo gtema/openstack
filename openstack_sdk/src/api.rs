@@ -138,16 +138,12 @@
 //!
 #![allow(clippy::module_inception)]
 
+pub use openstack_sdk_core::api::*;
+
 mod client;
-pub(crate) mod common;
 mod error;
 mod find;
-mod ignore;
-#[allow(dead_code)]
-mod paged;
-mod params;
-pub(crate) mod query;
-mod rest_endpoint;
+//mod rest_endpoint;
 
 #[cfg(feature = "block_storage")]
 pub mod block_storage;
@@ -194,18 +190,3 @@ pub use self::query::RawQuery;
 pub use self::query::RawQueryAsync;
 
 pub mod rest_endpoint_prelude;
-
-pub use self::paged::paged;
-pub use self::paged::Pageable;
-pub use self::paged::Paged;
-pub use self::paged::Pagination;
-pub use self::paged::PaginationError;
-
-pub use self::find::{find, find_by_name, Findable};
-
-pub use self::params::JsonBodyParams;
-pub use self::params::ParamValue;
-pub use self::params::QueryParams;
-
-pub use self::ignore::ignore;
-pub use self::ignore::Ignore;

@@ -12,4 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub use openstack_sdk_core::api::*;
+//! Identity API (Keystone) bindings
+pub mod v3;
+#[cfg(feature = "keystone_ng")]
+pub mod v4;

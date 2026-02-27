@@ -23,14 +23,13 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::{debug, trace};
 
-use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
 #[cfg(feature = "passkey")]
 use crate::auth::v4passkey;
 use crate::auth::{
-    auth_helper::AuthHelper, authtoken_scope, v3applicationcredential, v3oidcaccesstoken,
-    v3password, v3token, v3totp, v3websso, AuthState,
+    auth_helper::AuthHelper, authtoken_scope, v3_token_info, v3applicationcredential,
+    v3oidcaccesstoken, v3password, v3token, v3totp, v3websso, AuthState,
 };
 #[cfg(feature = "keystone_ng")]
 use crate::auth::{v4federation, v4jwt};
@@ -101,7 +100,7 @@ pub enum AuthTokenError {
     InfoRequest {
         /// The error source
         #[from]
-        source: token_v3_info::RequestBuilderError,
+        source: v3_token_info::RequestBuilderError,
     },
 
     /// Token Scope error
@@ -562,8 +561,8 @@ where
 /// Prepare Endpoint for token info
 pub(crate) fn build_token_info_endpoint<S: AsRef<str>>(
     subject_token: S,
-) -> Result<token_v3_info::Request, AuthTokenError> {
-    Ok(token_v3_info::RequestBuilder::default()
+) -> Result<v3_token_info::Request, AuthTokenError> {
+    Ok(v3_token_info::RequestBuilder::default()
         .headers(
             [(
                 Some(HeaderName::from_static("x-subject-token")),

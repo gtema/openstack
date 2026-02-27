@@ -26,7 +26,7 @@ use tracing::{debug, error, trace, warn};
 use url::Url;
 
 pub use crate::catalog::error::CatalogError;
-pub(crate) use crate::catalog::service_endpoint::ServiceEndpoint;
+pub use crate::catalog::service_endpoint::ServiceEndpoint;
 use crate::catalog::{service_authority::ServiceAuthority, service_endpoint::ServiceEndpoints};
 use crate::config::CloudConfig;
 use crate::types::{
@@ -40,7 +40,7 @@ mod service_endpoint;
 
 /// Structure representing session ServiceCatalog
 #[derive(Debug, Clone)]
-pub(crate) struct Catalog {
+pub struct Catalog {
     /// Current project_id
     project_id: Option<String>,
 

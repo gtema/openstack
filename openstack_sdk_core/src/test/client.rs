@@ -57,7 +57,7 @@ use crate::RestError;
 /// ```no_run
 /// use httpmock::MockServer;
 /// use std::borrow::Cow;
-/// use openstack_sdk::{api::RestEndpoint, types::ServiceType};
+/// use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
 ///
 /// struct Dummy;
 ///
