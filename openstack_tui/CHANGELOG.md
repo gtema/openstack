@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.5...openstack_tui-v0.13.6) - 2026-02-28
+
+### Added
+
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+
+### Other
+
+- *(deps)* Bump strum from 0.27.2 to 0.28.0 ([#1652](https://github.com/gtema/openstack/pull/1652))
+- Adapt to the newer release of typos ([#1639](https://github.com/gtema/openstack/pull/1639))
+
 ## [0.13.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.3...openstack_tui-v0.13.4) - 2026-01-16
 
 ### Other

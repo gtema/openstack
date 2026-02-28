@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.5...openstack_sdk_core-v0.22.6) - 2026-02-28
+
+### Added
+
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+
 ## [0.22.5](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.4...openstack_sdk-v0.22.5) - 2026-01-17
 
 ### Fixed

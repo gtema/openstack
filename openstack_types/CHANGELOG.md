@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack_types-v0.22.5...openstack_types-v0.22.6) - 2026-02-28
+
+### Added
+
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+
+### Other
+
+- *(deps)* Bump uuid from 1.20.0 to 1.21.0 ([#1648](https://github.com/gtema/openstack/pull/1648))
+- *(deps)* Bump uuid from 1.19.0 to 1.20.0 ([#1627](https://github.com/gtema/openstack/pull/1627))
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+
 ## [0.22.4](https://github.com/gtema/openstack/compare/openstack_types-v0.22.3...openstack_types-v0.22.4) - 2026-01-16
 
 ### Added
