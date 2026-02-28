@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.6](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.5...openstack_cli-v0.13.6) - 2026-02-28
+
+### Added
+
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+- Add dynamic completions in clap library ([#1626](https://github.com/gtema/openstack/pull/1626))
+- Split openstack_sdk crate ([#1655](https://github.com/gtema/openstack/pull/1655))
+
+### Other
+
+- *(deps)* Bump rand from 0.9.2 to 0.10.0 ([#1644](https://github.com/gtema/openstack/pull/1644))
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+- Changes from Keystone webauthn api tests ([#1615](https://github.com/gtema/openstack/pull/1615))
+
 ## [0.13.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.4...openstack_cli-v0.13.5) - 2026-01-17
 
 ### Fixed
