@@ -47636,16 +47636,22 @@ components:
           type: object
       type: object
     ServersOs_Security_GroupsListResponse:
+      additionalProperties: false
       properties:
         security_groups:
           description: |-
             One or more security groups objects.
           items:
+            additionalProperties: false
+            description: |-
+              Specify the `security_group` action in the request body.
             properties:
               description:
                 description: |-
                   Security group description.
-                type: string
+                type:
+                  - 'null'
+                  - string
               id:
                 description: |-
                   The ID of the security group.
@@ -47659,38 +47665,98 @@ components:
                 description: |-
                   The list of security group rules.
                 items:
+                  additionalProperties: false
+                  description: |-
+                    A `security_group_rule` object.
                   properties:
                     from_port:
-                      type: integer
+                      description: |-
+                        The port at start of range.
+                      minimum: -1
+                      type:
+                        - integer
+                        - 'null'
                     group:
+                      additionalProperties: false
+                      description: |-
+                        A `group` object. Includes the `tenant_id` and the source security
+                        group `name`.
                       properties:
                         name:
+                          description: |-
+                            The security group name.
                           type: string
+                        tenant_id:
+                          description: |-
+                            The UUID of the tenant that owns this security group.
+                          maxLength: 255
+                          minLength: 1
+                          pattern: ^[a-zA-Z0-9-]*$
+                          type: string
+                      required: []
                       type: object
                     id:
+                      description: |-
+                        The security group rule ID.
                       format: uuid
                       type: string
                     ip_protocol:
-                      type: string
+                      description: |-
+                        The IP protocol. A valid value is ICMP, TCP, or UDP.
+                      type:
+                        - 'null'
+                        - string
                     ip_range:
+                      additionalProperties: false
+                      description: |-
+                        An IP range object. Includes the security group rule `cidr`.
+                      properties:
+                        cidr:
+                          description: |-
+                            The CIDR for address range.
+                          format: cidr
+                          type: string
+                      required: []
                       type: object
                     parent_group_id:
+                      description: |-
+                        Security group ID.
                       format: uuid
                       type: string
                     to_port:
-                      type: integer
+                      description: |-
+                        The port at end of range.
+                      minimum: -1
+                      type:
+                        - integer
+                        - 'null'
+                  required:
+                    - from_port
+                    - group
+                    - id
+                    - ip_protocol
+                    - ip_range
+                    - parent_group_id
+                    - to_port
                   type: object
                 type: array
               tenant_id:
                 description: |-
-                  The UUID of the tenant in a multi-tenancy cloud.
-                format: uuid
+                  The UUID of the tenant that owns this security group.
+                maxLength: 255
+                minLength: 1
+                pattern: ^[a-zA-Z0-9-]*$
                 type: string
             required:
+              - description
               - id
               - name
+              - rules
+              - tenant_id
             type: object
           type: array
+      required:
+        - security_groups
       type: object
     ServersOs_Server_PasswordListResponse:
       properties:

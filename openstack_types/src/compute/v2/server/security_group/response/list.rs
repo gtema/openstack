@@ -17,15 +17,12 @@
 //! Response type for the GET `servers/{server_id}/os-security-groups` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// SecurityGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
     /// Security group description.
-    #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
@@ -38,38 +35,42 @@ pub struct SecurityGroupResponse {
     pub name: String,
 
     /// The list of security group rules.
-    #[serde(default)]
-    #[structable(optional, serialize, wide)]
-    pub rules: Option<Vec<Rules>>,
+    #[structable(serialize, wide)]
+    pub rules: Vec<Rules>,
 
-    /// The UUID of the tenant in a multi-tenancy cloud.
-    #[serde(default)]
-    #[structable(optional, wide)]
-    pub tenant_id: Option<String>,
+    /// The UUID of the tenant that owns this security group.
+    #[structable(wide)]
+    pub tenant_id: String,
 }
 
+/// A `group` object. Includes the `tenant_id` and the source security group
+/// `name`.
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
     #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
+    pub tenant_id: Option<String>,
 }
 
+/// An IP range object. Includes the security group rule `cidr`.
+/// `IpRange` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct IpRange {
+    #[serde(default)]
+    pub cidr: Option<String>,
+}
+
+/// A `security_group_rule` object.
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    #[serde(default)]
     pub from_port: Option<i32>,
-    #[serde(default)]
-    pub group: Option<Group>,
-    #[serde(default)]
-    pub id: Option<String>,
-    #[serde(default)]
+    pub group: Group,
+    pub id: String,
     pub ip_protocol: Option<String>,
-    #[serde(default)]
-    pub ip_range: Option<BTreeMap<String, Value>>,
-    #[serde(default)]
-    pub parent_group_id: Option<String>,
-    #[serde(default)]
+    pub ip_range: IpRange,
+    pub parent_group_id: String,
     pub to_port: Option<i32>,
 }
