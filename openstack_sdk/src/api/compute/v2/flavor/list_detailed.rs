@@ -48,6 +48,9 @@ pub struct Request<'a> {
     min_ram: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
@@ -107,6 +110,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("minDisk", self.min_disk.as_ref());
         params.push_opt("minRam", self.min_ram.as_ref());
+        params.push_opt("name", self.name.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
 

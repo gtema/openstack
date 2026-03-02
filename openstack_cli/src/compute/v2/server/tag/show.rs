@@ -30,7 +30,6 @@ use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::tag::get;
-use openstack_types::compute::v2::server::tag::response::get::TagResponse;
 
 /// Checks tag existence on the server. If tag exists response with 204 status
 /// code will be returned. Otherwise returns 404.
@@ -94,9 +93,7 @@ impl TagCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<TagResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

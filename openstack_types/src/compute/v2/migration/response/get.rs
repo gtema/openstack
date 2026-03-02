@@ -46,7 +46,8 @@ pub struct MigrationResponse {
     #[structable(optional)]
     pub dest_host: Option<String>,
 
-    /// The target node for a migration.
+    /// The target node for a migration. This will be `null` if pre-migration
+    /// checks fail due to e.g. insufficient resources.
     #[serde(default)]
     #[structable(optional)]
     pub dest_node: Option<String>,
@@ -106,7 +107,8 @@ pub struct MigrationResponse {
     #[structable(optional)]
     pub source_compute: Option<String>,
 
-    /// The source node for a migration.
+    /// The source node for a migration. This will be `null` if pre-migration
+    /// checks fail due to e.g. insufficient resources.
     #[serde(default)]
     #[structable(optional)]
     pub source_node: Option<String>,

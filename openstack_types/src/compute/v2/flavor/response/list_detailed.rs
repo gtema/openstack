@@ -63,13 +63,6 @@ pub struct FlavorResponse {
     #[structable(serialize, title = "os-flavor-access:is_public", wide)]
     pub os_flavor_access_is_public: Value,
 
-    /// Whether or not the flavor has been administratively disabled. This is
-    /// an artifact of the legacy v2 API and will always be set to `false`.
-    /// There is currently no way to disable a flavor and set this to `true`.
-    #[serde(rename = "OS-FLV-DISABLED:disabled")]
-    #[structable(title = "OS-FLV-DISABLED:disabled", wide)]
-    pub os_flv_disabled_disabled: bool,
-
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
     /// used as a scratch space for applications that are aware of its
@@ -82,17 +75,12 @@ pub struct FlavorResponse {
     #[structable(wide)]
     pub ram: i32,
 
-    /// OpenAPI specifies the field as '{}'.
-    #[structable(serialize, wide)]
-    pub rxtx_factor: Value,
-
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
     /// empty string (‘’) is used to represent 0. As of microversion 2.75
     /// default return value of swap is 0 instead of empty string.
-    #[serde(deserialize_with = "crate::common::deser_num_str")]
     #[structable(wide)]
-    pub swap: i64,
+    pub swap: i32,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[structable(wide)]

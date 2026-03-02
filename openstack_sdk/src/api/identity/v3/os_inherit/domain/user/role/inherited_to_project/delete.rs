@@ -154,7 +154,8 @@ mod tests {
         let server = MockServer::start();
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path(format!(
+            when.method(httpmock::Method::DELETE)
+            .path(format!(
       "/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/{role_id}/inherited_to_projects",
           domain_id = "domain_id",
           role_id = "role_id",

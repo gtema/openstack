@@ -159,12 +159,11 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
-    if let TopLevelCommands::Auth(args) = &cli.command {
-        if let auth::AuthCommands::Login(login_args) = &args.command {
-            if login_args.renew {
-                renew_auth = true;
-            }
-        }
+    if let TopLevelCommands::Auth(args) = &cli.command
+        && let auth::AuthCommands::Login(login_args) = &args.command
+        && login_args.renew
+    {
+        renew_auth = true;
     }
 
     // Connect to the selected cloud with the possible AuthHelper
@@ -231,12 +230,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let res = cli.take_action(&mut session).await;
 
     // If HTTP timing was requested dump stats into STDERR
-    if cli.global_opts.output.timing {
-        if let Ok(data) = request_stats.lock() {
-            let table = build_http_requests_timing_table(&data);
-            eprintln!("\nHTTP statistics:");
-            eprintln!("{table}");
-        }
+    if cli.global_opts.output.timing
+        && let Ok(data) = request_stats.lock()
+    {
+        let table = build_http_requests_timing_table(&data);
+        eprintln!("\nHTTP statistics:");
+        eprintln!("{table}");
     }
 
     res

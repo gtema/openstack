@@ -2,8 +2,6 @@ openapi: 3.1.0
 info:
   title: openstack_keystone
   description: OpenStack Keystone service
-  contact:
-    name: Artem Goncharov (gtema)
   license:
     name: Apache-2.0
     identifier: Apache-2.0
@@ -23,120 +21,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Versions'
-  /auth/passkey/finish:
-    post:
-      tags:
-      - passkey
-      - auth
-      summary: Finish user passkey authentication.
-      description: |-
-        Exchange the challenge signed with one of the users passkeys or security
-        devices for the unscoped Keystone API token.
-      operationId: /auth/passkey/finish:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
-        required: true
-      responses:
-        '200':
-          description: Authentication Token object
-          headers:
-            x-subject-token:
-              schema:
-                type: string
-              description: Keystone token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenResponse'
-  /auth/passkey/start:
-    post:
-      tags:
-      - passkey
-      - auth
-      summary: Start passkey authentication for the user.
-      description: |-
-        Initiate a passkey login for the user. The user must have at least one
-        passkey previously registered. When the user does not exist a fake challenge
-        is being returned to prevent id scanning.
-      operationId: /auth/passkey/start:post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasskeyAuthenticationStartRequest'
-        required: true
-      responses:
-        '200':
-          description: Challenge that must be signed with any of the user passkeys
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasskeyAuthenticationStartResponse'
-        '500':
-          description: Internal error
-  /users/{user_id}/passkeys/register_finish:
-    post:
-      tags:
-      - passkey
-      summary: Finish passkey registration for the user.
-      operationId: /user/passkey/register:finish
-      parameters:
-      - name: user_id
-        in: path
-        description: The ID of the user.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPasskeyRegistrationFinishRequest'
-        required: true
-      responses:
-        '201':
-          description: Passkey successfully registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasskeyResponse'
-        '500':
-          description: Internal error
-  /users/{user_id}/passkeys/register_start:
-    post:
-      tags:
-      - passkey
-      summary: Start passkey registration for the user.
-      description: |-
-        Generate a challenge that the user must sign with the passkey or security
-        device. Signed challenge must be sent to the
-        `/v4/users/{user_id}/passkey/register_finish` endpoint.
-      operationId: /user/passkey/register:start
-      parameters:
-      - name: user_id
-        in: path
-        description: The ID of the user.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPasskeyRegistrationStartRequest'
-        required: true
-      responses:
-        '201':
-          description: Passkey successfully registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
-        '500':
-          description: Internal error
   /v3:
     get:
       tags:
@@ -263,7 +147,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -271,7 +155,7 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
         required: false
         schema:
           type:
@@ -344,11 +228,120 @@ paths:
           description: Deleted
         '404':
           description: group not found
+  /v3/projects:
+    post:
+      tags:
+      - projects
+      summary: Create project.
+      description: Creates a project, where the project may act as a domain.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/projects/{project_id}:
+    delete:
+      tags:
+      - projects
+      summary: Delete project by ID.
+      operationId: remove
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Project not found
   /v3/projects/{project_id}/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on project
+      description: Assigns a role to a user on a project.
+      operationId: /project/user/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on project
+      description: Remove a role assignment for a user on a specific project.
+      operationId: /project/user/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
     head:
       tags:
       - role_assignments
-      summary: Check whether user has role assignment on project
+      summary: Check whether user has role assignment on project.
       description: Validates that a user has a role on a project.
       operationId: /project/user/role:check
       parameters:
@@ -441,8 +434,6 @@ paths:
           If set to true, then the names of any entities returned will be include
           as well as their IDs. Any value other than 0 (including no value)
           will be interpreted as true.
-
-          New in version 3.6
         required: false
         schema:
           type:
@@ -467,7 +458,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -475,7 +466,7 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
         required: false
         schema:
           type:
@@ -669,6 +660,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleVersion'
+  /v4/auth/passkey/finish:
+    post:
+      tags:
+      - passkey
+      - auth
+      summary: Finish user passkey authentication.
+      description: |-
+        Exchange the challenge signed with one of the users passkeys or security
+        devices for the unscoped Keystone API token.
+      operationId: /auth/passkey/finish:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
+        required: true
+      responses:
+        '200':
+          description: Authentication Token object
+          headers:
+            x-subject-token:
+              schema:
+                type: string
+              description: Keystone token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /v4/auth/passkey/start:
+    post:
+      tags:
+      - passkey
+      - auth
+      summary: Start passkey authentication for the user.
+      description: |-
+        Initiate a passkey login for the user. The user must have at least one
+        passkey previously registered. When the user does not exist a fake challenge
+        is being returned to prevent id scanning.
+      operationId: /auth/passkey/start:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationStartRequest'
+        required: true
+      responses:
+        '200':
+          description: Challenge that must be signed with any of the user passkeys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasskeyAuthenticationStartResponse'
+        '500':
+          description: Internal error
   /v4/auth/tokens:
     get:
       tags:
@@ -1028,7 +1073,7 @@ paths:
           type: string
       - name: limit
         in: query
-        description: Limit number of entries on the single response page (Maximal 100)
+        description: Limit number of entries on the single response page (Maximal 100).
         required: false
         schema:
           type:
@@ -1199,7 +1244,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -1207,7 +1252,7 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
         required: false
         schema:
           type:
@@ -1280,11 +1325,520 @@ paths:
           description: Deleted
         '404':
           description: group not found
+  /v4/k8s_auth/instances:
+    get:
+      tags:
+      - k8s_auth_instance
+      summary: List K8s auth instances
+      operationId: /k8s_auth/instance:list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Domain id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthInstanceList'
+        '500':
+          description: Internal error
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - k8s_auth_instance
+      summary: Create the K8s auth instance.
+      description: Create the K8s auth instance with the specified properties.
+      operationId: /k8s_auth/auth_instance:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthInstanceCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: auth instance object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthInstanceResponse'
+      security:
+      - x-auth: []
+  /v4/k8s_auth/instances/{instance_id}:
+    get:
+      tags:
+      - k8s_auth_instance
+      summary: Get single K8s auth instance.
+      description: Shows details of the existing instance.
+      operationId: /k8s_auth/instance:show
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the instance
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: K8s auth instance object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthInstanceResponse'
+        '404':
+          description: Resource not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - k8s_auth_instance
+      summary: Update single K8s auth instance.
+      description: Updates the existing k8s auth instance.
+      operationId: /k8s_auth/instance:update
+      parameters:
+      - name: instance
+        in: path
+        description: The ID of the instance
+        required: true
+        schema:
+          type: string
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthInstanceUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Instance object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthInstanceResponse'
+        '404':
+          description: Instance not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - k8s_auth_instance
+      summary: Delete K8s auth instance.
+      description: Deletes the existing k8s auth instance.
+      operationId: /k8s_auth/instance:delete
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the auth instance
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: k8s_auth instance not found
+      security:
+      - x-auth: []
+  /v4/k8s_auth/instances/{instance_id}/auth:
+    post:
+      tags:
+      - k8s_auth_instance
+      summary: Authenticate using the JWT token of the Kubernetes service account.
+      description: |-
+        This operation takes the JWT token of the Kubernetes service account, K8s
+        auth instance and role name and exchanges them to the Keystone token with
+        the user and scope information from the token restrictions bound with the
+        k8s auth role.
+      operationId: /k8s_auth/auth:post
+      parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Authentication Token object
+          headers:
+            x-subject-token:
+              schema:
+                type: string
+              description: Keystone token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /v4/k8s_auth/instances/{instance_id}/roles:
+    get:
+      tags:
+      - k8s_auth_role
+      summary: List K8 auth roles.
+      description: List available K8s auth roles belonging to the auth instance.
+      operationId: /k8s_auth/instance/role:list
+      parameters:
+      - name: name
+        in: query
+        description: Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: instance_id
+        in: path
+        description: The ID of the k8s auth instance
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleList'
+        '500':
+          description: Internal error
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - k8s_auth_role
+      summary: Create K8s auth role.
+      operationId: /k8s_auth/instance/role:create
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the k8s auth instance
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthRoleCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleResponse'
+      security:
+      - x-auth: []
+  /v4/k8s_auth/instances/{instance_id}/roles/{id}:
+    get:
+      tags:
+      - k8s_auth_role
+      summary: Get single K8s auth role of a instance.
+      description: Show the k8s auth role by the ID.
+      operationId: /k8s_auth/instance/role:show
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the K8s auth instance.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID of the K8s auth role.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleResponse'
+        '404':
+          description: role not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - k8s_auth_role
+      summary: Update K8s auth role of an instance.
+      operationId: /k8s_auth/instance/role:update
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the K8s auth instance.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID of the K8s auth role.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthRoleUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleResponse'
+        '404':
+          description: role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - k8s_auth_role
+      summary: Delete k8s auth role of an instance.
+      operationId: /k8s_auth/instance/role:delete
+      parameters:
+      - name: instance_id
+        in: path
+        description: The ID of the K8s auth instance.
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The ID of the K8s auth role.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
+  /v4/k8s_auth/roles:
+    get:
+      tags:
+      - k8s_auth_role
+      summary: List K8 auth roles.
+      description: List available K8s auth roles.
+      operationId: /k8s_auth/role:list
+      parameters:
+      - name: auth_instance_id
+        in: query
+        description: K8s auth instance id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: domain_id
+        in: query
+        description: |-
+          Domain id.
+
+          Bu default only user with corresponding privileges is allowed to list
+          roles of the domain other than in the current scope.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleList'
+        '500':
+          description: Internal error
+      security:
+      - x-auth: []
+  /v4/k8s_auth/roles/{id}:
+    get:
+      tags:
+      - k8s_auth_role
+      summary: Get single K8s auth role.
+      description: Show the k8s auth role by the ID.
+      operationId: /k8s_auth/role:show
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the k8s auth role.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleResponse'
+        '404':
+          description: role not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - k8s_auth_role
+      summary: Update K8s auth role.
+      operationId: /k8s_auth/role:update
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the k8s auth role.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/K8sAuthRoleUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/K8sAuthRoleResponse'
+        '404':
+          description: role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - k8s_auth_role
+      summary: Delete k8s auth role.
+      operationId: /k8s_auth/role:delete
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the k8s auth role
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
   /v4/role_assignments/projects/{project_id}/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on project
+      description: Assigns a role to a user on a project.
+      operationId: /project/user/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on project
+      description: Remove a role assignment for a user on a specific project.
+      operationId: /project/user/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
     head:
       tags:
       - role_assignments
-      summary: Check whether user has role assignment on project
+      summary: Check whether user has role assignment on project.
       description: Validates that a user has a role on a project.
       operationId: /project/user/role:check
       parameters:
@@ -1377,8 +1931,6 @@ paths:
           If set to true, then the names of any entities returned will be include
           as well as their IDs. Any value other than 0 (including no value)
           will be interpreted as true.
-
-          New in version 3.6
         required: false
         schema:
           type:
@@ -1403,7 +1955,7 @@ paths:
       parameters:
       - name: domain_id
         in: query
-        description: Filter users by Domain ID
+        description: Filter users by Domain ID.
         required: false
         schema:
           type:
@@ -1411,7 +1963,7 @@ paths:
           - 'null'
       - name: name
         in: query
-        description: Filter users by Name
+        description: Filter users by Name.
         required: false
         schema:
           type:
@@ -1741,6 +2293,66 @@ paths:
                 $ref: '#/components/schemas/GroupList'
         '500':
           description: Internal error
+  /v4/users/{user_id}/passkeys/register_finish:
+    post:
+      tags:
+      - passkey
+      summary: Finish passkey registration for the user.
+      operationId: /user/passkey/register:finish
+      parameters:
+      - name: user_id
+        in: path
+        description: The ID of the user.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasskeyRegistrationFinishRequest'
+        required: true
+      responses:
+        '201':
+          description: Passkey successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasskeyResponse'
+        '500':
+          description: Internal error
+  /v4/users/{user_id}/passkeys/register_start:
+    post:
+      tags:
+      - passkey
+      summary: Start passkey registration for the user.
+      description: |-
+        Generate a challenge that the user must sign with the passkey or security
+        device. Signed challenge must be sent to the
+        `/v4/users/{user_id}/passkey/register_finish` endpoint.
+      operationId: /user/passkey/register:start
+      parameters:
+      - name: user_id
+        in: path
+        description: The ID of the user.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasskeyRegistrationStartRequest'
+        required: true
+      responses:
+        '201':
+          description: Passkey successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
+        '500':
+          description: Internal error
 components:
   schemas:
     AllowCredentials:
@@ -1759,7 +2371,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuthenticatorTransport'
-          description: <https://www.w3.org/TR/webauthn/#transport> may be usb, nfc, ble, internal
+          description: <https://www.w3.org/TR/webauthn/#transport> may be usb, nfc, ble, internal.
         type_:
           type: string
           description: The type of credential.
@@ -1796,10 +2408,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Assignment'
-          description: Collection of role assignment objects
+          description: Collection of role assignment objects.
     AttestationConveyancePreference:
       type: string
-      description: <https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference>
+      description: <https://www.w3.org/TR/webauthn/#enumdef-attestationconveyancepreference>.
       enum:
       - None
       - Indirect
@@ -1809,7 +2421,7 @@ components:
       description: |-
         The type of attestation on the credential.
 
-        <https://www.iana.org/assignments/webauthn/webauthn.xhtml>
+        <https://www.iana.org/assignments/webauthn/webauthn.xhtml>.
       enum:
       - Packed
       - Tpm
@@ -1869,9 +2481,9 @@ components:
     AuthenticationExtensionsClientOutputs:
       type: object
       description: |-
-        [AuthenticationExtensionsClientOutputs](https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs)
+        [AuthenticationExtensionsClientOutputs](https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs).
 
-        The default option here for Options are None, so it can be derived
+        The default option here for Options are None, so it can be derived.
       properties:
         appid:
           type: boolean
@@ -1881,7 +2493,7 @@ components:
           description: The response to a hmac get secret request.
     AuthenticatorAssertionResponseRaw:
       type: object
-      description: '[AuthenticatorAssertionResponseRaw](https://w3c.github.io/webauthn/#authenticatorassertionresponse)'
+      description: '[AuthenticatorAssertionResponseRaw](https://w3c.github.io/webauthn/#authenticatorassertionresponse).'
       required:
       - authenticator_data
       - client_data_json
@@ -1906,7 +2518,7 @@ components:
         user_handle:
           type: string
           format: binary
-          description: Optional userhandle.
+          description: Optional user handle.
           contentEncoding: base64
     AuthenticatorAttachment:
       type: string
@@ -1914,13 +2526,13 @@ components:
         The authenticator attachment hint. This is NOT enforced, and is only used to
         help a user select a relevant authenticator type.
 
-        <https://www.w3.org/TR/webauthn/#attachment>
+        <https://www.w3.org/TR/webauthn/#attachment>.
       enum:
       - Platform
       - CrossPlatform
     AuthenticatorAttestationResponseRaw:
       type: object
-      description: <https://w3c.github.io/webauthn/#authenticatorattestationresponse>
+      description: <https://w3c.github.io/webauthn/#authenticatorattestationresponse>.
       required:
       - attestation_object
       - client_data_json
@@ -1942,7 +2554,7 @@ components:
           description: <https://w3c.github.io/webauthn/#dom-authenticatorattestationresponse-gettransports>.
     AuthenticatorSelectionCriteria:
       type: object
-      description: <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>
+      description: <https://www.w3.org/TR/webauthn/#dictdef-authenticatorselectioncriteria>.
       required:
       - require_resident_key
       - user_verification
@@ -1974,7 +2586,7 @@ components:
             registration.
     AuthenticatorTransport:
       type: string
-      description: <https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport>
+      description: <https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport>.
       enum:
       - Ble
       - Hybrid
@@ -2011,12 +2623,12 @@ components:
           - 'null'
     CredProps:
       type: object
-      description: <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>
-      required:
-      - rk
+      description: <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>.
       properties:
         rk:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: |-
             A user agent supplied hint that this credential may have created a
             resident key. It is returned from the user agent, not the
@@ -2027,15 +2639,15 @@ components:
     CredProtect:
       type: object
       description: |-
-        The desired options for the client's use of the credProtect extension
+        The desired options for the client's use of the credProtect extension.
 
-        <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>
+        <https://fidoalliance.org/specs/fido-v2.1-rd-20210309/fido-client-to-authenticator-protocol-v2.1-rd-20210309.html#sctn-credProtect-extension>.
       required:
       - credential_protection_policy
       properties:
         credential_protection_policy:
           $ref: '#/components/schemas/CredentialProtectionPolicy'
-          description: The credential policy to enact.
+          description: The credential policy to enforce.
         enforce_credential_protection_policy:
           type: boolean
           description: |-
@@ -2044,7 +2656,7 @@ components:
             provided, the client treats it as false.
     CredentialProtectionPolicy:
       type: string
-      description: Valid credential protection policies
+      description: Valid credential protection policies.
       enum:
       - Optional
       - OptionalWithCredentialIDList
@@ -2109,10 +2721,10 @@ components:
       properties:
         protocol_id:
           type: string
-          description: Federation protocol ID
+          description: Federation protocol ID.
         unique_id:
           type: string
-          description: Unique ID of the associated user
+          description: Unique ID of the associated user.
     Group:
       allOf:
       - {}
@@ -2126,16 +2738,16 @@ components:
             type:
             - string
             - 'null'
-            description: Group description
+            description: Group description.
           domain_id:
             type: string
-            description: Group domain ID
+            description: Group domain ID.
           id:
             type: string
-            description: Group ID
+            description: Group ID.
           name:
             type: string
-            description: Group name
+            description: Group name.
     GroupCreate:
       allOf:
       - {}
@@ -2148,13 +2760,13 @@ components:
             type:
             - string
             - 'null'
-            description: Group description
+            description: Group description.
           domain_id:
             type: string
-            description: Group domain ID
+            description: Group domain ID.
           name:
             type: string
-            description: Group name
+            description: Group name.
     GroupCreateRequest:
       type: object
       required:
@@ -2162,10 +2774,10 @@ components:
       properties:
         group:
           $ref: '#/components/schemas/GroupCreate'
-          description: Group object
+          description: Group object.
     GroupList:
       type: object
-      description: Groups
+      description: Groups.
       required:
       - groups
       properties:
@@ -2173,7 +2785,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Group'
-          description: Collection of group objects
+          description: Collection of group objects.
     GroupResponse:
       type: object
       required:
@@ -2181,13 +2793,13 @@ components:
       properties:
         group:
           $ref: '#/components/schemas/Group'
-          description: group object
+          description: group object.
     HmacGetSecretInput:
       type: object
       description: |-
         The inputs to the hmac secret if it was created during registration.
 
-        <https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html#sctn-hmac-secret-extension>
+        <https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html#sctn-hmac-secret-extension>.
       required:
       - output1
       properties:
@@ -2242,7 +2854,7 @@ components:
             description: The token object, contains the authentication information.
     IdentityProvider:
       type: object
-      description: Identity provider data
+      description: Identity provider data.
       required:
       - id
       - name
@@ -2416,10 +3028,10 @@ components:
           description: List of supported response types.
         provider_config:
           type: object
-          description: Additional special provider specific configuration
+          description: Additional special provider specific configuration.
     IdentityProviderCreateRequest:
       type: object
-      description: Identity provider create request
+      description: Identity provider create request.
       required:
       - identity_provider
       properties:
@@ -2531,13 +3143,350 @@ components:
           description: New additional provider configuration.
     IdentityProviderUpdateRequest:
       type: object
-      description: Identity provider update request
+      description: Identity provider update request.
       required:
       - identity_provider
       properties:
         identity_provider:
           $ref: '#/components/schemas/IdentityProviderUpdate'
           description: Identity provider object.
+    K8sAuthInstance:
+      type: object
+      description: K8s authentication instance.
+      required:
+      - disable_local_ca_jwt
+      - domain_id
+      - enabled
+      - host
+      - id
+      properties:
+        ca_cert:
+          type:
+          - string
+          - 'null'
+          description: |-
+            PEM encoded CA cert for use by the TLS client used to talk with the
+            Kubernetes API. NOTE: Every line must end with a newline: \n If not set,
+            the local CA cert will be used if running in a Kubernetes pod.
+        disable_local_ca_jwt:
+          type: boolean
+          description: |-
+            Disable defaulting to the local CA cert and service account JWT when
+            running in a Kubernetes pod.
+        domain_id:
+          type: string
+          description: Domain ID owning the K8s auth configuration.
+        enabled:
+          type: boolean
+        host:
+          type: string
+          description: |-
+            Host must be a host string, a host:port pair, or a URL to the base of
+            the Kubernetes API server.
+        id:
+          type: string
+          description: K8s auth configuration ID.
+        name:
+          type:
+          - string
+          - 'null'
+          description: K8s auth name.
+    K8sAuthInstanceCreate:
+      type: object
+      description: New K8s authentication instance.
+      required:
+      - domain_id
+      - enabled
+      - host
+      properties:
+        ca_cert:
+          type:
+          - string
+          - 'null'
+          description: |-
+            PEM encoded CA cert for use by the TLS client used to talk with the
+            Kubernetes API. NOTE: Every line must end with a newline: \n If not set,
+            the local CA cert will be used if running in a Kubernetes pod.
+        disable_local_ca_jwt:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            Disable defaulting to the local CA cert and service account JWT when
+            running in a Kubernetes pod.
+        domain_id:
+          type: string
+          description: Domain ID owning the K8s auth instance.
+        enabled:
+          type: boolean
+        host:
+          type: string
+          description: |-
+            Host must be a host string, a host:port pair, or a URL to the base of
+            the Kubernetes API server.
+        name:
+          type:
+          - string
+          - 'null'
+          description: K8s auth name.
+    K8sAuthInstanceCreateRequest:
+      type: object
+      description: K8s auth instance create request.
+      required:
+      - instance
+      properties:
+        instance:
+          $ref: '#/components/schemas/K8sAuthInstanceCreate'
+          description: K8s auth instance object.
+    K8sAuthInstanceList:
+      type: object
+      description: List of K8s auth instances.
+      required:
+      - instances
+      properties:
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/K8sAuthInstance'
+          description: Collection of k8s auth instance objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+    K8sAuthInstanceResponse:
+      type: object
+      description: K8s auth instance response.
+      required:
+      - instance
+      properties:
+        instance:
+          $ref: '#/components/schemas/K8sAuthInstance'
+          description: K8s auth instance object.
+    K8sAuthInstanceUpdate:
+      type: object
+      description: Update K8s authentication instance.
+      properties:
+        ca_cert:
+          type:
+          - string
+          - 'null'
+          description: |-
+            PEM encoded CA cert for use by the TLS client used to talk with the
+            Kubernetes API. NOTE: Every line must end with a newline: \n If not set,
+            the local CA cert will be used if running in a Kubernetes pod.
+        disable_local_ca_jwt:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            Disable defaulting to the local CA cert and service account JWT when
+            running in a Kubernetes pod.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+        host:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Host must be a host string, a host:port pair, or a URL to the base of
+            the Kubernetes API server.
+        name:
+          type:
+          - string
+          - 'null'
+          description: K8s auth name.
+    K8sAuthInstanceUpdateRequest:
+      type: object
+      description: K8s auth instance update request.
+      required:
+      - instance
+      properties:
+        instance:
+          $ref: '#/components/schemas/K8sAuthInstanceUpdate'
+          description: K8s auth instance object.
+    K8sAuthRequest:
+      type: object
+      description: K8s authentication request.
+      required:
+      - jwt
+      - role_name
+      properties:
+        jwt:
+          type: string
+        role_name:
+          type: string
+    K8sAuthRole:
+      type: object
+      description: K8s authentication role.
+      required:
+      - auth_instance_id
+      - bound_service_account_names
+      - bound_service_account_namespaces
+      - domain_id
+      - enabled
+      - id
+      - name
+      - token_restriction_id
+      properties:
+        auth_instance_id:
+          type: string
+          description: ID of the K8s auth instance this role belongs to.
+        bound_audience:
+          type:
+          - string
+          - 'null'
+          description: Optional Audience claim to verify in the JWT.
+        bound_service_account_names:
+          type: array
+          items:
+            type: string
+          description: List of service account names able to access this role.
+        bound_service_account_namespaces:
+          type: array
+          items:
+            type: string
+          description: List of namespaces allowed to access this role.
+        domain_id:
+          type: string
+          description: |-
+            Domain ID owning the K8s auth role configuration. It must always match
+            the `domain_id` of the referred configuration.
+        enabled:
+          type: boolean
+        id:
+          type: string
+        name:
+          type: string
+          description: K8s auth role name.
+        token_restriction_id:
+          type: string
+          description: |-
+            A token restriction ID that is used to bind the K8s token to the
+            Keystone Identity and Authorization mapping.
+    K8sAuthRoleCreate:
+      type: object
+      description: New K8s authentication role.
+      required:
+      - bound_service_account_names
+      - bound_service_account_namespaces
+      - enabled
+      - name
+      - token_restriction_id
+      properties:
+        bound_audience:
+          type:
+          - string
+          - 'null'
+          description: Optional Audience claim to verify in the JWT.
+        bound_service_account_names:
+          type: array
+          items:
+            type: string
+          description: List of service account names able to access this role.
+        bound_service_account_namespaces:
+          type: array
+          items:
+            type: string
+          description: List of namespaces allowed to access this role.
+        enabled:
+          type: boolean
+        name:
+          type: string
+          description: K8s auth role name.
+        token_restriction_id:
+          type: string
+          description: |-
+            A token restriction ID that is used to bind the K8s token to the
+            Keystone Identity and Authorization mapping.
+    K8sAuthRoleCreateRequest:
+      type: object
+      description: K8s auth role create request.
+      required:
+      - role
+      properties:
+        role:
+          $ref: '#/components/schemas/K8sAuthRoleCreate'
+          description: K8s auth role object.
+    K8sAuthRoleList:
+      type: object
+      description: List of K8s auth roles.
+      required:
+      - roles
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/K8sAuthRole'
+          description: Collection of k8s auth role objects.
+    K8sAuthRoleResponse:
+      type: object
+      description: K8s auth role response.
+      required:
+      - role
+      properties:
+        role:
+          $ref: '#/components/schemas/K8sAuthRole'
+          description: K8s auth role object.
+    K8sAuthRoleUpdate:
+      type: object
+      description: Update K8s authentication role.
+      properties:
+        bound_audience:
+          type:
+          - string
+          - 'null'
+          description: Optional Audience claim to verify in the JWT.
+        bound_service_account_names:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of service account names able to access this role.
+        bound_service_account_namespaces:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of namespaces allowed to access this role.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+          description: K8s auth role name.
+        token_restriction_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            A token restriction ID that is used to bind the K8s token to the
+            Keystone Identity and Authorization mapping.
+    K8sAuthRoleUpdateRequest:
+      type: object
+      description: K8s auth role update request.
+      required:
+      - role
+      properties:
+        role:
+          $ref: '#/components/schemas/K8sAuthRoleUpdate'
+          description: K8s auth role object.
     Link:
       type: object
       description: Link object.
@@ -2732,7 +3681,7 @@ components:
       properties:
         mapping:
           $ref: '#/components/schemas/MappingCreate'
-          description: Mapping object
+          description: Mapping object.
     MappingList:
       type: object
       description: List of OIDC/JWT attribute mappings.
@@ -2750,7 +3699,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Mapping'
-          description: Collection of identity provider objects
+          description: Collection of identity provider objects.
     MappingResponse:
       type: object
       required:
@@ -2758,7 +3707,7 @@ components:
       properties:
         mapping:
           $ref: '#/components/schemas/Mapping'
-          description: IDP object
+          description: Mapping object.
     MappingType:
       type: string
       description: Attribute mapping type.
@@ -2864,7 +3813,7 @@ components:
       properties:
         mapping:
           $ref: '#/components/schemas/MappingUpdate'
-          description: Mapping object
+          description: Mapping object.
     MediaType:
       type: object
       required:
@@ -2878,7 +3827,7 @@ components:
     Mediation:
       type: string
       description: |-
-        Request in residentkey workflows that conditional mediation should be used
+        Request in resident key workflows that conditional mediation should be used
         in the UI, or not.
       enum:
       - Conditional
@@ -2947,8 +3896,8 @@ components:
 
         A JSON serializable challenge which is issued to the user's webbrowser for
         handling. This is meant to be opaque, that is, you should not need to
-        inspect or alter the content of the struct
-        - you should serialise it and transmit it to the client only.
+        inspect or alter the content of the struct - you should serialise it and
+        transmit it to the client only.
       required:
       - public_key
       properties:
@@ -2964,7 +3913,7 @@ components:
       properties:
         description:
           type: string
-          description: Passkey description
+          description: Passkey description.
           maxLength: 64
     PasskeyResponse:
       type: object
@@ -3036,6 +3985,79 @@ components:
         name:
           type: string
           description: Project Name.
+    ProjectCreate:
+      allOf:
+      - description: Additional project properties.
+      - type: object
+        required:
+        - domain_id
+        - enabled
+        - is_domain
+        - name
+        properties:
+          description:
+            type:
+            - string
+            - 'null'
+            description: The description of the project.
+          domain_id:
+            type: string
+            description: The ID of the domain for the project.
+          enabled:
+            type: boolean
+            description: |-
+              If set to true, project is enabled. If set to false, project is
+              disabled.
+          is_domain:
+            type: boolean
+            description: |-
+              Indicates whether the project also acts as a domain. If set to true,
+              this project acts as both a project and domain. As a domain, the project
+              provides a name space in which you can create users, groups, and other
+              projects. If set to false, this project behaves as a regular project
+              that contains only resources. Default is false. You cannot update this
+              parameter after you create the project.
+          name:
+            type: string
+            description: |-
+              The name of the project, which must be unique within the owning domain.
+              A project can have the same name as its domain.
+          parent_id:
+            type:
+            - string
+            - 'null'
+            description: |-
+              The ID of the parent of the project.
+
+              If specified on project creation, this places the project within a
+              hierarchy and implicitly defines the owning domain, which will be the
+              same domain as the parent specified. If `parent_id` is not specified and
+              `is_domain` is false, then the project will use its owning domain as its
+              parent. If `is_domain` is true (i.e. the project is acting as a domain),
+              then `parent_id` must not specified (or if it is, it must be null) since
+              domains have no parents.
+
+              `parent_id` is immutable, and can’t be updated after the project is
+              created - hence a project cannot be moved within the hierarchy.
+      description: New project data.
+    ProjectCreateRequest:
+      type: object
+      description: New project creation request.
+      required:
+      - project
+      properties:
+        project:
+          $ref: '#/components/schemas/ProjectCreate'
+          description: Project object.
+    ProjectResponse:
+      type: object
+      description: Complete response with the project data.
+      required:
+      - project
+      properties:
+        project:
+          $ref: '#/components/schemas/Project'
+          description: Project object.
     ProjectShort:
       type: object
       description: Short Project representation.
@@ -3072,7 +4094,7 @@ components:
           description: Collection of project objects.
     PubKeyCredParams:
       type: object
-      description: Public key cryptographic parameters
+      description: Public key cryptographic parameters.
       required:
       - alg
       - type_
@@ -3131,7 +4153,7 @@ components:
           description: The set of cryptographic types allowed by this server.
         rp:
           $ref: '#/components/schemas/RelyingParty'
-          description: The relying party
+          description: The relying party.
         timeout:
           type: integer
           format: int32
@@ -3142,7 +4164,7 @@ components:
           description: The user.
     PublicKeyCredentialDescriptor:
       type: object
-      description: <https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor>
+      description: <https://www.w3.org/TR/webauthn/#dictdef-publickeycredentialdescriptor>.
       required:
       - type_
       - id
@@ -3162,22 +4184,12 @@ components:
         type_:
           type: string
           description: The type of credential.
-    PublicKeyCredentialHint:
-      type: string
-      description: |-
-        A hint as to the class of device that is expected to fufil this operation.
-
-        <https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints>
-      enum:
-      - ClientDevice
-      - Hybrid
-      - SecurityKey
     PublicKeyCredentialHints:
       type: string
       description: |-
-        A hint as to the class of device that is expected to fufil this operation.
+        A hint as to the class of device that is expected to fulfill this operation.
 
-        <https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints>
+        <https://www.w3.org/TR/webauthn-3/#enumdef-publickeycredentialhints>.
       enum:
       - ClientDevice
       - Hybrid
@@ -3207,7 +4219,7 @@ components:
         hints:
           type: array
           items:
-            $ref: '#/components/schemas/PublicKeyCredentialHint'
+            $ref: '#/components/schemas/PublicKeyCredentialHints'
           description: Hints defining which types credentials may be used in this operation.
         rp_id:
           type: string
@@ -3226,7 +4238,7 @@ components:
       type: object
       description: |-
         <https://w3c.github.io/webauthn/#dictdef-authenticationextensionsclientoutputs> The default
-        option here for Options are None, so it can be derived
+        option here for Options are None, so it can be derived.
       properties:
         appid:
           type: boolean
@@ -3266,9 +4278,9 @@ components:
     RequestAuthenticationExtensions:
       type: object
       description: |-
-        Extension option inputs for PublicKeyCredentialRequestOptions
+        Extension option inputs for PublicKeyCredentialRequestOptions.
 
-        Implements AuthenticatorExtensionsClientInputs from the spec
+        Implements AuthenticatorExtensionsClientInputs from the spec.
       properties:
         appid:
           type: string
@@ -3307,13 +4319,13 @@ components:
           description: CTAP2.1 Minimum pin length.
         uvm:
           type: boolean
-          description: ⚠️ - Browsers do not support this! Uvm
+          description: ⚠️ - Browsers do not support this! Uvm.
     ResidentKeyRequirement:
       type: string
       description: |-
         The Relying Party's requirements for client-side discoverable credentials.
 
-        <https://www.w3.org/TR/webauthn-2/#enumdef-residentkeyrequirement>
+        <https://www.w3.org/TR/webauthn-2/#enumdef-residentkeyrequirement>.
       enum:
       - Discouraged
       - Preferred
@@ -3330,18 +4342,18 @@ components:
             type:
             - string
             - 'null'
-            description: Role description
+            description: Role description.
           domain_id:
             type:
             - string
             - 'null'
-            description: Role domain ID
+            description: Role domain ID.
           id:
             type: string
-            description: Role ID
+            description: Role ID.
           name:
             type: string
-            description: Role name
+            description: Role name.
       description: The role data.
     RoleCreate:
       allOf:
@@ -3366,7 +4378,7 @@ components:
       description: Role create request body.
     RoleList:
       type: object
-      description: Roles
+      description: Roles.
       required:
       - roles
       properties:
@@ -3382,7 +4394,7 @@ components:
       properties:
         role:
           $ref: '#/components/schemas/Role'
-          description: Role object
+          description: Role object.
     Scope:
       oneOf:
       - type: object
@@ -3455,10 +4467,10 @@ components:
       properties:
         all:
           type: boolean
-          description: All
+          description: All.
     Token:
       type: object
-      description: Authorization token
+      description: Authorization token.
       required:
       - audit_ids
       - methods
@@ -3536,7 +4548,7 @@ components:
           - 'null'
           items:
             $ref: '#/components/schemas/Role'
-          description: A list of role objects
+          description: A list of role objects.
         system:
           oneOf:
           - type: 'null'
@@ -3561,7 +4573,7 @@ components:
       properties:
         token:
           $ref: '#/components/schemas/Token'
-          description: Token
+          description: Token.
     TokenRestriction:
       type: object
       description: Token restriction data.
@@ -3805,24 +4817,24 @@ components:
       properties:
         domain:
           $ref: '#/components/schemas/Domain'
-          description: User domain
+          description: User domain.
         id:
           type: string
-          description: User ID
+          description: User ID.
         name:
           type:
           - string
           - 'null'
-          description: User Name
+          description: User Name.
         password_expires_at:
           type:
           - string
           - 'null'
           format: date-time
-          description: User password expiry date
+          description: User password expiry date.
     UserCreate:
       allOf:
-      - description: Additional user properties
+      - description: Additional user properties.
       - type: object
         required:
         - domain_id
@@ -3889,7 +4901,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
-          description: Collection of user objects
+          description: Collection of user objects.
     UserOptions:
       type: object
       description: User options.
@@ -3935,7 +4947,7 @@ components:
 
         You should not need to handle the inner content of this structure - you
         should provide this to the correctly handling function of Webauthn only.
-        <https://w3c.github.io/webauthn/#iface-pkcredential>
+        <https://w3c.github.io/webauthn/#iface-pkcredential>.
       required:
       - id
       - raw_id
@@ -4026,7 +5038,7 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-          description: User object
+          description: User object.
     UserVerificationPolicy:
       type: string
       description: |-
@@ -4145,6 +5157,80 @@ components:
       in: header
       name: x-auth-token
 tags:
+- name: roles
+  description: |-
+    OpenStack services typically determine whether a user’s API request should be allowed using Role Based Access Control (RBAC). For OpenStack this means the service compares the roles that user has on the project (as indicated by the roles in the token), against the roles required for the API in question (as defined in the service’s policy file). A user obtains roles on a project by having these assigned to them via the Identity service API.
+
+    Roles must initially be created as entities via the Identity services API and, once created, can then be assigned. You can assign roles to a user or group on a project, including projects owned by other domains. You can also assign roles to a user or group on a domain, although this is only currently relevant for using a domain scoped token to execute domain-level Identity service API requests.
+- name: role_assignments
+  description: |
+    The creation, checking and deletion of role assignments is done with each of the attributes being specified in the URL. For example to assign a role to a user on a project:
+
+    ```
+    PUT /v3/projects/{project_id}/users/{user_id}/roles/{role_id}
+    ```
+
+    You can also list roles assigned to the system, or to a specified domain, project, or user using this form of API, however a more generalized API for list assignments is provided where query parameters are used to filter the set of assignments returned in the collection. For example:
+
+    - List role assignments for the specified user:
+
+      ```
+      GET /role_assignments?user.id={user_id}
+      ```
+
+    - List role assignments for the specified project:
+
+      ```
+      GET /role_assignments?scope.project.id={project_id}
+      ```
+
+    - List system role assignments for a specific user:
+
+      ```
+      GET /role_assignments?scope.system=all?user.id={user_id}
+      ```
+
+    - List system role assignments for all users and groups:
+
+      ```
+      GET /role_assignments?scope.system=all
+      ```
+
+    Since Identity API v3.10, you can grant role assignments to users and groups on an entity called the system. The role assignment API also supports listing and filtering role assignments on the system.
+
+    Since Identity API v3.6, you can also list all role assignments within a tree of projects, for example the following would list all role assignments for a specified project and its sub-projects:
+
+    ```
+    GET /role_assignments?scope.project.id={project_id}&include_subtree=true
+    ```
+
+    If you specify include_subtree=true, you must also specify the scope.project.id. Otherwise, this call returns the Bad Request (400) response code.
+
+    Each role assignment entity in the collection contains a link to the assignment that created the entity.
+
+    As mentioned earlier, role assignments can be made to a user or a group on a particular project, domain, or the entire system. A user who is a member of a group that has a role assignment, will also be treated as having that role assignment by virtue of their group membership. The effective role assignments of a user (on a given project or domain) therefore consists of any direct assignments they have, plus any they gain by virtue of membership of groups that also have assignments on the given project or domain. This set of effective role assignments is what is placed in the token for reference by services wishing to check policy. You can list the effective role assignments using the effective query parameter at the user, project, and domain level:
+
+    - Determine what a user can actually do:
+
+      ```
+      GET /role_assignments?user.id={user_id}&effective
+      ```
+
+    - Get the equivalent set of role assignments that are included in a project-scoped token response:
+
+      ```
+      GET /role_assignments?user.id={user_id}&scope.project.id={project_id}&effective
+      ```
+
+    When listing in effective mode, since the group assignments have been effectively expanded out into assignments for each user, the group role assignment entities themselves are not returned in the collection. However, in the response, the links entity section for each assignment gained by virtue of group membership will contain a URL that enables access to the membership of the group.
+
+    By default only the IDs of entities are returned in collections from the role_assignment API calls. The names of entities may also be returned, in addition to the IDs, by using the include_names query parameter on any of these calls, for example:
+
+    - List role assignments including names:
+
+      ```
+      GET /role_assignments?include_names
+      ```
 - name: identity_providers
   description: |-
     Identity providers API.
@@ -4166,6 +5252,16 @@ tags:
     Mappings with an empty domain_id are considered globals and every domain may use it. Such mappings
     require the `domain_id_claim` attribute to be set to identify the domain_id for the respective
     user.
+- name: k8s_auth_instance
+  description: |
+    Kubernetes authentication instances (Kubernetes Clusters) API.
+
+    Authentication Instance represents a remote Kubernetes cluster that issues the JWT token for the service account which could be exchanged for the Keystone token using the corresponding auth_role.
+- name: k8s_auth_role
+  description: |
+    Kubernetes auth role API.
+
+    K8s auth roles define how the JWT token of the Kubernetes pod running as a service account should be mapped to the local user during the token exchange.
 - name: token
   description: Token API
 - name: token_restriction

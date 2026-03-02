@@ -97,8 +97,7 @@ impl RestEndpoint for Request<'_> {
           domain_id = self.domain_id.as_ref(),
           group_id = self.group_id.as_ref(),
           role_id = self.role_id.as_ref(),
-      )
-        .into()
+      ).into()
     }
 
     fn parameters(&self) -> QueryParams<'_> {
@@ -154,7 +153,8 @@ mod tests {
         let server = MockServer::start();
         let client = FakeOpenStackClient::new(server.base_url());
         let mock = server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path(format!(
+            when.method(httpmock::Method::DELETE)
+            .path(format!(
       "/OS-INHERIT/domains/{domain_id}/groups/{group_id}/roles/{role_id}/inherited_to_projects",
           domain_id = "domain_id",
           group_id = "group_id",

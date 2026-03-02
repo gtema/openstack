@@ -305,10 +305,10 @@ impl OutputProcessor {
                     .add_rows(rows);
 
                 for (idx, constraint) in table_constraints.iter().enumerate() {
-                    if let Some(constraint) = constraint {
-                        if let Some(col) = table.column_mut(idx) {
-                            col.set_constraint(*constraint);
-                        }
+                    if let Some(constraint) = constraint
+                        && let Some(col) = table.column_mut(idx)
+                    {
+                        col.set_constraint(*constraint);
                     }
                 }
 

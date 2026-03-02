@@ -16266,6 +16266,8 @@ components:
       properties:
         network_ip_availability:
           properties:
+            ip_availability_details:
+              type: string
             network_id:
               type: string
             network_name:
@@ -16288,6 +16290,17 @@ components:
             The `network_ip_availabilities` object.
           items:
             properties:
+              ip_availability_details:
+                description: |-
+                  The detailed information of IP availability for a network. This field
+                  includes the following attributes: `total_ips_in_subnet` is the number
+                  of available IPs in the subnet cidr, `total_ips_in_allocation_pool` is
+                  the sum of available IPs in each allocation pool (0 if there are no
+                  allocation pools), `used_ips_in_subnet` is the number of used IPs in the
+                  subnet (does not consider allocation pools), and
+                  `used_ips_in_allocation_pool` is the sum of used IPs in each allocation
+                  pool (0 if there are no allocation pools).
+                type: string
               network_id:
                 description: |-
                   The ID of the network whose IP availability detail is reported.
@@ -16324,6 +16337,17 @@ components:
           description: |-
             A `network_ip_availability` object.
           properties:
+            ip_availability_details:
+              description: |-
+                The detailed information of IP availability for a network. This field
+                includes the following attributes: `total_ips_in_subnet` is the number
+                of available IPs in the subnet cidr, `total_ips_in_allocation_pool` is
+                the sum of available IPs in each allocation pool (0 if there are no
+                allocation pools), `used_ips_in_subnet` is the number of used IPs in the
+                subnet (does not consider allocation pools), and
+                `used_ips_in_allocation_pool` is the sum of used IPs in each allocation
+                pool (0 if there are no allocation pools).
+              type: string
             network_id:
               description: |-
                 The ID of the network whose IP availability detail is reported.
@@ -16364,6 +16388,8 @@ components:
       properties:
         network_ip_availability:
           properties:
+            ip_availability_details:
+              type: string
             network_id:
               type: string
             network_name:

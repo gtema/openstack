@@ -24,6 +24,10 @@ use structable::{StructTable, StructTableOptions};
 pub struct NetworkIpAvailabilityResponse {
     #[serde(default)]
     #[structable(optional)]
+    pub ip_availability_details: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional)]
     pub network_id: Option<String>,
 
     #[serde(default)]

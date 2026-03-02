@@ -83,10 +83,13 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     min_ram: Option<String>,
 
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
-    #[arg(help_heading = "Query parameters", long, value_parser = ["created_at","description","disabled","ephemeral_gb","flavorid","id","is_public","memory_mb","name","root_gb","rxtx_factor","swap","updated_at","vcpu_weight","vcpus"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["created_at","description","disabled","ephemeral_gb","flavorid","id","is_public","memory_mb","name","root_gb","swap","updated_at","vcpu_weight","vcpus"])]
     sort_key: Option<String>,
 }
 
@@ -123,6 +126,9 @@ impl FlavorsCommand {
         }
         if let Some(val) = &self.query.min_ram {
             ep_builder.min_ram(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val);

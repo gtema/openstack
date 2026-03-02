@@ -114,13 +114,6 @@ pub struct QuotaSet {
     /// **Available until version 2.56**
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) networks: Option<i32>,
-
-    /// The number of allowed injected files for each tenant.
-    ///
-    /// **Available until version 2.56**
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
     pub(crate) ram: Option<i32>,
 
     /// The number of allowed injected files for each tenant.

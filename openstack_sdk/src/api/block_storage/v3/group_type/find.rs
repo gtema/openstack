@@ -99,15 +99,14 @@ impl<'a> Findable for Request<'a> {
         let mut maybe_result: Option<serde_json::Value> = None;
         for item in data.iter() {
             trace!("Validate item {:?} is what we search for", item);
-            if let Some(name_as_val) = item.get("name") {
-                if let Some(name) = name_as_val.as_str() {
-                    if name == self.id {
-                        if maybe_result.is_none() {
-                            maybe_result = Some(item.clone());
-                        } else {
-                            return Err(ApiError::IdNotUnique);
-                        }
-                    }
+            if let Some(name_as_val) = item.get("name")
+                && let Some(name) = name_as_val.as_str()
+                && name == self.id
+            {
+                if maybe_result.is_none() {
+                    maybe_result = Some(item.clone());
+                } else {
+                    return Err(ApiError::IdNotUnique);
                 }
             }
         }

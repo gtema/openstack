@@ -22,6 +22,18 @@ use structable::{StructTable, StructTableOptions};
 /// NetworkIpAvailability response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkIpAvailabilityResponse {
+    /// The detailed information of IP availability for a network. This field
+    /// includes the following attributes: `total_ips_in_subnet` is the number
+    /// of available IPs in the subnet cidr, `total_ips_in_allocation_pool` is
+    /// the sum of available IPs in each allocation pool (0 if there are no
+    /// allocation pools), `used_ips_in_subnet` is the number of used IPs in
+    /// the subnet (does not consider allocation pools), and
+    /// `used_ips_in_allocation_pool` is the sum of used IPs in each allocation
+    /// pool (0 if there are no allocation pools).
+    #[serde(default)]
+    #[structable(optional)]
+    pub ip_availability_details: Option<String>,
+
     /// The ID of the network whose IP availability detail is reported.
     #[serde(default)]
     #[structable(optional)]

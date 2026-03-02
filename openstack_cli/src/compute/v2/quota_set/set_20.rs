@@ -164,12 +164,6 @@ struct QuotaSet {
     ///
     /// **Available until version 2.56**
     #[arg(help_heading = "Body parameters", long)]
-    networks: Option<i32>,
-
-    /// The number of allowed injected files for each tenant.
-    ///
-    /// **Available until version 2.56**
-    #[arg(help_heading = "Body parameters", long)]
     ram: Option<i32>,
 
     /// The number of allowed injected files for each tenant.
@@ -303,10 +297,6 @@ impl QuotaSetCommand {
 
         if let Some(val) = &args.metadata_items {
             quota_set_builder.metadata_items(*val);
-        }
-
-        if let Some(val) = &args.networks {
-            quota_set_builder.networks(*val);
         }
 
         if let Some(val) = &args.ram {

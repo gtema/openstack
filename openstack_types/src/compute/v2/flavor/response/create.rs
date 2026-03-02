@@ -69,13 +69,6 @@ pub struct FlavorResponse {
     #[structable(serialize, title = "os-flavor-access:is_public")]
     pub os_flavor_access_is_public: Value,
 
-    /// Whether or not the flavor has been administratively disabled. This is
-    /// an artifact of the legacy v2 API and will always be set to `false`.
-    /// There is currently no way to disable a flavor and set this to `true`.
-    #[serde(rename = "OS-FLV-DISABLED:disabled")]
-    #[structable(title = "OS-FLV-DISABLED:disabled")]
-    pub os_flv_disabled_disabled: bool,
-
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
     /// used as a scratch space for applications that are aware of its
@@ -87,10 +80,6 @@ pub struct FlavorResponse {
     /// The amount of RAM a flavor has, in MiB.
     #[structable()]
     pub ram: i32,
-
-    /// OpenAPI specifies the field as '{}'.
-    #[structable(serialize)]
-    pub rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the

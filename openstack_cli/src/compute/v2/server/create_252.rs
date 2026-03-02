@@ -154,8 +154,10 @@ struct OsSchedulerHints {
     /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
     /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    #[arg(help_heading = "Body parameters", long)]
-    group: Option<String>,
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    group: Option<Vec<String>>,
 
     /// Schedule the server by using a custom filter in JSON format. For
     /// example:
@@ -477,7 +479,7 @@ impl ServerCommand {
             }
 
             if let Some(val) = &args.group {
-                os_scheduler_hints_builder.group(val);
+                os_scheduler_hints_builder.group(val.iter().map(Into::into).collect::<Vec<_>>());
             }
 
             if let Some(val) = &args.query {
