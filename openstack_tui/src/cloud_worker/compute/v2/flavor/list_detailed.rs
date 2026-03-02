@@ -42,6 +42,8 @@ pub struct ComputeFlavorList {
     #[builder(default)]
     pub min_ram: Option<String>,
     #[builder(default)]
+    pub name: Option<String>,
+    #[builder(default)]
     pub sort_dir: Option<String>,
     #[builder(default)]
     pub sort_key: Option<String>,
@@ -72,6 +74,9 @@ impl TryFrom<&ComputeFlavorList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.min_ram {
             ep_builder.min_ram(val.clone());
+        }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &value.sort_dir {
             ep_builder.sort_dir(val.clone());

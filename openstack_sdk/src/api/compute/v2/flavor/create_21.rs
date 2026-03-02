@@ -83,6 +83,8 @@ pub struct Flavor<'a> {
     /// The receive / transmit factor (as a float) that will be set on ports if
     /// the network backend supports the QOS extension. Otherwise it will be
     /// ignored. It defaults to 1.0.
+    ///
+    /// **Available until version 2.101**
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) rxtx_factor: Option<Cow<'a, str>>,

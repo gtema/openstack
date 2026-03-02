@@ -102,7 +102,7 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) group: Option<Cow<'a, str>>,
+    pub(crate) group: Option<Vec<Cow<'a, str>>>,
 
     /// Schedule the server by using a custom filter in JSON format. For
     /// example:
@@ -209,7 +209,7 @@ pub struct OsSchedulerHints<'a> {
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) group: Option<Cow<'a, str>>,
+    pub(crate) group: Option<Vec<Cow<'a, str>>>,
 
     /// Schedule the server by using a custom filter in JSON format. For
     /// example:

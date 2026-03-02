@@ -22,302 +22,94 @@ use structable::{StructTable, StructTableOptions};
 /// QuotaSet response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaSetResponse {
-    /// The object of detailed cores quota, including in_use, limit and
-    /// reserved number of cores.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub cores: Option<Cores>,
-
-    /// The object of detailed fixed ips quota, including in_use, limit and
-    /// reserved number of fixed ips.
-    ///
-    /// **Available until version 2.35**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub fixed_ips: Option<FixedIps>,
-
-    /// The object of detailed floating ips quota, including in_use, limit and
-    /// reserved number of floating ips.
-    ///
-    /// **Available until version 2.35**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub floating_ips: Option<FloatingIps>,
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub cores: Cores,
 
     /// The UUID of the tenant/user the quotas listed for.
     #[structable()]
     pub id: String,
 
-    /// The object of detailed injected files quota, including in_use, limit
-    /// and reserved number of injected files.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub injected_files: Option<InjectedFiles>,
-
-    /// The object of detailed injected file content bytes quota, including
-    /// in_use, limit and reserved number of injected file content bytes.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub injected_files_content_bytes: Option<InjectedFilesContentBytes>,
-
-    /// The object of detailed injected file path bytes quota, including
-    /// in_use, limit and reserved number of injected file path bytes.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub injected_files_path_bytes: Option<InjectedFilesPathBytes>,
-
-    /// The object of detailed servers quota, including in_use, limit and
-    /// reserved number of instances.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub instances: Option<Instances>,
-
-    /// The object of detailed key pairs quota, including in_use, limit and
-    /// reserved number of key pairs.
-    ///
-    /// Note
-    ///
-    /// `in_use` field value for keypair quota details is always zero. In Nova,
-    /// key_pairs are a user-level resource, not a project- level resource, so
-    /// for legacy reasons, the keypair in-use information is not counted.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub key_pairs: Option<KeyPairs>,
-
-    /// The object of detailed key metadata items quota, including in_use,
-    /// limit and reserved number of metadata items.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub metadata_items: Option<MetadataItems>,
-
-    /// The number of private networks that can be created per project.
-    ///
-    /// **Available until version 2.35**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub networks: Option<Networks>,
-
-    /// The object of detailed key ram quota, including in_use, limit and
-    /// reserved number of ram.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub ram: Option<Ram>,
-
-    /// The object of detailed security group rules quota, including in_use,
-    /// limit and reserved number of security group rules.
-    ///
-    /// **Available until version 2.35**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub security_group_rules: Option<SecurityGroupRules>,
-
-    /// The object of detailed security groups, including in_use, limit and
-    /// reserved number of security groups.
-    ///
-    /// **Available until version 2.35**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub security_groups: Option<SecurityGroups>,
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub instances: Instances,
 
     /// The object of detailed server group members, including in_use, limit
     /// and reserved number of server group members.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub server_group_members: Option<ServerGroupMembers>,
+    #[structable(serialize)]
+    pub key_pairs: KeyPairs,
 
-    /// The object of detailed server groups, including in_use, limit and
-    /// reserved number of server groups.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub server_groups: Option<ServerGroups>,
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub metadata_items: MetadataItems,
+
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub ram: Ram,
+
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub server_group_members: ServerGroupMembers,
+
+    /// The object of detailed server group members, including in_use, limit
+    /// and reserved number of server group members.
+    #[structable(serialize)]
+    pub server_groups: ServerGroups,
 }
 
-/// The object of detailed cores quota, including in_use, limit and reserved
-/// number of cores.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `Cores` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Cores {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
-/// The object of detailed fixed ips quota, including in_use, limit and
-/// reserved number of fixed ips.
-///
-/// **Available until version 2.35**
-/// `FixedIps` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FixedIps {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed floating ips quota, including in_use, limit and
-/// reserved number of floating ips.
-///
-/// **Available until version 2.35**
-/// `FloatingIps` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FloatingIps {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed injected files quota, including in_use, limit and
-/// reserved number of injected files.
-///
-/// **Available until version 2.56**
-/// `InjectedFiles` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct InjectedFiles {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed injected file content bytes quota, including in_use,
-/// limit and reserved number of injected file content bytes.
-/// `InjectedFilesContentBytes` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct InjectedFilesContentBytes {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed injected file path bytes quota, including in_use,
-/// limit and reserved number of injected file path bytes.
-/// `InjectedFilesPathBytes` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct InjectedFilesPathBytes {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed servers quota, including in_use, limit and reserved
-/// number of instances.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `Instances` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Instances {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
-/// The object of detailed key pairs quota, including in_use, limit and
-/// reserved number of key pairs.
-///
-/// Note
-///
-/// `in_use` field value for keypair quota details is always zero. In Nova,
-/// key_pairs are a user-level resource, not a project- level resource, so for
-/// legacy reasons, the keypair in-use information is not counted.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `KeyPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct KeyPairs {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
-/// The object of detailed key metadata items quota, including in_use, limit
-/// and reserved number of metadata items.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `MetadataItems` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MetadataItems {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
-/// The number of private networks that can be created per project.
-///
-/// **Available until version 2.35**
-/// `Networks` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Networks {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed key ram quota, including in_use, limit and reserved
-/// number of ram.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `Ram` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ram {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed security group rules quota, including in_use, limit
-/// and reserved number of security group rules.
-///
-/// **Available until version 2.35**
-/// `SecurityGroupRules` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SecurityGroupRules {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
-}
-
-/// The object of detailed security groups, including in_use, limit and
-/// reserved number of security groups.
-///
-/// **Available until version 2.35**
-/// `SecurityGroups` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SecurityGroups {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
 /// The object of detailed server group members, including in_use, limit and
@@ -325,23 +117,17 @@ pub struct SecurityGroups {
 /// `ServerGroupMembers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroupMembers {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }
 
-/// The object of detailed server groups, including in_use, limit and reserved
-/// number of server groups.
+/// The object of detailed server group members, including in_use, limit and
+/// reserved number of server group members.
 /// `ServerGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroups {
-    #[serde(default)]
-    pub in_use: Option<i32>,
-    #[serde(default)]
-    pub limit: Option<i32>,
-    #[serde(default)]
-    pub reserved: Option<i32>,
+    pub in_use: i32,
+    pub limit: i32,
+    pub reserved: i32,
 }

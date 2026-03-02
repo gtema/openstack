@@ -17,13 +17,12 @@
 //! Response type for the PUT `servers/{server_id}/metadata/{id}` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct MetadataResponse(BTreeMap<String, Value>);
+pub struct MetadataResponse(BTreeMap<String, Option<String>>);
 
 impl StructTable for MetadataResponse {
     fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
@@ -31,7 +30,7 @@ impl StructTable for MetadataResponse {
     }
 
     fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+        Vec::from_iter(self.0.values().map(|v| v.clone().map(|x| x.to_string())))
     }
 }
 
@@ -41,6 +40,6 @@ impl StructTable for &MetadataResponse {
     }
 
     fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
+        Vec::from_iter(self.0.values().map(|v| v.clone().map(|x| x.to_string())))
     }
 }

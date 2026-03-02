@@ -17,30 +17,40 @@
 //! Response type for the PUT `os-quota-class-sets/{id}` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-pub struct QuotaClassSetResponse(BTreeMap<String, Value>);
+/// QuotaClassSet response representation
+#[derive(Clone, Deserialize, Serialize, StructTable)]
+pub struct QuotaClassSetResponse {
+    /// The number of allowed server cores for the quota class.
+    #[structable()]
+    pub cores: i32,
 
-impl StructTable for QuotaClassSetResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The number of allowed servers for the quota class.
+    #[structable()]
+    pub instances: i32,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
-}
+    /// The number of allowed key pairs for the quota class.
+    #[structable()]
+    pub key_pairs: i32,
 
-impl StructTable for &QuotaClassSetResponse {
-    fn instance_headers<O: StructTableOptions>(&self, _options: &O) -> Option<Vec<String>> {
-        Some(self.0.keys().map(Into::into).collect())
-    }
+    /// The number of allowed metadata items for each server.
+    #[structable()]
+    pub metadata_items: i32,
 
-    fn data<O: StructTableOptions>(&self, _options: &O) -> Vec<Option<String>> {
-        Vec::from_iter(self.0.values().map(|v| serde_json::to_string(&v).ok()))
-    }
+    /// The amount of allowed instance RAM, in MiB, for the quota class.
+    #[structable()]
+    pub ram: i32,
+
+    /// The number of allowed members for each server group.
+    ///
+    /// **New in version 2.50**
+    #[structable()]
+    pub server_group_members: i32,
+
+    /// The number of allowed server groups for the quota class.
+    ///
+    /// **New in version 2.50**
+    #[structable()]
+    pub server_groups: i32,
 }

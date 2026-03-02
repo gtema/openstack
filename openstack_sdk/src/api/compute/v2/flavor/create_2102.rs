@@ -88,15 +88,6 @@ pub struct Flavor<'a> {
     #[builder(setter(into))]
     pub(crate) ram: i32,
 
-    /// The receive / transmit factor (as a float) that will be set on ports if
-    /// the network backend supports the QOS extension. Otherwise it will be
-    /// ignored. It defaults to 1.0.
-    ///
-    /// **Available until version 2.101**
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) rxtx_factor: Option<Cow<'a, str>>,
-
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -191,7 +182,7 @@ impl RestEndpoint for Request<'_> {
 
     /// Returns required API version
     fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(2, 55))
+        Some(ApiVersion::new(2, 102))
     }
 }
 

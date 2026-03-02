@@ -22,113 +22,40 @@ use structable::{StructTable, StructTableOptions};
 /// QuotaClassSet response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaClassSetResponse {
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub cores: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub fixed_ips: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub floating_ips: Option<i64>,
+    /// The number of allowed server cores for the quota class.
+    #[structable()]
+    pub cores: i32,
 
     /// The ID of the quota class. Nova supports the `default` Quota Class
     /// only.
     #[structable()]
     pub id: String,
 
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub injected_file_content_bytes: Option<i64>,
+    /// The number of allowed servers for the quota class.
+    #[structable()]
+    pub instances: i32,
 
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub injected_file_path_bytes: Option<i64>,
+    /// The number of allowed key pairs for the quota class.
+    #[structable()]
+    pub key_pairs: i32,
 
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub injected_files: Option<i64>,
+    /// The number of allowed metadata items for each server.
+    #[structable()]
+    pub metadata_items: i32,
 
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub instances: Option<i64>,
+    /// The amount of allowed instance RAM, in MiB, for the quota class.
+    #[structable()]
+    pub ram: i32,
 
-    /// The number of allowed injected files for the quota class.
+    /// The number of allowed members for each server group.
     ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub key_pairs: Option<i64>,
+    /// **New in version 2.50**
+    #[structable()]
+    pub server_group_members: i32,
 
-    /// The number of allowed injected files for the quota class.
+    /// The number of allowed server groups for the quota class.
     ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub metadata_items: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub networks: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub ram: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub security_group_rules: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub security_groups: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub server_group_members: Option<i64>,
-
-    /// The number of allowed injected files for the quota class.
-    ///
-    /// **Available until version 2.56**
-    #[serde(default, deserialize_with = "crate::common::deser_num_str_opt")]
-    #[structable(optional)]
-    pub server_groups: Option<i64>,
+    /// **New in version 2.50**
+    #[structable()]
+    pub server_groups: i32,
 }
