@@ -13,9 +13,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Perform cloud login
+use std::io::{self, Write};
+
 use clap::Parser;
 use eyre::eyre;
-use std::io::{self, Write};
+use secrecy::ExposeSecret;
 use tracing::info;
 
 use crate::{Cli, OpenStackCliError};
@@ -48,7 +50,7 @@ impl LoginCommand {
         if let Some(token) = client.get_auth_token() {
             let mut stdout = io::stdout().lock();
 
-            stdout.write_all(&token.into_bytes())?;
+            stdout.write_all(token.expose_secret().as_bytes())?;
             return Ok(());
         }
         Err(eyre!("Authorization information missing").into())

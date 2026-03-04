@@ -14,7 +14,14 @@ RUN USER=root cargo new openstack
 
 # We want dependencies cached, so copy those first.
 COPY Cargo.toml Cargo.lock /usr/src/openstack/
-COPY openstack_sdk_core/Cargo.toml /usr/src/openstack/openstack_sdk_core/
+COPY sdk-core/Cargo.toml /usr/src/openstack/sdk-core/
+COPY auth-application-credential/Cargo.toml /usr/src/openstack/auth-application-credential/
+COPY auth-core/Cargo.toml /usr/src/openstack/auth-core/
+COPY auth-federation/Cargo.toml /usr/src/openstack/auth-federation/
+COPY auth-jwt/Cargo.toml /usr/src/openstack/auth-jwt/
+COPY auth-oidcaccesstoken/Cargo.toml /usr/src/openstack/auth-oidcaccesstoken/
+COPY auth-passkey/Cargo.toml /usr/src/openstack/auth-passkey/
+COPY auth-websso/Cargo.toml /usr/src/openstack/auth-websso/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
@@ -30,15 +37,22 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
     mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs &&\
     mkdir -p openstack/openstack_sdk/examples &&\
-    mkdir -p openstack/openstack_sdk_core/examples &&\
+    mkdir -p openstack/sdk-core/examples &&\
     mkdir -p openstack/openstack_types/src && touch openstack/openstack_types/src/lib.rs &&\
     touch openstack/openstack_sdk/examples/query_find.rs &&\
     touch openstack/openstack_sdk/examples/paged.rs &&\
     touch openstack/openstack_sdk/examples/query.rs &&\
     touch openstack/openstack_sdk/examples/ignore.rs &&\
-    touch openstack/openstack_sdk_core/examples/ignore.rs &&\
-    touch openstack/openstack_sdk_core/examples/paged.rs &&\
-    touch openstack/openstack_sdk_core/examples/query.rs
+    touch openstack/sdk-core/examples/ignore.rs &&\
+    touch openstack/sdk-core/examples/paged.rs &&\
+    touch openstack/sdk-core/examples/query.rs &&\
+    mkdir -p openstack/auth-application-credential/src &&touch openstack/auth-application-credential/src/lib.rs &&\
+    mkdir -p openstack/auth-core/src &&touch openstack/auth-core/src/lib.rs &&\
+    mkdir -p openstack/auth-federation/src && touch openstack/auth-federation/src/lib.rs &&\
+    mkdir -p openstack/auth-jwt/src && touch openstack/auth-jwt/src/lib.rs &&\
+    mkdir -p openstack/auth-oidcaccesstoken/src && touch openstack/auth-oidcaccesstoken/src/lib.rs &&\
+    mkdir -p openstack/auth-passkey/src && touch openstack/auth-passkey/src/lib.rs &&\
+    mkdir -p openstack/auth-websso/src && touch openstack/auth-websso/src/lib.rs
 
 # Set the working directory
 WORKDIR /usr/src/openstack

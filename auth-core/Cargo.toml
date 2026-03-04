@@ -1,0 +1,36 @@
+[package]
+name = "openstack-sdk-auth-core"
+description = "OpenStack SDK auth core"
+version = "0.22.5"
+keywords = ["api", "openstack"]
+categories = ["api-bindings"]
+authors = ["Artem Goncharov (gtema)"]
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+
+[dependencies]
+async-trait.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+derive_builder.workspace = true
+dyn-clone = { version = "1.0" }
+http.workspace = true
+inventory.workspace = true
+reqwest = { workspace = true, features = ["json"] }
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+
+[lints]
+workspace = true

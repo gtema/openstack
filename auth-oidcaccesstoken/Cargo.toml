@@ -1,0 +1,26 @@
+[package]
+name = "openstack-sdk-auth-oidcaccesstoken"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+inventory.workspace = true
+openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+url.workspace = true
+
+[lints]
+workspace = true

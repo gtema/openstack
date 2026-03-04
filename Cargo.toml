@@ -1,13 +1,21 @@
 [workspace]
 resolver = "3"
 members = [
-  "openstack_sdk_core",
+  "auth-core",
+  "auth-application-credential", 
+  "auth-federation",
+  "auth-jwt",
+  "auth-oidcaccesstoken",
+  "auth-passkey",
+  "auth-websso",
+  "sdk-core",
   "openstack_sdk",
   "openstack_cli",
   "openstack_tui",
   "openstack_types",
   "xtask",
-  "fuzz"]
+  "fuzz",
+]
 default-members = ["openstack_cli", "openstack_sdk", "openstack_tui", "openstack_types"]
 
 [workspace.package]
@@ -31,20 +39,27 @@ derive_builder = { version = "^0.20" }
 dialoguer = "^0.12.0"
 dirs = "^6.0"
 eyre = { version = "^0.6" }
+form_urlencoded = "^1.2"
 futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.4"
+http-body-util = "^0.1"
 httpmock = { version = "0.8" }
+hyper = { version = "^1.8" }
+hyper-util = { version = "^0.1" }
+inventory = { version = "0.3" }
 itertools = { version = "^0.14" }
 json-patch = { version = "^4.1" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.3" }
 regex = { version = "^1.12" }
 reqwest = { version = "^0.13", features = ["blocking", "stream", "rustls"], default-features = false }
+reserve-port = "^2.4"
 secrecy = { version = "0.10", features = ["serde"] }
 serde = { version="^1.0", features=["derive"] }
 serde_json = "^1.0"
 serde_bytes = "^0.11"
+serde_urlencoded = "^0.7"
 strip-ansi-escapes = "^0.2"
 structable = { version = "^0.3" }
 tempfile = "^3.26"
