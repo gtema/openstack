@@ -75,7 +75,7 @@ itertools = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
 openstack_types = { path="../openstack_types", version = "^0.22" }
-owo-colors = { version = "^4.2", features = ["supports-colors"] }
+owo-colors = { version = "^4.3", features = ["supports-colors"] }
 indicatif = "^0.18"
 rand = { version = "^0.10" }
 regex = { workspace = true }
