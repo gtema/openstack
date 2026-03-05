@@ -70,7 +70,7 @@ webauthn-rs-proto = { workspace = true, optional = true }
 
 [dev-dependencies]
 httpmock.workspace = true
-reserve-port = "^2.2"
+reserve-port = "^2.4"
 tempfile.workspace = true
 tracing-test.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
