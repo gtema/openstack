@@ -1,0 +1,27 @@
+[package]
+name = "openstack-sdk-auth-passkey"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+base64.workspace = true
+derive_builder.workspace = true
+inventory.workspace = true
+openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
+url.workspace = true
+webauthn-authenticator-rs.workspace = true
+webauthn-rs-proto.workspace = true
+
+[lints]
+workspace = true

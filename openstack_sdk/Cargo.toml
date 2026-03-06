@@ -36,12 +36,12 @@ load_balancer = []
 network = []
 object_store = []
 placement = []
-sync = ["openstack_sdk_core/sync"]
-async = ["openstack_sdk_core/async"]
+sync = ["openstack-sdk-core/sync"]
+async = ["openstack-sdk-core/async"]
 client_der = []
 client_pem = []
 keystone_ng = []
-passkey = ["keystone_ng", "openstack_sdk_core/passkey" ]
+passkey = ["keystone_ng", "openstack-sdk-core/passkey" ]
 
 [dependencies]
 async-trait.workspace = true
@@ -50,7 +50,7 @@ derive_builder.workspace = true
 futures.workspace = true
 http.workspace = true
 json-patch.workspace = true
-openstack_sdk_core = { path = "../openstack_sdk_core/", version = "^0.22" }
+openstack-sdk-core = { path = "../sdk-core/", version = "^0.22" }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
