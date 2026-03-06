@@ -27,6 +27,8 @@ use std::ops::Range;
 use thiserror::Error;
 use url::Url;
 
+use openstack_sdk_auth_core::types::Project;
+
 #[cfg(feature = "async")]
 use crate::api::AsyncClient;
 #[cfg(feature = "sync")]
@@ -34,7 +36,6 @@ use crate::api::Client;
 use crate::api::{ApiError, RestClient};
 
 use crate::catalog::ServiceEndpoint;
-use crate::types::identity::v3::Project;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 
 /// Expected URL for certain mock tests.

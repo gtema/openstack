@@ -12,7 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#[cfg(feature = "async")]
-mod r#async;
-#[cfg(feature = "sync")]
-mod sync;
+//! Authentication helper.
+//!
+//! Authentication data may not be present in the configuration file, not provided during the
+//! calling operation or simply not known in advance. When authentication requires a TOTP or other
+//! temporary token - may be during the re-authentication or session renewal - the is no other way
+//! rather than the client to provide a callback that the authentication routine may invoke to
+//! request for such additional authentication data. This module defines such interface.
+
+pub use openstack_sdk_core::auth::auth_helper::*;

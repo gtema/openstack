@@ -15,17 +15,17 @@
 //! Types of the SDK
 
 #![allow(dead_code)]
-use secrecy::{ExposeSecret, SecretString};
 use std::fmt;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+
+use futures::io::AsyncRead;
+use futures::io::Error;
+use secrecy::{ExposeSecret, SecretString};
 
 pub mod api_version;
 pub mod common;
 pub mod identity;
-
-use futures::io::AsyncRead;
-use futures::io::Error;
-use std::pin::Pin;
-use std::task::{Context, Poll};
 
 pub use crate::types::api_version::ApiVersion;
 pub use common::{IdAndName, NameOrId};

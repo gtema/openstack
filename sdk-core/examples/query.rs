@@ -3,14 +3,14 @@
 //! `OS_CLOUD=devstack FLAVOR_ID=... cargo run -p openstack_sdk --example query`
 //!
 use derive_builder::Builder;
-use serde_json::Value;
+// use serde_json::Value;
 use std::borrow::Cow;
 use std::env;
 
 use openstack_sdk_core::OpenStackError;
-use openstack_sdk_core::api::QueryAsync;
+// use openstack_sdk_core::api::QueryAsync;
 use openstack_sdk_core::api::rest_endpoint_prelude::*;
-use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile};
+use openstack_sdk_core::config::ConfigFile;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
@@ -47,13 +47,13 @@ impl RestEndpoint for Request<'_> {
 async fn main() -> Result<(), OpenStackError> {
     let cfg = ConfigFile::new().unwrap();
     // Get connection config from clouds.yaml/secure.yaml
-    let profile = cfg
+    let _profile = cfg
         .get_cloud_config(env::var("OS_CLOUD").expect("OS_CLOUD variable must be set"))
         .unwrap()
         .unwrap();
 
     // Establish connection
-    let client = AsyncOpenStack::new(&profile).await?;
+    // let client = AsyncOpenStack::new(&profile).await?;
 
     // Prepare the find combinator
     let mut ep_builder = RequestBuilder::default();
@@ -64,9 +64,9 @@ async fn main() -> Result<(), OpenStackError> {
     // Build the endpoint
     let ep = ep_builder.build().unwrap();
 
-    // Execute query keeping data as raw json_value
-    let data_raw: Value = ep.query_async(&client).await?;
+    // // Execute query keeping data as raw json_value
+    // let data_raw: Value = ep.query_async(&client).await?;
 
-    println!("Flavor raw json {:?}", serde_json::to_string(&data_raw)?);
+    // println!("Flavor raw json {:?}", serde_json::to_string(&data_raw)?);
     Ok(())
 }

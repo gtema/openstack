@@ -20,10 +20,11 @@ use bytes::Bytes;
 use http::request::Builder as RequestBuilder;
 use http::{HeaderMap, Response};
 
+use openstack_sdk_auth_core::types::Project;
+
 use crate::api::ApiError;
 use crate::catalog::ServiceEndpoint;
-//use crate::types::api_version::ApiVersion;
-use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType, identity::v3::Project};
+use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 
 /// A trait representing a client which can communicate with a OpenStack service API via REST API.
 pub trait RestClient {

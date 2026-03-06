@@ -18,9 +18,11 @@ use std::any;
 use thiserror::Error;
 
 use crate::api;
-use crate::auth::{AuthError, authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError};
 use crate::catalog::CatalogError;
 use crate::config::ConfigError;
+use openstack_sdk_auth_core::{
+    AuthError, authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError,
+};
 
 /// Rest errors that may happen during API communication
 #[derive(Debug, Error)]

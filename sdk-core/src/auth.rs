@@ -26,20 +26,13 @@ use secrecy::SecretString;
 pub use openstack_sdk_auth_core::{Auth, AuthError, AuthState};
 
 pub mod auth_helper;
-mod auth_token_endpoint;
-pub mod authtoken;
 pub mod authtoken_scope;
-pub mod v3_token_info;
-pub mod v3password;
-pub mod v3token;
-pub mod v3totp;
 
 use crate::auth::auth_helper::AuthHelper;
 use crate::config::CloudConfig;
 use crate::error::OpenStackError;
-use authtoken::AuthToken;
 
-pub(crate) async fn gather_auth_data<A>(
+pub async fn gather_auth_data<A>(
     requirements: &serde_json::Value,
     config: &CloudConfig,
     auth_helper: &mut A,

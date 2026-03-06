@@ -16,22 +16,8 @@ default = [
   "async",
   "sync",
 ]
-block_storage = []
-compute = []
-container_infra = []
-dns = []
-identity = []
-image = []
-load_balancer = []
-network = []
-object_store = []
-placement = []
 sync = []
 async = []
-client_der = []
-client_pem = []
-keystone_ng = ["dep:openstack-sdk-auth-jwt", "dep:openstack-sdk-auth-federation"]
-passkey = ["keystone_ng", "dep:openstack-sdk-auth-passkey"]
 
 [dependencies]
 async-trait.workspace = true
@@ -48,13 +34,7 @@ futures-util.workspace = true
 http.workspace = true
 inventory.workspace = true
 itertools.workspace = true
-openstack-sdk-auth-applicationcredential = { version = "0.1", path = "../auth-application-credential/" }
 openstack-sdk-auth-core = { version = "0.22", path = "../auth-core/" }
-openstack-sdk-auth-federation = { version = "0.1", path = "../auth-federation/", optional = true }
-openstack-sdk-auth-jwt = { version = "0.1", path = "../auth-jwt/", optional = true }
-openstack-sdk-auth-oidcaccesstoken = { version = "0.1", path = "../auth-oidcaccesstoken/" }
-openstack-sdk-auth-passkey = { version = "0.1", path = "../auth-passkey/", optional = true }
-openstack-sdk-auth-websso = { version = "0.1", path = "../auth-websso/" }
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 regex.workspace = true
 reqwest = { workspace = true, features = ["gzip", "deflate", "form", "json", "http2",
@@ -74,18 +54,6 @@ httpmock.workspace = true
 tempfile.workspace = true
 tracing-test.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
-
-[[example]]
-name = "paged"
-required-features = ["async"]
-
-[[example]]
-name = "query"
-required-features = ["async"]
-
-[[example]]
-name = "ignore"
-required-features = ["async"]
 
 [lints]
 workspace = true

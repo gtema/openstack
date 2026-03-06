@@ -15,11 +15,11 @@
 //! Identity v3 data types
 pub mod version;
 
-pub use openstack_sdk_auth_core::types::*;
+use openstack_sdk_auth_core::types::Domain;
 
 /// Build Domain type if id or name are given
 #[inline]
-pub(crate) fn get_domain(id: Option<String>, name: Option<String>) -> Option<Domain> {
+pub fn get_domain(id: Option<String>, name: Option<String>) -> Option<Domain> {
     if id.is_some() || name.is_some() {
         Some(Domain {
             id: id.clone(),

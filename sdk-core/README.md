@@ -19,7 +19,7 @@ The simplest example demonstrating how to list compute flavors:
 ```rust
 use openstack_sdk_core::api::{paged, Pagination, QueryAsync, Pageable,
     RestEndpoint};
-use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+use openstack_sdk_core::{config::ConfigFile, OpenStackError};
 use openstack_sdk_core::types::ServiceType;
 use std::borrow::Cow;
 
@@ -59,29 +59,19 @@ async fn list_flavors() -> Result<(), OpenStackError> {
 
     let cfg = ConfigFile::new().unwrap();
     // Get connection config from clouds.yaml/secure.yaml
-    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+    let _profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
     // Establish connection
-    let mut session = AsyncOpenStack::new(&profile).await?;
+    // let mut session = AsyncOpenStack::new(&profile).await?;
 
     // Invoke service discovery when desired.
-    session.discover_service_endpoint(&ServiceType::Compute).await?;
+    // session.discover_service_endpoint(&ServiceType::Compute).await?;
 
     // Execute the call with pagination limiting maximum amount of entries to 1000
-    let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(1000))
-        .query_async(&session)
-        .await.unwrap();
+    // let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(1000))
+    //     .query_async(&session)
+    //     .await.unwrap();
 
-    println!("Data = {:?}", data);
+    // println!("Data = {:?}", data);
     Ok(())
 }
 ```
-
-## Documentation
-
-Current crate documentation is known to be not sufficient. It will be addressed in
-future, but for now the best way to figure out how it works is to look at
-openstack_cli and openstack_tui using it.
-
-Crate documentation [is published here](https://docs.rs/openstack_sdk_core)
-
-Project documentation [is available here](https://gtema.github.io/openstack)

@@ -20,16 +20,16 @@ use std::str::FromStr;
 use http::{HeaderName, HeaderValue};
 use tracing::{debug, trace};
 
+pub use openstack_sdk_auth_core::authtoken::{AuthToken, AuthTokenError};
+use openstack_sdk_auth_core::types::AuthReceiptResponse;
+use openstack_sdk_core::auth::auth_helper::AuthHelper;
+
 use crate::api::RestEndpoint;
 use crate::auth::auth_token_endpoint as token_v3;
-use crate::auth::{
-    auth_helper::AuthHelper, authtoken_scope, v3_token_info, v3password, v3token, v3totp,
-};
+use crate::auth::{authtoken_scope, v3_token_info, v3password, v3token, v3totp};
 use crate::config;
-use crate::types::identity::v3::AuthReceiptResponse;
 
 pub use crate::auth::authtoken::authtoken_scope::AuthTokenScope;
-pub use openstack_sdk_auth_core::authtoken::{AuthToken, AuthTokenError};
 
 /// Supported AuthTypes
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
@@ -203,7 +203,7 @@ pub(crate) async fn build_identity_data_from_config<'a>(
             .await?;
         }
     };
-    Ok(identity_builder.build()?)
+    identity_builder.build().map_err(AuthTokenError::plugin)
 }
 
 /// Build Auth request from `Identity` and `AuthScope`
@@ -223,9 +223,10 @@ pub(crate) fn build_auth_request_with_identity_and_scope<'a>(
         }
     }
 
-    Ok(token_v3::RequestBuilder::default()
-        .auth(auth_request_data.build()?)
-        .build()?)
+    token_v3::RequestBuilder::default()
+        .auth(auth_request_data.build().map_err(AuthTokenError::plugin)?)
+        .build()
+        .map_err(AuthTokenError::plugin)
 }
 
 /// Build Auth request from `AuthToken` and `AuthScope
@@ -246,9 +247,10 @@ pub(crate) fn build_reauth_request<'a>(
         }
     }
 
-    Ok(token_v3::RequestBuilder::default()
-        .auth(auth_request_data.build()?)
-        .build()?)
+    token_v3::RequestBuilder::default()
+        .auth(auth_request_data.build().map_err(AuthTokenError::plugin)?)
+        .build()
+        .map_err(AuthTokenError::plugin)
 }
 
 /// Build Auth request from `Receipt`
@@ -289,14 +291,14 @@ pub(crate) async fn build_auth_request_from_receipt<'a>(
     }
 
     let mut auth_request_data = token_v3::AuthBuilder::default();
-    auth_request_data.identity(identity_builder.build()?);
+    auth_request_data.identity(identity_builder.build().map_err(AuthTokenError::plugin)?);
 
     if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
         auth_request_data.scope(scope_data);
     }
 
-    Ok(token_v3::RequestBuilder::default()
-        .auth(auth_request_data.build()?)
+    token_v3::RequestBuilder::default()
+        .auth(auth_request_data.build().map_err(AuthTokenError::plugin)?)
         .headers(
             [(
                 Some(HeaderName::from_static("openstack-auth-receipt")),
@@ -305,7 +307,8 @@ pub(crate) async fn build_auth_request_from_receipt<'a>(
             .iter()
             .cloned(),
         )
-        .build()?)
+        .build()
+        .map_err(AuthTokenError::plugin)
 }
 
 /// Prepare Endpoint for token info

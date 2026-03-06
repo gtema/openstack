@@ -588,9 +588,8 @@ impl CloudConfig {
     /// Get sensitive config values.
     ///
     /// This method allows getting list of sensitive values from the config which need to be
-    /// censored from logs. It is purposely only available inside the crate for now to prevent
-    /// users from accidentally logging those. It can be made public though.
-    pub(crate) fn get_sensitive_values(&self) -> Vec<&str> {
+    /// censored from logs.
+    pub fn get_sensitive_values(&self) -> Vec<&str> {
         let mut res = Vec::new();
         if let Some(auth) = &self.auth {
             if let Some(val) = &auth.password {

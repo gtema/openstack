@@ -5,13 +5,48 @@ git_release_enable = false
 git_release_latest = false
 
 [[package]]
-name = "openstack_sdk_core"
+name = "openstack-sdk-auth-core"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-applicationcredential"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-federation"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-jwt"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-oidcaccesstoken"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-passkey"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-auth-websso"
+git_release_enable = true
+version_group = "auth"
+
+[[package]]
+name = "openstack-sdk-core"
 git_release_enable = true
 version_group = "sdks"
 
 [[package]]
 name = "openstack_sdk"
-changelog_include = ["openstack_sdk_core"]
+changelog_include = ["openstack-sdk-core"]
 git_release_enable = true
 version_group = "sdks"
 

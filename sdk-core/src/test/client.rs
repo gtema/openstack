@@ -30,6 +30,8 @@ use reqwest::blocking::Client as HttpClient;
 use std::collections::HashMap;
 use url::Url;
 
+use openstack_sdk_auth_core::types::Project;
+
 #[cfg(feature = "async")]
 use crate::api::AsyncClient;
 #[cfg(feature = "sync")]
@@ -39,7 +41,6 @@ use crate::auth::Auth;
 
 use crate::RestError;
 use crate::catalog::{CatalogError, ServiceEndpoint};
-use crate::types::identity::v3::Project;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 
 /// Fake (test) OpenStack client
