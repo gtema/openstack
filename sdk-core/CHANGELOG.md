@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack-sdk-core-v0.22.5...openstack-sdk-core-v0.22.6) - 2026-03-07
+
+### Other
+
+- Move client back to `openstack_sdk` ([#1670](https://github.com/gtema/openstack/pull/1670))
+- Trait-ize auth plugins ([#1668](https://github.com/gtema/openstack/pull/1668))
+
 ## [0.22.5](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.4...openstack_sdk-v0.22.5) - 2026-01-17
 
 ### Fixed
