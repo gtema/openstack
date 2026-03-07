@@ -25,13 +25,13 @@ use std::collections::{HashMap, HashSet};
 use tracing::{debug, error, trace, warn};
 use url::Url;
 
+use openstack_sdk_auth_core::types::ServiceEndpoints as ApiServiceEndpoints;
+
 pub use crate::catalog::error::CatalogError;
 pub use crate::catalog::service_endpoint::ServiceEndpoint;
 use crate::catalog::{service_authority::ServiceAuthority, service_endpoint::ServiceEndpoints};
 use crate::config::CloudConfig;
-use crate::types::{
-    ServiceType, api_version::ApiVersion, identity::v3::ServiceEndpoints as ApiServiceEndpoints,
-};
+use crate::types::{ServiceType, api_version::ApiVersion};
 
 mod discovery;
 mod error;
@@ -93,7 +93,7 @@ impl Catalog {
     }
 
     /// Register single service endpoint as catalog endpoint
-    pub(crate) fn register_catalog_endpoint<S1: AsRef<str>, S2: AsRef<str>, S3: AsRef<str>>(
+    pub fn register_catalog_endpoint<S1: AsRef<str>, S2: AsRef<str>, S3: AsRef<str>>(
         &mut self,
         service_type: S1,
         url: &str,
@@ -113,7 +113,7 @@ impl Catalog {
     }
 
     /// Process catalog information (usually from the token)
-    pub(crate) fn process_catalog_endpoints(
+    pub fn process_catalog_endpoints(
         &mut self,
         srv_endpoints: &Vec<ApiServiceEndpoints>,
         interface: Option<&str>,
@@ -155,7 +155,7 @@ impl Catalog {
     }
 
     /// Get endpoint
-    pub(crate) fn get_service_endpoint<S1: AsRef<str>, S2: AsRef<str>>(
+    pub fn get_service_endpoint<S1: AsRef<str>, S2: AsRef<str>>(
         &self,
         service_type: S1,
         api_version: Option<&ApiVersion>,
@@ -274,7 +274,7 @@ impl Catalog {
     }
 
     /// Process version discovery response for the service returning list of extracted endpoints
-    pub(crate) fn parse_endpoint_discovery<S: AsRef<str>>(
+    pub fn parse_endpoint_discovery<S: AsRef<str>>(
         &self,
         service_type: &ServiceType,
         url: &Url,
@@ -330,7 +330,7 @@ impl Catalog {
     }
 
     /// Consume service endpoints as discovered
-    pub(crate) fn consume_discovered_endpoints(
+    pub fn consume_discovered_endpoints(
         &mut self,
         service_type: &ServiceType,
         endpoints: ServiceEndpoints,
@@ -346,7 +346,7 @@ impl Catalog {
     }
 
     /// Parse service endpoint discovery document and set discovered endpoints.
-    pub(crate) fn process_endpoint_discovery<S: AsRef<str>>(
+    pub fn process_endpoint_discovery<S: AsRef<str>>(
         &mut self,
         service_type: &ServiceType,
         url: &Url,

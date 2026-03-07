@@ -17,7 +17,7 @@
 use std::path::{Path, PathBuf};
 
 /// Expand tilde in the file path
-pub(crate) fn expand_tilde<P: AsRef<Path>>(path_user_input: P) -> Option<PathBuf> {
+pub fn expand_tilde<P: AsRef<Path>>(path_user_input: P) -> Option<PathBuf> {
     let path = path_user_input.as_ref();
     if !path.starts_with("~") {
         return Some(path.to_path_buf());

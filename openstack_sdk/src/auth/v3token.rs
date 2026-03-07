@@ -30,8 +30,9 @@
 use secrecy::ExposeSecret;
 use thiserror::Error;
 
-use crate::auth::AuthToken;
-use crate::auth::auth_helper::{AuthHelper, AuthHelperError};
+use openstack_sdk_auth_core::AuthToken;
+use openstack_sdk_core::auth::auth_helper::{AuthHelper, AuthHelperError};
+
 use crate::auth::auth_token_endpoint as token_v3;
 use crate::config;
 
@@ -56,7 +57,7 @@ pub enum TokenError {
     Builder {
         /// The error source
         #[from]
-        source: crate::error::BuilderError,
+        source: crate::BuilderError,
     },
 }
 

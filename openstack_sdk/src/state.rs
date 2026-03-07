@@ -18,17 +18,19 @@
 //! caching of the authentication/authorization information with certain functionality to manage
 //! cache data.
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::{DirBuilder, File};
 use std::io::prelude::*;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
-
-use serde::{Deserialize, Serialize};
 use tracing::{debug, info, trace, warn};
 
-use openstack_sdk_auth_core::{AuthState, authtoken::AuthToken, authtoken_scope::AuthTokenScope};
+use crate::auth::{
+    AuthState,
+    authtoken::{AuthToken, AuthTokenScope},
+};
 
 /// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]

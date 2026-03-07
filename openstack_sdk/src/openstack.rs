@@ -32,26 +32,36 @@ use secrecy::SecretString;
 use tokio::runtime::Runtime;
 use tracing::{Level, debug, error, event, info, instrument, trace, warn};
 
-use openstack_sdk_auth_core::AuthPluginRegistration;
+use openstack_sdk_auth_applicationcredential as _;
+use openstack_sdk_auth_oidcaccesstoken as _;
 
-use crate::api;
-use crate::api::RestClient;
-use crate::api::query;
-use crate::api::query::RawQuery;
-use crate::auth::{
-    self, Auth, AuthState,
-    auth_helper::{AuthHelper, Dialoguer, Noop},
-    authtoken,
-    authtoken::{AuthTokenError, AuthType},
+use openstack_sdk_auth_core::{
+    Auth, AuthPluginRegistration,
+    authtoken::AuthTokenError,
+    authtoken_scope::AuthTokenScope,
+    types::{AuthReceiptResponse, Project},
 };
-use crate::catalog::{Catalog, CatalogError, ServiceEndpoint};
-use crate::config::CloudConfig;
-use crate::config::{ConfigFile, get_config_identity_hash};
-use crate::error::{OpenStackError, OpenStackResult, RestError};
-use crate::state;
-use crate::types::identity::v3::{AuthReceiptResponse, Project};
-use crate::types::{ApiVersion, ServiceType};
-use crate::utils::expand_tilde;
+
+use openstack_sdk_core::api::{
+    self, RestClient,
+    query::{self, RawQuery},
+};
+use openstack_sdk_core::auth::{
+    AuthState,
+    auth_helper::{AuthHelper, Dialoguer, Noop},
+    gather_auth_data,
+};
+use openstack_sdk_core::catalog::{Catalog, CatalogError, ServiceEndpoint};
+use openstack_sdk_core::config::{CloudConfig, ConfigFile, get_config_identity_hash};
+use openstack_sdk_core::error::{OpenStackError, OpenStackResult, RestError};
+use openstack_sdk_core::state;
+use openstack_sdk_core::types::{ApiVersion, ServiceType};
+use openstack_sdk_core::utils::expand_tilde;
+
+use crate::auth::authtoken::{
+    AuthType, build_auth_request_from_receipt, build_auth_request_with_identity_and_scope,
+    build_identity_data_from_config, build_reauth_request,
+};
 
 // Private enum that enables the parsing of the cert bytes to be
 // delayed until the client is built rather than when they're passed
@@ -70,41 +80,14 @@ enum ClientCert {
 ///
 /// Separate Identity (not the scope) should use separate instances of this.
 /// ```rust
-/// use openstack_sdk_core::api::{paged, Pagination, Query, Pageable, RestEndpoint};
-/// use openstack_sdk_core::{OpenStack, config::ConfigFile, OpenStackError};
-/// use openstack_sdk_core::types::ServiceType;
-/// # use std::borrow::Cow;
-///
-/// #[derive(derive_builder::Builder)]
-/// #[builder(setter(strip_option))]
-/// pub struct Request<'a> {
-///     id: Cow<'a, str>,
-///     #[builder(default, setter(into))]
-///     min_disk: Option<Cow<'a, str>>,
-/// }
-///
-/// impl RestEndpoint for Request<'_> {
-///     fn method(&self) -> http::Method {
-///         http::Method::GET
-///     }
-///
-///     fn endpoint(&self) -> Cow<'static, str> {
-///         "flavors".to_string().into()
-///     }
-///
-///     fn service_type(&self) -> ServiceType {
-///         ServiceType::Compute
-///     }
-///
-///     fn response_key(&self) -> Option<Cow<'static, str>> {
-///         Some("flavor".into())
-///     }
-/// }
-/// impl Pageable for Request<'_> {}
+/// use openstack_sdk::api::{paged, Pagination, Query};
+/// use openstack_sdk::{OpenStack, config::ConfigFile, OpenStackError};
+/// use openstack_sdk::types::ServiceType;
+/// use openstack_sdk::api::compute::v2::flavor::list;
 ///
 /// fn list_flavors() -> Result<(), OpenStackError> {
 ///     // Get the builder for the listing Flavors Endpoint
-///     let mut ep_builder = RequestBuilder::default();
+///     let mut ep_builder = list::Request::builder();
 ///     // Set the `min_disk` query param
 ///     ep_builder.min_disk("15");
 ///     let ep = ep_builder.build().unwrap();
@@ -127,7 +110,6 @@ enum ClientCert {
 ///     Ok(())
 /// }
 /// ```
-
 #[derive(Clone)]
 pub struct OpenStack {
     /// The client to use for API calls.
@@ -241,7 +223,7 @@ impl OpenStack {
     }
 
     /// Set the authorization to be used by the client
-    fn set_auth(&mut self, auth: auth::Auth, skip_cache_update: bool) -> &mut Self {
+    fn set_auth(&mut self, auth: Auth, skip_cache_update: bool) -> &mut Self {
         self.auth = auth;
         if !skip_cache_update && let Auth::AuthToken(auth) = &self.auth {
             // For app creds we should save auth as unscoped since:
@@ -252,7 +234,7 @@ impl OpenStack {
             let scope = match &auth.auth_info {
                 Some(info) => {
                     if info.token.application_credential.is_some() {
-                        authtoken::AuthTokenScope::Unscoped
+                        AuthTokenScope::Unscoped
                     } else {
                         auth.get_scope()
                     }
@@ -264,17 +246,10 @@ impl OpenStack {
         self
     }
 
-    ///// Set TokenAuth as current authorization
-    //fn set_token_auth(&mut self, token: String, token_info: Option<AuthResponse>) -> &mut Self {
-    //    let token_auth = authtoken::AuthToken::new(token, token_info);
-    //    self.set_auth(auth::Auth::AuthToken(Box::new(token_auth.clone())), false);
-    //    self
-    //}
-
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
         &mut self,
-        scope: Option<authtoken::AuthTokenScope>,
+        scope: Option<AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
@@ -288,7 +263,7 @@ impl OpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize_with_auth_helper<A>(
         &mut self,
-        scope: Option<authtoken::AuthTokenScope>,
+        scope: Option<AuthTokenScope>,
         auth_helper: &mut A,
         renew_auth: bool,
     ) -> Result<(), OpenStackError>
@@ -297,12 +272,12 @@ impl OpenStack {
     {
         // Create the runtime
         let rt = Runtime::new()?;
-        let requested_scope = scope.unwrap_or(authtoken::AuthTokenScope::try_from(&self.config)?);
+        let requested_scope = scope.unwrap_or(AuthTokenScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
             // Valid authorization is already available and no renewal is required
             trace!("Auth already available");
-            self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+            self.auth = Auth::AuthToken(Box::new(auth.clone()));
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
@@ -321,7 +296,7 @@ impl OpenStack {
                 // scope/unscoped. It is possible to request new authz
                 // using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_ep = authtoken::build_reauth_request(&available_auth, &requested_scope)?;
+                let auth_ep = build_reauth_request(&available_auth, &requested_scope)?;
                 rsp = auth_ep.raw_query(self)?;
 
                 let token_auth = Auth::try_from(rsp)?;
@@ -335,11 +310,9 @@ impl OpenStack {
                     | AuthType::V3Token
                     | AuthType::V3Totp
                     | AuthType::V3Multifactor => {
-                        let identity = rt.block_on(authtoken::build_identity_data_from_config(
-                            &self.config,
-                            auth_helper,
-                        ))?;
-                        let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
+                        let identity = rt
+                            .block_on(build_identity_data_from_config(&self.config, auth_helper))?;
+                        let auth_ep = build_auth_request_with_identity_and_scope(
                             &identity,
                             &requested_scope,
                         )?;
@@ -351,14 +324,13 @@ impl OpenStack {
                         {
                             let receipt_data: AuthReceiptResponse =
                                 serde_json::from_slice(rsp.body())?;
-                            let auth_endpoint =
-                                rt.block_on(authtoken::build_auth_request_from_receipt(
-                                    &self.config,
-                                    receipt.clone(),
-                                    &receipt_data,
-                                    &requested_scope,
-                                    auth_helper,
-                                ))?;
+                            let auth_endpoint = rt.block_on(build_auth_request_from_receipt(
+                                &self.config,
+                                receipt.clone(),
+                                &receipt_data,
+                                &requested_scope,
+                                auth_helper,
+                            ))?;
                             rsp = auth_endpoint.raw_query(self)?;
                         }
                         api::check_response_error::<Self>(&rsp, None)?;
@@ -375,7 +347,7 @@ impl OpenStack {
                             .map(|x| x.method)
                         {
                             // authenticate
-                            let auth_data = rt.block_on(auth::gather_auth_data(
+                            let auth_data = rt.block_on(gather_auth_data(
                                 &authenticator.requirements(),
                                 &self.config,
                                 auth_helper,
@@ -403,7 +375,7 @@ impl OpenStack {
             };
         }
 
-        if let auth::Auth::AuthToken(token_data) = &self.auth {
+        if let Auth::AuthToken(token_data) = &self.auth {
             match &token_data.auth_info {
                 Some(auth_data) => {
                     if let Some(project) = &auth_data.token.project {

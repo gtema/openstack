@@ -22,38 +22,37 @@
 //!
 //! ```
 //!    use openstack_sdk_core::api::QueryAsync;
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
+//!    # use openstack_sdk_core::{config::ConfigFile, OpenStackError};
 //!    # use std::borrow::Cow;
-//!    # use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
 //!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    #
-//!    # #[derive(derive_builder::Builder)]
-//!    # pub struct Request<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for Request<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         format!("flavors/{id}", id = self.id.as_ref(),).into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # let ep = RequestBuilder::default().build().unwrap();
-//!    let data_raw: serde_json::Value = ep.query_async(&client).await?;
+//!    #[derive(derive_builder::Builder)]
+//!    pub struct Request<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for Request<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            format!("flavors/{id}", id = self.id.as_ref(),).into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    let ep = RequestBuilder::default().build().unwrap();
+//!    // let data_raw: serde_json::Value = ep.query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -64,39 +63,39 @@
 //!
 //! ```
 //!    use openstack_sdk_core::api::RawQueryAsync;
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use std::borrow::Cow;
-//!    # use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
-//!    # use http::{Response};
-//!    # use bytes::Bytes;
-//!    # async fn func() -> Result<(), OpenStackError> {
-//!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # #[derive(derive_builder::Builder)]
-//!    # pub struct Request<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for Request<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         format!("flavors/{id}", id = self.id.as_ref(),).into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # let ep = RequestBuilder::default().build().unwrap();
-//!    let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use std::borrow::Cow;
+//!    use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
+//!    use http::{Response};
+//!    use bytes::Bytes;
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    #[derive(derive_builder::Builder)]
+//!    pub struct Request<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for Request<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            format!("flavors/{id}", id = self.id.as_ref(),).into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    let ep = RequestBuilder::default().build().unwrap();
+//!    // let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -113,107 +112,107 @@
 //! ```
 //!    use openstack_sdk_core::api::QueryAsync;
 //!    use openstack_sdk_core::api::find;
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use http::Response;
-//!    # use std::borrow::Cow;
-//!    # use derive_builder::Builder;
-//!    # use openstack_sdk_core::{api::{ApiError, Pageable, RestClient, RestEndpoint}, types::ServiceType};
-//!    # use openstack_sdk_core::api::Findable;
-//!    # async fn func() -> Result<(), OpenStackError> {
-//!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # #[derive(Builder)]
-//!    # pub struct GetRequest<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for GetRequest<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         format!("flavors/{id}", id = self.id.as_ref(),).into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # #[derive(Builder)]
-//!    # pub struct ListRequest<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for ListRequest<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         "flavors".to_string().into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # impl Pageable for ListRequest<'_> {}
-//!    #
-//!    # #[derive(Debug, Builder, Clone)]
-//!    # pub struct FindRequest<'a> {
-//!    #     #[builder(setter(into), default)]
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl<'a> Findable for FindRequest<'a> {
-//!    #     type G = GetRequest<'a>;
-//!    #     type L = ListRequest<'a>;
-//!    #     fn get_ep<C: RestClient>(&self) -> Result<Self::G, ApiError<C::Error>> {
-//!    #         let mut ep = GetRequestBuilder::default();
-//!    #         ep.id(self.id.clone());
-//!    #         ep.build().map_err(ApiError::endpoint_builder)
-//!    #     }
-//!    #
-//!    #     fn list_ep<C: RestClient>(&self) -> Result<Self::L, ApiError<C::Error>> {
-//!    #         let mut ep = ListRequestBuilder::default();
-//!    #         ep.build().map_err(ApiError::endpoint_builder)
-//!    #     }
-//!    #     /// Locate flavor in a list
-//!    #     fn locate_resource_in_list<C: RestClient>(
-//!    #         &self,
-//!    #         data: Vec<serde_json::Value>,
-//!    #     ) -> Result<serde_json::Value, ApiError<C::Error>> {
-//!    #         // flavor is not supporting name as query parameter to the list.
-//!    #         // Therefore it is necessary to go through complete list of results.
-//!    #         let mut maybe_result: Option<serde_json::Value> = None;
-//!    #         for item in data.iter() {
-//!    #             if let Some(name_as_val) = item.get("name") {
-//!    #                 if let Some(name) = name_as_val.as_str() {
-//!    #                     if name == self.id {
-//!    #                         if maybe_result.is_none() {
-//!    #                             maybe_result = Some(item.clone());
-//!    #                         } else {
-//!    #                             return Err(ApiError::IdNotUnique);
-//!    #                         }
-//!    #                     }
-//!    #                 }
-//!    #             }
-//!    #         }
-//!    #         maybe_result.ok_or(ApiError::ResourceNotFound)
-//!    #     }
-//!    # }
-//!    # let ep = FindRequestBuilder::default().build().unwrap();
-//!    let data_raw: serde_json::Value = find(ep).query_async(&client).await?;
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use http::Response;
+//!    use std::borrow::Cow;
+//!    use derive_builder::Builder;
+//!    use openstack_sdk_core::{api::{ApiError, Pageable, RestClient, RestEndpoint}, types::ServiceType};
+//!    use openstack_sdk_core::api::Findable;
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    #[derive(Builder)]
+//!    pub struct GetRequest<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for GetRequest<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            format!("flavors/{id}", id = self.id.as_ref(),).into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    #[derive(Builder)]
+//!    pub struct ListRequest<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for ListRequest<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            "flavors".to_string().into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    impl Pageable for ListRequest<'_> {}
+//!    
+//!    #[derive(Debug, Builder, Clone)]
+//!    pub struct FindRequest<'a> {
+//!        #[builder(setter(into), default)]
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl<'a> Findable for FindRequest<'a> {
+//!        type G = GetRequest<'a>;
+//!        type L = ListRequest<'a>;
+//!        fn get_ep<C: RestClient>(&self) -> Result<Self::G, ApiError<C::Error>> {
+//!            let mut ep = GetRequestBuilder::default();
+//!            ep.id(self.id.clone());
+//!            ep.build().map_err(ApiError::endpoint_builder)
+//!        }
+//!    
+//!        fn list_ep<C: RestClient>(&self) -> Result<Self::L, ApiError<C::Error>> {
+//!            let mut ep = ListRequestBuilder::default();
+//!            ep.build().map_err(ApiError::endpoint_builder)
+//!        }
+//!        /// Locate flavor in a list
+//!        fn locate_resource_in_list<C: RestClient>(
+//!            &self,
+//!            data: Vec<serde_json::Value>,
+//!        ) -> Result<serde_json::Value, ApiError<C::Error>> {
+//!            // flavor is not supporting name as query parameter to the list.
+//!            // Therefore it is necessary to go through complete list of results.
+//!            let mut maybe_result: Option<serde_json::Value> = None;
+//!            for item in data.iter() {
+//!                if let Some(name_as_val) = item.get("name") {
+//!                    if let Some(name) = name_as_val.as_str() {
+//!                        if name == self.id {
+//!                            if maybe_result.is_none() {
+//!                                maybe_result = Some(item.clone());
+//!                            } else {
+//!                                return Err(ApiError::IdNotUnique);
+//!                            }
+//!                        }
+//!                    }
+//!                }
+//!            }
+//!            maybe_result.ok_or(ApiError::ResourceNotFound)
+//!        }
+//!    }
+//!    let ep = FindRequestBuilder::default().build().unwrap();
+//!    // let data_raw: serde_json::Value = find(ep).query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -225,107 +224,107 @@
 //! ```
 //!    use openstack_sdk_core::api::QueryAsync;
 //!    use openstack_sdk_core::api::find_by_name;
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use http::Response;
-//!    # use std::borrow::Cow;
-//!    # use derive_builder::Builder;
-//!    # use openstack_sdk_core::{api::{ApiError, Pageable, RestClient, RestEndpoint}, types::ServiceType};
-//!    # use openstack_sdk_core::api::Findable;
-//!    # async fn func() -> Result<(), OpenStackError> {
-//!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # #[derive(Builder)]
-//!    # pub struct GetRequest<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for GetRequest<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         format!("flavors/{id}", id = self.id.as_ref(),).into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # #[derive(Builder)]
-//!    # pub struct ListRequest<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for ListRequest<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         "flavors".to_string().into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # impl Pageable for ListRequest<'_> {}
-//!    #
-//!    # #[derive(Debug, Builder, Clone)]
-//!    # pub struct FindRequest<'a> {
-//!    #     #[builder(setter(into), default)]
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl<'a> Findable for FindRequest<'a> {
-//!    #     type G = GetRequest<'a>;
-//!    #     type L = ListRequest<'a>;
-//!    #     fn get_ep<C: RestClient>(&self) -> Result<Self::G, ApiError<C::Error>> {
-//!    #         let mut ep = GetRequestBuilder::default();
-//!    #         ep.id(self.id.clone());
-//!    #         ep.build().map_err(ApiError::endpoint_builder)
-//!    #     }
-//!    #
-//!    #     fn list_ep<C: RestClient>(&self) -> Result<Self::L, ApiError<C::Error>> {
-//!    #         let mut ep = ListRequestBuilder::default();
-//!    #         ep.build().map_err(ApiError::endpoint_builder)
-//!    #     }
-//!    #     /// Locate flavor in a list
-//!    #     fn locate_resource_in_list<C: RestClient>(
-//!    #         &self,
-//!    #         data: Vec<serde_json::Value>,
-//!    #     ) -> Result<serde_json::Value, ApiError<C::Error>> {
-//!    #         // flavor is not supporting name as query parameter to the list.
-//!    #         // Therefore it is necessary to go through complete list of results.
-//!    #         let mut maybe_result: Option<serde_json::Value> = None;
-//!    #         for item in data.iter() {
-//!    #             if let Some(name_as_val) = item.get("name") {
-//!    #                 if let Some(name) = name_as_val.as_str() {
-//!    #                     if name == self.id {
-//!    #                         if maybe_result.is_none() {
-//!    #                             maybe_result = Some(item.clone());
-//!    #                         } else {
-//!    #                             return Err(ApiError::IdNotUnique);
-//!    #                         }
-//!    #                     }
-//!    #                 }
-//!    #             }
-//!    #         }
-//!    #         maybe_result.ok_or(ApiError::ResourceNotFound)
-//!    #     }
-//!    # }
-//!    # let ep = FindRequestBuilder::default().build().unwrap();
-//!    let data_raw: serde_json::Value = find_by_name(ep).query_async(&client).await?;
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use http::Response;
+//!    use std::borrow::Cow;
+//!    use derive_builder::Builder;
+//!    use openstack_sdk_core::{api::{ApiError, Pageable, RestClient, RestEndpoint}, types::ServiceType};
+//!    use openstack_sdk_core::api::Findable;
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    #[derive(Builder)]
+//!    pub struct GetRequest<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for GetRequest<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            format!("flavors/{id}", id = self.id.as_ref(),).into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    #[derive(Builder)]
+//!    pub struct ListRequest<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for ListRequest<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            "flavors".to_string().into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    impl Pageable for ListRequest<'_> {}
+//!    
+//!    #[derive(Debug, Builder, Clone)]
+//!    pub struct FindRequest<'a> {
+//!        #[builder(setter(into), default)]
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl<'a> Findable for FindRequest<'a> {
+//!        type G = GetRequest<'a>;
+//!        type L = ListRequest<'a>;
+//!        fn get_ep<C: RestClient>(&self) -> Result<Self::G, ApiError<C::Error>> {
+//!            let mut ep = GetRequestBuilder::default();
+//!            ep.id(self.id.clone());
+//!            ep.build().map_err(ApiError::endpoint_builder)
+//!        }
+//!    
+//!        fn list_ep<C: RestClient>(&self) -> Result<Self::L, ApiError<C::Error>> {
+//!            let mut ep = ListRequestBuilder::default();
+//!            ep.build().map_err(ApiError::endpoint_builder)
+//!        }
+//!        /// Locate flavor in a list
+//!        fn locate_resource_in_list<C: RestClient>(
+//!            &self,
+//!            data: Vec<serde_json::Value>,
+//!        ) -> Result<serde_json::Value, ApiError<C::Error>> {
+//!            // flavor is not supporting name as query parameter to the list.
+//!            // Therefore it is necessary to go through complete list of results.
+//!            let mut maybe_result: Option<serde_json::Value> = None;
+//!            for item in data.iter() {
+//!                if let Some(name_as_val) = item.get("name") {
+//!                    if let Some(name) = name_as_val.as_str() {
+//!                        if name == self.id {
+//!                            if maybe_result.is_none() {
+//!                                maybe_result = Some(item.clone());
+//!                            } else {
+//!                                return Err(ApiError::IdNotUnique);
+//!                            }
+//!                        }
+//!                    }
+//!                }
+//!            }
+//!            maybe_result.ok_or(ApiError::ResourceNotFound)
+//!        }
+//!    }
+//!    let ep = FindRequestBuilder::default().build().unwrap();
+//!    // let data_raw: serde_json::Value = find_by_name(ep).query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -338,40 +337,40 @@
 //! ```
 //!    use openstack_sdk_core::api::{QueryAsync, Pagination};
 //!    use openstack_sdk_core::api::paged;
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use std::borrow::Cow;
-//!    # use openstack_sdk_core::{api::{Pageable, RestEndpoint}, types::ServiceType};
-//!    # async fn func() -> Result<(), OpenStackError> {
-//!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # #[derive(derive_builder::Builder)]
-//!    # pub struct Request<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for Request<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         "flavors".to_string().into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # impl Pageable for Request<'_> {}
-//!    # let ep = RequestBuilder::default().build().unwrap();
-//!    let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(100))
-//!        .query_async(&client)
-//!        .await?;
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use std::borrow::Cow;
+//!    use openstack_sdk_core::{api::{Pageable, RestEndpoint}, types::ServiceType};
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    #[derive(derive_builder::Builder)]
+//!    pub struct Request<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for Request<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            "flavors".to_string().into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    impl Pageable for Request<'_> {}
+//!    let ep = RequestBuilder::default().build().unwrap();
+//!    // let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(100))
+//!    //     .query_async(&client)
+//!    //     .await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -385,37 +384,37 @@
 //!
 //! ```
 //!    use openstack_sdk_core::api::{ignore, QueryAsync};
-//!    # use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use std::borrow::Cow;
-//!    # use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
-//!    # async fn func() -> Result<(), OpenStackError> {
-//!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
-//!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # #[derive(derive_builder::Builder)]
-//!    # pub struct Request<'a> {
-//!    #     id: Cow<'a, str>,
-//!    # }
-//!    #
-//!    # impl RestEndpoint for Request<'_> {
-//!    #     fn method(&self) -> http::Method {
-//!    #         http::Method::GET
-//!    #     }
-//!    #
-//!    #     fn endpoint(&self) -> Cow<'static, str> {
-//!    #         format!("flavors/{id}", id = self.id.as_ref(),).into()
-//!    #     }
-//!    #
-//!    #     fn service_type(&self) -> ServiceType {
-//!    #         ServiceType::Compute
-//!    #     }
-//!    #
-//!    #     fn response_key(&self) -> Option<Cow<'static, str>> {
-//!    #         Some("flavor".into())
-//!    #     }
-//!    # }
-//!    # let ep = RequestBuilder::default().build().unwrap();
-//!    ignore(ep).query_async(&client).await?;
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use std::borrow::Cow;
+//!    use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    #[derive(derive_builder::Builder)]
+//!    pub struct Request<'a> {
+//!        id: Cow<'a, str>,
+//!    }
+//!    
+//!    impl RestEndpoint for Request<'_> {
+//!        fn method(&self) -> http::Method {
+//!            http::Method::GET
+//!        }
+//!    
+//!        fn endpoint(&self) -> Cow<'static, str> {
+//!            format!("flavors/{id}", id = self.id.as_ref(),).into()
+//!        }
+//!    
+//!        fn service_type(&self) -> ServiceType {
+//!            ServiceType::Compute
+//!        }
+//!    
+//!        fn response_key(&self) -> Option<Cow<'static, str>> {
+//!            Some("flavor".into())
+//!        }
+//!    }
+//!    let ep = RequestBuilder::default().build().unwrap();
+//!    // ignore(ep).query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```

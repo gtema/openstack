@@ -40,28 +40,46 @@ sync = ["openstack-sdk-core/sync"]
 async = ["openstack-sdk-core/async"]
 client_der = []
 client_pem = []
-keystone_ng = []
-passkey = ["keystone_ng", "openstack-sdk-core/passkey" ]
+keystone_ng = ["dep:openstack-sdk-auth-jwt", "dep:openstack-sdk-auth-federation"]
+passkey = ["keystone_ng", "dep:openstack-sdk-auth-passkey"]
+#keystone_ng = []
+#passkey = ["keystone_ng", "openstack-sdk-core/passkey" ]
 
 [dependencies]
 async-trait.workspace = true
+base64.workspace = true
+bytes.workspace = true
 chrono.workspace= true
 derive_builder.workspace = true
+dialoguer.workspace = true
 futures.workspace = true
+futures-util.workspace = true
 http.workspace = true
 json-patch.workspace = true
+inventory.workspace = true
+openstack-sdk-auth-applicationcredential = { version = "0.1", path = "../auth-application-credential/" }
+openstack-sdk-auth-core = { version = "0.22", path = "../auth-core/" }
+openstack-sdk-auth-federation = { version = "0.1", path = "../auth-federation/", optional = true }
+openstack-sdk-auth-jwt = { version = "0.1", path = "../auth-jwt/", optional = true }
+openstack-sdk-auth-oidcaccesstoken = { version = "0.1", path = "../auth-oidcaccesstoken/" }
+openstack-sdk-auth-passkey = { version = "0.1", path = "../auth-passkey/", optional = true }
+openstack-sdk-auth-websso = { version = "0.1", path = "../auth-websso/" }
 openstack-sdk-core = { path = "../sdk-core/", version = "^0.22" }
+reqwest = { workspace = true, features = ["gzip", "deflate", "form", "json", "http2",
+  "socks", "system-proxy"] }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
+tokio-util.workspace = true
 tracing.workspace = true
 
 [dev-dependencies]
 bytes.workspace = true
 httpmock.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tracing-test.workspace = true
 
 [[test]]
 name = "functional"

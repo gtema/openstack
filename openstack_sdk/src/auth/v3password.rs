@@ -37,9 +37,10 @@
 use secrecy::ExposeSecret;
 use thiserror::Error;
 
-use crate::auth::auth_helper::{AuthHelper, AuthHelperError};
+use openstack_sdk_core::auth::auth_helper::{AuthHelper, AuthHelperError};
+use openstack_sdk_core::config;
+
 use crate::auth::auth_token_endpoint as token_v3;
-use crate::config;
 
 /// User name/pass related errors
 #[derive(Debug, Error)]
@@ -66,7 +67,7 @@ pub enum PasswordError {
     Builder {
         /// The error source
         #[from]
-        source: crate::error::BuilderError,
+        source: crate::BuilderError,
     },
 }
 

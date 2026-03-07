@@ -19,4 +19,13 @@
 //! - AuthToken (X-Auth-Token header)
 //! - None (unauthenticated)
 
-pub use openstack_sdk_core::auth::*;
+pub mod auth_helper;
+mod auth_token_endpoint;
+pub mod authtoken;
+pub mod authtoken_scope;
+pub mod v3_token_info;
+pub mod v3password;
+pub mod v3token;
+pub mod v3totp;
+
+pub use openstack_sdk_auth_core::{Auth, AuthError, AuthState};

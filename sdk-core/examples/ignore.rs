@@ -9,10 +9,10 @@ use std::env;
 use derive_builder::Builder;
 
 use openstack_sdk_core::OpenStackError;
-use openstack_sdk_core::api::QueryAsync;
-use openstack_sdk_core::api::ignore;
+// use openstack_sdk_core::api::QueryAsync;
+// use openstack_sdk_core::api::ignore;
 use openstack_sdk_core::api::rest_endpoint_prelude::*;
-use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile};
+use openstack_sdk_core::config::ConfigFile;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
@@ -49,13 +49,13 @@ impl RestEndpoint for FlavorRequest<'_> {
 async fn main() -> Result<(), OpenStackError> {
     let cfg = ConfigFile::new().unwrap();
     // Get connection config from clouds.yaml/secure.yaml
-    let profile = cfg
+    let _profile = cfg
         .get_cloud_config(env::var("OS_CLOUD").expect("OS_CLOUD variable must be set"))
         .unwrap()
         .unwrap();
 
     // Establish connection
-    let client = AsyncOpenStack::new(&profile).await?;
+    // let client = AsyncOpenStack::new(&profile).await?;
 
     // Prepare the find combinator
     let mut ep_builder = FlavorRequestBuilder::default();
@@ -67,8 +67,8 @@ async fn main() -> Result<(), OpenStackError> {
     let ep = ep_builder.build().unwrap();
 
     // Execute query keeping data as raw json_value
-    ignore(ep).query_async(&client).await?;
+    // ignore(ep).query_async(&client).await?;
 
-    println!("Flavor was retrieved but we ignored the result");
+    // println!("Flavor was retrieved but we ignored the result");
     Ok(())
 }

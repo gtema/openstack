@@ -12,11 +12,11 @@ use std::borrow::Cow;
 use std::env;
 
 use openstack_sdk_core::OpenStackError;
-use openstack_sdk_core::api::Pagination;
-use openstack_sdk_core::api::QueryAsync;
-use openstack_sdk_core::api::paged;
+// use openstack_sdk_core::api::Pagination;
+// use openstack_sdk_core::api::QueryAsync;
+// use openstack_sdk_core::api::paged;
 use openstack_sdk_core::api::rest_endpoint_prelude::*;
-use openstack_sdk_core::{AsyncOpenStack, config::ConfigFile};
+use openstack_sdk_core::config::ConfigFile;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
@@ -96,12 +96,12 @@ struct Flavor {
 async fn main() -> Result<(), OpenStackError> {
     let cfg = ConfigFile::new().unwrap();
     // Get connection config from clouds.yaml/secure.yaml
-    let profile = cfg
+    let _profile = cfg
         .get_cloud_config(env::var("OS_CLOUD").expect("OS_CLOUD variable must be set"))
         .unwrap()
         .unwrap();
     // Establish connection
-    let client = AsyncOpenStack::new(&profile).await?;
+    // let client = AsyncOpenStack::new(&profile).await?;
 
     // use the list_detailed endpoint
     let mut ep_builder = RequestBuilder::default();
@@ -114,10 +114,10 @@ async fn main() -> Result<(), OpenStackError> {
     let ep = ep_builder.build().unwrap();
 
     // Execute the query enabling pagination
-    let data: Vec<Flavor> = paged(ep, Pagination::Limit(100))
-        .query_async(&client)
-        .await?;
+    // let data: Vec<Flavor> = paged(ep, Pagination::Limit(100))
+    //     .query_async(&client)
+    //     .await?;
 
-    println!("Flavors = {data:?}");
+    // println!("Flavors = {data:?}");
     Ok(())
 }

@@ -20,15 +20,18 @@ pub mod config;
 pub mod catalog {
     pub use openstack_sdk_core::catalog::CatalogError;
 }
-
 pub mod types;
 
 #[cfg(feature = "async")]
-pub use openstack_sdk_core::AsyncOpenStack;
+mod openstack_async;
+#[cfg(feature = "async")]
+pub use openstack_async::AsyncOpenStack;
 #[cfg(feature = "sync")]
-pub use openstack_sdk_core::OpenStack;
+mod openstack;
+#[cfg(feature = "sync")]
+pub use openstack::OpenStack;
 pub use openstack_sdk_core::auth::AuthError;
-pub use openstack_sdk_core::{OpenStackError, RestError};
+pub use openstack_sdk_core::{BuilderError, OpenStackError, RestError};
 
 #[allow(dead_code)]
 pub mod test;
