@@ -4007,7 +4007,7 @@ components:
             type: boolean
             description: |-
               If set to true, project is enabled. If set to false, project is
-              disabled.
+              disabled. The defaults is `true`.
           is_domain:
             type: boolean
             description: |-
@@ -4387,6 +4387,24 @@ components:
           items:
             $ref: '#/components/schemas/Role'
           description: Collection of role objects.
+    RoleRef:
+      type: object
+      description: The role reference data.
+      required:
+      - id
+      - name
+      properties:
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: Role domain ID.
+        id:
+          type: string
+          description: Role ID.
+        name:
+          type: string
+          description: Role name.
     RoleResponse:
       type: object
       required:
@@ -4547,7 +4565,7 @@ components:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: A list of role objects.
         system:
           oneOf:
@@ -4604,7 +4622,7 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4637,7 +4655,7 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4697,7 +4715,7 @@ components:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4838,6 +4856,7 @@ components:
       - type: object
         required:
         - domain_id
+        - enabled
         - name
         properties:
           default_project_id:
@@ -4857,9 +4876,7 @@ components:
             type: string
             description: User domain ID.
           enabled:
-            type:
-            - boolean
-            - 'null'
+            type: boolean
             description: |-
               If the user is enabled, this value is true. If the user is disabled,
               this value is false.

@@ -907,7 +907,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServicesEnsure_SharesEnsure_SharesRequest'
+              $ref: '#/components/schemas/ServicesEnsure_SharesEnsure_Shares_286'
       responses:
         '201':
           content:
@@ -6496,14 +6496,26 @@ components:
     ServiceUpdateResponse:
       description: Response of the services/id:put operation
       type: object
-    ServicesEnsure_SharesEnsure_SharesRequest:
-      description: Request of the services/ensure-shares:post operation
+    ServicesEnsure_SharesEnsure_Shares_286:
+      additionalProperties: false
+      properties:
+        ensure_shares:
+          additionalProperties: false
+          properties:
+            host:
+              description: "The host name of the manila-share binary that you want
+                to\nstart the ensure shares procedure in the ``host@backend`` format.\n"
+              type: string
+          required:
+            - host
+          type: object
+      required:
+        - ensure_shares
       type: object
       x-openstack:
-        action-name: ensure_shares
+        min-ver: '2.86'
     ServicesEnsure_SharesResponse:
-      description: Response of the services/ensure-shares:post operation
-      type: object
+      type: 'null'
     ServicesListResponse:
       description: Response of the services:get operation
       type: object
