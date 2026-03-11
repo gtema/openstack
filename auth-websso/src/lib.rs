@@ -44,7 +44,8 @@ use url::Url;
 use dialoguer::Confirm;
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenError, OpenStackAuthType,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenError, AuthTokenScope,
+    OpenStackAuthType,
 };
 
 /// V3 WebSSO Authentication for OpenStack SDK.
@@ -62,8 +63,8 @@ impl OpenStackAuthType for WebSSOAuthenticator {
         vec!["v3websso"]
     }
 
-    fn requirements(&self) -> Value {
-        json!({
+    fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
+        Ok(json!({
             "type": "object",
             "required": ["protocol"],
             "properties": {
@@ -76,7 +77,7 @@ impl OpenStackAuthType for WebSSOAuthenticator {
                     "description": "Protocol"
                 },
             }
-        })
+        }))
     }
 
     fn api_version(&self) -> (u8, u8) {
@@ -88,6 +89,8 @@ impl OpenStackAuthType for WebSSOAuthenticator {
         _http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: std::collections::HashMap<String, SecretString>,
+        _scope: Option<&AuthTokenScope>,
+        _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
         let protocol_id = values.get("protocol").ok_or(WebSsoError::MissingProtocol)?;
 
@@ -104,7 +107,7 @@ impl OpenStackAuthType for WebSSOAuthenticator {
             )
         };
 
-        let mut auth_url = identity_url.join(&endpoint).map_err(WebSsoError::from)?;
+        let mut auth_url = identity_url.join(&endpoint)?;
 
         let token_auth = get_token_auth(&mut auth_url).await?;
 
@@ -177,14 +180,6 @@ pub enum WebSsoError {
     PoisonedLock {
         /// The source of the error.
         context: String,
-    },
-
-    /// The URL failed to parse.
-    #[error("failed to parse url: {}", source)]
-    UrlParse {
-        /// The source of the error.
-        #[from]
-        source: url::ParseError,
     },
 }
 

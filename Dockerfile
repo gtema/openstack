@@ -19,8 +19,13 @@ COPY auth-application-credential/Cargo.toml /usr/src/openstack/auth-application-
 COPY auth-core/Cargo.toml /usr/src/openstack/auth-core/
 COPY auth-federation/Cargo.toml /usr/src/openstack/auth-federation/
 COPY auth-jwt/Cargo.toml /usr/src/openstack/auth-jwt/
+COPY auth-multifactor/Cargo.toml /usr/src/openstack/auth-multifactor/
 COPY auth-oidcaccesstoken/Cargo.toml /usr/src/openstack/auth-oidcaccesstoken/
 COPY auth-passkey/Cargo.toml /usr/src/openstack/auth-passkey/
+COPY auth-password/Cargo.toml /usr/src/openstack/auth-password/
+COPY auth-receipt/Cargo.toml /usr/src/openstack/auth-receipt/
+COPY auth-token/Cargo.toml /usr/src/openstack/auth-token/
+COPY auth-totp/Cargo.toml /usr/src/openstack/auth-totp/
 COPY auth-websso/Cargo.toml /usr/src/openstack/auth-websso/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
@@ -50,8 +55,13 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p openstack/auth-core/src &&touch openstack/auth-core/src/lib.rs &&\
     mkdir -p openstack/auth-federation/src && touch openstack/auth-federation/src/lib.rs &&\
     mkdir -p openstack/auth-jwt/src && touch openstack/auth-jwt/src/lib.rs &&\
+    mkdir -p openstack/auth-multifactor/src && touch openstack/auth-multifactor/src/lib.rs &&\
     mkdir -p openstack/auth-oidcaccesstoken/src && touch openstack/auth-oidcaccesstoken/src/lib.rs &&\
     mkdir -p openstack/auth-passkey/src && touch openstack/auth-passkey/src/lib.rs &&\
+    mkdir -p openstack/auth-password/src && touch openstack/auth-password/src/lib.rs &&\
+    mkdir -p openstack/auth-receipt/src && touch openstack/auth-receipt/src/lib.rs &&\
+    mkdir -p openstack/auth-token/src && touch openstack/auth-token/src/lib.rs &&\
+    mkdir -p openstack/auth-totp/src && touch openstack/auth-totp/src/lib.rs &&\
     mkdir -p openstack/auth-websso/src && touch openstack/auth-websso/src/lib.rs
 
 # Set the working directory

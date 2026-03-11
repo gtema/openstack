@@ -23,7 +23,8 @@ use secrecy::{ExposeSecret, SecretString};
 use serde_json::{Value, json};
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenScope, OpenStackAuthType,
+    execute_auth_request,
 };
 
 pub use error::PasskeyError;
@@ -45,8 +46,8 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
         vec!["v4passkey", "passkey"]
     }
 
-    fn requirements(&self) -> Value {
-        json!({
+    fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
+        Ok(json!({
             "type": "object",
             "required": ["user_id"],
             "properties": {
@@ -55,7 +56,7 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
                     "description": "User ID"
                 },
             }
-        })
+        }))
     }
 
     fn api_version(&self) -> (u8, u8) {
@@ -67,6 +68,8 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
         http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: std::collections::HashMap<String, SecretString>,
+        _scope: Option<&AuthTokenScope>,
+        _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
         let user_id = values
             .get("user_id")
@@ -76,12 +79,13 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
             .join("auth/passkey/start")
             .map_err(PasskeyError::from)?;
 
-        let req: PasskeyAuthenticationStartResponse = http_client
+        let request = http_client
             .post(auth_start_ep)
             .json(&json!({"passkey": {"user_id": user_id}}))
-            .send()
-            .await
-            .map_err(PasskeyError::from)?
+            .build()?;
+
+        let req: PasskeyAuthenticationStartResponse = execute_auth_request(http_client, request)
+            .await?
             .json::<PasskeyAuthenticationStartResponse>()
             .await
             .map_err(PasskeyError::from)?;
@@ -105,12 +109,11 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
             .map_err(PasskeyError::from)?;
         passkey_auth.user_id(user_id);
 
-        let response = http_client
+        let request = http_client
             .post(auth_finish_ep)
             .json(&passkey_auth.build().map_err(PasskeyError::from)?)
-            .send()
-            .await
-            .map_err(PasskeyError::from)?;
+            .build()?;
+        let response = execute_auth_request(http_client, request).await?;
 
         let auth_token = AuthToken::from_reqwest_response(response).await?;
 

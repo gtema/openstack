@@ -2763,6 +2763,7 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.18",
  "tokio",
+ "tracing",
  "url",
 ]
 
@@ -2816,6 +2817,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-sdk-auth-multifactor"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "openstack-sdk-auth-password",
+ "openstack-sdk-auth-token",
+ "openstack-sdk-auth-totp",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
 name = "openstack-sdk-auth-oidcaccesstoken"
 version = "0.1.0"
 dependencies = [
@@ -2850,6 +2874,91 @@ dependencies = [
  "url",
  "webauthn-authenticator-rs",
  "webauthn-rs-proto",
+]
+
+[[package]]
+name = "openstack-sdk-auth-password"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "openstack-sdk-auth-receipt"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "chrono",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "openstack-sdk-auth-password",
+ "openstack-sdk-auth-token",
+ "openstack-sdk-auth-totp",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "openstack-sdk-auth-token"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "openstack-sdk-auth-totp"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "url",
 ]
 
 [[package]]
@@ -2987,6 +3096,10 @@ dependencies = [
  "openstack-sdk-auth-jwt",
  "openstack-sdk-auth-oidcaccesstoken",
  "openstack-sdk-auth-passkey",
+ "openstack-sdk-auth-password",
+ "openstack-sdk-auth-receipt",
+ "openstack-sdk-auth-token",
+ "openstack-sdk-auth-totp",
  "openstack-sdk-auth-websso",
  "openstack-sdk-core",
  "reqwest",

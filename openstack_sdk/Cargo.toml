@@ -63,6 +63,10 @@ openstack-sdk-auth-federation = { version = "0.1", path = "../auth-federation/",
 openstack-sdk-auth-jwt = { version = "0.1", path = "../auth-jwt/", optional = true }
 openstack-sdk-auth-oidcaccesstoken = { version = "0.1", path = "../auth-oidcaccesstoken/" }
 openstack-sdk-auth-passkey = { version = "0.1", path = "../auth-passkey/", optional = true }
+openstack-sdk-auth-password = { version = "0.1", path = "../auth-password/" }
+openstack-sdk-auth-receipt = { version = "0.1", path = "../auth-receipt/" }
+openstack-sdk-auth-token = { version = "0.1", path = "../auth-token/" }
+openstack-sdk-auth-totp = { version = "0.1", path = "../auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.1", path = "../auth-websso/" }
 openstack-sdk-core = { path = "../sdk-core/", version = "^0.22" }
 reqwest = { workspace = true, features = ["gzip", "deflate", "form", "json", "http2",

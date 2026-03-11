@@ -14,8 +14,9 @@
 
 //! Synchronous OpenStack client
 
-#![deny(dead_code, unused_imports, unused_mut)]
+//#![deny(dead_code, unused_imports, unused_mut)]
 
+use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
@@ -32,19 +33,22 @@ use secrecy::SecretString;
 use tokio::runtime::Runtime;
 use tracing::{Level, debug, error, event, info, instrument, trace, warn};
 
+// Force the linker to include crate plugins
 use openstack_sdk_auth_applicationcredential as _;
 use openstack_sdk_auth_oidcaccesstoken as _;
+use openstack_sdk_auth_password as _;
+use openstack_sdk_auth_receipt as token_receipt;
+use openstack_sdk_auth_token as token_auth;
+use openstack_sdk_auth_totp as _;
 
 use openstack_sdk_auth_core::{
-    Auth, AuthPluginRegistration,
-    authtoken::AuthTokenError,
-    authtoken_scope::AuthTokenScope,
-    types::{AuthReceiptResponse, Project},
+    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    authtoken::AuthTokenError, authtoken_scope::AuthTokenScope, types::Project,
 };
 
 use openstack_sdk_core::api::{
     self, RestClient,
-    query::{self, RawQuery},
+    query::{self},
 };
 use openstack_sdk_core::auth::{
     AuthState,
@@ -58,10 +62,7 @@ use openstack_sdk_core::state;
 use openstack_sdk_core::types::{ApiVersion, ServiceType};
 use openstack_sdk_core::utils::expand_tilde;
 
-use crate::auth::authtoken::{
-    AuthType, build_auth_request_from_receipt, build_auth_request_with_identity_and_scope,
-    build_identity_data_from_config, build_reauth_request,
-};
+use crate::auth::authtoken::AuthType;
 
 // Private enum that enables the parsing of the cert bytes to be
 // delayed until the client is built rather than when they're passed
@@ -260,6 +261,22 @@ impl OpenStack {
         }
     }
 
+    /// Re-authenticate with the existing auth for the given scope.
+    fn reauth(&self, auth: &AuthToken, scope: &AuthTokenScope) -> Result<Auth, OpenStackError> {
+        // Create the runtime
+        let rt = Runtime::new()?;
+        let client = reqwest::Client::new();
+        Ok(rt.block_on(
+            token_auth::PLUGIN.auth(
+                &client,
+                self.get_service_endpoint(&ServiceType::Identity, Some(&ApiVersion::from((3, 0))))?
+                    .url(),
+                HashMap::from([("token".into(), auth.token.clone())]),
+                Some(scope),
+                None,
+            ),
+        )?)
+    }
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize_with_auth_helper<A>(
         &mut self,
@@ -289,90 +306,98 @@ impl OpenStack {
                 // So for AppCred we just force a brand new auth
                 force_new_auth = true;
             }
-            let mut rsp;
             if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), force_new_auth)
             {
                 // State contain valid authentication for different
                 // scope/unscoped. It is possible to request new authz
                 // using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_ep = build_reauth_request(&available_auth, &requested_scope)?;
-                rsp = auth_ep.raw_query(self)?;
-
-                let token_auth = Auth::try_from(rsp)?;
+                let token_auth = self.reauth(&available_auth, &requested_scope)?;
                 self.set_auth(token_auth.clone(), false);
             } else {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
-                match AuthType::from_cloud_config(&self.config)? {
-                    AuthType::V3Password
-                    | AuthType::V3Token
-                    | AuthType::V3Totp
-                    | AuthType::V3Multifactor => {
-                        let identity = rt
-                            .block_on(build_identity_data_from_config(&self.config, auth_helper))?;
-                        let auth_ep = build_auth_request_with_identity_and_scope(
-                            &identity,
-                            &requested_scope,
-                        )?;
-                        rsp = auth_ep.raw_query(self)?;
-
-                        // Handle the MFA
-                        if let StatusCode::UNAUTHORIZED = rsp.status()
-                            && let Some(receipt) = rsp.headers().get("openstack-auth-receipt")
-                        {
-                            let receipt_data: AuthReceiptResponse =
-                                serde_json::from_slice(rsp.body())?;
-                            let auth_endpoint = rt.block_on(build_auth_request_from_receipt(
-                                &self.config,
-                                receipt.clone(),
-                                &receipt_data,
-                                &requested_scope,
-                                auth_helper,
-                            ))?;
-                            rsp = auth_endpoint.raw_query(self)?;
-                        }
-                        api::check_response_error::<Self>(&rsp, None)?;
-                        let token_auth = Auth::try_from(rsp)?;
-
-                        self.set_auth(token_auth.clone(), false);
-                    }
-                    other => {
-                        let auth_type = other.as_str();
-                        // Find authenticator supporting the auth_type
-                        if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
-                            .into_iter()
-                            .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
-                            .map(|x| x.method)
-                        {
-                            // authenticate
-                            let auth_data = rt.block_on(gather_auth_data(
-                                &authenticator.requirements(),
-                                &self.config,
-                                auth_helper,
-                            ))?;
-                            let client = reqwest::Client::new();
-                            let token_auth = rt.block_on(
-                                authenticator.auth(
-                                    &client,
-                                    self.get_service_endpoint(
-                                        &ServiceType::Identity,
-                                        Some(&ApiVersion::from(authenticator.api_version())),
-                                    )?
-                                    .url(),
-                                    auth_data,
-                                ),
-                            )?;
+                let auth_type = auth_type.as_str();
+                // Find authenticator supporting the auth_type
+                if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
+                    .into_iter()
+                    .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
+                    .map(|x| x.method)
+                {
+                    // authenticate
+                    let auth_hints = self
+                        .config
+                        .auth_methods
+                        .as_ref()
+                        .map(|methods| serde_json::json!({"auth_methods": methods}));
+                    let auth_data = rt.block_on(gather_auth_data(
+                        &authenticator.requirements(auth_hints.as_ref())?,
+                        &self.config,
+                        auth_helper,
+                    ))?;
+                    let client = reqwest::Client::new();
+                    match rt.block_on(
+                        authenticator.auth(
+                            &client,
+                            self.get_service_endpoint(
+                                &ServiceType::Identity,
+                                Some(&ApiVersion::from(authenticator.api_version())),
+                            )?
+                            .url(),
+                            auth_data,
+                            Some(&requested_scope),
+                            auth_hints.as_ref(),
+                        ),
+                    ) {
+                        Ok(token_auth) => {
                             self.set_auth(token_auth.clone(), false);
-                        } else {
-                            return Err(AuthTokenError::IdentityMethodSync {
-                                auth_type: auth_type.into(),
-                            })?;
+                        }
+
+                        Err(AuthError::AuthReceipt(receipt)) => {
+                            // Auth Receipt is received
+                            // Find the receipt auth plugin
+                            if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
+                                .into_iter()
+                                .find(|x| {
+                                    x.method.get_supported_auth_methods().contains(&"receipt")
+                                })
+                                .map(|x| x.method)
+                            {
+                                // Convert the receipt into auth hints
+                                let auth_hints = serde_json::to_value(&receipt)?;
+                                let auth_data = rt.block_on(gather_auth_data(
+                                    &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
+                                    &self.config,
+                                    auth_helper,
+                                ))?;
+                                // Authenticate
+                                let token_auth = rt.block_on(
+                                    token_receipt::PLUGIN.auth(
+                                        &client,
+                                        self.get_service_endpoint(
+                                            &ServiceType::Identity,
+                                            Some(&ApiVersion::from(authenticator.api_version())),
+                                        )?
+                                        .url(),
+                                        auth_data,
+                                        Some(&requested_scope),
+                                        Some(&auth_hints),
+                                    ),
+                                )?;
+                                self.set_auth(token_auth.clone(), false);
+                            }
+                        }
+                        Err(other) => {
+                            return Err(other.into());
                         }
                     }
+                } else {
+                    return Err(AuthTokenError::IdentityMethodSync {
+                        auth_type: auth_type.into(),
+                    })?;
                 }
-            };
+            }
         }
 
         if let Auth::AuthToken(token_data) = &self.auth {

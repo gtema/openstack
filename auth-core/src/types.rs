@@ -13,12 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Types of the SDK authentication methods
+use std::hash::{Hash, Hasher};
 
 use chrono::prelude::*;
+use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
+use crate::BuilderError;
+
 /// A reference to a resource by its Name and ID.
-#[derive(Deserialize, Debug, Clone, Serialize, Eq, PartialEq)]
+#[derive(Deserialize, Debug, Clone, Eq, PartialEq, Serialize)]
 pub struct IdAndName {
     /// The name of the entity.
     pub name: String,
@@ -27,7 +31,7 @@ pub struct IdAndName {
 }
 
 /// A reference to a resource by either its Name or ID.
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Hash, PartialEq, Serialize)]
 pub enum NameOrId {
     /// Resource ID.
     #[serde(rename = "id")]
@@ -38,7 +42,7 @@ pub enum NameOrId {
 }
 
 /// AuthResponse structure returned by token authentication calls
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct AuthResponse {
     pub token: AuthToken,
 }
@@ -58,7 +62,7 @@ pub struct AuthToken {
     pub expires_at: DateTime<Utc>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ServiceEndpoints {
     pub endpoints: Vec<CatalogEndpoint>,
     #[serde(rename = "type")]
@@ -66,7 +70,7 @@ pub struct ServiceEndpoints {
     pub name: String,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct CatalogEndpoint {
     pub id: String,
     pub interface: String,
@@ -74,13 +78,13 @@ pub struct CatalogEndpoint {
     pub url: String,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct User {
     pub domain: Option<Domain>,
     pub name: String,
     pub id: String,
     // Note(gtema): some clouds return empty string instead of null when
-    // password doesnot expire. It is technically possible to use
+    // password does not expire. It is technically possible to use
     // deserialize_with to capture errors, but that leads bincode to fail
     // when deserializing. For now just leave it as optional string instead
     // of DateTime
@@ -93,33 +97,92 @@ pub struct User {
 /// While in the response `id` and `name` and mandatorily set this type is
 /// also reused to manage authentications where at least one of them must be
 /// present
-#[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Serialize)]
+#[builder(build_fn(error = "BuilderError"))]
+#[builder(setter(strip_option))]
 pub struct Project {
+    #[builder(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+
+    #[builder(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+
+    #[builder(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub domain: Option<Domain>,
 }
 
-#[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
+impl PartialEq for Project {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            || (self.name.is_some()
+                && other.name.is_some()
+                && self.name == other.name
+                && self.domain == other.domain)
+    }
+}
+
+impl Hash for Project {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state)
+    }
+}
+
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Serialize)]
+#[builder(build_fn(error = "BuilderError"))]
+#[builder(setter(strip_option))]
 pub struct Domain {
+    #[builder(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+
+    #[builder(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 
-/// System Scope
-///
-#[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
+impl PartialEq for Domain {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            || (self.name.is_some() && other.name.is_some() && self.name == other.name)
+    }
+}
+
+impl Hash for Domain {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state)
+    }
+}
+
+/// System Scope.
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[builder(build_fn(error = "BuilderError"))]
+#[builder(setter(strip_option))]
 pub struct System {
+    #[builder(default)]
     pub all: Option<bool>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq)]
+// Trust scope.
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[builder(build_fn(error = "BuilderError"))]
+#[builder(setter(strip_option))]
+pub struct OsTrustTrust {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub id: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct AuthReceiptResponse {
     pub receipt: AuthReceipt,
     pub required_auth_methods: Vec<Vec<String>>,
+    pub token: Option<String>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct AuthReceipt {
     pub catalog: Option<Vec<ServiceEndpoints>>,
     pub roles: Option<Vec<IdAndName>>,
@@ -156,51 +219,18 @@ impl From<&AuthResponse> for crate::authtoken_scope::AuthTokenScope {
     }
 }
 
-///// Build Auth [`Scope`](token_v3::Scope) data from existing [`AuthTokenScope`]
-//impl TryFrom<&AuthTokenScope> for Scope<'_> {
-//    type Error = crate::authtoken::AuthTokenError;
-//    fn try_from(scope: &crate::authtoken::AuthTokenScope) -> Result<Self, Self::Error> {
-//        let mut scope_builder = ScopeBuilder::default();
-//        match scope {
-//            AuthTokenScope::Project(project) => {
-//                let mut project_builder = token_v3::ProjectBuilder::default();
-//                if let Some(val) = &project.id {
-//                    project_builder.id(val.clone());
-//                }
-//                if let Some(val) = &project.name {
-//                    project_builder.name(val.clone());
-//                }
-//                if let Some(domain) = &project.domain {
-//                    let mut domain_builder = token_v3::DomainBuilder::default();
-//                    if let Some(val) = &domain.id {
-//                        domain_builder.id(val.clone());
-//                    }
-//                    if let Some(val) = &domain.name {
-//                        domain_builder.name(val.clone());
-//                    }
-//                    project_builder.domain(domain_builder.build()?);
-//                }
-//                scope_builder.project(project_builder.build()?);
-//            }
-//            AuthTokenScope::Domain(domain) => {
-//                let mut domain_builder = token_v3::DomainBuilder::default();
-//                if let Some(val) = &domain.id {
-//                    domain_builder.id(val.clone());
-//                }
-//                if let Some(val) = &domain.name {
-//                    domain_builder.name(val.clone());
-//                }
-//                scope_builder.domain(domain_builder.build()?);
-//            }
-//            AuthTokenScope::System(system) => {
-//                let mut system_builder = token_v3::SystemBuilder::default();
-//                if let Some(all) = system.all {
-//                    system_builder.all(all);
-//                }
-//                scope_builder.system(system_builder.build()?);
-//            }
-//            AuthTokenScope::Unscoped => {}
-//        }
-//        Ok(scope_builder.build()?)
-//    }
-//}
+/// Authentication error response.
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+pub struct AuthErrorResponse {
+    /// Error object.
+    pub error: IdentityError,
+}
+
+/// Error object.
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+pub struct IdentityError {
+    /// Error code.
+    pub code: u32,
+    /// Error message.
+    pub message: String,
+}

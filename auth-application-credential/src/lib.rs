@@ -14,7 +14,7 @@
 
 //! # Application credentials authentication method for [`openstack_sdk`]
 //!
-//! Authorization using Application Credentials look like:
+//! Authentication using Application Credentials look like:
 //!
 //! With ID and Secret
 //! ```json
@@ -60,7 +60,8 @@ use secrecy::{ExposeSecret, SecretString};
 use serde_json::{Value, json};
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenScope, OpenStackAuthType,
+    execute_auth_request,
 };
 
 /// Application Credential Authentication for OpenStack SDK.
@@ -78,8 +79,8 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
         vec!["v3applicationcredential", "applicationcredential"]
     }
 
-    fn requirements(&self) -> Value {
-        json!({
+    fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
+        Ok(json!({
             "type": "object",
             "required": ["application_credential_secret"],
             "properties": {
@@ -96,7 +97,7 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
                     "type": "string",
                     "description": "User ID",
                 },
-                "user_name": {
+                "username": {
                     "type": "string",
                     "description": "User name",
                 },
@@ -109,7 +110,7 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
                     "description": "User domain name",
                 },
             }
-        })
+        }))
     }
 
     fn api_version(&self) -> (u8, u8) {
@@ -121,10 +122,10 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
         http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: std::collections::HashMap<String, SecretString>,
+        _scope: Option<&AuthTokenScope>,
+        _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
-        let endpoint = identity_url
-            .join("auth/tokens")
-            .map_err(ApplicationCredentialError::from)?;
+        let endpoint = identity_url.join("auth/tokens")?;
         let mut app_cred = json!({
             "secret": values
                 .get("application_credential_secret")
@@ -137,7 +138,7 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
             let mut user = json!({});
             if let Some(user_id) = values.get("user_id") {
                 user["id"] = user_id.expose_secret().into();
-            } else if let Some(user_name) = values.get("user_name") {
+            } else if let Some(user_name) = values.get("username") {
                 user["name"] = user_name.expose_secret().into();
                 if let Some(udi) = values.get("user_domain_id") {
                     user["user_domain_id"] = udi.expose_secret().into();
@@ -160,16 +161,11 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
             }
         });
 
-        let response = http_client
-            .post(endpoint)
-            .json(&body)
-            .send()
-            .await
-            .map_err(ApplicationCredentialError::from)?;
-
-        let auth_token = AuthToken::from_reqwest_response(response).await?;
-
-        Ok(Auth::AuthToken(Box::new(auth_token)))
+        let request = http_client.post(endpoint).json(&body).build()?;
+        let response = execute_auth_request(http_client, request).await?;
+        Ok(Auth::AuthToken(Box::new(
+            AuthToken::from_reqwest_response(response).await?,
+        )))
     }
 }
 
@@ -194,22 +190,6 @@ pub enum ApplicationCredentialError {
         "User domain name/id is required when application credential name and user name are used"
     )]
     MissingUserDomain,
-
-    /// Reqwest error.
-    #[error("error sending query: {}", source)]
-    Reqwest {
-        /// The error source.
-        #[from]
-        source: reqwest::Error,
-    },
-
-    /// Url parse error.
-    #[error(transparent)]
-    Url {
-        /// The error source
-        #[from]
-        source: url::ParseError,
-    },
 }
 
 impl From<ApplicationCredentialError> for AuthError {
@@ -283,6 +263,8 @@ mod tests {
                         SecretString::from("secret"),
                     ),
                 ]),
+                None,
+                None,
             )
             .await
         {
@@ -304,6 +286,8 @@ mod tests {
                     "application_credential_secret".into(),
                     SecretString::from("secret"),
                 )]),
+                None,
+                None,
             )
             .await
         {

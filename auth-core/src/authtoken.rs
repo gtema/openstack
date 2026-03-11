@@ -18,7 +18,7 @@ use std::fmt;
 use std::fmt::Debug;
 
 use http::{HeaderMap, HeaderValue};
-use reqwest::Response;
+use reqwest::{Response, StatusCode};
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize, Serializer};
 use thiserror::Error;
@@ -225,18 +225,35 @@ impl AuthToken {
         }
     }
 
-    //pub fn from_auth_response(response: http::Response<bytes::Bytes>) -> Result<Self, AuthError> {
-    //    let token = response
-    //        .headers()
-    //        .get("x-subject-token")
-    //        .ok_or(AuthError::AuthTokenNotInResponse)?
-    //        .to_str()
-    //        .map_err(|_| AuthError::AuthTokenNotString)?;
-
-    //    let token_info: AuthResponse = serde_json::from_slice(response.body())?;
-    //    Ok(Self::new(token, Some(token_info)))
-    //}
+    /// Parse [`Response`] into the AuthToken.
     pub async fn from_reqwest_response(response: Response) -> Result<Self, AuthError> {
+        if !response.status().is_success() {
+            // Handle the MFA
+            let status = response.status();
+            if let StatusCode::UNAUTHORIZED = status
+                && let Some(receipt) = response.headers().get("openstack-auth-receipt")
+            {
+                let receipt_token = receipt
+                    .to_str()
+                    .map_err(|_| AuthError::AuthReceiptNotString)?
+                    .into();
+                let mut receipt: AuthReceiptResponse = response.json().await?;
+                receipt.token = Some(receipt_token);
+                return Err(AuthError::AuthReceipt(receipt));
+            }
+
+            let body = response.text().await?;
+
+            if let Ok(data) = serde_json::from_str::<AuthErrorResponse>(&body) {
+                return Err(AuthError::Identity(data.error));
+            } else {
+                return Err(AuthError::UnknownAuth {
+                    code: status.into(),
+                    message: Some(body),
+                });
+            }
+        }
+
         let token = response
             .headers()
             .get("x-subject-token")
@@ -266,5 +283,127 @@ impl TryFrom<http::Response<bytes::Bytes>> for AuthToken {
 
         let token_info: AuthResponse = serde_json::from_slice(value.body())?;
         Ok(Self::new(token, Some(token_info)))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::Local;
+    use http::response::Builder;
+    use reqwest::Response;
+    use secrecy::ExposeSecret;
+    use serde_json::to_string;
+
+    use super::AuthError;
+    use super::AuthToken;
+    use crate::types::*;
+
+    #[tokio::test]
+    async fn test_from_reqwest_response_receipt() {
+        let auth_receipt = AuthReceiptResponse {
+            receipt: AuthReceipt {
+                methods: vec!["password".into()],
+                user: User {
+                    id: "uid".into(),
+                    name: "uname".into(),
+                    ..Default::default()
+                },
+                expires_at: Local::now(),
+                ..Default::default()
+            },
+            required_auth_methods: vec![vec!["totp".into(), "password".into()]],
+            token: None,
+        };
+        let http_response = Builder::new()
+            .status(401)
+            .header("openstack-auth-receipt", "foobar")
+            .header("content-type", "application/json")
+            .body(to_string(&auth_receipt).unwrap())
+            .unwrap();
+
+        let response: Response = Response::from(http_response);
+
+        let rsp = AuthToken::from_reqwest_response(response).await;
+        match rsp {
+            Err(AuthError::AuthReceipt(receipt)) => {
+                let mut expected = auth_receipt.clone();
+                expected.token = Some("foobar".into());
+                assert_eq!(expected, receipt);
+            }
+            other => {
+                panic!("wrong response for the expected receipt error: {:?}", other);
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_from_reqwest_response_error() {
+        let err = AuthErrorResponse {
+            error: IdentityError {
+                code: 401,
+                message: "internal error".into(),
+            },
+        };
+        let http_response = Builder::new()
+            .status(401)
+            .header("content-type", "application/json")
+            .body(to_string(&err).unwrap())
+            .unwrap();
+
+        let response: Response = Response::from(http_response);
+
+        let rsp = AuthToken::from_reqwest_response(response).await;
+        match rsp {
+            Err(AuthError::Identity(error)) => {
+                assert_eq!(error, err.error);
+            }
+            other => {
+                panic!("wrong response: {:?}", other);
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_from_reqwest_response_success() {
+        let auth = AuthResponse::default();
+        let http_response = Builder::new()
+            .status(201)
+            .header("content-type", "application/json")
+            .header("x-subject-token", "foobar")
+            .body(to_string(&auth).unwrap())
+            .unwrap();
+
+        let response: Response = Response::from(http_response);
+
+        let rsp = AuthToken::from_reqwest_response(response).await;
+        match rsp {
+            Ok(rsp) => {
+                assert_eq!(auth, rsp.auth_info.unwrap());
+                assert_eq!("foobar", rsp.token.expose_secret());
+            }
+            other => {
+                panic!("wrong response: {:?}", other);
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_from_reqwest_response_success_no_token() {
+        let auth = AuthResponse::default();
+        let http_response = Builder::new()
+            .status(201)
+            .header("content-type", "application/json")
+            .body(to_string(&auth).unwrap())
+            .unwrap();
+
+        let response: Response = Response::from(http_response);
+
+        let rsp = AuthToken::from_reqwest_response(response).await;
+        match rsp {
+            Err(AuthError::AuthTokenNotInResponse) => {}
+            other => {
+                panic!("wrong response: {:?}", other);
+            }
+        }
     }
 }

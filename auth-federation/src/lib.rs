@@ -37,7 +37,6 @@ use hyper_util::rt::TokioIo;
 use secrecy::{ExposeSecret, SecretString};
 use serde::Deserialize;
 use serde_json::{Value, json};
-use serde_urlencoded;
 use thiserror::Error;
 use tokio::net::TcpListener;
 use tokio::signal;
@@ -46,7 +45,8 @@ use tracing::{Level, enabled, error, info, trace, warn};
 use url::Url;
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenScope, OpenStackAuthType,
+    execute_auth_request,
 };
 
 /// V4 OIDC Authentication for OpenStack SDK.
@@ -64,8 +64,8 @@ impl OpenStackAuthType for OidcAuthenticator {
         vec!["v4federation", "federation"]
     }
 
-    fn requirements(&self) -> Value {
-        json!({
+    fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
+        Ok(json!({
             "type": "object",
             "required": ["identity_provider"],
             "properties": {
@@ -74,7 +74,7 @@ impl OpenStackAuthType for OidcAuthenticator {
                     "description": "Identity Provider ID"
                 },
             }
-        })
+        }))
     }
 
     fn api_version(&self) -> (u8, u8) {
@@ -86,6 +86,8 @@ impl OpenStackAuthType for OidcAuthenticator {
         http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: std::collections::HashMap<String, SecretString>,
+        _scope: Option<&AuthTokenScope>,
+        _hints: Option<&Value>,
     ) -> Result<Auth, AuthError> {
         // Construct request for initializing authentication (POST call to keystone
         // `/federation/identity_providers/{idp_id}/auth`) to get the IDP url
@@ -98,15 +100,13 @@ impl OpenStackAuthType for OidcAuthenticator {
             .get("identity_provider")
             .ok_or(FederationError::MissingAuthData)?
             .expose_secret();
-        let auth_start = identity_url
-            .join(
-                format!(
-                    "federation/identity_providers/{idp_id}/auth",
-                    idp_id = idp_id,
-                )
-                .as_str(),
+        let auth_start = identity_url.join(
+            format!(
+                "federation/identity_providers/{idp_id}/auth",
+                idp_id = idp_id,
             )
-            .map_err(FederationError::from)?;
+            .as_str(),
+        )?;
         let mut body = json!({"redirect_uri": format!("http://localhost:{}/oidc/callback", callback_addr.port())});
 
         // TODO: check this
@@ -114,15 +114,11 @@ impl OpenStackAuthType for OidcAuthenticator {
             body["scope"] = scope.expose_secret().into();
         }
 
-        let auth_info = http_client
-            .post(auth_start)
-            .json(&body)
-            .send()
-            .await
-            .map_err(FederationError::from)?
+        let request = http_client.post(auth_start).json(&body).build()?;
+        let auth_info = execute_auth_request(http_client, request)
+            .await?
             .json::<FederationAuthRequestResponse>()
-            .await
-            .map_err(FederationError::from)?;
+            .await?;
 
         // Perform the magic directing user's browser at the IDP url and waiting
         // for the callback to be invoked with the authorization code
@@ -131,17 +127,14 @@ impl OpenStackAuthType for OidcAuthenticator {
         // Construct the request to Keystone to finish the authorization exchanging
         // received authorization code for the (unscoped) token
         //
-        let auth_finish = identity_url
-            .join("federation/oidc/callback")
-            .map_err(FederationError::from)?;
+        let auth_finish = identity_url.join("federation/oidc/callback")?;
 
         if let (Some(code), Some(state)) = (oauth2_code.code, oauth2_code.state) {
-            let response = http_client
+            let request = http_client
                 .post(auth_finish)
                 .json(&json!({"code": code, "state": state}))
-                .send()
-                .await
-                .map_err(FederationError::from)?;
+                .build()?;
+            let response = execute_auth_request(http_client, request).await?;
 
             let auth_token = AuthToken::from_reqwest_response(response).await?;
 
@@ -156,54 +149,13 @@ impl OpenStackAuthType for OidcAuthenticator {
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum FederationError {
-    /// Auth data is missing
-    #[error("auth data is missing")]
-    MissingAuthData,
-
-    /// Callback did not returned a token
+    /// Callback did not returned a token.
     #[error("federation callback didn't return a token")]
     CallbackNoToken,
 
-    /// Some failure in the SSO flow
+    /// Some failure in the SSO flow.
     #[error("federation authentication failed")]
     CallbackFailed,
-
-    /// IO communication error
-    #[error("`IO` error: {}", source)]
-    IO {
-        /// The error source
-        #[from]
-        source: IoError,
-    },
-
-    #[error("failed to URL encode form parameters: {}", source)]
-    UrlEncodedDeser {
-        /// The source of the error.
-        #[from]
-        source: serde_urlencoded::de::Error,
-    },
-
-    /// Http error.
-    #[error("http server error: {}", source)]
-    Http {
-        /// The source of the error.
-        #[from]
-        source: http::Error,
-    },
-    #[error("hyper error: {}", source)]
-    Hyper {
-        /// The source of the error.
-        #[from]
-        source: hyper::Error,
-    },
-
-    /// Thread join error
-    #[error("`Join` error: {}", source)]
-    Join {
-        /// The error source
-        #[from]
-        source: tokio::task::JoinError,
-    },
 
     /// Dialoguer error.
     #[error("error reading the user input: {}", source)]
@@ -213,25 +165,55 @@ pub enum FederationError {
         source: dialoguer::Error,
     },
 
-    /// Reqwest error.
-    #[error(transparent)]
-    Reqwest {
+    /// Http error.
+    #[error("http server error: {}", source)]
+    Http {
         /// The source of the error.
         #[from]
-        source: reqwest::Error,
+        source: http::Error,
     },
+
+    /// Hyper error.
+    #[error("hyper error: {}", source)]
+    Hyper {
+        /// The source of the error.
+        #[from]
+        source: hyper::Error,
+    },
+
+    /// IO communication error.
+    #[error("`IO` error: {}", source)]
+    IO {
+        /// The error source
+        #[from]
+        source: IoError,
+    },
+
+    /// Thread join error.
+    #[error("`Join` error: {}", source)]
+    Join {
+        /// The error source
+        #[from]
+        source: tokio::task::JoinError,
+    },
+
+    /// Auth data is missing.
+    #[error("auth data is missing")]
+    MissingAuthData,
+
     /// Poisoned guard lock in the internal processing.
     #[error("internal error: poisoned lock: {}", context)]
     PoisonedLock {
         /// The source of the error.
         context: String,
     },
-    /// Url error.
-    #[error(transparent)]
-    Url {
+
+    /// Url encoding error.
+    #[error("failed to URL encode form parameters: {}", source)]
+    UrlEncodedDeser {
         /// The source of the error.
         #[from]
-        source: url::ParseError,
+        source: serde_urlencoded::de::Error,
     },
 }
 
