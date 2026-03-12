@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.5...openstack_sdk-v0.22.6) - 2026-03-12
+
+### Added
+
+- Split out remaining auth methods to plugins ([#1680](https://github.com/gtema/openstack/pull/1680))
+- Sync changes from codegenerator ([#1662](https://github.com/gtema/openstack/pull/1662))
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+- Split openstack_sdk crate ([#1655](https://github.com/gtema/openstack/pull/1655))
+
+### Other
+
+- Move client back to `openstack_sdk` ([#1670](https://github.com/gtema/openstack/pull/1670))
+- Trait-ize auth plugins ([#1668](https://github.com/gtema/openstack/pull/1668))
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+- Changes from Keystone webauthn api tests ([#1615](https://github.com/gtema/openstack/pull/1615))
+
 ## [0.22.5](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.4...openstack_sdk-v0.22.5) - 2026-01-17
 
 ### Fixed
