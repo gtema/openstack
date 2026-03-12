@@ -2728,7 +2728,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-applicationcredential"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "bytes",
@@ -2769,7 +2769,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-federation"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "bytes",
@@ -2802,7 +2802,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-jwt"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -2841,7 +2841,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-oidcaccesstoken"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "inventory",
@@ -2859,7 +2859,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-passkey"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -2963,7 +2963,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-websso"
-version = "0.1.0"
+version = "0.22.5"
 dependencies = [
  "async-trait",
  "bytes",
@@ -2996,7 +2996,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-core"
-version = "0.22.5"
+version = "0.22.6"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -3032,7 +3032,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_cli"
-version = "0.13.5"
+version = "0.13.6"
 dependencies = [
  "assert_cmd",
  "base64 0.22.1",
@@ -3076,7 +3076,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk"
-version = "0.22.5"
+version = "0.22.6"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -3123,7 +3123,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_tui"
-version = "0.13.5"
+version = "0.13.6"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3163,7 +3163,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_types"
-version = "0.22.5"
+version = "0.22.6"
 dependencies = [
  "chrono",
  "openstack_sdk",
