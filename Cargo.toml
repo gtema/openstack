@@ -2,11 +2,16 @@
 resolver = "3"
 members = [
   "auth-core",
-  "auth-application-credential", 
+  "auth-application-credential",
   "auth-federation",
   "auth-jwt",
+  "auth-multifactor",
   "auth-oidcaccesstoken",
   "auth-passkey",
+  "auth-password",
+  "auth-receipt",
+  "auth-token",
+  "auth-totp",
   "auth-websso",
   "sdk-core",
   "openstack_sdk",
@@ -14,7 +19,7 @@ members = [
   "openstack_tui",
   "openstack_types",
   "xtask",
-  "fuzz",
+  "fuzz", 
 ]
 default-members = ["openstack_cli", "openstack_sdk", "openstack_tui", "openstack_types"]
 

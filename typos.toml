@@ -28,7 +28,7 @@ ratatui = "ratatui"
 [type.rust]
 extend-glob = []
 extend-ignore-identifiers-re = ["consts"]
-extend-ignore-words-re = []
+extend-ignore-words-re = ["udid"]
 extend-ignore-re = []
 
 [type.py]

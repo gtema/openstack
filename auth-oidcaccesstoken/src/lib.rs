@@ -21,7 +21,8 @@ use serde_json::{Value, json};
 use thiserror::Error;
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, AuthTokenScope, OpenStackAuthType,
+    execute_auth_request,
 };
 
 /// V3 OIDCAccessToken Authentication for OpenStack SDK.
@@ -43,8 +44,8 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         (3, 0)
     }
 
-    fn requirements(&self) -> Value {
-        json!({
+    fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
+        Ok(json!({
             "type": "object",
             "required": ["identity_provider", "protocol", "access_token"],
             "properties": {
@@ -62,7 +63,7 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
                     "description": "Access token"
                 },
             }
-        })
+        }))
     }
 
     async fn auth(
@@ -70,6 +71,8 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: std::collections::HashMap<String, secrecy::SecretString>,
+        _scope: Option<&AuthTokenScope>,
+        _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
         let idp_id = values
             .get("identity_provider")
@@ -78,22 +81,17 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
             .get("protocol")
             .ok_or(OidcAccessTokenError::MissingProtocolId)?;
 
-        let endpoint = identity_url
-            .join(
-                format!(
-                    "OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol}/auth",
-                    idp_id = idp_id.expose_secret(),
-                    protocol = protocol.expose_secret()
-                )
-                .as_str(),
+        let endpoint = identity_url.join(
+            format!(
+                "OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol}/auth",
+                idp_id = idp_id.expose_secret(),
+                protocol = protocol.expose_secret()
             )
-            .map_err(OidcAccessTokenError::from)?;
+            .as_str(),
+        )?;
 
-        let response = http_client
-            .post(endpoint)
-            .send()
-            .await
-            .map_err(OidcAccessTokenError::from)?;
+        let request = http_client.post(endpoint).build()?;
+        let response = execute_auth_request(&http_client, request).await?;
 
         let auth_token = AuthToken::from_reqwest_response(response).await?;
 
@@ -119,22 +117,6 @@ pub enum OidcAccessTokenError {
     /// Access token is missing
     #[error("access token is missing")]
     MissingAccessToken,
-
-    /// Reqwest error.
-    #[error("error sending query: {}", source)]
-    Reqwest {
-        /// The error source.
-        #[from]
-        source: reqwest::Error,
-    },
-
-    /// Url error.
-    #[error(transparent)]
-    Url {
-        /// The error source.
-        #[from]
-        source: url::ParseError,
-    },
 }
 
 impl From<OidcAccessTokenError> for AuthError {

@@ -1,0 +1,35 @@
+[package]
+name = "openstack-sdk-auth-receipt"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+bytes.workspace = true
+inventory.workspace = true
+openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-password = { version = "0.1", path = "../auth-password" }
+openstack-sdk-auth-token = { version = "0.1", path = "../auth-token" }
+openstack-sdk-auth-totp = { version = "0.1", path = "../auth-totp" }
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_urlencoded.workspace = true
+reqwest = { workspace = true, features = ["form"] }
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+chrono.workspace = true
+httpmock.workspace = true
+
+
+[lints]
+workspace = true

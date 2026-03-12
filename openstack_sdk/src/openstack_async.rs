@@ -14,6 +14,7 @@
 
 //! Asynchronous OpenStack client
 
+use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::{Duration, SystemTime};
@@ -32,26 +33,28 @@ use tokio_util::compat::FuturesAsyncReadCompatExt;
 use tracing::{Level, debug, enabled, error, event, info, instrument, trace, warn};
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration,
+    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
     authtoken::AuthTokenError,
     authtoken_scope::AuthTokenScope,
-    types::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints},
+    types::{AuthResponse, Project, ServiceEndpoints},
 };
 
+// Force the linker to include crate plugins
 use openstack_sdk_auth_applicationcredential as _;
 #[cfg(feature = "keystone_ng")]
-use openstack_sdk_auth_federation as _; // Force the linker to include the crate
+use openstack_sdk_auth_federation as _;
 #[cfg(feature = "keystone_ng")]
-use openstack_sdk_auth_jwt as _; // Force the linker to include the crate
+use openstack_sdk_auth_jwt as _;
 use openstack_sdk_auth_oidcaccesstoken as _;
 #[cfg(feature = "passkey")]
-use openstack_sdk_auth_passkey as _; // Force the linker to include the crate
-use openstack_sdk_auth_websso as _; // Force the linker to include the crate
+use openstack_sdk_auth_passkey as _;
+use openstack_sdk_auth_password as _;
+use openstack_sdk_auth_receipt as token_receipt;
+use openstack_sdk_auth_token as token_auth;
+use openstack_sdk_auth_totp as _;
+use openstack_sdk_auth_websso as _;
 
-use crate::auth::authtoken::{
-    AuthType, build_auth_request_from_receipt, build_auth_request_with_identity_and_scope,
-    build_identity_data_from_config, build_reauth_request, build_token_info_endpoint,
-};
+use crate::auth::authtoken::{AuthType, build_token_info_endpoint};
 
 use openstack_sdk_core::api::{
     self, RestClient,
@@ -351,6 +354,24 @@ impl AsyncOpenStack {
         }
     }
 
+    /// Re-authenticate with the existing auth for the given scope.
+    async fn reauth(
+        &self,
+        auth: &AuthToken,
+        scope: &AuthTokenScope,
+    ) -> Result<Auth, OpenStackError> {
+        Ok(token_auth::PLUGIN
+            .auth(
+                &self.client,
+                self.get_service_endpoint(&ServiceType::Identity, Some(&ApiVersion::from((3, 0))))?
+                    .url(),
+                HashMap::from([("token".into(), auth.token.clone())]),
+                Some(scope),
+                None,
+            )
+            .await?)
+    }
+
     /// Authorize against the cloud using provided credentials and get the session token with the
     /// auth helper that may be invoked to interactively ask for the credentials.
     pub async fn authorize_with_auth_helper<A>(
@@ -379,68 +400,59 @@ impl AsyncOpenStack {
                 // supplying application credentials.
                 force_new_auth = true;
             }
-            let mut rsp;
             if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), force_new_auth)
             {
                 // State contain valid authentication for different scope/unscoped. It is possible
                 // to request new authz using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_ep = build_reauth_request(&available_auth, &requested_scope)?;
-                rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
-                // Check whether re-auth was successful
-                api::check_response_error::<Self>(&rsp, None)?;
-
-                let token_auth = Auth::try_from(rsp)?;
+                let token_auth = self.reauth(&available_auth, &requested_scope).await?;
                 self.set_auth(token_auth.clone(), false);
             } else {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
-                match auth_type {
-                    AuthType::V3Password
-                    | AuthType::V3Token
-                    | AuthType::V3Totp
-                    | AuthType::V3Multifactor => {
-                        let identity =
-                            build_identity_data_from_config(&self.config, auth_helper).await?;
-                        let auth_ep = build_auth_request_with_identity_and_scope(
-                            &identity,
-                            &requested_scope,
-                        )?;
-                        rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
-
-                        // Handle the MFA
-                        if let StatusCode::UNAUTHORIZED = rsp.status()
-                            && let Some(receipt) = rsp.headers().get("openstack-auth-receipt")
-                        {
-                            let receipt_data: AuthReceiptResponse =
-                                serde_json::from_slice(rsp.body())?;
-                            let auth_endpoint = build_auth_request_from_receipt(
+                let auth_type = auth_type.as_str();
+                // Find authenticator supporting the auth_type
+                if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
+                    .into_iter()
+                    .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
+                    .map(|x| x.method)
+                {
+                    // authenticate
+                    let auth_hints = self
+                        .config
+                        .auth_methods
+                        .as_ref()
+                        .map(|methods| serde_json::json!({"auth_methods": methods}));
+                    match authenticator
+                        .auth(
+                            &self.client,
+                            self.get_service_endpoint(
+                                &ServiceType::Identity,
+                                Some(&ApiVersion::from(authenticator.api_version())),
+                            )?
+                            .url(),
+                            gather_auth_data(
+                                &authenticator.requirements(auth_hints.as_ref())?,
                                 &self.config,
-                                receipt.clone(),
-                                &receipt_data,
-                                &requested_scope,
                                 auth_helper,
                             )
-                            .await?;
-                            rsp = auth_endpoint.raw_query_async(self).await?;
+                            .await?,
+                            Some(&requested_scope),
+                            auth_hints.as_ref(),
+                        )
+                        .await
+                    {
+                        Ok(token_auth) => {
+                            self.set_auth(token_auth.clone(), false);
                         }
-                        api::check_response_error::<Self>(&rsp, None)?;
-
-                        let token_auth = Auth::try_from(rsp)?;
-
-                        self.set_auth(token_auth.clone(), false);
-                    }
-                    other => {
-                        let auth_type = other.as_str();
-                        // Find authenticator supporting the auth_type
-                        if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
-                            .into_iter()
-                            .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
-                            .map(|x| x.method)
-                        {
-                            // authenticate
-                            let token_auth = authenticator
+                        Err(AuthError::AuthReceipt(receipt)) => {
+                            // Auth Receipt is received
+                            // Find the receipt auth plugin
+                            // Convert the receipt into auth hints
+                            let auth_hints = serde_json::to_value(&receipt)?;
+                            // Authenticate
+                            let token_auth = token_receipt::PLUGIN
                                 .auth(
                                     &self.client,
                                     self.get_service_endpoint(
@@ -449,22 +461,27 @@ impl AsyncOpenStack {
                                     )?
                                     .url(),
                                     gather_auth_data(
-                                        &authenticator.requirements(),
+                                        &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
                                         &self.config,
                                         auth_helper,
                                     )
                                     .await?,
+                                    Some(&requested_scope),
+                                    Some(&auth_hints),
                                 )
                                 .await?;
                             self.set_auth(token_auth.clone(), false);
-                        } else {
-                            return Err(AuthTokenError::IdentityMethod {
-                                auth_type: auth_type.into(),
-                            })?;
+                        }
+                        Err(other) => {
+                            return Err(other.into());
                         }
                     }
+                } else {
+                    return Err(AuthTokenError::IdentityMethod {
+                        auth_type: auth_type.into(),
+                    })?;
                 }
-            };
+            }
         }
 
         if let Auth::AuthToken(token_auth) = &self.auth {
@@ -492,9 +509,10 @@ impl AsyncOpenStack {
                     .is_some_and(|scope| requested_scope == scope)
             {
                 // And now time to rescope the token
-                let auth_ep = build_reauth_request(token_auth, &requested_scope)?;
-                let rsp = auth_ep.raw_query_async(self).await?;
-                let token_auth = Auth::try_from(rsp)?;
+                let token_auth = self.reauth(token_auth, &requested_scope).await?;
+                //let auth_ep = build_reauth_request(token_auth, &requested_scope)?;
+                //let rsp = auth_ep.raw_query_async(self).await?;
+                //let token_auth = Auth::try_from(rsp)?;
                 self.set_auth(token_auth.clone(), false);
             } else {
                 // Client may not specify the target scope expecting the mapping to set

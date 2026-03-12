@@ -29,7 +29,7 @@ use openstack_sdk_auth_core::{
 #[non_exhaustive]
 pub enum RestError {
     /// Auth error
-    #[error("error setting auth header: {}", source)]
+    #[error("authentication error: {}", source)]
     AuthError {
         /// The source of the error.
         #[from]

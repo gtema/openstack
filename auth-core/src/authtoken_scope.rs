@@ -38,10 +38,19 @@ pub enum AuthTokenScopeError {
     /// Scope cannot be built
     #[error("Cannot determine authorization scope from config")]
     MissingScope,
+
+    /// Scope cannot be built
+    #[error(transparent)]
+    //"Cannot determine authorization scope from config")]
+    Builder {
+        #[from]
+        source: crate::BuilderError,
+    },
 }
 
 /// Represents AuthToken authorization scope
 #[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum AuthTokenScope {
     /// Project
     Project(Project),
@@ -52,18 +61,3 @@ pub enum AuthTokenScope {
     /// Unscoped
     Unscoped,
 }
-
-///// Build [`AuthTokenScope`] from [`AuthResponse`]
-//impl From<&AuthResponse> for AuthTokenScope {
-//    fn from(auth: &AuthResponse) -> Self {
-//        if let Some(project) = &auth.token.project {
-//            Self::Project(project.clone())
-//        } else if let Some(domain) = &auth.token.domain {
-//            Self::Domain(domain.clone())
-//        } else if let Some(system) = &auth.token.system {
-//            Self::System(system.clone())
-//        } else {
-//            Self::Unscoped
-//        }
-//    }
-//}

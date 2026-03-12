@@ -15,23 +15,35 @@
 
 use std::collections::HashMap;
 use std::fmt::{self, Debug};
+use std::time::SystemTime;
 
 use async_trait::async_trait;
 use http::{HeaderMap, HeaderValue};
+use reqwest::{Client, Request, Response};
 use secrecy::SecretString;
 use thiserror::Error;
+use tracing::{Level, event, info, instrument};
 
 pub mod authtoken;
 pub mod authtoken_scope;
 pub mod types;
 
 pub use authtoken::{AuthToken, AuthTokenError};
+pub use authtoken_scope::AuthTokenScope;
 pub use types::*;
 
 /// Authentication error.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum AuthError {
+    /// Authentication rejected with a receipt.
+    #[error("authentication rejected")]
+    AuthReceipt(AuthReceiptResponse),
+
+    /// openstack-auth-receipt cannot be converted to string.
+    #[error("authentication receipt cannot be converted to string")]
+    AuthReceiptNotString,
+
     /// AuthToken error.
     #[error("AuthToken error: {}", source)]
     AuthToken {
@@ -45,12 +57,16 @@ pub enum AuthError {
     AuthTokenNotInResponse,
 
     /// X-Subject-Token cannot be converted to string.
-    #[error("token missing cannot be converted to string")]
+    #[error("token cannot be converted to string")]
     AuthTokenNotString,
 
     /// Necessary data was not supplied to the auth method.
     #[error("value necessary for the chosen auth method was not supplied to the auth method")]
     AuthValueNotSupplied(String),
+
+    /// Keystone error.
+    #[error("authentication method error: {}", .0.message)]
+    Identity(IdentityError),
 
     // TODO: Move out
     /// Necessary data was not supplied to the auth method.
@@ -88,6 +104,23 @@ pub enum AuthError {
         #[from]
         source: reqwest::Error,
     },
+
+    /// Identity error not supported.
+    #[error("identity service error")]
+    UnknownAuth {
+        /// The error code.
+        code: u16,
+        /// The error body.
+        message: Option<String>,
+    },
+
+    /// Url parse error.
+    #[error(transparent)]
+    Url {
+        /// The error source
+        #[from]
+        source: url::ParseError,
+    },
 }
 
 impl AuthError {
@@ -105,18 +138,13 @@ impl AuthError {
 #[async_trait]
 pub trait OpenStackAuthType: Send + Sync {
     /// Return list of supported authentication methods.
-    ///
-    /// Example:
-    ///
-    /// ```rust
-    /// fn get_supported_auth_methods(&self) -> Vec<&'static str> {
-    ///     vec!["v4federation", "federation"]
-    /// }
-    /// ```
     fn get_supported_auth_methods(&self) -> Vec<&'static str>;
 
     /// Get the json schema of the data the plugin requires to complete the authentication.
-    fn requirements(&self) -> serde_json::Value;
+    fn requirements(
+        &self,
+        hints: Option<&serde_json::Value>,
+    ) -> Result<serde_json::Value, AuthError>;
 
     /// Get the API version of the Identity Service the plugin need to communicate to.
     fn api_version(&self) -> (u8, u8);
@@ -127,6 +155,8 @@ pub trait OpenStackAuthType: Send + Sync {
         http_client: &reqwest::Client,
         identity_url: &url::Url,
         values: HashMap<String, SecretString>,
+        scope: Option<&AuthTokenScope>,
+        hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError>;
 }
 
@@ -137,6 +167,55 @@ pub struct AuthPluginRegistration {
 
 // Essential: This creates the global registry for this specific struct
 inventory::collect!(AuthPluginRegistration);
+
+/// The trait for multifactor-capable authentication methods.
+pub trait OpenStackMultifactorAuthMethod: Send + Sync {
+    /// Return list of supported authentication methods.
+    fn get_supported_auth_methods(&self) -> Vec<&'static str>;
+
+    /// Get the json schema of the data the plugin requires to complete the authentication.
+    fn requirements(
+        &self,
+        hints: Option<&serde_json::Value>,
+    ) -> Result<serde_json::Value, AuthError>;
+
+    /// Authenticate the client with the configuration.
+    fn get_auth_data(
+        &self,
+        values: &HashMap<String, SecretString>,
+    ) -> Result<(&'static str, serde_json::Value), AuthError>;
+}
+
+// This struct "wraps" the trait object so inventory can track it
+pub struct AuthMethodPluginRegistration {
+    pub method: &'static dyn OpenStackMultifactorAuthMethod,
+}
+inventory::collect!(AuthMethodPluginRegistration);
+
+#[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
+pub async fn execute_auth_request(
+    client: &Client,
+    request: Request,
+) -> Result<Response, reqwest::Error> {
+    info!("Sending request {:?}", request);
+    let url = request.url().clone();
+    let method = request.method().clone();
+    let start = SystemTime::now();
+    let rsp = client.execute(request).await?;
+    let elapsed = SystemTime::now().duration_since(start).unwrap_or_default();
+    event!(
+        name: "http_request",
+        Level::INFO,
+        url=url.as_str(),
+        duration_ms=elapsed.as_millis(),
+        status=rsp.status().as_u16(),
+        method=method.as_str(),
+        request_id=rsp.headers().get("x-openstack-request-id").map(|v| v.to_str().unwrap_or("")),
+        "Request completed with status {}",
+        rsp.status(),
+    );
+    Ok(rsp)
+}
 
 /// An OpenStack Authentication type
 #[derive(Clone)]
@@ -195,6 +274,33 @@ pub enum AuthState {
     AboutToExpire,
     /// Authentication is missing
     Unset,
+}
+
+/// Builder error.
+///
+/// A wrapper error that is used instead of the error generated by the
+/// `derive_builder`.
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum BuilderError {
+    /// Uninitialized field.
+    #[error("{0}")]
+    UninitializedField(String),
+    /// Custom validation error.
+    #[error("{0}")]
+    Validation(String),
+}
+
+impl From<String> for BuilderError {
+    fn from(s: String) -> Self {
+        Self::Validation(s)
+    }
+}
+
+impl From<derive_builder::UninitializedFieldError> for BuilderError {
+    fn from(ufe: derive_builder::UninitializedFieldError) -> Self {
+        Self::UninitializedField(ufe.to_string())
+    }
 }
 
 #[cfg(test)]
