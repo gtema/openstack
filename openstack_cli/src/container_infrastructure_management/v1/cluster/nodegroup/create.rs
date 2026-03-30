@@ -220,22 +220,38 @@ impl NodegroupCommand {
 
         // Set Request.labels data
         if let Some(arg) = &self.labels {
-            ep_builder.labels(arg.iter().cloned());
+            let mut data: Vec<(String, create::Labels)> = Vec::new();
+            for (k, v) in arg.iter() {
+                data.push((k.clone(), serde_json::from_str(v)?));
+            }
+            ep_builder.labels(data.into_iter());
         }
 
         // Set Request.labels_added data
         if let Some(arg) = &self.labels_added {
-            ep_builder.labels_added(arg.iter().cloned());
+            let mut data: Vec<(String, create::LabelsAdded)> = Vec::new();
+            for (k, v) in arg.iter() {
+                data.push((k.clone(), serde_json::from_str(v)?));
+            }
+            ep_builder.labels_added(data.into_iter());
         }
 
         // Set Request.labels_overridden data
         if let Some(arg) = &self.labels_overridden {
-            ep_builder.labels_overridden(arg.iter().cloned());
+            let mut data: Vec<(String, create::LabelsOverridden)> = Vec::new();
+            for (k, v) in arg.iter() {
+                data.push((k.clone(), serde_json::from_str(v)?));
+            }
+            ep_builder.labels_overridden(data.into_iter());
         }
 
         // Set Request.labels_skipped data
         if let Some(arg) = &self.labels_skipped {
-            ep_builder.labels_skipped(arg.iter().cloned());
+            let mut data: Vec<(String, create::LabelsSkipped)> = Vec::new();
+            for (k, v) in arg.iter() {
+                data.push((k.clone(), serde_json::from_str(v)?));
+            }
+            ep_builder.labels_skipped(data.into_iter());
         }
 
         // Set Request.links data

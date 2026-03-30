@@ -37,6 +37,38 @@ pub enum HealthStatus {
     Unknown,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum Labels<'a> {
+    F1(bool),
+    F2(i32),
+    F3(Cow<'a, str>),
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum LabelsAdded<'a> {
+    F1(bool),
+    F2(i32),
+    F3(Cow<'a, str>),
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum LabelsOverridden<'a> {
+    F1(bool),
+    F2(i32),
+    F3(Cow<'a, str>),
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum LabelsSkipped<'a> {
+    F1(bool),
+    F2(i32),
+    F3(Cow<'a, str>),
+}
+
 /// A link representation.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -191,16 +223,16 @@ pub struct Request<'a> {
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
     #[builder(default, private, setter(into, name = "_labels"))]
-    pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Labels<'a>>>,
 
     #[builder(default, private, setter(into, name = "_labels_added"))]
-    pub(crate) labels_added: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) labels_added: Option<BTreeMap<Cow<'a, str>, LabelsAdded<'a>>>,
 
     #[builder(default, private, setter(into, name = "_labels_overridden"))]
-    pub(crate) labels_overridden: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) labels_overridden: Option<BTreeMap<Cow<'a, str>, LabelsOverridden<'a>>>,
 
     #[builder(default, private, setter(into, name = "_labels_skipped"))]
-    pub(crate) labels_skipped: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) labels_skipped: Option<BTreeMap<Cow<'a, str>, LabelsSkipped<'a>>>,
 
     #[builder(default, setter(into))]
     pub(crate) links: Option<Vec<Links<'a>>>,
@@ -310,7 +342,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<Labels<'a>>,
     {
         self.labels
             .get_or_insert(None)
@@ -323,7 +355,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<LabelsAdded<'a>>,
     {
         self.labels_added
             .get_or_insert(None)
@@ -336,7 +368,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<LabelsOverridden<'a>>,
     {
         self.labels_overridden
             .get_or_insert(None)
@@ -349,7 +381,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<LabelsSkipped<'a>>,
     {
         self.labels_skipped
             .get_or_insert(None)

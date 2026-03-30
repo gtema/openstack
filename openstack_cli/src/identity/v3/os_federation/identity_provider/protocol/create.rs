@@ -35,7 +35,7 @@ use openstack_types::identity::v3::os_federation::identity_provider::protocol::r
 
 /// Create protocol for an IDP.
 ///
-/// PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+/// PUT /OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
 #[derive(Args)]
 pub struct ProtocolCommand {
     /// Request Query parameters

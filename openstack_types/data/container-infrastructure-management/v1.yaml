@@ -864,8 +864,11 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           description: |-
             Arbitrary labels in the form of `key=value` pairs. The accepted keys and
             valid values are defined in the cluster drivers. They are used as a way
@@ -873,18 +876,27 @@ components:
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -1012,8 +1024,9 @@ components:
           value:
             description: |-
               Resource attribute’s value.
-            format:
-            type: string
+            type:
+              - integer
+              - string
         required:
           - op
           - path
@@ -1148,23 +1161,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           description: |-
@@ -1456,8 +1481,11 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           description: |-
             Arbitrary labels in the form of `key=value` pairs. The accepted keys and
             valid values are defined in the cluster drivers. They are used as a way
@@ -1710,23 +1738,35 @@ components:
                 type: string
               labels:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_added:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_overridden:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_skipped:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               links:
                 description: |-
@@ -1854,8 +1894,9 @@ components:
           path:
             type: string
           value:
-            format:
-            type: string
+            type:
+              - integer
+              - string
         required:
           - op
           - path
@@ -1891,23 +1932,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -2015,23 +2068,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -2139,23 +2204,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -2279,23 +2356,35 @@ components:
                 type: string
               labels:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_added:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_overridden:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_skipped:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               links:
                 items:
@@ -2413,23 +2502,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -2548,23 +2649,35 @@ components:
                 type: string
               labels:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_added:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_overridden:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               labels_skipped:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 type: object
               links:
                 items:
@@ -2677,23 +2790,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:
@@ -2930,8 +3055,11 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           description: |-
             Arbitrary labels in the form of `key=value` pairs. The accepted keys and
             valid values are defined in the cluster drivers. They are used as a way
@@ -3238,8 +3366,11 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           description: |-
             Arbitrary labels in the form of `key=value` pairs. The accepted keys and
             valid values are defined in the cluster drivers. They are used as a way
@@ -3555,8 +3686,11 @@ components:
                 type: string
               labels:
                 additionalProperties:
-                  format:
-                  type: string
+                  type:
+                    - boolean
+                    - integer
+                    - number
+                    - string
                 description: |-
                   Arbitrary labels in the form of `key=value` pairs. The accepted keys and
                   valid values are defined in the cluster drivers. They are used as a way
@@ -4072,23 +4206,35 @@ components:
           type: string
         labels:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_added:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_overridden:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         labels_skipped:
           additionalProperties:
-            format:
-            type: string
+            type:
+              - boolean
+              - integer
+              - number
+              - string
           type: object
         links:
           items:

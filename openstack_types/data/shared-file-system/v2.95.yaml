@@ -907,7 +907,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServicesEnsure_SharesEnsure_SharesRequest'
+              $ref: '#/components/schemas/ServicesEnsure_SharesEnsure_Shares_286'
       responses:
         '201':
           content:
@@ -2004,7 +2004,7 @@ paths:
       tags:
         - share-replicas
       x-openstack:
-        max-ver: '2.66'
+        max-ver: '2.94'
         min-ver: '2.11'
   /share-replicas/detail:
     get:
@@ -3208,6 +3208,8 @@ paths:
           description: Ok
       tags:
         - snapshots
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/snapshots_id'
     put:
@@ -6496,14 +6498,26 @@ components:
     ServiceUpdateResponse:
       description: Response of the services/id:put operation
       type: object
-    ServicesEnsure_SharesEnsure_SharesRequest:
-      description: Request of the services/ensure-shares:post operation
+    ServicesEnsure_SharesEnsure_Shares_286:
+      additionalProperties: false
+      properties:
+        ensure_shares:
+          additionalProperties: false
+          properties:
+            host:
+              description: "The host name of the manila-share binary that you want
+                to\nstart the ensure shares procedure in the ``host@backend`` format.\n"
+              type: string
+          required:
+            - host
+          type: object
+      required:
+        - ensure_shares
       type: object
       x-openstack:
-        action-name: ensure_shares
+        min-ver: '2.86'
     ServicesEnsure_SharesResponse:
-      description: Response of the services/ensure-shares:post operation
-      type: object
+      type: 'null'
     ServicesListResponse:
       description: Response of the services:get operation
       type: object
@@ -7994,6 +8008,7 @@ components:
           additionalProperties: true
           properties:
             snapshot_id:
+              description: "The UUID of the share's base snapshot.\n"
               format: uuid
               type: string
           required:
@@ -8552,7 +8567,107 @@ components:
         operation
       type: object
     SnapshotShowResponse:
-      description: Response of the snapshots/id:get operation
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              type: string
+            description:
+              description: "The user defined description of the resource.\n"
+              type:
+                - 'null'
+                - string
+            id:
+              description: "The UUID of the snapshot.\n"
+              type:
+                - integer
+                - string
+            links:
+              items:
+                additionalProperties: false
+                properties:
+                  href:
+                    format: uri
+                    type: string
+                  rel:
+                    enum:
+                      - bookmark
+                      - self
+                    type: string
+                required:
+                  - href
+                  - rel
+                type: object
+              type: array
+            metadata:
+              additionalProperties:
+                type: string
+              description: "One or more metadata key and value pairs as a\ndictionary
+                of strings.\n"
+              type: object
+            name:
+              description: "The user defined name of the resource.\n"
+              type:
+                - 'null'
+                - string
+            project_id:
+              description: "ID of the project that the snapshot belongs to.\n"
+              type: string
+            provider_location:
+              description: "Provider location of the snapshot on the backend.\n"
+              type:
+                - 'null'
+                - string
+            share_id:
+              description: "The UUID of the source share that was used to\ncreate
+                the snapshot.\n"
+              type: string
+            share_proto:
+              description: "The file system protocol of a share snapshot. A\nvalid
+                value is ``NFS``, ``CIFS``, ``GlusterFS``, ``HDFS``,\n``CephFS`` or
+                ``MAPRFS``. ``CephFS`` is supported starting\nwith API v2.13.\n"
+              type: string
+            share_size:
+              description: "The share snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            size:
+              description: "The snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            status:
+              description: "The snapshot status, which can be ``available``,\n``error``,
+                ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
+                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+              type: string
+            user_id:
+              description: "ID of the user that the snapshot was created by.\n"
+              type: string
+          required:
+            - created_at
+            - description
+            - id
+            - links
+            - name
+            - project_id
+            - share_id
+            - share_proto
+            - share_size
+            - size
+            - status
+            - user_id
+          type: object
+      required:
+        - snapshot
       type: object
     SnapshotUpdateRequest:
       description: Request of the snapshots/id:put operation

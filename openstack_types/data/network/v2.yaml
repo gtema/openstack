@@ -18530,8 +18530,7 @@ components:
     PortsBindingsActivateActivateRequest:
       properties:
         host:
-          description: |-
-            The hostname of the system the agent is running on.
+          description: The hostname of the system the agent is running on.
           type: string
       type: object
     PortsBindingsCreateRequest:

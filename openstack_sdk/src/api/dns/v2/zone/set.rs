@@ -31,7 +31,8 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// e-mail for the zone. Used in SOA records for the zone
+    /// e-mail for the zone. Used in SOA records for the zone. Forbidden for
+    /// SECONDARY zones.
     #[builder(default, setter(into))]
     pub(crate) email: Option<Cow<'a, str>>,
 

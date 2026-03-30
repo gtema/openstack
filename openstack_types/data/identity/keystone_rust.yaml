@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: openstack_keystone
+  title: openstack-keystone
   description: OpenStack Keystone service
   license:
     name: Apache-2.0
@@ -2726,47 +2726,45 @@ components:
           type: string
           description: Unique ID of the associated user.
     Group:
-      allOf:
-      - {}
-      - type: object
-        required:
-        - id
-        - domain_id
-        - name
-        properties:
-          description:
-            type:
-            - string
-            - 'null'
-            description: Group description.
-          domain_id:
-            type: string
-            description: Group domain ID.
-          id:
-            type: string
-            description: Group ID.
-          name:
-            type: string
-            description: Group name.
+      type: object
+      required:
+      - domain_id
+      - id
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: Group description.
+        domain_id:
+          type: string
+          description: Group domain ID.
+        id:
+          type: string
+          description: Group ID.
+        name:
+          type: string
+          description: Group name.
+      additionalProperties: {}
     GroupCreate:
-      allOf:
-      - {}
-      - type: object
-        required:
-        - domain_id
-        - name
-        properties:
-          description:
-            type:
-            - string
-            - 'null'
-            description: Group description.
-          domain_id:
-            type: string
-            description: Group domain ID.
-          name:
-            type: string
-            description: Group name.
+      type: object
+      required:
+      - domain_id
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: Group description.
+        domain_id:
+          type: string
+          description: Group domain ID.
+        name:
+          type: string
+          description: Group name.
+      additionalProperties: {}
     GroupCreateRequest:
       type: object
       required:
@@ -3617,6 +3615,9 @@ components:
         bound_claims:
           type: object
           description: Additional claims that must be present in the token.
+          additionalProperties: {}
+          propertyNames:
+            type: string
         bound_subject:
           type: string
           description: Token subject value that must be set in the token.
@@ -3986,60 +3987,60 @@ components:
           type: string
           description: Project Name.
     ProjectCreate:
-      allOf:
-      - description: Additional project properties.
-      - type: object
-        required:
-        - domain_id
-        - enabled
-        - is_domain
-        - name
-        properties:
-          description:
-            type:
-            - string
-            - 'null'
-            description: The description of the project.
-          domain_id:
-            type: string
-            description: The ID of the domain for the project.
-          enabled:
-            type: boolean
-            description: |-
-              If set to true, project is enabled. If set to false, project is
-              disabled.
-          is_domain:
-            type: boolean
-            description: |-
-              Indicates whether the project also acts as a domain. If set to true,
-              this project acts as both a project and domain. As a domain, the project
-              provides a name space in which you can create users, groups, and other
-              projects. If set to false, this project behaves as a regular project
-              that contains only resources. Default is false. You cannot update this
-              parameter after you create the project.
-          name:
-            type: string
-            description: |-
-              The name of the project, which must be unique within the owning domain.
-              A project can have the same name as its domain.
-          parent_id:
-            type:
-            - string
-            - 'null'
-            description: |-
-              The ID of the parent of the project.
-
-              If specified on project creation, this places the project within a
-              hierarchy and implicitly defines the owning domain, which will be the
-              same domain as the parent specified. If `parent_id` is not specified and
-              `is_domain` is false, then the project will use its owning domain as its
-              parent. If `is_domain` is true (i.e. the project is acting as a domain),
-              then `parent_id` must not specified (or if it is, it must be null) since
-              domains have no parents.
-
-              `parent_id` is immutable, and can’t be updated after the project is
-              created - hence a project cannot be moved within the hierarchy.
+      type: object
       description: New project data.
+      required:
+      - domain_id
+      - enabled
+      - is_domain
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The description of the project.
+        domain_id:
+          type: string
+          description: The ID of the domain for the project.
+        enabled:
+          type: boolean
+          description: |-
+            If set to true, project is enabled. If set to false, project is
+            disabled. The defaults is `true`.
+        is_domain:
+          type: boolean
+          description: |-
+            Indicates whether the project also acts as a domain. If set to true,
+            this project acts as both a project and domain. As a domain, the project
+            provides a name space in which you can create users, groups, and other
+            projects. If set to false, this project behaves as a regular project
+            that contains only resources. Default is false. You cannot update this
+            parameter after you create the project.
+        name:
+          type: string
+          description: |-
+            The name of the project, which must be unique within the owning domain.
+            A project can have the same name as its domain.
+        parent_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the parent of the project.
+
+            If specified on project creation, this places the project within a
+            hierarchy and implicitly defines the owning domain, which will be the
+            same domain as the parent specified. If `parent_id` is not specified and
+            `is_domain` is false, then the project will use its owning domain as its
+            parent. If `is_domain` is true (i.e. the project is acting as a domain),
+            then `parent_id` must not specified (or if it is, it must be null) since
+            domains have no parents.
+
+            `parent_id` is immutable, and can’t be updated after the project is
+            created - hence a project cannot be moved within the hierarchy.
+      additionalProperties:
+        description: Additional project properties.
     ProjectCreateRequest:
       type: object
       description: New project creation request.
@@ -4331,51 +4332,50 @@ components:
       - Preferred
       - Required
     Role:
-      allOf:
-      - {}
-      - type: object
-        required:
-        - id
-        - name
-        properties:
-          description:
-            type:
-            - string
-            - 'null'
-            description: Role description.
-          domain_id:
-            type:
-            - string
-            - 'null'
-            description: Role domain ID.
-          id:
-            type: string
-            description: Role ID.
-          name:
-            type: string
-            description: Role name.
+      type: object
       description: The role data.
+      required:
+      - id
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: Role description.
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: Role domain ID.
+        id:
+          type: string
+          description: Role ID.
+        name:
+          type: string
+          description: Role name.
+      additionalProperties: {}
     RoleCreate:
-      allOf:
-      - description: Extra attributes for the role.
-      - type: object
-        required:
-        - name
-        properties:
-          description:
-            type:
-            - string
-            - 'null'
-            description: The role description.
-          domain_id:
-            type:
-            - string
-            - 'null'
-            description: The domain ID of the role.
-          name:
-            type: string
-            description: The role name.
+      type: object
       description: Role create request body.
+      required:
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The role description.
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: The domain ID of the role.
+        name:
+          type: string
+          description: The role name.
+      additionalProperties:
+        description: Extra attributes for the role.
     RoleList:
       type: object
       description: Roles.
@@ -4387,6 +4387,24 @@ components:
           items:
             $ref: '#/components/schemas/Role'
           description: Collection of role objects.
+    RoleRef:
+      type: object
+      description: The role reference data.
+      required:
+      - id
+      - name
+      properties:
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: Role domain ID.
+        id:
+          type: string
+          description: Role ID.
+        name:
+          type: string
+          description: Role name.
     RoleResponse:
       type: object
       required:
@@ -4547,7 +4565,7 @@ components:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: A list of role objects.
         system:
           oneOf:
@@ -4604,7 +4622,7 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4637,7 +4655,7 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4697,7 +4715,7 @@ components:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/RoleRef'
           description: Bound token roles.
         user_id:
           type:
@@ -4833,55 +4851,54 @@ components:
           format: date-time
           description: User password expiry date.
     UserCreate:
-      allOf:
-      - description: Additional user properties.
-      - type: object
-        required:
-        - domain_id
-        - name
-        properties:
-          default_project_id:
-            type:
-            - string
-            - 'null'
-            description: |-
-              The ID of the default project for the user. A user's default project
-              must not be a domain. Setting this attribute does not grant any actual
-              authorization on the project, and is merely provided for convenience.
-              Therefore, the referenced project does not need to exist within the user
-              domain. If the user does not have authorization to their default
-              project, the default project is ignored at token creation. Additionally,
-              if your default project is not valid, a token is issued without an
-              explicit scope of authorization.
-          domain_id:
-            type: string
-            description: User domain ID.
-          enabled:
-            type:
-            - boolean
-            - 'null'
-            description: |-
-              If the user is enabled, this value is true. If the user is disabled,
-              this value is false.
-          name:
-            type: string
-            description: The user name. Must be unique within the owning domain.
-          options:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/UserOptions'
-              description: |-
-                The resource options for the user. Available resource options are
-                ignore_change_password_upon_first_use, ignore_password_expiry,
-                ignore_lockout_failure_attempts, lock_password,
-                multi_factor_auth_enabled, and multi_factor_auth_rules
-                ignore_user_inactivity.
-          password:
-            type:
-            - string
-            - 'null'
-            description: The password for the user.
+      type: object
       description: Create user data.
+      required:
+      - domain_id
+      - enabled
+      - name
+      properties:
+        default_project_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the default project for the user. A user's default project
+            must not be a domain. Setting this attribute does not grant any actual
+            authorization on the project, and is merely provided for convenience.
+            Therefore, the referenced project does not need to exist within the user
+            domain. If the user does not have authorization to their default
+            project, the default project is ignored at token creation. Additionally,
+            if your default project is not valid, a token is issued without an
+            explicit scope of authorization.
+        domain_id:
+          type: string
+          description: User domain ID.
+        enabled:
+          type: boolean
+          description: |-
+            If the user is enabled, this value is true. If the user is disabled,
+            this value is false.
+        name:
+          type: string
+          description: The user name. Must be unique within the owning domain.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/UserOptions'
+            description: |-
+              The resource options for the user. Available resource options are
+              ignore_change_password_upon_first_use, ignore_password_expiry,
+              ignore_lockout_failure_attempts, lock_password,
+              multi_factor_auth_enabled, and multi_factor_auth_rules
+              ignore_user_inactivity.
+        password:
+          type:
+          - string
+          - 'null'
+          description: The password for the user.
+      additionalProperties:
+        description: Additional user properties.
     UserCreateRequest:
       type: object
       description: Complete create user request.

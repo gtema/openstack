@@ -45,7 +45,8 @@ pub struct ZoneResponse {
     #[structable(optional, wide)]
     pub description: Option<String>,
 
-    /// e-mail for the zone. Used in SOA records for the zone
+    /// e-mail for the zone. Used in SOA records for the zone. Mandatory for
+    /// PRIMARY zones, forbidden for SECONDARY zones.
     #[serde(default)]
     #[structable(optional, wide)]
     pub email: Option<String>,

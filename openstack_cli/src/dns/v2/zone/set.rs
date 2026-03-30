@@ -50,7 +50,8 @@ pub struct ZoneCommand {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// e-mail for the zone. Used in SOA records for the zone
+    /// e-mail for the zone. Used in SOA records for the zone. Forbidden for
+    /// SECONDARY zones.
     #[arg(help_heading = "Body parameters", long)]
     email: Option<String>,
 

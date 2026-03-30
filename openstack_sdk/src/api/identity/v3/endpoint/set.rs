@@ -50,9 +50,9 @@ pub struct Endpoint<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// Indicates whether the endpoint appears in the service catalog -false.
-    /// The endpoint does not appear in the service catalog. -true. The
-    /// endpoint appears in the service catalog.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enabled: Option<bool>,
