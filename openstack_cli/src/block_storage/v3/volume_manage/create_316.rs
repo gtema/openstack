@@ -23,13 +23,12 @@ use clap::Args;
 use eyre::WrapErr;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume_manage::create_316;
 use openstack_types::block_storage::v3::volume_manage::response::create::VolumeManageResponse;
@@ -151,7 +150,7 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
     no_name: bool,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     _ref: Value,
 
     #[arg(help_heading = "Body parameters", long)]
@@ -164,9 +163,9 @@ struct Volume {
 
 impl VolumeManageCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create VolumeManage");

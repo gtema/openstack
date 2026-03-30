@@ -23,11 +23,10 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
-
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use dialoguer::Password;
@@ -89,7 +88,7 @@ struct ApplicationCredential {
 
     /// A user object, required if an application credential is identified by
     /// name and not ID.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     user: Option<Value>,
 }
 
@@ -106,7 +105,7 @@ enum Methods {
 #[group(required = false, multiple = true)]
 struct PasswordUser {
     /// A `domain` object
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     domain: Option<Value>,
 
     /// The ID of the user. Required if you do not specify the user name.
@@ -147,7 +146,7 @@ struct Token {
 #[group(required = true, multiple = true)]
 struct TotpUser {
     /// A `domain` object
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     domain: Option<Value>,
 
     /// The user ID
@@ -238,7 +237,7 @@ struct Scope {
     #[command(flatten)]
     os_trust_trust: Option<OsTrustTrust>,
 
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     project: Option<Value>,
 
     #[command(flatten)]
@@ -267,9 +266,9 @@ struct Auth {
 
 impl TokenCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create Token");

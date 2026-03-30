@@ -22,11 +22,10 @@
 use clap::Args;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
-
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_bandwidth_rule::get;
@@ -62,9 +61,9 @@ struct PathParameters {
 
 impl AliasMinimumBandwidthRuleCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Show AliasMinimumBandwidthRule");

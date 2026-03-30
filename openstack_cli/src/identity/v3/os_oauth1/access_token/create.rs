@@ -23,13 +23,12 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_oauth1::access_token::create;
 use openstack_types::identity::v3::os_oauth1::access_token::response::create::AccessTokenResponse;
@@ -61,9 +60,9 @@ struct PathParameters {}
 
 impl AccessTokenCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create AccessToken");

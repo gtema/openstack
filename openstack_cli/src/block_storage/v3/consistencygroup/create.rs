@@ -23,13 +23,12 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::consistencygroup::create;
 use openstack_types::block_storage::v3::consistencygroup::response::create::ConsistencygroupResponse;
@@ -66,7 +65,7 @@ struct PathParameters {}
 #[derive(Args, Clone)]
 struct Consistencygroup {
     /// OpenAPI specifies the field as '{}'.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     availability_zone: Option<Value>,
 
     /// The consistency group description.
@@ -86,15 +85,15 @@ struct Consistencygroup {
     no_name: bool,
 
     /// OpenAPI specifies the field as '{}'.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     volume_types: Value,
 }
 
 impl ConsistencygroupCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create Consistencygroup");

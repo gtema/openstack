@@ -23,14 +23,13 @@ use clap::Args;
 use eyre::WrapErr;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
 use clap::ValueEnum;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::listener::create;
 use openstack_types::load_balancer::v2::listener::response::create::ListenerResponse;
@@ -164,7 +163,7 @@ struct Listener {
     connection_limit: Option<i32>,
 
     /// A pool object.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     default_pool: Option<Value>,
 
     /// The ID of the pool used by the listener if no L7 policies match. The
@@ -220,7 +219,7 @@ struct Listener {
     /// A list of L7 policy objects.
     ///
     /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     l7policies: Option<Vec<Value>>,
 
     /// The ID of the load balancer.
@@ -297,9 +296,9 @@ struct Listener {
 
 impl ListenerCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create Listener");
