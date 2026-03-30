@@ -26,8 +26,8 @@ use tracing_subscriber::layer::Context;
 
 /// HTTP Request statistics container
 #[derive(Default)]
-pub(crate) struct HttpRequestStats {
-    pub requests: Vec<HttpRequest>,
+pub struct HttpRequestStats {
+    requests: Vec<HttpRequest>,
 }
 
 impl HttpRequestStats {
@@ -59,13 +59,13 @@ impl HttpRequestStats {
 ///
 /// Added as a `tracing` layer it captures all events with name "request" and mandatory fields: [url,
 /// duration_ms, method] (additional optional fields: [status, request_id]
-pub(crate) struct RequestTracingCollector {
+pub struct RequestTracingCollector {
     pub stats: Arc<Mutex<HttpRequestStats>>,
 }
 
 /// Single HTTP request profile record
 #[derive(Debug, Default)]
-pub(crate) struct HttpRequest {
+struct HttpRequest {
     pub url: String,
     pub method: String,
     pub duration: u128,

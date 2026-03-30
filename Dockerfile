@@ -27,6 +27,7 @@ COPY auth-receipt/Cargo.toml /usr/src/openstack/auth-receipt/
 COPY auth-token/Cargo.toml /usr/src/openstack/auth-token/
 COPY auth-totp/Cargo.toml /usr/src/openstack/auth-totp/
 COPY auth-websso/Cargo.toml /usr/src/openstack/auth-websso/
+COPY cli-core/Cargo.toml /usr/src/openstack/cli-core/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
@@ -62,7 +63,8 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p openstack/auth-receipt/src && touch openstack/auth-receipt/src/lib.rs &&\
     mkdir -p openstack/auth-token/src && touch openstack/auth-token/src/lib.rs &&\
     mkdir -p openstack/auth-totp/src && touch openstack/auth-totp/src/lib.rs &&\
-    mkdir -p openstack/auth-websso/src && touch openstack/auth-websso/src/lib.rs
+    mkdir -p openstack/auth-websso/src && touch openstack/auth-websso/src/lib.rs &&\
+    mkdir -p openstack/cli-core/src && touch openstack/cli-core/src/lib.rs
 
 # Set the working directory
 WORKDIR /usr/src/openstack
