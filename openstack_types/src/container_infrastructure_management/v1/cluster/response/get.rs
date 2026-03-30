@@ -118,19 +118,19 @@ pub struct ClusterResponse {
 
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels: Option<BTreeMap<String, String>>,
+    pub labels: Option<BTreeMap<String, f64>>,
 
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_added: Option<BTreeMap<String, String>>,
+    pub labels_added: Option<BTreeMap<String, f64>>,
 
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_overridden: Option<BTreeMap<String, String>>,
+    pub labels_overridden: Option<BTreeMap<String, f64>>,
 
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub labels_skipped: Option<BTreeMap<String, String>>,
+    pub labels_skipped: Option<BTreeMap<String, f64>>,
 
     /// Links to the resources in question.
     #[serde(default)]

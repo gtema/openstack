@@ -2228,7 +2228,8 @@ components:
           type: string
         email:
           description: |-
-            e-mail for the zone. Used in SOA records for the zone
+            e-mail for the zone. Used in SOA records for the zone.
+            Mandatory for PRIMARY zones, forbidden for SECONDARY zones.
           format: uuid
           type: string
         id:
@@ -2344,7 +2345,8 @@ components:
           type: string
         email:
           description: |-
-            e-mail for the zone. Used in SOA records for the zone
+            e-mail for the zone. Used in SOA records for the zone.
+            Forbidden for SECONDARY zones.
           format: uuid
           type: string
         ttl:
@@ -2390,7 +2392,8 @@ components:
           type: string
         email:
           description: |-
-            e-mail for the zone. Used in SOA records for the zone
+            e-mail for the zone. Used in SOA records for the zone.
+            Mandatory for PRIMARY zones, forbidden for SECONDARY zones.
           format: uuid
           type: string
         id:
@@ -2532,7 +2535,8 @@ components:
           type: string
         email:
           description: |-
-            e-mail for the zone. Used in SOA records for the zone
+            e-mail for the zone. Used in SOA records for the zone.
+            Mandatory for PRIMARY zones, forbidden for SECONDARY zones.
           format: uuid
           type: string
         id:
@@ -2676,7 +2680,8 @@ components:
           type: string
         email:
           description: |-
-            e-mail for the zone. Used in SOA records for the zone
+            e-mail for the zone. Used in SOA records for the zone.
+            Mandatory for PRIMARY zones, forbidden for SECONDARY zones.
           format: uuid
           type: string
         id:
@@ -2828,7 +2833,8 @@ components:
                 type: string
               email:
                 description: |-
-                  e-mail for the zone. Used in SOA records for the zone
+                  e-mail for the zone. Used in SOA records for the zone.
+                  Mandatory for PRIMARY zones, forbidden for SECONDARY zones.
                 format: uuid
                 type: string
               id:

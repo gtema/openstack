@@ -33,6 +33,14 @@ pub enum Coe {
     Kubernetes,
 }
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
+pub enum Labels<'a> {
+    F1(bool),
+    F2(i32),
+    F3(Cow<'a, str>),
+}
+
 /// A link representation.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -185,7 +193,7 @@ pub struct Request<'a> {
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
     #[builder(default, private, setter(into, name = "_labels"))]
-    pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) labels: Option<BTreeMap<Cow<'a, str>, Labels<'a>>>,
 
     #[builder(default, setter(into))]
     pub(crate) links: Option<Vec<Links<'a>>>,
@@ -290,7 +298,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<Labels<'a>>,
     {
         self.labels
             .get_or_insert(None)

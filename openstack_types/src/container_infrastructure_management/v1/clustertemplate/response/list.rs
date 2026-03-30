@@ -161,7 +161,7 @@ pub struct ClustertemplateResponse {
     /// driver.
     #[serde(default)]
     #[structable(optional, serialize, wide)]
-    pub labels: Option<BTreeMap<String, String>>,
+    pub labels: Option<BTreeMap<String, f64>>,
 
     /// The flavor of the master node for this cluster template.
     #[serde(default)]

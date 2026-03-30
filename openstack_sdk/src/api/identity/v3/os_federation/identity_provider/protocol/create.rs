@@ -17,7 +17,7 @@
 
 //! Create protocol for an IDP.
 //!
-//! PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+//! PUT /OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

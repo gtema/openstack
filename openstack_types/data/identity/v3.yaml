@@ -795,7 +795,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_FederationIdentity_ProvidersProtocolPatchRequest'
+              $ref: '#/components/schemas/Os_FederationIdentity_ProvidersProtocolPatch'
       responses:
         '200':
           content:
@@ -813,14 +813,14 @@ paths:
       description: |-
         Create protocol for an IDP.
 
-        PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+        PUT /OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
       operationId: 
         OS-FEDERATION/identity_providers/idp_id/protocols/protocol_id:put
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Os_FederationIdentity_ProvidersProtocolPutRequest'
+              $ref: '#/components/schemas/Os_FederationIdentity_ProvidersProtocolPut'
       responses:
         '201':
           content:
@@ -11803,9 +11803,11 @@ components:
                 - 'null'
                 - string
             enabled:
-              description: Indicates whether the endpoint appears in the service
-                catalog -false. The endpoint does not appear in the service 
-                catalog. -true. The endpoint appears in the service catalog.
+              description: |-
+                Indicates whether the endpoint appears in the
+                service catalog: - `false`. The endpoint does not appear in the
+                service catalog. - `true`. The endpoint appears in the service
+                catalog.
               type: boolean
             interface:
               description: |-
@@ -13540,6 +13542,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
+                maxLength: 64
                 type: string
               type:
                 - array
@@ -13641,6 +13644,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
+                maxLength: 64
                 type: string
               type:
                 - array
@@ -13725,11 +13729,12 @@ components:
               type: string
           type: object
       type: object
-    Os_FederationIdentity_ProvidersProtocolPatchRequest:
+    Os_FederationIdentity_ProvidersProtocolPatch:
       additionalProperties: false
       properties:
         protocol:
           additionalProperties: false
+          minProperties: 1
           properties:
             mapping_id:
               maxLength: 64
@@ -13737,9 +13742,7 @@ components:
               type: string
             remote_id_attribute:
               maxLength: 64
-              type:
-                - 'null'
-                - string
+              type: string
           required:
             - mapping_id
           type: object
@@ -13761,7 +13764,7 @@ components:
               type: string
           type: object
       type: object
-    Os_FederationIdentity_ProvidersProtocolPutRequest:
+    Os_FederationIdentity_ProvidersProtocolPut:
       additionalProperties: false
       properties:
         protocol:

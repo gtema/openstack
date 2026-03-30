@@ -387,7 +387,11 @@ impl ClustertemplateCommand {
 
         // Set Request.labels data
         if let Some(arg) = &self.labels {
-            ep_builder.labels(arg.iter().cloned());
+            let mut data: Vec<(String, create::Labels)> = Vec::new();
+            for (k, v) in arg.iter() {
+                data.push((k.clone(), serde_json::from_str(v)?));
+            }
+            ep_builder.labels(data.into_iter());
         }
 
         // Set Request.links data

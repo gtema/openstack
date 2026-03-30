@@ -88,9 +88,9 @@ struct Endpoint {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "description")]
     no_description: bool,
 
-    /// Indicates whether the endpoint appears in the service catalog -false.
-    /// The endpoint does not appear in the service catalog. -true. The
-    /// endpoint appears in the service catalog.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
