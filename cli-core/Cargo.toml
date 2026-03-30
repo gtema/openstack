@@ -1,0 +1,48 @@
+[package]
+name = "openstack-cli-core"
+description = "OpenStack CLI core"
+version = "0.13.5"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+clap = { workspace = true }
+clap_complete = { workspace = true }
+comfy-table = { version = "^7.2" }
+config.workspace = true
+dialoguer = { workspace = true }
+dirs = { workspace = true }
+eyre = { workspace = true }
+http = { workspace = true }
+indicatif = "^0.18"
+itertools = { workspace = true }
+#openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false }
+openstack-sdk-auth-core = { path="../auth-core", version = "^0.22", default-features = false }
+openstack-sdk-core = { path="../sdk-core", version = "^0.22", default-features = false }
+owo-colors = { version = "^4.3", features = ["supports-colors"] }
+rand = { version = "^0.10" }
+reqwest = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = {workspace = true}
+structable = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs", "io-std"]}
+tokio-util = {workspace = true}
+tracing = { workspace = true}
+tracing-subscriber = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+#assert_cmd = "^2.2"
+#futures.workspace = true
+#md5 = "^0.8.0"
+#rand = "^0.10"
+tempfile = { workspace = true }
+
+[lints]
+workspace = true

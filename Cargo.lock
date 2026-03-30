@@ -2748,6 +2748,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-cli-core"
+version = "0.13.5"
+dependencies = [
+ "base64 0.22.1",
+ "clap",
+ "clap_complete",
+ "comfy-table",
+ "config",
+ "dialoguer",
+ "dirs",
+ "eyre",
+ "http",
+ "indicatif",
+ "itertools",
+ "openstack-sdk-auth-core",
+ "openstack-sdk-core",
+ "owo-colors",
+ "rand 0.10.0",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "structable",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
 name = "openstack-sdk-auth-applicationcredential"
 version = "0.1.0"
 dependencies = [
@@ -3062,20 +3094,15 @@ dependencies = [
  "clap",
  "clap_complete",
  "color-eyre",
- "comfy-table",
- "config",
  "dialoguer",
- "dirs",
  "eyre",
  "futures",
  "http",
- "indicatif",
- "itertools",
  "json-patch",
  "md5",
+ "openstack-cli-core",
  "openstack_sdk",
  "openstack_types",
- "owo-colors",
  "rand 0.10.0",
  "regex",
  "reqwest",
@@ -3087,7 +3114,6 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.18",
  "tokio",
- "tokio-util",
  "tracing",
  "tracing-subscriber",
  "url",

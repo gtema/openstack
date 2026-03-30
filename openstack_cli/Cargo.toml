@@ -61,23 +61,17 @@ _test_net_vpn = []
 [dependencies]
 base64 = { workspace = true }
 bytes = { workspace = true }
-config.workspace = true
 chrono = { workspace= true }
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
 color-eyre = { workspace = true }
-comfy-table = { version = "^7.2" }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
-dirs = { workspace = true }
 eyre = { workspace = true }
 http = { workspace = true }
-itertools = { workspace = true }
 json-patch = { workspace = true }
+openstack-cli-core = { path="../cli-core", version = "^0.13" }
 openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
 openstack_types = { path="../openstack_types", version = "^0.22" }
-owo-colors = { version = "^4.3", features = ["supports-colors"] }
-indicatif = "^0.18"
-rand = { version = "^0.10" }
 regex = { workspace = true }
 reqwest = { workspace = true }
 secrecy.workspace = true
@@ -85,8 +79,7 @@ serde = { workspace = true }
 serde_json = {workspace = true}
 strip-ansi-escapes = { workspace = true }
 structable = { workspace = true }
-tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std"]}
-tokio-util = {workspace = true}
+tokio = { workspace = true, features = ["macros", "net", "sync", "rt-multi-thread"]}
 thiserror = { workspace = true }
 tracing = { workspace = true}
 tracing-subscriber = { workspace = true }

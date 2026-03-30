@@ -32,6 +32,11 @@ use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::{
+    build_http_requests_timing_table,
+    tracing_stats::{HttpRequestStats, RequestTracingCollector},
+};
 use openstack_sdk::{
     AsyncOpenStack,
     auth::auth_helper::{Dialoguer, ExternalCmd, Noop},
@@ -55,21 +60,12 @@ pub mod network;
 pub mod object_store;
 pub mod placement;
 
-mod tracing_stats;
-
 pub mod cli;
 pub mod error;
 pub mod output;
 
-use crate::error::OpenStackCliError;
-use crate::tracing_stats::{HttpRequestStats, RequestTracingCollector};
-
 pub use cli::Cli;
 use cli::TopLevelCommands;
-
-use comfy_table::ContentArrangement;
-use comfy_table::Table;
-use comfy_table::presets::UTF8_FULL_CONDENSED;
 
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {
@@ -239,21 +235,4 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     }
 
     res
-}
-
-/// Build a table of HTTP request timings
-fn build_http_requests_timing_table(data: &HttpRequestStats) -> Table {
-    let mut table = Table::new();
-    table
-        .load_preset(UTF8_FULL_CONDENSED)
-        .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_header(Vec::from(["Url", "Method", "Duration (ms)"]));
-
-    let mut total_http_duration: u128 = 0;
-    for rec in data.summarize_by_url_method() {
-        total_http_duration += rec.2;
-        table.add_row(vec![rec.0, rec.1, rec.2.to_string()]);
-    }
-    table.add_row(vec!["Total", "", &total_http_duration.to_string()]);
-    table
 }
