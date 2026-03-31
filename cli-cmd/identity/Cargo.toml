@@ -28,5 +28,6 @@ webauthn-rs-proto = { workspace = true, optional = true }
 workspace = true
 
 [features]
+default = []
 keystone_ng = ["openstack_sdk/keystone_ng", "openstack_types/keystone_ng"]
 passkey = ["keystone_ng", "openstack_sdk/passkey", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto", "dep:base64"]

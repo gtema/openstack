@@ -1,33 +1,25 @@
 ################
 ##### chef
-FROM rust:1.94.0-slim@sha256:d6782f2b326a10eaf593eb90cafc34a03a287b4a25fe4d0c693c90304b06f6d7 AS chef
-
-RUN rustup target add x86_64-unknown-linux-musl &&\
-    apt update && \
-    apt install -y musl-tools musl-dev && \
-    update-ca-certificates
+FROM rust:1.94.1-slim-trixie AS base
 
 RUN cargo install --locked cargo-chef
 WORKDIR app
 
 ################
 ##### Planner
-FROM chef as planner
+FROM base AS planner
 COPY . .
 # Prepare the build recipe
 RUN cargo chef prepare --recipe-path recipe.json
 
 ################
 ##### Builder
-FROM chef AS builder
+FROM base AS builder
 
 RUN rustup target add x86_64-unknown-linux-musl &&\
     apt update && \
     apt install -y musl-tools musl-dev && \
     update-ca-certificates
-
-## ## Install target platform (Cross-Compilation) --> Needed for Alpine
-#RUN rustup target add x86_64-unknown-linux-musl
 
 # Copy the build recipe
 COPY --from=planner /app/recipe.json recipe.json

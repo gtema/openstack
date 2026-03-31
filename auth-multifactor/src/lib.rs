@@ -272,7 +272,7 @@ mod tests {
                         "type": "string",
                         "description": "User ID",
                     },
-                    "user_name": {
+                    "username": {
                         "type": "string",
                         "description": "User name",
                     },
@@ -288,6 +288,7 @@ mod tests {
             })
         );
     }
+
     #[tokio::test]
     async fn test_auth() {
         let server = MockServer::start_async().await;
@@ -304,9 +305,11 @@ mod tests {
                                 "token": {
                                     "id": "secret",
                                 },
-                                "user": {
-                                    "id": "uid",
-                                    "passcode": "passcode"
+                                "totp": {
+                                    "user": {
+                                        "id": "uid",
+                                        "passcode": "passcode"
+                                    }
                                 }
                             }
                         }
@@ -332,10 +335,17 @@ mod tests {
                         "auth": {
                             "identity": {
                                 "methods": ["password", "totp"],
-                                "user": {
-                                    "id": "uid",
-                                    "password": "password",
-                                    "passcode": "passcode"
+                                "password": {
+                                    "user": {
+                                        "id": "uid",
+                                        "password": "password",
+                                    }
+                                },
+                                "totp": {
+                                    "user": {
+                                        "id": "uid",
+                                        "passcode": "passcode"
+                                    }
                                 }
                             }
                         }
