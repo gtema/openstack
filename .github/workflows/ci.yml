@@ -12,10 +12,13 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
       - '.github/workflows/ci.yml'
+      - 'auth-*/**'
+      - 'cli-*/**'
       - 'openstack_cli/**'
       - 'openstack_sdk/**'
       - 'openstack_tui/**'
       - 'openstack_types/**'
+      - 'sdk-*/**'
       - 'fuzz/**'
 
 env:

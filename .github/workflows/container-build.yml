@@ -10,8 +10,11 @@ on:
       - 'Cargo.lock'
       - '.github/workflows/container-build.yml'
       - '.github/workflows/container-publish.yml'
+      - 'auth-*/**'
+      - 'cli-*/**'
       - 'openstack_cli/**'
       - 'openstack_sdk/**'
+      - 'sdk-*/**'
       - 'Dockerfile'
       - '.dockerignore'
 

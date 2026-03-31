@@ -11,8 +11,11 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
       - '.github/workflows/functional.yml'
+      - 'auth-*/**'
+      - 'cli-*/**'
       - 'openstack_cli/**'
       - 'openstack_sdk/**'
+      - 'sdk-*/**'
 
 jobs:
   functional:
