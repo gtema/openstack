@@ -23,13 +23,12 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_volume::create_30;
 use openstack_types::block_storage::v3::manageable_volume::response::create::ManageableVolumeResponse;
@@ -159,7 +158,7 @@ struct Volume {
     /// reference depends on the volume driver implementation. For details
     /// about the required elements in the structure, see the documentation for
     /// the volume driver.
-    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     _ref: Value,
 
     /// The volume name.
@@ -173,9 +172,9 @@ struct Volume {
 
 impl ManageableVolumeCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create ManageableVolume");

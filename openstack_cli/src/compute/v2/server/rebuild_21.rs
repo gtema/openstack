@@ -23,14 +23,13 @@ use clap::Args;
 use eyre::WrapErr;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
 use clap::ValueEnum;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::rebuild_21;
 use serde_json::Value;
@@ -138,7 +137,7 @@ struct Rebuild {
     /// **Available until version 2.56**
     ///
     /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     personality: Option<Vec<Value>>,
 
     /// Indicates whether the server is rebuilt with the preservation of the
@@ -155,9 +154,9 @@ struct Rebuild {
 
 impl ServerCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Action Server");

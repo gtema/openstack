@@ -23,14 +23,13 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
 use eyre::eyre;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::os_inherit::domain::group::role::inherited_to_project::inherited_to_projects;
@@ -107,9 +106,9 @@ struct DomainInput {
 
 impl InheritedToProjectCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Action InheritedToProject");

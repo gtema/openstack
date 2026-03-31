@@ -23,11 +23,10 @@ use clap::Args;
 use eyre::WrapErr;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
-
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
@@ -164,7 +163,7 @@ struct L7policy {
     redirect_url: Option<String>,
 
     /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     rules: Option<Vec<Value>>,
 
     /// Parameter is an array, may be provided multiple times.
@@ -177,9 +176,9 @@ struct L7policy {
 
 impl L7PolicyCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create L7Policy");

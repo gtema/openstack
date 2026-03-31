@@ -22,14 +22,13 @@
 use clap::Args;
 use tracing::info;
 
+use openstack_cli_core::cli::CliArgs;
+use openstack_cli_core::error::OpenStackCliError;
+use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use crate::Cli;
-use crate::OpenStackCliError;
-use crate::output::OutputProcessor;
-
-use crate::common::parse_key_val;
 use clap::ValueEnum;
+use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::create;
 use openstack_types::container_infrastructure_management::v1::clustertemplate::response::create::ClustertemplateResponse;
@@ -166,7 +165,7 @@ pub struct ClustertemplateCommand {
     labels: Option<Vec<(String, String)>>,
 
     /// Parameter is an array, may be provided multiple times.
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=crate::common::parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
     links: Option<Vec<Value>>,
 
     /// The flavor of the master node for this cluster template.
@@ -272,9 +271,9 @@ enum ServerType {
 
 impl ClustertemplateCommand {
     /// Perform command action
-    pub async fn take_action(
+    pub async fn take_action<C: CliArgs>(
         &self,
-        parsed_args: &Cli,
+        parsed_args: &C,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Create Clustertemplate");
