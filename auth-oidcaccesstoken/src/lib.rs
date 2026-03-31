@@ -91,7 +91,7 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         )?;
 
         let request = http_client.post(endpoint).build()?;
-        let response = execute_auth_request(&http_client, request).await?;
+        let response = execute_auth_request(http_client, request).await?;
 
         let auth_token = AuthToken::from_reqwest_response(response).await?;
 

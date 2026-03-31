@@ -20,7 +20,7 @@ use clap::{Arg, ArgMatches, Command, CommandFactory};
 use mdbook::book::Book;
 use mdbook::errors::Error;
 use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
-use mdbook::{book::Chapter, BookItem};
+use mdbook::{BookItem, book::Chapter};
 use openstack_cli::Cli;
 use regex::{Error as RegexError, Regex};
 use semver::{Version, VersionReq};

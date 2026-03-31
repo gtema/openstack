@@ -15,26 +15,9 @@
 use clap::Parser;
 
 use openstack_cli_core::cli::{CliArgs, CompletionCommand, GlobalOpts, parse_config, styles};
+use openstack_cli_core::config::Config;
+use openstack_cli_core::error::OpenStackCliError;
 use openstack_sdk::AsyncOpenStack;
-
-use crate::error::OpenStackCliError;
-
-use crate::api;
-use crate::auth;
-use crate::block_storage::v3 as block_storage;
-use crate::catalog;
-use crate::compute::v2 as compute;
-use crate::config::Config;
-use crate::container_infrastructure_management::v1 as container_infra;
-use crate::dns::v2 as dns;
-use crate::identity::v3 as identity;
-#[cfg(feature = "keystone_ng")]
-use crate::identity::v4 as identity_v4;
-use crate::image::v2 as image;
-use crate::load_balancer::v2 as load_balancer;
-use crate::network::v2 as network;
-use crate::object_store::v1 as object_store;
-use crate::placement::v1 as placement;
 
 /// OpenStack command line interface.
 ///
@@ -129,22 +112,24 @@ impl CliArgs for Cli {
 #[allow(missing_docs)]
 #[derive(Parser)]
 pub enum TopLevelCommands {
-    Api(api::ApiCommand),
-    Auth(auth::AuthCommand),
-    BlockStorage(block_storage::BlockStorageCommand),
-    Catalog(catalog::CatalogCommand),
-    Compute(compute::ComputeCommand),
+    Api(openstack_cli_api::ApiCommand),
+    Auth(openstack_cli_auth::AuthCommand),
+    BlockStorage(openstack_cli_block_storage::v3::BlockStorageCommand),
+    Catalog(openstack_cli_catalog::CatalogCommand),
+    Compute(openstack_cli_compute::v2::ComputeCommand),
     #[command(aliases = ["container-infrastructure-management", "container"])]
-    ContainerInfrastructure(container_infra::ContainerInfrastructureCommand),
-    Dns(dns::DnsCommand),
-    Identity(identity::IdentityCommand),
+    ContainerInfrastructure(
+        openstack_cli_container_infrastructure_management::v1::ContainerInfrastructureCommand,
+    ),
+    Dns(openstack_cli_dns::v2::DnsCommand),
+    Identity(openstack_cli_identity::v3::IdentityCommand),
     #[cfg(feature = "keystone_ng")]
-    Identity4(identity_v4::IdentityCommand),
-    Image(image::ImageCommand),
-    LoadBalancer(load_balancer::LoadBalancerCommand),
-    Network(network::NetworkCommand),
-    ObjectStore(object_store::ObjectStoreCommand),
-    Placement(placement::PlacementCommand),
+    Identity4(openstack_cli_identity::v4::IdentityCommand),
+    Image(openstack_cli_image::v2::ImageCommand),
+    LoadBalancer(openstack_cli_load_balancer::v2::LoadBalancerCommand),
+    Network(openstack_cli_network::v2::NetworkCommand),
+    ObjectStore(openstack_cli_object_store::v1::ObjectStoreCommand),
+    Placement(openstack_cli_placement::v1::PlacementCommand),
     Completion(CompletionCommand),
 }
 

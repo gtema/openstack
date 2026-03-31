@@ -15,11 +15,25 @@ members = [
   "auth-websso",
   "sdk-core",
   "openstack_sdk",
+  "cli-core",
+  "cli-cmd/api",
+  "cli-cmd/auth",
+  "cli-cmd/block-storage",
+  "cli-cmd/catalog",
+  "cli-cmd/compute",
+  "cli-cmd/container-infrastructure-management",
+  "cli-cmd/dns",
+  "cli-cmd/identity",
+  "cli-cmd/image",
+  "cli-cmd/load-balancer",
+  "cli-cmd/network",
+  "cli-cmd/object-store",
+  "cli-cmd/placement",
   "openstack_cli",
   "openstack_tui",
   "openstack_types",
   "xtask",
-  "fuzz", "cli-core", 
+  "fuzz",
 ]
 default-members = ["openstack_cli", "openstack_sdk", "openstack_tui", "openstack_types"]
 
@@ -92,3 +106,4 @@ result_large_err = "allow"
 unwrap_used = "deny"
 expect_used = "deny"
 enum_glob_use = "deny"
+module_inception = "allow"

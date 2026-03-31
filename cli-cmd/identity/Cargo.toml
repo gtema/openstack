@@ -1,0 +1,32 @@
+[package]
+name = "openstack-cli-identity"
+description = "OpenStack CLI Identity commands"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+base64 = { workspace = true, optional = true }
+clap.workspace = true
+dialoguer.workspace = true
+openstack-cli-core = { version = "0.13", path = "../../cli-core/" }
+openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
+openstack-sdk-core = { path="../../sdk-core", version = "^0.22" }
+openstack_types = { path="../../openstack_types", version = "^0.22" }
+eyre.workspace = true
+http.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+webauthn-authenticator-rs = { workspace = true, optional = true }
+webauthn-rs-proto = { workspace = true, optional = true }
+
+[lints]
+workspace = true
+
+[features]
+keystone_ng = ["openstack_sdk/keystone_ng", "openstack_types/keystone_ng"]
+passkey = ["keystone_ng", "openstack_sdk/passkey", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto", "dep:base64"]

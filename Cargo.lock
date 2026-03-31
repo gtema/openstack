@@ -2748,6 +2748,95 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-cli-api"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack_sdk",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-auth"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "clap",
+ "eyre",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "structable",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-block-storage"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-catalog"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "serde",
+ "serde_json",
+ "structable",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-compute"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-container-infrastructure-management"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
 name = "openstack-cli-core"
 version = "0.13.5"
 dependencies = [
@@ -2777,6 +2866,120 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "url",
+]
+
+[[package]]
+name = "openstack-cli-dns"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-identity"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "clap",
+ "dialoguer",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+ "webauthn-authenticator-rs",
+ "webauthn-rs-proto",
+]
+
+[[package]]
+name = "openstack-cli-image"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "json-patch",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-load-balancer"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-network"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-object-store"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "regex",
+ "serde",
+ "serde_json",
+ "structable",
+ "tracing",
+]
+
+[[package]]
+name = "openstack-cli-placement"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack-sdk-core",
+ "openstack_sdk",
+ "openstack_types",
+ "serde_json",
+ "tracing",
 ]
 
 [[package]]
@@ -3088,9 +3291,6 @@ name = "openstack_cli"
 version = "0.13.5"
 dependencies = [
  "assert_cmd",
- "base64 0.22.1",
- "bytes",
- "chrono",
  "clap",
  "clap_complete",
  "color-eyre",
@@ -3098,27 +3298,30 @@ dependencies = [
  "eyre",
  "futures",
  "http",
- "json-patch",
  "md5",
+ "openstack-cli-api",
+ "openstack-cli-auth",
+ "openstack-cli-block-storage",
+ "openstack-cli-catalog",
+ "openstack-cli-compute",
+ "openstack-cli-container-infrastructure-management",
  "openstack-cli-core",
+ "openstack-cli-dns",
+ "openstack-cli-identity",
+ "openstack-cli-image",
+ "openstack-cli-load-balancer",
+ "openstack-cli-network",
+ "openstack-cli-object-store",
+ "openstack-cli-placement",
  "openstack_sdk",
- "openstack_types",
  "rand 0.10.0",
- "regex",
  "reqwest",
- "secrecy",
- "serde",
  "serde_json",
  "strip-ansi-escapes",
- "structable",
  "tempfile",
- "thiserror 2.0.18",
  "tokio",
  "tracing",
  "tracing-subscriber",
- "url",
- "webauthn-authenticator-rs",
- "webauthn-rs-proto",
 ]
 
 [[package]]
