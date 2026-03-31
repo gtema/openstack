@@ -11,7 +11,6 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-
 [dependencies]
 async-trait.workspace = true
 bytes.workspace = true
@@ -20,7 +19,7 @@ derive_builder.workspace = true
 dyn-clone = { version = "1.0" }
 http.workspace = true
 inventory.workspace = true
-reqwest = { workspace = true, features = ["json"] }
+reqwest = { workspace = true, default-features = false, features = ["json"] }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

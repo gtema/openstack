@@ -69,8 +69,7 @@ openstack-sdk-auth-token = { version = "0.1", path = "../auth-token/" }
 openstack-sdk-auth-totp = { version = "0.1", path = "../auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.1", path = "../auth-websso/" }
 openstack-sdk-core = { path = "../sdk-core/", version = "^0.22" }
-reqwest = { workspace = true, features = ["gzip", "deflate", "form", "json", "http2",
-  "socks", "system-proxy"] }
+reqwest = { workspace = true, features = ["rustls", "stream", "gzip", "deflate", "http2", "socks", "system-proxy"] }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
