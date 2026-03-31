@@ -16,7 +16,7 @@ default = [
   "async",
   "sync",
 ]
-sync = []
+sync = ["reqwest/blocking"]
 async = []
 
 [dependencies]
@@ -37,8 +37,7 @@ itertools.workspace = true
 openstack-sdk-auth-core = { version = "0.22", path = "../auth-core/" }
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 regex.workspace = true
-reqwest = { workspace = true, features = ["gzip", "deflate", "form", "json", "http2",
-  "socks", "system-proxy"] }
+reqwest = { workspace = true, default-features = false }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
