@@ -17,9 +17,9 @@
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::find::Findable;
-use crate::api::rest_endpoint_prelude::*;
-use crate::api::{ApiError, RestClient};
+use openstack_sdk_core::api::Findable;
+use openstack_sdk_core::api::rest_endpoint_prelude::*;
+use openstack_sdk_core::api::{ApiError, RestClient};
 
 use crate::api::network::v2::address_scope::{get as Get, list as List};
 

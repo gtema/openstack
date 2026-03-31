@@ -28,7 +28,7 @@
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::rest_endpoint_prelude::*;
+use openstack_sdk_core::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
@@ -213,13 +213,14 @@ impl RestEndpoint for Request<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[cfg(feature = "sync")]
-    use crate::api::Query;
-    use crate::test::client::FakeOpenStackClient;
-    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use httpmock::MockServer;
+    #[cfg(feature = "sync")]
+    use openstack_sdk_core::api::Query;
+    use openstack_sdk_core::types::ServiceType;
     use serde_json::json;
+
+    use crate::test::client::FakeOpenStackClient;
 
     #[test]
     fn test_service_type() {
