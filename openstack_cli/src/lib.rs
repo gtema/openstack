@@ -32,6 +32,7 @@ use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
+use openstack_cli_auth as auth;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::{
     build_http_requests_timing_table,
@@ -44,25 +45,8 @@ use openstack_sdk::{
     types::identity::v3::Project,
 };
 
-pub mod api;
-pub mod auth;
-pub mod block_storage;
-pub mod catalog;
-mod common;
-pub mod compute;
-pub mod config;
-pub mod container_infrastructure_management;
-pub mod dns;
-pub mod identity;
-pub mod image;
-pub mod load_balancer;
-pub mod network;
-pub mod object_store;
-pub mod placement;
-
 pub mod cli;
 pub mod error;
-pub mod output;
 
 pub use cli::Cli;
 use cli::TopLevelCommands;

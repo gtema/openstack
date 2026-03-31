@@ -1,0 +1,24 @@
+[package]
+name = "openstack-cli-container-infrastructure-management"
+description = "OpenStack CLI Container infra commands"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap = { workspace = true }
+openstack-cli-core = { version = "0.13", path = "../../cli-core/" }
+openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "container_infra"] }
+openstack-sdk-core = { path="../../sdk-core", version = "^0.22" }
+openstack_types = { path="../../openstack_types", version = "^0.22" }
+eyre = { workspace = true }
+http = { workspace = true }
+serde_json = {workspace = true}
+tracing = { workspace = true}
+
+[lints]
+workspace = true
