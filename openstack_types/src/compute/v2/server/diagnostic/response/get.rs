@@ -17,8 +17,6 @@
 //! Response type for the GET `servers/{server_id}/diagnostics` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// Diagnostic response representation
@@ -27,9 +25,8 @@ pub struct DiagnosticResponse {
     /// Indicates whether or not a config drive was used for this server.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional)]
-    pub config_drive: Option<bool>,
+    #[structable()]
+    pub config_drive: bool,
 
     /// The list of dictionaries with detailed information about VM CPUs.
     /// Following fields are presented in each dictionary:
@@ -39,9 +36,8 @@ pub struct DiagnosticResponse {
     /// - `utilisation` - CPU utilisation in percents (Integer)
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub cpu_details: Option<Vec<BTreeMap<String, Value>>>,
+    #[structable(serialize)]
+    pub cpu_details: Vec<CpuDetails>,
 
     /// The list of dictionaries with detailed information about VM disks.
     /// Following fields are presented in each dictionary:
@@ -53,9 +49,8 @@ pub struct DiagnosticResponse {
     /// - `errors_count` - Disk errors (Integer)
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub disk_details: Option<Vec<BTreeMap<String, Value>>>,
+    #[structable(serialize)]
+    pub disk_details: Vec<DiskDetails>,
 
     /// The driver on which the VM is running. Possible values are:
     ///
@@ -65,28 +60,21 @@ pub struct DiagnosticResponse {
     /// - `ironic`
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub driver: Option<Driver>,
+    #[structable(serialize)]
+    pub driver: Driver,
 
     /// The hypervisor on which the VM is running. Examples for libvirt driver
     /// may be: `qemu`, `kvm` or `xen`.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub hypervisor: Option<String>,
 
     /// The hypervisor OS.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub hypervisor_os: Option<String>,
-
-    /// Id of the resource
-    #[structable()]
-    pub id: String,
 
     /// The dictionary with information about VM memory usage. Following fields
     /// are presented in the dictionary:
@@ -96,13 +84,8 @@ pub struct DiagnosticResponse {
     ///   operating system and its applications in MiB (Integer)
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub memory_details: Option<Vec<BTreeMap<String, Value>>>,
-
-    /// Name
-    #[structable()]
-    pub name: String,
+    #[structable(serialize)]
+    pub memory_details: MemoryDetails,
 
     /// The list of dictionaries with detailed information about VM NICs.
     /// Following fields are presented in each dictionary:
@@ -120,28 +103,24 @@ pub struct DiagnosticResponse {
     /// - `tx_rate` - Transmit rate in bytes (Integer)
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub nic_details: Option<Vec<NicDetails>>,
+    #[structable(serialize)]
+    pub nic_details: Vec<NicDetails>,
 
     /// The number of vCPUs.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub num_cpus: Option<i32>,
 
     /// The number of disks.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub num_disks: Option<i32>,
 
     /// The number of vNICs.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub num_nics: Option<i32>,
 
@@ -156,24 +135,36 @@ pub struct DiagnosticResponse {
     /// - `suspended`
     ///
     /// **New in version 2.48**
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub state: Option<State>,
+    #[structable(serialize)]
+    pub state: State,
 
     /// The amount of time in seconds that the VM has been running.
     ///
     /// **New in version 2.48**
-    #[serde(default)]
     #[structable(optional)]
     pub uptime: Option<i32>,
 }
 
+/// `CpuDetails` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct CpuDetails {
+    pub id: Option<i32>,
+    pub time: Option<i32>,
+    pub utilisation: Option<i32>,
+}
+
+/// `DiskDetails` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct DiskDetails {
+    pub errors_count: Option<i32>,
+    pub read_bytes: Option<i32>,
+    pub read_requests: Option<i32>,
+    pub write_bytes: Option<i32>,
+    pub write_requests: Option<i32>,
+}
+
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Driver {
-    // Hyperv
-    #[serde(rename = "hyperv")]
-    Hyperv,
-
     // Ironic
     #[serde(rename = "ironic")]
     Ironic,
@@ -195,7 +186,6 @@ impl std::str::FromStr for Driver {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "hyperv" => Ok(Self::Hyperv),
             "ironic" => Ok(Self::Ironic),
             "libvirt" => Ok(Self::Libvirt),
             "vmwareapi" => Ok(Self::Vmwareapi),
@@ -205,30 +195,34 @@ impl std::str::FromStr for Driver {
     }
 }
 
+/// The dictionary with information about VM memory usage. Following fields are
+/// presented in the dictionary:
+///
+/// - `maximum` - Amount of memory provisioned for the VM in MiB (Integer)
+/// - `used` - Amount of memory that is currently used by the guest operating
+///   system and its applications in MiB (Integer)
+///
+/// **New in version 2.48**
+/// `MemoryDetails` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MemoryDetails {
+    pub maximum: Option<i32>,
+    pub used: Option<i32>,
+}
+
 /// `NicDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NicDetails {
-    #[serde(default)]
     pub mac_address: Option<String>,
-    #[serde(default)]
     pub rx_drop: Option<i32>,
-    #[serde(default)]
     pub rx_errors: Option<i32>,
-    #[serde(default)]
     pub rx_octets: Option<i32>,
-    #[serde(default)]
     pub rx_packets: Option<i32>,
-    #[serde(default)]
     pub rx_rate: Option<i32>,
-    #[serde(default)]
     pub tx_drop: Option<i32>,
-    #[serde(default)]
     pub tx_errors: Option<i32>,
-    #[serde(default)]
     pub tx_octets: Option<i32>,
-    #[serde(default)]
     pub tx_packets: Option<i32>,
-    #[serde(default)]
     pub tx_rate: Option<i32>,
 }
 

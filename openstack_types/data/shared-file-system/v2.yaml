@@ -4177,7 +4177,7 @@ components:
         default: created_at
         description: "The key to sort a list of resource locks. A valid value\nis
           ``id``, ``resource_id``, ``resource_type``, ``resource_action``,\n``user_id``,
-          ``project_id``, ``created_at``, ``updated_act``,\n``lock_context``.\n"
+          ``project_id``, ``created_at``, ``updated_at``,\n``lock_context``.\n"
         type: string
       x-openstack:
         min-ver: '2.81'

@@ -46324,6 +46324,7 @@ components:
           type: array
       type: object
     ServersDiagnosticsListResponse:
+      additionalProperties: false
       properties:
         config_drive:
           description: |-
@@ -46331,8 +46332,6 @@ components:
 
             **New in version 2.48**
           type: boolean
-          x-openstack:
-            min-ver: '2.48'
         cpu_details:
           description: |-
             The list of dictionaries with detailed information about VM CPUs.
@@ -46344,10 +46343,26 @@ components:
 
             **New in version 2.48**
           items:
+            additionalProperties: false
+            properties:
+              id:
+                type:
+                  - integer
+                  - 'null'
+              time:
+                type:
+                  - integer
+                  - 'null'
+              utilisation:
+                type:
+                  - integer
+                  - 'null'
+            required:
+              - id
+              - time
+              - utilisation
             type: object
           type: array
-          x-openstack:
-            min-ver: '2.48'
         disk_details:
           description: |-
             The list of dictionaries with detailed information about VM disks.
@@ -46361,10 +46376,36 @@ components:
 
             **New in version 2.48**
           items:
+            additionalProperties: false
+            properties:
+              errors_count:
+                type:
+                  - integer
+                  - 'null'
+              read_bytes:
+                type:
+                  - integer
+                  - 'null'
+              read_requests:
+                type:
+                  - integer
+                  - 'null'
+              write_bytes:
+                type:
+                  - integer
+                  - 'null'
+              write_requests:
+                type:
+                  - integer
+                  - 'null'
+            required:
+              - errors_count
+              - read_bytes
+              - read_requests
+              - write_bytes
+              - write_requests
             type: object
           type: array
-          x-openstack:
-            min-ver: '2.48'
         driver:
           description: |-
             The driver on which the VM is running. Possible values are:
@@ -46376,37 +46417,30 @@ components:
 
             **New in version 2.48**
           enum:
-            - hyperv
             - ironic
             - libvirt
             - vmwareapi
             - xenapi
           type: string
-          x-openstack:
-            min-ver: '2.48'
         hypervisor:
           description: |-
             The hypervisor on which the VM is running. Examples for libvirt driver
             may be: `qemu`, `kvm` or `xen`.
 
             **New in version 2.48**
-          type: string
-          x-openstack:
-            min-ver: '2.48'
+          type:
+            - 'null'
+            - string
         hypervisor_os:
           description: |-
             The hypervisor OS.
 
             **New in version 2.48**
-          type: string
-          x-openstack:
-            min-ver: '2.48'
-        id:
-          description: Id of the resource
-          format: uuid
-          readOnly: true
-          type: string
+          type:
+            - 'null'
+            - string
         memory_details:
+          additionalProperties: false
           description: |-
             The dictionary with information about VM memory usage.
             Following fields are presented in the dictionary:
@@ -46416,14 +46450,19 @@ components:
               system and its applications in MiB (Integer)
 
             **New in version 2.48**
-          items:
-            type: object
-          type: array
-          x-openstack:
-            min-ver: '2.48'
-        name:
-          description: Name
-          type: string
+          properties:
+            maximum:
+              type:
+                - integer
+                - 'null'
+            used:
+              type:
+                - integer
+                - 'null'
+          required:
+            - maximum
+            - used
+          type: object
         nic_details:
           description: |-
             The list of dictionaries with detailed information about VM NICs.
@@ -46443,68 +46482,90 @@ components:
 
             **New in version 2.48**
           items:
+            additionalProperties: false
             properties:
               mac_address:
-                description: ''
-                type: string
+                type:
+                  - 'null'
+                  - string
               rx_drop:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               rx_errors:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               rx_octets:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               rx_packets:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               rx_rate:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               tx_drop:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               tx_errors:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               tx_octets:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               tx_packets:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
               tx_rate:
-                description: ''
-                type: integer
+                type:
+                  - integer
+                  - 'null'
+            required:
+              - mac_address
+              - rx_drop
+              - rx_errors
+              - rx_octets
+              - rx_packets
+              - rx_rate
+              - tx_drop
+              - tx_errors
+              - tx_octets
+              - tx_packets
+              - tx_rate
             type: object
           type: array
-          x-openstack:
-            min-ver: '2.48'
         num_cpus:
           description: |-
             The number of vCPUs.
 
             **New in version 2.48**
-          type: integer
-          x-openstack:
-            min-ver: '2.48'
+          type:
+            - integer
+            - 'null'
         num_disks:
           description: |-
             The number of disks.
 
             **New in version 2.48**
-          type: integer
-          x-openstack:
-            min-ver: '2.48'
+          type:
+            - integer
+            - 'null'
         num_nics:
           description: |-
             The number of vNICs.
 
             **New in version 2.48**
-          type: integer
-          x-openstack:
-            min-ver: '2.48'
+          type:
+            - integer
+            - 'null'
         state:
           description: |-
             A string enum denoting the current state of the VM. Possible values are:
@@ -46525,19 +46586,28 @@ components:
             - shutdown
             - suspended
           type: string
-          x-openstack:
-            min-ver: '2.48'
         uptime:
           description: |-
             The amount of time in seconds that the VM has been running.
 
             **New in version 2.48**
-          type: integer
-          x-openstack:
-            min-ver: '2.48'
+          type:
+            - integer
+            - 'null'
       required:
-        - id
-        - name
+        - config_drive
+        - cpu_details
+        - disk_details
+        - driver
+        - hypervisor
+        - hypervisor_os
+        - memory_details
+        - nic_details
+        - num_cpus
+        - num_disks
+        - num_nics
+        - state
+        - uptime
       type: object
     ServersIpShowResponse:
       additionalProperties:
