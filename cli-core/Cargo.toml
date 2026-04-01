@@ -21,8 +21,8 @@ eyre = { workspace = true }
 http = { workspace = true }
 indicatif = "^0.18"
 itertools = { workspace = true }
-openstack-sdk-auth-core = { path="../auth-core", version = "^0.22", default-features = false }
-openstack-sdk-core = { path="../sdk-core", version = "^0.22", default-features = false }
+openstack-sdk-auth-core = { path="../sdk/auth-core", version = "^0.22", default-features = false }
+openstack-sdk-core = { path="../sdk/core", version = "^0.22", default-features = false }
 owo-colors = { version = "^4.3", features = ["supports-colors"] }
 rand = { version = "^0.10" }
 reqwest = { workspace = true }

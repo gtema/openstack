@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Object-Store API (Swift) bindings
-pub mod v1;
+//! # Object-Store API (Swift) bindings
+pub use openstack_sdk_object_store::*;

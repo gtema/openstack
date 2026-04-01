@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Container Infrastructure Management service (Magnum) bindings
-pub mod v1;
+//! # Container Infrastructure Management service (Magnum) bindings
+pub use openstack_sdk_container_infrastructure_management::*;

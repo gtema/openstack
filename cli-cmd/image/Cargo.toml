@@ -14,7 +14,7 @@ clap = { workspace = true }
 json-patch = { workspace = true }
 openstack-cli-core = { version = "0.13", path = "../../cli-core/" }
 openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity", "image"] }
-openstack-sdk-core = { path="../../sdk-core", version = "^0.22" }
+openstack-sdk-core = { path="../../sdk/core", version = "^0.22" }
 openstack_types = { path="../../openstack_types", version = "^0.22" }
 eyre = { workspace = true }
 http = { workspace = true }

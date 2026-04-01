@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! DNS service (Designate) bindings
-pub mod v2;
+//! # DNS service (Designate) bindings
+pub use openstack_sdk_dns::*;
