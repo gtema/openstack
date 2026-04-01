@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Load Balancing API (Octavia) bindings
-pub mod v2;
+//! # Load Balancing API (Octavia) bindings
+pub use openstack_sdk_load_balancer::*;

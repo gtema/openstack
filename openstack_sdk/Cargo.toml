@@ -26,50 +26,78 @@ default = [
   "object_store",
   "placement"
 ]
-block_storage = []
-compute = []
-container_infra = []
-dns = []
-identity = []
-image = []
-load_balancer = []
-network = []
-object_store = []
-placement = []
-sync = ["openstack-sdk-core/sync"]
-async = ["openstack-sdk-core/async"]
+block_storage = ["dep:openstack-sdk-block-storage"]
+compute = ["dep:openstack-sdk-compute"]
+container_infra = ["dep:openstack-sdk-container-infrastructure-management"]
+dns = ["dep:openstack-sdk-dns"]
+identity = ["dep:openstack-sdk-identity"]
+image = ["dep:openstack-sdk-image"]
+load_balancer = ["dep:openstack-sdk-load-balancer"]
+network = ["dep:openstack-sdk-network"]
+object_store = ["dep:openstack-sdk-object-store"]
+placement = ["dep:openstack-sdk-placement"]
+sync = ["openstack-sdk-core/sync", 
+  "openstack-sdk-block-storage/sync",
+  "openstack-sdk-compute/sync",
+  "openstack-sdk-container-infrastructure-management/sync",
+  "openstack-sdk-dns/sync", 
+  "openstack-sdk-identity/sync",
+  "openstack-sdk-image/sync", 
+  "openstack-sdk-load-balancer/sync",
+  "openstack-sdk-network/sync", 
+  "openstack-sdk-object-store/sync",
+  "openstack-sdk-placement/sync"
+]
+async = ["openstack-sdk-core/async", 
+  "openstack-sdk-block-storage/async",
+  "openstack-sdk-compute/async",
+  "openstack-sdk-container-infrastructure-management/async",
+  "openstack-sdk-dns/async", 
+  "openstack-sdk-identity/async",
+  "openstack-sdk-image/async", 
+  "openstack-sdk-load-balancer/async",
+  "openstack-sdk-network/async", 
+  "openstack-sdk-object-store/async",
+  "openstack-sdk-placement/async"
+]
 client_der = []
 client_pem = []
 keystone_ng = ["dep:openstack-sdk-auth-jwt", "dep:openstack-sdk-auth-federation"]
 passkey = ["keystone_ng", "dep:openstack-sdk-auth-passkey"]
-#keystone_ng = []
-#passkey = ["keystone_ng", "openstack-sdk-core/passkey" ]
 
 [dependencies]
 async-trait.workspace = true
-base64.workspace = true
 bytes.workspace = true
 chrono.workspace= true
 derive_builder.workspace = true
-dialoguer.workspace = true
 futures.workspace = true
 futures-util.workspace = true
 http.workspace = true
-json-patch.workspace = true
 inventory.workspace = true
-openstack-sdk-auth-applicationcredential = { version = "0.1", path = "../auth-application-credential/" }
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core/" }
-openstack-sdk-auth-federation = { version = "0.1", path = "../auth-federation/", optional = true }
-openstack-sdk-auth-jwt = { version = "0.1", path = "../auth-jwt/", optional = true }
-openstack-sdk-auth-oidcaccesstoken = { version = "0.1", path = "../auth-oidcaccesstoken/" }
-openstack-sdk-auth-passkey = { version = "0.1", path = "../auth-passkey/", optional = true }
-openstack-sdk-auth-password = { version = "0.1", path = "../auth-password/" }
-openstack-sdk-auth-receipt = { version = "0.1", path = "../auth-receipt/" }
-openstack-sdk-auth-token = { version = "0.1", path = "../auth-token/" }
-openstack-sdk-auth-totp = { version = "0.1", path = "../auth-totp/" }
-openstack-sdk-auth-websso = { version = "0.1", path = "../auth-websso/" }
-openstack-sdk-core = { path = "../sdk-core/", version = "^0.22" }
-reqwest = { workspace = true, features = ["rustls", "stream", "gzip", "deflate", "http2", "socks", "system-proxy"] }
+openstack-sdk-auth-applicationcredential = { version = "0.1", path = "../sdk/auth-application-credential/" }
+openstack-sdk-auth-core = { version = "0.22", path = "../sdk/auth-core/" }
+openstack-sdk-auth-federation = { version = "0.1", path = "../sdk/auth-federation/", optional = true }
+openstack-sdk-auth-jwt = { version = "0.1", path = "../sdk/auth-jwt/", optional = true }
+openstack-sdk-auth-oidcaccesstoken = { version = "0.1", path = "../sdk/auth-oidcaccesstoken/" }
+openstack-sdk-auth-passkey = { version = "0.1", path = "../sdk/auth-passkey/", optional = true }
+openstack-sdk-auth-password = { version = "0.1", path = "../sdk/auth-password/" }
+openstack-sdk-auth-receipt = { version = "0.1", path = "../sdk/auth-receipt/" }
+openstack-sdk-auth-token = { version = "0.1", path = "../sdk/auth-token/" }
+openstack-sdk-auth-totp = { version = "0.1", path = "../sdk/auth-totp/" }
+openstack-sdk-auth-websso = { version = "0.1", path = "../sdk/auth-websso/" }
+openstack-sdk-core = { path = "../sdk/core/", version = "^0.22" }
+openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.1", optional = true }
+openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.1", optional = true }
+openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.1", optional = true }
+openstack-sdk-dns = { path = "../sdk/dns/", version = "^0.1", optional = true }
+openstack-sdk-identity = { path = "../sdk/identity/", version = "^0.1", optional = true }
+openstack-sdk-image = { path = "../sdk/image/", version = "^0.1", optional = true }
+openstack-sdk-load-balancer = { path = "../sdk/load-balancer/", version = "^0.1", optional = true }
+openstack-sdk-network = { path = "../sdk/network/", version = "^0.1", optional = true }
+openstack-sdk-object-store = { path = "../sdk/object-store/", version = "^0.1", optional = true }
+openstack-sdk-placement= { path = "../sdk/placement/", version = "^0.1", optional = true }
+reqwest = { workspace = true, features = ["rustls", "stream", "gzip", "deflate", "json", "http2",
+  "socks", "system-proxy"] }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

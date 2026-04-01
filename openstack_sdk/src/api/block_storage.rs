@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Block Storage (Cinder) API bindings
-pub mod v3;
+//! # Block Storage (Cinder) API bindings
+pub use openstack_sdk_block_storage::*;

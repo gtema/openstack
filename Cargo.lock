@@ -3251,6 +3251,54 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-sdk-block-storage"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-compute"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-container-infrastructure-management"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
 name = "openstack-sdk-core"
 version = "0.22.5"
 dependencies = [
@@ -3284,6 +3332,122 @@ dependencies = [
  "tracing",
  "tracing-test",
  "url",
+]
+
+[[package]]
+name = "openstack-sdk-dns"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-identity"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-image"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "json-patch",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-load-balancer"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-network"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-object-store"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "derive_builder",
+ "futures",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
+name = "openstack-sdk-placement"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack-sdk-core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
 ]
 
 [[package]]
@@ -3329,17 +3493,14 @@ name = "openstack_sdk"
 version = "0.22.5"
 dependencies = [
  "async-trait",
- "base64 0.22.1",
  "bytes",
  "chrono",
  "derive_builder",
- "dialoguer",
  "futures",
  "futures-util",
  "http",
  "httpmock",
  "inventory",
- "json-patch",
  "openstack-sdk-auth-applicationcredential",
  "openstack-sdk-auth-core",
  "openstack-sdk-auth-federation",
@@ -3351,7 +3512,17 @@ dependencies = [
  "openstack-sdk-auth-token",
  "openstack-sdk-auth-totp",
  "openstack-sdk-auth-websso",
+ "openstack-sdk-block-storage",
+ "openstack-sdk-compute",
+ "openstack-sdk-container-infrastructure-management",
  "openstack-sdk-core",
+ "openstack-sdk-dns",
+ "openstack-sdk-identity",
+ "openstack-sdk-image",
+ "openstack-sdk-load-balancer",
+ "openstack-sdk-network",
+ "openstack-sdk-object-store",
+ "openstack-sdk-placement",
  "reqwest",
  "secrecy",
  "serde",
