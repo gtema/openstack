@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Placement bindings
-pub mod v1;
+//! # Placement bindings
+pub use openstack_sdk_placement::*;

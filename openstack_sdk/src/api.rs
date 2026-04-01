@@ -142,8 +142,6 @@ pub use openstack_sdk_core::api::*;
 
 mod client;
 mod error;
-mod find;
-//mod rest_endpoint;
 
 #[cfg(feature = "block_storage")]
 pub mod block_storage;
@@ -172,6 +170,7 @@ pub use self::error::ApiError;
 pub use self::error::BodyError;
 
 pub use self::client::RestClient;
+pub use openstack_sdk_core::api::Findable;
 
 pub use self::rest_endpoint::RestEndpoint;
 pub use self::rest_endpoint::check_response_error;

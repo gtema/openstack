@@ -20,7 +20,6 @@
 //! - None (unauthenticated)
 
 pub mod auth_helper;
-//mod auth_token_endpoint;
 pub mod authtoken;
 pub mod v3_token_info;
 
