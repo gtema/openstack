@@ -3451,6 +3451,125 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-types-block-storage"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-compute"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-container-infrastructure-management"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-core"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "openstack-types-dns"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-identity"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-image"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-load-balancer"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-network"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-object-store"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
+name = "openstack-types-placement"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
 name = "openstack_cli"
 version = "0.13.5"
 dependencies = [
@@ -3587,6 +3706,16 @@ name = "openstack_types"
 version = "0.22.5"
 dependencies = [
  "chrono",
+ "openstack-types-block-storage",
+ "openstack-types-compute",
+ "openstack-types-container-infrastructure-management",
+ "openstack-types-dns",
+ "openstack-types-identity",
+ "openstack-types-image",
+ "openstack-types-load-balancer",
+ "openstack-types-network",
+ "openstack-types-object-store",
+ "openstack-types-placement",
  "openstack_sdk",
  "reqwest",
  "serde",

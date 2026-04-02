@@ -1,0 +1,22 @@
+[package]
+name = "openstack-types-image"
+description = "OpenStack API Types"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+chrono = { workspace= true }
+openstack-types-core = { path = "../core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+structable = { workspace = true }
+
+[dev-dependencies]
+
+[lints]
+workspace = true
