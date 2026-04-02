@@ -144,14 +144,13 @@ mod tests {
     use super::*;
     use http::{HeaderName, HeaderValue};
     use httpmock::MockServer;
+    use json_patch::Patch;
     #[cfg(feature = "sync")]
     use openstack_sdk_core::api::Query;
-    use openstack_sdk_core::types::ServiceType;
-    use serde_json::json;
-
-    use json_patch::Patch;
     use openstack_sdk_core::test::client::FakeOpenStackClient;
+    use openstack_sdk_core::types::ServiceType;
     use serde_json::from_value;
+    use serde_json::json;
 
     #[test]
     fn test_service_type() {

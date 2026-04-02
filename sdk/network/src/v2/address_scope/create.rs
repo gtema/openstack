@@ -150,10 +150,9 @@ mod tests {
     use httpmock::MockServer;
     #[cfg(feature = "sync")]
     use openstack_sdk_core::api::Query;
+    use openstack_sdk_core::test::client::FakeOpenStackClient;
     use openstack_sdk_core::types::ServiceType;
     use serde_json::json;
-
-    use openstack_sdk_core::test::client::FakeOpenStackClient;
 
     #[test]
     fn test_service_type() {
