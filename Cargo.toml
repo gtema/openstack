@@ -2,33 +2,25 @@
 resolver = "3"
 members = [
   "cli-core",
-  "cli-cmd/api",
-  "cli-cmd/auth",
-  "cli-cmd/block-storage",
-  "cli-cmd/catalog",
-  "cli-cmd/compute",
-  "cli-cmd/container-infrastructure-management",
-  "cli-cmd/dns",
-  "cli-cmd/identity",
-  "cli-cmd/image",
-  "cli-cmd/load-balancer",
-  "cli-cmd/network",
-  "cli-cmd/object-store",
-  "cli-cmd/placement",
+  "cli-cmd/*",
   "openstack_sdk",
   "openstack_cli",
   "openstack_tui",
   "openstack_types",
+  "sdk/*",
+  "xtask",
+  "fuzz",
+  "types/*",
+]
+# webauthn-rs should not land in the default members since it pulls openssl that
+# is not available for alpine
+default-members = [
   "sdk/auth-core",
   "sdk/auth-application-credential",
-  "sdk/auth-federation",
-  "sdk/auth-jwt",
   "sdk/auth-multifactor",
   "sdk/auth-oidcaccesstoken",
-  "sdk/auth-passkey",
   "sdk/auth-password",
   "sdk/auth-receipt",
-  "sdk/auth-token",
   "sdk/auth-totp",
   "sdk/auth-websso",
   "sdk/core",
@@ -42,33 +34,9 @@ members = [
   "sdk/network",
   "sdk/object-store",
   "sdk/placement",
-  "xtask",
-  "fuzz",
-]
-# webauthn-rs should not land in the default members since it pulls openssl that
-# is not available for alpine
-default-members = [
-  "sdk/auth-core", 
-  "sdk/auth-application-credential",
-  "sdk/auth-multifactor", 
-  "sdk/auth-oidcaccesstoken", 
-  "sdk/auth-password", 
-  "sdk/auth-receipt",
-  "sdk/auth-totp", 
-  "sdk/auth-websso", 
-  "sdk/core",
-  "sdk/block-storage",
-  "sdk/container-infrastructure-management",
-  "sdk/compute",
-  "sdk/dns",
-  "sdk/identity",
-  "sdk/image",
-  "sdk/load-balancer",
-  "sdk/network",
-  "sdk/object-store",
-  "sdk/placement",
-  "cli-core", 
-  "cli-cmd/*", 
+  "cli-core",
+  "cli-cmd/*",
+  "types/*",
   "openstack_*"]
 
 [workspace.package]
@@ -80,12 +48,12 @@ homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 
 [workspace.dependencies]
-async-trait = { version = "^0.1" } #, optional = true }
+async-trait = { version = "^0.1" }
 base64 = "0.22"
 bytes = "^1.11"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.6", features = ["cargo", "color", "derive", "env"] }
-clap_complete = { version = "^4.6", features = ["unstable-dynamic"] }
+clap_complete = { version = "^4.6" }
 color-eyre = { version = "^0.6", features = ["default", "issue-url", "track-caller"] }
 config = { version = "^0.15", default-features = false }
 derive_builder = { version = "^0.20" }
@@ -116,7 +84,7 @@ serde_urlencoded = "^0.7"
 strip-ansi-escapes = "^0.2"
 structable = { version = "^0.3" }
 tempfile = "^3.27"
-tokio = { version = "^1.50", features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std", "signal"]}
+tokio = { version = "^1.50", default-features = false, features = ["macros"]}
 tokio-util = { version="^0.7", features = ["io", "compat"]}
 thiserror = { version = "^2.0" }
 tracing = "^0.1"
@@ -126,6 +94,7 @@ tracing-test = { version = "^0.2" }
 url = { version = "^2.5", features = ["serde"] }
 webauthn-authenticator-rs = { version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "0.5" }
+uuid = { version = "1.23" }
 
 [profile.dev]
 debug = 0

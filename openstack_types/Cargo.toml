@@ -24,22 +24,32 @@ default = [
   "object_store",
   "placement",
 ]
-block_storage = []
-compute = []
-container_infra = []
-dns = []
-identity = []
-image = []
-load_balancer = []
-network = []
-object_store = []
-placement = []
+block_storage = ["dep:openstack-types-block-storage"]
+compute = ["dep:openstack-types-compute"]
+container_infra = ["dep:openstack-types-container-infrastructure-management"]
+dns = ["dep:openstack-types-dns"]
+identity = ["dep:openstack-types-identity"]
+image = ["dep:openstack-types-image"]
+load_balancer = ["dep:openstack-types-load-balancer"]
+network = ["dep:openstack-types-network"]
+object_store = ["dep:openstack-types-object-store"]
+placement = ["dep:openstack-types-placement"]
 # include openapi specs
 openapi = []
 keystone_ng = []
 
 [dependencies]
 chrono = { workspace= true }
+openstack-types-block-storage = { path = "../types/block-storage/", version = "0.1", optional = true}
+openstack-types-compute = { path = "../types/compute/", version = "0.1", optional = true}
+openstack-types-container-infrastructure-management = { path = "../types/container-infrastructure-management/", version = "0.1", optional = true}
+openstack-types-dns = { path = "../types/dns/", version = "0.1", optional = true}
+openstack-types-identity = { path = "../types/identity/", version = "0.1", optional = true}
+openstack-types-image = { path = "../types/image/", version = "0.1", optional = true}
+openstack-types-load-balancer = { path = "../types/load-balancer/", version = "0.1", optional = true}
+openstack-types-network = { path = "../types/network/", version = "0.1", optional = true}
+openstack-types-object-store = { path = "../types/object-store/", version = "0.1", optional = true}
+openstack-types-placement = { path = "../types/placement/", version = "0.1", optional = true}
 serde = { workspace = true }
 serde_json = { workspace = true }
 structable = { workspace = true }
@@ -49,7 +59,7 @@ openstack_sdk = { path = "../openstack_sdk" }
 reqwest.workspace = true
 tokio.workspace = true
 url.workspace = true
-uuid = { version = "1.23", features = ["v4"] }
+uuid = { workspace = true, features = ["v4"] }
 
 [[test]]
 name = "mocked"

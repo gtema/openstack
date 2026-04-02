@@ -28,7 +28,7 @@ serde_json.workspace = true
 serde_urlencoded.workspace = true
 reqwest = { workspace = true, features = ["form"] }
 thiserror.workspace = true
-tokio.workspace = true
+tokio = { workspace = true, features = ["signal"] }
 tokio-util.workspace = true
 tracing.workspace = true
 url.workspace = true

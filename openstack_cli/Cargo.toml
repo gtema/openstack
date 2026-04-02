@@ -60,7 +60,7 @@ _test_net_vpn = []
 
 [dependencies]
 clap = { workspace = true, features = ["color", "derive", "env"] }
-clap_complete = { workspace = true }
+clap_complete = { workspace = true, features = ["unstable-dynamic"] }
 color-eyre = { workspace = true }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
