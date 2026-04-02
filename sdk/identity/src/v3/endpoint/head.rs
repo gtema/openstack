@@ -127,9 +127,8 @@ mod tests {
     use httpmock::MockServer;
     #[cfg(feature = "sync")]
     use openstack_sdk_core::api::RawQuery;
-    use openstack_sdk_core::types::ServiceType;
-
     use openstack_sdk_core::test::client::FakeOpenStackClient;
+    use openstack_sdk_core::types::ServiceType;
 
     #[test]
     fn test_service_type() {
