@@ -13,3 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! # OpenStack Identity API response types
+pub mod v3;
+#[cfg(feature = "keystone_ng")]
+pub mod v4;

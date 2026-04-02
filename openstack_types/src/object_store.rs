@@ -14,7 +14,7 @@
 
 //! Object Store API types
 
-pub mod v1;
+pub use openstack_types_object_store::*;
 
 /// Get OpenAPI spec for the object-store service used during the
 /// codegeneration.

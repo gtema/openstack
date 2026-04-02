@@ -14,7 +14,7 @@
 
 //! Placement API types
 
-pub mod v1;
+pub use openstack_types_placement::*;
 
 /// Get OpenAPI spec for the placement service used during the
 /// codegeneration.

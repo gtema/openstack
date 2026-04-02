@@ -13,3 +13,4 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! # OpenStack Container Infrastructure Management API response types
+pub mod v1;

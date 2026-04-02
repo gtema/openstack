@@ -14,7 +14,7 @@
 
 //! Compute API types
 
-pub mod v2;
+pub use openstack_types_compute::*;
 
 /// Get OpenAPI spec for the compute service used during the codegeneration.
 #[cfg(feature = "openapi")]

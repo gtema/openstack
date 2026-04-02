@@ -14,7 +14,7 @@
 
 //! Container Infra API types
 
-pub mod v1;
+pub use openstack_types_container_infrastructure_management::*;
 
 /// Get OpenAPI spec for the container-infrastructure-management service used during the
 /// codegeneration.

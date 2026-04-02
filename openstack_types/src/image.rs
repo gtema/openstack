@@ -14,7 +14,7 @@
 
 //! Image API types
 
-pub mod v2;
+pub use openstack_types_image::*;
 
 /// Get OpenAPI spec for the image service used during the
 /// codegeneration.

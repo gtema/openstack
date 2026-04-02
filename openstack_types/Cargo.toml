@@ -36,7 +36,7 @@ object_store = ["dep:openstack-types-object-store"]
 placement = ["dep:openstack-types-placement"]
 # include openapi specs
 openapi = []
-keystone_ng = []
+keystone_ng = ["openstack-types-identity/keystone_ng"]
 
 [dependencies]
 chrono = { workspace= true }

@@ -14,7 +14,7 @@
 
 //! DNS API types
 
-pub mod v2;
+pub use openstack_types_dns::*;
 
 /// Get OpenAPI spec for the dns service used during the
 /// codegeneration.
