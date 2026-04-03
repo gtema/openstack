@@ -14,7 +14,7 @@
 
 //! Network API types
 
-pub mod v2;
+pub use openstack_types_network::*;
 
 /// Get OpenAPI spec for the network service used during the
 /// codegeneration.

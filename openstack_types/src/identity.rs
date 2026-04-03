@@ -14,9 +14,7 @@
 
 //! Identity API types
 
-pub mod v3;
-#[cfg(feature = "keystone_ng")]
-pub mod v4;
+pub use openstack_types_identity::*;
 
 /// Get OpenAPI spec for the identity service used during the
 /// codegeneration.

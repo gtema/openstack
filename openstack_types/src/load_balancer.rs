@@ -14,7 +14,7 @@
 
 //! Load Balancer API types
 
-pub mod v2;
+pub use openstack_types_load_balancer::*;
 
 /// Get OpenAPI spec for the load-balancer service used during the
 /// codegeneration.

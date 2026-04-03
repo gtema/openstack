@@ -14,7 +14,7 @@
 
 //! Block Storage API types
 
-pub mod v3;
+pub use openstack_types_block_storage::*;
 
 /// Get OpenAPI spec for the block-storage service used during the codegeneration.
 #[cfg(feature = "openapi")]

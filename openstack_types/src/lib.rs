@@ -19,7 +19,6 @@
 
 #[cfg(feature = "block_storage")]
 pub mod block_storage;
-pub mod common;
 #[cfg(feature = "compute")]
 pub mod compute;
 #[cfg(feature = "container_infra")]
