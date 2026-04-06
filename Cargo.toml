@@ -66,7 +66,7 @@ futures-util = { version = "^0.3", default-features = false}
 http = "^1.4"
 http-body-util = "^0.1"
 httpmock = { version = "0.8" }
-hyper = { version = "^1.8" }
+hyper = { version = "^1.9" }
 hyper-util = { version = "^0.1" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.14" }
