@@ -84,7 +84,7 @@ serde_urlencoded = "^0.7"
 strip-ansi-escapes = "^0.2"
 structable = { version = "^0.3" }
 tempfile = "^3.27"
-tokio = { version = "^1.50", default-features = false, features = ["macros"]}
+tokio = { version = "^1.51", default-features = false, features = ["macros"]}
 tokio-util = { version="^0.7", features = ["io", "compat"]}
 thiserror = { version = "^2.0" }
 tracing = "^0.1"
