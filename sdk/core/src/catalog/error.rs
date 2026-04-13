@@ -67,8 +67,18 @@ pub enum CatalogError {
     #[error("Invalid version discovery document")]
     InvalidDiscoveryDocument,
 
-    #[error("Service `{0}` is not configured")]
-    ServiceNotConfigured(String),
+    /// The service is not configured for the specified type, region and interface.
+    #[error(
+        "Service `{}` is not configured for interface {:?} at region {:?}",
+        srv_type,
+        interface,
+        region
+    )]
+    ServiceNotConfigured {
+        srv_type: String,
+        region: Option<String>,
+        interface: Option<String>,
+    },
 
     #[error("Api Version with id `{id}` for service is not defining `self` link")]
     VersionSelfLinkMissing { id: String },

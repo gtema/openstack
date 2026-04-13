@@ -142,9 +142,12 @@ impl api::RestClient for AsyncOpenStack {
         service_type: &ServiceType,
         version: Option<&ApiVersion>,
     ) -> Result<&ServiceEndpoint, api::ApiError<Self::Error>> {
-        Ok(self
-            .catalog
-            .get_service_endpoint(service_type.to_string(), version, None::<String>)?)
+        Ok(self.catalog.get_service_endpoint(
+            service_type.to_string(),
+            version,
+            self.config.region_name.as_ref(),
+            self.config.interface.as_ref(),
+        )?)
     }
 
     /// Get project id from the current scope
@@ -534,8 +537,7 @@ impl AsyncOpenStack {
                         self.catalog.configure(&self.config)?;
                     }
                     if let Some(endpoints) = &auth_data.token.catalog {
-                        self.catalog
-                            .process_catalog_endpoints(endpoints, Some("public"))?;
+                        self.catalog.process_catalog_endpoints(endpoints)?;
                     } else {
                         error!("No catalog information");
                     }
@@ -557,6 +559,7 @@ impl AsyncOpenStack {
             service_type.to_string(),
             None,
             self.config.region_name.as_ref(),
+            self.config.interface.as_ref(),
         ) {
             if self.catalog.discovery_allowed(service_type.to_string()) {
                 info!("Performing `{}` endpoint version discovery", service_type);
@@ -586,6 +589,7 @@ impl AsyncOpenStack {
                                         &try_url,
                                         rsp.body(),
                                         self.config.region_name.as_ref(),
+                                        self.config.interface.as_ref(),
                                     )
                                     .is_ok()
                             {
@@ -593,6 +597,7 @@ impl AsyncOpenStack {
                                     "Finished service version discovery at {}",
                                     try_url.as_str()
                                 );
+                                debug!("catalog {:?}", self.catalog);
                                 return Ok(());
                             }
                         }

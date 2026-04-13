@@ -92,7 +92,7 @@ impl Catalog {
         self
     }
 
-    /// Register single service endpoint as catalog endpoint
+    /// Register single service endpoint as catalog endpoint.
     pub fn register_catalog_endpoint<S1: AsRef<str>, S2: AsRef<str>, S3: AsRef<str>>(
         &mut self,
         service_type: S1,
@@ -112,15 +112,13 @@ impl Catalog {
         Ok(self)
     }
 
-    /// Process catalog information (usually from the token)
+    /// Process catalog information (usually from the token).
     pub fn process_catalog_endpoints(
         &mut self,
         srv_endpoints: &Vec<ApiServiceEndpoints>,
-        interface: Option<&str>,
     ) -> Result<&mut Self, CatalogError> {
         trace!("Start processing ServiceCatalog response");
         let mut token_catalog = Vec::new();
-        let intf = interface.unwrap_or("public");
         // Reset all previously discovered information. If we re-authed we may get different
         // project_ids
         for (srv, val) in self.service_endpoints.iter_mut() {
@@ -140,26 +138,25 @@ impl Catalog {
             }
             for ep in &srv.endpoints {
                 trace!("Processing endpoint {:?}", ep);
-                if ep.interface == intf {
-                    self.register_catalog_endpoint(
-                        &srv.service_type,
-                        &ep.url,
-                        ep.region.clone(),
-                        Some(&ep.interface),
-                    )?;
-                }
+                self.register_catalog_endpoint(
+                    &srv.service_type,
+                    &ep.url,
+                    ep.region.clone(),
+                    Some(&ep.interface),
+                )?;
             }
         }
         self.token_catalog = Some(token_catalog);
         Ok(self)
     }
 
-    /// Get endpoint
-    pub fn get_service_endpoint<S1: AsRef<str>, S2: AsRef<str>>(
+    /// Get endpoint.
+    pub fn get_service_endpoint<S: AsRef<str>, R: AsRef<str>, I: AsRef<str>>(
         &self,
-        service_type: S1,
+        service_type: S,
         api_version: Option<&ApiVersion>,
-        region_name: Option<S2>,
+        region_name: Option<R>,
+        interface: Option<I>,
     ) -> Result<&ServiceEndpoint, CatalogError> {
         // Check for endpoint_override -> return override directly
         if let Some(ep) = &self.endpoint_overrides.get(service_type.as_ref()) {
@@ -171,6 +168,14 @@ impl Catalog {
             );
             return Ok(ep);
         }
+        // Default to "public" as the interface when nothing is passed explicitly
+        let interface = Some(
+            interface
+                .as_ref()
+                .map(|x| x.as_ref())
+                .unwrap_or("public")
+                .to_string(),
+        );
 
         // Find main service_type
         let main_service_type = self
@@ -189,16 +194,20 @@ impl Catalog {
             .catalog_endpoints
             .get(catalog_service_type)
             .and_then(|eps| match region_name {
-                Some(_) => eps.get_by_region(region_name.as_ref()),
-                None => eps.get_by_region(self.region.as_ref()),
+                Some(_) => {
+                    eps.get_by_region_and_interface(region_name.as_ref(), interface.as_ref())
+                }
+                None => eps.get_by_region_and_interface(self.region.as_ref(), interface.as_ref()),
             });
         // TODO: check the API version
 
         // Get discovered information for the main service
         if let Some(discovered_endpoints) = self.service_endpoints.get(&main_service_type) {
-            if let Some(ep) =
-                discovered_endpoints.get_by_version_and_region(api_version, region_name.as_ref())
-            {
+            if let Some(ep) = discovered_endpoints.get_by_version(
+                api_version,
+                region_name.as_ref(),
+                interface.as_ref(),
+            ) {
                 debug!(
                     "Using discovered endpoint `{:?}` for service_type: `{}` and version `{:?}`",
                     ep,
@@ -231,8 +240,11 @@ impl Catalog {
             .get_all_types_by_service_type(main_service_type)?
         {
             if let Some(catalog_eps) = &self.catalog_endpoints.get(&cat_type)
-                && let Some(catalog_ep) =
-                    catalog_eps.get_by_version_and_region(api_version, region_name.as_ref())
+                && let Some(catalog_ep) = catalog_eps.get_by_version(
+                    api_version,
+                    region_name.as_ref(),
+                    interface.as_ref(),
+                )
             {
                 debug!(
                     "Using catalog endpoint `{:?}` for service_type: `{}` (requested: `{}`) and version `{:?}`",
@@ -268,18 +280,21 @@ impl Catalog {
             }
         }
 
-        Err(CatalogError::ServiceNotConfigured(
-            service_type.as_ref().into(),
-        ))
+        Err(CatalogError::ServiceNotConfigured {
+            srv_type: service_type.as_ref().into(),
+            region: region_name.map(|x| x.as_ref().into()),
+            interface,
+        })
     }
 
     /// Process version discovery response for the service returning list of extracted endpoints
-    pub fn parse_endpoint_discovery<S: AsRef<str>>(
+    pub fn parse_endpoint_discovery<R: AsRef<str>, I: AsRef<str>>(
         &self,
         service_type: &ServiceType,
         url: &Url,
         data: &Bytes,
-        region: Option<S>,
+        region: Option<R>,
+        interface: Option<I>,
     ) -> Result<ServiceEndpoints, CatalogError> {
         let mut service_entry = ServiceEndpoints::default();
         // Get main service type
@@ -294,6 +309,7 @@ impl Catalog {
             discovery::extract_discovery_endpoints(url, data, service_type.to_string())?.iter_mut()
         {
             ep.set_region(region.as_ref());
+            ep.set_interface(interface.as_ref());
             // Rounded (to the major) version so that we respect catalog_endpoints and
             // endpoint_overrides for a higher minor versions
             let ep_maj_ver = ApiVersion::new(ep.version().major, 0);
@@ -309,7 +325,7 @@ impl Catalog {
                     ep.set_last_segment_with_project_id(epo.last_segment_with_project_id().clone());
                 }
                 if let Some(ep_cat) = &self.catalog_endpoints.get(cat_type).and_then(|srv| {
-                    srv.get_by_version_and_region(Some(&ep_maj_ver), region.as_ref())
+                    srv.get_by_version(Some(&ep_maj_ver), region.as_ref(), ep.interface().as_ref())
                 }) {
                     ep.set_last_segment_with_project_id(
                         ep_cat.last_segment_with_project_id().clone(),
@@ -346,15 +362,16 @@ impl Catalog {
     }
 
     /// Parse service endpoint discovery document and set discovered endpoints.
-    pub fn process_endpoint_discovery<S: AsRef<str>>(
+    pub fn process_endpoint_discovery<R: AsRef<str>, I: AsRef<str>>(
         &mut self,
         service_type: &ServiceType,
         url: &Url,
         data: &Bytes,
-        region: Option<S>,
+        region: Option<R>,
+        interface: Option<I>,
     ) -> Result<&mut Self, CatalogError> {
         let discovered_endpoints =
-            self.parse_endpoint_discovery(service_type, url, data, region)?;
+            self.parse_endpoint_discovery(service_type, url, data, region, interface)?;
         self.consume_discovered_endpoints(service_type, discovered_endpoints)
     }
 
@@ -477,21 +494,35 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_register_catalog_endpoint() {
         let mut cat = Catalog::default();
-        cat.register_catalog_endpoint("s1", "http://s1.foo.bar", Some("public"), Some("default"))
+        cat.register_catalog_endpoint("s1", "http://s1.foo.bar", Some("default"), Some("public"))
             .unwrap();
         let check = cat.catalog_endpoints.get("s1").unwrap();
         assert_eq!(
             "http://s1.foo.bar/",
             check.get_by_region(None::<String>).unwrap().url_str()
         );
+        assert_eq!(
+            "http://s1.foo.bar/",
+            check
+                .get_by_region_and_interface(None::<String>, Some("public"))
+                .unwrap()
+                .url_str()
+        );
+        assert!(
+            check
+                .get_by_region_and_interface(None::<String>, Some("internal"))
+                .is_none()
+        );
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_process_catalog_endpoints() {
         let mut cat = Catalog::default();
-        cat.register_catalog_endpoint("s1", "http://s1.foo.bar", Some("public"), Some("default"))
+        cat.register_catalog_endpoint("s1", "http://s1.foo.bar", Some("default"), Some("public"))
             .unwrap();
         cat.process_catalog_endpoints(
             &Vec::from([
@@ -507,16 +538,23 @@ mod tests {
                     "type": "s3",
                     "name": "s3",
                     "endpoints": [
-                        {"id": "dummy", "interface": "public", "region": "r1", "url": "http://r2.foo.bar/s3"}
+                        {"id": "dummy", "interface": "public", "region": "r1", "url": "http://r2.foo.bar/s3"},
+                        {"id": "dummy_internal", "interface": "internal", "region": "r1", "url": "http://r2.internal/s3"}
                     ]
                 })).unwrap()
             ]),
-            Some("public"),
         ).unwrap();
         let check = cat.catalog_endpoints.get("s1").unwrap();
         assert_eq!(
             "http://s1.foo.bar/",
             check.get_by_region(None::<String>).unwrap().url_str()
+        );
+        assert_eq!(
+            "http://s1.foo.bar/",
+            check
+                .get_by_region_and_interface(None::<String>, Some("public"))
+                .unwrap()
+                .url_str()
         );
         let check = cat.catalog_endpoints.get("s2").unwrap();
         assert_eq!(
@@ -527,6 +565,14 @@ mod tests {
                 .iter()
                 .map(|x| x.url_str())
                 .collect::<Vec<_>>()
+        );
+        let check = cat.catalog_endpoints.get("s3").unwrap();
+        assert_eq!(
+            "http://r2.internal/s3",
+            check
+                .get_by_region_and_interface(None::<String>, Some("internal"))
+                .unwrap()
+                .url_str()
         );
         // TODO: Check token_catalog
     }
@@ -557,12 +603,14 @@ mod tests {
                 .to_string(),
             ),
             Some("default"),
+            Some("public"),
         )
         .unwrap();
         assert!(cat.service_endpoints.contains_key("compute"));
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_process_endpoint_discovery_with_endpoint_override() {
         let mut cat = Catalog::default();
         let conf = CloudConfig {
@@ -611,6 +659,7 @@ mod tests {
                 .to_string(),
             ),
             Some("default"),
+            Some("public"),
         )
         .unwrap();
         let srv = cat.service_endpoints.get("block-storage").unwrap();
@@ -644,6 +693,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_process_endpoint_discovery_with_multiversion() {
         let mut cat = Catalog::default();
         cat.set_project_id(Some("PROJECT_ID"));
@@ -687,6 +737,7 @@ mod tests {
                 .to_string(),
             ),
             Some("default"),
+            Some("public"),
         )
         .unwrap();
         let srv = cat.service_endpoints.get("compute").unwrap();
@@ -743,13 +794,19 @@ mod tests {
                 .to_string(),
             ),
             Some("default"),
+            Some("public"),
         )
         .unwrap();
         assert_eq!(
             "http://foo.bar/v2/",
-            cat.get_service_endpoint("volume", Some(&ApiVersion::new(2, 0)), Some("default"))
-                .unwrap()
-                .url_str(),
+            cat.get_service_endpoint(
+                "volume",
+                Some(&ApiVersion::new(2, 0)),
+                Some("default"),
+                Some("public"),
+            )
+            .unwrap()
+            .url_str(),
             "alias service type versioned"
         );
         assert_eq!(
@@ -757,7 +814,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(2, 0)),
-                Some("default")
+                Some("default"),
+                Some("public"),
             )
             .unwrap()
             .url_str(),
@@ -768,7 +826,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(3, 0)),
-                Some("default")
+                Some("default"),
+                Some("public"),
             )
             .unwrap()
             .url_str(),
@@ -779,7 +838,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(0, 0)),
-                Some("default")
+                Some("default"),
+                Some("public"),
             )
             .unwrap()
             .url_str(),
@@ -788,6 +848,7 @@ mod tests {
     }
 
     #[test]
+    #[tracing_test::traced_test]
     fn test_get_service_endpoint_overrides() {
         let mut cat = Catalog::default();
         let conf = CloudConfig {
@@ -839,13 +900,19 @@ mod tests {
                 .to_string(),
             ),
             Some("default"),
+            Some("public"),
         )
         .unwrap();
         assert_eq!(
             "http://foo.bar/v2/",
-            cat.get_service_endpoint("volume", Some(&ApiVersion::new(2, 0)), Some("default"))
-                .unwrap()
-                .url_str(),
+            cat.get_service_endpoint(
+                "volume",
+                Some(&ApiVersion::new(2, 0)),
+                Some("default"),
+                Some("public")
+            )
+            .unwrap()
+            .url_str(),
             "alias service type versioned"
         );
         assert_eq!(
@@ -853,7 +920,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(2, 0)),
-                Some("default")
+                Some("default"),
+                Some("public")
             )
             .unwrap()
             .url_str(),
@@ -864,7 +932,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(3, 0)),
-                Some("default")
+                Some("default"),
+                Some("public")
             )
             .unwrap()
             .url_str(),
@@ -875,7 +944,8 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(0, 0)),
-                Some("default")
+                Some("default"),
+                Some("public")
             )
             .unwrap()
             .url_str(),
@@ -883,7 +953,7 @@ mod tests {
         );
         assert_eq!(
             "http://another.foo.bar/v3/z_PROJECT_ID",
-            cat.get_service_endpoint("volumev3", None, Some("default"))
+            cat.get_service_endpoint("volumev3", None, Some("default"), Some("public"))
                 .unwrap()
                 .url_str(),
             "endpoint as in endpoint_override"
@@ -891,14 +961,19 @@ mod tests {
         // TODO:
         assert_eq!(
             "http://foo.bar/v3/",
-            cat.get_service_endpoint("volumev2", None, Some("default"))
+            cat.get_service_endpoint("volumev2", None, Some("default"), Some("public"))
                 .unwrap()
                 .url_str(),
             "This must start failing"
         );
 
         let ep = cat
-            .get_service_endpoint("volumev2", Some(&ApiVersion::new(2, 0)), Some("default"))
+            .get_service_endpoint(
+                "volumev2",
+                Some(&ApiVersion::new(2, 0)),
+                Some("default"),
+                Some("public"),
+            )
             .unwrap();
         assert_eq!(
             "http://foo.bar/v2/",
@@ -915,6 +990,7 @@ mod tests {
                 "block-storage",
                 Some(&ApiVersion::new(3, 0)),
                 Some("default"),
+                Some("public"),
             )
             .unwrap();
         assert_eq!(
@@ -962,13 +1038,18 @@ mod tests {
 
         assert_eq!(
             "http://foo.bar/v1/PROJECT_ID",
-            cat.get_service_endpoint("volume", Some(&ApiVersion::new(1, 0)), Some("default"))
-                .unwrap()
-                .url_str(),
+            cat.get_service_endpoint(
+                "volume",
+                Some(&ApiVersion::new(1, 0)),
+                Some("default"),
+                Some("public")
+            )
+            .unwrap()
+            .url_str(),
         );
         assert_eq!(
             "http://foo.bar/v3/PROJECT_ID",
-            cat.get_service_endpoint("block-storage", None, Some("default"))
+            cat.get_service_endpoint("block-storage", None, Some("default"), Some("public"))
                 .unwrap()
                 .url_str(),
         );
@@ -977,10 +1058,20 @@ mod tests {
             cat.get_service_endpoint(
                 "block-storage",
                 Some(&ApiVersion::new(2, 0)),
-                Some("default")
+                Some("default"),
+                Some("public")
             )
             .unwrap()
             .url_str(),
+        );
+        assert!(
+            cat.get_service_endpoint(
+                "block-storage",
+                Some(&ApiVersion::new(2, 0)),
+                Some("default"),
+                Some("internal")
+            )
+            .is_err()
         );
     }
 }

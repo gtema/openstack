@@ -147,9 +147,11 @@ impl RestClient for FakeOpenStackClient {
         self.endpoints
             .get(&service_type.to_string())
             .or(self.endpoints.get("default"))
-            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured(
-                service_type.to_string(),
-            )))
+            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured {
+                srv_type: service_type.to_string(),
+                region: None,
+                interface: None,
+            }))
     }
 
     fn get_current_project(&self) -> Option<Project> {

@@ -74,9 +74,11 @@ impl ShowCommand {
             .collect::<Result<Vec<_>, _>>()?;
 
         if data.is_empty() {
-            return Err(openstack_sdk::catalog::CatalogError::ServiceNotConfigured(
-                self.service_type.clone(),
-            )
+            return Err(openstack_sdk::catalog::CatalogError::ServiceNotConfigured {
+                srv_type: self.service_type.clone(),
+                region: None,
+                interface: None,
+            }
             .into());
         }
 
