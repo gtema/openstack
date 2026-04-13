@@ -24,32 +24,31 @@ use crate::catalog::CatalogError;
 use crate::types::ApiVersion;
 use crate::types::identity::v3::version::EndpointVersionStatus;
 
-/// Service endpoint
-///
+/// Service endpoint.
 #[derive(Clone, PartialEq)]
 pub struct ServiceEndpoint {
-    /// ServiceEndpoint URL
+    /// ServiceEndpoint URL.
     url: Url,
-    /// Service endpoint region
+    /// Service endpoint region.
     region: Option<String>,
-    /// Service endpoint interface
+    /// Service endpoint interface.
     interface: Option<String>,
-    /// API version determined from the url
+    /// API version determined from the url.
     version: ApiVersion,
-    /// lowest supported microversion
+    /// lowest supported microversion.
     min_version: Option<String>,
-    /// Highest supported microversion
+    /// Highest supported microversion.
     max_version: Option<String>,
-    /// Service type as used in the ServiceCatalog
+    /// Service type as used in the ServiceCatalog.
     service_type: Option<String>,
-    // Last url segment if it ends with project_id
+    // Last url segment if it ends with project_id.
     last_segment_with_project_id: Option<String>,
-    /// ServiceEndpoint status
+    /// ServiceEndpoint status.
     status: Option<EndpointVersionStatus>,
 }
 
 impl ServiceEndpoint {
-    /// Build new ServiceEndpoint from URL and `[ApiVersion]`
+    /// Build new ServiceEndpoint from URL and `[ApiVersion]`.
     pub fn new(url: Url, api_version: ApiVersion) -> Self {
         Self {
             url,
@@ -63,7 +62,7 @@ impl ServiceEndpoint {
             status: None,
         }
     }
-    /// Build new ServiceEndpoint from string URL
+    /// Build new ServiceEndpoint from string URL.
     ///
     /// optional project_id is used to locate version information in the url
     pub fn from_url_string<S1: AsRef<str>, S2: AsRef<str>>(
@@ -107,56 +106,61 @@ impl ServiceEndpoint {
         Ok(res)
     }
 
-    /// Set service type
+    /// Set service type.
     pub fn set_service_type<S: AsRef<str>>(&mut self, service_type: Option<S>) -> &mut Self {
         self.service_type = service_type.map(|x| x.as_ref().into());
         self
     }
 
-    /// Set endpoint region
+    /// Set endpoint region.
     pub fn set_region<S: AsRef<str>>(&mut self, region: Option<S>) -> &mut Self {
         self.region = region.map(|x| x.as_ref().into());
         self
     }
 
-    /// Set endpoint interface
+    /// Set endpoint interface.
     pub fn set_interface<S: AsRef<str>>(&mut self, interface: Option<S>) -> &mut Self {
         self.interface = interface.map(|x| x.as_ref().into());
         self
     }
 
-    /// Set min_version
+    /// Set min_version.
     pub fn set_min_version<S: AsRef<str>>(&mut self, version: Option<S>) -> &mut Self {
         self.min_version = version.map(|x| x.as_ref().into());
         self
     }
-    /// Set min_version
+    /// Set min_version.
     pub fn set_max_version<S: AsRef<str>>(&mut self, version: Option<S>) -> &mut Self {
         self.max_version = version.map(|x| x.as_ref().into());
         self
     }
-    /// Set status
+    /// Set status.
     pub fn set_status(&mut self, status: Option<EndpointVersionStatus>) -> &mut Self {
         self.status = status;
         self
     }
 
-    /// Returns a reference to Url
+    /// Returns a reference to the Url.
     pub fn url(&self) -> &Url {
         &self.url
     }
 
-    /// Returns a reference to Url as &str
+    /// Returns a reference to the Url as &str.
     pub fn url_str(&self) -> &str {
         self.url.as_str()
     }
 
-    /// Returns a reference to ApiVersion
+    /// Returns a reference to the interface of the endpoint.
+    pub fn interface(&self) -> &Option<String> {
+        &self.interface
+    }
+
+    /// Returns a reference to the ApiVersion.
     pub fn version(&self) -> &ApiVersion {
         &self.version
     }
 
-    /// Returns a reference to region
+    /// Returns a reference to the region.
     pub fn region(&self) -> &Option<String> {
         &self.region
     }
@@ -170,22 +174,22 @@ impl ServiceEndpoint {
         self
     }
 
-    /// Retrieve ServiceServiceEndpoint status
+    /// Retrieve [ServiceServiceEndpoint] status.
     pub fn status(&self) -> &Option<EndpointVersionStatus> {
         &self.status
     }
 
-    /// Retrieve ServiceServiceEndpoint min_version
+    /// Retrieve [ServiceServiceEndpoint] min_version.
     pub fn min_version(&self) -> &Option<String> {
         &self.min_version
     }
 
-    /// Retrieve ServiceServiceEndpoint max_version
+    /// Retrieve [ServiceServiceEndpoint] max_version.
     pub fn max_version(&self) -> &Option<String> {
         &self.max_version
     }
 
-    /// Build request URL from base endpoint url and the `RestEndpoint`
+    /// Build request URL from base endpoint url and the [`RestEndpoint`].
     pub fn build_request_url(&self, endpoint: &str) -> Result<Url, CatalogError> {
         trace!(
             "Constructing request url for service endpoint {} for {}",
@@ -261,14 +265,16 @@ impl fmt::Debug for ServiceEndpoint {
 pub struct ServiceEndpoints(Vec<ServiceEndpoint>);
 
 impl ServiceEndpoints {
-    /// Add endpoint into the list
+    /// Add endpoint into the list.
     pub fn push(&mut self, ep: ServiceEndpoint) -> &mut Self {
         self.0.push(ep);
         self
     }
 
-    /// Get the endpoint by region name. If no reion_name is passed first endpoint is being
-    /// returned.
+    /// Get the endpoint by region name.
+    ///
+    /// If no region_name is passed first endpoint is being returned.
+    #[deprecated(since = "0.23.0", note = "Use `get_by_region_and_interface` instead")]
     pub fn get_by_region<S: AsRef<str>>(&self, region_name: Option<S>) -> Option<&ServiceEndpoint> {
         if let Some(region) = &region_name {
             self.0
@@ -279,8 +285,85 @@ impl ServiceEndpoints {
         }
     }
 
-    /// Get the endpoint by region name. If no reion_name is passed first endpoint is being
-    /// returned.
+    /// Get the endpoint by region and interface name.
+    ///
+    /// Find the endpoint matching the filters.
+    ///
+    /// # Arguments
+    /// * `region_name` - name of the region
+    /// * `interface` - interface name.
+    ///
+    /// # Returns
+    /// * `Some(&ServiceEndpoint)` - reference to the found endpoint.
+    pub fn get_by_region_and_interface<R: AsRef<str>, I: AsRef<str>>(
+        &self,
+        region_name: Option<R>,
+        interface: Option<I>,
+    ) -> Option<&ServiceEndpoint> {
+        self.0.iter().find(|ep| {
+            [
+                region_name
+                    .as_ref()
+                    .is_none_or(|x| ep.region == Some(x.as_ref().into())),
+                interface
+                    .as_ref()
+                    .is_none_or(|x| ep.interface == Some(x.as_ref().into())),
+            ]
+            .iter()
+            .all(|&condition| condition)
+        })
+    }
+
+    /// Get the endpoint by a version and a region name.
+    ///
+    /// # Arguments
+    /// * `api_version` - API version.
+    /// * `region_name` - An optional region name.
+    /// * `interface` - An optional interface name.
+    pub fn get_by_version<R: AsRef<str>, I: AsRef<str>>(
+        &self,
+        api_version: Option<&ApiVersion>,
+        region_name: Option<R>,
+        interface: Option<I>,
+    ) -> Option<&ServiceEndpoint> {
+        for candidate in self.0.iter() {
+            if let Some(requested_version) = &api_version {
+                let cver = candidate.version();
+                if !(cver.major == requested_version.major
+                    && (cver.minor >= requested_version.minor))
+                {
+                    continue;
+                }
+            } else if *candidate.status() != Some(EndpointVersionStatus::Current) {
+                continue;
+            }
+            match (&region_name, candidate.region()) {
+                (Some(requested_region), Some(candidate_region)) => {
+                    if candidate_region.as_str() == requested_region.as_ref()
+                        && candidate.interface.as_ref().map(|x| x.as_ref())
+                            == interface.as_ref().map(|x| x.as_ref())
+                    {
+                        return Some(candidate);
+                    }
+                }
+                (None, _) => {
+                    return Some(candidate);
+                }
+                _ => {}
+            };
+        }
+        // Maybe there is no entry with `status=Current` (i.e. before we do version discovery)
+        if api_version.is_none() {
+            return self.get_by_region_and_interface(region_name, interface);
+        }
+        None
+    }
+
+    /// Get the endpoint by the version and region name.
+    ///
+    /// If no region_name is passed first endpoint is being returned.
+    #[deprecated(since = "0.23.0", note = "Use `get_by_version` instead")]
+    #[allow(deprecated)]
     pub fn get_by_version_and_region<S: AsRef<str>>(
         &self,
         api_version: Option<&ApiVersion>,
@@ -364,6 +447,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_endpoints_by_region() {
         let e1 = ServiceEndpoint::from_url_string("http://r1.foo.bar/s1", None::<String>)
             .unwrap()
@@ -390,6 +474,171 @@ mod tests {
     }
 
     #[test]
+    fn test_endpoints_by_region_and_interface() {
+        let e1 = ServiceEndpoint::from_url_string("http://r1.foo.bar/s1", None::<String>)
+            .unwrap()
+            .set_region(Some("r1"))
+            .set_interface(Some("internal"))
+            .to_owned();
+        let e2 = ServiceEndpoint::from_url_string("http://r2.foo.bar/s1", None::<String>)
+            .unwrap()
+            .set_region(Some("r2"))
+            .set_interface(Some("internal"))
+            .to_owned();
+        let endpoints = ServiceEndpoints(Vec::from([e1, e2]));
+        assert_eq!(
+            "http://r1.foo.bar/s1",
+            endpoints
+                .get_by_region_and_interface(Some("r1"), Some("internal"))
+                .unwrap()
+                .url_str()
+        );
+        assert_eq!(
+            "http://r1.foo.bar/s1",
+            endpoints
+                .get_by_region_and_interface(Some("r1"), None::<String>)
+                .unwrap()
+                .url_str()
+        );
+        assert_eq!(
+            "http://r1.foo.bar/s1",
+            endpoints
+                .get_by_region_and_interface(None::<String>, None::<String>)
+                .unwrap()
+                .url_str()
+        );
+        assert!(
+            endpoints
+                .get_by_region_and_interface(Some("r1"), Some("public"))
+                .is_none()
+        );
+        assert_eq!(
+            "http://r1.foo.bar/s1",
+            endpoints
+                .get_by_region_and_interface(None::<String>, Some("internal"))
+                .unwrap()
+                .url_str()
+        );
+        assert_eq!(
+            "http://r2.foo.bar/s1",
+            endpoints
+                .get_by_region_and_interface(Some("r2"), Some("internal"))
+                .unwrap()
+                .url_str()
+        );
+        assert!(
+            endpoints
+                .get_by_region_and_interface(Some("r3"), Some("internal"))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn test_endpoints_by_version_and() {
+        let endpoints = ServiceEndpoints(Vec::from([
+            ServiceEndpoint::new(
+                Url::parse("http://r1.foo.bar/s1/").unwrap(),
+                ApiVersion::new(0, 0),
+            )
+            .set_region(Some("r1"))
+            .set_interface(Some("internal"))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r1.foo.bar/s1/v1/").unwrap(),
+                ApiVersion::new(1, 0),
+            )
+            .set_region(Some("r1"))
+            .set_interface(Some("internal"))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r1.foo.bar/s1/v2/").unwrap(),
+                ApiVersion::new(2, 0),
+            )
+            .set_region(Some("r1"))
+            .set_interface(Some("internal"))
+            .set_status(Some(EndpointVersionStatus::Current))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r1.foo.bar/s1/v3/").unwrap(),
+                ApiVersion::new(3, 0),
+            )
+            .set_region(Some("r1"))
+            .set_interface(Some("internal"))
+            .set_status(Some(EndpointVersionStatus::Experimental))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r2.foo.bar/s1/").unwrap(),
+                ApiVersion::new(0, 0),
+            )
+            .set_region(Some("r2"))
+            .set_interface(Some("internal"))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r2.foo.bar/s1/v1/").unwrap(),
+                ApiVersion::new(1, 0),
+            )
+            .set_region(Some("r2"))
+            .set_interface(Some("internal"))
+            .to_owned(),
+            ServiceEndpoint::new(
+                Url::parse("http://r2.foo.bar/s1/v2/").unwrap(),
+                ApiVersion::new(2, 90),
+            )
+            .set_region(Some("r2"))
+            .set_interface(Some("internal"))
+            .set_status(Some(EndpointVersionStatus::Current))
+            .to_owned(),
+        ]));
+        assert_eq!(
+            "http://r1.foo.bar/s1/",
+            endpoints
+                .get_by_version(Some(&ApiVersion::new(0, 0)), Some("r1"), Some("internal"))
+                .unwrap()
+                .url_str(),
+            "Requesting unversioned endpoint"
+        );
+        assert_eq!(
+            "http://r1.foo.bar/s1/v1/",
+            endpoints
+                .get_by_version(Some(&ApiVersion::new(1, 0)), Some("r1"), Some("internal"))
+                .unwrap()
+                .url_str(),
+            "Requesting versioned endpoint"
+        );
+        assert_eq!(
+            "http://r1.foo.bar/s1/v2/",
+            endpoints
+                .get_by_version(None, Some("r1"), Some("internal"))
+                .unwrap()
+                .url_str(),
+            "Requesting current endpoint"
+        );
+        assert_eq!(
+            "http://r2.foo.bar/s1/v2/",
+            endpoints
+                .get_by_version(None, Some("r2"), Some("internal"))
+                .unwrap()
+                .url_str(),
+            "Requesting current endpoint"
+        );
+        assert_eq!(
+            "http://r2.foo.bar/s1/v2/",
+            endpoints
+                .get_by_version(Some(&ApiVersion::new(2, 0)), Some("r2"), Some("internal"))
+                .unwrap()
+                .url_str(),
+            "Requesting versioned endpoint with min 'lower' then available"
+        );
+        assert!(
+            endpoints
+                .get_by_version(Some(&ApiVersion::new(2, 100)), Some("r2"), Some("internal"))
+                .is_none(),
+            "Requesting versioned endpoint with min 'higher' then available"
+        );
+    }
+
+    #[test]
+    #[allow(deprecated)]
     fn test_endpoints_by_version_and_region() {
         let endpoints = ServiceEndpoints(Vec::from([
             ServiceEndpoint::new(

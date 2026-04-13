@@ -356,6 +356,7 @@ pub struct CloudConfig {
     /// Vendor Profile (by name from clouds-public.yaml or TBD: URL).
     pub profile: Option<String>,
     /// Interface name to be used for endpoints selection.
+    #[serde(default = "default_public")]
     pub interface: Option<String>,
     /// Region name.
     pub region_name: Option<String>,
@@ -372,6 +373,10 @@ pub struct CloudConfig {
     /// All other options.
     #[serde(flatten)]
     pub options: HashMap<String, config::Value>,
+}
+
+fn default_public() -> Option<String> {
+    Some(String::from("public"))
 }
 
 impl fmt::Debug for CloudConfig {
