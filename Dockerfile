@@ -3,12 +3,15 @@
 FROM rust:1.94.1-slim-trixie AS base
 
 RUN cargo install --locked cargo-chef
-WORKDIR app
+
+WORKDIR /app
 
 ################
 ##### Planner
 FROM base AS planner
+
 COPY . .
+
 # Prepare the build recipe
 RUN cargo chef prepare --recipe-path recipe.json
 
