@@ -6,6 +6,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.6](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.5...openstack_cli-v0.13.6) - 2026-04-20
+
+### Added
+
+- Sync changes from codegenerator ([#1662](https://github.com/gtema/openstack/pull/1662))
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+- Add dynamic completions in clap library ([#1626](https://github.com/gtema/openstack/pull/1626))
+- Split out remaining auth methods to plugins ([#1680](https://github.com/gtema/openstack/pull/1680))
+- Split openstack_sdk crate ([#1655](https://github.com/gtema/openstack/pull/1655))
+
+### Fixed
+
+- Add endpoint interface handling ([#1728](https://github.com/gtema/openstack/pull/1728))
+
+### Other
+
+- Introduce dedicated types crates ([#1715](https://github.com/gtema/openstack/pull/1715))
+- Split cli crate ([#1708](https://github.com/gtema/openstack/pull/1708))
+- Prepare split of cli crate ([#1707](https://github.com/gtema/openstack/pull/1707))
+- Repair codegenerator ([#1701](https://github.com/gtema/openstack/pull/1701))
+- Split the cli-core crate ([#1700](https://github.com/gtema/openstack/pull/1700))
+- *(deps)* Bump assert_cmd from 2.1.2 to 2.2.0 ([#1685](https://github.com/gtema/openstack/pull/1685))
+- Trait-ize auth plugins ([#1668](https://github.com/gtema/openstack/pull/1668))
+- *(deps)* Upgrade dependencies ([#1669](https://github.com/gtema/openstack/pull/1669))
+- *(deps)* Bump rand from 0.9.2 to 0.10.0 ([#1644](https://github.com/gtema/openstack/pull/1644))
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+- Split sdk crate into subcrates ([#1713](https://github.com/gtema/openstack/pull/1713))
+- Update sdk service impl to use core crate ([#1711](https://github.com/gtema/openstack/pull/1711))
+- Remove unused features ([#1710](https://github.com/gtema/openstack/pull/1710))
+- Move client back to `openstack_sdk` ([#1670](https://github.com/gtema/openstack/pull/1670))
+- Changes from Keystone webauthn api tests ([#1615](https://github.com/gtema/openstack/pull/1615))
+
 ## [0.13.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.4...openstack_cli-v0.13.5) - 2026-01-17
 
 ### Fixed
