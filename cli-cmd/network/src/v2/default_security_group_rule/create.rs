@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::default_security_group_rule::create;
-use openstack_types::network::v2::default_security_group_rule::response::create::DefaultSecurityGroupRuleResponse;
+use openstack_types::network::v2::default_security_group_rule::response;
 
 /// Creates an Openstack Networking security group rule template.
 ///
@@ -237,8 +237,9 @@ impl DefaultSecurityGroupRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<DefaultSecurityGroupRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::DefaultSecurityGroupRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -22,37 +22,56 @@ use structable::{StructTable, StructTableOptions};
 /// Imply response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImplyResponse {
-    /// A prior role object.
+    /// Links for the collection of resources.
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub implies: Option<Implies>,
+    pub links: Option<Links>,
 
-    /// A prior role object.
+    /// Role inference object that contains `prior_role` object and `implies`
+    /// object.
     #[serde(default)]
     #[structable(optional, serialize)]
-    pub prior_role: Option<PriorRole>,
+    pub role_inference: Option<RoleInference>,
 }
 
-/// The link to the resources in question.
+/// Links for the collection of resources.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
+    #[serde(default)]
+    pub next: Option<String>,
+    #[serde(default)]
+    pub previous: Option<String>,
+    #[serde(rename = "self")]
+    pub _self: String,
+}
+
+/// The link to the resource in question.
+/// `ImpliesLinks` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ImpliesLinks {
     #[serde(default, rename = "self")]
     pub _self: Option<String>,
 }
 
-/// A prior role object.
+/// An implied role object.
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {
     #[serde(default)]
-    pub description: Option<String>,
-    #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
-    pub links: Option<Links>,
+    pub links: Option<ImpliesLinks>,
     #[serde(default)]
     pub name: Option<String>,
+}
+
+/// The link to the resources in question.
+/// `PriorRoleLinks` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PriorRoleLinks {
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
 }
 
 /// A prior role object.
@@ -60,11 +79,20 @@ pub struct Implies {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
     #[serde(default)]
-    pub description: Option<String>,
-    #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
-    pub links: Option<Links>,
+    pub links: Option<PriorRoleLinks>,
     #[serde(default)]
     pub name: Option<String>,
+}
+
+/// Role inference object that contains `prior_role` object and `implies`
+/// object.
+/// `RoleInference` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RoleInference {
+    #[serde(default)]
+    pub implies: Option<Implies>,
+    #[serde(default)]
+    pub prior_role: Option<PriorRole>,
 }

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::amphorae::stats;
-use openstack_types::load_balancer::v2::amphorae::response::stats::AmphoraeResponse;
+use openstack_types::load_balancer::v2::amphorae::response;
 
 /// Show the statistics for an amphora.
 ///
@@ -90,7 +90,7 @@ impl AmphoraeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<AmphoraeResponse>(data)?;
+        op.output_list::<response::stats::AmphoraeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

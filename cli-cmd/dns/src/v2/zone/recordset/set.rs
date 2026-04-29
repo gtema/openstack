@@ -33,7 +33,7 @@ use openstack_sdk::api::dns::v2::zone::recordset::find;
 use openstack_sdk::api::dns::v2::zone::recordset::set;
 use openstack_sdk::api::find;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::recordset::response::set::RecordsetResponse;
+use openstack_types::dns::v2::zone::recordset::response;
 use tracing::warn;
 
 /// Update a recordset
@@ -220,8 +220,9 @@ impl RecordsetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RecordsetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::RecordsetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

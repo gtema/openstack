@@ -34,7 +34,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::group::option::set;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
-use openstack_types::identity::v3::domain::config::group::option::response::set::OptionResponse;
+use openstack_types::identity::v3::domain::config::group::option::response;
 use serde_json::Value;
 use tracing::warn;
 
@@ -189,8 +189,9 @@ impl OptionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<OptionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::OptionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

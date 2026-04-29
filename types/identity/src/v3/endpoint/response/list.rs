@@ -22,6 +22,11 @@ use structable::{StructTable, StructTableOptions};
 /// Endpoint response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EndpointResponse {
+    /// The endpoint description. It is returned only when set on the resource.
+    #[serde(default)]
+    #[structable(optional, wide)]
+    pub description: Option<String>,
+
     /// Indicates whether the endpoint appears in the service catalog: -
     /// `false`. The endpoint does not appear in the service catalog. - `true`.
     /// The endpoint appears in the service catalog.
@@ -42,6 +47,16 @@ pub struct EndpointResponse {
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub interface: Option<Interface>,
+
+    /// (Deprecated) The endpoint name. The field will only be returned in
+    /// responses when set on the resource.
+    ///
+    /// This field is deprecated as it provides no value. Endpoints are better
+    /// described by the combination of service, region and interface they
+    /// describe or by their ID.
+    #[serde(default)]
+    #[structable(optional)]
+    pub name: Option<String>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     #[serde(default)]
@@ -89,4 +104,12 @@ impl std::str::FromStr for Interface {
             _ => Err(()),
         }
     }
+}
+
+/// The links for the `endpoints` resource.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
 }

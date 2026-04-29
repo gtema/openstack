@@ -32,7 +32,7 @@ use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::find;
 use openstack_sdk::api::find;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::recordset::response::get::RecordsetResponse;
+use openstack_types::dns::v2::zone::recordset::response;
 use tracing::warn;
 
 /// Show an single recordset
@@ -166,7 +166,7 @@ impl RecordsetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<RecordsetResponse>(find_data)?;
+        op.output_single::<response::get::RecordsetResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

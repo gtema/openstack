@@ -33,7 +33,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::credential::os_ec2::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::identity::v3::user::credential::os_ec2::response::list::OsEc2Response;
 use tracing::warn;
 
 /// List EC2 Credentials for user.
@@ -143,9 +142,7 @@ impl OsEc2SCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<OsEc2Response>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network::create;
-use openstack_types::network::v2::network::response::create::NetworkResponse;
+use openstack_types::network::v2::network::response;
 use serde_json::Value;
 
 /// Creates a network.
@@ -280,8 +280,9 @@ impl NetworkCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<NetworkResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::NetworkResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

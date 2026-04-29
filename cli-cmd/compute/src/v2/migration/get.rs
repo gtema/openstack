@@ -33,7 +33,7 @@ use openstack_sdk::api::compute::v2::migration::get;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::compute::v2::migration::response::get::MigrationResponse;
+use openstack_types::compute::v2::migration::response;
 use tracing::warn;
 
 /// Lists migrations.
@@ -284,7 +284,10 @@ impl MigrationCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<MigrationResponse>(data)?;
+        op.output_list::<response::get_20::MigrationResponse>(data.clone())
+            .or_else(|_| op.output_list::<response::get_223::MigrationResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::get_259::MigrationResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::get_280::MigrationResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

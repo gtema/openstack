@@ -215,7 +215,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("member".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -258,7 +258,7 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
+        assert!(
             Request::builder()
                 .members(Vec::from([MembersBuilder::default()
                     .address("foo")
@@ -268,9 +268,8 @@ mod tests {
                 .build()
                 .unwrap()
                 .response_key()
-                .unwrap(),
-            "member"
-        );
+                .is_none()
+        )
     }
 
     #[cfg(feature = "sync")]
@@ -286,7 +285,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "member": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
@@ -317,7 +316,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "member": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()

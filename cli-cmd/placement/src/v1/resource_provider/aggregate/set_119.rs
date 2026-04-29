@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::aggregate::set_119;
-use openstack_types::placement::v1::resource_provider::aggregate::response::set::AggregateResponse;
+use openstack_types::placement::v1::resource_provider::aggregate::response;
 
 /// Associate a list of aggregates with the resource provider identified by
 /// {uuid}.
@@ -109,7 +109,7 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<AggregateResponse>(data)?;
+        op.output_list::<response::set::AggregateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::port_association::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::local_ip::port_association::response::list::PortAssociationResponse;
+use openstack_types::network::v2::local_ip::port_association::response;
 
 /// Lists Associations for the given Local IP.
 ///
@@ -189,7 +189,8 @@ impl PortAssociationsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<PortAssociationResponse>(data)?;
+
+        op.output_list::<response::list::PortAssociationResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

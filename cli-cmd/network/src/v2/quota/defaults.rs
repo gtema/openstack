@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::quota::defaults;
-use openstack_types::network::v2::quota::response::defaults::QuotaResponse;
+use openstack_types::network::v2::quota::response;
 
 /// Lists default quotas for a project.
 ///
@@ -97,8 +97,9 @@ impl QuotaCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::defaults::QuotaResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

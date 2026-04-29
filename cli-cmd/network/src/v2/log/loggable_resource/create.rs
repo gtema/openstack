@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::log::loggable_resource::create;
-use openstack_types::network::v2::log::loggable_resource::response::create::LoggableResourceResponse;
+use openstack_types::network::v2::log::loggable_resource::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -84,8 +84,9 @@ impl LoggableResourceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LoggableResourceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::LoggableResourceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::hypervisor::response::list_detailed::HypervisorResponse;
+use openstack_types::compute::v2::hypervisor::response;
 
 /// Lists hypervisors details.
 ///
@@ -123,7 +123,20 @@ impl HypervisorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<HypervisorResponse>(data)?;
+
+        op.output_list::<response::list_detailed_21::HypervisorResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_228::HypervisorResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_233::HypervisorResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_253::HypervisorResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_288::HypervisorResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

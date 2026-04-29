@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::find;
-use openstack_types::load_balancer::v2::loadbalancer::response::get::LoadbalancerResponse;
+use openstack_types::load_balancer::v2::loadbalancer::response;
 
 /// Shows the details of a load balancer.
 ///
@@ -93,7 +93,7 @@ impl LoadbalancerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<LoadbalancerResponse>(find_data)?;
+        op.output_single::<response::get::LoadbalancerResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

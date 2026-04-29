@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::domain::config::group::default;
-use openstack_types::identity::v3::domain::config::group::response::default::GroupResponse;
+use openstack_types::identity::v3::domain::config::group::response;
 
 /// Reads the default configuration settings for a specific group.
 ///
@@ -89,8 +89,9 @@ impl GroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::default::GroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

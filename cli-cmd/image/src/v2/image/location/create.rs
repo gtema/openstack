@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::location::create;
-use openstack_types::image::v2::image::location::response::create::LocationResponse;
+use openstack_types::image::v2::image::location::response;
 use serde_json::Value;
 
 /// Add location to an image which is in `queued` state. Accepts location url,
@@ -154,8 +154,9 @@ impl LocationCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LocationResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::LocationResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

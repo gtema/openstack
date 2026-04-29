@@ -32,8 +32,8 @@ pub struct ProjectResponse {
     #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
@@ -43,8 +43,8 @@ pub struct ProjectResponse {
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     #[serde(default)]
     #[structable(optional, wide)]
     pub is_domain: Option<bool>,
@@ -54,8 +54,6 @@ pub struct ProjectResponse {
     #[structable(optional)]
     pub name: Option<String>,
 
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
@@ -81,8 +79,6 @@ pub struct Links {
     pub _self: Option<String>,
 }
 
-/// The resource options for the project. Available resource options are
-/// `immutable`.
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {

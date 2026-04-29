@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::pool::member::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::pool::member::response::list::MemberResponse;
+use openstack_types::load_balancer::v2::pool::member::response;
 use tracing::warn;
 
 /// Lists all members for the project.
@@ -330,7 +330,8 @@ impl MembersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<MemberResponse>(data)?;
+
+        op.output_list::<response::list::MemberResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

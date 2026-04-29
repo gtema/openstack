@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::list;
-use openstack_types::block_storage::v3::r#type::response::list::TypeResponse;
+use openstack_types::block_storage::v3::r#type::response;
 
 /// Returns the list of volume types.
 #[derive(Args)]
@@ -70,7 +70,8 @@ impl TypesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TypeResponse>(data)?;
+
+        op.output_list::<response::list::TypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

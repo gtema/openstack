@@ -28,9 +28,9 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::auth::get;
 use openstack_sdk::api::QueryAsync;
-use openstack_types::identity::v3::os_federation::identity_provider::protocol::auth::response::get::AuthResponse;
+use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::auth::get;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::auth::response;
 
 /// Authenticate from dedicated uri endpoint.
 ///
@@ -100,8 +100,9 @@ impl AuthCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AuthResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::AuthResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

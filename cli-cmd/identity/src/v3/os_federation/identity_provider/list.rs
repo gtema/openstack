@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::list;
-use openstack_types::identity::v3::os_federation::identity_provider::response::list::IdentityProviderResponse;
+use openstack_types::identity::v3::os_federation::identity_provider::response;
 
 /// List all identity providers.
 ///
@@ -92,7 +92,8 @@ impl IdentityProvidersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<IdentityProviderResponse>(data)?;
+
+        op.output_list::<response::list::IdentityProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

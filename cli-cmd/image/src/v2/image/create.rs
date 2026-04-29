@@ -31,7 +31,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::create;
-use openstack_types::image::v2::image::response::create::ImageResponse;
+use openstack_types::image::v2::image::response;
 use serde_json::Value;
 
 /// Creates a catalog record for an operating system disk image. *(Since Image
@@ -330,8 +330,9 @@ impl ImageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ImageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ImageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

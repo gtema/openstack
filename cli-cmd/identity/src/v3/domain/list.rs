@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::domain::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::identity::v3::domain::response::list::DomainResponse;
+use openstack_types::identity::v3::domain::response;
 
 /// Lists all domains.
 ///
@@ -120,7 +120,8 @@ impl DomainsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<DomainResponse>(data)?;
+
+        op.output_list::<response::list::DomainResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

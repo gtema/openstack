@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v4/federation/mappings` with `POST` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::mapping::create;
-use openstack_types::identity::v4::federation::mapping::response::create::MappingResponse;
+use openstack_types::identity::v4::federation::mapping::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -258,8 +258,9 @@ impl MappingCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MappingResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::MappingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

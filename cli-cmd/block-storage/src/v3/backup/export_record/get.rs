@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::export_record::get;
-use openstack_types::block_storage::v3::backup::export_record::response::get::ExportRecordResponse;
+use openstack_types::block_storage::v3::backup::export_record::response;
 
 /// Export a backup.
 #[derive(Args)]
@@ -83,8 +83,9 @@ impl ExportRecordCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ExportRecordResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ExportRecordResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

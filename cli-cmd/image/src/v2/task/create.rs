@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::create;
-use openstack_types::image::v2::task::response::create::TaskResponse;
+use openstack_types::image::v2::task::response;
 use serde_json::Value;
 
 /// Creates a task.
@@ -224,8 +224,9 @@ impl TaskCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<TaskResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::TaskResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

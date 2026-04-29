@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_group::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::address_group::response::list::AddressGroupResponse;
+use openstack_types::network::v2::address_group::response;
 
 /// Lists address groups that the project has access to.
 ///
@@ -183,7 +183,8 @@ impl AddressGroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AddressGroupResponse>(data)?;
+
+        op.output_list::<response::list::AddressGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

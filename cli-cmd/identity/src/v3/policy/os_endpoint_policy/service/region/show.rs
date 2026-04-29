@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::service::region::get;
-use openstack_types::identity::v3::policy::os_endpoint_policy::service::region::response::get::RegionResponse;
 
 /// GET operation on
 /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
@@ -108,9 +107,7 @@ impl RegionCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<RegionResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

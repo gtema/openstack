@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::simple_tenant_usage::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::simple_tenant_usage::response::list::SimpleTenantUsageResponse;
+use openstack_types::compute::v2::simple_tenant_usage::response;
 
 /// Lists usage statistics for all tenants.
 ///
@@ -129,7 +129,11 @@ impl SimpleTenantUsagesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<SimpleTenantUsageResponse>(data)?;
+
+        op.output_list::<response::list_21::SimpleTenantUsageResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_240::SimpleTenantUsageResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::floatingip::response::list::FloatingipResponse;
+use openstack_types::network::v2::floatingip::response;
 
 /// Lists floating IPs visible to the user.
 ///
@@ -246,7 +246,8 @@ impl FloatingipsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<FloatingipResponse>(data)?;
+
+        op.output_list::<response::list::FloatingipResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

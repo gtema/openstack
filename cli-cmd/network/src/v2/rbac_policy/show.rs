@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::rbac_policy::get;
-use openstack_types::network::v2::rbac_policy::response::get::RbacPolicyResponse;
+use openstack_types::network::v2::rbac_policy::response;
 
 /// Show details for a given RBAC policy.
 ///
@@ -87,8 +87,9 @@ impl RbacPolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RbacPolicyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::RbacPolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

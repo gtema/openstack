@@ -112,9 +112,9 @@ impl Component for NetworkSecurityGroups<'_> {
                     NetworkSecurityGroupApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
-            Action::ShowNetworkSecurityGroupRules => {
+            Action::ShowNetworkSecurityGroupRules
                 // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::NetworkSecurityGroups {
+                if current_mode == Mode::NetworkSecurityGroups => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -132,7 +132,6 @@ impl Component for NetworkSecurityGroups<'_> {
                         }
                     }
                 }
-            }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,

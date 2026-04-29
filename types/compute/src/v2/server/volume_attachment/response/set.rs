@@ -23,34 +23,26 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeAttachmentResponse {
     /// The UUID of the associated volume attachment in Cinder.
-    ///
-    /// **New in version 2.89**
     #[serde(default)]
     #[structable(optional)]
     pub attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
-    ///
-    /// **New in version 2.89**
     #[serde(default)]
     #[structable(optional)]
     pub bdm_uuid: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
     /// server is deleted.
-    ///
-    /// **New in version 2.79**
     #[serde(default)]
     #[structable(optional)]
     pub delete_on_termination: Option<bool>,
 
-    /// Name of the device in the attachment object, such as, `/dev/vdb`.
+    /// Name of the device in the attachment object, such as, /dev/vdb.
     #[structable()]
     pub device: String,
 
-    /// The volume ID of the attachment.
-    ///
-    /// **Available until version 2.88**
+    /// The volume ID of the attachment
     #[structable()]
     pub id: String,
 
@@ -59,9 +51,7 @@ pub struct VolumeAttachmentResponse {
     #[structable(title = "serverId")]
     pub server_id: String,
 
-    /// The device tag applied to the volume block device or `null`.
-    ///
-    /// **New in version 2.70**
+    /// The device tag applied to the volume block device or null.
     #[serde(default)]
     #[structable(optional)]
     pub tag: Option<String>,

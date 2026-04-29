@@ -20,5 +20,4 @@ pub mod domain;
 pub mod identity_provider;
 pub mod mapping;
 pub mod project;
-pub mod saml2;
 pub mod service_provider;

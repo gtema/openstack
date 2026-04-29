@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::region::list;
-use openstack_types::identity::v3::region::response::list::RegionResponse;
+use openstack_types::identity::v3::region::response;
 
 /// Lists regions.
 ///
@@ -83,7 +83,8 @@ impl RegionsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<RegionResponse>(data)?;
+
+        op.output_list::<response::list::RegionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

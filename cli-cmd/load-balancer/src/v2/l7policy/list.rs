@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::l7policy::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::l7policy::response::list::L7policyResponse;
+use openstack_types::load_balancer::v2::l7policy::response;
 use tracing::warn;
 
 /// Lists all L7 policies for the project.
@@ -248,7 +248,8 @@ impl L7PoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<L7policyResponse>(data)?;
+
+        op.output_list::<response::list::L7policyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

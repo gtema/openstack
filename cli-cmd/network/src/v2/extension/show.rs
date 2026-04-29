@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::extension::get;
-use openstack_types::network::v2::extension::response::get::ExtensionResponse;
+use openstack_types::network::v2::extension::response;
 
 /// Shows details for an extension, by alias. The response shows the extension
 /// name and its alias. To show details for an extension, you specify the
@@ -89,8 +89,9 @@ impl ExtensionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ExtensionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ExtensionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

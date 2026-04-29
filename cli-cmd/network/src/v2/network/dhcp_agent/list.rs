@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network::dhcp_agent::list;
-use openstack_types::network::v2::network::dhcp_agent::response::list::DhcpAgentResponse;
+use openstack_types::network::v2::network::dhcp_agent::response;
 
 /// Lists DHCP agents hosting a network.
 ///
@@ -153,8 +153,9 @@ impl DhcpAgentsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<DhcpAgentResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::DhcpAgentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::create;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::recordset::response::create::RecordsetResponse;
+use openstack_types::dns::v2::zone::recordset::response;
 use tracing::warn;
 
 /// Create a recordset in a zone
@@ -212,8 +212,9 @@ impl RecordsetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RecordsetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::RecordsetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

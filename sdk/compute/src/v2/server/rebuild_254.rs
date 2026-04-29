@@ -248,7 +248,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("server".into())
     }
 
     /// Returns headers to be set into the request
@@ -287,14 +287,15 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(
+        assert_eq!(
             Request::builder()
                 .rebuild(RebuildBuilder::default().image_ref("foo").build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
-                .is_none()
-        )
+                .unwrap(),
+            "server"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -308,7 +309,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "server": {} }));
         });
 
         let endpoint = Request::builder()
@@ -332,7 +333,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "server": {} }));
         });
 
         let endpoint = Request::builder()

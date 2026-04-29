@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::find;
 use openstack_sdk::api::find;
-use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response::get::NodegroupResponse;
+use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response;
 
 /// Retrieve information for the given nodegroup in a cluster.
 ///
@@ -88,7 +88,7 @@ impl NodegroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<NodegroupResponse>(find_data)?;
+        op.output_single::<response::get::NodegroupResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

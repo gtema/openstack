@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::listener::create;
-use openstack_types::load_balancer::v2::listener::response::create::ListenerResponse;
+use openstack_types::load_balancer::v2::listener::response;
 use serde_json::Value;
 
 /// Creates a listener for a load balancer.
@@ -457,8 +457,9 @@ impl ListenerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ListenerResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ListenerResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

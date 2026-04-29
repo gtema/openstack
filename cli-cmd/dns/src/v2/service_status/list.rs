@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::service_status::list;
-use openstack_types::dns::v2::service_status::response::list::ServiceStatusResponse;
 
 /// List all Services and statuses.
 #[derive(Args)]
@@ -101,9 +100,7 @@ impl ServiceStatusesCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServiceStatusResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::catalog::list;
-use openstack_types::identity::v3::auth::catalog::response::list::CatalogResponse;
+use openstack_types::identity::v3::auth::catalog::response;
 
 /// New in version 3.3
 ///
@@ -82,7 +82,8 @@ impl CatalogsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<CatalogResponse>(data)?;
+
+        op.output_list::<response::list::CatalogResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

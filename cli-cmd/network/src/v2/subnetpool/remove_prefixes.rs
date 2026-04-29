@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnetpool::remove_prefixes;
-use openstack_types::network::v2::subnetpool::response::remove_prefixes::SubnetpoolResponse;
+use openstack_types::network::v2::subnetpool::response;
 use serde_json::Value;
 
 /// Request of the subnetpools/id/remove_prefixes:put operation
@@ -95,8 +95,9 @@ impl SubnetpoolCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<SubnetpoolResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::remove_prefixes::SubnetpoolResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

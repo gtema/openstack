@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::dscp_marking_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::qos::policy::dscp_marking_rule::response::list::DscpMarkingRuleResponse;
+use openstack_types::network::v2::qos::policy::dscp_marking_rule::response;
 
 /// Lists all DSCP marking rules for a QoS policy.
 ///
@@ -175,7 +175,8 @@ impl DscpMarkingRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<DscpMarkingRuleResponse>(data)?;
+
+        op.output_list::<response::list::DscpMarkingRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

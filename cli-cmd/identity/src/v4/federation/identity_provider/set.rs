@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers/{idp_id}` with `PUT` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::identity_provider::set;
-use openstack_types::identity::v4::federation::identity_provider::response::set::IdentityProviderResponse;
+use openstack_types::identity::v4::federation::identity_provider::response;
 use serde_json::Value;
 
 /// Updates the existing identity provider.
@@ -257,8 +257,9 @@ impl IdentityProviderCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IdentityProviderResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::IdentityProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::list;
-use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response::list::NodegroupResponse;
+use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response;
 
 /// Retrieve a list of nodegroups.
 ///
@@ -81,7 +81,8 @@ impl NodegroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<NodegroupResponse>(data)?;
+
+        op.output_list::<response::list::NodegroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::policy::packet_rate_limit_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::policy::packet_rate_limit_rule::response::list::PacketRateLimitRuleResponse;
+use openstack_types::network::v2::policy::packet_rate_limit_rule::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -172,7 +172,8 @@ impl PacketRateLimitRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<PacketRateLimitRuleResponse>(data)?;
+
+        op.output_list::<response::list::PacketRateLimitRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

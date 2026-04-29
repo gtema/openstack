@@ -22,16 +22,27 @@ use structable::{StructTable, StructTableOptions};
 /// Protocol response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProtocolResponse {
-    /// The federation protocol ID
-    #[serde(default)]
-    #[structable(optional)]
-    pub id: Option<String>,
+    /// The resource name.
+    #[structable()]
+    pub id: String,
 
     #[serde(default)]
-    #[structable(optional)]
-    pub mapping_id: Option<String>,
+    #[structable(optional, serialize)]
+    pub links: Option<Links>,
+
+    #[structable()]
+    pub mapping_id: String,
 
     #[serde(default)]
     #[structable(optional)]
     pub remote_id_attribute: Option<String>,
+}
+
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    #[serde(default)]
+    pub identity_provider: Option<String>,
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
 }

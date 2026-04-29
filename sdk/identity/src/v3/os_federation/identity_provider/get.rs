@@ -93,7 +93,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("identity_provider".into())
+        Some("identity_providers".into())
     }
 
     /// Returns headers to be set into the request
@@ -130,7 +130,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder().build().unwrap().response_key().unwrap(),
-            "identity_provider"
+            "identity_providers"
         );
     }
 
@@ -147,7 +147,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "identity_provider": {} }));
+                .json_body(json!({ "identity_providers": {} }));
         });
 
         let endpoint = Request::builder().idp_id("idp_id").build().unwrap();
@@ -170,7 +170,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "identity_provider": {} }));
+                .json_body(json!({ "identity_providers": {} }));
         });
 
         let endpoint = Request::builder()

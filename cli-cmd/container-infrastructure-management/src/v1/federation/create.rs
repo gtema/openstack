@@ -31,7 +31,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::federation::create;
-use openstack_types::container_infrastructure_management::v1::federation::response::create::FederationResponse;
+use openstack_types::container_infrastructure_management::v1::federation::response;
 use serde_json::Value;
 
 /// Create a new federation.
@@ -190,8 +190,9 @@ impl FederationCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<FederationResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::FederationResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

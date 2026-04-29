@@ -17,7 +17,7 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_types::compute::v2::hypervisor::response::list_detailed::HypervisorResponse;
+use openstack_types::compute::v2::hypervisor::response::list_detailed_253::HypervisorResponse;
 
 use crate::{
     action::Action,

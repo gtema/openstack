@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::service_provider::create;
-use openstack_types::network::v2::service_provider::response::create::ServiceProviderResponse;
+use openstack_types::network::v2::service_provider::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -84,8 +84,9 @@ impl ServiceProviderCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServiceProviderResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ServiceProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::member::get;
-use openstack_types::image::v2::image::member::response::get::MemberResponse;
+use openstack_types::image::v2::image::member::response;
 
 /// Shows image member details. *(Since Image API v2.1)*
 ///
@@ -98,8 +98,9 @@ impl MemberCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MemberResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MemberResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -35,7 +35,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::find;
 use openstack_sdk::api::image::v2::image::patch;
-use openstack_types::image::v2::image::response::patch::ImageResponse;
+use openstack_types::image::v2::image::response::patch::*;
 use serde_json::Value;
 use serde_json::json;
 

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::list;
-use openstack_types::placement::v1::resource_class::response::list::ResourceClassResponse;
+use openstack_types::placement::v1::resource_class::response;
 
 /// Return a list of all resource classes.
 ///
@@ -74,7 +74,8 @@ impl ResourceClassesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResourceClassResponse>(data)?;
+
+        op.output_list::<response::list::ResourceClassResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

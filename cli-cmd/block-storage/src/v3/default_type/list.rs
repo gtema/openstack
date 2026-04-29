@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::default_type::list;
-use openstack_types::block_storage::v3::default_type::response::list::DefaultTypeResponse;
+use openstack_types::block_storage::v3::default_type::response;
 
 /// Return a list of default types.
 #[derive(Args)]
@@ -74,7 +74,8 @@ impl DefaultTypesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<DefaultTypeResponse>(data)?;
+
+        op.output_list::<response::list::DefaultTypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

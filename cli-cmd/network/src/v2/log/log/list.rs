@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::log::log::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::log::log::response::list::LogResponse;
+use openstack_types::network::v2::log::log::response;
 
 /// Lists all log resources associated with your project.
 ///
@@ -215,7 +215,8 @@ impl LogsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<LogResponse>(data)?;
+
+        op.output_list::<response::list::LogResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

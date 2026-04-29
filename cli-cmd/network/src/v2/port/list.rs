@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::port::response::list::PortResponse;
+use openstack_types::network::v2::port::response;
 
 /// Lists ports to which the user has access.
 ///
@@ -286,7 +286,8 @@ impl PortsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<PortResponse>(data)?;
+
+        op.output_list::<response::list::PortResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

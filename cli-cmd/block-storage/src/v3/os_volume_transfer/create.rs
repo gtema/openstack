@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::os_volume_transfer::create;
-use openstack_types::block_storage::v3::os_volume_transfer::response::create::OsVolumeTransferResponse;
+use openstack_types::block_storage::v3::os_volume_transfer::response;
 
 /// Create a new volume transfer.
 #[derive(Args)]
@@ -111,8 +111,9 @@ impl OsVolumeTransferCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<OsVolumeTransferResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::OsVolumeTransferResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

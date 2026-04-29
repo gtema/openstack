@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::floatingip::port_forwarding::response::list::PortForwardingResponse;
+use openstack_types::network::v2::floatingip::port_forwarding::response;
 
 /// Lists floating IP port forwardings that the project has access to.
 ///
@@ -209,7 +209,8 @@ impl PortForwardingsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<PortForwardingResponse>(data)?;
+
+        op.output_list::<response::list::PortForwardingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

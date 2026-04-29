@@ -28,9 +28,7 @@ pub struct ServiceResponse {
     pub description: Option<String>,
 
     /// Defines whether the service and its endpoints appear in the service
-    /// catalog: - `false`. The service and its endpoints do not appear in the
-    /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
+    /// catalog.
     #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,

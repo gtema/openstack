@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::message::get;
-use openstack_types::block_storage::v3::message::response::get::MessageResponse;
+use openstack_types::block_storage::v3::message::response;
 
 /// Return the given message.
 #[derive(Args)]
@@ -80,8 +80,9 @@ impl MessageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MessageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MessageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

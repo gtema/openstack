@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_group::create_215;
-use openstack_types::compute::v2::server_group::response::create::ServerGroupResponse;
+use openstack_types::compute::v2::server_group::response;
 
 /// Creates a server group.
 ///
@@ -149,8 +149,9 @@ impl ServerGroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerGroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_215::ServerGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::endpoint_group::find;
 use openstack_sdk::api::network::v2::vpn::endpoint_group::set;
-use openstack_types::network::v2::vpn::endpoint_group::response::set::EndpointGroupResponse;
+use openstack_types::network::v2::vpn::endpoint_group::response;
 
 /// Updates settings for a VPN endpoint group.
 ///
@@ -137,8 +137,9 @@ impl EndpointGroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<EndpointGroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::EndpointGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

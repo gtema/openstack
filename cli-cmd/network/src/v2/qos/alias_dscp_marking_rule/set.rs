@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_dscp_marking_rule::set;
-use openstack_types::network::v2::qos::alias_dscp_marking_rule::response::set::AliasDscpMarkingRuleResponse;
+use openstack_types::network::v2::qos::alias_dscp_marking_rule::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -107,8 +107,9 @@ impl AliasDscpMarkingRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AliasDscpMarkingRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::AliasDscpMarkingRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

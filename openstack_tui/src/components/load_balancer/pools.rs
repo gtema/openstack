@@ -125,9 +125,9 @@ impl Component for LoadBalancerPools<'_> {
                     LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
-            Action::ShowLoadBalancerPoolMembers => {
+            Action::ShowLoadBalancerPoolMembers
                 // only if we are currently in the expected mode
-                if current_mode == Mode::LoadBalancerPools {
+                if current_mode == Mode::LoadBalancerPools => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -143,10 +143,9 @@ impl Component for LoadBalancerPools<'_> {
                         }
                     }
                 }
-            }
-            Action::ShowLoadBalancerPoolHealthMonitors => {
+            Action::ShowLoadBalancerPoolHealthMonitors
                 // only if we are currently in the expected mode
-                if current_mode == Mode::LoadBalancerPools {
+                if current_mode == Mode::LoadBalancerPools => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -162,7 +161,6 @@ impl Component for LoadBalancerPools<'_> {
                         }
                     }
                 }
-            }
             // Action::DeleteLoadBalancer => {
             //     // only if we are currently in the right mode
             //     if current_mode == Mode::LoadBalancerLoadBalancers {

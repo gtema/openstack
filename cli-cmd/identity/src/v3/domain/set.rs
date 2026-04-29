@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::domain::find;
 use openstack_sdk::api::identity::v3::domain::set;
-use openstack_types::identity::v3::domain::response::set::DomainResponse;
+use openstack_types::identity::v3::domain::response;
 
 /// Updates a domain.
 ///
@@ -187,8 +187,9 @@ impl DomainCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<DomainResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::DomainResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

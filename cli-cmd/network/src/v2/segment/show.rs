@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::segment::find;
-use openstack_types::network::v2::segment::response::get::SegmentResponse;
+use openstack_types::network::v2::segment::response;
 
 /// Shows details for a segment.
 ///
@@ -89,7 +89,7 @@ impl SegmentCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<SegmentResponse>(find_data)?;
+        op.output_single::<response::get::SegmentResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

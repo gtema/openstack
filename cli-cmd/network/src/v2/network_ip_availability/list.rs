@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network_ip_availability::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::network_ip_availability::response::list::NetworkIpAvailabilityResponse;
+use openstack_types::network::v2::network_ip_availability::response;
 
 /// Lists network IP availability of all networks.
 ///
@@ -178,7 +178,8 @@ impl NetworkIpAvailabilitiesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<NetworkIpAvailabilityResponse>(data)?;
+
+        op.output_list::<response::list::NetworkIpAvailabilityResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

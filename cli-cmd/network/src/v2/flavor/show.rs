@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::flavor::find;
-use openstack_types::network::v2::flavor::response::get::FlavorResponse;
+use openstack_types::network::v2::flavor::response;
 
 /// Shows details for a flavor.
 ///
@@ -93,7 +93,7 @@ impl FlavorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<FlavorResponse>(find_data)?;
+        op.output_single::<response::get::FlavorResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

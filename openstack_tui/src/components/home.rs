@@ -164,11 +164,9 @@ impl Component for Home {
             }
             Action::Mode {
                 mode: Mode::Home, ..
-            } => {
-                if !self.is_loading {
-                    self.set_loading(true);
-                    return self.refresh_data();
-                }
+            } if !self.is_loading => {
+                self.set_loading(true);
+                return self.refresh_data();
             }
             Action::Tick => {
                 self.tick();

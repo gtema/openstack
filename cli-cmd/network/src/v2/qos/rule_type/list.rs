@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::rule_type::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::qos::rule_type::response::list::RuleTypeResponse;
+use openstack_types::network::v2::qos::rule_type::response;
 
 /// Lists available qos rule types.
 ///
@@ -158,7 +158,8 @@ impl RuleTypesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<RuleTypeResponse>(data)?;
+
+        op.output_list::<response::list::RuleTypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

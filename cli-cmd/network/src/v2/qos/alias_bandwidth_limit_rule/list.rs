@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::qos::alias_bandwidth_limit_rule::response::list::AliasBandwidthLimitRuleResponse;
+use openstack_types::network::v2::qos::alias_bandwidth_limit_rule::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -158,7 +158,8 @@ impl AliasBandwidthLimitRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AliasBandwidthLimitRuleResponse>(data)?;
+
+        op.output_list::<response::list::AliasBandwidthLimitRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

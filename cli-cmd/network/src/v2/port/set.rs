@@ -34,7 +34,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;
-use openstack_types::network::v2::port::response::set::PortResponse;
+use openstack_types::network::v2::port::response;
 use serde_json::Value;
 
 /// Updates a port.
@@ -454,8 +454,9 @@ impl PortCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PortResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::PortResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

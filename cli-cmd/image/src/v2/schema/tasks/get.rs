@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::schema::tasks::get;
-use openstack_types::image::v2::schema::tasks::response::get::TasksResponse;
+use openstack_types::image::v2::schema::tasks::response;
 
 /// *(Since Images v2.2)*
 ///

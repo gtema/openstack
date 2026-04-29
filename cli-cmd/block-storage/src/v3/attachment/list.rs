@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::attachment::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::attachment::response::list_detailed::AttachmentResponse;
+use openstack_types::block_storage::v3::attachment::response;
 
 /// Return a detailed list of attachments.
 #[derive(Args)]
@@ -146,7 +146,8 @@ impl AttachmentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AttachmentResponse>(data)?;
+
+        op.output_list::<response::list_detailed::AttachmentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::set;
-use openstack_types::network::v2::floatingip::response::set::FloatingipResponse;
+use openstack_types::network::v2::floatingip::response;
 
 /// Updates a floating IP and its association with an internal port.
 ///
@@ -171,8 +171,9 @@ impl FloatingipCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<FloatingipResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::FloatingipResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

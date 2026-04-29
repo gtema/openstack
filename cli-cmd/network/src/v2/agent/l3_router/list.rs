@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::l3_router::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::agent::l3_router::response::list::L3RouterResponse;
+use openstack_types::network::v2::agent::l3_router::response;
 
 /// Lists routers that an l3 agent hosts.
 ///
@@ -153,7 +153,8 @@ impl L3RoutersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<L3RouterResponse>(data)?;
+
+        op.output_list::<response::list::L3RouterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

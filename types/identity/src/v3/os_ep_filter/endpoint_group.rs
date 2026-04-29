@@ -16,6 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of identity
-pub mod endpoint;
-pub mod project;
 pub mod response;

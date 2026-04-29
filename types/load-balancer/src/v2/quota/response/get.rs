@@ -73,4 +73,12 @@ pub struct QuotaResponse {
     #[serde(default)]
     #[structable(optional)]
     pub pool: Option<i32>,
+
+    #[serde(default)]
+    #[structable(optional)]
+    pub project_id: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional)]
+    pub tenant_id: Option<String>,
 }

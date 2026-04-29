@@ -17,7 +17,7 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_types::compute::v2::flavor::response::list_detailed::FlavorResponse;
+use openstack_types::compute::v2::flavor::response::list_detailed_255::FlavorResponse;
 
 use crate::{
     action::Action,
@@ -104,9 +104,9 @@ impl Component for ComputeFlavors<'_> {
                     self.set_data(data)?;
                 }
             }
-            Action::ShowComputeServersWithFlavor => {
+            Action::ShowComputeServersWithFlavor
                 // only if we are currently in the flavors mode
-                if current_mode == Mode::ComputeFlavors {
+                if current_mode == Mode::ComputeFlavors => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -126,7 +126,6 @@ impl Component for ComputeFlavors<'_> {
                         }
                     }
                 }
-            }
             _ => {}
         };
         Ok(None)

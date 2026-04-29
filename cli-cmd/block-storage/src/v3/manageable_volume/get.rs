@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_volume::get;
-use openstack_types::block_storage::v3::manageable_volume::response::get::ManageableVolumeResponse;
+use openstack_types::block_storage::v3::manageable_volume::response;
 
 /// Returns a summary list of volumes available to manage.
 #[derive(Args)]
@@ -136,7 +136,7 @@ impl ManageableVolumeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ManageableVolumeResponse>(data)?;
+        op.output_list::<response::get::ManageableVolumeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

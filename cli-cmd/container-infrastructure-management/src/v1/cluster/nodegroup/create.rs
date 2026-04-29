@@ -29,9 +29,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
-use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::create;
 use openstack_sdk::api::QueryAsync;
-use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response::create::NodegroupResponse;
+use openstack_sdk::api::container_infrastructure_management::v1::cluster::nodegroup::create;
+use openstack_types::container_infrastructure_management::v1::cluster::nodegroup::response;
 use serde_json::Value;
 
 /// Retrieve a list of nodegroups.
@@ -356,8 +356,12 @@ impl NodegroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<NodegroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::NodegroupResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::create_a::NodegroupResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::create_a::NodegroupResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::create_b::NodegroupResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

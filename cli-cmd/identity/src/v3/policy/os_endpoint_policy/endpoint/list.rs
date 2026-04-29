@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::endpoint::list;
-use openstack_types::identity::v3::policy::os_endpoint_policy::endpoint::response::list::EndpointResponse;
 
 /// GET operation on /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints
 #[derive(Args)]
@@ -84,9 +83,7 @@ impl EndpointsCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<EndpointResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

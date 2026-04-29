@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::dscp_marking_rule::get;
-use openstack_types::network::v2::qos::policy::dscp_marking_rule::response::get::DscpMarkingRuleResponse;
+use openstack_types::network::v2::qos::policy::dscp_marking_rule::response;
 
 /// Shows details for a DSCP marking rule for a QoS policy.
 ///
@@ -99,8 +99,9 @@ impl DscpMarkingRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<DscpMarkingRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::DscpMarkingRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

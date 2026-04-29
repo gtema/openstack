@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::flavor::find;
 use openstack_sdk::api::load_balancer::v2::flavor::set;
-use openstack_types::load_balancer::v2::flavor::response::set::FlavorResponse;
+use openstack_types::load_balancer::v2::flavor::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -133,8 +133,9 @@ impl FlavorCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<FlavorResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::FlavorResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

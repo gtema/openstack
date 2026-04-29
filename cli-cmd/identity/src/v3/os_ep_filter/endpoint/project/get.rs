@@ -29,7 +29,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint::project::get;
-use openstack_types::identity::v3::os_ep_filter::endpoint::project::response::get::ProjectResponse;
 
 /// Return a list of projects associated with the endpoint.
 #[derive(Args)]
@@ -83,9 +82,7 @@ impl ProjectCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<ProjectResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

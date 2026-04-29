@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::limit::list;
-use openstack_types::compute::v2::limit::response::list::LimitResponse;
+use openstack_types::compute::v2::limit::response;
 
 /// Shows rate and absolute limits for the project.
 ///
@@ -82,8 +82,12 @@ impl LimitCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LimitResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list_21::LimitResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::list_236::LimitResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::list_239::LimitResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::list_257::LimitResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

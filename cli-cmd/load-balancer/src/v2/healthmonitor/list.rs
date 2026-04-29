@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::healthmonitor::response::list::HealthmonitorResponse;
+use openstack_types::load_balancer::v2::healthmonitor::response;
 use tracing::warn;
 
 /// Lists all health monitors for the project.
@@ -340,7 +340,8 @@ impl HealthmonitorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<HealthmonitorResponse>(data)?;
+
+        op.output_list::<response::list::HealthmonitorResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

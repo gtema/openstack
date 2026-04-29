@@ -33,7 +33,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::role::list;
-use openstack_types::identity::v3::user::os_oauth1::access_token::role::response::list::RoleResponse;
 use tracing::warn;
 
 /// List roles for a user access token.
@@ -156,9 +155,7 @@ impl RolesCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<RoleResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

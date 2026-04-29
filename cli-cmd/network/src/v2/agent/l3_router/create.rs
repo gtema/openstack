@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::l3_router::create;
-use openstack_types::network::v2::agent::l3_router::response::create::L3RouterResponse;
+use openstack_types::network::v2::agent::l3_router::response;
 
 /// Add a router to an l3 agent.
 ///
@@ -96,8 +96,9 @@ impl L3RouterCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<L3RouterResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::L3RouterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

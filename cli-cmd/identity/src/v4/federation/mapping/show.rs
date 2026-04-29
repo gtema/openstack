@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/mappings/{id}` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -29,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::mapping::get;
-use openstack_types::identity::v4::federation::mapping::response::get::MappingResponse;
+use openstack_types::identity::v4::federation::mapping::response;
 
 /// Show the attribute mapping attribute by the ID.
 #[derive(Args)]
@@ -84,8 +85,9 @@ impl MappingCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MappingResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MappingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

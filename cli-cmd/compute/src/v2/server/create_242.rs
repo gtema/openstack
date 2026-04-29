@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::create_242;
-use openstack_types::compute::v2::server::response::create::ServerResponse;
+use openstack_types::compute::v2::server::response;
 use serde_json::Value;
 
 /// Creates a server.
@@ -619,8 +619,10 @@ impl ServerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_a::ServerResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::create_b::ServerResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

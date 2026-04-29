@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::cluster::set;
-use openstack_types::container_infrastructure_management::v1::cluster::response::set::ClusterResponse;
+use openstack_types::container_infrastructure_management::v1::cluster::response;
 
 /// Update information of one cluster attributes using operations including:
 /// `add`, `replace` or `remove`. The attributes to `add` and `replace` in the
@@ -126,8 +126,9 @@ impl ClusterCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ClusterResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ClusterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

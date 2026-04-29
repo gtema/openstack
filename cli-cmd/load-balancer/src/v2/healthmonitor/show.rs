@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::find;
-use openstack_types::load_balancer::v2::healthmonitor::response::get::HealthmonitorResponse;
+use openstack_types::load_balancer::v2::healthmonitor::response;
 
 /// Shows the details of a health monitor.
 ///
@@ -93,7 +93,7 @@ impl HealthmonitorCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<HealthmonitorResponse>(find_data)?;
+        op.output_single::<response::get::HealthmonitorResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

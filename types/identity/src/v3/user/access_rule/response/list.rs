@@ -46,7 +46,7 @@ pub struct AccessRuleResponse {
     pub service: Option<String>,
 }
 
-/// The link to the resources in question.
+/// The link to the resource in question.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

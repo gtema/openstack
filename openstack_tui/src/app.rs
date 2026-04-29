@@ -399,12 +399,11 @@ impl App {
                 Action::ClearScreen => tui.terminal.clear()?,
                 Action::Resize(w, h) => self.handle_resize(tui, w, h)?,
                 Action::Render => self.render(tui)?,
-                Action::Clouds(_) => {
+                Action::Clouds(_)
                     // Started without any cloud selected - switch to CloudSelect mode
-                    if self.cloud_name.is_none() {
+                    if self.cloud_name.is_none() => {
                         self.action_tx.send(Action::CloudSelect)?;
                     }
-                }
 
                 Action::ConnectedToCloud(_) => {
                     if let Some(popup) = &self.active_popup
@@ -462,8 +461,8 @@ impl App {
                     self.active_popup = None;
                     self.render(tui)?;
                 }
-                Action::Mode { mode, stack } => {
-                    if self.mode != mode {
+                Action::Mode { mode, stack }
+                    if self.mode != mode => {
                         debug!("Switching from {:?} to {:?}", self.mode, mode);
                         // Hide popup
                         self.active_popup = None;
@@ -474,7 +473,6 @@ impl App {
                         self.mode = mode;
                         self.render(tui)?;
                     }
-                }
                 Action::PerformApiRequest(ref request) => {
                     self.cloud_worker_tx
                         .send(Action::PerformApiRequest(request.clone()))?;

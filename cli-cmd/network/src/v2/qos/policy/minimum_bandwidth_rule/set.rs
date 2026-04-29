@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::minimum_bandwidth_rule::set;
-use openstack_types::network::v2::qos::policy::minimum_bandwidth_rule::response::set::MinimumBandwidthRuleResponse;
+use openstack_types::network::v2::qos::policy::minimum_bandwidth_rule::response;
 
 /// Updates a minimum bandwidth rule for a QoS policy.
 ///
@@ -152,8 +152,9 @@ impl MinimumBandwidthRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MinimumBandwidthRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::MinimumBandwidthRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

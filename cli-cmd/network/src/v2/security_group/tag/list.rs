@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::security_group::tag::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::security_group::tag::response::list::TagResponse;
+use openstack_types::network::v2::security_group::tag::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -139,7 +139,8 @@ impl TagsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<TagResponse>(data)?;
+
+        op.output_list::<response::list::TagResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

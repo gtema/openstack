@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::find;
 use openstack_sdk::api::compute::v2::server::set_20;
 use openstack_sdk::api::find;
-use openstack_types::compute::v2::server::response::set::ServerResponse;
+use openstack_types::compute::v2::server::response;
 
 /// Updates the editable attributes of an existing server.
 ///
@@ -185,8 +185,9 @@ impl ServerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set_20::ServerResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

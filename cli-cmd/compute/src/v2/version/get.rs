@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::version::get;
-use openstack_types::compute::v2::version::response::get::VersionResponse;
+use openstack_types::compute::v2::version::response;
 
 /// This fetches all the information about all known major API versions in the
 /// deployment. Links to more specific information will be provided for each
@@ -76,8 +76,9 @@ impl VersionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VersionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::VersionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

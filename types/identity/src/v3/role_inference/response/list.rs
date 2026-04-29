@@ -41,12 +41,10 @@ pub struct Links {
     pub _self: Option<String>,
 }
 
-/// A prior role object.
+/// An implied role object.
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {
-    #[serde(default)]
-    pub description: Option<String>,
     #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
@@ -59,8 +57,6 @@ pub struct Implies {
 /// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
-    #[serde(default)]
-    pub description: Option<String>,
     #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]

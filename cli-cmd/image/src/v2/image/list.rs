@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::image::v2::image::response::list::ImageResponse;
+use openstack_types::image::v2::image::response;
 
 /// Lists public virtual machine (VM) images. *(Since Image API v2.0)*
 ///
@@ -335,7 +335,8 @@ impl ImagesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ImageResponse>(data)?;
+
+        op.output_list::<response::list::ImageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

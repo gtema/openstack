@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::qos::policy::find;
 use openstack_sdk::api::network::v2::qos::policy::set;
-use openstack_types::network::v2::qos::policy::response::set::PolicyResponse;
+use openstack_types::network::v2::qos::policy::response;
 
 /// Updates a QoS policy.
 ///
@@ -151,8 +151,9 @@ impl PolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PolicyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::PolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

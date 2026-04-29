@@ -29,9 +29,9 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::common::parse_key_val;
-use openstack_sdk::api::network::v2::subnetpool::onboard_network_subnet::onboard_network_subnets;
 use openstack_sdk::api::QueryAsync;
-use openstack_types::network::v2::subnetpool::onboard_network_subnet::response::onboard_network_subnets::OnboardNetworkSubnetResponse;
+use openstack_sdk::api::network::v2::subnetpool::onboard_network_subnet::onboard_network_subnets;
+use openstack_types::network::v2::subnetpool::onboard_network_subnet::response;
 use serde_json::Value;
 
 /// Request of the subnetpools/id/onboard_network_subnets:put operation
@@ -96,8 +96,11 @@ impl OnboardNetworkSubnetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<OnboardNetworkSubnetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::onboard_network_subnets::OnboardNetworkSubnetResponse>(
+            data.clone(),
+        )?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

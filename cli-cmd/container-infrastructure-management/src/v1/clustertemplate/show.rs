@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::get;
-use openstack_types::container_infrastructure_management::v1::clustertemplate::response::get::ClustertemplateResponse;
+use openstack_types::container_infrastructure_management::v1::clustertemplate::response;
 
 /// Get all information of a cluster template in Magnum.
 #[derive(Args)]
@@ -85,8 +85,9 @@ impl ClustertemplateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ClustertemplateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ClustertemplateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::rbac_policy::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::rbac_policy::response::list::RbacPolicyResponse;
+use openstack_types::network::v2::rbac_policy::response;
 
 /// List RBAC policies that belong to a given tenant.
 ///
@@ -185,7 +185,8 @@ impl RbacPoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<RbacPolicyResponse>(data)?;
+
+        op.output_list::<response::list::RbacPolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

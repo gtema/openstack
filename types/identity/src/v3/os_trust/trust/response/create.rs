@@ -57,7 +57,7 @@ pub struct TrustResponse {
     #[structable(optional)]
     pub impersonation: Option<bool>,
 
-    /// The links for the `user` resource.
+    /// Links for the collection of resources.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
@@ -110,7 +110,7 @@ pub struct TrustResponse {
     #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
-    /// The links for the `user` resource.
+    /// Links for the collection of resources.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub roles_links: Option<RolesLinks>,
@@ -127,7 +127,7 @@ pub struct TrustResponse {
     pub trustor_user_id: Option<String>,
 }
 
-/// The links for the `user` resource.
+/// Links for the collection of resources.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -163,7 +163,7 @@ pub struct Roles {
     pub options: Option<Options>,
 }
 
-/// The links for the `user` resource.
+/// Links for the collection of resources.
 /// `RolesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RolesLinks {

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::host::get;
-use openstack_types::block_storage::v3::host::response::get::HostResponse;
+use openstack_types::block_storage::v3::host::response;
 
 /// Show Host Details for a project
 #[derive(Args)]
@@ -80,8 +80,9 @@ impl HostCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<HostResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::HostResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

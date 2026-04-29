@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::os_get_console_output;
-use openstack_types::compute::v2::server::response::os_get_console_output::ServerResponse;
+use openstack_types::compute::v2::server::response;
 
 /// Shows console output for a server.
 ///
@@ -129,8 +129,9 @@ impl ServerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::os_get_console_output::ServerResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

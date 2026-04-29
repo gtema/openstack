@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::get;
-use openstack_types::placement::v1::resource_provider::response::get::ResourceProviderResponse;
+use openstack_types::placement::v1::resource_provider::response;
 
 /// Return a representation of the resource provider identified by {uuid}.
 ///
@@ -88,8 +88,9 @@ impl ResourceProviderCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResourceProviderResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ResourceProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

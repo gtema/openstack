@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::get;
-use openstack_types::network::v2::metering::metering_label_rule::response::get::MeteringLabelRuleResponse;
+use openstack_types::network::v2::metering::metering_label_rule::response;
 
 /// Shows details for a metering label rule.
 ///
@@ -93,8 +93,9 @@ impl MeteringLabelRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MeteringLabelRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MeteringLabelRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

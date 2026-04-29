@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::domain::config::group::option::default;
-use openstack_types::identity::v3::domain::config::group::option::response::default::OptionResponse;
+use openstack_types::identity::v3::domain::config::group::option::response;
 
 /// Reads the default configuration setting for an option within a group.
 ///
@@ -100,8 +100,9 @@ impl OptionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<OptionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::default::OptionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

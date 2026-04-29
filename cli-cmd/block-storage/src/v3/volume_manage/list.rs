@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume_manage::list_detailed;
-use openstack_types::block_storage::v3::volume_manage::response::list_detailed::VolumeManageResponse;
+use openstack_types::block_storage::v3::volume_manage::response;
 
 /// Returns a detailed list of volumes available to manage.
 #[derive(Args)]
@@ -73,8 +73,9 @@ impl VolumeManagesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VolumeManageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list_detailed::VolumeManageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

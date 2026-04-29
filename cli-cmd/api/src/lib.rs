@@ -141,8 +141,7 @@ impl ApiCommand {
                             })?,
                         ))
                     })
-                    .collect::<Result<Vec<(_, _)>, _>>()?
-                    .into_iter(),
+                    .collect::<Result<Vec<(_, _)>, _>>()?,
             )
         }
 

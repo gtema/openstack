@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::service_profile::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::flavor::service_profile::response::list::ServiceProfileResponse;
+use openstack_types::network::v2::flavor::service_profile::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -140,7 +140,8 @@ impl ServiceProfilesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ServiceProfileResponse>(data)?;
+
+        op.output_list::<response::list::ServiceProfileResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

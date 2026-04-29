@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::project::find;
 use openstack_sdk::api::identity::v3::project::set;
-use openstack_types::identity::v3::project::response::set::ProjectResponse;
+use openstack_types::identity::v3::project::response;
 
 /// Updates a project.
 ///
@@ -184,8 +184,9 @@ impl ProjectCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ProjectResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ProjectResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

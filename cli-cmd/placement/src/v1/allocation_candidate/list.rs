@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::allocation_candidate::list;
-use openstack_types::placement::v1::allocation_candidate::response::list::AllocationCandidateResponse;
+use openstack_types::placement::v1::allocation_candidate::response;
 
 /// Returns a dictionary representing a collection of allocation requests and
 /// resource provider summaries. Each allocation request has information to
@@ -228,8 +228,9 @@ impl AllocationCandidateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AllocationCandidateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::AllocationCandidateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

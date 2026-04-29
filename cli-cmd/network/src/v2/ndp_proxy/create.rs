@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::ndp_proxy::create;
-use openstack_types::network::v2::ndp_proxy::response::create::NdpProxyResponse;
+use openstack_types::network::v2::ndp_proxy::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -134,8 +134,9 @@ impl NdpProxyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<NdpProxyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::NdpProxyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

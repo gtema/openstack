@@ -17,7 +17,7 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_types::compute::v2::aggregate::response::list::AggregateResponse;
+use openstack_types::compute::v2::aggregate::response::list_241::AggregateResponse;
 
 use crate::{
     action::Action,

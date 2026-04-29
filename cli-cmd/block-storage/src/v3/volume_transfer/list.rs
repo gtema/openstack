@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume_transfer::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::volume_transfer::response::list_detailed::VolumeTransferResponse;
+use openstack_types::block_storage::v3::volume_transfer::response;
 
 /// Returns a detailed list of transfers.
 #[derive(Args)]
@@ -156,7 +156,8 @@ impl VolumeTransfersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<VolumeTransferResponse>(data)?;
+
+        op.output_list::<response::list_detailed::VolumeTransferResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

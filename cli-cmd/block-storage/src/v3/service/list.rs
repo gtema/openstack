@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::service::list;
-use openstack_types::block_storage::v3::service::response::list::ServiceResponse;
+use openstack_types::block_storage::v3::service::response;
 
 /// Return a list of all running services.
 ///
@@ -72,8 +72,9 @@ impl ServicesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServiceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::ServiceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

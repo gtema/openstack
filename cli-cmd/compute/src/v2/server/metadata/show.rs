@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::metadata::get;
-use openstack_types::compute::v2::server::metadata::response::get::MetadataResponse;
+use openstack_types::compute::v2::server::metadata::response;
 
 /// Shows details for a metadata item, by key, for a server.
 ///
@@ -98,8 +98,9 @@ impl MetadataCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MetadataResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MetadataResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::conntrack_helper::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::router::conntrack_helper::response::list::ConntrackHelperResponse;
+use openstack_types::network::v2::router::conntrack_helper::response;
 
 /// Lists router conntrack helpers associated with a router.
 ///
@@ -188,7 +188,8 @@ impl ConntrackHelpersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ConntrackHelperResponse>(data)?;
+
+        op.output_list::<response::list::ConntrackHelperResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

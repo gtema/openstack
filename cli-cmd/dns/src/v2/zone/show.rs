@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find;
 use openstack_sdk::api::find;
-use openstack_types::dns::v2::zone::response::get::ZoneResponse;
+use openstack_types::dns::v2::zone::response;
 
 /// Show a zone
 #[derive(Args)]
@@ -110,7 +110,7 @@ impl ZoneCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ZoneResponse>(find_data)?;
+        op.output_single::<response::get::ZoneResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

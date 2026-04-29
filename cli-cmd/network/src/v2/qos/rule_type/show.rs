@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::rule_type::get;
-use openstack_types::network::v2::qos::rule_type::response::get::RuleTypeResponse;
+use openstack_types::network::v2::qos::rule_type::response;
 
 /// Shows details for an available QoS rule type.
 ///
@@ -88,8 +88,9 @@ impl RuleTypeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RuleTypeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::RuleTypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

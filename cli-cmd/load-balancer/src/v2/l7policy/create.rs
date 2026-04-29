@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::l7policy::create;
-use openstack_types::load_balancer::v2::l7policy::response::create::L7policyResponse;
+use openstack_types::load_balancer::v2::l7policy::response;
 use serde_json::Value;
 
 /// Creates a L7 policy.
@@ -266,8 +266,9 @@ impl L7PolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<L7policyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::L7policyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

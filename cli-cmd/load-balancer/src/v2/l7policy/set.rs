@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::l7policy::find;
 use openstack_sdk::api::load_balancer::v2::l7policy::set;
-use openstack_types::load_balancer::v2::l7policy::response::set::L7policyResponse;
+use openstack_types::load_balancer::v2::l7policy::response;
 
 /// Updates a L7 policy.
 ///
@@ -237,8 +237,9 @@ impl L7PolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<L7policyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::L7policyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

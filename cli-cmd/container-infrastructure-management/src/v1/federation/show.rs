@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::federation::get;
-use openstack_types::container_infrastructure_management::v1::federation::response::get::FederationResponse;
+use openstack_types::container_infrastructure_management::v1::federation::response;
 
 /// Retrieve information about a given Federation.
 ///
@@ -86,8 +86,9 @@ impl FederationCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<FederationResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::FederationResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::user::create;
-use openstack_types::identity::v3::user::response::create::UserResponse;
+use openstack_types::identity::v3::user::response;
 use serde_json::Value;
 
 /// Creates a user.
@@ -260,8 +260,9 @@ impl UserCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<UserResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::UserResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -39,7 +39,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// Individual quota definitions.
+/// Base type for complex types
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Quota {
@@ -99,7 +99,7 @@ pub struct Quota {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Individual quota definitions.
+    /// Base type for complex types
     #[builder(setter(into))]
     pub(crate) quota: Quota,
 

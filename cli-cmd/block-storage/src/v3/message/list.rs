@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::message::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::message::response::list::MessageResponse;
+use openstack_types::block_storage::v3::message::response;
 
 /// Returns a list of messages, transformed through view builder.
 #[derive(Args)]
@@ -139,7 +139,8 @@ impl MessagesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<MessageResponse>(data)?;
+
+        op.output_list::<response::list::MessageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

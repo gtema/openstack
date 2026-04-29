@@ -31,7 +31,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::create;
-use openstack_types::container_infrastructure_management::v1::clustertemplate::response::create::ClustertemplateResponse;
+use openstack_types::container_infrastructure_management::v1::clustertemplate::response;
 use serde_json::Value;
 
 /// Create new cluster template.
@@ -485,8 +485,9 @@ impl ClustertemplateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ClustertemplateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ClustertemplateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

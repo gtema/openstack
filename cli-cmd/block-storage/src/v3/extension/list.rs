@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::extension::list;
-use openstack_types::block_storage::v3::extension::response::list::ExtensionResponse;
+use openstack_types::block_storage::v3::extension::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -71,7 +71,8 @@ impl ExtensionsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ExtensionResponse>(data)?;
+
+        op.output_list::<response::list::ExtensionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

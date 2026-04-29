@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::tag::replace_226;
-use openstack_types::compute::v2::server::tag::response::replace::TagResponse;
+use openstack_types::compute::v2::server::tag::response;
 
 /// Replaces all tags on specified server with the new set of tags.
 ///
@@ -102,7 +102,7 @@ impl TagCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TagResponse>(data)?;
+        op.output_list::<response::replace_226::TagResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

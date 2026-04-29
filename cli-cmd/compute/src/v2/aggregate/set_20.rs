@@ -32,7 +32,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::find;
 use openstack_sdk::api::compute::v2::aggregate::set_20;
 use openstack_sdk::api::find;
-use openstack_types::compute::v2::aggregate::response::set::AggregateResponse;
 
 /// Updates either or both the name and availability zone for an aggregate. If
 /// the aggregate to be updated has host that already in the given availability
@@ -158,9 +157,7 @@ impl AggregateCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AggregateResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

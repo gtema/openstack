@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::availability_zone::list;
-use openstack_types::compute::v2::availability_zone::response::list::AvailabilityZoneResponse;
+use openstack_types::compute::v2::availability_zone::response;
 
 /// Lists availability zone information.
 ///
@@ -79,7 +79,8 @@ impl AvailabilityZonesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<AvailabilityZoneResponse>(data)?;
+
+        op.output_list::<response::list::AvailabilityZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

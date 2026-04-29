@@ -20,4 +20,3 @@ pub mod nameserver;
 pub mod recordset;
 pub mod response;
 pub mod share;
-pub mod task;

@@ -110,9 +110,9 @@ impl Component for NetworkNetworks<'_> {
                     NetworkNetworkApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
-            Action::ShowNetworkSubnets => {
+            Action::ShowNetworkSubnets
                 // only if we are currently in the expected mode
-                if current_mode == Mode::NetworkNetworks {
+                if current_mode == Mode::NetworkNetworks => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -128,7 +128,6 @@ impl Component for NetworkNetworks<'_> {
                         }
                     }
                 }
-            }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,

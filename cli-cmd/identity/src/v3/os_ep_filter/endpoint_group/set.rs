@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::set;
-use openstack_types::identity::v3::os_ep_filter::endpoint_group::response::set::EndpointGroupResponse;
+use openstack_types::identity::v3::os_ep_filter::endpoint_group::response;
 
 /// Update existing endpoint groups
 ///
@@ -194,8 +194,9 @@ impl EndpointGroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<EndpointGroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::EndpointGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

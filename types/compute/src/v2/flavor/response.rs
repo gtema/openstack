@@ -17,9 +17,24 @@
 
 //! `response` REST operations of compute
 pub mod add_tenant_access;
-pub mod create;
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod create_20;
+pub mod create_2102;
+pub mod create_255;
+pub mod create_261;
+pub mod create_275;
+pub mod get_20;
+pub mod get_2102;
+pub mod get_255;
+pub mod get_261;
+pub mod get_275;
+pub mod list_20;
+pub mod list_255;
+pub mod list_detailed_20;
+pub mod list_detailed_2102;
+pub mod list_detailed_255;
+pub mod list_detailed_261;
 pub mod remove_tenant_access;
-pub mod set;
+pub mod set_2102;
+pub mod set_255;
+pub mod set_261;
+pub mod set_275;

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::local_ip::response::list::LocalIpResponse;
+use openstack_types::network::v2::local_ip::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -188,7 +188,8 @@ impl LocalIpsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<LocalIpResponse>(data)?;
+
+        op.output_list::<response::list::LocalIpResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

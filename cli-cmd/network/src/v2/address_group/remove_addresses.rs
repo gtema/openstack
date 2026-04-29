@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_group::remove_addresses;
-use openstack_types::network::v2::address_group::response::remove_addresses::AddressGroupResponse;
+use openstack_types::network::v2::address_group::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -110,8 +110,9 @@ impl AddressGroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AddressGroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::remove_addresses::AddressGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

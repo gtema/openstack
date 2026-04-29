@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::default_security_group_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::default_security_group_rule::response::list::DefaultSecurityGroupRuleResponse;
+use openstack_types::network::v2::default_security_group_rule::response;
 
 /// Lists a summary of all OpenStack Networking security group rules that are
 /// used for every newly created Security Group.
@@ -244,7 +244,8 @@ impl DefaultSecurityGroupRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<DefaultSecurityGroupRuleResponse>(data)?;
+
+        op.output_list::<response::list::DefaultSecurityGroupRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

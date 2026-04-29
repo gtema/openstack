@@ -29,7 +29,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::set_10;
-use openstack_types::placement::v1::resource_provider::response::set::ResourceProviderResponse;
 
 /// Update the name of the resource provider identified by {uuid}.
 ///
@@ -102,9 +101,7 @@ impl ResourceProviderCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResourceProviderResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

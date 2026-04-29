@@ -124,9 +124,9 @@ impl Component for DnsZones<'_> {
                     DnsZoneApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
-            Action::ShowDnsZoneRecordsets => {
+            Action::ShowDnsZoneRecordsets
                 // only if we are currently in the servers mode
-                if current_mode == Mode::DnsZones {
+                if current_mode == Mode::DnsZones => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -143,10 +143,9 @@ impl Component for DnsZones<'_> {
                         }
                     }
                 }
-            }
-            Action::DeleteDnsZone => {
+            Action::DeleteDnsZone
                 // only if we are currently in the right mode
-                if current_mode == Mode::DnsZones {
+                if current_mode == Mode::DnsZones => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -161,7 +160,6 @@ impl Component for DnsZones<'_> {
                         }
                     }
                 }
-            }
             _ => {}
         };
         Ok(None)

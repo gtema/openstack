@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot::metadata::create;
-use openstack_types::block_storage::v3::snapshot::metadata::response::create::MetadataResponse;
+use openstack_types::block_storage::v3::snapshot::metadata::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -103,8 +103,9 @@ impl MetadataCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MetadataResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::MetadataResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::binding::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::port::binding::response::list::BindingResponse;
+use openstack_types::network::v2::port::binding::response;
 
 /// Use the `fields` query parameter to control which fields are returned in
 /// the response body. For more information, see [Fields](#fields).
@@ -169,7 +169,8 @@ impl BindingsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<BindingResponse>(data)?;
+
+        op.output_list::<response::list::BindingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

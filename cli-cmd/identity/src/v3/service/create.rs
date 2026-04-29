@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::service::create;
-use openstack_types::identity::v3::service::response::create::ServiceResponse;
+use openstack_types::identity::v3::service::response;
 
 /// Creates a service.
 ///
@@ -117,8 +117,9 @@ impl ServiceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServiceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ServiceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

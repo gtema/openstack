@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val_opt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::set_metadata;
-use openstack_types::compute::v2::aggregate::response::set_metadata::AggregateResponse;
+use openstack_types::compute::v2::aggregate::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -112,8 +112,12 @@ impl AggregateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AggregateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set_metadata_21::AggregateResponse>(data.clone())
+            .or_else(|_| {
+                op.output_single::<response::set_metadata_241::AggregateResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

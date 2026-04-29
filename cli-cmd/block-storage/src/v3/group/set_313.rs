@@ -32,7 +32,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group::find;
 use openstack_sdk::api::block_storage::v3::group::set_313;
 use openstack_sdk::api::find;
-use openstack_types::block_storage::v3::group::response::set::GroupResponse;
 
 /// Update the group.
 ///
@@ -184,9 +183,7 @@ impl GroupCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

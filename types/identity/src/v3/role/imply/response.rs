@@ -17,6 +17,5 @@
 
 //! `response` REST operations of identity
 pub mod get;
-pub mod head;
 pub mod list;
 pub mod set;

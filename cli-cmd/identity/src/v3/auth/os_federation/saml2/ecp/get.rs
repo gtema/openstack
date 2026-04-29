@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::ecp::get;
-use openstack_types::identity::v3::auth::os_federation::saml2::ecp::response::get::EcpResponse;
 
 /// GET operation on /v3/auth/OS-FEDERATION/saml2/ecp
 #[derive(Args)]
@@ -73,9 +72,7 @@ impl EcpCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<EcpResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

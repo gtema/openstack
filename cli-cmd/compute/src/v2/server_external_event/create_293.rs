@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_external_event::create_293;
-use openstack_types::compute::v2::server_external_event::response::create::ServerExternalEventResponse;
+use openstack_types::compute::v2::server_external_event::response;
 use serde_json::Value;
 
 /// Creates one or more external events, which the API dispatches to the host a
@@ -108,8 +108,9 @@ impl ServerExternalEventCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerExternalEventResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_293::ServerExternalEventResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

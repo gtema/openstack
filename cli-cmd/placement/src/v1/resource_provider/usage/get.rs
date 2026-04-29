@@ -29,7 +29,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_provider::usage::get;
-use openstack_types::placement::v1::resource_provider::usage::response::get::UsageResponse;
 
 /// Return a report of usage information for resources associated with the
 /// resource provider identified by {uuid}. The value is a dictionary of
@@ -90,9 +89,7 @@ impl UsageCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<UsageResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

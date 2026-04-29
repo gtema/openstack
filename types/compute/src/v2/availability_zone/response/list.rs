@@ -24,9 +24,8 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// It is always `null`.
-    #[serde(default)]
-    #[structable(optional)]
-    pub hosts: Option<Value>,
+    #[structable()]
+    pub hosts: Value,
 
     /// The availability zone name.
     #[serde(rename = "zoneName")]

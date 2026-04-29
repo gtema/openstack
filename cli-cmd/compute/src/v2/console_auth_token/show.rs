@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::console_auth_token::get;
-use openstack_types::compute::v2::console_auth_token::response::get::ConsoleAuthTokenResponse;
+use openstack_types::compute::v2::console_auth_token::response;
 
 /// Given the console authentication token for a server, shows the related
 /// connection information.
@@ -95,8 +95,12 @@ impl ConsoleAuthTokenCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ConsoleAuthTokenResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::ConsoleAuthTokenResponse>(data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_299::ConsoleAuthTokenResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

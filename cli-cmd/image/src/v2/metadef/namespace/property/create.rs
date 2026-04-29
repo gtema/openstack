@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::property::create;
-use openstack_types::image::v2::metadef::namespace::property::response::create::PropertyResponse;
+use openstack_types::image::v2::metadef::namespace::property::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -255,8 +255,9 @@ impl PropertyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PropertyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::PropertyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

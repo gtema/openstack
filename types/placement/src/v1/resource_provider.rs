@@ -21,4 +21,3 @@ pub mod allocation;
 pub mod inventory;
 pub mod response;
 pub mod r#trait;
-pub mod usage;

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_class_set::set;
-use openstack_types::block_storage::v3::quota_class_set::response::set::QuotaClassSetResponse;
+use openstack_types::block_storage::v3::quota_class_set::response;
 
 /// Update quota classes for a project
 #[derive(Args)]
@@ -93,8 +93,9 @@ impl QuotaClassSetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaClassSetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::QuotaClassSetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

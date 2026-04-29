@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::assisted_volume_snapshot::create;
-use openstack_types::compute::v2::assisted_volume_snapshot::response::create::AssistedVolumeSnapshotResponse;
+use openstack_types::compute::v2::assisted_volume_snapshot::response;
 
 /// Creates an assisted volume snapshot.
 ///
@@ -156,8 +156,9 @@ impl AssistedVolumeSnapshotCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AssistedVolumeSnapshotResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::AssistedVolumeSnapshotResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::access_rule::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::identity::v3::user::access_rule::response::get::AccessRuleResponse;
+use openstack_types::identity::v3::user::access_rule::response;
 use tracing::warn;
 
 /// Show details of an access rule.
@@ -156,8 +156,9 @@ impl AccessRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AccessRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::AccessRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

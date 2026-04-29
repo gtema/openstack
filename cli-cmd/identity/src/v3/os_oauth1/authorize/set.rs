@@ -31,7 +31,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_oauth1::authorize::set;
-use openstack_types::identity::v3::os_oauth1::authorize::response::set::AuthorizeResponse;
 use serde_json::Value;
 
 /// PUT operation on /v3/OS-OAUTH1/authorize/{request_token_id}
@@ -95,9 +94,7 @@ impl AuthorizeCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AuthorizeResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

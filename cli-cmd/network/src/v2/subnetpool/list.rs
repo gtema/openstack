@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnetpool::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::subnetpool::response::list::SubnetpoolResponse;
+use openstack_types::network::v2::subnetpool::response;
 
 /// Lists subnet pools that the project has access to.
 ///
@@ -266,7 +266,8 @@ impl SubnetpoolsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<SubnetpoolResponse>(data)?;
+
+        op.output_list::<response::list::SubnetpoolResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

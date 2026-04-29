@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::certificate::create;
-use openstack_types::container_infrastructure_management::v1::certificate::response::create::CertificateResponse;
+use openstack_types::container_infrastructure_management::v1::certificate::response;
 use serde_json::Value;
 
 /// Sign a new certificate by the CA.
@@ -139,8 +139,9 @@ impl CertificateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CertificateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::CertificateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

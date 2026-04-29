@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::interface::create_249;
-use openstack_types::compute::v2::server::interface::response::create::InterfaceResponse;
+use openstack_types::compute::v2::server::interface::response;
 
 /// Creates a port interface and uses it to attach a port to a server.
 ///
@@ -162,8 +162,9 @@ impl InterfaceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<InterfaceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_21::InterfaceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

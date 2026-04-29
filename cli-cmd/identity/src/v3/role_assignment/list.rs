@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role_assignment::list;
-use openstack_types::identity::v3::role_assignment::response::list::RoleAssignmentResponse;
+use openstack_types::identity::v3::role_assignment::response;
 
 /// Get a list of role assignments.
 ///
@@ -207,7 +207,8 @@ impl RoleAssignmentsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<RoleAssignmentResponse>(data)?;
+
+        op.output_list::<response::list::RoleAssignmentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

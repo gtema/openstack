@@ -27,9 +27,9 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::identity::v3::auth::os_federation::identity_provider::protocol::websso::get;
 use openstack_sdk::api::QueryAsync;
-use openstack_types::identity::v3::auth::os_federation::identity_provider::protocol::websso::response::get::WebssoResponse;
+use openstack_sdk::api::identity::v3::auth::os_federation::identity_provider::protocol::websso::get;
+use openstack_types::identity::v3::auth::os_federation::identity_provider::protocol::websso::response;
 
 /// GET operation on
 /// /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
@@ -97,8 +97,9 @@ impl WebssoCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<WebssoResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::WebssoResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

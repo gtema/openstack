@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::user::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::identity::v3::user::response::list::UserResponse;
+use openstack_types::identity::v3::user::response;
 use tracing::warn;
 
 /// Lists users.
@@ -241,7 +241,8 @@ impl UsersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<UserResponse>(data)?;
+
+        op.output_list::<response::list::UserResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

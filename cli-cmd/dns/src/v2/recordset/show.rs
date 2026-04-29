@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::recordset::get;
-use openstack_types::dns::v2::recordset::response::get::RecordsetResponse;
 
 /// Get RecordSet
 #[derive(Args)]
@@ -109,9 +108,7 @@ impl RecordsetCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<RecordsetResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

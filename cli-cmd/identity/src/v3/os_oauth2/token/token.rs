@@ -31,7 +31,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_oauth2::token::token;
-use openstack_types::identity::v3::os_oauth2::token::response::token::TokenResponse;
 use serde_json::Value;
 
 /// Request of the OS-OAUTH2/token:put operation
@@ -84,9 +83,7 @@ impl TokenCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<TokenResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

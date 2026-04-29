@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::limit::get;
-use openstack_types::dns::v2::limit::response::get::LimitResponse;
+use openstack_types::dns::v2::limit::response;
 
 /// List project limits
 #[derive(Args)]
@@ -101,8 +101,9 @@ impl LimitCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LimitResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::LimitResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

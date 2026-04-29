@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/mappings` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -30,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::mapping::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::identity::v4::federation::mapping::response::list::MappingResponse;
+use openstack_types::identity::v4::federation::mapping::response;
 
 /// List available federation mappings.
 ///
@@ -135,7 +136,8 @@ impl MappingsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<MappingResponse>(data)?;
+
+        op.output_list::<response::list::MappingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
