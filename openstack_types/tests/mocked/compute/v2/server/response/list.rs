@@ -14,7 +14,7 @@
 
 use openstack_sdk::api::compute::v2::server::list::Request;
 use openstack_sdk::api::{Pagination, QueryAsync, paged};
-use openstack_types::compute::v2::server::response::list_21::ServerResponse;
+use openstack_types::compute::v2::server::response;
 
 use crate::get_client;
 
@@ -22,9 +22,19 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("compute");
 
-    let _res: Vec<ServerResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
+    let res: Vec<serde_json::Value> = paged(Request::builder().build()?, Pagination::Limit(10))
         .query_async(&client)
         .await?;
 
+    // Need to iterate over all possible candidate schemas
+    if let Some(val) = res.first() {
+        assert!(
+            serde_json::from_value::<response::list_21::ServerResponse>(val.clone()).is_ok()
+                || serde_json::from_value::<response::list_269_a::ServerResponse>(val.clone(),)
+                    .is_ok()
+                || serde_json::from_value::<response::list_269_b::ServerResponse>(val.clone(),)
+                    .is_ok()
+        );
+    }
     Ok(())
 }
