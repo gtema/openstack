@@ -87,7 +87,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClustersCreateResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/ClustersCreateResponse'
+                  - $ref: '#/components/schemas/ClustersPostResponse'
           description: Ok
       summary: Create new cluster
       tags:
@@ -187,13 +189,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClustersNodegroupsGet_OneResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/ClustersNodegroupsGet_AllResponse'
+                  - $ref: '#/components/schemas/ClustersNodegroupsGet_OneResponse'
           description: Ok
         '202':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClustersNodegroupsCreateResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/ClustersNodegroupsCreateResponse'
+                  - $ref: '#/components/schemas/ClustersNodegroupsPostResponse'
           description: Ok
       tags:
         - clusters
@@ -2902,6 +2908,8 @@ components:
         model and the API representation of a cluster\nID."
       properties:
         uuid:
+          description: |-
+            The UUID of the cluster.
           format: uuid
           type: string
       type: object

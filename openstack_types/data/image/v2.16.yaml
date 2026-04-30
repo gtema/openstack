@@ -32,10 +32,6 @@ paths:
       operationId: cache:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CacheGet_Cache_StateResponse'
           description: Ok
       summary: Query cache status
       tags:
@@ -74,10 +70,6 @@ paths:
               $ref: '#/components/schemas/CacheQueue_Image_From_ApiRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CacheQueue_Image_From_ApiResponse'
           description: Ok
       summary: Queue image
       tags:
@@ -374,10 +366,6 @@ paths:
               $ref: '#/components/schemas/ImagesActionsDeactivateDeactivateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImagesActionsDeactivateResponse'
           description: Ok
       summary: Deactivate image
       tags:
@@ -408,10 +396,6 @@ paths:
               $ref: '#/components/schemas/ImagesActionsReactivateReactivateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImagesActionsReactivateResponse'
           description: Ok
       summary: Reactivate image
       tags:
@@ -444,7 +428,7 @@ paths:
       responses:
         '200':
           content:
-            application/json:
+            application/octet-stream:
               schema:
                 $ref: '#/components/schemas/ImagesFileDownloadResponse'
           description: Ok
@@ -459,7 +443,7 @@ paths:
           description: Ok
         '206':
           content:
-            application/json:
+            application/octet-stream:
               schema:
                 $ref: '#/components/schemas/ImagesFileDownloadResponse'
           description: Ok
@@ -867,10 +851,6 @@ paths:
               $ref: '#/components/schemas/ImagesStageStageRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImagesStageResponse'
           description: Ok
       summary: Stage binary image data
       tags:
@@ -895,10 +875,6 @@ paths:
               $ref: '#/components/schemas/ImagesTagUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImagesTagUpdateResponse'
           description: Ok
       tags:
         - images
@@ -2142,14 +2118,8 @@ components:
       schema:
         type: string
   schemas:
-    CacheGet_Cache_StateResponse:
-      description: Response of the cache:get operation
-      type: object
     CacheQueue_Image_From_ApiRequest:
       description: Request of the cache/image_id:put operation
-      type: object
-    CacheQueue_Image_From_ApiResponse:
-      description: Response of the cache/image_id:put operation
       type: object
     ImageShowResponse:
       additionalProperties:
@@ -2808,16 +2778,8 @@ components:
       description: Request of the images/image_id/actions/deactivate:post 
         operation
       type: object
-    ImagesActionsDeactivateResponse:
-      description: Response of the images/image_id/actions/deactivate:post 
-        operation
-      type: object
     ImagesActionsReactivateReactivateRequest:
       description: Request of the images/image_id/actions/reactivate:post 
-        operation
-      type: object
-    ImagesActionsReactivateResponse:
-      description: Response of the images/image_id/actions/reactivate:post 
         operation
       type: object
     ImagesCreateRequest:
@@ -4011,17 +3973,11 @@ components:
         schema:
           type: string
       type: object
-    ImagesStageResponse:
-      description: Response of the images/image_id/stage:put operation
-      type: object
     ImagesStageStageRequest:
       description: Request of the images/image_id/stage:put operation
       type: object
     ImagesTagUpdateRequest:
       description: Request of the images/image_id/tags/tag_value:put operation
-      type: object
-    ImagesTagUpdateResponse:
-      description: Response of the images/image_id/tags/tag_value:put operation
       type: object
     ImagesTasksGet_Task_InfoResponse:
       properties:

@@ -21,6 +21,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Versions'
+  /health:
+    get:
+      tags:
+      - health
+      summary: Health check endpoint.
+      description: |-
+        Perform diverse checks to identify the overall status of the system. It can be `OK`,
+        `SERVICE_UNAVAILABLE`. In difference to the `/ready` check this does not return
+        `SERVICE_UNAVAILABLE` when components are in the degraded state to prevent from the restart. It
+        is similar to the `/live` check.
+      operationId: health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /ready:
+    get:
+      tags:
+      - health
+      summary: Readiness health check endpoint.
+      description: |-
+        Perform relevant checks only returning `OK` when all of them are ok. Any check in the
+        degraded/warn state would result in `SERVICE_UNAVAILABLE` response.
+      operationId: ready
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
   /v3:
     get:
       tags:
@@ -141,8 +187,7 @@ paths:
     get:
       tags:
       - groups
-      summary: List groups
-      description: List groups
+      summary: List user groups.
       operationId: list
       parameters:
       - name: domain_id
@@ -173,8 +218,7 @@ paths:
     post:
       tags:
       - groups
-      summary: Create group
-      description: Create new Group
+      summary: Create new user group.
       operationId: create
       requestBody:
         content:
@@ -193,8 +237,7 @@ paths:
     get:
       tags:
       - groups
-      summary: Get single group
-      description: Get group by ID
+      summary: Get a single user group by ID.
       operationId: show
       parameters:
       - name: group_id
@@ -214,9 +257,8 @@ paths:
     delete:
       tags:
       - groups
-      summary: Delete group
-      description: Delete group by ID
-      operationId: remove
+      summary: Delete group by ID.
+      operationId: delete
       parameters:
       - name: group_id
         in: path
@@ -1238,8 +1280,7 @@ paths:
     get:
       tags:
       - groups
-      summary: List groups
-      description: List groups
+      summary: List user groups.
       operationId: list
       parameters:
       - name: domain_id
@@ -1270,8 +1311,7 @@ paths:
     post:
       tags:
       - groups
-      summary: Create group
-      description: Create new Group
+      summary: Create new user group.
       operationId: create
       requestBody:
         content:
@@ -1290,8 +1330,7 @@ paths:
     get:
       tags:
       - groups
-      summary: Get single group
-      description: Get group by ID
+      summary: Get a single user group by ID.
       operationId: show
       parameters:
       - name: group_id
@@ -1311,9 +1350,8 @@ paths:
     delete:
       tags:
       - groups
-      summary: Delete group
-      description: Delete group by ID
-      operationId: remove
+      summary: Delete group by ID.
+      operationId: delete
       parameters:
       - name: group_id
         in: path
@@ -2661,6 +2699,20 @@ components:
       - Optional
       - OptionalWithCredentialIDList
       - Required
+    DatabaseStatus:
+      type: object
+      description: Health status of the database.
+      required:
+      - status
+      properties:
+        message:
+          type:
+          - string
+          - 'null'
+          description: The error message.
+        status:
+          $ref: '#/components/schemas/HealthStatus'
+          description: Status of database.
     Domain:
       type: object
       description: Domain information.
@@ -2792,6 +2844,44 @@ components:
         group:
           $ref: '#/components/schemas/Group'
           description: group object.
+    HealthComponents:
+      type: object
+      description: The health components of the system.
+      required:
+      - raft
+      - database
+      - policy
+      properties:
+        database:
+          $ref: '#/components/schemas/DatabaseStatus'
+          description: Status of the database.
+        policy:
+          $ref: '#/components/schemas/PolicyStatus'
+          description: Status of the policy enforcement engine.
+        raft:
+          $ref: '#/components/schemas/RaftStatus'
+          description: Status of the raft storage.
+    HealthResponse:
+      type: object
+      description: Health check response.
+      required:
+      - status
+      - components
+      properties:
+        components:
+          $ref: '#/components/schemas/HealthComponents'
+          description: Individual health checks.
+        status:
+          $ref: '#/components/schemas/HealthStatus'
+          description: Overall health status of the system.
+    HealthStatus:
+      type: string
+      description: The health status.
+      enum:
+      - skipped
+      - ok
+      - warn
+      - error
     HmacGetSecretInput:
       type: object
       description: |-
@@ -3969,6 +4059,20 @@ components:
         user:
           $ref: '#/components/schemas/UserPassword'
           description: A user object.
+    PolicyStatus:
+      type: object
+      description: Health status of the policy engine.
+      required:
+      - status
+      properties:
+        message:
+          type:
+          - string
+          - 'null'
+          description: The error message.
+        status:
+          $ref: '#/components/schemas/HealthStatus'
+          description: Status of Raft cluster.
     Project:
       type: object
       description: Project information.
@@ -4235,6 +4339,20 @@ components:
         user_verification:
           $ref: '#/components/schemas/UserVerificationPolicy'
           description: The verification policy the browser will request.
+    RaftStatus:
+      type: object
+      description: Health status of the Raft storage.
+      required:
+      - status
+      properties:
+        message:
+          type:
+          - string
+          - 'null'
+          description: The error message.
+        status:
+          $ref: '#/components/schemas/HealthStatus'
+          description: Status of Raft cluster.
     RegistrationExtensionsClientOutputs:
       type: object
       description: |-

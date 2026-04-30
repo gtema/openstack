@@ -10220,7 +10220,6 @@ components:
         - attachment
       type: object
       x-openstack:
-        max-ver: '3.53'
         min-ver: '3.54'
     AttachmentsDetailResponse:
       properties:
@@ -10605,7 +10604,6 @@ components:
         - backup
       type: object
       x-openstack:
-        max-ver: '3.42'
         min-ver: '3.43'
     BackupUpdate_39:
       additionalProperties: false
