@@ -1607,10 +1607,6 @@ paths:
               $ref: '#/components/schemas/MembersRootPUT'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LbaasPoolsMembersCreateResponse'
           description: Ok
       summary: Batch Update Members
       tags:
@@ -1843,7 +1839,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuotaPUT'
+              $ref: '#/components/schemas/QuotaRootPUT'
       responses:
         '202':
           content:
@@ -9762,11 +9758,11 @@ components:
           type: array
       type: object
     LbaasQuotaGetResponse:
-      description: Wrapper object for quotas responses.
+      description: Base type for complex types
       properties:
         quota:
           description: |-
-            Individual quota definitions.
+            Base type for complex types
           properties:
             health_monitor:
               maximum: 2000000000
@@ -9827,14 +9823,19 @@ components:
               maximum: 2000000000
               minimum: -1
               type: integer
+            project_id:
+              type: string
+            tenant_id:
+              maxLength: 36
+              type: string
           type: object
       type: object
     LbaasQuotaUpdateResponse:
-      description: Wrapper object for quotas responses.
+      description: Base type for complex types
       properties:
         quota:
           description: |-
-            Individual quota definitions.
+            Base type for complex types
           properties:
             health_monitor:
               maximum: 2000000000
@@ -9895,6 +9896,11 @@ components:
               maximum: 2000000000
               minimum: -1
               type: integer
+            project_id:
+              type: string
+            tenant_id:
+              maxLength: 36
+              type: string
           type: object
       type: object
     LbaasQuotasListResponse:
@@ -9903,48 +9909,66 @@ components:
         quotas:
           items:
             description: |-
-              Wrapper object for get all quotas responses.
+              Base type for complex types
             properties:
               health_monitor:
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               healthmonitor:
                 description: |-
                   The configured health monitor quota limit. A setting of `null` means it
                   is using the deployment default quota. A setting of `-1`
                   means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               l7policy:
                 description: |-
                   The configured l7policy quota limit. A setting of `null` means it is
                   using the deployment default quota. A setting of `-1` means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               l7rule:
                 description: |-
                   The configured l7rule quota limit. A setting of `null` means it is
                   using the deployment default quota. A setting of `-1` means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               listener:
                 description: |-
                   The configured listener quota limit. A setting of `null` means it is
                   using the deployment default quota. A setting of `-1` means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               load_balancer:
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               loadbalancer:
                 description: |-
                   The configured load balancer quota limit. A setting of `null` means it
                   is using the deployment default quota. A setting of `-1` means
                   unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               member:
                 description: |-
                   The configured member quota limit. A setting of `null` means it is using
                   the deployment default quota. A setting of `-1` means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               pool:
                 description: |-
                   The configured pool quota limit. A setting of `null` means it is using
                   the deployment default quota. A setting of `-1` means unlimited.
+                maximum: 2000000000
+                minimum: -1
                 type: integer
               project_id:
                 description: |-
@@ -12738,12 +12762,12 @@ components:
               type: array
           type: object
       type: object
-    QuotaPUT:
-      description: Overall object for quota PUT request.
+    QuotaRootPUT:
+      description: Base type for complex types
       properties:
         quota:
           description: |-
-            Individual quota definitions.
+            Base type for complex types
           properties:
             health_monitor:
               maximum: 2000000000

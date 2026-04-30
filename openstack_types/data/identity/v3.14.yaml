@@ -12,10 +12,6 @@ paths:
       operationId: versions:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RootGetResponse'
           description: Ok
         '403':
           description: Error
@@ -43,10 +39,6 @@ paths:
       operationId: version:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RootGetResponse'
           description: Ok
         '403':
           description: Error
@@ -211,10 +203,6 @@ paths:
       operationId: OS-EP-FILTER/endpoint_groups/endpoint_group_id/endpoints:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterEndpoint_GroupsEndpointsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -244,10 +232,6 @@ paths:
       operationId: OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterEndpoint_GroupsProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -292,10 +276,6 @@ paths:
         OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterEndpoint_GroupsProjectGetResponse'
           description: Ok
         '403':
           description: Error
@@ -332,10 +312,6 @@ paths:
               $ref: '#/components/schemas/Os_Ep_FilterEndpoint_GroupsProjectPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterEndpoint_GroupsProjectPutResponse'
           description: Ok
         '403':
           description: Error
@@ -350,10 +326,6 @@ paths:
       operationId: OS-EP-FILTER/endpoints/endpoint_id/projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterEndpointsProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -383,10 +355,6 @@ paths:
       operationId: OS-EP-FILTER/projects/project_id/endpoint_groups:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterProjectsEndpoint_GroupsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -416,10 +384,6 @@ paths:
       operationId: OS-EP-FILTER/projects/project_id/endpoints:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterProjectsEndpointsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -462,10 +426,6 @@ paths:
       operationId: OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterProjectsEndpointGetResponse'
           description: Ok
         '403':
           description: Error
@@ -500,10 +460,6 @@ paths:
               $ref: '#/components/schemas/Os_Ep_FilterProjectsEndpointPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Ep_FilterProjectsEndpointPutResponse'
           description: Ok
         '403':
           description: Error
@@ -1256,10 +1212,6 @@ paths:
         OS-INHERIT/domains/domain_id/groups/group_id/roles/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsGroupsRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1317,10 +1269,6 @@ paths:
         OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsGroupsRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1366,10 +1314,6 @@ paths:
               $ref: '#/components/schemas/Os_InheritDomainsGroupsRolesInherited_To_ProjectsPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsGroupsRolesInherited_To_ProjectsPutResponse'
           description: Ok
         '403':
           description: Error
@@ -1390,10 +1334,6 @@ paths:
         OS-INHERIT/domains/domain_id/users/user_id/roles/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsUsersRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1451,10 +1391,6 @@ paths:
         OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsUsersRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1502,10 +1438,6 @@ paths:
               $ref: '#/components/schemas/Os_InheritDomainsUsersRolesInherited_To_ProjectsPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritDomainsUsersRolesInherited_To_ProjectsPutResponse'
           description: Ok
         '403':
           description: Error
@@ -1541,10 +1473,6 @@ paths:
         OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritProjectsGroupsRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1590,10 +1518,6 @@ paths:
               $ref: '#/components/schemas/Os_InheritProjectsGroupsRolesInherited_To_ProjectsPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritProjectsGroupsRolesInherited_To_ProjectsPutResponse'
           description: Ok
         '403':
           description: Error
@@ -1629,10 +1553,6 @@ paths:
         OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritProjectsUsersRolesInherited_To_ProjectsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1678,10 +1598,6 @@ paths:
               $ref: '#/components/schemas/Os_InheritProjectsUsersRolesInherited_To_ProjectsPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_InheritProjectsUsersRolesInherited_To_ProjectsPutResponse'
           description: Ok
         '403':
           description: Error
@@ -1697,10 +1613,6 @@ paths:
       operationId: OS-OAUTH1/access_token:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1Access_TokenGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1732,10 +1644,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth1Access_TokenPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1Access_TokenPostResponse'
           description: Ok
         '403':
           description: Error
@@ -1757,10 +1665,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth1AuthorizePutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1AuthorizePutResponse'
           description: Ok
         '403':
           description: Error
@@ -1775,10 +1679,6 @@ paths:
       operationId: OS-OAUTH1/consumers:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1ConsumersGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1810,10 +1710,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth1ConsumersPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1ConsumersPostResponse'
           description: Ok
         '403':
           description: Error
@@ -1841,10 +1737,6 @@ paths:
       operationId: OS-OAUTH1/consumers/consumer_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1ConsumerGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1878,10 +1770,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth1ConsumerPatchRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1ConsumerPatchResponse'
           description: Ok
         '403':
           description: Error
@@ -1896,10 +1784,6 @@ paths:
       operationId: OS-OAUTH1/request_token:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1Request_TokenGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1931,10 +1815,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth1Request_TokenPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth1Request_TokenPostResponse'
           description: Ok
         '403':
           description: Error
@@ -1962,10 +1842,6 @@ paths:
       operationId: OS-OAUTH2/token:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth2TokenGetResponse'
           description: Ok
         '403':
           description: Error
@@ -1997,10 +1873,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth2TokenPatchRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth2TokenPatchResponse'
           description: Ok
         '403':
           description: Error
@@ -2021,10 +1893,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth2TokenPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth2TokenPostResponse'
           description: Ok
         '403':
           description: Error
@@ -2043,10 +1911,6 @@ paths:
               $ref: '#/components/schemas/Os_Oauth2TokenPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Oauth2TokenPutResponse'
           description: Ok
         '403':
           description: Error
@@ -2061,10 +1925,6 @@ paths:
       operationId: OS-REVOKE/events:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_RevokeEventsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2092,10 +1952,6 @@ paths:
       operationId: OS-SIMPLE-CERT/ca:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Simple_CertCaGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2123,10 +1979,6 @@ paths:
       operationId: OS-SIMPLE-CERT/certificates:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Simple_CertCertificatesGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2273,10 +2125,6 @@ paths:
       operationId: OS-TRUST/trusts/trust_id/roles:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_TrustTrustsRolesGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2306,10 +2154,6 @@ paths:
       operationId: OS-TRUST/trusts/trust_id/roles/role_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_TrustTrustsRoleGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2394,10 +2238,6 @@ paths:
       operationId: auth/OS-FEDERATION/saml2:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthOs_FederationSaml2GetResponse'
           description: Ok
         '403':
           description: Error
@@ -2449,10 +2289,6 @@ paths:
       operationId: auth/OS-FEDERATION/saml2/ecp:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthOs_FederationSaml2EcpGetResponse'
           description: Ok
         '403':
           description: Error
@@ -2843,10 +2679,6 @@ paths:
       operationId: auth/tokens/OS-PKI/revoked:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthTokensOs_PkiRevokedGetResponse'
           description: Ok
         '403':
           description: Error
@@ -3820,10 +3652,6 @@ paths:
       operationId: ec2tokens:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Ec2TokensGetResponse'
           description: Ok
         '403':
           description: Error
@@ -3857,10 +3685,6 @@ paths:
               $ref: '#/components/schemas/Ec2TokensPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Ec2TokensPostResponse'
           description: Ok
         '403':
           description: Error
@@ -4024,10 +3848,6 @@ paths:
       operationId: endpoints/endpoint_id/OS-ENDPOINT-POLICY/policy:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EndpointsOs_Endpoint_PolicyPolicyGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4512,10 +4332,6 @@ paths:
       operationId: policies:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4550,10 +4366,6 @@ paths:
               $ref: '#/components/schemas/PoliciesPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesPostResponse'
           description: Ok
         '403':
           description: Error
@@ -4587,10 +4399,6 @@ paths:
       operationId: policies/policy_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PolicyGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4627,10 +4435,6 @@ paths:
               $ref: '#/components/schemas/PolicyPatchRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PolicyPatchResponse'
           description: Ok
         '403':
           description: Error
@@ -4646,10 +4450,6 @@ paths:
       operationId: policies/policy_id/OS-ENDPOINT-POLICY/endpoints:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyEndpointsGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4694,10 +4494,6 @@ paths:
         policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyEndpointGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4734,10 +4530,6 @@ paths:
               $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyEndpointPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyEndpointPutResponse'
           description: Ok
         '403':
           description: Error
@@ -4766,10 +4558,6 @@ paths:
       operationId: policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServiceGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4805,10 +4593,6 @@ paths:
               $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServicePutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServicePutResponse'
           description: Ok
         '403':
           description: Error
@@ -4838,10 +4622,6 @@ paths:
         policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServicesRegionGetResponse'
           description: Ok
         '403':
           description: Error
@@ -4879,10 +4659,6 @@ paths:
               $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServicesRegionPutRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoliciesOs_Endpoint_PolicyServicesRegionPutResponse'
           description: Ok
         '403':
           description: Error
@@ -6177,10 +5953,6 @@ paths:
       operationId: s3tokens:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/S3TokensGetResponse'
           description: Ok
         '403':
           description: Error
@@ -6214,10 +5986,6 @@ paths:
               $ref: '#/components/schemas/S3TokensPostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/S3TokensPostResponse'
           description: Ok
         '403':
           description: Error
@@ -6765,10 +6533,6 @@ paths:
       operationId: users/user_id/OS-OAUTH1/access_tokens:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersOs_Oauth1Access_TokensGetResponse'
           description: Ok
         '403':
           description: Error
@@ -6817,10 +6581,6 @@ paths:
       operationId: users/user_id/OS-OAUTH1/access_tokens/access_token_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersOs_Oauth1Access_TokenGetResponse'
           description: Ok
         '403':
           description: Error
@@ -6857,10 +6617,6 @@ paths:
         users/user_id/OS-OAUTH1/access_tokens/access_token_id/roles:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersOs_Oauth1Access_TokensRolesGetResponse'
           description: Ok
         '403':
           description: Error
@@ -6899,10 +6655,6 @@ paths:
         users/user_id/OS-OAUTH1/access_tokens/access_token_id/roles/role_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersOs_Oauth1Access_TokensRoleGetResponse'
           description: Ok
         '403':
           description: Error
@@ -7169,10 +6921,6 @@ paths:
       operationId: users/user_id/credentials/OS-EC2:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersCredentialsOs_Ec2GetResponse'
           description: Ok
         '403':
           description: Error
@@ -7210,10 +6958,6 @@ paths:
               $ref: '#/components/schemas/UsersCredentialsOs_Ec2PostRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersCredentialsOs_Ec2PostResponse'
           description: Ok
         '403':
           description: Error
@@ -7245,10 +6989,6 @@ paths:
       operationId: users/user_id/credentials/OS-EC2/credential_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersCredentialsOs_Ec2GetResponse'
           description: Ok
         '403':
           description: Error
@@ -9387,9 +9127,6 @@ components:
               type: object
           type: object
       type: object
-    AuthOs_FederationSaml2EcpGetResponse:
-      description: Response of the auth/OS-FEDERATION/saml2/ecp:get operation
-      type: object
     AuthOs_FederationSaml2EcpPostRequest:
       definitions:
         user_domain:
@@ -9607,9 +9344,6 @@ components:
       description: SAML assertion in XML format
       format: xml
       type: string
-    AuthOs_FederationSaml2GetResponse:
-      description: Response of the auth/OS-FEDERATION/saml2:get operation
-      type: object
     AuthOs_FederationSaml2PostRequest:
       definitions:
         user_domain:
@@ -10386,9 +10120,6 @@ components:
               type: object
           type: object
       type: object
-    AuthTokensOs_PkiRevokedGetResponse:
-      description: Response of the auth/tokens/OS-PKI/revoked:get operation
-      type: object
     AuthTokensPostRequest:
       definitions:
         user_domain:
@@ -10811,7 +10542,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links for the `credential` resource.
               properties:
                 self:
                   format: uri
@@ -10888,7 +10619,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links for the `credential` resource.
               properties:
                 self:
                   format: uri
@@ -10920,8 +10651,7 @@ components:
             A list of `credential` objects.
           items:
             additionalProperties: true
-            description: |-
-              A `credential` object.
+            description: A credential object.
             properties:
               blob:
                 description: |-
@@ -10935,7 +10665,7 @@ components:
               links:
                 additionalProperties: false
                 description: |-
-                  The link to the resources in question.
+                  The links for the `credentials` resource.
                 properties:
                   self:
                     format: uri
@@ -10961,8 +10691,7 @@ components:
           type: array
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -11056,7 +10785,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links for the `credential` resource.
               properties:
                 self:
                   format: uri
@@ -11163,7 +10892,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links to the `domain` resource.
               properties:
                 self:
                   format: uri
@@ -11172,7 +10901,7 @@ components:
               type: object
             name:
               description: |-
-                The name of the project.
+                The name of the domain.
               maxLength: 64
               minLength: 1
               pattern: '[\S]+'
@@ -11193,8 +10922,6 @@ components:
                     - 'null'
               type: object
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -11349,7 +11076,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links to the `domain` resource.
               properties:
                 self:
                   format: uri
@@ -11358,7 +11085,7 @@ components:
               type: object
             name:
               description: |-
-                The name of the project.
+                The name of the domain.
               maxLength: 64
               minLength: 1
               pattern: '[\S]+'
@@ -11379,8 +11106,6 @@ components:
                     - 'null'
               type: object
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -11402,8 +11127,6 @@ components:
             A list of `domain` objects
           items:
             additionalProperties: false
-            description: |-
-              A `domain` object
             properties:
               description:
                 description: |-
@@ -11450,7 +11173,7 @@ components:
               links:
                 additionalProperties: false
                 description: |-
-                  The link to the resources in question.
+                  The links to the `domain` resource.
                 properties:
                   self:
                     format: uri
@@ -11459,16 +11182,13 @@ components:
                 type: object
               name:
                 description: |-
-                  The name of the project.
+                  The name of the domain.
                 maxLength: 64
                 minLength: 1
                 pattern: '[\S]+'
                 type: string
               options:
                 additionalProperties: false
-                description: |-
-                  The resource options for the role. Available resource options are
-                  `immutable`.
                 properties:
                   immutable:
                     enum:
@@ -11480,8 +11200,6 @@ components:
                       - 'null'
                 type: object
               tags:
-                description: |-
-                  A list of simple strings assigned to a project.
                 items:
                   maxLength: 255
                   minLength: 1
@@ -11495,8 +11213,7 @@ components:
           type: array
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -11515,6 +11232,81 @@ components:
           required:
             - self
           type: object
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
+      type: object
+    DomainsGroupsRolesGetResponse:
+      additionalProperties: false
+      properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        roles:
+          items:
+            additionalProperties: false
+            description: A role object.
+            properties:
+              description:
+                description: The role description.
+                type:
+                  - 'null'
+                  - string
+              domain_id:
+                description: The ID of the domain.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: The ID of the role.
+                type: string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              name:
+                description: The name of the role.
+                maxLength: 255
+                minLength: 1
+                type: string
+              options:
+                additionalProperties: false
+                properties:
+                  immutable:
+                    enum:
+                      - 
+                      - false
+                      - true
+                    type:
+                      - boolean
+                      - 'null'
+                type: object
+            type: object
+          type: array
         truncated:
           description: Flag indicating that the amount of entities exceeds 
             global response limit
@@ -11669,7 +11461,7 @@ components:
             links:
               additionalProperties: false
               description: |-
-                The link to the resources in question.
+                The links to the `domain` resource.
               properties:
                 self:
                   format: uri
@@ -11678,7 +11470,7 @@ components:
               type: object
             name:
               description: |-
-                The name of the project.
+                The name of the domain.
               maxLength: 64
               minLength: 1
               pattern: '[\S]+'
@@ -11699,8 +11491,6 @@ components:
                     - 'null'
               type: object
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -11714,17 +11504,86 @@ components:
       required:
         - domain
       type: object
-    Ec2TokensGetResponse:
-      description: Response of the ec2tokens:get operation
+    DomainsUsersRolesGetResponse:
+      additionalProperties: false
+      properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        roles:
+          items:
+            additionalProperties: false
+            description: A role object.
+            properties:
+              description:
+                description: The role description.
+                type:
+                  - 'null'
+                  - string
+              domain_id:
+                description: The ID of the domain.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: The ID of the role.
+                type: string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              name:
+                description: The name of the role.
+                maxLength: 255
+                minLength: 1
+                type: string
+              options:
+                additionalProperties: false
+                properties:
+                  immutable:
+                    enum:
+                      - 
+                      - false
+                      - true
+                    type:
+                      - boolean
+                      - 'null'
+                type: object
+            type: object
+          type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
       type: object
     Ec2TokensPostRequest:
       description: Request of the ec2tokens:post operation
       type: object
       x-openstack:
         action-name: POST
-    Ec2TokensPostResponse:
-      description: Response of the ec2tokens:post operation
-      type: object
     Endpoint:
       properties:
         endpoint:
@@ -11782,6 +11641,78 @@ components:
               description: |-
                 The endpoint URL.
               format: uri
+              type: string
+          type: object
+      type: object
+    EndpointGetResponse:
+      additionalProperties: false
+      description: An endpoint object
+      properties:
+        endpoint:
+          additionalProperties: true
+          description: An endpoint object
+          properties:
+            description:
+              description: A description of the endpoint.
+              type:
+                - 'null'
+                - string
+            enabled:
+              description: Indicates whether the endpoint appears in the service
+                catalog -false. The endpoint does not appear in the service 
+                catalog. -true. The endpoint appears in the service catalog.
+              type: boolean
+            id:
+              description: The endpoint ID
+              readOnly: true
+              type: string
+            interface:
+              description: 'The interface type, which describes the visibility of
+                the endpoint. Value is: -public. Visible by end users on a publicly
+                available network interface. -internal. Visible by end users on an
+                unmetered internal network interface. -admin. Visible by administrative
+                users on a secure network interface.'
+              enum:
+                - admin
+                - internal
+                - public
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the endpoint.
+              type: string
+            region:
+              description: (Deprecated in v3.2) The geographic location of the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                max-ver: 3.2
+            region_id:
+              description: (Since v3.2) The ID of the region that contains the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                min-ver: 3.2
+            service_id:
+              description: The UUID of the service to which the endpoint belongs
+              type: string
+            url:
+              description: The endpoint URL.
+              maxLength: 225
+              minLength: 0
+              pattern: ^[a-zA-Z0-9+.-]+:.+
               type: string
           type: object
       type: object
@@ -11864,15 +11795,95 @@ components:
       required:
         - endpoint
       type: object
+    EndpointPatchResponse:
+      additionalProperties: false
+      description: An endpoint object
+      properties:
+        endpoint:
+          additionalProperties: true
+          description: An endpoint object
+          properties:
+            description:
+              description: A description of the endpoint.
+              type:
+                - 'null'
+                - string
+            enabled:
+              description: Indicates whether the endpoint appears in the service
+                catalog -false. The endpoint does not appear in the service 
+                catalog. -true. The endpoint appears in the service catalog.
+              type: boolean
+            id:
+              description: The endpoint ID
+              readOnly: true
+              type: string
+            interface:
+              description: 'The interface type, which describes the visibility of
+                the endpoint. Value is: -public. Visible by end users on a publicly
+                available network interface. -internal. Visible by end users on an
+                unmetered internal network interface. -admin. Visible by administrative
+                users on a secure network interface.'
+              enum:
+                - admin
+                - internal
+                - public
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the endpoint.
+              type: string
+            region:
+              description: (Deprecated in v3.2) The geographic location of the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                max-ver: 3.2
+            region_id:
+              description: (Since v3.2) The ID of the region that contains the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                min-ver: 3.2
+            service_id:
+              description: The UUID of the service to which the endpoint belongs
+              type: string
+            url:
+              description: The endpoint URL.
+              maxLength: 225
+              minLength: 0
+              pattern: ^[a-zA-Z0-9+.-]+:.+
+              type: string
+          type: object
+      type: object
     EndpointsGetResponse:
+      additionalProperties: false
       properties:
         endpoints:
           description: |-
             A list of `endpoint` objects.
           items:
-            description: |-
-              An `endpoint` object.
+            additionalProperties: true
+            description: An endpoint object
             properties:
+              description:
+                description: |-
+                  The endpoint description. It is returned only when set on the
+                  resource.
+                type:
+                  - 'null'
+                  - string
               enabled:
                 description: |-
                   Indicates whether the endpoint appears in the
@@ -11883,7 +11894,6 @@ components:
               id:
                 description: |-
                   The endpoint ID.
-                format: uuid
                 readOnly: true
                 type: string
               interface:
@@ -11899,38 +11909,82 @@ components:
                   - internal
                   - public
                 type: string
+              links:
+                additionalProperties: false
+                description: |-
+                  The links for the `endpoints` resource.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              name:
+                description: |-
+                  (Deprecated) The endpoint name. The field will only be returned in responses
+                  when set on the resource.
+
+                  This field is deprecated as it provides no value. Endpoints are better
+                  described by the combination of service, region and interface they describe
+                  or by their ID.
+                type: string
               region:
                 description: |-
                   (Deprecated in v3.2) The geographic location of
                   the service endpoint.
-                type: string
+                type:
+                  - 'null'
+                  - string
                 x-openstack:
-                  max-ver: '3.2'
+                  max-ver: 3.2
               region_id:
                 description: |-
                   (Since v3.2) The ID of the region that contains
                   the service endpoint.
-                format: uuid
-                type: string
+                type:
+                  - 'null'
+                  - string
                 x-openstack:
-                  min-ver: '3.2'
+                  min-ver: 3.2
               service_id:
                 description: |-
                   The UUID of the service to which the endpoint
                   belongs.
-                format: uuid
                 type: string
               url:
                 description: |-
                   The endpoint URL.
-                format: uri
+                maxLength: 225
+                minLength: 0
+                pattern: ^[a-zA-Z0-9+.-]+:.+
                 type: string
             type: object
           type: array
-      type: object
-    EndpointsOs_Endpoint_PolicyPolicyGetResponse:
-      description: Response of the 
-        endpoints/endpoint_id/OS-ENDPOINT-POLICY/policy:get operation
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
       type: object
     EndpointsPost:
       additionalProperties: false
@@ -12015,6 +12069,78 @@ components:
             - url
           type: object
       type: object
+    EndpointsPostResponse:
+      additionalProperties: false
+      description: An endpoint object
+      properties:
+        endpoint:
+          additionalProperties: true
+          description: An endpoint object
+          properties:
+            description:
+              description: A description of the endpoint.
+              type:
+                - 'null'
+                - string
+            enabled:
+              description: Indicates whether the endpoint appears in the service
+                catalog -false. The endpoint does not appear in the service 
+                catalog. -true. The endpoint appears in the service catalog.
+              type: boolean
+            id:
+              description: The endpoint ID
+              readOnly: true
+              type: string
+            interface:
+              description: 'The interface type, which describes the visibility of
+                the endpoint. Value is: -public. Visible by end users on a publicly
+                available network interface. -internal. Visible by end users on an
+                unmetered internal network interface. -admin. Visible by administrative
+                users on a secure network interface.'
+              enum:
+                - admin
+                - internal
+                - public
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the endpoint.
+              type: string
+            region:
+              description: (Deprecated in v3.2) The geographic location of the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                max-ver: 3.2
+            region_id:
+              description: (Since v3.2) The ID of the region that contains the 
+                service endpoint.
+              type:
+                - 'null'
+                - string
+              x-openstack:
+                min-ver: 3.2
+            service_id:
+              description: The UUID of the service to which the endpoint belongs
+              type: string
+            url:
+              description: The endpoint URL.
+              maxLength: 225
+              minLength: 0
+              pattern: ^[a-zA-Z0-9+.-]+:.+
+              type: string
+          type: object
+      type: object
     GroupGetResponse:
       additionalProperties: false
       properties:
@@ -12031,7 +12157,7 @@ components:
                 - string
             domain_id:
               description: |-
-                The ID of the domain.
+                The ID of the domain of the group.
               type: string
             id:
               description: |-
@@ -12087,7 +12213,7 @@ components:
                 - string
             domain_id:
               description: |-
-                The ID of the domain.
+                The ID of the domain of the group.
               type: string
             id:
               description: |-
@@ -12109,8 +12235,6 @@ components:
             A list of `group` objects
           items:
             additionalProperties: true
-            description: |-
-              A `group` object
             properties:
               description:
                 description: |-
@@ -12120,7 +12244,7 @@ components:
                   - string
               domain_id:
                 description: |-
-                  The ID of the domain.
+                  The ID of the domain of the group.
                 type: string
               id:
                 description: |-
@@ -12135,7 +12259,7 @@ components:
         links:
           additionalProperties: false
           description: |-
-            The links for the `user` resource.
+            The link to the resources in question.
           properties:
             next:
               format: uri
@@ -12214,7 +12338,7 @@ components:
                 - string
             domain_id:
               description: |-
-                The ID of the domain.
+                The ID of the domain of the group.
               type: string
             id:
               description: |-
@@ -12233,8 +12357,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -12258,16 +12381,11 @@ components:
             global response limit
           type: boolean
         users:
-          description: |-
-            A list of `user` objects
           items:
             additionalProperties: true
-            description: |-
-              A `user` object
             properties:
               default_project_id:
-                description: |-
-                  The ID of the default project for the user.
+                description: The ID of the default project for the user.
                 type:
                   - 'null'
                   - string
@@ -12277,31 +12395,18 @@ components:
                   - 'null'
                   - string
               domain_id:
-                description: |-
-                  The ID of the domain.
+                description: The ID of the domain.
                 type: string
               enabled:
-                description: |-
-                  If the user is enabled, this value is `true`.
-                  If the user is disabled, this value is `false`.
+                description: If the user is enabled, this value is true. If the 
+                  user is disabled, this value is false.
                 type: boolean
               federated:
-                description: |-
-                  List of federated objects associated with a user. Each object in the list
-                  contains the `idp_id` and `protocols`. `protocols` is a list of
-                  objects, each of which contains `protocol_id` and `unique_id` of
-                  the protocol and user respectively. For example:
-
-                  ```
-                  "federated": [
-                    {
-                      "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-                      "protocols": [
-                        {"protocol_id": "mapped", "unique_id": "test@example.com"}
-                      ]
-                    }
-                  ]
-                  ```
+                description: List of federated objects associated with a user. 
+                  Each object in the list contains the idp_id and protocols. 
+                  protocols is a list of objects, each of which contains 
+                  protocol_id and unique_id of the protocol and user 
+                  respectively.
                 items:
                   properties:
                     idp_id:
@@ -12327,13 +12432,11 @@ components:
                   type: object
                 type: array
               id:
-                description: |-
-                  The user ID.
+                description: The user ID.
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The links for the `user` resource.
+                description: Links for the collection of resources.
                 properties:
                   next:
                     format: uri
@@ -12353,8 +12456,8 @@ components:
                   - self
                 type: object
               name:
-                description: |-
-                  The user name. Must be unique within the owning domain.
+                description: The user name. Must be unique within the owning 
+                  domain.
                 type: string
               options:
                 additionalProperties: false
@@ -12420,14 +12523,9 @@ components:
                     uniqueItems: true
                 type: object
               password_expires_at:
-                description: |-
-                  The date and time when the password expires. The time zone
-                  is UTC.
-
-                  This is a response object attribute; not valid for requests.
-                  A `null` value indicates that the password never expires.
-
-                  **New in version 3.7**
+                description: The date and time when the password expires. The 
+                  time zone is UTC. A null value indicates that the password 
+                  never expires.
                 format: date-time
                 type:
                   - 'null'
@@ -12629,8 +12727,7 @@ components:
             A list of `limits` objects
           items:
             additionalProperties: false
-            description: |-
-              A `limit` object
+            description: A limit object.
             properties:
               description:
                 description: |-
@@ -12656,8 +12753,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -12705,7 +12801,7 @@ components:
         links:
           additionalProperties: false
           description: |-
-            The links for the `user` resource.
+            The link to the resources in question.
           properties:
             next:
               format: uri
@@ -12779,7 +12875,7 @@ components:
                   - string
               domain_id:
                 description: |-
-                  The name of the domain.
+                  The ID of the domain. Either this or the project ID must be supplied.
                 maxLength: 64
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]+$
@@ -12788,7 +12884,7 @@ components:
                   - string
               project_id:
                 description: |-
-                  The ID for the project.
+                  The ID of the project. Either this or the domain ID must be supplied.
                 maxLength: 64
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]+$
@@ -12839,8 +12935,7 @@ components:
             A list of `limits` objects
           items:
             additionalProperties: false
-            description: |-
-              A `limit` object
+            description: A limit object.
             properties:
               description:
                 description: |-
@@ -12969,8 +13064,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -13101,8 +13195,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -13116,10 +13209,6 @@ components:
               pattern: '[\S]+'
               type: string
           type: object
-      type: object
-    Os_Ep_FilterEndpoint_GroupsEndpointsGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/endpoint_groups/endpoint_group_id/endpoints:get operation
       type: object
     Os_Ep_FilterEndpoint_GroupsGetResponse:
       additionalProperties: false
@@ -13178,8 +13267,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -13196,8 +13284,7 @@ components:
           type: array
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -13337,8 +13424,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -13353,11 +13439,6 @@ components:
               type: string
           type: object
       type: object
-    Os_Ep_FilterEndpoint_GroupsProjectGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:get 
-        operation
-      type: object
     Os_Ep_FilterEndpoint_GroupsProjectPutRequest:
       description: Request of the 
         OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:put 
@@ -13365,41 +13446,12 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    Os_Ep_FilterEndpoint_GroupsProjectPutResponse:
-      description: Response of the 
-        OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects/project_id:put 
-        operation
-      type: object
-    Os_Ep_FilterEndpoint_GroupsProjectsGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/endpoint_groups/endpoint_group_id/projects:get operation
-      type: object
-    Os_Ep_FilterEndpointsProjectsGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/endpoints/endpoint_id/projects:get operation
-      type: object
-    Os_Ep_FilterProjectsEndpointGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:get operation
-      type: object
     Os_Ep_FilterProjectsEndpointPutRequest:
       description: Request of the 
         OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:put operation
       type: object
       x-openstack:
         action-name: PUT
-    Os_Ep_FilterProjectsEndpointPutResponse:
-      description: Response of the 
-        OS-EP-FILTER/projects/project_id/endpoints/endpoint_id:put operation
-      type: object
-    Os_Ep_FilterProjectsEndpoint_GroupsGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/projects/project_id/endpoint_groups:get operation
-      type: object
-    Os_Ep_FilterProjectsEndpointsGetResponse:
-      description: Response of the 
-        OS-EP-FILTER/projects/project_id/endpoints:get operation
-      type: object
     Os_FederationDomainsGetResponse:
       properties:
         domains:
@@ -13461,33 +13513,102 @@ components:
           type: array
       type: object
     Os_FederationIdentity_ProviderGetResponse:
+      additionalProperties: true
       properties:
-        identity_provider:
-          properties:
-            authorization_ttl:
-              description: The length of validity in minutes for group 
-                memberships carried over through mapping and persisted in the 
-                database.
-              type: integer
-            description:
-              description: The Identity Provider description
-              type: string
-            domain_id:
-              description: The ID of a domain that is associated with the 
-                Identity Provider.
-              format: uuid
-              type: string
-            enabled:
-              description: Whether the Identity Provider is enabled or not
-              type: boolean
-            id:
-              description: The Identity Provider unique ID
-              type: string
-            remote_ids:
-              description: List of the unique Identity Provider’s remote IDs
-              items:
+        identity_providers:
+          description: A list of identity provider objects
+          items:
+            additionalProperties: true
+            description: An identity provider object
+            properties:
+              authorization_ttl:
+                description: The length of validity in minutes for group 
+                  memberships carried over through mapping and persisted in the 
+                  database. If left unset, the default value configured in 
+                  keystone will be used, if enabled.
+                minimum: 0
+                type:
+                  - integer
+                  - 'null'
+              description:
+                description: The identity provider description
+                type:
+                  - 'null'
+                  - string
+              enabled:
+                description: Whether the identity provider is enabled or not
+                enum:
+                  - ''
+                  - '0'
+                  - '1'
+                  - 'FALSE'
+                  - false
+                  - 'False'
+                  - N
+                  - OFF
+                  - ON
+                  - 'TRUE'
+                  - true
+                  - 'True'
+                  - Y
+                  - 'false'
+                  - n
+                  - no
+                  - off
+                  - on
+                  - 'true'
+                  - y
+                  - yes
+                type:
+                  - boolean
+                  - 'null'
+                  - string
+              id:
+                description: The identity provider ID
+                readOnly: true
                 type: string
-              type: array
+              links:
+                additionalProperties: false
+                properties:
+                  protocols:
+                    format: uri
+                    type: string
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              remote_ids:
+                description: List of the unique identity provider's remote IDs
+                items:
+                  maxLength: 64
+                  type: string
+                type:
+                  - array
+                  - 'null'
+                uniqueItems: true
+            type: object
+          type: array
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
           type: object
       type: object
     Os_FederationIdentity_ProviderPatch:
@@ -13553,33 +13674,79 @@ components:
         - identity_provider
       type: object
     Os_FederationIdentity_ProviderPatchResponse:
+      additionalProperties: false
+      description: An identity provider object
       properties:
         identity_provider:
+          additionalProperties: true
+          description: An identity provider object
           properties:
             authorization_ttl:
               description: The length of validity in minutes for group 
                 memberships carried over through mapping and persisted in the 
-                database.
-              type: integer
+                database. If left unset, the default value configured in 
+                keystone will be used, if enabled.
+              minimum: 0
+              type:
+                - integer
+                - 'null'
             description:
-              description: The Identity Provider description
-              type: string
-            domain_id:
-              description: The ID of a domain that is associated with the 
-                Identity Provider.
-              format: uuid
-              type: string
+              description: The identity provider description
+              type:
+                - 'null'
+                - string
             enabled:
-              description: Whether the Identity Provider is enabled or not
-              type: boolean
+              description: Whether the identity provider is enabled or not
+              enum:
+                - ''
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - N
+                - OFF
+                - ON
+                - 'TRUE'
+                - true
+                - 'True'
+                - Y
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - 'null'
+                - string
             id:
-              description: The Identity Provider unique ID
+              description: The identity provider ID
+              readOnly: true
               type: string
+            links:
+              additionalProperties: false
+              properties:
+                protocols:
+                  format: uri
+                  type: string
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             remote_ids:
-              description: List of the unique Identity Provider’s remote IDs
+              description: List of the unique identity provider's remote IDs
               items:
+                maxLength: 64
                 type: string
-              type: array
+              type:
+                - array
+                - 'null'
+              uniqueItems: true
           type: object
       type: object
     Os_FederationIdentity_ProviderPut:
@@ -13653,81 +13820,217 @@ components:
           type: object
       type: object
     Os_FederationIdentity_ProviderPutResponse:
+      additionalProperties: false
+      description: An identity provider object
       properties:
         identity_provider:
+          additionalProperties: true
+          description: An identity provider object
           properties:
             authorization_ttl:
               description: The length of validity in minutes for group 
                 memberships carried over through mapping and persisted in the 
-                database.
-              type: integer
+                database. If left unset, the default value configured in 
+                keystone will be used, if enabled.
+              minimum: 0
+              type:
+                - integer
+                - 'null'
             description:
-              description: The Identity Provider description
-              type: string
-            domain_id:
-              description: The ID of a domain that is associated with the 
-                Identity Provider.
-              format: uuid
-              type: string
+              description: The identity provider description
+              type:
+                - 'null'
+                - string
             enabled:
-              description: Whether the Identity Provider is enabled or not
-              type: boolean
+              description: Whether the identity provider is enabled or not
+              enum:
+                - ''
+                - '0'
+                - '1'
+                - 'FALSE'
+                - false
+                - 'False'
+                - N
+                - OFF
+                - ON
+                - 'TRUE'
+                - true
+                - 'True'
+                - Y
+                - 'false'
+                - n
+                - no
+                - off
+                - on
+                - 'true'
+                - y
+                - yes
+              type:
+                - boolean
+                - 'null'
+                - string
             id:
-              description: The Identity Provider unique ID
+              description: The identity provider ID
+              readOnly: true
               type: string
+            links:
+              additionalProperties: false
+              properties:
+                protocols:
+                  format: uri
+                  type: string
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             remote_ids:
-              description: List of the unique Identity Provider’s remote IDs
+              description: List of the unique identity provider's remote IDs
               items:
+                maxLength: 64
                 type: string
-              type: array
+              type:
+                - array
+                - 'null'
+              uniqueItems: true
           type: object
       type: object
     Os_FederationIdentity_ProvidersGetResponse:
+      additionalProperties: true
       properties:
         identity_providers:
+          description: A list of identity provider objects
           items:
+            additionalProperties: true
+            description: An identity provider object
             properties:
               authorization_ttl:
                 description: The length of validity in minutes for group 
                   memberships carried over through mapping and persisted in the 
-                  database.
-                type: integer
+                  database. If left unset, the default value configured in 
+                  keystone will be used, if enabled.
+                minimum: 0
+                type:
+                  - integer
+                  - 'null'
               description:
-                description: The Identity Provider description
-                type: string
-              domain_id:
-                description: The ID of a domain that is associated with the 
-                  Identity Provider.
-                format: uuid
-                type: string
+                description: The identity provider description
+                type:
+                  - 'null'
+                  - string
               enabled:
-                description: Whether the Identity Provider is enabled or not
-                type: boolean
+                description: Whether the identity provider is enabled or not
+                enum:
+                  - ''
+                  - '0'
+                  - '1'
+                  - 'FALSE'
+                  - false
+                  - 'False'
+                  - N
+                  - OFF
+                  - ON
+                  - 'TRUE'
+                  - true
+                  - 'True'
+                  - Y
+                  - 'false'
+                  - n
+                  - no
+                  - off
+                  - on
+                  - 'true'
+                  - y
+                  - yes
+                type:
+                  - boolean
+                  - 'null'
+                  - string
               id:
-                description: The Identity Provider unique ID
+                description: The identity provider ID
+                readOnly: true
                 type: string
+              links:
+                additionalProperties: false
+                properties:
+                  protocols:
+                    format: uri
+                    type: string
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
               remote_ids:
-                description: List of the unique Identity Provider’s remote IDs
+                description: List of the unique identity provider's remote IDs
                 items:
+                  maxLength: 64
                   type: string
-                type: array
+                type:
+                  - array
+                  - 'null'
+                uniqueItems: true
             type: object
           type: array
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
       type: object
     Os_FederationIdentity_ProvidersProtocolGetResponse:
+      additionalProperties: false
       properties:
         protocol:
+          additionalProperties: false
+          description: A federation protocol object.
           properties:
             id:
-              description: The federation protocol ID
-              format: uuid
+              description: The resource name.
+              maxLength: 255
+              minLength: 1
+              pattern: '[\S]+'
               type: string
+            links:
+              additionalProperties: false
+              properties:
+                identity_provider:
+                  format: uri
+                  type: string
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             mapping_id:
+              maxLength: 64
+              minLength: 1
               type: string
             remote_id_attribute:
               maxLength: 64
               type: string
+          required:
+            - id
+            - mapping_id
           type: object
+      required:
+        - protocol
       type: object
     Os_FederationIdentity_ProvidersProtocolPatch:
       additionalProperties: false
@@ -13750,19 +14053,42 @@ components:
         - protocol
       type: object
     Os_FederationIdentity_ProvidersProtocolPatchResponse:
+      additionalProperties: false
       properties:
         protocol:
+          additionalProperties: false
+          description: A federation protocol object.
           properties:
             id:
-              description: The federation protocol ID
-              format: uuid
+              description: The resource name.
+              maxLength: 255
+              minLength: 1
+              pattern: '[\S]+'
               type: string
+            links:
+              additionalProperties: false
+              properties:
+                identity_provider:
+                  format: uri
+                  type: string
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             mapping_id:
+              maxLength: 64
+              minLength: 1
               type: string
             remote_id_attribute:
               maxLength: 64
               type: string
+          required:
+            - id
+            - mapping_id
           type: object
+      required:
+        - protocol
       type: object
     Os_FederationIdentity_ProvidersProtocolPut:
       additionalProperties: false
@@ -13786,19 +14112,42 @@ components:
         - protocol
       type: object
     Os_FederationIdentity_ProvidersProtocolPutResponse:
+      additionalProperties: false
       properties:
         protocol:
+          additionalProperties: false
+          description: A federation protocol object.
           properties:
             id:
-              description: The federation protocol ID
-              format: uuid
+              description: The resource name.
+              maxLength: 255
+              minLength: 1
+              pattern: '[\S]+'
               type: string
+            links:
+              additionalProperties: false
+              properties:
+                identity_provider:
+                  format: uri
+                  type: string
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             mapping_id:
+              maxLength: 64
+              minLength: 1
               type: string
             remote_id_attribute:
               maxLength: 64
               type: string
+          required:
+            - id
+            - mapping_id
           type: object
+      required:
+        - protocol
       type: object
     Os_FederationIdentity_ProvidersProtocolsAuthGetResponse:
       properties:
@@ -14044,21 +14393,71 @@ components:
           type: object
       type: object
     Os_FederationIdentity_ProvidersProtocolsGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         protocols:
           items:
+            additionalProperties: false
+            description: A federation protocol object.
             properties:
               id:
-                description: The federation protocol ID
-                format: uuid
+                maxLength: 64
+                minLength: 1
                 type: string
+              idp_id:
+                description: The identity provider ID
+                readOnly: true
+                type: string
+              links:
+                additionalProperties: false
+                properties:
+                  identity_provider:
+                    format: uri
+                    type: string
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
               mapping_id:
+                maxLength: 64
+                minLength: 1
                 type: string
               remote_id_attribute:
                 maxLength: 64
-                type: string
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - idp_id
+              - mapping_id
+              - remote_id_attribute
             type: object
           type: array
+      required:
+        - protocols
       type: object
     Os_FederationMappingGetResponse:
       properties:
@@ -15252,8 +15651,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -15388,8 +15786,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -15526,8 +15923,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -15552,8 +15948,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -15623,8 +16018,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -15649,11 +16043,6 @@ components:
             global response limit
           type: boolean
       type: object
-    Os_InheritDomainsGroupsRolesInherited_To_ProjectsGetResponse:
-      description: Response of the 
-        OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:get
-        operation
-      type: object
     Os_InheritDomainsGroupsRolesInherited_To_ProjectsPutRequest:
       description: Request of the 
         OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:put
@@ -15661,16 +16050,6 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    Os_InheritDomainsGroupsRolesInherited_To_ProjectsPutResponse:
-      description: Response of the 
-        OS-INHERIT/domains/domain_id/groups/group_id/roles/role_id/inherited_to_projects:put
-        operation
-      type: object
-    Os_InheritDomainsUsersRolesInherited_To_ProjectsGetResponse:
-      description: Response of the 
-        OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:get
-        operation
-      type: object
     Os_InheritDomainsUsersRolesInherited_To_ProjectsPutRequest:
       description: Request of the 
         OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:put
@@ -15678,16 +16057,6 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    Os_InheritDomainsUsersRolesInherited_To_ProjectsPutResponse:
-      description: Response of the 
-        OS-INHERIT/domains/domain_id/users/user_id/roles/role_id/inherited_to_projects:put
-        operation
-      type: object
-    Os_InheritProjectsGroupsRolesInherited_To_ProjectsGetResponse:
-      description: Response of the 
-        OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:get
-        operation
-      type: object
     Os_InheritProjectsGroupsRolesInherited_To_ProjectsPutRequest:
       description: Request of the 
         OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:put
@@ -15695,16 +16064,6 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    Os_InheritProjectsGroupsRolesInherited_To_ProjectsPutResponse:
-      description: Response of the 
-        OS-INHERIT/projects/project_id/groups/group_id/roles/role_id/inherited_to_projects:put
-        operation
-      type: object
-    Os_InheritProjectsUsersRolesInherited_To_ProjectsGetResponse:
-      description: Response of the 
-        OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:get
-        operation
-      type: object
     Os_InheritProjectsUsersRolesInherited_To_ProjectsPutRequest:
       description: Request of the 
         OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:put
@@ -15712,103 +16071,48 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    Os_InheritProjectsUsersRolesInherited_To_ProjectsPutResponse:
-      description: Response of the 
-        OS-INHERIT/projects/project_id/users/user_id/roles/role_id/inherited_to_projects:put
-        operation
-      type: object
-    Os_Oauth1Access_TokenGetResponse:
-      description: Response of the OS-OAUTH1/access_token:get operation
-      type: object
     Os_Oauth1Access_TokenPostRequest:
       description: Request of the OS-OAUTH1/access_token:post operation
       type: object
       x-openstack:
         action-name: POST
-    Os_Oauth1Access_TokenPostResponse:
-      description: Response of the OS-OAUTH1/access_token:post operation
-      type: object
     Os_Oauth1AuthorizePutRequest:
       description: Request of the OS-OAUTH1/authorize/request_token_id:put 
         operation
       type: object
       x-openstack:
         action-name: PUT
-    Os_Oauth1AuthorizePutResponse:
-      description: Response of the OS-OAUTH1/authorize/request_token_id:put 
-        operation
-      type: object
-    Os_Oauth1ConsumerGetResponse:
-      description: Response of the OS-OAUTH1/consumers/consumer_id:get operation
-      type: object
     Os_Oauth1ConsumerPatchRequest:
       description: Request of the OS-OAUTH1/consumers/consumer_id:patch 
         operation
       type: object
       x-openstack:
         action-name: PATCH
-    Os_Oauth1ConsumerPatchResponse:
-      description: Response of the OS-OAUTH1/consumers/consumer_id:patch 
-        operation
-      type: object
-    Os_Oauth1ConsumersGetResponse:
-      description: Response of the OS-OAUTH1/consumers:get operation
-      type: object
     Os_Oauth1ConsumersPostRequest:
       description: Request of the OS-OAUTH1/consumers:post operation
       type: object
       x-openstack:
         action-name: POST
-    Os_Oauth1ConsumersPostResponse:
-      description: Response of the OS-OAUTH1/consumers:post operation
-      type: object
-    Os_Oauth1Request_TokenGetResponse:
-      description: Response of the OS-OAUTH1/request_token:get operation
-      type: object
     Os_Oauth1Request_TokenPostRequest:
       description: Request of the OS-OAUTH1/request_token:post operation
       type: object
       x-openstack:
         action-name: POST
-    Os_Oauth1Request_TokenPostResponse:
-      description: Response of the OS-OAUTH1/request_token:post operation
-      type: object
-    Os_Oauth2TokenGetResponse:
-      description: Response of the OS-OAUTH2/token:get operation
-      type: object
     Os_Oauth2TokenPatchRequest:
       description: Request of the OS-OAUTH2/token:patch operation
       type: object
       x-openstack:
         action-name: PATCH
-    Os_Oauth2TokenPatchResponse:
-      description: Response of the OS-OAUTH2/token:patch operation
-      type: object
     Os_Oauth2TokenPostRequest:
       description: Request of the OS-OAUTH2/token:post operation
       type: object
       x-openstack:
         action-name: POST
-    Os_Oauth2TokenPostResponse:
-      description: Response of the OS-OAUTH2/token:post operation
-      type: object
     Os_Oauth2TokenPutRequest:
       description: Request of the OS-OAUTH2/token:put operation
       type: object
       x-openstack:
         action-name: PUT
-    Os_Oauth2TokenPutResponse:
-      description: Response of the OS-OAUTH2/token:put operation
-      type: object
-    Os_RevokeEventsGetResponse:
-      description: Response of the OS-REVOKE/events:get operation
-      type: object
-    Os_Simple_CertCaGetResponse:
-      description: Response of the OS-SIMPLE-CERT/ca:get operation
-      type: object
-    Os_Simple_CertCertificatesGetResponse:
-      description: Response of the OS-SIMPLE-CERT/certificates:get operation
-      type: object
     Os_TrustTrustGetResponse:
       additionalProperties: false
       description: A trust object
@@ -15852,8 +16156,7 @@ components:
               type: boolean
             links:
               additionalProperties: false
-              description: |-
-                The links for the `user` resource.
+              description: Links for the collection of resources.
               properties:
                 next:
                   format: uri
@@ -15945,8 +16248,7 @@ components:
                     type: string
                   links:
                     additionalProperties: false
-                    description: |-
-                      The links for the `user` resource.
+                    description: Links for the collection of resources.
                     properties:
                       next:
                         format: uri
@@ -15966,8 +16268,7 @@ components:
                       - self
                     type: object
                   name:
-                    description: |-
-                      The resource name.
+                    description: The resource name.
                     maxLength: 255
                     minLength: 1
                     pattern: '[\S]+'
@@ -15988,8 +16289,7 @@ components:
               type: array
             roles_links:
               additionalProperties: false
-              description: |-
-                The links for the `user` resource.
+              description: Links for the collection of resources.
               properties:
                 next:
                   format: uri
@@ -16023,8 +16323,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -16090,8 +16389,7 @@ components:
                 type: boolean
               links:
                 additionalProperties: false
-                description: |-
-                  The links for the `user` resource.
+                description: Links for the collection of resources.
                 properties:
                   next:
                     format: uri
@@ -16186,8 +16484,7 @@ components:
                       type: string
                     links:
                       additionalProperties: false
-                      description: |-
-                        The links for the `user` resource.
+                      description: Links for the collection of resources.
                       properties:
                         next:
                           format: uri
@@ -16207,8 +16504,7 @@ components:
                         - self
                       type: object
                     name:
-                      description: |-
-                        The resource name.
+                      description: The resource name.
                       maxLength: 255
                       minLength: 1
                       pattern: '[\S]+'
@@ -16229,8 +16525,7 @@ components:
                 type: array
               roles_links:
                 additionalProperties: false
-                description: |-
-                  The links for the `user` resource.
+                description: Links for the collection of resources.
                 properties:
                   next:
                     format: uri
@@ -16418,8 +16713,7 @@ components:
               type: boolean
             links:
               additionalProperties: false
-              description: |-
-                The links for the `user` resource.
+              description: Links for the collection of resources.
               properties:
                 next:
                   format: uri
@@ -16511,8 +16805,7 @@ components:
                     type: string
                   links:
                     additionalProperties: false
-                    description: |-
-                      The links for the `user` resource.
+                    description: Links for the collection of resources.
                     properties:
                       next:
                         format: uri
@@ -16532,8 +16825,7 @@ components:
                       - self
                     type: object
                   name:
-                    description: |-
-                      The resource name.
+                    description: The resource name.
                     maxLength: 255
                     minLength: 1
                     pattern: '[\S]+'
@@ -16554,8 +16846,7 @@ components:
               type: array
             roles_links:
               additionalProperties: false
-              description: |-
-                The links for the `user` resource.
+              description: Links for the collection of resources.
               properties:
                 next:
                   format: uri
@@ -16584,21 +16875,6 @@ components:
               type: string
           type: object
       type: object
-    Os_TrustTrustsRoleGetResponse:
-      description: Response of the OS-TRUST/trusts/trust_id/roles/role_id:get 
-        operation
-      type: object
-    Os_TrustTrustsRolesGetResponse:
-      description: Response of the OS-TRUST/trusts/trust_id/roles:get operation
-      type: object
-    PoliciesGetResponse:
-      description: Response of the policies:get operation
-      type: object
-    PoliciesOs_Endpoint_PolicyEndpointGetResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:get 
-        operation
-      type: object
     PoliciesOs_Endpoint_PolicyEndpointPutRequest:
       description: Request of the 
         policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:put 
@@ -16606,34 +16882,12 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    PoliciesOs_Endpoint_PolicyEndpointPutResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/endpoints/endpoint_id:put 
-        operation
-      type: object
-    PoliciesOs_Endpoint_PolicyEndpointsGetResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/endpoints:get operation
-      type: object
-    PoliciesOs_Endpoint_PolicyServiceGetResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:get operation
-      type: object
     PoliciesOs_Endpoint_PolicyServicePutRequest:
       description: Request of the 
         policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:put operation
       type: object
       x-openstack:
         action-name: PUT
-    PoliciesOs_Endpoint_PolicyServicePutResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/services/service_id:put operation
-      type: object
-    PoliciesOs_Endpoint_PolicyServicesRegionGetResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:get
-        operation
-      type: object
     PoliciesOs_Endpoint_PolicyServicesRegionPutRequest:
       description: Request of the 
         policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:put
@@ -16641,30 +16895,16 @@ components:
       type: object
       x-openstack:
         action-name: PUT
-    PoliciesOs_Endpoint_PolicyServicesRegionPutResponse:
-      description: Response of the 
-        policies/policy_id/OS-ENDPOINT-POLICY/services/service_id/regions/region_id:put
-        operation
-      type: object
     PoliciesPostRequest:
       description: Request of the policies:post operation
       type: object
       x-openstack:
         action-name: POST
-    PoliciesPostResponse:
-      description: Response of the policies:post operation
-      type: object
-    PolicyGetResponse:
-      description: Response of the policies/policy_id:get operation
-      type: object
     PolicyPatchRequest:
       description: Request of the policies/policy_id:patch operation
       type: object
       x-openstack:
         action-name: PATCH
-    PolicyPatchResponse:
-      description: Response of the policies/policy_id:patch operation
-      type: object
     ProjectGetResponse:
       additionalProperties: false
       properties:
@@ -16690,8 +16930,8 @@ components:
                 - string
             enabled:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -16725,8 +16965,8 @@ components:
               type: string
             is_domain:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -16797,8 +17037,6 @@ components:
                 - 'null'
                 - string
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -16916,8 +17154,8 @@ components:
                 - string
             enabled:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -16951,8 +17189,8 @@ components:
               type: string
             is_domain:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -17023,8 +17261,6 @@ components:
                 - 'null'
                 - string
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -17041,8 +17277,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -17066,8 +17301,6 @@ components:
             A list of `project` objects
           items:
             additionalProperties: true
-            description: |-
-              A `project` object
             properties:
               description:
                 description: |-
@@ -17086,8 +17319,8 @@ components:
                   - string
               enabled:
                 description: |-
-                  If the user is enabled, this value is `true`.
-                  If the user is disabled, this value is `false`.
+                  If set to `true`, project is enabled. If set to
+                  `false`, project is disabled.
                 enum:
                   - ''
                   - '0'
@@ -17121,8 +17354,8 @@ components:
                 type: string
               is_domain:
                 description: |-
-                  If the user is enabled, this value is `true`.
-                  If the user is disabled, this value is `false`.
+                  If set to `true`, project is enabled. If set to
+                  `false`, project is disabled.
                 enum:
                   - ''
                   - '0'
@@ -17168,9 +17401,6 @@ components:
                 type: string
               options:
                 additionalProperties: false
-                description: |-
-                  The resource options for the project. Available resource options are
-                  `immutable`.
                 properties:
                   immutable:
                     enum:
@@ -17204,6 +17434,81 @@ components:
                 required: []
                 type: array
                 uniqueItems: true
+            type: object
+          type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
+      type: object
+    ProjectsGroupsRolesGetResponse:
+      additionalProperties: false
+      properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        roles:
+          items:
+            additionalProperties: false
+            description: A role object.
+            properties:
+              description:
+                description: The role description.
+                type:
+                  - 'null'
+                  - string
+              domain_id:
+                description: The ID of the domain.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: The ID of the role.
+                type: string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              name:
+                description: The name of the role.
+                maxLength: 255
+                minLength: 1
+                type: string
+              options:
+                additionalProperties: false
+                properties:
+                  immutable:
+                    enum:
+                      - 
+                      - false
+                      - true
+                    type:
+                      - boolean
+                      - 'null'
+                type: object
             type: object
           type: array
         truncated:
@@ -17391,8 +17696,8 @@ components:
                 - string
             enabled:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -17426,8 +17731,8 @@ components:
               type: string
             is_domain:
               description: |-
-                If the user is enabled, this value is `true`.
-                If the user is disabled, this value is `false`.
+                If set to `true`, project is enabled. If set to
+                `false`, project is disabled.
               enum:
                 - ''
                 - '0'
@@ -17498,8 +17803,6 @@ components:
                 - 'null'
                 - string
             tags:
-              description: |-
-                A list of simple strings assigned to a project.
               items:
                 maxLength: 255
                 minLength: 1
@@ -17516,8 +17819,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -17561,8 +17863,7 @@ components:
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -17588,6 +17889,81 @@ components:
             type: string
           type: array
       type: object
+    ProjectsUsersRolesGetResponse:
+      additionalProperties: false
+      properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        roles:
+          items:
+            additionalProperties: false
+            description: A role object.
+            properties:
+              description:
+                description: The role description.
+                type:
+                  - 'null'
+                  - string
+              domain_id:
+                description: The ID of the domain.
+                type:
+                  - 'null'
+                  - string
+              id:
+                description: The ID of the role.
+                type: string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
+              name:
+                description: The name of the role.
+                maxLength: 255
+                minLength: 1
+                type: string
+              options:
+                additionalProperties: false
+                properties:
+                  immutable:
+                    enum:
+                      - 
+                      - false
+                      - true
+                    type:
+                      - boolean
+                      - 'null'
+                type: object
+            type: object
+          type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
+      type: object
     Region:
       properties:
         region:
@@ -17610,6 +17986,52 @@ components:
               format: uuid
               type: string
           type: object
+      type: object
+    RegionGetResponse:
+      additionalProperties: false
+      properties:
+        region:
+          additionalProperties: true
+          description: A region object.
+          properties:
+            description:
+              description: The resource description.
+              maxLength: 255
+              type:
+                - 'null'
+                - string
+            id:
+              description: The region ID.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            parent_region_id:
+              description: To make this region a child of another region, set 
+                this parameter to the ID of the parent region.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+          required:
+            - description
+            - id
+            - links
+            - parent_region_id
+          type: object
+      required:
+        - region
       type: object
     RegionPatch:
       additionalProperties: false
@@ -17643,6 +18065,52 @@ components:
               type:
                 - 'null'
                 - string
+          type: object
+      required:
+        - region
+      type: object
+    RegionPatchResponse:
+      additionalProperties: false
+      properties:
+        region:
+          additionalProperties: true
+          description: A region object.
+          properties:
+            description:
+              description: The resource description.
+              maxLength: 255
+              type:
+                - 'null'
+                - string
+            id:
+              description: The region ID.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            parent_region_id:
+              description: To make this region a child of another region, set 
+                this parameter to the ID of the parent region.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+          required:
+            - description
+            - id
+            - links
+            - parent_region_id
           type: object
       required:
         - region
@@ -17700,8 +18168,7 @@ components:
                 - string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -17726,31 +18193,83 @@ components:
         - region
       type: object
     RegionsGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: |-
+            The links for the `region` resource.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         regions:
           description: |-
             A list of `region` object
           items:
-            description: |-
-              A `region` object
+            additionalProperties: true
+            description: A region object.
             properties:
               description:
                 description: |-
                   The region description.
-                type: string
+                maxLength: 255
+                type:
+                  - 'null'
+                  - string
               id:
                 description: |-
                   The ID for the region.
-                format: uuid
+                maxLength: 255
+                minLength: 1
+                type:
+                  - 'null'
+                  - string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
                 readOnly: true
-                type: string
-              parent_id:
-                description: To make this region a child of another region, set 
-                  this parameter to the ID of the parent region.
-                format: uuid
-                type: string
+                type: object
+              parent_region_id:
+                description: |-
+                  To make this region a child of another region,
+                  set this parameter to the ID of the parent region.
+                maxLength: 255
+                minLength: 1
+                type:
+                  - 'null'
+                  - string
+            required:
+              - description
+              - id
+              - links
+              - parent_region_id
             type: object
           type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
+      required:
+        - regions
       type: object
     RegionsPost:
       additionalProperties: false
@@ -17784,6 +18303,52 @@ components:
               type:
                 - 'null'
                 - string
+          type: object
+      required:
+        - region
+      type: object
+    RegionsPostResponse:
+      additionalProperties: false
+      properties:
+        region:
+          additionalProperties: true
+          description: A region object.
+          properties:
+            description:
+              description: The resource description.
+              maxLength: 255
+              type:
+                - 'null'
+                - string
+            id:
+              description: The region ID.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            parent_region_id:
+              description: To make this region a child of another region, set 
+                this parameter to the ID of the parent region.
+              maxLength: 255
+              minLength: 1
+              type:
+                - 'null'
+                - string
+          required:
+            - description
+            - id
+            - links
+            - parent_region_id
           type: object
       required:
         - region
@@ -17968,7 +18533,7 @@ components:
         links:
           additionalProperties: false
           description: |-
-            The links for the `user` resource.
+            The link to the resources in question.
           properties:
             next:
               format: uri
@@ -17992,8 +18557,7 @@ components:
             A list of `registered_limits` objects
           items:
             additionalProperties: false
-            description: |-
-              A `registered_limit` objects
+            description: A registered limit object.
             properties:
               default_limit:
                 description: |-
@@ -18016,8 +18580,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -18114,8 +18677,7 @@ components:
             A list of `registered_limits` objects
           items:
             additionalProperties: false
-            description: |-
-              A `registered_limit` objects
+            description: A registered limit object.
             properties:
               default_limit:
                 description: |-
@@ -18236,6 +18798,54 @@ components:
               type: object
           type: object
       type: object
+    RoleGetResponse:
+      additionalProperties: false
+      properties:
+        role:
+          additionalProperties: true
+          description: A role object.
+          properties:
+            description:
+              description: The role description.
+              type:
+                - 'null'
+                - string
+            domain_id:
+              description: The ID of the domain.
+              type:
+                - 'null'
+                - string
+            id:
+              description: The ID of the role.
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the role.
+              maxLength: 255
+              minLength: 1
+              type: string
+            options:
+              additionalProperties: false
+              properties:
+                immutable:
+                  enum:
+                    - 
+                    - false
+                    - true
+                  type:
+                    - boolean
+                    - 'null'
+              type: object
+          type: object
+      type: object
     RolePatch:
       additionalProperties: false
       properties:
@@ -18285,13 +18895,60 @@ components:
       required:
         - role
       type: object
+    RolePatchResponse:
+      additionalProperties: false
+      properties:
+        role:
+          additionalProperties: true
+          description: A role object.
+          properties:
+            description:
+              description: The role description.
+              type:
+                - 'null'
+                - string
+            domain_id:
+              description: The ID of the domain.
+              type:
+                - 'null'
+                - string
+            id:
+              description: The ID of the role.
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the role.
+              maxLength: 255
+              minLength: 1
+              type: string
+            options:
+              additionalProperties: false
+              properties:
+                immutable:
+                  enum:
+                    - 
+                    - false
+                    - true
+                  type:
+                    - boolean
+                    - 'null'
+              type: object
+          type: object
+      type: object
     Role_AssignmentsGetResponse:
       additionalProperties: false
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -18477,86 +19134,125 @@ components:
           type: boolean
       type: object
     Role_InferencesGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         role_inferences:
+          additionalProperties: false
           description: |-
             An array of `role_inference` object.
           items:
+            additionalProperties: false
             properties:
               implies:
                 description: |-
                   An implied role object.
                 items:
-                  description: |-
-                    A prior role object.
+                  additionalProperties: false
+                  description: An implied role object.
                   properties:
-                    description:
-                      description: The role description.
-                      type: string
                     id:
                       description: |-
                         The role ID.
-                      format: uuid
                       type: string
                     links:
+                      additionalProperties: false
                       description: |-
                         The link to the resources in question.
                       properties:
                         self:
-                          description: The link to the resource in question.
                           format: uri
                           type: string
+                      readOnly: true
                       type: object
                     name:
                       description: |-
                         The role name.
+                      maxLength: 255
+                      minLength: 1
                       type: string
                   type: object
                 type: array
               prior_role:
+                additionalProperties: false
                 description: |-
                   A prior role object.
                 properties:
-                  description:
-                    description: The role description.
-                    type: string
                   id:
                     description: |-
                       The role ID.
-                    format: uuid
                     type: string
                   links:
+                    additionalProperties: false
                     description: |-
                       The link to the resources in question.
                     properties:
                       self:
-                        description: The link to the resource in question.
                         format: uri
                         type: string
+                    readOnly: true
                     type: object
                   name:
                     description: |-
                       The role name.
+                    maxLength: 255
+                    minLength: 1
                     type: string
                 type: object
             type: object
           type: array
       type: object
     RolesGetResponse:
+      additionalProperties: false
       properties:
         links:
-          additionalProperties:
-            format: uri
-            type:
-              - 'null'
-              - string
+          additionalProperties: false
+          description: |-
+            The link to the resources in question.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
           type: object
         roles:
           description: |-
             A list of `role` objects
           items:
-            description: |-
-              A `role` object
+            additionalProperties: true
+            description: A role object.
             properties:
               description:
                 description: |-
@@ -18567,26 +19263,20 @@ components:
               domain_id:
                 description: |-
                   The ID of the domain.
-                maxLength: 64
-                minLength: 1
-                pattern: ^[a-zA-Z0-9-]+$
                 type:
                   - 'null'
                   - string
               id:
                 description: |-
                   The role ID.
-                format: uuid
-                readOnly: true
                 type: string
               links:
-                additionalProperties:
-                  format: uri
-                  type:
-                    - 'null'
-                    - string
-                description: |-
-                  The link to the resources in question.
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
                 readOnly: true
                 type: object
               name:
@@ -18594,13 +19284,9 @@ components:
                   The role name.
                 maxLength: 255
                 minLength: 1
-                pattern: '[\S]+'
                 type: string
               options:
                 additionalProperties: false
-                description: |-
-                  The resource options for the role. Available resource options are
-                  `immutable`.
                 properties:
                   immutable:
                     enum:
@@ -18613,10 +19299,37 @@ components:
                 type: object
             type: object
           type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
       type: object
     RolesImpliesGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         role_inference:
+          additionalProperties: false
           description: |-
             Role inference object that contains `prior_role` object
             and `implies` object.
@@ -18625,178 +19338,220 @@ components:
               description: |-
                 An array of implied role objects.
               items:
-                description: |-
-                  A prior role object.
+                additionalProperties: false
+                description: An implied role object.
                 properties:
-                  description:
-                    description: The role description.
-                    type: string
                   id:
                     description: |-
                       The role ID.
-                    format: uuid
                     type: string
                   links:
-                    description: |-
-                      The link to the resources in question.
+                    additionalProperties: false
+                    description: The link to the resource in question.
                     properties:
                       self:
-                        description: The link to the resource in question.
                         format: uri
                         type: string
+                    readOnly: true
                     type: object
                   name:
                     description: |-
                       The role name.
+                    maxLength: 255
+                    minLength: 1
                     type: string
                 type: object
               type: array
             prior_role:
+              additionalProperties: false
               description: |-
                 A prior role object.
               properties:
-                description:
-                  description: The role description.
-                  type: string
                 id:
                   description: |-
                     The role ID.
-                  format: uuid
                   type: string
                 links:
+                  additionalProperties: false
                   description: |-
                     The link to the resources in question.
                   properties:
                     self:
-                      description: The link to the resource in question.
                       format: uri
                       type: string
+                  readOnly: true
                   type: object
                 name:
                   description: |-
                     The role name.
+                  maxLength: 255
+                  minLength: 1
                   type: string
               type: object
           type: object
       type: object
     RolesImplyGetResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         role_inference:
+          additionalProperties: false
           description: |-
             Role inference object that contains `prior_role` object
             and `implies` object.
           properties:
             implies:
+              additionalProperties: false
               description: |-
-                A prior role object.
+                An implied role object.
               properties:
-                description:
-                  description: The role description.
-                  type: string
                 id:
                   description: |-
                     The role ID.
-                  format: uuid
                   type: string
                 links:
-                  description: |-
-                    The link to the resources in question.
+                  additionalProperties: false
+                  description: The link to the resource in question.
                   properties:
                     self:
-                      description: The link to the resource in question.
                       format: uri
                       type: string
+                  readOnly: true
                   type: object
                 name:
                   description: |-
                     The role name.
+                  maxLength: 255
+                  minLength: 1
                   type: string
               type: object
             prior_role:
+              additionalProperties: false
               description: |-
                 A prior role object.
               properties:
-                description:
-                  description: The role description.
-                  type: string
                 id:
                   description: |-
                     The role ID.
-                  format: uuid
                   type: string
                 links:
+                  additionalProperties: false
                   description: |-
                     The link to the resources in question.
                   properties:
                     self:
-                      description: The link to the resource in question.
                       format: uri
                       type: string
+                  readOnly: true
                   type: object
                 name:
                   description: |-
                     The role name.
+                  maxLength: 255
+                  minLength: 1
                   type: string
               type: object
           type: object
       type: object
     RolesImplyPutResponse:
+      additionalProperties: false
       properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         role_inference:
+          additionalProperties: false
           description: |-
             Role inference object that contains `prior_role` object
             and `implies` object.
           properties:
             implies:
+              additionalProperties: false
               description: |-
-                A prior role object.
+                An implied role object.
               properties:
-                description:
-                  description: The role description.
-                  type: string
                 id:
                   description: |-
                     The role ID.
-                  format: uuid
                   type: string
                 links:
-                  description: |-
-                    The link to the resources in question.
+                  additionalProperties: false
+                  description: The link to the resource in question.
                   properties:
                     self:
-                      description: The link to the resource in question.
                       format: uri
                       type: string
+                  readOnly: true
                   type: object
                 name:
                   description: |-
                     The role name.
+                  maxLength: 255
+                  minLength: 1
                   type: string
               type: object
             prior_role:
+              additionalProperties: false
               description: |-
                 A prior role object.
               properties:
-                description:
-                  description: The role description.
-                  type: string
                 id:
                   description: |-
                     The role ID.
-                  format: uuid
                   type: string
                 links:
+                  additionalProperties: false
                   description: |-
                     The link to the resources in question.
                   properties:
                     self:
-                      description: The link to the resource in question.
                       format: uri
                       type: string
+                  readOnly: true
                   type: object
                 name:
                   description: |-
                     The role name.
+                  maxLength: 255
+                  minLength: 1
                   type: string
               type: object
           type: object
@@ -18815,8 +19570,6 @@ components:
           description: |-
             A list of `role` objects
           items:
-            description: |-
-              A prior role object.
             properties:
               description:
                 description: The role description.
@@ -18893,20 +19646,59 @@ components:
       required:
         - role
       type: object
-    RootGetResponse:
-      description: Response of the versions:get operation
-      type: object
-    S3TokensGetResponse:
-      description: Response of the s3tokens:get operation
+    RolesPostResponse:
+      additionalProperties: false
+      properties:
+        role:
+          additionalProperties: true
+          description: A role object.
+          properties:
+            description:
+              description: The role description.
+              type:
+                - 'null'
+                - string
+            domain_id:
+              description: The ID of the domain.
+              type:
+                - 'null'
+                - string
+            id:
+              description: The ID of the role.
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The name of the role.
+              maxLength: 255
+              minLength: 1
+              type: string
+            options:
+              additionalProperties: false
+              properties:
+                immutable:
+                  enum:
+                    - 
+                    - false
+                    - true
+                  type:
+                    - boolean
+                    - 'null'
+              type: object
+          type: object
       type: object
     S3TokensPostRequest:
       description: Request of the s3tokens:post operation
       type: object
       x-openstack:
         action-name: POST
-    S3TokensPostResponse:
-      description: Response of the s3tokens:post operation
-      type: object
     Service:
       properties:
         service:
@@ -18918,11 +19710,8 @@ components:
                 The service description.
               type: string
             enabled:
-              description: |-
-                Defines whether the service and its endpoints
-                appear in the service catalog: - `false`. The service and its
-                endpoints do not appear in the service catalog. - `true`. The
-                service and its endpoints appear in the service catalog.
+              description: Defines whether the service and its endpoints appear 
+                in the service catalog.
               type: boolean
             id:
               description: |-
@@ -18940,6 +19729,47 @@ components:
                 The service type, which describes the API
                 implemented by the service. Value is `compute`, `ec2`,
                 `identity`, `image`, `network`, or `volume`.
+              type: string
+          type: object
+      type: object
+    ServiceGetResponse:
+      additionalProperties: false
+      description: A service object.
+      properties:
+        service:
+          additionalProperties: true
+          description: A service object
+          properties:
+            enabled:
+              description: Defines whether the service and its endpoints appear 
+                in the service catalog - false. The service and its endpoints do
+                not appear in the service catalog - true.
+              type: boolean
+            id:
+              description: The UUID of the service to which the endpoint 
+                belongs.
+              readOnly: true
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The service name.
+              maxLength: 255
+              minLength: 0
+              type: string
+            type:
+              description: The service type, which describes the API implemented
+                by the service. Value is compute, ec2, identity, image, network,
+                or volume.
+              maxLength: 255
+              minLength: 1
               type: string
           type: object
       type: object
@@ -18978,19 +19808,78 @@ components:
       required:
         - service
       type: object
-    ServicesGetResponse:
+    ServicePatchResponse:
+      additionalProperties: false
+      description: A service object.
       properties:
+        service:
+          additionalProperties: true
+          description: A service object
+          properties:
+            enabled:
+              description: Defines whether the service and its endpoints appear 
+                in the service catalog - false. The service and its endpoints do
+                not appear in the service catalog - true.
+              type: boolean
+            id:
+              description: The UUID of the service to which the endpoint 
+                belongs.
+              readOnly: true
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The service name.
+              maxLength: 255
+              minLength: 0
+              type: string
+            type:
+              description: The service type, which describes the API implemented
+                by the service. Value is compute, ec2, identity, image, network,
+                or volume.
+              maxLength: 255
+              minLength: 1
+              type: string
+          type: object
+      type: object
+    ServicesGetResponse:
+      additionalProperties: false
+      properties:
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
         services:
           description: |-
             A list of `service` object.
           items:
-            description: |-
-              A `service` object.
+            additionalProperties: true
+            description: A service object
             properties:
-              description:
-                description: |-
-                  The service description.
-                type: string
               enabled:
                 description: |-
                   Defines whether the service and its endpoints
@@ -19002,21 +19891,38 @@ components:
                 description: |-
                   The UUID of the service to which the endpoint
                   belongs.
-                format: uuid
                 readOnly: true
                 type: string
+              links:
+                additionalProperties: false
+                description: |-
+                  The links for the `service` resource.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
               name:
                 description: |-
                   The service name.
+                maxLength: 255
+                minLength: 0
                 type: string
               type:
                 description: |-
                   The service type, which describes the API
                   implemented by the service. Value is `compute`, `ec2`,
                   `identity`, `image`, `network`, or `volume`.
+                maxLength: 255
+                minLength: 1
                 type: string
             type: object
           type: array
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
       type: object
     ServicesPost:
       description: A service object.
@@ -19051,13 +19957,54 @@ components:
             - type
           type: object
       type: object
+    ServicesPostResponse:
+      additionalProperties: false
+      description: A service object.
+      properties:
+        service:
+          additionalProperties: true
+          description: A service object
+          properties:
+            enabled:
+              description: Defines whether the service and its endpoints appear 
+                in the service catalog - false. The service and its endpoints do
+                not appear in the service catalog - true.
+              type: boolean
+            id:
+              description: The UUID of the service to which the endpoint 
+                belongs.
+              readOnly: true
+              type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
+            name:
+              description: The service name.
+              maxLength: 255
+              minLength: 0
+              type: string
+            type:
+              description: The service type, which describes the API implemented
+                by the service. Value is compute, ec2, identity, image, network,
+                or volume.
+              maxLength: 255
+              minLength: 1
+              type: string
+          type: object
+      type: object
     SystemGroupsRolesGetResponse:
       additionalProperties: false
       properties:
         links:
           additionalProperties: false
           description: |-
-            The links for the `user` resource.
+            The link to the resources in question.
           properties:
             next:
               format: uri
@@ -19099,8 +20046,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -19137,7 +20083,7 @@ components:
         links:
           additionalProperties: false
           description: |-
-            The links for the `user` resource.
+            The link to the resources in question.
           properties:
             next:
               format: uri
@@ -19179,8 +20125,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -19778,8 +20723,7 @@ components:
               type: string
             links:
               additionalProperties: false
-              description: |-
-                The link to the resources in question.
+              description: The link to the resource in question.
               properties:
                 self:
                   format: uri
@@ -19830,8 +20774,7 @@ components:
                 type: string
               links:
                 additionalProperties: false
-                description: |-
-                  The link to the resources in question.
+                description: The link to the resource in question.
                 properties:
                   self:
                     format: uri
@@ -19869,8 +20812,7 @@ components:
           type: array
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -19899,20 +20841,47 @@ components:
       type: object
     UsersApplication_CredentialGetResponse:
       additionalProperties: false
+      description: An application credential object.
       properties:
         application_credential:
+          additionalProperties: false
+          description: An application credential object.
           properties:
             access_rules:
-              description: A list of access_rules objects
+              description: A list of access_rules objects.
               items:
                 properties:
                   id:
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                   method:
+                    description: The request method that the application 
+                      credential is permitted to use for a given API endpoint.
+                    enum:
+                      - DELETE
+                      - GET
+                      - HEAD
+                      - PATCH
+                      - POST
+                      - PUT
                     type: string
                   path:
+                    description: The API path that the application credential is
+                      permitted to access.
+                    maxLength: 225
+                    minLength: 0
+                    pattern: ^/\.*
                     type: string
                   service:
+                    description: The service type identifier for the service 
+                      that the application credential is permitted to access. 
+                      Must be a service type that is listed in the service 
+                      catalog and not a code name for a service.
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                 type: object
               type: array
@@ -19923,63 +20892,132 @@ components:
                 - 'null'
                 - string
             expires_at:
+              description: The expiration time of the application credential, if
+                one was specified.
               type:
                 - 'null'
                 - string
             id:
-              description: The ID of the application credential.
-              format: uuid
+              description: The UUID of the application credential
               readOnly: true
               type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             name:
               description: The name of the application credential. Must be 
                 unique to a user.
+              maxLength: 255
+              minLength: 1
+              pattern: '[\S]+'
               type: string
             project_id:
               description: The ID of the project the application credential was 
                 created for and that authentication requests using this 
                 application credential will be scoped to.
-              format: uuid
               type: string
             roles:
-              description: An optional list of role objects, identified by ID or
-                name. The list may only contain roles that the user has assigned
-                on the project. If not provided, the roles assigned to the 
-                application credential will be the same as the roles in the 
-                current token.
+              description: A list of one or more roles that this application 
+                credential has associated with its project. A token using this 
+                application credential will have these same roles.
               items:
+                additionalProperties: false
                 properties:
+                  description:
+                    description: A description about the role.
+                    type:
+                      - 'null'
+                      - string
+                  domain_id:
+                    description: The ID of the domain of the role.
+                    type:
+                      - 'null'
+                      - string
                   id:
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                   name:
+                    description: The resource name.
+                    maxLength: 255
+                    minLength: 1
+                    pattern: '[\S]+'
                     type: string
+                  options:
+                    description: The resource options for the role. Available 
+                      resource options are immutable.
+                    type:
+                      - 'null'
+                      - object
                 type: object
               type: array
+            system:
+              type:
+                - 'null'
+                - string
             unrestricted:
-              description: An optional flag to restrict whether the application 
-                credential may be used for the creation or destruction of other 
-                application credentials or trusts. Defaults to false.
-              type: boolean
+              description: A flag indicating whether the application credential 
+                may be used for creation or destruction of other application 
+                credentials or trusts.
+              type:
+                - boolean
+                - 'null'
+            user_id:
+              description: The ID of the user.
+              type: string
           type: object
-      required:
-        - application_credential
       type: object
     UsersApplication_CredentialsGetResponse:
+      additionalProperties: false
       properties:
         application_credentials:
+          description: A list of application credentials
           items:
+            additionalProperties: false
+            description: An application credential object.
             properties:
               access_rules:
-                description: A list of access_rules objects
+                description: A list of access_rules objects.
                 items:
                   properties:
                     id:
+                      maxLength: 64
+                      minLength: 1
+                      pattern: ^[a-zA-Z0-9-]+$
                       type: string
                     method:
+                      description: The request method that the application 
+                        credential is permitted to use for a given API endpoint.
+                      enum:
+                        - DELETE
+                        - GET
+                        - HEAD
+                        - PATCH
+                        - POST
+                        - PUT
                       type: string
                     path:
+                      description: The API path that the application credential 
+                        is permitted to access.
+                      maxLength: 225
+                      minLength: 0
+                      pattern: ^/\.*
                       type: string
                     service:
+                      description: The service type identifier for the service 
+                        that the application credential is permitted to access. 
+                        Must be a service type that is listed in the service 
+                        catalog and not a code name for a service.
+                      maxLength: 64
+                      minLength: 1
+                      pattern: ^[a-zA-Z0-9-]+$
                       type: string
                   type: object
                 type: array
@@ -19990,48 +21028,113 @@ components:
                   - 'null'
                   - string
               expires_at:
+                description: The expiration time of the application credential, 
+                  if one was specified.
                 type:
                   - 'null'
                   - string
               id:
-                description: The ID of the application credential.
-                format: uuid
+                description: The UUID of the application credential
                 readOnly: true
                 type: string
+              links:
+                additionalProperties: false
+                description: The link to the resource in question.
+                properties:
+                  self:
+                    format: uri
+                    type: string
+                readOnly: true
+                type: object
               name:
                 description: The name of the application credential. Must be 
                   unique to a user.
+                maxLength: 255
+                minLength: 1
+                pattern: '[\S]+'
                 type: string
               project_id:
                 description: The ID of the project the application credential 
                   was created for and that authentication requests using this 
                   application credential will be scoped to.
-                format: uuid
                 type: string
               roles:
-                description: An optional list of role objects, identified by ID 
-                  or name. The list may only contain roles that the user has 
-                  assigned on the project. If not provided, the roles assigned 
-                  to the application credential will be the same as the roles in
-                  the current token.
+                description: A list of one or more roles that this application 
+                  credential has associated with its project. A token using this
+                  application credential will have these same roles.
                 items:
+                  additionalProperties: false
                   properties:
+                    description:
+                      description: A description about the role.
+                      type:
+                        - 'null'
+                        - string
+                    domain_id:
+                      description: The ID of the domain of the role.
+                      type:
+                        - 'null'
+                        - string
                     id:
+                      maxLength: 64
+                      minLength: 1
+                      pattern: ^[a-zA-Z0-9-]+$
                       type: string
                     name:
+                      description: The resource name.
+                      maxLength: 255
+                      minLength: 1
+                      pattern: '[\S]+'
                       type: string
+                    options:
+                      description: The resource options for the role. Available 
+                        resource options are immutable.
+                      type:
+                        - 'null'
+                        - object
                   type: object
                 type: array
+              system:
+                type:
+                  - 'null'
+                  - string
               unrestricted:
-                description: An optional flag to restrict whether the 
-                  application credential may be used for the creation or 
-                  destruction of other application credentials or trusts. 
-                  Defaults to false.
-                type: boolean
+                description: A flag indicating whether the application 
+                  credential may be used for creation or destruction of other 
+                  application credentials or trusts.
+                type:
+                  - boolean
+                  - 'null'
+              user_id:
+                description: The ID of the user.
+                type: string
             type: object
           type: array
-      required:
-        - application_credentials
+        links:
+          additionalProperties: false
+          description: Links for the collection of resources.
+          properties:
+            next:
+              format: uri
+              type:
+                - 'null'
+                - string
+            previous:
+              format: uri
+              type:
+                - 'null'
+                - string
+            self:
+              format: uri
+              type: string
+          readOnly: true
+          required:
+            - self
+          type: object
+        truncated:
+          description: Flag indicating that the amount of entities exceeds 
+            global response limit
+          type: boolean
       type: object
     UsersApplication_CredentialsPost:
       additionalProperties: false
@@ -20160,20 +21263,47 @@ components:
       type: object
     UsersApplication_CredentialsPostResponse:
       additionalProperties: false
+      description: An application credential object.
       properties:
         application_credential:
+          additionalProperties: false
+          description: An application credential object.
           properties:
             access_rules:
-              description: A list of access_rules objects
+              description: A list of access_rules objects.
               items:
                 properties:
                   id:
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                   method:
+                    description: The request method that the application 
+                      credential is permitted to use for a given API endpoint.
+                    enum:
+                      - DELETE
+                      - GET
+                      - HEAD
+                      - PATCH
+                      - POST
+                      - PUT
                     type: string
                   path:
+                    description: The API path that the application credential is
+                      permitted to access.
+                    maxLength: 225
+                    minLength: 0
+                    pattern: ^/\.*
                     type: string
                   service:
+                    description: The service type identifier for the service 
+                      that the application credential is permitted to access. 
+                      Must be a service type that is listed in the service 
+                      catalog and not a code name for a service.
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                 type: object
               type: array
@@ -20184,57 +21314,91 @@ components:
                 - 'null'
                 - string
             expires_at:
+              description: The expiration time of the application credential, if
+                one was specified.
               type:
                 - 'null'
                 - string
             id:
-              description: The ID of the application credential.
-              format: uuid
+              description: The UUID of the application credential
               readOnly: true
               type: string
+            links:
+              additionalProperties: false
+              description: The link to the resource in question.
+              properties:
+                self:
+                  format: uri
+                  type: string
+              readOnly: true
+              type: object
             name:
               description: The name of the application credential. Must be 
                 unique to a user.
+              maxLength: 255
+              minLength: 1
+              pattern: '[\S]+'
               type: string
             project_id:
               description: The ID of the project the application credential was 
                 created for and that authentication requests using this 
                 application credential will be scoped to.
-              format: uuid
               type: string
             roles:
-              description: An optional list of role objects, identified by ID or
-                name. The list may only contain roles that the user has assigned
-                on the project. If not provided, the roles assigned to the 
-                application credential will be the same as the roles in the 
-                current token.
+              description: A list of one or more roles that this application 
+                credential has associated with its project. A token using this 
+                application credential will have these same roles.
               items:
+                additionalProperties: false
                 properties:
+                  description:
+                    description: A description about the role.
+                    type:
+                      - 'null'
+                      - string
+                  domain_id:
+                    description: The ID of the domain of the role.
+                    type:
+                      - 'null'
+                      - string
                   id:
+                    maxLength: 64
+                    minLength: 1
+                    pattern: ^[a-zA-Z0-9-]+$
                     type: string
                   name:
+                    description: The resource name.
+                    maxLength: 255
+                    minLength: 1
+                    pattern: '[\S]+'
                     type: string
+                  options:
+                    description: The resource options for the role. Available 
+                      resource options are immutable.
+                    type:
+                      - 'null'
+                      - object
                 type: object
               type: array
             secret:
-              description: The secret for the application credential, either 
-                generated by the server or provided by the user. This is only 
-                ever shown once in the response to a create request. It is not 
-                stored nor ever shown again. If the secret is lost, a new 
-                application credential must be created.
+              description: The secret that the application credential will be 
+                created with.
               type: string
+            system:
+              type:
+                - 'null'
+                - string
             unrestricted:
-              description: An optional flag to restrict whether the application 
-                credential may be used for the creation or destruction of other 
-                application credentials or trusts. Defaults to false.
-              type: boolean
+              description: A flag indicating whether the application credential 
+                may be used for creation or destruction of other application 
+                credentials or trusts.
+              type:
+                - boolean
+                - 'null'
+            user_id:
+              description: The ID of the user.
+              type: string
           type: object
-      required:
-        - application_credential
-      type: object
-    UsersCredentialsOs_Ec2GetResponse:
-      description: Response of the users/user_id/credentials/OS-EC2:get 
-        operation
       type: object
     UsersCredentialsOs_Ec2PostRequest:
       description: Request of the users/user_id/credentials/OS-EC2:post 
@@ -20242,17 +21406,12 @@ components:
       type: object
       x-openstack:
         action-name: POST
-    UsersCredentialsOs_Ec2PostResponse:
-      description: Response of the users/user_id/credentials/OS-EC2:post 
-        operation
-      type: object
     UsersGetResponse:
       additionalProperties: false
       properties:
         links:
           additionalProperties: false
-          description: |-
-            The links for the `user` resource.
+          description: Links for the collection of resources.
           properties:
             next:
               format: uri
@@ -20280,8 +21439,6 @@ components:
             A list of `user` objects
           items:
             additionalProperties: true
-            description: |-
-              A `user` object
             properties:
               default_project_id:
                 description: |-
@@ -20304,22 +21461,11 @@ components:
                   If the user is disabled, this value is `false`.
                 type: boolean
               federated:
-                description: |-
-                  List of federated objects associated with a user. Each object in the list
-                  contains the `idp_id` and `protocols`. `protocols` is a list of
-                  objects, each of which contains `protocol_id` and `unique_id` of
-                  the protocol and user respectively. For example:
-
-                  ```
-                  "federated": [
-                    {
-                      "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-                      "protocols": [
-                        {"protocol_id": "mapped", "unique_id": "test@example.com"}
-                      ]
-                    }
-                  ]
-                  ```
+                description: List of federated objects associated with a user. 
+                  Each object in the list contains the idp_id and protocols. 
+                  protocols is a list of objects, each of which contains 
+                  protocol_id and unique_id of the protocol and user 
+                  respectively.
                 items:
                   properties:
                     idp_id:
@@ -20495,24 +21641,6 @@ components:
                 type: string
             type: object
           type: array
-      type: object
-    UsersOs_Oauth1Access_TokenGetResponse:
-      description: Response of the 
-        users/user_id/OS-OAUTH1/access_tokens/access_token_id:get operation
-      type: object
-    UsersOs_Oauth1Access_TokensGetResponse:
-      description: Response of the users/user_id/OS-OAUTH1/access_tokens:get 
-        operation
-      type: object
-    UsersOs_Oauth1Access_TokensRoleGetResponse:
-      description: Response of the 
-        users/user_id/OS-OAUTH1/access_tokens/access_token_id/roles/role_id:get 
-        operation
-      type: object
-    UsersOs_Oauth1Access_TokensRolesGetResponse:
-      description: Response of the 
-        users/user_id/OS-OAUTH1/access_tokens/access_token_id/roles:get 
-        operation
       type: object
     UsersPasswordPostRequest:
       properties:

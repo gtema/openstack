@@ -15,10 +15,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlacklistsListResponse'
           description: Ok
       summary: List Blacklists
       tags:
@@ -34,10 +30,6 @@ paths:
               $ref: '#/components/schemas/BlacklistsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlacklistsCreateResponse'
           description: Ok
       summary: Create Blacklist
       tags:
@@ -62,10 +54,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlacklistShowResponse'
           description: Ok
       summary: Show Blacklist
       tags:
@@ -87,10 +75,6 @@ paths:
               $ref: '#/components/schemas/BlacklistUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlacklistUpdateResponse'
           description: Ok
       summary: Update Blacklist
       tags:
@@ -123,10 +107,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoolsListResponse'
           description: Ok
       summary: List all Pools
       tags:
@@ -142,10 +122,6 @@ paths:
               $ref: '#/components/schemas/PoolsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoolsCreateResponse'
           description: Ok
       tags:
         - pools
@@ -172,10 +148,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoolShowResponse'
           description: Ok
       summary: Show a Pool
       tags:
@@ -193,10 +165,6 @@ paths:
               $ref: '#/components/schemas/PoolUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PoolUpdateResponse'
           description: Ok
       tags:
         - pools
@@ -309,10 +277,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RecordsetShowResponse'
           description: Ok
       tags:
         - recordsets
@@ -386,10 +350,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Service_StatusesListResponse'
           description: Ok
       summary: List Statuses
       tags:
@@ -404,10 +364,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Service_StatusShowResponse'
           description: Ok
       summary: Show a Service Status
       tags:
@@ -424,10 +380,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TldsListResponse'
           description: Ok
       summary: List Tlds
       tags:
@@ -443,10 +395,6 @@ paths:
               $ref: '#/components/schemas/TldsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TldsCreateResponse'
           description: Ok
       summary: Create Tld
       tags:
@@ -471,10 +419,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TldShowResponse'
           description: Ok
       summary: Show Tld
       tags:
@@ -492,10 +436,6 @@ paths:
               $ref: '#/components/schemas/TldUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TldUpdateResponse'
           description: Ok
       summary: Update Tld
       tags:
@@ -510,10 +450,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TsigkeysListResponse'
           description: Ok
       summary: List Tsigkeys
       tags:
@@ -529,10 +465,6 @@ paths:
               $ref: '#/components/schemas/TsigkeysCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TsigkeysCreateResponse'
           description: Ok
       summary: Create Tsigkeys
       tags:
@@ -557,10 +489,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TsigkeyShowResponse'
           description: Ok
       summary: Show a Tsigkey
       tags:
@@ -578,10 +506,6 @@ paths:
               $ref: '#/components/schemas/TsigkeyUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TsigkeyUpdateResponse'
           description: Ok
       summary: Update Tsigkey
       tags:
@@ -642,10 +566,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksExportsListResponse'
           description: Ok
       summary: List all Zone Exports
       tags:
@@ -660,10 +580,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksExportShowResponse'
           description: Ok
       tags:
         - zone-exports
@@ -678,10 +594,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksExportsExportListResponse'
           description: Ok
       summary: Retrieve a Zone Export from the Designate Datastore
       tags:
@@ -712,10 +624,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksImportsListResponse'
           description: Ok
       summary: List all Zone Imports
       tags:
@@ -731,10 +639,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksImportsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksImportsCreateResponse'
           description: Ok
       summary: Create a Zone Import
       tags:
@@ -749,10 +653,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksImportShowResponse'
           description: Ok
       tags:
         - zone-imports
@@ -786,10 +686,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsListResponse'
           description: Ok
       summary: List Zone Transfer Accepts
       tags:
@@ -805,10 +701,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptsCreateResponse'
           description: Ok
       summary: Create Zone Transfer Accept
       tags:
@@ -823,10 +715,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_AcceptShowResponse'
           description: Ok
       tags:
         - zone-ownership-transfers-accepts
@@ -843,10 +731,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_RequestsListResponse'
           description: Ok
       summary: List Zone Transfer Requests
       tags:
@@ -869,10 +753,6 @@ paths:
         - $ref: '#/components/parameters/x-auth-sudo-project-id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_RequestShowResponse'
           description: Ok
       summary: Show a Zone Transfer Request
       tags:
@@ -889,10 +769,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksTransfer_RequestUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_RequestUpdateResponse'
           description: Ok
       summary: Update a Zone Transfer Request
       tags:
@@ -1163,10 +1039,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksAbandonCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksAbandonCreateResponse'
           description: Ok
       summary: Abandon Zone
       tags:
@@ -1185,10 +1057,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksExportCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksExportCreateResponse'
           description: Ok
       summary: Create a Zone Export
       tags:
@@ -1211,10 +1079,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksPool_MoveCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksPool_MoveCreateResponse'
           description: Ok
       summary: Pool Move Zone
       tags:
@@ -1235,10 +1099,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksTransfer_RequestsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksTransfer_RequestsCreateResponse'
           description: Ok
       summary: Create Zone Transfer Request
       tags:
@@ -1262,10 +1122,6 @@ paths:
               $ref: '#/components/schemas/ZonesTasksXfrCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ZonesTasksXfrCreateResponse'
           description: Ok
       summary: Manually Trigger an Update of a Secondary Zone
       tags:
@@ -1628,28 +1484,16 @@ components:
       schema:
         type: string
   schemas:
-    BlacklistShowResponse:
-      description: Response of the blacklists/blacklist_id:get operation
-      type: object
     BlacklistUpdateRequest:
       description: Request of the blacklists/blacklist_id:patch operation
       type: object
       x-openstack:
         action-name: update
-    BlacklistUpdateResponse:
-      description: Response of the blacklists/blacklist_id:patch operation
-      type: object
     BlacklistsCreateRequest:
       description: Request of the blacklists:post operation
       type: object
       x-openstack:
         action-name: create
-    BlacklistsCreateResponse:
-      description: Response of the blacklists:post operation
-      type: object
-    BlacklistsListResponse:
-      description: Response of the blacklists:get operation
-      type: object
     LimitsListResponse:
       properties:
         max_page_limit:
@@ -1685,28 +1529,16 @@ components:
             The lowest ttl allowed on this system
           type: integer
       type: object
-    PoolShowResponse:
-      description: Response of the pools/pool_id:get operation
-      type: object
     PoolUpdateRequest:
       description: Request of the pools/pool_id:patch operation
       type: object
       x-openstack:
         action-name: update
-    PoolUpdateResponse:
-      description: Response of the pools/pool_id:patch operation
-      type: object
     PoolsCreateRequest:
       description: Request of the pools:post operation
       type: object
       x-openstack:
         action-name: create
-    PoolsCreateResponse:
-      description: Response of the pools:post operation
-      type: object
-    PoolsListResponse:
-      description: Response of the pools:get operation
-      type: object
     QuotaShowResponse:
       properties:
         api_export_size:
@@ -1758,9 +1590,6 @@ components:
           type: integer
         zones:
           type: integer
-      type: object
-    RecordsetShowResponse:
-      description: Response of the recordsets/recordset_id:get operation
       type: object
     RecordsetsListResponse:
       additionalProperties: false
@@ -2142,56 +1971,26 @@ components:
           readOnly: true
           type: object
       type: object
-    Service_StatusShowResponse:
-      description: Response of the service_statuses/service_id:get operation
-      type: object
-    Service_StatusesListResponse:
-      description: Response of the service_statuses:get operation
-      type: object
-    TldShowResponse:
-      description: Response of the tlds/tld_id:get operation
-      type: object
     TldUpdateRequest:
       description: Request of the tlds/tld_id:patch operation
       type: object
       x-openstack:
         action-name: update
-    TldUpdateResponse:
-      description: Response of the tlds/tld_id:patch operation
-      type: object
     TldsCreateRequest:
       description: Request of the tlds:post operation
       type: object
       x-openstack:
         action-name: create
-    TldsCreateResponse:
-      description: Response of the tlds:post operation
-      type: object
-    TldsListResponse:
-      description: Response of the tlds:get operation
-      type: object
-    TsigkeyShowResponse:
-      description: Response of the tsigkeys/tsigkey_id:get operation
-      type: object
     TsigkeyUpdateRequest:
       description: Request of the tsigkeys/tsigkey_id:patch operation
       type: object
       x-openstack:
         action-name: update
-    TsigkeyUpdateResponse:
-      description: Response of the tsigkeys/tsigkey_id:patch operation
-      type: object
     TsigkeysCreateRequest:
       description: Request of the tsigkeys:post operation
       type: object
       x-openstack:
         action-name: create
-    TsigkeysCreateResponse:
-      description: Response of the tsigkeys:post operation
-      type: object
-    TsigkeysListResponse:
-      description: Response of the tsigkeys:get operation
-      type: object
     ZoneShowResponse:
       additionalProperties: false
       description: DNS Zone
@@ -2354,8 +2153,6 @@ components:
             TTL (Time to Live) for the zone.
           type: integer
       type: object
-      x-openstack:
-        action-name: update
     ZoneUpdateResponse:
       additionalProperties: false
       description: DNS Zone
@@ -2642,8 +2439,6 @@ components:
           readOnly: true
           type: integer
       type: object
-      x-openstack:
-        action-name: create
     ZonesCreateResponse:
       additionalProperties: false
       description: DNS Zone
@@ -3123,8 +2918,6 @@ components:
             TTL (Time to Live) for the recordset.
           type: integer
       type: object
-      x-openstack:
-        action-name: update
     ZonesRecordsetUpdateResponse:
       additionalProperties: false
       description: Zone Record object
@@ -3369,8 +3162,6 @@ components:
           readOnly: true
           type: string
       type: object
-      x-openstack:
-        action-name: create
     ZonesRecordsetsCreateResponse:
       additionalProperties: false
       description: Zone Record object
@@ -3854,99 +3645,43 @@ components:
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksAbandonCreateResponse:
-      description: Response of the zones/zone_id/tasks/abandon:post operation
-      type: object
     ZonesTasksExportCreateRequest:
       description: Request of the zones/zone_id/tasks/export:post operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksExportCreateResponse:
-      description: Response of the zones/zone_id/tasks/export:post operation
-      type: object
-    ZonesTasksExportShowResponse:
-      description: Response of the zones/tasks/exports/export_id:get operation
-      type: object
-    ZonesTasksExportsExportListResponse:
-      description: Response of the zones/tasks/exports/export_id/export:get 
-        operation
-      type: object
-    ZonesTasksExportsListResponse:
-      description: Response of the zones/tasks/exports:get operation
-      type: object
-    ZonesTasksImportShowResponse:
-      description: Response of the zones/tasks/imports/import_id:get operation
-      type: object
     ZonesTasksImportsCreateRequest:
       description: Request of the zones/tasks/imports:post operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksImportsCreateResponse:
-      description: Response of the zones/tasks/imports:post operation
-      type: object
-    ZonesTasksImportsListResponse:
-      description: Response of the zones/tasks/imports:get operation
-      type: object
     ZonesTasksPool_MoveCreateRequest:
       description: Request of the zones/zone_id/tasks/pool_move:post operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksPool_MoveCreateResponse:
-      description: Response of the zones/zone_id/tasks/pool_move:post operation
-      type: object
-    ZonesTasksTransfer_AcceptShowResponse:
-      description: Response of the 
-        zones/tasks/transfer_accepts/transfer_accept_id:get operation
-      type: object
     ZonesTasksTransfer_AcceptsCreateRequest:
       description: Request of the zones/tasks/transfer_accepts:post operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksTransfer_AcceptsCreateResponse:
-      description: Response of the zones/tasks/transfer_accepts:post operation
-      type: object
-    ZonesTasksTransfer_AcceptsListResponse:
-      description: Response of the zones/tasks/transfer_accepts:get operation
-      type: object
-    ZonesTasksTransfer_RequestShowResponse:
-      description: Response of the 
-        zones/tasks/transfer_requests/zone_transfer_request_id:get operation
-      type: object
     ZonesTasksTransfer_RequestUpdateRequest:
       description: Request of the 
         zones/tasks/transfer_requests/zone_transfer_request_id:patch operation
       type: object
       x-openstack:
         action-name: update
-    ZonesTasksTransfer_RequestUpdateResponse:
-      description: Response of the 
-        zones/tasks/transfer_requests/zone_transfer_request_id:patch operation
-      type: object
     ZonesTasksTransfer_RequestsCreateRequest:
       description: Request of the zones/zone_id/tasks/transfer_requests:post 
         operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksTransfer_RequestsCreateResponse:
-      description: Response of the zones/zone_id/tasks/transfer_requests:post 
-        operation
-      type: object
-    ZonesTasksTransfer_RequestsListResponse:
-      description: Response of the zones/tasks/transfer_requests:get operation
-      type: object
     ZonesTasksXfrCreateRequest:
       description: Request of the zones/zone_id/tasks/xfr:post operation
       type: object
       x-openstack:
         action-name: create
-    ZonesTasksXfrCreateResponse:
-      description: Response of the zones/zone_id/tasks/xfr:post operation
-      type: object
   securitySchemes:
     ApiKeyAuth:
       in: header

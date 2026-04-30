@@ -17,10 +17,6 @@ paths:
       operationId: :get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RootHomeResponse'
           description: Ok
       summary: List Versions
       tags:
@@ -738,10 +734,6 @@ paths:
       operationId: resource_providers/uuid/usages:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource_ProvidersUsagesList_UsagesResponse'
           description: Ok
       summary: List resource provider usages
       tags:
@@ -3070,12 +3062,6 @@ components:
           type: array
       required:
         - traits
-      type: object
-    Resource_ProvidersUsagesList_UsagesResponse:
-      description: Response of the resource_providers/uuid/usages:get operation
-      type: object
-    RootHomeResponse:
-      description: Response of the :get operation
       type: object
     TraitsList_TraitsResponse:
       additionalProperties: false

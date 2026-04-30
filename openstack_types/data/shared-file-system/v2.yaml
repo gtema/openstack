@@ -18,10 +18,6 @@ paths:
       operationId: :get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RootListResponse'
           description: Ok
       summary: List All Major Versions
       tags:
@@ -36,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Availability_ZonesListResponse'
+                $ref: '#/components/schemas/Availability_ZonesIndexResponse_27'
           description: Ok
       tags:
         - availability-zones
@@ -47,10 +43,6 @@ paths:
       operationId: extensions:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExtensionsListResponse'
           description: Ok
       tags:
         - extensions
@@ -63,10 +55,6 @@ paths:
               $ref: '#/components/schemas/ExtensionsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExtensionsCreateResponse'
           description: Ok
       tags:
         - extensions
@@ -82,10 +70,6 @@ paths:
       operationId: extensions/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExtensionShowResponse'
           description: Ok
       tags:
         - extensions
@@ -98,10 +82,6 @@ paths:
       operationId: limits:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LimitsListResponse'
           description: Ok
       tags:
         - limits
@@ -128,7 +108,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessagesListResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/MessagesIndexResponse_237'
+                  - $ref: '#/components/schemas/MessagesIndexResponse_252'
           description: Ok
       tags:
         - messages
@@ -155,7 +137,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageShowResponse'
+                $ref: '#/components/schemas/MessageShowResponse_237'
           description: Ok
       tags:
         - messages
@@ -172,7 +154,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Os_Availability_ZoneListResponse'
+                $ref: '#/components/schemas/Os_Availability_ZoneIndexResponse_20'
           description: Ok
       tags:
         - os-availability-zone
@@ -188,7 +170,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Os_Quota_Class_SetShowResponse'
+                $ref: '#/components/schemas/Os_Quota_Class_SetShowResponse_20'
           description: Ok
       tags:
         - os-quota-class-sets
@@ -210,7 +192,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Os_Quota_Class_SetUpdateResponse'
+                $ref: '#/components/schemas/Os_Quota_Class_SetUpdateResponse_20'
           description: Ok
       tags:
         - os-quota-class-sets
@@ -234,10 +216,6 @@ paths:
       operationId: os-quota-sets/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetShowResponse'
           description: Ok
       tags:
         - os-quota-sets
@@ -256,10 +234,6 @@ paths:
               $ref: '#/components/schemas/Os_Quota_SetUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetUpdateResponse'
           description: Ok
       tags:
         - os-quota-sets
@@ -272,10 +246,6 @@ paths:
       operationId: os-quota-sets/id/defaults:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Quota_SetsDefaultsResponse'
           description: Ok
       tags:
         - os-quota-sets
@@ -290,10 +260,6 @@ paths:
       operationId: os-services:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_ServicesListResponse'
           description: Ok
       tags:
         - os-services
@@ -313,10 +279,6 @@ paths:
               $ref: '#/components/schemas/Os_ServiceUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_ServiceUpdateResponse'
           description: Ok
       tags:
         - os-services
@@ -339,10 +301,6 @@ paths:
               $ref: '#/components/schemas/Os_Share_ManageCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Share_ManageCreateResponse'
           description: Ok
       tags:
         - os-share-manage
@@ -364,10 +322,6 @@ paths:
               $ref: '#/components/schemas/Os_Share_UnmanageUnmanageUnmanageRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Os_Share_UnmanageUnmanageResponse'
           description: Ok
       tags:
         - os-share-unmanage
@@ -381,10 +335,6 @@ paths:
       operationId: qos-types:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesListResponse'
           description: Ok
       tags:
         - qos-types
@@ -401,10 +351,6 @@ paths:
               $ref: '#/components/schemas/Qos_TypesCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesCreateResponse'
           description: Ok
       tags:
         - qos-types
@@ -428,10 +374,6 @@ paths:
       operationId: qos-types/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypeShowResponse'
           description: Ok
       tags:
         - qos-types
@@ -450,10 +392,6 @@ paths:
               $ref: '#/components/schemas/Qos_TypeUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypeUpdateResponse'
           description: Ok
       tags:
         - qos-types
@@ -466,10 +404,6 @@ paths:
       operationId: qos-types/id/specs:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesSpecsListResponse'
           description: Ok
       tags:
         - qos-types
@@ -488,10 +422,6 @@ paths:
               $ref: '#/components/schemas/Qos_TypesSpecsCreateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesSpecsCreateResponse'
           description: Ok
       tags:
         - qos-types
@@ -515,10 +445,6 @@ paths:
       operationId: qos-types/id/specs/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesSpecShowResponse'
           description: Ok
       tags:
         - qos-types
@@ -538,10 +464,6 @@ paths:
               $ref: '#/components/schemas/Qos_TypesSpecUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Qos_TypesSpecUpdateResponse'
           description: Ok
       tags:
         - qos-types
@@ -555,7 +477,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quota_Class_SetShowResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_10'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_240'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_253'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_262'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_27'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_280'
+                  - $ref: '#/components/schemas/Quota_Class_SetShowResponse_290'
           description: Ok
       tags:
         - quota-class-sets
@@ -575,7 +504,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quota_Class_SetUpdateResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_240'
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_253'
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_262'
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_27'
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_280'
+                  - $ref: '#/components/schemas/Quota_Class_SetUpdateResponse_290'
           description: Ok
       tags:
         - quota-class-sets
@@ -595,10 +530,6 @@ paths:
       operationId: quota-sets/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quota_SetShowResponse'
           description: Ok
       tags:
         - quota-sets
@@ -615,10 +546,6 @@ paths:
               $ref: '#/components/schemas/Quota_SetUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quota_SetUpdateResponse'
           description: Ok
       tags:
         - quota-sets
@@ -629,10 +556,6 @@ paths:
       operationId: quota-sets/id/defaults:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quota_SetsDefaultsResponse'
           description: Ok
       tags:
         - quota-sets
@@ -645,10 +568,6 @@ paths:
       operationId: quota-sets/id/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quota_SetsDetailResponse'
           description: Ok
       tags:
         - quota-sets
@@ -682,7 +601,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource_LocksListResponse'
+                $ref: '#/components/schemas/Resource_LocksIndexResponse_281'
           description: Ok
       tags:
         - resource-locks
@@ -702,7 +621,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource_LocksCreateResponse'
+                $ref: '#/components/schemas/Resource_LocksCreateResponse_281'
           description: Ok
       tags:
         - resource-locks
@@ -729,7 +648,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource_LockShowResponse'
+                $ref: '#/components/schemas/Resource_LockShowResponse_281'
           description: Ok
       tags:
         - resource-locks
@@ -751,7 +670,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource_LockUpdateResponse'
+                $ref: '#/components/schemas/Resource_LockUpdateResponse_281'
           description: Ok
       tags:
         - resource-locks
@@ -765,10 +684,6 @@ paths:
       operationId: scheduler-stats/pools:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Scheduler_StatsPoolsPools_ListResponse'
           description: Ok
       tags:
         - scheduler-stats
@@ -783,10 +698,6 @@ paths:
       operationId: scheduler-stats/pools/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Scheduler_StatsPoolsDetailPools_DetailResponse'
           description: Ok
       tags:
         - scheduler-stats
@@ -800,10 +711,6 @@ paths:
       operationId: security-services:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Security_ServicesListResponse'
           description: Ok
       tags:
         - security-services
@@ -818,10 +725,6 @@ paths:
               $ref: '#/components/schemas/Security_ServicesCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Security_ServicesCreateResponse'
           description: Ok
       tags:
         - security-services
@@ -832,10 +735,6 @@ paths:
       operationId: security-services/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Security_ServicesDetailResponse'
           description: Ok
       tags:
         - security-services
@@ -855,10 +754,6 @@ paths:
       operationId: security-services/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Security_ServiceShowResponse'
           description: Ok
       tags:
         - security-services
@@ -875,10 +770,6 @@ paths:
               $ref: '#/components/schemas/Security_ServiceUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Security_ServiceUpdateResponse'
           description: Ok
       tags:
         - security-services
@@ -888,10 +779,6 @@ paths:
       operationId: services:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServicesListResponse'
           description: Ok
       tags:
         - services
@@ -910,10 +797,6 @@ paths:
               $ref: '#/components/schemas/ServicesEnsure_SharesEnsure_Shares_286'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServicesEnsure_SharesResponse'
           description: Ok
       tags:
         - services
@@ -932,10 +815,6 @@ paths:
               $ref: '#/components/schemas/ServiceUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceUpdateResponse'
           description: Ok
       tags:
         - services
@@ -948,10 +827,6 @@ paths:
       operationId: share-access-rules:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Access_RulesListResponse'
           description: Ok
       tags:
         - share-access-rules
@@ -970,10 +845,6 @@ paths:
               $ref: '#/components/schemas/Share_Access_RulesMetadataUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Access_RulesMetadataUpdateResponse'
           description: Ok
       tags:
         - share-access-rules
@@ -1001,10 +872,6 @@ paths:
       operationId: share-access-rules/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Access_RuleShowResponse'
           description: Ok
       tags:
         - share-access-rules
@@ -1023,10 +890,6 @@ paths:
               $ref: '#/components/schemas/Share_Access_RuleUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Access_RuleUpdateResponse'
           description: Ok
       tags:
         - share-access-rules
@@ -1039,10 +902,6 @@ paths:
       operationId: share-backups:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupsListResponse'
           description: Ok
       tags:
         - share-backups
@@ -1059,10 +918,6 @@ paths:
               $ref: '#/components/schemas/Share_BackupsCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupsCreateResponse'
           description: Ok
       tags:
         - share-backups
@@ -1075,10 +930,6 @@ paths:
       operationId: share-backups/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupsDetailResponse'
           description: Ok
       tags:
         - share-backups
@@ -1102,10 +953,6 @@ paths:
       operationId: share-backups/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupShowResponse'
           description: Ok
       tags:
         - share-backups
@@ -1124,10 +971,6 @@ paths:
               $ref: '#/components/schemas/Share_BackupUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupUpdateResponse'
           description: Ok
       tags:
         - share-backups
@@ -1149,16 +992,8 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupsActionReset_StatusResponse'
           description: Ok
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_BackupsActionRestoreResponse'
           description: Ok
       tags:
         - share-backups
@@ -1170,10 +1005,6 @@ paths:
       operationId: share-group-snapshots:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotsListResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1190,10 +1021,6 @@ paths:
               $ref: '#/components/schemas/Share_Group_SnapshotsCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotsCreateResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1208,10 +1035,6 @@ paths:
       operationId: share-group-snapshots/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotsDetailResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1235,10 +1058,6 @@ paths:
       operationId: share-group-snapshots/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotShowResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1257,10 +1076,6 @@ paths:
               $ref: '#/components/schemas/Share_Group_SnapshotUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotUpdateResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1283,12 +1098,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_Group_SnapshotsActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/Share_Group_SnapshotsActionReset_StatusResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1298,10 +1107,6 @@ paths:
       operationId: share-group-snapshots/id/members:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_SnapshotsMembersResponse'
           description: Ok
       tags:
         - share-group-snapshots
@@ -1316,10 +1121,6 @@ paths:
       operationId: share-group-types:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesListResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1336,10 +1137,6 @@ paths:
               $ref: '#/components/schemas/Share_Group_TypesCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesCreateResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1352,10 +1149,6 @@ paths:
       operationId: share-group-types/default:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesDefaultResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1379,10 +1172,6 @@ paths:
       operationId: share-group-types/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypeShowResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1397,10 +1186,6 @@ paths:
       operationId: share-group-types/id/access:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesAccessShare_Group_Type_AccessResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1427,14 +1212,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_Group_TypesActionAddprojectaccessResponse'
-                  - $ref: '#/components/schemas/Share_Group_TypesActionCreateResponse'
-                  - $ref: '#/components/schemas/Share_Group_TypesActionDeleteResponse'
-                  - $ref: '#/components/schemas/Share_Group_TypesActionRemoveprojectaccessResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1444,10 +1221,6 @@ paths:
       operationId: share-group-types/id/group-specs:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesGroup_SpecsListResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1466,10 +1239,6 @@ paths:
               $ref: '#/components/schemas/Share_Group_TypesGroup_SpecsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesGroup_SpecsCreateResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1493,10 +1262,6 @@ paths:
       operationId: share-group-types/id/group-specs/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesGroup_SpecShowResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1516,10 +1281,6 @@ paths:
               $ref: '#/components/schemas/Share_Group_TypesGroup_SpecUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_Group_TypesGroup_SpecUpdateResponse'
           description: Ok
       tags:
         - share-group-types
@@ -1532,10 +1293,6 @@ paths:
       operationId: share-groups:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_GroupsListResponse'
           description: Ok
       tags:
         - share-groups
@@ -1552,10 +1309,6 @@ paths:
               $ref: '#/components/schemas/Share_GroupsCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_GroupsCreateResponse'
           description: Ok
       tags:
         - share-groups
@@ -1568,10 +1321,6 @@ paths:
       operationId: share-groups/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_GroupsDetailResponse'
           description: Ok
       tags:
         - share-groups
@@ -1595,10 +1344,6 @@ paths:
       operationId: share-groups/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_GroupShowResponse'
           description: Ok
       tags:
         - share-groups
@@ -1617,10 +1362,6 @@ paths:
               $ref: '#/components/schemas/Share_GroupUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_GroupUpdateResponse'
           description: Ok
       tags:
         - share-groups
@@ -1643,12 +1384,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_GroupsActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/Share_GroupsActionReset_StatusResponse'
           description: Ok
       tags:
         - share-groups
@@ -1659,10 +1394,6 @@ paths:
       operationId: share-networks:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksListResponse'
           description: Ok
       tags:
         - share-networks
@@ -1677,10 +1408,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworksCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksCreateResponse'
           description: Ok
       tags:
         - share-networks
@@ -1691,10 +1418,6 @@ paths:
       operationId: share-networks/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksDetailResponse'
           description: Ok
       tags:
         - share-networks
@@ -1714,10 +1437,6 @@ paths:
       operationId: share-networks/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworkShowResponse'
           description: Ok
       tags:
         - share-networks
@@ -1734,10 +1453,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworkUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworkUpdateResponse'
           description: Ok
       tags:
         - share-networks
@@ -1762,23 +1477,8 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_NetworksActionAdd_Security_ServiceResponse'
-                  - $ref: '#/components/schemas/Share_NetworksActionRemove_Security_ServiceResponse'
-                  - $ref: '#/components/schemas/Share_NetworksActionReset_StatusResponse'
           description: Ok
         '202':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_NetworksActionAdd_Security_Service_CheckResponse'
-                  - $ref: '#/components/schemas/Share_NetworksActionShare_Network_Subnet_Create_CheckResponse'
-                  - $ref: '#/components/schemas/Share_NetworksActionUpdate_Security_ServiceResponse'
-                  - $ref: '#/components/schemas/Share_NetworksActionUpdate_Security_Service_CheckResponse'
           description: Ok
       tags:
         - share-networks
@@ -1789,10 +1489,6 @@ paths:
       operationId: share-networks/share_network_id/subnets:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsListResponse'
           description: Ok
       tags:
         - share-networks
@@ -1811,10 +1507,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworksSubnetsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsCreateResponse'
           description: Ok
       tags:
         - share-networks
@@ -1828,10 +1520,6 @@ paths:
         share-networks/share_network_id/subnets/resource_id/metadata:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsMetadataList_MetadataResponse'
           description: Ok
       tags:
         - share-networks
@@ -1852,10 +1540,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworksSubnetsMetadataCreate_MetadataRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsMetadataCreate_MetadataResponse'
           description: Ok
       tags:
         - share-networks
@@ -1873,10 +1557,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworksSubnetsMetadataUpdate_All_MetadataRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsMetadataUpdate_All_MetadataResponse'
           description: Ok
       tags:
         - share-networks
@@ -1902,10 +1582,6 @@ paths:
         share-networks/share_network_id/subnets/resource_id/metadata/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsMetadataShow_MetadataResponse'
           description: Ok
       tags:
         - share-networks
@@ -1927,10 +1603,6 @@ paths:
               $ref: '#/components/schemas/Share_NetworksSubnetsMetadataUpdate_Metadata_ItemRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetsMetadataUpdate_Metadata_ItemResponse'
           description: Ok
       tags:
         - share-networks
@@ -1956,10 +1628,6 @@ paths:
         share-networks/share_network_id/subnets/share_network_subnet_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_NetworksSubnetShowResponse'
           description: Ok
       tags:
         - share-networks
@@ -1976,10 +1644,6 @@ paths:
       operationId: share-replicas:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasListResponse'
           description: Ok
       tags:
         - share-replicas
@@ -1996,10 +1660,6 @@ paths:
               $ref: '#/components/schemas/Share_ReplicasCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasCreateResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2014,10 +1674,6 @@ paths:
       operationId: share-replicas/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasDetailResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2043,10 +1699,6 @@ paths:
       operationId: share-replicas/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicaShowResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2074,21 +1726,8 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_ReplicasActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/Share_ReplicasActionReset_Replica_StateResponse'
-                  - $ref: '#/components/schemas/Share_ReplicasActionReset_StatusResponse'
           description: Ok
         '202':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_ReplicasActionPromoteResponse'
-                  - $ref: '#/components/schemas/Share_ReplicasActionResyncResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2099,10 +1738,6 @@ paths:
       operationId: share-replicas/resource_id/metadata:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasMetadataList_MetadataResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2119,10 +1754,6 @@ paths:
               $ref: '#/components/schemas/Share_ReplicasMetadataCreate_MetadataRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasMetadataCreate_MetadataResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2137,10 +1768,6 @@ paths:
               $ref: '#/components/schemas/Share_ReplicasMetadataUpdate_All_MetadataRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasMetadataUpdate_All_MetadataResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2160,10 +1787,6 @@ paths:
       operationId: share-replicas/resource_id/metadata/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasMetadataShow_MetadataResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2181,10 +1804,6 @@ paths:
               $ref: '#/components/schemas/Share_ReplicasMetadataUpdate_Metadata_ItemRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasMetadataUpdate_Metadata_ItemResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2196,10 +1815,6 @@ paths:
       operationId: share-replicas/share_replica_id/export-locations:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasExport_LocationsListResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2215,10 +1830,6 @@ paths:
         share-replicas/share_replica_id/export-locations/export_location_uuid:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ReplicasExport_LocationShowResponse'
           description: Ok
       tags:
         - share-replicas
@@ -2235,10 +1846,6 @@ paths:
       operationId: share-servers:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ServersListResponse'
           description: Ok
       tags:
         - share-servers
@@ -2252,10 +1859,6 @@ paths:
               $ref: '#/components/schemas/Share_ServersManageManageRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ServersManageResponse'
           description: Ok
       tags:
         - share-servers
@@ -2277,10 +1880,6 @@ paths:
       operationId: share-servers/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ServerShowResponse'
           description: Ok
       tags:
         - share-servers
@@ -2308,24 +1907,8 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_ServersActionMigration_CheckResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionMigration_CompleteResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionMigration_Get_ProgressResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionReset_StatusResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionReset_Task_StateResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionUnmanageResponse'
           description: Ok
         '202':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_ServersActionMigration_CancelResponse'
-                  - $ref: '#/components/schemas/Share_ServersActionMigration_StartResponse'
           description: Ok
       tags:
         - share-servers
@@ -2336,10 +1919,6 @@ paths:
       operationId: share-servers/id/details:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_ServersDetailsResponse'
           description: Ok
       tags:
         - share-servers
@@ -2352,10 +1931,6 @@ paths:
       operationId: share-transfers:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_TransfersListResponse'
           description: Ok
       tags:
         - share-transfers
@@ -2372,10 +1947,6 @@ paths:
               $ref: '#/components/schemas/Share_TransfersCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_TransfersCreateResponse'
           description: Ok
       tags:
         - share-transfers
@@ -2388,10 +1959,6 @@ paths:
       operationId: share-transfers/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_TransfersDetailResponse'
           description: Ok
       tags:
         - share-transfers
@@ -2415,10 +1982,6 @@ paths:
       operationId: share-transfers/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_TransferShowResponse'
           description: Ok
       tags:
         - share-transfers
@@ -2440,10 +2003,6 @@ paths:
               $ref: '#/components/schemas/Share_TransfersAcceptAcceptRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_TransfersAcceptResponse'
           description: Ok
       tags:
         - share-transfers
@@ -2455,10 +2014,6 @@ paths:
       operationId: share_instances:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_InstancesListResponse'
           description: Ok
       tags:
         - share_instances
@@ -2470,10 +2025,6 @@ paths:
       operationId: share_instances/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Share_InstanceShowResponse'
           description: Ok
       tags:
         - share_instances
@@ -2499,14 +2050,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/Share_InstancesActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/Share_InstancesActionOs-Force_DeleteResponse'
-                  - $ref: '#/components/schemas/Share_InstancesActionOs-Reset_StatusResponse'
-                  - $ref: '#/components/schemas/Share_InstancesActionReset_StatusResponse'
           description: Ok
       tags:
         - share_instances
@@ -2520,7 +2063,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Share_InstancesExport_LocationsListResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationsIndexResponse_214'
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationsIndexResponse_287'
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationsIndexResponse_29'
           description: Ok
       tags:
         - share_instances
@@ -2539,7 +2085,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Share_InstancesExport_LocationShowResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationShowResponse_214'
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationShowResponse_287'
+                  - $ref: '#/components/schemas/Share_InstancesExport_LocationShowResponse_29'
           description: Ok
       tags:
         - share_instances
@@ -2555,10 +2104,6 @@ paths:
       operationId: shares:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesListResponse'
           description: Ok
       tags:
         - shares
@@ -2574,10 +2119,6 @@ paths:
               $ref: '#/components/schemas/SharesCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesCreateResponse'
           description: Ok
       tags:
         - shares
@@ -2591,10 +2132,6 @@ paths:
       operationId: shares/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesDetailResponse'
           description: Ok
       tags:
         - shares
@@ -2610,10 +2147,6 @@ paths:
               $ref: '#/components/schemas/SharesManageManageRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesManageResponse'
           description: Ok
       tags:
         - shares
@@ -2635,10 +2168,6 @@ paths:
       operationId: shares/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ShareShowResponse'
           description: Ok
       tags:
         - shares
@@ -2655,10 +2184,6 @@ paths:
               $ref: '#/components/schemas/ShareUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ShareUpdateResponse'
           description: Ok
       tags:
         - shares
@@ -2703,29 +2228,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/SharesActionAccess_ListResponse'
-                  - $ref: '#/components/schemas/SharesActionAllow_AccessResponse'
-                  - $ref: '#/components/schemas/SharesActionDeny_AccessResponse'
-                  - $ref: '#/components/schemas/SharesActionExtendResponse'
-                  - $ref: '#/components/schemas/SharesActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/SharesActionMigration_CancelResponse'
-                  - $ref: '#/components/schemas/SharesActionMigration_CompleteResponse'
-                  - $ref: '#/components/schemas/SharesActionMigration_Get_ProgressResponse'
-                  - $ref: '#/components/schemas/SharesActionMigration_StartResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-Access_ListResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-Allow_AccessResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-Deny_AccessResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-ExtendResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-Force_DeleteResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-Reset_StatusResponse'
-                  - $ref: '#/components/schemas/SharesActionOs-ShrinkResponse'
-                  - $ref: '#/components/schemas/SharesActionReset_StatusResponse'
-                  - $ref: '#/components/schemas/SharesActionReset_Task_StateResponse'
-                  - $ref: '#/components/schemas/SharesActionRestoreResponse'
-                  - $ref: '#/components/schemas/SharesActionRevertResponse'
-                  - $ref: '#/components/schemas/SharesActionShrinkResponse'
-                  - $ref: '#/components/schemas/SharesActionSoft_DeleteResponse'
-                  - $ref: '#/components/schemas/SharesActionUnmanageResponse'
+                  - $ref: '#/components/schemas/SharesActionMigration_Get_ProgressResponse_222'
+                  - $ref: '#/components/schemas/SharesActionMigration_Get_ProgressResponse_259'
           description: Ok
       tags:
         - shares
@@ -2736,10 +2240,6 @@ paths:
       operationId: shares/resource_id/metadata:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesMetadataList_MetadataResponse'
           description: Ok
       tags:
         - shares
@@ -2756,10 +2256,6 @@ paths:
               $ref: '#/components/schemas/SharesMetadataCreate_MetadataRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesMetadataCreate_MetadataResponse'
           description: Ok
       tags:
         - shares
@@ -2774,10 +2270,6 @@ paths:
               $ref: '#/components/schemas/SharesMetadataUpdate_All_MetadataRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesMetadataUpdate_All_MetadataResponse'
           description: Ok
       tags:
         - shares
@@ -2797,10 +2289,6 @@ paths:
       operationId: shares/resource_id/metadata/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesMetadataShow_MetadataResponse'
           description: Ok
       tags:
         - shares
@@ -2818,10 +2306,6 @@ paths:
               $ref: '#/components/schemas/SharesMetadataUpdate_Metadata_ItemRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesMetadataUpdate_Metadata_ItemResponse'
           description: Ok
       tags:
         - shares
@@ -2838,7 +2322,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsListResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/SharesExport_LocationsIndexResponse_214'
+                  - $ref: '#/components/schemas/SharesExport_LocationsIndexResponse_247'
+                  - $ref: '#/components/schemas/SharesExport_LocationsIndexResponse_287'
+                  - $ref: '#/components/schemas/SharesExport_LocationsIndexResponse_29'
           description: Ok
       tags:
         - shares
@@ -2858,7 +2346,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationShowResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/SharesExport_LocationShowResponse_214'
+                  - $ref: '#/components/schemas/SharesExport_LocationShowResponse_247'
+                  - $ref: '#/components/schemas/SharesExport_LocationShowResponse_287'
+                  - $ref: '#/components/schemas/SharesExport_LocationShowResponse_29'
           description: Ok
       tags:
         - shares
@@ -2878,7 +2370,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsMetadataList_MetadataResponse'
+                $ref: '#/components/schemas/SharesExport_LocationsMetadataIndex_MetadataResponse_287'
           description: Ok
       tags:
         - shares
@@ -2901,7 +2393,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsMetadataCreate_MetadataResponse'
+                $ref: '#/components/schemas/SharesExport_LocationsMetadataCreate_MetadataResponse_287'
           description: Ok
       tags:
         - shares
@@ -2921,7 +2413,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_All_MetadataResponse'
+                $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_All_MetadataResponse_287'
           description: Ok
       tags:
         - shares
@@ -2949,7 +2441,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsMetadataShow_MetadataResponse'
+                $ref: '#/components/schemas/SharesExport_LocationsMetadataShow_MetadataResponse_287'
           description: Ok
       tags:
         - shares
@@ -2974,7 +2466,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse'
+                $ref: '#/components/schemas/SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse_287'
           description: Ok
       tags:
         - shares
@@ -2985,10 +2477,6 @@ paths:
       operationId: shares/share_id/instances:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SharesInstancesGet_Share_InstancesResponse'
           description: Ok
       tags:
         - shares
@@ -3003,10 +2491,6 @@ paths:
       operationId: snapshot-instances:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstancesListResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3019,10 +2503,6 @@ paths:
       operationId: snapshot-instances/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstancesDetailResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3033,10 +2513,6 @@ paths:
       operationId: snapshot-instances/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstanceShowResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3059,10 +2535,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstancesActionReset_StatusResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3071,10 +2543,6 @@ paths:
       operationId: snapshot-instances/snapshot_instance_id/export-locations:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstancesExport_LocationsListResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3088,10 +2556,6 @@ paths:
         snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Snapshot_InstancesExport_LocationShowResponse'
           description: Ok
       tags:
         - snapshot-instances
@@ -3126,7 +2590,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SnapshotsListResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/SnapshotsIndexResponse_20'
+                  - $ref: '#/components/schemas/SnapshotsIndexResponse_236'
+                  - $ref: '#/components/schemas/SnapshotsIndexResponse_273'
+                  - $ref: '#/components/schemas/SnapshotsIndexResponse_279'
           description: Ok
       tags:
         - snapshots
@@ -3143,10 +2611,6 @@ paths:
               $ref: '#/components/schemas/SnapshotsCreateRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsCreateResponse'
           description: Ok
       tags:
         - snapshots
@@ -3157,10 +2621,6 @@ paths:
       operationId: snapshots/detail:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsDetailResponse'
           description: Ok
       tags:
         - snapshots
@@ -3176,10 +2636,6 @@ paths:
               $ref: '#/components/schemas/SnapshotsManageManageRequest'
       responses:
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsManageResponse'
           description: Ok
       tags:
         - snapshots
@@ -3204,7 +2660,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SnapshotShowResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/SnapshotShowResponse_20'
+                  - $ref: '#/components/schemas/SnapshotShowResponse_212'
+                  - $ref: '#/components/schemas/SnapshotShowResponse_217'
+                  - $ref: '#/components/schemas/SnapshotShowResponse_273'
           description: Ok
       tags:
         - snapshots
@@ -3223,10 +2683,6 @@ paths:
               $ref: '#/components/schemas/SnapshotUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotUpdateResponse'
           description: Ok
       tags:
         - snapshots
@@ -3251,22 +2707,8 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/SnapshotsActionDeny_AccessResponse'
-                  - $ref: '#/components/schemas/SnapshotsActionForce_DeleteResponse'
-                  - $ref: '#/components/schemas/SnapshotsActionOs-Force_DeleteResponse'
-                  - $ref: '#/components/schemas/SnapshotsActionOs-Reset_StatusResponse'
-                  - $ref: '#/components/schemas/SnapshotsActionReset_StatusResponse'
-                  - $ref: '#/components/schemas/SnapshotsActionUnmanageResponse'
           description: Ok
         '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsActionAllow_AccessResponse'
           description: Ok
       tags:
         - snapshots
@@ -3277,10 +2719,6 @@ paths:
       operationId: snapshots/resource_id/metadata:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsMetadataList_MetadataResponse'
           description: Ok
       tags:
         - snapshots
@@ -3297,10 +2735,6 @@ paths:
               $ref: '#/components/schemas/SnapshotsMetadataCreate_MetadataRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsMetadataCreate_MetadataResponse'
           description: Ok
       tags:
         - snapshots
@@ -3315,10 +2749,6 @@ paths:
               $ref: '#/components/schemas/SnapshotsMetadataUpdate_All_MetadataRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsMetadataUpdate_All_MetadataResponse'
           description: Ok
       tags:
         - snapshots
@@ -3338,10 +2768,6 @@ paths:
       operationId: snapshots/resource_id/metadata/key:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsMetadataShow_MetadataResponse'
           description: Ok
       tags:
         - snapshots
@@ -3359,10 +2785,6 @@ paths:
               $ref: '#/components/schemas/SnapshotsMetadataUpdate_Metadata_ItemRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsMetadataUpdate_Metadata_ItemResponse'
           description: Ok
       tags:
         - snapshots
@@ -3373,10 +2795,6 @@ paths:
       operationId: snapshots/snapshot_id/access-list:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsAccess_ListResponse'
           description: Ok
       tags:
         - snapshots
@@ -3389,10 +2807,6 @@ paths:
       operationId: snapshots/snapshot_id/export-locations:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsExport_LocationsListResponse'
           description: Ok
       tags:
         - snapshots
@@ -3405,10 +2819,6 @@ paths:
       operationId: snapshots/snapshot_id/export-locations/export_location_id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SnapshotsExport_LocationShowResponse'
           description: Ok
       tags:
         - snapshots
@@ -3424,10 +2834,6 @@ paths:
       operationId: types:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesListResponse'
           description: Ok
       tags:
         - types
@@ -3441,10 +2847,6 @@ paths:
               $ref: '#/components/schemas/TypesCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesCreateResponse'
           description: Ok
       tags:
         - types
@@ -3458,10 +2860,6 @@ paths:
       operationId: types/default:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesDefaultResponse'
           description: Ok
       tags:
         - types
@@ -3481,10 +2879,6 @@ paths:
       operationId: types/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypeShowResponse'
           description: Ok
       tags:
         - types
@@ -3501,10 +2895,6 @@ paths:
               $ref: '#/components/schemas/TypeUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypeUpdateResponse'
           description: Ok
       tags:
         - types
@@ -3529,15 +2919,6 @@ paths:
                 discriminator: action
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/TypesActionAddprojectaccessResponse'
-                  - $ref: '#/components/schemas/TypesActionCreateResponse'
-                  - $ref: '#/components/schemas/TypesActionDeleteResponse'
-                  - $ref: '#/components/schemas/TypesActionRemoveprojectaccessResponse'
-                  - $ref: '#/components/schemas/TypesActionUpdateResponse'
           description: Ok
       tags:
         - types
@@ -3546,10 +2927,6 @@ paths:
       operationId: types/id/os-share-type-access:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesOs_Share_Type_AccessOs-Share-Type-AccessResponse'
           description: Ok
       tags:
         - types
@@ -3560,10 +2937,6 @@ paths:
       operationId: types/id/share_type_access:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesShare_Type_AccessResponse'
           description: Ok
       tags:
         - types
@@ -3576,10 +2949,6 @@ paths:
       operationId: types/type_id/extra_specs:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesExtra_SpecsListResponse'
           description: Ok
       tags:
         - types
@@ -3594,10 +2963,6 @@ paths:
               $ref: '#/components/schemas/TypesExtra_SpecsCreateRequest'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesExtra_SpecsCreateResponse'
           description: Ok
       tags:
         - types
@@ -3621,10 +2986,6 @@ paths:
       operationId: types/type_id/extra_specs/id:get
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesExtra_SpecShowResponse'
           description: Ok
       tags:
         - types
@@ -3640,10 +3001,6 @@ paths:
               $ref: '#/components/schemas/TypesExtra_SpecUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypesExtra_SpecUpdateResponse'
           description: Ok
       tags:
         - types
@@ -3697,7 +3054,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_created_before:
       in: query
@@ -3706,7 +3062,6 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.52'
     messages_created_since:
       in: query
@@ -3715,7 +3070,6 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.52'
     messages_detail_id:
       in: query
@@ -3723,7 +3077,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_edit_id:
       description: id parameter for /messages/{id}/edit API
@@ -3751,7 +3104,6 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_message_level:
       in: query
@@ -3759,7 +3111,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_offset:
       in: query
@@ -3773,7 +3124,6 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_request_id:
       in: query
@@ -3781,7 +3131,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_resource_id:
       in: query
@@ -3789,7 +3138,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_resource_type:
       in: query
@@ -3797,7 +3145,6 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_sort_dir:
       in: query
@@ -3806,7 +3153,6 @@ components:
         default: desc
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     messages_sort_key:
       in: query
@@ -3815,7 +3161,6 @@ components:
         default: created_at
         type: string
       x-openstack:
-        max-ver: '2.51'
         min-ver: '2.37'
     os_availability_zone_edit_id:
       description: id parameter for /os-availability-zone/{id}/edit API
@@ -4781,9 +4126,6 @@ components:
         type:
           - boolean
           - string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_description:
       in: query
       name: description
@@ -4791,9 +4133,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_description_:
       in: query
       name: description~
@@ -4801,9 +4140,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_edit_id:
       description: id parameter for /snapshots/{id}/edit API
       in: path
@@ -4845,9 +4181,6 @@ components:
         type:
           - integer
           - string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_metadata:
       in: query
       name: metadata
@@ -4855,9 +4188,6 @@ components:
         maxLength: 4096
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_metadata_key:
       description: key parameter for /snapshots/{resource_id}/metadata/{key} API
       in: path
@@ -4880,9 +4210,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_name_:
       in: query
       name: name~
@@ -4890,9 +4217,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_offset:
       in: query
       name: offset
@@ -4904,9 +4228,6 @@ components:
         type:
           - integer
           - string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_project_id:
       in: query
       name: project_id
@@ -4915,8 +4236,6 @@ components:
         minLength: 1
         type: string
       x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
         resource_link: identity/v3/project.id
     snapshots_share_id:
       in: query
@@ -4925,9 +4244,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_size:
       in: query
       name: size
@@ -4939,9 +4255,6 @@ components:
         type:
           - integer
           - string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_sort_dir:
       in: query
       name: sort_dir
@@ -4949,9 +4262,6 @@ components:
         default: desc
         description: Sort direction
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_sort_key:
       in: query
       name: sort_key
@@ -4959,9 +4269,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_status:
       in: query
       name: status
@@ -4969,9 +4276,6 @@ components:
         maxLength: 255
         minLength: 1
         type: string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     snapshots_with_count:
       in: query
       name: with_count
@@ -5008,9 +4312,6 @@ components:
         type:
           - boolean
           - string
-      x-openstack:
-        max-ver: '2.35'
-        max_ver: '2.78'
     types_action_id:
       description: id parameter for /types/{id}/action API
       in: path
@@ -5083,7 +4384,7 @@ components:
       schema:
         type: string
   schemas:
-    Availability_ZonesListResponse:
+    Availability_ZonesIndexResponse_27:
       additionalProperties: false
       properties:
         availability_zones:
@@ -5111,24 +4412,14 @@ components:
       required:
         - availability_zones
       type: object
-    ExtensionShowResponse:
-      description: Response of the extensions/id:get operation
-      type: object
+      x-openstack:
+        min-ver: '2.7'
     ExtensionsCreateRequest:
       description: Request of the extensions:post operation
       type: object
       x-openstack:
         action-name: create
-    ExtensionsCreateResponse:
-      description: Response of the extensions:post operation
-      type: object
-    ExtensionsListResponse:
-      description: Response of the extensions:get operation
-      type: object
-    LimitsListResponse:
-      description: Response of the limits:get operation
-      type: object
-    MessageShowResponse:
+    MessageShowResponse_237:
       additionalProperties: false
       properties:
         message:
@@ -5196,7 +4487,9 @@ components:
       required:
         - message
       type: object
-    MessagesListResponse:
+      x-openstack:
+        min-ver: '2.37'
+    MessagesIndexResponse_237:
       additionalProperties: false
       properties:
         messages:
@@ -5282,7 +4575,98 @@ components:
       required:
         - messages
       type: object
-    Os_Availability_ZoneListResponse:
+      x-openstack:
+        max-ver: '2.51'
+        min-ver: '2.37'
+    MessagesIndexResponse_252:
+      additionalProperties: false
+      properties:
+        messages:
+          items:
+            additionalProperties: false
+            properties:
+              action_id:
+                type: string
+              created_at:
+                format: date-time
+                type: string
+              detail_id:
+                type: string
+              expires_at:
+                format: date-time
+                type: string
+              id:
+                format: uuid
+                type: string
+              links:
+                items:
+                  additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      enum:
+                        - bookmark
+                        - self
+                      type: string
+                  required:
+                    - href
+                    - rel
+                  type: object
+                type: array
+              message_level:
+                enum:
+                  - ERROR
+                type: string
+              project_id:
+                type: string
+              request_id:
+                type: string
+              resource_id:
+                format: uuid
+                type: string
+              resource_type:
+                type: string
+              user_message:
+                type: string
+            required:
+              - action_id
+              - created_at
+              - detail_id
+              - expires_at
+              - id
+              - links
+              - message_level
+              - project_id
+              - request_id
+              - resource_id
+              - resource_type
+              - user_message
+            type: object
+          type: array
+        messages_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+      required:
+        - messages
+      type: object
+      x-openstack:
+        min-ver: '2.52'
+    Os_Availability_ZoneIndexResponse_20:
       additionalProperties: false
       properties:
         availability_zones:
@@ -5310,7 +4694,10 @@ components:
       required:
         - availability_zones
       type: object
-    Os_Quota_Class_SetShowResponse:
+      x-openstack:
+        max-ver: '2.6'
+        min-ver: '2.0'
+    Os_Quota_Class_SetShowResponse_20:
       additionalProperties: false
       description: "A ``quota_class_set`` object.\n"
       properties:
@@ -5346,7 +4733,10 @@ components:
       required:
         - quota_class_set
       type: object
-    Os_Quota_Class_SetUpdateResponse:
+      x-openstack:
+        max-ver: '2.6'
+        min-ver: '2.0'
+    Os_Quota_Class_SetUpdateResponse_20:
       additionalProperties: false
       description: "A ``quota_class_set`` object.\n"
       properties:
@@ -5382,6 +4772,9 @@ components:
       required:
         - quota_class_set
       type: object
+      x-openstack:
+        max-ver: '2.6'
+        min-ver: '2.0'
     Os_Quota_Class_SetUpdate_20:
       additionalProperties: true
       description: "A ``quota_class_set`` object.\n"
@@ -5416,92 +4809,364 @@ components:
       x-openstack:
         max-ver: '2.6'
         min-ver: '2.0'
-    Os_Quota_SetShowResponse:
-      description: Response of the os-quota-sets/id:get operation
-      type: object
     Os_Quota_SetUpdateRequest:
       description: Request of the os-quota-sets/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Os_Quota_SetUpdateResponse:
-      description: Response of the os-quota-sets/id:put operation
-      type: object
-    Os_Quota_SetsDefaultsResponse:
-      description: Response of the os-quota-sets/id/defaults:get operation
-      type: object
     Os_ServiceUpdateRequest:
       description: Request of the os-services/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Os_ServiceUpdateResponse:
-      description: Response of the os-services/id:put operation
-      type: object
-    Os_ServicesListResponse:
-      description: Response of the os-services:get operation
-      type: object
     Os_Share_ManageCreateRequest:
       description: Request of the os-share-manage:post operation
       type: object
       x-openstack:
         action-name: create
-    Os_Share_ManageCreateResponse:
-      description: Response of the os-share-manage:post operation
-      type: object
-    Os_Share_UnmanageUnmanageResponse:
-      description: Response of the os-share-unmanage/id/unmanage:post operation
-      type: object
     Os_Share_UnmanageUnmanageUnmanageRequest:
       description: Request of the os-share-unmanage/id/unmanage:post operation
       type: object
       x-openstack:
         action-name: unmanage
-    Qos_TypeShowResponse:
-      description: Response of the qos-types/id:get operation
-      type: object
     Qos_TypeUpdateRequest:
       description: Request of the qos-types/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Qos_TypeUpdateResponse:
-      description: Response of the qos-types/id:put operation
-      type: object
     Qos_TypesCreateRequest:
       description: Request of the qos-types:post operation
       type: object
       x-openstack:
         action-name: create
-    Qos_TypesCreateResponse:
-      description: Response of the qos-types:post operation
-      type: object
-    Qos_TypesListResponse:
-      description: Response of the qos-types:get operation
-      type: object
-    Qos_TypesSpecShowResponse:
-      description: Response of the qos-types/id/specs/key:get operation
-      type: object
     Qos_TypesSpecUpdateRequest:
       description: Request of the qos-types/id/specs/key:put operation
       type: object
       x-openstack:
         action-name: update
-    Qos_TypesSpecUpdateResponse:
-      description: Response of the qos-types/id/specs/key:put operation
-      type: object
     Qos_TypesSpecsCreateRequest:
       description: Request of the qos-types/id/specs:post operation
       type: object
       x-openstack:
         action-name: create
-    Qos_TypesSpecsCreateResponse:
-      description: Response of the qos-types/id/specs:post operation
+    Quota_Class_SetShowResponse_10:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
       type: object
-    Qos_TypesSpecsListResponse:
-      description: Response of the qos-types/id/specs:get operation
+      x-openstack:
+        max-ver: '2.39'
+        min-ver: '1.0'
+    Quota_Class_SetShowResponse_240:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_group_snapshots:
+              description: "The number of share group snapshots allowed for each project
+                or user.\n"
+              type: integer
+            share_groups:
+              description: "The number of share groups allowed for each project or
+                user.\n"
+              type: integer
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_group_snapshots
+            - share_groups
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
       type: object
-    Quota_Class_SetShowResponse:
+      x-openstack:
+        max-ver: '2.52'
+        min-ver: '2.40'
+    Quota_Class_SetShowResponse_253:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            replica_gigabytes:
+              description: "The number of gigabytes for the share replicas allowed
+                for each project.\n"
+              type: integer
+            share_group_snapshots:
+              description: "The number of share group snapshots allowed for each project
+                or user.\n"
+              type: integer
+            share_groups:
+              description: "The number of share groups allowed for each project or
+                user.\n"
+              type: integer
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            share_replicas:
+              description: "The number of share replicas allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - replica_gigabytes
+            - share_group_snapshots
+            - share_groups
+            - share_networks
+            - share_replicas
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.61'
+        min-ver: '2.53'
+    Quota_Class_SetShowResponse_262:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            per_share_gigabytes:
+              description: "The number of gigabytes per share allowed for each project.\n"
+              type: integer
+            replica_gigabytes:
+              description: "The number of gigabytes for the share replicas allowed
+                for each project.\n"
+              type: integer
+            share_group_snapshots:
+              description: "The number of share group snapshots allowed for each project
+                or user.\n"
+              type: integer
+            share_groups:
+              description: "The number of share groups allowed for each project or
+                user.\n"
+              type: integer
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            share_replicas:
+              description: "The number of share replicas allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - per_share_gigabytes
+            - replica_gigabytes
+            - share_group_snapshots
+            - share_groups
+            - share_networks
+            - share_replicas
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.79'
+        min-ver: '2.62'
+    Quota_Class_SetShowResponse_27:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        min-ver: '2.7'
+    Quota_Class_SetShowResponse_280:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            backup_gigabytes:
+              description: "The number of gigabytes for the backups allowed for each
+                project.\n"
+              type: integer
+            backups:
+              description: "The number of backups allowed for each project.\n"
+              type: integer
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            per_share_gigabytes:
+              description: "The number of gigabytes per share allowed for each project.\n"
+              type: integer
+            replica_gigabytes:
+              description: "The number of gigabytes for the share replicas allowed
+                for each project.\n"
+              type: integer
+            share_group_snapshots:
+              description: "The number of share group snapshots allowed for each project
+                or user.\n"
+              type: integer
+            share_groups:
+              description: "The number of share groups allowed for each project or
+                user.\n"
+              type: integer
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            share_replicas:
+              description: "The number of share replicas allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - backup_gigabytes
+            - backups
+            - gigabytes
+            - per_share_gigabytes
+            - replica_gigabytes
+            - share_group_snapshots
+            - share_groups
+            - share_networks
+            - share_replicas
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.89'
+        min-ver: '2.80'
+    Quota_Class_SetShowResponse_290:
       additionalProperties: false
       description: "A ``quota_class_set`` object.\n"
       properties:
@@ -5573,6 +5238,8 @@ components:
       required:
         - quota_class_set
       type: object
+      x-openstack:
+        min-ver: '2.90'
     Quota_Class_SetUpdateRequest:
       oneOf:
         - $ref: '#/components/schemas/Quota_Class_SetUpdate_253'
@@ -5582,36 +5249,19 @@ components:
         - $ref: '#/components/schemas/Quota_Class_SetUpdate_290'
       x-openstack:
         discriminator: microversion
-    Quota_Class_SetUpdateResponse:
+    Quota_Class_SetUpdateResponse_240:
       additionalProperties: false
       description: "A ``quota_class_set`` object.\n"
       properties:
         quota_class_set:
           additionalProperties: false
           properties:
-            backup_gigabytes:
-              description: "The number of gigabytes for the backups allowed for each
-                project.\n"
-              type: integer
-            backups:
-              description: "The number of backups allowed for each project.\n"
-              type: integer
-            encryption_keys:
-              description: "The number of encryption keys allowed for each project.\n"
-              type: integer
             gigabytes:
               description: "The number of gigabytes allowed for each project.\n"
               type: integer
             id:
               description: "A ``quota_class_set`` id.\n"
               type: string
-            per_share_gigabytes:
-              description: "The number of gigabytes per share allowed for each project.\n"
-              type: integer
-            replica_gigabytes:
-              description: "The number of gigabytes for the share replicas allowed
-                for each project.\n"
-              type: integer
             share_group_snapshots:
               description: "The number of share group snapshots allowed for each project
                 or user.\n"
@@ -5622,9 +5272,6 @@ components:
               type: integer
             share_networks:
               description: "The number of share networks allowed for each project.\n"
-              type: integer
-            share_replicas:
-              description: "The number of share replicas allowed for each project.\n"
               type: integer
             shares:
               description: "The number of shares allowed for each project.\n"
@@ -5637,16 +5284,10 @@ components:
               description: "The number of snapshots allowed for each project.\n"
               type: integer
           required:
-            - backup_gigabytes
-            - backups
-            - encryption_keys
             - gigabytes
-            - per_share_gigabytes
-            - replica_gigabytes
             - share_group_snapshots
             - share_groups
             - share_networks
-            - share_replicas
             - shares
             - snapshot_gigabytes
             - snapshots
@@ -5654,6 +5295,203 @@ components:
       required:
         - quota_class_set
       type: object
+      x-openstack:
+        max-ver: '2.52'
+        min-ver: '2.40'
+    Quota_Class_SetUpdateResponse_253:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.61'
+        min-ver: '2.53'
+    Quota_Class_SetUpdateResponse_262:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.79'
+        min-ver: '2.62'
+    Quota_Class_SetUpdateResponse_27:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.39'
+        min-ver: '2.7'
+    Quota_Class_SetUpdateResponse_280:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        max-ver: '2.89'
+        min-ver: '2.80'
+    Quota_Class_SetUpdateResponse_290:
+      additionalProperties: false
+      description: "A ``quota_class_set`` object.\n"
+      properties:
+        quota_class_set:
+          additionalProperties: false
+          properties:
+            gigabytes:
+              description: "The number of gigabytes allowed for each project.\n"
+              type: integer
+            id:
+              description: "A ``quota_class_set`` id.\n"
+              type: string
+            share_networks:
+              description: "The number of share networks allowed for each project.\n"
+              type: integer
+            shares:
+              description: "The number of shares allowed for each project.\n"
+              type: integer
+            snapshot_gigabytes:
+              description: "The number of gigabytes for the snapshots allowed for
+                each project.\n"
+              type: integer
+            snapshots:
+              description: "The number of snapshots allowed for each project.\n"
+              type: integer
+          required:
+            - gigabytes
+            - share_networks
+            - shares
+            - snapshot_gigabytes
+            - snapshots
+          type: object
+      required:
+        - quota_class_set
+      type: object
+      x-openstack:
+        min-ver: '2.90'
     Quota_Class_SetUpdate_253:
       additionalProperties: true
       description: "A ``quota_class_set`` object.\n"
@@ -5874,26 +5712,13 @@ components:
         - quota_class_set
       type: object
       x-openstack:
-        max-ver: '2.52'
         min-ver: '2.90'
-    Quota_SetShowResponse:
-      description: Response of the quota-sets/id:get operation
-      type: object
     Quota_SetUpdateRequest:
       description: Request of the quota-sets/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Quota_SetUpdateResponse:
-      description: Response of the quota-sets/id:put operation
-      type: object
-    Quota_SetsDefaultsResponse:
-      description: Response of the quota-sets/id/defaults:get operation
-      type: object
-    Quota_SetsDetailResponse:
-      description: Response of the quota-sets/id/detail:get operation
-      type: object
-    Resource_LockShowResponse:
+    Resource_LockShowResponse_281:
       additionalProperties: false
       properties:
         resource_lock:
@@ -6005,7 +5830,9 @@ components:
       required:
         - resource_lock
       type: object
-    Resource_LockUpdateResponse:
+      x-openstack:
+        min-ver: '2.81'
+    Resource_LockUpdateResponse_281:
       additionalProperties: false
       properties:
         resource_lock:
@@ -6117,6 +5944,8 @@ components:
       required:
         - resource_lock
       type: object
+      x-openstack:
+        min-ver: '2.81'
     Resource_LockUpdate_281:
       additionalProperties: true
       properties:
@@ -6150,7 +5979,7 @@ components:
       type: object
       x-openstack:
         min-ver: '2.81'
-    Resource_LocksCreateResponse:
+    Resource_LocksCreateResponse_281:
       additionalProperties: false
       properties:
         resource_lock:
@@ -6262,6 +6091,8 @@ components:
       required:
         - resource_lock
       type: object
+      x-openstack:
+        min-ver: '2.81'
     Resource_LocksCreate_281:
       additionalProperties: true
       properties:
@@ -6319,7 +6150,7 @@ components:
       type: object
       x-openstack:
         min-ver: '2.81'
-    Resource_LocksListResponse:
+    Resource_LocksIndexResponse_281:
       additionalProperties: false
       properties:
         count:
@@ -6456,48 +6287,23 @@ components:
       required:
         - resource_locks
       type: object
-    RootListResponse:
-      description: Response of the :get operation
-      type: object
-    Scheduler_StatsPoolsDetailPools_DetailResponse:
-      description: Response of the scheduler-stats/pools/detail:get operation
-      type: object
-    Scheduler_StatsPoolsPools_ListResponse:
-      description: Response of the scheduler-stats/pools:get operation
-      type: object
-    Security_ServiceShowResponse:
-      description: Response of the security-services/id:get operation
-      type: object
+      x-openstack:
+        min-ver: '2.81'
     Security_ServiceUpdateRequest:
       description: Request of the security-services/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Security_ServiceUpdateResponse:
-      description: Response of the security-services/id:put operation
-      type: object
     Security_ServicesCreateRequest:
       description: Request of the security-services:post operation
       type: object
       x-openstack:
         action-name: create
-    Security_ServicesCreateResponse:
-      description: Response of the security-services:post operation
-      type: object
-    Security_ServicesDetailResponse:
-      description: Response of the security-services/detail:get operation
-      type: object
-    Security_ServicesListResponse:
-      description: Response of the security-services:get operation
-      type: object
     ServiceUpdateRequest:
       description: Request of the services/id:put operation
       type: object
       x-openstack:
         action-name: update
-    ServiceUpdateResponse:
-      description: Response of the services/id:put operation
-      type: object
     ServicesEnsure_SharesEnsure_Shares_286:
       additionalProperties: false
       properties:
@@ -6516,68 +6322,32 @@ components:
       type: object
       x-openstack:
         min-ver: '2.86'
-    ServicesEnsure_SharesResponse:
-      type: 'null'
-    ServicesListResponse:
-      description: Response of the services:get operation
-      type: object
-    ShareShowResponse:
-      description: Response of the shares/id:get operation
-      type: object
     ShareUpdateRequest:
       description: Request of the shares/id:put operation
       type: object
       x-openstack:
         action-name: update
-    ShareUpdateResponse:
-      description: Response of the shares/id:put operation
-      type: object
-    Share_Access_RuleShowResponse:
-      description: Response of the share-access-rules/id:get operation
-      type: object
     Share_Access_RuleUpdateRequest:
       description: Request of the share-access-rules/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Share_Access_RuleUpdateResponse:
-      description: Response of the share-access-rules/id:put operation
-      type: object
-    Share_Access_RulesListResponse:
-      description: Response of the share-access-rules:get operation
-      type: object
     Share_Access_RulesMetadataUpdateRequest:
       description: Request of the share-access-rules/access_id/metadata:put 
         operation
       type: object
       x-openstack:
         action-name: update
-    Share_Access_RulesMetadataUpdateResponse:
-      description: Response of the share-access-rules/access_id/metadata:put 
-        operation
-      type: object
-    Share_BackupShowResponse:
-      description: Response of the share-backups/id:get operation
-      type: object
     Share_BackupUpdateRequest:
       description: Request of the share-backups/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Share_BackupUpdateResponse:
-      description: Response of the share-backups/id:put operation
-      type: object
     Share_BackupsActionReset_StatusRequest:
       description: Empty body for reset_status action
       properties:
         reset_status:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: reset_status
-    Share_BackupsActionReset_StatusResponse:
-      description: Response of the share-backups/id/action:post:reset_status 
-        action
       type: object
       x-openstack:
         action-name: reset_status
@@ -6589,58 +6359,26 @@ components:
       type: object
       x-openstack:
         action-name: restore
-    Share_BackupsActionRestoreResponse:
-      description: Response of the share-backups/id/action:post:restore action
-      type: object
-      x-openstack:
-        action-name: restore
     Share_BackupsCreateRequest:
       description: Request of the share-backups:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_BackupsCreateResponse:
-      description: Response of the share-backups:post operation
-      type: object
-    Share_BackupsDetailResponse:
-      description: Response of the share-backups/detail:get operation
-      type: object
-    Share_BackupsListResponse:
-      description: Response of the share-backups:get operation
-      type: object
-    Share_GroupShowResponse:
-      description: Response of the share-groups/id:get operation
-      type: object
     Share_GroupUpdateRequest:
       description: Request of the share-groups/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Share_GroupUpdateResponse:
-      description: Response of the share-groups/id:put operation
-      type: object
-    Share_Group_SnapshotShowResponse:
-      description: Response of the share-group-snapshots/id:get operation
-      type: object
     Share_Group_SnapshotUpdateRequest:
       description: Request of the share-group-snapshots/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Share_Group_SnapshotUpdateResponse:
-      description: Response of the share-group-snapshots/id:put operation
-      type: object
     Share_Group_SnapshotsActionForce_DeleteRequest:
       description: Empty body for force_delete action
       properties:
         force_delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: force_delete
-    Share_Group_SnapshotsActionForce_DeleteResponse:
-      description: Response of the 
-        share-group-snapshots/id/action:post:force_delete action
       type: object
       x-openstack:
         action-name: force_delete
@@ -6652,47 +6390,16 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_Group_SnapshotsActionReset_StatusResponse:
-      description: Response of the 
-        share-group-snapshots/id/action:post:reset_status action
-      type: object
-      x-openstack:
-        action-name: reset_status
     Share_Group_SnapshotsCreateRequest:
       description: Request of the share-group-snapshots:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_Group_SnapshotsCreateResponse:
-      description: Response of the share-group-snapshots:post operation
-      type: object
-    Share_Group_SnapshotsDetailResponse:
-      description: Response of the share-group-snapshots/detail:get operation
-      type: object
-    Share_Group_SnapshotsListResponse:
-      description: Response of the share-group-snapshots:get operation
-      type: object
-    Share_Group_SnapshotsMembersResponse:
-      description: Response of the share-group-snapshots/id/members:get 
-        operation
-      type: object
-    Share_Group_TypeShowResponse:
-      description: Response of the share-group-types/id:get operation
-      type: object
-    Share_Group_TypesAccessShare_Group_Type_AccessResponse:
-      description: Response of the share-group-types/id/access:get operation
-      type: object
     Share_Group_TypesActionAddprojectaccessRequest:
       description: Empty body for addProjectAccess action
       properties:
         addProjectAccess:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: addProjectAccess
-    Share_Group_TypesActionAddprojectaccessResponse:
-      description: Response of the 
-        share-group-types/id/action:post:addProjectAccess action
       type: object
       x-openstack:
         action-name: addProjectAccess
@@ -6704,23 +6411,11 @@ components:
       type: object
       x-openstack:
         action-name: create
-    Share_Group_TypesActionCreateResponse:
-      description: Response of the share-group-types/id/action:post:create 
-        action
-      type: object
-      x-openstack:
-        action-name: create
     Share_Group_TypesActionDeleteRequest:
       description: Empty body for delete action
       properties:
         delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: delete
-    Share_Group_TypesActionDeleteResponse:
-      description: Response of the share-group-types/id/action:post:delete 
-        action
       type: object
       x-openstack:
         action-name: delete
@@ -6732,67 +6427,28 @@ components:
       type: object
       x-openstack:
         action-name: removeProjectAccess
-    Share_Group_TypesActionRemoveprojectaccessResponse:
-      description: Response of the 
-        share-group-types/id/action:post:removeProjectAccess action
-      type: object
-      x-openstack:
-        action-name: removeProjectAccess
     Share_Group_TypesCreateRequest:
       description: Request of the share-group-types:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_Group_TypesCreateResponse:
-      description: Response of the share-group-types:post:create action
-      type: object
-      x-openstack:
-        action-name: create
-    Share_Group_TypesDefaultResponse:
-      description: Response of the share-group-types/default:get operation
-      type: object
-    Share_Group_TypesGroup_SpecShowResponse:
-      description: Response of the share-group-types/id/group-specs/key:get 
-        operation
-      type: object
     Share_Group_TypesGroup_SpecUpdateRequest:
       description: Request of the share-group-types/id/group-specs/key:put 
         operation
       type: object
       x-openstack:
         action-name: update
-    Share_Group_TypesGroup_SpecUpdateResponse:
-      description: Response of the share-group-types/id/group-specs/key:put 
-        operation
-      type: object
     Share_Group_TypesGroup_SpecsCreateRequest:
       description: Request of the share-group-types/id/group-specs:post 
         operation
       type: object
       x-openstack:
         action-name: create
-    Share_Group_TypesGroup_SpecsCreateResponse:
-      description: Response of the share-group-types/id/group-specs:post 
-        operation
-      type: object
-    Share_Group_TypesGroup_SpecsListResponse:
-      description: Response of the share-group-types/id/group-specs:get 
-        operation
-      type: object
-    Share_Group_TypesListResponse:
-      description: Response of the share-group-types:get operation
-      type: object
     Share_GroupsActionForce_DeleteRequest:
       description: Empty body for force_delete action
       properties:
         force_delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: force_delete
-    Share_GroupsActionForce_DeleteResponse:
-      description: Response of the share-groups/id/action:post:force_delete 
-        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -6804,40 +6460,16 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_GroupsActionReset_StatusResponse:
-      description: Response of the share-groups/id/action:post:reset_status 
-        action
-      type: object
-      x-openstack:
-        action-name: reset_status
     Share_GroupsCreateRequest:
       description: Request of the share-groups:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_GroupsCreateResponse:
-      description: Response of the share-groups:post operation
-      type: object
-    Share_GroupsDetailResponse:
-      description: Response of the share-groups/detail:get operation
-      type: object
-    Share_GroupsListResponse:
-      description: Response of the share-groups:get operation
-      type: object
-    Share_InstanceShowResponse:
-      description: Response of the share_instances/id:get operation
-      type: object
     Share_InstancesActionForce_DeleteRequest:
       description: Empty body for force_delete action
       properties:
         force_delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: force_delete
-    Share_InstancesActionForce_DeleteResponse:
-      description: Response of the share_instances/id/action:post:force_delete 
-        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -6849,23 +6481,11 @@ components:
       type: object
       x-openstack:
         action-name: os-force_delete
-    Share_InstancesActionOs-Force_DeleteResponse:
-      description: Response of the 
-        share_instances/id/action:post:os-force_delete action
-      type: object
-      x-openstack:
-        action-name: os-force_delete
     Share_InstancesActionOs-Reset_StatusRequest:
       description: Empty body for os-reset_status action
       properties:
         os-reset_status:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reset_status
-    Share_InstancesActionOs-Reset_StatusResponse:
-      description: Response of the 
-        share_instances/id/action:post:os-reset_status action
       type: object
       x-openstack:
         action-name: os-reset_status
@@ -6877,13 +6497,73 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_InstancesActionReset_StatusResponse:
-      description: Response of the share_instances/id/action:post:reset_status 
-        action
+    Share_InstancesExport_LocationShowResponse_214:
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          description: "The export location.  For newer API versions it is available
+            in\nseparate APIs. See sections `Share export locations\n<#share-share-export-locations>`_
+            and `Share instance export\nlocations <#share-share-instance-export-locations>`_.\n"
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              format: date-time
+              readonly: true
+              type: string
+            id:
+              description: "The share export location UUID.\n"
+              readonly: true
+              type: string
+            is_admin_only:
+              description: "Defines purpose of an export location. If set to\n``true``,
+                then it is expected to be used for service needs and by\nadministrators
+                only. If it is set to ``false``, then this export\nlocation can be
+                used by end users. This parameter is only available to\nusers with
+                an \"administrator\" role, and cannot be controlled via policy\n.json.\n"
+              type: boolean
+            path:
+              description: "The export location path that should be used for mount
+                operation.\n"
+              type: string
+            preferred:
+              description: "Drivers may use this field to identify which export locations\n\
+                are most efficient and should be used preferentially by clients.\n\
+                By default it is set to ``false`` value.\n"
+              type: boolean
+            share_instance_id:
+              description: "The UUID of the share instance that this\nexport location
+                belongs to. This parameter is only available to users\nwith an \"\
+                administrator\" role, and cannot be controlled via policy.yaml.\n"
+              type: string
+            updated_at:
+              description: "The date and time stamp when the resource was last updated
+                within the\nservice's database. If a resource was never updated after
+                it was\ncreated, the value of this parameter is set to ``null``.\n\
+                \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
+                \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2016-12-31T13:14:15-05:00``.\n"
+              format: date-time
+              readonly: true
+              type: string
+          required:
+            - created_at
+            - id
+            - path
+            - preferred
+            - updated_at
+          type: object
+      required:
+        - export_location
       type: object
       x-openstack:
-        action-name: reset_status
-    Share_InstancesExport_LocationShowResponse:
+        max-ver: '2.86'
+        min-ver: '2.14'
+    Share_InstancesExport_LocationShowResponse_287:
       additionalProperties: false
       properties:
         export_location:
@@ -6953,7 +6633,113 @@ components:
       required:
         - export_location
       type: object
-    Share_InstancesExport_LocationsListResponse:
+      x-openstack:
+        min-ver: '2.87'
+    Share_InstancesExport_LocationShowResponse_29:
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          description: "The export location.  For newer API versions it is available
+            in\nseparate APIs. See sections `Share export locations\n<#share-share-export-locations>`_
+            and `Share instance export\nlocations <#share-share-instance-export-locations>`_.\n"
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              format: date-time
+              readonly: true
+              type: string
+            id:
+              description: "The share export location UUID.\n"
+              readonly: true
+              type: string
+            is_admin_only:
+              description: "Defines purpose of an export location. If set to\n``true``,
+                then it is expected to be used for service needs and by\nadministrators
+                only. If it is set to ``false``, then this export\nlocation can be
+                used by end users. This parameter is only available to\nusers with
+                an \"administrator\" role, and cannot be controlled via policy\n.json.\n"
+              type: boolean
+            path:
+              description: "The export location path that should be used for mount
+                operation.\n"
+              type: string
+            share_instance_id:
+              description: "The UUID of the share instance that this\nexport location
+                belongs to. This parameter is only available to users\nwith an \"\
+                administrator\" role, and cannot be controlled via policy.yaml.\n"
+              type: string
+            updated_at:
+              description: "The date and time stamp when the resource was last updated
+                within the\nservice's database. If a resource was never updated after
+                it was\ncreated, the value of this parameter is set to ``null``.\n\
+                \nThe date and time stamp format is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\
+                \n::\n\n   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2016-12-31T13:14:15-05:00``.\n"
+              format: date-time
+              readonly: true
+              type: string
+          required:
+            - created_at
+            - id
+            - path
+            - updated_at
+          type: object
+      required:
+        - export_location
+      type: object
+      x-openstack:
+        max-ver: '2.13'
+        min-ver: '2.9'
+    Share_InstancesExport_LocationsIndexResponse_214:
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: "The share export location UUID.\n"
+                type: string
+              is_admin_only:
+                description: "Defines purpose of an export location. If set to\n``true``,
+                  then it is expected to be used for service needs and by\nadministrators
+                  only. If it is set to ``false``, then this export\nlocation can
+                  be used by end users. This parameter is only available to\nusers
+                  with an \"administrator\" role, and cannot be controlled via policy\n\
+                  .json.\n"
+                type: boolean
+              path:
+                description: "The export location path that should be used for mount
+                  operation.\n"
+                type: string
+              preferred:
+                description: "Drivers may use this field to identify which export
+                  locations\nare most efficient and should be used preferentially
+                  by clients.\nBy default it is set to ``false`` value.\n"
+                type: boolean
+              share_instance_id:
+                description: "The UUID of the share instance that this\nexport location
+                  belongs to. This parameter is only available to users\nwith an \"\
+                  administrator\" role, and cannot be controlled via policy.yaml.\n"
+                type: string
+            required:
+              - id
+              - path
+              - preferred
+            type: object
+          type: array
+      required:
+        - export_locations
+      type: object
+      x-openstack:
+        max-ver: '2.86'
+        min-ver: '2.14'
+    Share_InstancesExport_LocationsIndexResponse_287:
       additionalProperties: false
       properties:
         export_locations:
@@ -7001,31 +6787,56 @@ components:
       required:
         - export_locations
       type: object
-    Share_InstancesListResponse:
-      description: Response of the share_instances:get operation
+      x-openstack:
+        min-ver: '2.87'
+    Share_InstancesExport_LocationsIndexResponse_29:
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: "The share export location UUID.\n"
+                type: string
+              is_admin_only:
+                description: "Defines purpose of an export location. If set to\n``true``,
+                  then it is expected to be used for service needs and by\nadministrators
+                  only. If it is set to ``false``, then this export\nlocation can
+                  be used by end users. This parameter is only available to\nusers
+                  with an \"administrator\" role, and cannot be controlled via policy\n\
+                  .json.\n"
+                type: boolean
+              path:
+                description: "The export location path that should be used for mount
+                  operation.\n"
+                type: string
+              share_instance_id:
+                description: "The UUID of the share instance that this\nexport location
+                  belongs to. This parameter is only available to users\nwith an \"\
+                  administrator\" role, and cannot be controlled via policy.yaml.\n"
+                type: string
+            required:
+              - id
+              - path
+            type: object
+          type: array
+      required:
+        - export_locations
       type: object
-    Share_NetworkShowResponse:
-      description: Response of the share-networks/id:get operation
-      type: object
+      x-openstack:
+        max-ver: '2.13'
+        min-ver: '2.9'
     Share_NetworkUpdateRequest:
       description: Request of the share-networks/id:put operation
       type: object
       x-openstack:
         action-name: update
-    Share_NetworkUpdateResponse:
-      description: Response of the share-networks/id:put operation
-      type: object
     Share_NetworksActionAdd_Security_ServiceRequest:
       description: Empty body for add_security_service action
       properties:
         add_security_service:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: add_security_service
-    Share_NetworksActionAdd_Security_ServiceResponse:
-      description: Response of the 
-        share-networks/id/action:post:add_security_service action
       type: object
       x-openstack:
         action-name: add_security_service
@@ -7037,23 +6848,11 @@ components:
       type: object
       x-openstack:
         action-name: add_security_service_check
-    Share_NetworksActionAdd_Security_Service_CheckResponse:
-      description: Response of the 
-        share-networks/id/action:post:add_security_service_check action
-      type: object
-      x-openstack:
-        action-name: add_security_service_check
     Share_NetworksActionRemove_Security_ServiceRequest:
       description: Empty body for remove_security_service action
       properties:
         remove_security_service:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: remove_security_service
-    Share_NetworksActionRemove_Security_ServiceResponse:
-      description: Response of the 
-        share-networks/id/action:post:remove_security_service action
       type: object
       x-openstack:
         action-name: remove_security_service
@@ -7065,23 +6864,11 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_NetworksActionReset_StatusResponse:
-      description: Response of the share-networks/id/action:post:reset_status 
-        action
-      type: object
-      x-openstack:
-        action-name: reset_status
     Share_NetworksActionShare_Network_Subnet_Create_CheckRequest:
       description: Empty body for share_network_subnet_create_check action
       properties:
         share_network_subnet_create_check:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: share_network_subnet_create_check
-    Share_NetworksActionShare_Network_Subnet_Create_CheckResponse:
-      description: Response of the 
-        share-networks/id/action:post:share_network_subnet_create_check action
       type: object
       x-openstack:
         action-name: share_network_subnet_create_check
@@ -7093,12 +6880,6 @@ components:
       type: object
       x-openstack:
         action-name: update_security_service
-    Share_NetworksActionUpdate_Security_ServiceResponse:
-      description: Response of the 
-        share-networks/id/action:post:update_security_service action
-      type: object
-      x-openstack:
-        action-name: update_security_service
     Share_NetworksActionUpdate_Security_Service_CheckRequest:
       description: Empty body for update_security_service_check action
       properties:
@@ -7107,45 +6888,17 @@ components:
       type: object
       x-openstack:
         action-name: update_security_service_check
-    Share_NetworksActionUpdate_Security_Service_CheckResponse:
-      description: Response of the 
-        share-networks/id/action:post:update_security_service_check action
-      type: object
-      x-openstack:
-        action-name: update_security_service_check
     Share_NetworksCreateRequest:
       description: Request of the share-networks:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_NetworksCreateResponse:
-      description: Response of the share-networks:post operation
-      type: object
-    Share_NetworksDetailResponse:
-      description: Response of the share-networks/detail:get operation
-      type: object
-    Share_NetworksListResponse:
-      description: Response of the share-networks:get operation
-      type: object
-    Share_NetworksSubnetShowResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/share_network_subnet_id:get 
-        operation
-      type: object
     Share_NetworksSubnetsCreateRequest:
       description: Request of the share-networks/share_network_id/subnets:post 
         operation
       type: object
       x-openstack:
         action-name: create
-    Share_NetworksSubnetsCreateResponse:
-      description: Response of the share-networks/share_network_id/subnets:post 
-        operation
-      type: object
-    Share_NetworksSubnetsListResponse:
-      description: Response of the share-networks/share_network_id/subnets:get 
-        operation
-      type: object
     Share_NetworksSubnetsMetadataCreate_MetadataRequest:
       description: Request of the 
         share-networks/share_network_id/subnets/resource_id/metadata:post 
@@ -7153,21 +6906,6 @@ components:
       type: object
       x-openstack:
         action-name: create_metadata
-    Share_NetworksSubnetsMetadataCreate_MetadataResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/resource_id/metadata:post 
-        operation
-      type: object
-    Share_NetworksSubnetsMetadataList_MetadataResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/resource_id/metadata:get 
-        operation
-      type: object
-    Share_NetworksSubnetsMetadataShow_MetadataResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/resource_id/metadata/key:get 
-        operation
-      type: object
     Share_NetworksSubnetsMetadataUpdate_All_MetadataRequest:
       description: Request of the 
         share-networks/share_network_id/subnets/resource_id/metadata:put 
@@ -7175,11 +6913,6 @@ components:
       type: object
       x-openstack:
         action-name: update_all_metadata
-    Share_NetworksSubnetsMetadataUpdate_All_MetadataResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/resource_id/metadata:put 
-        operation
-      type: object
     Share_NetworksSubnetsMetadataUpdate_Metadata_ItemRequest:
       description: Request of the 
         share-networks/share_network_id/subnets/resource_id/metadata/key:post 
@@ -7187,25 +6920,11 @@ components:
       type: object
       x-openstack:
         action-name: update_metadata_item
-    Share_NetworksSubnetsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the 
-        share-networks/share_network_id/subnets/resource_id/metadata/key:post 
-        operation
-      type: object
-    Share_ReplicaShowResponse:
-      description: Response of the share-replicas/id:get operation
-      type: object
     Share_ReplicasActionForce_DeleteRequest:
       description: Empty body for force_delete action
       properties:
         force_delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: force_delete
-    Share_ReplicasActionForce_DeleteResponse:
-      description: Response of the share-replicas/id/action:post:force_delete 
-        action
       type: object
       x-openstack:
         action-name: force_delete
@@ -7217,22 +6936,11 @@ components:
       type: object
       x-openstack:
         action-name: promote
-    Share_ReplicasActionPromoteResponse:
-      description: Response of the share-replicas/id/action:post:promote action
-      type: object
-      x-openstack:
-        action-name: promote
     Share_ReplicasActionReset_Replica_StateRequest:
       description: Empty body for reset_replica_state action
       properties:
         reset_replica_state:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: reset_replica_state
-    Share_ReplicasActionReset_Replica_StateResponse:
-      description: Response of the 
-        share-replicas/id/action:post:reset_replica_state action
       type: object
       x-openstack:
         action-name: reset_replica_state
@@ -7244,12 +6952,6 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_ReplicasActionReset_StatusResponse:
-      description: Response of the share-replicas/id/action:post:reset_status 
-        action
-      type: object
-      x-openstack:
-        action-name: reset_status
     Share_ReplicasActionResyncRequest:
       description: Empty body for resync action
       properties:
@@ -7258,86 +6960,34 @@ components:
       type: object
       x-openstack:
         action-name: resync
-    Share_ReplicasActionResyncResponse:
-      description: Response of the share-replicas/id/action:post:resync action
-      type: object
-      x-openstack:
-        action-name: resync
     Share_ReplicasCreateRequest:
       description: Request of the share-replicas:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_ReplicasCreateResponse:
-      description: Response of the share-replicas:post operation
-      type: object
-    Share_ReplicasDetailResponse:
-      description: Response of the share-replicas/detail:get operation
-      type: object
-    Share_ReplicasExport_LocationShowResponse:
-      description: Response of the 
-        share-replicas/share_replica_id/export-locations/export_location_uuid:get
-        operation
-      type: object
-    Share_ReplicasExport_LocationsListResponse:
-      description: Response of the 
-        share-replicas/share_replica_id/export-locations:get operation
-      type: object
-    Share_ReplicasListResponse:
-      description: Response of the share-replicas:get operation
-      type: object
     Share_ReplicasMetadataCreate_MetadataRequest:
       description: Request of the share-replicas/resource_id/metadata:post 
         operation
       type: object
       x-openstack:
         action-name: create_metadata
-    Share_ReplicasMetadataCreate_MetadataResponse:
-      description: Response of the share-replicas/resource_id/metadata:post 
-        operation
-      type: object
-    Share_ReplicasMetadataList_MetadataResponse:
-      description: Response of the share-replicas/resource_id/metadata:get 
-        operation
-      type: object
-    Share_ReplicasMetadataShow_MetadataResponse:
-      description: Response of the share-replicas/resource_id/metadata/key:get 
-        operation
-      type: object
     Share_ReplicasMetadataUpdate_All_MetadataRequest:
       description: Request of the share-replicas/resource_id/metadata:put 
         operation
       type: object
       x-openstack:
         action-name: update_all_metadata
-    Share_ReplicasMetadataUpdate_All_MetadataResponse:
-      description: Response of the share-replicas/resource_id/metadata:put 
-        operation
-      type: object
     Share_ReplicasMetadataUpdate_Metadata_ItemRequest:
       description: Request of the share-replicas/resource_id/metadata/key:post 
         operation
       type: object
       x-openstack:
         action-name: update_metadata_item
-    Share_ReplicasMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the share-replicas/resource_id/metadata/key:post 
-        operation
-      type: object
-    Share_ServerShowResponse:
-      description: Response of the share-servers/id:get operation
-      type: object
     Share_ServersActionMigration_CancelRequest:
       description: Empty body for migration_cancel action
       properties:
         migration_cancel:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_cancel
-    Share_ServersActionMigration_CancelResponse:
-      description: Response of the share-servers/id/action:post:migration_cancel
-        action
       type: object
       x-openstack:
         action-name: migration_cancel
@@ -7349,23 +6999,11 @@ components:
       type: object
       x-openstack:
         action-name: migration_check
-    Share_ServersActionMigration_CheckResponse:
-      description: Response of the share-servers/id/action:post:migration_check 
-        action
-      type: object
-      x-openstack:
-        action-name: migration_check
     Share_ServersActionMigration_CompleteRequest:
       description: Empty body for migration_complete action
       properties:
         migration_complete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_complete
-    Share_ServersActionMigration_CompleteResponse:
-      description: Response of the 
-        share-servers/id/action:post:migration_complete action
       type: object
       x-openstack:
         action-name: migration_complete
@@ -7377,23 +7015,11 @@ components:
       type: object
       x-openstack:
         action-name: migration_get_progress
-    Share_ServersActionMigration_Get_ProgressResponse:
-      description: Response of the 
-        share-servers/id/action:post:migration_get_progress action
-      type: object
-      x-openstack:
-        action-name: migration_get_progress
     Share_ServersActionMigration_StartRequest:
       description: Empty body for migration_start action
       properties:
         migration_start:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: migration_start
-    Share_ServersActionMigration_StartResponse:
-      description: Response of the share-servers/id/action:post:migration_start 
-        action
       type: object
       x-openstack:
         action-name: migration_start
@@ -7405,23 +7031,11 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Share_ServersActionReset_StatusResponse:
-      description: Response of the share-servers/id/action:post:reset_status 
-        action
-      type: object
-      x-openstack:
-        action-name: reset_status
     Share_ServersActionReset_Task_StateRequest:
       description: Empty body for reset_task_state action
       properties:
         reset_task_state:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: reset_task_state
-    Share_ServersActionReset_Task_StateResponse:
-      description: Response of the share-servers/id/action:post:reset_task_state
-        action
       type: object
       x-openstack:
         action-name: reset_task_state
@@ -7433,60 +7047,26 @@ components:
       type: object
       x-openstack:
         action-name: unmanage
-    Share_ServersActionUnmanageResponse:
-      description: Response of the share-servers/id/action:post:unmanage action
-      type: object
-      x-openstack:
-        action-name: unmanage
-    Share_ServersDetailsResponse:
-      description: Response of the share-servers/id/details:get operation
-      type: object
-    Share_ServersListResponse:
-      description: Response of the share-servers:get operation
-      type: object
     Share_ServersManageManageRequest:
       description: Request of the share-servers/manage:post operation
       type: object
       x-openstack:
         action-name: manage
-    Share_ServersManageResponse:
-      description: Response of the share-servers/manage:post operation
-      type: object
-    Share_TransferShowResponse:
-      description: Response of the share-transfers/id:get operation
-      type: object
     Share_TransfersAcceptAcceptRequest:
       description: Request of the share-transfers/id/accept:post operation
       type: object
       x-openstack:
         action-name: accept
-    Share_TransfersAcceptResponse:
-      description: Response of the share-transfers/id/accept:post operation
-      type: object
     Share_TransfersCreateRequest:
       description: Request of the share-transfers:post operation
       type: object
       x-openstack:
         action-name: create
-    Share_TransfersCreateResponse:
-      description: Response of the share-transfers:post operation
-      type: object
-    Share_TransfersDetailResponse:
-      description: Response of the share-transfers/detail:get operation
-      type: object
-    Share_TransfersListResponse:
-      description: Response of the share-transfers:get operation
-      type: object
     SharesActionAccess_ListRequest:
       description: Empty body for access_list action
       properties:
         access_list:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: access_list
-    SharesActionAccess_ListResponse:
-      description: Response of the shares/id/action:post:access_list action
       type: object
       x-openstack:
         action-name: access_list
@@ -7498,21 +7078,11 @@ components:
       type: object
       x-openstack:
         action-name: allow_access
-    SharesActionAllow_AccessResponse:
-      description: Response of the shares/id/action:post:allow_access action
-      type: object
-      x-openstack:
-        action-name: allow_access
     SharesActionDeny_AccessRequest:
       description: Empty body for deny_access action
       properties:
         deny_access:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: deny_access
-    SharesActionDeny_AccessResponse:
-      description: Response of the shares/id/action:post:deny_access action
       type: object
       x-openstack:
         action-name: deny_access
@@ -7523,10 +7093,6 @@ components:
       x-openstack:
         action-name: extend
         discriminator: microversion
-    SharesActionExtendResponse:
-      type: 'null'
-      x-openstack:
-        action-name: extend
     SharesActionExtend_264:
       additionalProperties: false
       properties:
@@ -7580,7 +7146,6 @@ components:
       type: object
       x-openstack:
         action-name: extend
-        max-ver: '2.63'
         min-ver: '2.64'
     SharesActionExtend_27:
       additionalProperties: false
@@ -7630,14 +7195,6 @@ components:
         action-name: os-extend
         max-ver: '2.6'
         min-ver: '2.0'
-    SharesActionForce_DeleteResponse:
-      type: 'null'
-      x-openstack:
-        action-name: force_delete
-    SharesActionMigration_CancelResponse:
-      type: 'null'
-      x-openstack:
-        action-name: migration_cancel
     SharesActionMigration_Cancel_222:
       additionalProperties: false
       properties:
@@ -7648,10 +7205,6 @@ components:
       x-openstack:
         action-name: migration_cancel
         min-ver: '2.22'
-    SharesActionMigration_CompleteResponse:
-      type: 'null'
-      x-openstack:
-        action-name: migration_complete
     SharesActionMigration_Complete_222:
       additionalProperties: false
       properties:
@@ -7662,7 +7215,23 @@ components:
       x-openstack:
         action-name: migration_complete
         min-ver: '2.22'
-    SharesActionMigration_Get_ProgressResponse:
+    SharesActionMigration_Get_ProgressResponse_222:
+      additionalProperties: false
+      properties:
+        task_state: {}
+        total_progress:
+          max: 100
+          min: 0
+          type: integer
+      required:
+        - task_state
+        - total_progress
+      type: object
+      x-openstack:
+        action-name: migration_get_progress
+        max-ver: '2.58'
+        min-ver: '2.22'
+    SharesActionMigration_Get_ProgressResponse_259:
       additionalProperties: false
       properties:
         details: {}
@@ -7678,6 +7247,7 @@ components:
       type: object
       x-openstack:
         action-name: migration_get_progress
+        min-ver: '2.59'
     SharesActionMigration_Get_Progress_222:
       additionalProperties: false
       properties:
@@ -7688,10 +7258,6 @@ components:
       x-openstack:
         action-name: migration_get_progress
         min-ver: '2.22'
-    SharesActionMigration_StartResponse:
-      type: 'null'
-      x-openstack:
-        action-name: migration_start
     SharesActionMigration_Start_229:
       additionalProperties: false
       properties:
@@ -7884,21 +7450,11 @@ components:
       type: object
       x-openstack:
         action-name: os-access_list
-    SharesActionOs-Access_ListResponse:
-      description: Response of the shares/id/action:post:os-access_list action
-      type: object
-      x-openstack:
-        action-name: os-access_list
     SharesActionOs-Allow_AccessRequest:
       description: Empty body for os-allow_access action
       properties:
         os-allow_access:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-allow_access
-    SharesActionOs-Allow_AccessResponse:
-      description: Response of the shares/id/action:post:os-allow_access action
       type: object
       x-openstack:
         action-name: os-allow_access
@@ -7910,35 +7466,6 @@ components:
       type: object
       x-openstack:
         action-name: os-deny_access
-    SharesActionOs-Deny_AccessResponse:
-      description: Response of the shares/id/action:post:os-deny_access action
-      type: object
-      x-openstack:
-        action-name: os-deny_access
-    SharesActionOs-ExtendResponse:
-      type: 'null'
-      x-openstack:
-        action-name: os-extend
-    SharesActionOs-Force_DeleteResponse:
-      type: 'null'
-      x-openstack:
-        action-name: os-force_delete
-    SharesActionOs-Reset_StatusResponse:
-      type: 'null'
-      x-openstack:
-        action-name: os-reset_status
-    SharesActionOs-ShrinkResponse:
-      type: 'null'
-      x-openstack:
-        action-name: os-shrink
-    SharesActionReset_StatusResponse:
-      type: 'null'
-      x-openstack:
-        action-name: reset_status
-    SharesActionReset_Task_StateResponse:
-      type: 'null'
-      x-openstack:
-        action-name: reset_task_state
     SharesActionReset_Task_State_222:
       additionalProperties: false
       properties:
@@ -7993,14 +7520,6 @@ components:
       x-openstack:
         action-name: reset_task_state
         min-ver: '2.22'
-    SharesActionRestoreResponse:
-      type: 'null'
-      x-openstack:
-        action-name: restore
-    SharesActionRevertResponse:
-      type: 'null'
-      x-openstack:
-        action-name: revert
     SharesActionRevert_227:
       additionalProperties: false
       properties:
@@ -8234,10 +7753,6 @@ components:
       x-openstack:
         action-name: soft_delete
         min-ver: '2.69'
-    SharesActionShrinkResponse:
-      type: 'null'
-      x-openstack:
-        action-name: shrink
     SharesActionShrink_27:
       additionalProperties: false
       properties:
@@ -8285,14 +7800,6 @@ components:
         action-name: os-shrink
         max-ver: '2.6'
         min-ver: '2.0'
-    SharesActionSoft_DeleteResponse:
-      type: 'null'
-      x-openstack:
-        action-name: soft_delete
-    SharesActionUnmanageResponse:
-      type: 'null'
-      x-openstack:
-        action-name: unmanage
     SharesActionUnmanage_27:
       additionalProperties: false
       properties:
@@ -8308,13 +7815,7 @@ components:
       type: object
       x-openstack:
         action-name: create
-    SharesCreateResponse:
-      description: Response of the shares:post operation
-      type: object
-    SharesDetailResponse:
-      description: Response of the shares/detail:get operation
-      type: object
-    SharesExport_LocationShowResponse:
+    SharesExport_LocationShowResponse_214:
       additionalProperties: false
       properties:
         export_location:
@@ -8365,7 +7866,174 @@ components:
       required:
         - export_location
       type: object
-    SharesExport_LocationsListResponse:
+      x-openstack:
+        max-ver: '2.86'
+        min-ver: '2.14'
+    SharesExport_LocationShowResponse_247:
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          properties:
+            created_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: created_at
+            id:
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: export_location_id
+            is_admin_only:
+              type: boolean
+              x-openstack:
+                apiref: export_location_is_admin_only
+            path:
+              type: string
+              x-openstack:
+                apiref: export_location_path
+            preferred:
+              type: boolean
+              x-openstack:
+                apiref: export_location_preferred
+            share_instance_id:
+              type: string
+              x-openstack:
+                apiref: share_instance_id
+            updated_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: updated_at
+          required:
+            - created_at
+            - id
+            - path
+            - preferred
+            - updated_at
+          type: object
+          x-openstack:
+            apiref: export_location
+      required:
+        - export_location
+      type: object
+      x-openstack:
+        min-ver: '2.47'
+    SharesExport_LocationShowResponse_287:
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          properties:
+            created_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: created_at
+            id:
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: export_location_id
+            is_admin_only:
+              type: boolean
+              x-openstack:
+                apiref: export_location_is_admin_only
+            metadata:
+              additionalProperties: false
+              patternProperties:
+                ^[a-zA-Z0-9-_:. ]{1,255}$:
+                  type: string
+              type:
+                - 'null'
+                - object
+            path:
+              type: string
+              x-openstack:
+                apiref: export_location_path
+            preferred:
+              type: boolean
+              x-openstack:
+                apiref: export_location_preferred
+            share_instance_id:
+              type: string
+              x-openstack:
+                apiref: share_instance_id
+            updated_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: updated_at
+          required:
+            - created_at
+            - id
+            - metadata
+            - path
+            - preferred
+            - updated_at
+          type: object
+          x-openstack:
+            apiref: export_location
+      required:
+        - export_location
+      type: object
+      x-openstack:
+        min-ver: '2.87'
+    SharesExport_LocationShowResponse_29:
+      additionalProperties: false
+      properties:
+        export_location:
+          additionalProperties: false
+          properties:
+            created_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: created_at
+            id:
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: export_location_id
+            is_admin_only:
+              type: boolean
+              x-openstack:
+                apiref: export_location_is_admin_only
+            path:
+              type: string
+              x-openstack:
+                apiref: export_location_path
+            share_instance_id:
+              type: string
+              x-openstack:
+                apiref: share_instance_id
+            updated_at:
+              format: date-time
+              readonly: true
+              type: string
+              x-openstack:
+                apiref: updated_at
+          required:
+            - created_at
+            - id
+            - path
+            - updated_at
+          type: object
+          x-openstack:
+            apiref: export_location
+      required:
+        - export_location
+      type: object
+      x-openstack:
+        max-ver: '2.13'
+        min-ver: '2.9'
+    SharesExport_LocationsIndexResponse_214:
       additionalProperties: false
       properties:
         export_locations:
@@ -8403,7 +8071,128 @@ components:
       type: object
       x-openstack:
         apiref: export_locations
-    SharesExport_LocationsMetadataCreate_MetadataResponse:
+        max-ver: '2.86'
+        min-ver: '2.14'
+    SharesExport_LocationsIndexResponse_247:
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+                x-openstack:
+                  apiref: export_location_id
+              is_admin_only:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_is_admin_only
+              path:
+                type: string
+                x-openstack:
+                  apiref: export_location_path
+              preferred:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_preferred
+              share_instance_id:
+                type: string
+                x-openstack:
+                  apiref: share_instance_id
+            required:
+              - id
+              - path
+              - preferred
+            type: object
+          type: array
+      required:
+        - export_locations
+      type: object
+      x-openstack:
+        apiref: export_locations
+        min-ver: '2.47'
+    SharesExport_LocationsIndexResponse_287:
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+                x-openstack:
+                  apiref: export_location_id
+              is_admin_only:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_is_admin_only
+              metadata:
+                patternProperties:
+                  ^[a-zA-Z0-9-_:. ]{1,255}$:
+                    type: string
+                type: object
+              path:
+                type: string
+                x-openstack:
+                  apiref: export_location_path
+              preferred:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_preferred
+              share_instance_id:
+                type: string
+                x-openstack:
+                  apiref: share_instance_id
+            required:
+              - id
+              - metadata
+              - path
+              - preferred
+            type: object
+          type: array
+      required:
+        - export_locations
+      type: object
+      x-openstack:
+        apiref: export_locations
+        min-ver: '2.87'
+    SharesExport_LocationsIndexResponse_29:
+      additionalProperties: false
+      properties:
+        export_locations:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+                x-openstack:
+                  apiref: export_location_id
+              is_admin_only:
+                type: boolean
+                x-openstack:
+                  apiref: export_location_is_admin_only
+              path:
+                type: string
+                x-openstack:
+                  apiref: export_location_path
+              share_instance_id:
+                type: string
+                x-openstack:
+                  apiref: share_instance_id
+            required:
+              - id
+              - path
+            type: object
+          type: array
+      required:
+        - export_locations
+      type: object
+      x-openstack:
+        apiref: export_locations
+        max-ver: '2.13'
+        min-ver: '2.9'
+    SharesExport_LocationsMetadataCreate_MetadataResponse_287:
       additionalProperties: false
       properties:
         metadata:
@@ -8417,6 +8206,8 @@ components:
       required:
         - metadata
       type: object
+      x-openstack:
+        min-ver: '2.87'
     SharesExport_LocationsMetadataCreate_Metadata_287:
       additionalProperties: false
       properties:
@@ -8433,7 +8224,7 @@ components:
       type: object
       x-openstack:
         min-ver: '2.87'
-    SharesExport_LocationsMetadataList_MetadataResponse:
+    SharesExport_LocationsMetadataIndex_MetadataResponse_287:
       additionalProperties: false
       properties:
         meta:
@@ -8447,7 +8238,9 @@ components:
       required:
         - meta
       type: object
-    SharesExport_LocationsMetadataShow_MetadataResponse:
+      x-openstack:
+        min-ver: '2.87'
+    SharesExport_LocationsMetadataShow_MetadataResponse_287:
       additionalProperties: false
       properties:
         meta:
@@ -8461,7 +8254,9 @@ components:
       required:
         - meta
       type: object
-    SharesExport_LocationsMetadataUpdate_All_MetadataResponse:
+      x-openstack:
+        min-ver: '2.87'
+    SharesExport_LocationsMetadataUpdate_All_MetadataResponse_287:
       additionalProperties: false
       properties:
         metadata:
@@ -8475,6 +8270,8 @@ components:
       required:
         - metadata
       type: object
+      x-openstack:
+        min-ver: '2.87'
     SharesExport_LocationsMetadataUpdate_All_Metadata_287:
       additionalProperties: true
       properties:
@@ -8491,7 +8288,7 @@ components:
       type: object
       x-openstack:
         min-ver: '2.87'
-    SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse:
+    SharesExport_LocationsMetadataUpdate_Metadata_ItemResponse_287:
       additionalProperties: false
       properties:
         metadata:
@@ -8505,6 +8302,8 @@ components:
       required:
         - metadata
       type: object
+      x-openstack:
+        min-ver: '2.87'
     SharesExport_LocationsMetadataUpdate_Metadata_Item_287:
       additionalProperties: true
       properties:
@@ -8521,52 +8320,306 @@ components:
       type: object
       x-openstack:
         min-ver: '2.87'
-    SharesInstancesGet_Share_InstancesResponse:
-      description: Response of the shares/share_id/instances:get operation
-      type: object
-    SharesListResponse:
-      description: Response of the shares:get operation
-      type: object
     SharesManageManageRequest:
       description: Request of the shares/manage:post operation
       type: object
       x-openstack:
         action-name: manage
-    SharesManageResponse:
-      description: Response of the shares/manage:post operation
-      type: object
     SharesMetadataCreate_MetadataRequest:
       description: Request of the shares/resource_id/metadata:post operation
       type: object
       x-openstack:
         action-name: create_metadata
-    SharesMetadataCreate_MetadataResponse:
-      description: Response of the shares/resource_id/metadata:post operation
-      type: object
-    SharesMetadataList_MetadataResponse:
-      description: Response of the shares/resource_id/metadata:get operation
-      type: object
-    SharesMetadataShow_MetadataResponse:
-      description: Response of the shares/resource_id/metadata/key:get operation
-      type: object
     SharesMetadataUpdate_All_MetadataRequest:
       description: Request of the shares/resource_id/metadata:put operation
       type: object
       x-openstack:
         action-name: update_all_metadata
-    SharesMetadataUpdate_All_MetadataResponse:
-      description: Response of the shares/resource_id/metadata:put operation
-      type: object
     SharesMetadataUpdate_Metadata_ItemRequest:
       description: Request of the shares/resource_id/metadata/key:post operation
       type: object
       x-openstack:
         action-name: update_metadata_item
-    SharesMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the shares/resource_id/metadata/key:post 
-        operation
+    SnapshotShowResponse_20:
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              type: string
+            description:
+              description: "The user defined description of the resource.\n"
+              type:
+                - 'null'
+                - string
+            id:
+              description: "The UUID of the snapshot.\n"
+              type:
+                - integer
+                - string
+            links:
+              items:
+                additionalProperties: false
+                properties:
+                  href:
+                    format: uri
+                    type: string
+                  rel:
+                    enum:
+                      - bookmark
+                      - self
+                    type: string
+                required:
+                  - href
+                  - rel
+                type: object
+              type: array
+            name:
+              description: "The user defined name of the resource.\n"
+              type:
+                - 'null'
+                - string
+            share_id:
+              description: "The UUID of the source share that was used to\ncreate
+                the snapshot.\n"
+              type: string
+            share_proto:
+              description: "The file system protocol of a share snapshot. A\nvalid
+                value is ``NFS``, ``CIFS``, ``GlusterFS``, ``HDFS``,\n``CephFS`` or
+                ``MAPRFS``. ``CephFS`` is supported starting\nwith API v2.13.\n"
+              type: string
+            share_size:
+              description: "The share snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            size:
+              description: "The snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            status:
+              description: "The snapshot status, which can be ``available``,\n``error``,
+                ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
+                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+              type: string
+          required:
+            - created_at
+            - description
+            - id
+            - links
+            - name
+            - share_id
+            - share_proto
+            - share_size
+            - size
+            - status
+          type: object
+      required:
+        - snapshot
       type: object
-    SnapshotShowResponse:
+      x-openstack:
+        max-ver: '2.11'
+        min-ver: '2.0'
+    SnapshotShowResponse_212:
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              type: string
+            description:
+              description: "The user defined description of the resource.\n"
+              type:
+                - 'null'
+                - string
+            id:
+              description: "The UUID of the snapshot.\n"
+              type:
+                - integer
+                - string
+            links:
+              items:
+                additionalProperties: false
+                properties:
+                  href:
+                    format: uri
+                    type: string
+                  rel:
+                    enum:
+                      - bookmark
+                      - self
+                    type: string
+                required:
+                  - href
+                  - rel
+                type: object
+              type: array
+            name:
+              description: "The user defined name of the resource.\n"
+              type:
+                - 'null'
+                - string
+            provider_location:
+              description: "Provider location of the snapshot on the backend.\n"
+              type:
+                - 'null'
+                - string
+            share_id:
+              description: "The UUID of the source share that was used to\ncreate
+                the snapshot.\n"
+              type: string
+            share_proto:
+              description: "The file system protocol of a share snapshot. A\nvalid
+                value is ``NFS``, ``CIFS``, ``GlusterFS``, ``HDFS``,\n``CephFS`` or
+                ``MAPRFS``. ``CephFS`` is supported starting\nwith API v2.13.\n"
+              type: string
+            share_size:
+              description: "The share snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            size:
+              description: "The snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            status:
+              description: "The snapshot status, which can be ``available``,\n``error``,
+                ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
+                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+              type: string
+          required:
+            - created_at
+            - description
+            - id
+            - links
+            - name
+            - share_id
+            - share_proto
+            - share_size
+            - size
+            - status
+          type: object
+      required:
+        - snapshot
+      type: object
+      x-openstack:
+        max-ver: '2.16'
+        min-ver: '2.12'
+    SnapshotShowResponse_217:
+      additionalProperties: false
+      properties:
+        snapshot:
+          additionalProperties: false
+          properties:
+            created_at:
+              description: "The date and time stamp when the resource was created
+                within the service's\ndatabase.\n\nThe date and time stamp format
+                is `ISO 8601\n<https://en.wikipedia.org/wiki/ISO_8601>`_:\n\n::\n\n\
+                \   CCYY-MM-DDThh:mm:ss±hh:mm\n\nThe ``±hh:mm`` value, if included,
+                returns the time zone as an\noffset from UTC.\n\nFor example, ``2019-03-27T09:49:58-05:00``.\n"
+              type: string
+            description:
+              description: "The user defined description of the resource.\n"
+              type:
+                - 'null'
+                - string
+            id:
+              description: "The UUID of the snapshot.\n"
+              type:
+                - integer
+                - string
+            links:
+              items:
+                additionalProperties: false
+                properties:
+                  href:
+                    format: uri
+                    type: string
+                  rel:
+                    enum:
+                      - bookmark
+                      - self
+                    type: string
+                required:
+                  - href
+                  - rel
+                type: object
+              type: array
+            name:
+              description: "The user defined name of the resource.\n"
+              type:
+                - 'null'
+                - string
+            project_id:
+              description: "ID of the project that the snapshot belongs to.\n"
+              type: string
+            provider_location:
+              description: "Provider location of the snapshot on the backend.\n"
+              type:
+                - 'null'
+                - string
+            share_id:
+              description: "The UUID of the source share that was used to\ncreate
+                the snapshot.\n"
+              type: string
+            share_proto:
+              description: "The file system protocol of a share snapshot. A\nvalid
+                value is ``NFS``, ``CIFS``, ``GlusterFS``, ``HDFS``,\n``CephFS`` or
+                ``MAPRFS``. ``CephFS`` is supported starting\nwith API v2.13.\n"
+              type: string
+            share_size:
+              description: "The share snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            size:
+              description: "The snapshot size, in GiBs.\n"
+              type:
+                - integer
+                - 'null'
+            status:
+              description: "The snapshot status, which can be ``available``,\n``error``,
+                ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
+                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+              type: string
+            user_id:
+              description: "ID of the user that the snapshot was created by.\n"
+              type: string
+          required:
+            - created_at
+            - description
+            - id
+            - links
+            - name
+            - project_id
+            - share_id
+            - share_proto
+            - share_size
+            - size
+            - status
+            - user_id
+          type: object
+      required:
+        - snapshot
+      type: object
+      x-openstack:
+        max-ver: '2.72'
+        min-ver: '2.17'
+    SnapshotShowResponse_273:
       additionalProperties: false
       properties:
         snapshot:
@@ -8669,17 +8722,13 @@ components:
       required:
         - snapshot
       type: object
+      x-openstack:
+        min-ver: '2.73'
     SnapshotUpdateRequest:
       description: Request of the snapshots/id:put operation
       type: object
       x-openstack:
         action-name: update
-    SnapshotUpdateResponse:
-      description: Response of the snapshots/id:put operation
-      type: object
-    Snapshot_InstanceShowResponse:
-      description: Response of the snapshot-instances/id:get operation
-      type: object
     Snapshot_InstancesActionReset_StatusRequest:
       description: Empty body for reset_status action
       properties:
@@ -8688,41 +8737,11 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    Snapshot_InstancesActionReset_StatusResponse:
-      description: Response of the 
-        snapshot-instances/id/action:post:reset_status action
-      type: object
-      x-openstack:
-        action-name: reset_status
-    Snapshot_InstancesDetailResponse:
-      description: Response of the snapshot-instances/detail:get operation
-      type: object
-    Snapshot_InstancesExport_LocationShowResponse:
-      description: Response of the 
-        snapshot-instances/snapshot_instance_id/export-locations/export_location_id:get
-        operation
-      type: object
-    Snapshot_InstancesExport_LocationsListResponse:
-      description: Response of the 
-        snapshot-instances/snapshot_instance_id/export-locations:get operation
-      type: object
-    Snapshot_InstancesListResponse:
-      description: Response of the snapshot-instances:get operation
-      type: object
-    SnapshotsAccess_ListResponse:
-      description: Response of the snapshots/snapshot_id/access-list:get 
-        operation
-      type: object
     SnapshotsActionAllow_AccessRequest:
       description: Empty body for allow_access action
       properties:
         allow_access:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: allow_access
-    SnapshotsActionAllow_AccessResponse:
-      description: Response of the snapshots/id/action:post:allow_access action
       type: object
       x-openstack:
         action-name: allow_access
@@ -8734,21 +8753,11 @@ components:
       type: object
       x-openstack:
         action-name: deny_access
-    SnapshotsActionDeny_AccessResponse:
-      description: Response of the snapshots/id/action:post:deny_access action
-      type: object
-      x-openstack:
-        action-name: deny_access
     SnapshotsActionForce_DeleteRequest:
       description: Empty body for force_delete action
       properties:
         force_delete:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: force_delete
-    SnapshotsActionForce_DeleteResponse:
-      description: Response of the snapshots/id/action:post:force_delete action
       type: object
       x-openstack:
         action-name: force_delete
@@ -8760,23 +8769,11 @@ components:
       type: object
       x-openstack:
         action-name: os-force_delete
-    SnapshotsActionOs-Force_DeleteResponse:
-      description: Response of the snapshots/id/action:post:os-force_delete 
-        action
-      type: object
-      x-openstack:
-        action-name: os-force_delete
     SnapshotsActionOs-Reset_StatusRequest:
       description: Empty body for os-reset_status action
       properties:
         os-reset_status:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: os-reset_status
-    SnapshotsActionOs-Reset_StatusResponse:
-      description: Response of the snapshots/id/action:post:os-reset_status 
-        action
       type: object
       x-openstack:
         action-name: os-reset_status
@@ -8788,11 +8785,6 @@ components:
       type: object
       x-openstack:
         action-name: reset_status
-    SnapshotsActionReset_StatusResponse:
-      description: Response of the snapshots/id/action:post:reset_status action
-      type: object
-      x-openstack:
-        action-name: reset_status
     SnapshotsActionUnmanageRequest:
       description: Empty body for unmanage action
       properties:
@@ -8801,31 +8793,12 @@ components:
       type: object
       x-openstack:
         action-name: unmanage
-    SnapshotsActionUnmanageResponse:
-      description: Response of the snapshots/id/action:post:unmanage action
-      type: object
-      x-openstack:
-        action-name: unmanage
     SnapshotsCreateRequest:
       description: Request of the snapshots:post operation
       type: object
       x-openstack:
         action-name: create
-    SnapshotsCreateResponse:
-      description: Response of the snapshots:post operation
-      type: object
-    SnapshotsDetailResponse:
-      description: Response of the snapshots/detail:get operation
-      type: object
-    SnapshotsExport_LocationShowResponse:
-      description: Response of the 
-        snapshots/snapshot_id/export-locations/export_location_id:get operation
-      type: object
-    SnapshotsExport_LocationsListResponse:
-      description: Response of the snapshots/snapshot_id/export-locations:get 
-        operation
-      type: object
-    SnapshotsListResponse:
+    SnapshotsIndexResponse_20:
       additionalProperties: false
       properties:
         count:
@@ -8887,57 +8860,226 @@ components:
       required:
         - snapshots
       type: object
+      x-openstack:
+        max-ver: '2.35'
+        min-ver: '2.0'
+    SnapshotsIndexResponse_236:
+      additionalProperties: false
+      properties:
+        count:
+          minimum: 0
+          type: integer
+        share_snapshots_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+        snapshots:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: The UUID of the snapshot.
+                type:
+                  - integer
+                  - string
+              links:
+                items:
+                  additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      enum:
+                        - bookmark
+                        - self
+                      type: string
+                  required:
+                    - href
+                    - rel
+                  type: object
+                type: array
+              name:
+                description: The user-defined name of the snapshot.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - links
+              - name
+            type: object
+          type: array
+      required:
+        - snapshots
+      type: object
+      x-openstack:
+        max-ver: '2.72'
+        min-ver: '2.36'
+    SnapshotsIndexResponse_273:
+      additionalProperties: false
+      properties:
+        count:
+          minimum: 0
+          type: integer
+        share_snapshots_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+        snapshots:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: The UUID of the snapshot.
+                type:
+                  - integer
+                  - string
+              links:
+                items:
+                  additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      enum:
+                        - bookmark
+                        - self
+                      type: string
+                  required:
+                    - href
+                    - rel
+                  type: object
+                type: array
+              name:
+                description: The user-defined name of the snapshot.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - links
+              - name
+            type: object
+          type: array
+      required:
+        - snapshots
+      type: object
+      x-openstack:
+        max-ver: '2.78'
+        min-ver: '2.73'
+    SnapshotsIndexResponse_279:
+      additionalProperties: false
+      properties:
+        count:
+          minimum: 0
+          type: integer
+        share_snapshots_links:
+          items:
+            additionalProperties: false
+            properties:
+              href:
+                format: uri
+                type: string
+              rel:
+                const: next
+            required:
+              - href
+              - rel
+            type: object
+          maxItems: 1
+          minItems: 1
+          type: array
+        snapshots:
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                description: The UUID of the snapshot.
+                type:
+                  - integer
+                  - string
+              links:
+                items:
+                  additionalProperties: false
+                  properties:
+                    href:
+                      format: uri
+                      type: string
+                    rel:
+                      enum:
+                        - bookmark
+                        - self
+                      type: string
+                  required:
+                    - href
+                    - rel
+                  type: object
+                type: array
+              name:
+                description: The user-defined name of the snapshot.
+                type:
+                  - 'null'
+                  - string
+            required:
+              - id
+              - links
+              - name
+            type: object
+          type: array
+      required:
+        - snapshots
+      type: object
+      x-openstack:
+        min-ver: '2.79'
     SnapshotsManageManageRequest:
       description: Request of the snapshots/manage:post operation
       type: object
       x-openstack:
         action-name: manage
-    SnapshotsManageResponse:
-      description: Response of the snapshots/manage:post operation
-      type: object
     SnapshotsMetadataCreate_MetadataRequest:
       description: Request of the snapshots/resource_id/metadata:post operation
       type: object
       x-openstack:
         action-name: create_metadata
-    SnapshotsMetadataCreate_MetadataResponse:
-      description: Response of the snapshots/resource_id/metadata:post operation
-      type: object
-    SnapshotsMetadataList_MetadataResponse:
-      description: Response of the snapshots/resource_id/metadata:get operation
-      type: object
-    SnapshotsMetadataShow_MetadataResponse:
-      description: Response of the snapshots/resource_id/metadata/key:get 
-        operation
-      type: object
     SnapshotsMetadataUpdate_All_MetadataRequest:
       description: Request of the snapshots/resource_id/metadata:put operation
       type: object
       x-openstack:
         action-name: update_all_metadata
-    SnapshotsMetadataUpdate_All_MetadataResponse:
-      description: Response of the snapshots/resource_id/metadata:put operation
-      type: object
     SnapshotsMetadataUpdate_Metadata_ItemRequest:
       description: Request of the snapshots/resource_id/metadata/key:post 
         operation
       type: object
       x-openstack:
         action-name: update_metadata_item
-    SnapshotsMetadataUpdate_Metadata_ItemResponse:
-      description: Response of the snapshots/resource_id/metadata/key:post 
-        operation
-      type: object
-    TypeShowResponse:
-      description: Response of the types/id:get operation
-      type: object
     TypeUpdateRequest:
       description: Request of the types/id:put operation
-      type: object
-      x-openstack:
-        action-name: update
-    TypeUpdateResponse:
-      description: Response of the types/id:put:update action
       type: object
       x-openstack:
         action-name: update
@@ -8949,21 +9091,11 @@ components:
       type: object
       x-openstack:
         action-name: addProjectAccess
-    TypesActionAddprojectaccessResponse:
-      description: Response of the types/id/action:post:addProjectAccess action
-      type: object
-      x-openstack:
-        action-name: addProjectAccess
     TypesActionCreateRequest:
       description: Empty body for create action
       properties:
         create:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: create
-    TypesActionCreateResponse:
-      description: Response of the types/id/action:post:create action
       type: object
       x-openstack:
         action-name: create
@@ -8975,22 +9107,11 @@ components:
       type: object
       x-openstack:
         action-name: delete
-    TypesActionDeleteResponse:
-      description: Response of the types/id/action:post:delete action
-      type: object
-      x-openstack:
-        action-name: delete
     TypesActionRemoveprojectaccessRequest:
       description: Empty body for removeProjectAccess action
       properties:
         removeProjectAccess:
           type: 'null'
-      type: object
-      x-openstack:
-        action-name: removeProjectAccess
-    TypesActionRemoveprojectaccessResponse:
-      description: Response of the types/id/action:post:removeProjectAccess 
-        action
       type: object
       x-openstack:
         action-name: removeProjectAccess
@@ -9002,55 +9123,21 @@ components:
       type: object
       x-openstack:
         action-name: update
-    TypesActionUpdateResponse:
-      description: Response of the types/id/action:post:update action
-      type: object
-      x-openstack:
-        action-name: update
     TypesCreateRequest:
       description: Request of the types:post operation
       type: object
       x-openstack:
         action-name: create
-    TypesCreateResponse:
-      description: Response of the types:post:create action
-      type: object
-      x-openstack:
-        action-name: create
-    TypesDefaultResponse:
-      description: Response of the types/default:get operation
-      type: object
-    TypesExtra_SpecShowResponse:
-      description: Response of the types/type_id/extra_specs/id:get operation
-      type: object
     TypesExtra_SpecUpdateRequest:
       description: Request of the types/type_id/extra_specs/id:put operation
       type: object
       x-openstack:
         action-name: update
-    TypesExtra_SpecUpdateResponse:
-      description: Response of the types/type_id/extra_specs/id:put operation
-      type: object
     TypesExtra_SpecsCreateRequest:
       description: Request of the types/type_id/extra_specs:post operation
       type: object
       x-openstack:
         action-name: create
-    TypesExtra_SpecsCreateResponse:
-      description: Response of the types/type_id/extra_specs:post operation
-      type: object
-    TypesExtra_SpecsListResponse:
-      description: Response of the types/type_id/extra_specs:get operation
-      type: object
-    TypesListResponse:
-      description: Response of the types:get operation
-      type: object
-    TypesOs_Share_Type_AccessOs-Share-Type-AccessResponse:
-      description: Response of the types/id/os-share-type-access:get operation
-      type: object
-    TypesShare_Type_AccessResponse:
-      description: Response of the types/id/share_type_access:get operation
-      type: object
   securitySchemes:
     ApiKeyAuth:
       in: header
