@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::project::tag::replace;
-use openstack_types::identity::v3::project::tag::response::replace::TagResponse;
+use openstack_types::identity::v3::project::tag::response;
 use tracing::warn;
 
 /// Modifies the tags for a project. Any existing tags not specified will be
@@ -161,7 +161,7 @@ impl TagCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TagResponse>(data)?;
+        op.output_list::<response::replace::TagResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

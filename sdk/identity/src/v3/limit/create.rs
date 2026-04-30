@@ -37,12 +37,12 @@ pub struct Limits<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The name of the domain.
+    /// The ID of the domain. Either this or the project ID must be supplied.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
-    /// The ID for the project.
+    /// The ID of the project. Either this or the domain ID must be supplied.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Option<Cow<'a, str>>>,

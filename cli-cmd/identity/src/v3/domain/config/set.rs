@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::set;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
-use openstack_types::identity::v3::domain::config::response::set::ConfigResponse;
+use openstack_types::identity::v3::domain::config::response;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use tracing::warn;
@@ -169,8 +169,9 @@ impl ConfigCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ConfigResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ConfigResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::auto_allocated_topology::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::auto_allocated_topology::response::list::AutoAllocatedTopologyResponse;
+use openstack_types::network::v2::auto_allocated_topology::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -129,7 +129,8 @@ impl AutoAllocatedTopologiesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AutoAllocatedTopologyResponse>(data)?;
+
+        op.output_list::<response::list::AutoAllocatedTopologyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

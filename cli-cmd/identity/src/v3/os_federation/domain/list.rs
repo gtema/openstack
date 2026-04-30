@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::domain::list;
-use openstack_types::identity::v3::os_federation::domain::response::list::DomainResponse;
+use openstack_types::identity::v3::os_federation::domain::response;
 
 /// Get possible domain scopes for token.
 ///
@@ -77,7 +77,8 @@ impl DomainsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<DomainResponse>(data)?;
+
+        op.output_list::<response::list::DomainResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

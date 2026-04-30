@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::snapshot_manage::create;
-use openstack_types::block_storage::v3::snapshot_manage::response::create::SnapshotManageResponse;
+use openstack_types::block_storage::v3::snapshot_manage::response;
 use serde_json::Value;
 
 /// Instruct Cinder to manage a storage snapshot object.
@@ -177,8 +177,9 @@ impl SnapshotManageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<SnapshotManageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::SnapshotManageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

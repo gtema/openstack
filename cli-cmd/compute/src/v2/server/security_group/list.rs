@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::security_group::list;
-use openstack_types::compute::v2::server::security_group::response::list::SecurityGroupResponse;
+use openstack_types::compute::v2::server::security_group::response;
 
 /// Lists security groups for a server.
 ///
@@ -90,7 +90,8 @@ impl SecurityGroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<SecurityGroupResponse>(data)?;
+
+        op.output_list::<response::list::SecurityGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

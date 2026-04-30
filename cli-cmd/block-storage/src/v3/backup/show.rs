@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::find;
 use openstack_sdk::api::find;
-use openstack_types::block_storage::v3::backup::response::get::BackupResponse;
+use openstack_types::block_storage::v3::backup::response;
 
 /// Return data about the given backup.
 #[derive(Args)]
@@ -82,7 +82,7 @@ impl BackupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<BackupResponse>(find_data)?;
+        op.output_single::<response::get::BackupResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -36,26 +36,15 @@ pub struct UserResponse {
     #[structable(wide)]
     pub domain_id: String,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If the user is enabled, this value is true. If the user is disabled,
+    /// this value is false.
     #[structable(wide)]
     pub enabled: bool,
 
     /// List of federated objects associated with a user. Each object in the
-    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol_id` and `unique_id` of the
-    /// protocol and user respectively. For example:
-    ///
-    /// ```text
-    /// "federated": [
-    ///   {
-    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
-    ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
-    ///     ]
-    ///   }
-    /// ]
-    /// ```
+    /// list contains the idp_id and protocols. protocols is a list of objects,
+    /// each of which contains protocol_id and unique_id of the protocol and
+    /// user respectively.
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub federated: Option<Vec<Federated>>,
@@ -72,12 +61,8 @@ pub struct UserResponse {
     #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 
-    /// The date and time when the password expires. The time zone is UTC.
-    ///
-    /// This is a response object attribute; not valid for requests. A `null`
-    /// value indicates that the password never expires.
-    ///
-    /// **New in version 3.7**
+    /// The date and time when the password expires. The time zone is UTC. A
+    /// null value indicates that the password never expires.
     #[serde(default)]
     #[structable(optional, wide)]
     pub password_expires_at: Option<String>,
@@ -97,7 +82,7 @@ pub struct Federated {
     pub protocols: Vec<Protocols>,
 }
 
-/// The links for the `user` resource.
+/// Links for the collection of resources.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

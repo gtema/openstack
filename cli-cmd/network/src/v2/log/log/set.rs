@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::log::log::find;
 use openstack_sdk::api::network::v2::log::log::set;
-use openstack_types::network::v2::log::log::response::set::LogResponse;
+use openstack_types::network::v2::log::log::response;
 
 /// Updates a log resource.
 ///
@@ -142,8 +142,9 @@ impl LogCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LogResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::LogResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::credential::get;
-use openstack_types::identity::v3::credential::response::get::CredentialResponse;
+use openstack_types::identity::v3::credential::response;
 
 /// Shows details for a credential.
 ///
@@ -83,8 +83,9 @@ impl CredentialCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CredentialResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::CredentialResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

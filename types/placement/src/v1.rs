@@ -22,4 +22,3 @@ pub mod resource_class;
 pub mod resource_provider;
 pub mod r#trait;
 pub mod usage;
-pub mod version;

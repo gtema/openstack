@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::set;
-use openstack_types::identity::v3::os_federation::identity_provider::protocol::response::set::ProtocolResponse;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::response;
 
 /// Update protocol for an IDP.
 ///
@@ -127,8 +127,9 @@ impl ProtocolCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ProtocolResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ProtocolResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

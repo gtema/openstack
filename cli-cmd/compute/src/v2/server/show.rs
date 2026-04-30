@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::find;
 use openstack_sdk::api::find;
-use openstack_types::compute::v2::server::response::get::ServerResponse;
+use openstack_types::compute::v2::server::response;
 
 /// Shows details for a server.
 ///
@@ -101,7 +101,34 @@ impl ServerCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ServerResponse>(find_data)?;
+        op.output_single::<response::get_20::ServerResponse>(find_data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_2100_a::ServerResponse>(find_data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_2100_b::ServerResponse>(find_data.clone())
+            })
+            .or_else(|_| op.output_single::<response::get_216::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_219::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_226::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_23::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_247::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_263::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_269_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_269_b::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_271_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_271_b::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_273_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_273_b::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_29::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_290_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_290_b::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_296_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_296_b::ServerResponse>(find_data.clone()))
+            .or_else(|_| op.output_single::<response::get_298_a::ServerResponse>(find_data.clone()))
+            .or_else(|_| {
+                op.output_single::<response::get_298_b::ServerResponse>(find_data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

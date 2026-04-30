@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::version::get;
-use openstack_types::load_balancer::v2::version::response::get::VersionResponse;
+use openstack_types::load_balancer::v2::version::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -70,8 +70,9 @@ impl VersionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VersionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::VersionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::simple_tenant_usage::get;
-use openstack_types::compute::v2::simple_tenant_usage::response::get::SimpleTenantUsageResponse;
+use openstack_types::compute::v2::simple_tenant_usage::response;
 
 /// Shows usage statistics for a tenant.
 ///
@@ -124,8 +124,18 @@ impl SimpleTenantUsageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<SimpleTenantUsageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21_a::SimpleTenantUsageResponse>(data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_21_b::SimpleTenantUsageResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_240_a::SimpleTenantUsageResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_240_b::SimpleTenantUsageResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

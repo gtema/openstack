@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::credential::set;
-use openstack_types::identity::v3::credential::response::set::CredentialResponse;
+use openstack_types::identity::v3::credential::response;
 
 /// Updates a credential.
 ///
@@ -140,8 +140,9 @@ impl CredentialCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CredentialResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::CredentialResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

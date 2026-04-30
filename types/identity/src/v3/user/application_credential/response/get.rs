@@ -17,12 +17,14 @@
 //! Response type for the GET `users/{user_id}/application_credentials/{application_credential_id}` operation
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// ApplicationCredential response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ApplicationCredentialResponse {
-    /// A list of access_rules objects
+    /// A list of access_rules objects.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub access_rules: Option<Vec<AccessRules>>,
@@ -32,14 +34,21 @@ pub struct ApplicationCredentialResponse {
     #[structable(optional)]
     pub description: Option<String>,
 
+    /// The expiration time of the application credential, if one was
+    /// specified.
     #[serde(default)]
     #[structable(optional)]
     pub expires_at: Option<String>,
 
-    /// The ID of the application credential.
+    /// The UUID of the application credential
     #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
+
+    /// The link to the resource in question.
+    #[serde(default)]
+    #[structable(optional, serialize)]
+    pub links: Option<Links>,
 
     /// The name of the application credential. Must be unique to a user.
     #[serde(default)]
@@ -53,20 +62,69 @@ pub struct ApplicationCredentialResponse {
     #[structable(optional)]
     pub project_id: Option<String>,
 
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project. If
-    /// not provided, the roles assigned to the application credential will be
-    /// the same as the roles in the current token.
+    /// A list of one or more roles that this application credential has
+    /// associated with its project. A token using this application credential
+    /// will have these same roles.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
-    /// An optional flag to restrict whether the application credential may be
-    /// used for the creation or destruction of other application credentials
-    /// or trusts. Defaults to false.
+    #[serde(default)]
+    #[structable(optional)]
+    pub system: Option<String>,
+
+    /// A flag indicating whether the application credential may be used for
+    /// creation or destruction of other application credentials or trusts.
     #[serde(default)]
     #[structable(optional)]
     pub unrestricted: Option<bool>,
+
+    /// The ID of the user.
+    #[serde(default)]
+    #[structable(optional)]
+    pub user_id: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Method {
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
+
+    // Get
+    #[serde(rename = "GET")]
+    Get,
+
+    // Head
+    #[serde(rename = "HEAD")]
+    Head,
+
+    // Patch
+    #[serde(rename = "PATCH")]
+    Patch,
+
+    // Post
+    #[serde(rename = "POST")]
+    Post,
+
+    // Put
+    #[serde(rename = "PUT")]
+    Put,
+}
+
+impl std::str::FromStr for Method {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "DELETE" => Ok(Self::Delete),
+            "GET" => Ok(Self::Get),
+            "HEAD" => Ok(Self::Head),
+            "PATCH" => Ok(Self::Patch),
+            "POST" => Ok(Self::Post),
+            "PUT" => Ok(Self::Put),
+            _ => Err(()),
+        }
+    }
 }
 
 /// `AccessRules` type
@@ -75,18 +133,32 @@ pub struct AccessRules {
     #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
-    pub method: Option<String>,
+    pub method: Option<Method>,
     #[serde(default)]
     pub path: Option<String>,
     #[serde(default)]
     pub service: Option<String>,
 }
 
+/// The link to the resource in question.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
+}
+
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
     #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub domain_id: Option<String>,
+    #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
+    pub options: Option<BTreeMap<String, Value>>,
 }

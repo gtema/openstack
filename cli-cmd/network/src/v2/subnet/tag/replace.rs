@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnet::tag::replace;
-use openstack_types::network::v2::subnet::tag::response::replace::TagResponse;
+use openstack_types::network::v2::subnet::tag::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -91,7 +91,7 @@ impl TagCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TagResponse>(data)?;
+        op.output_list::<response::replace::TagResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

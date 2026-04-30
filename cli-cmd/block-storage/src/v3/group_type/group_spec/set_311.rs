@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val_opt;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::group_spec::set_311;
-use openstack_types::block_storage::v3::group_type::group_spec::response::set::GroupSpecResponse;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -110,9 +109,7 @@ impl GroupSpecCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupSpecResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::create;
-use openstack_types::network::v2::metering::metering_label_rule::response::create::MeteringLabelRuleResponse;
+use openstack_types::network::v2::metering::metering_label_rule::response;
 
 /// Creates an L3 metering label rule.
 ///
@@ -166,8 +166,9 @@ impl MeteringLabelRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MeteringLabelRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::MeteringLabelRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::availability_zone_profile::response::list::AvailabilityZoneProfileResponse;
+use openstack_types::load_balancer::v2::availability_zone_profile::response;
 
 /// Lists all Availability Zone Profiles.
 #[derive(Args)]
@@ -132,7 +132,8 @@ impl AvailabilityZoneProfilesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AvailabilityZoneProfileResponse>(data)?;
+
+        op.output_list::<response::list::AvailabilityZoneProfileResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

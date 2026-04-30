@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::find;
 use openstack_sdk::api::find;
-use openstack_types::compute::v2::aggregate::response::get::AggregateResponse;
+use openstack_types::compute::v2::aggregate::response;
 
 /// Shows details for an aggregate. Details include hosts and metadata.
 ///
@@ -86,7 +86,10 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<AggregateResponse>(find_data)?;
+        op.output_single::<response::get_21::AggregateResponse>(find_data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_241::AggregateResponse>(find_data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::get;
-use openstack_types::identity::v3::os_federation::identity_provider::response::get::IdentityProviderResponse;
+use openstack_types::identity::v3::os_federation::identity_provider::response;
 
 /// Get an IDP resource.
 ///
@@ -85,8 +85,9 @@ impl IdentityProviderCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IdentityProviderResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::IdentityProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

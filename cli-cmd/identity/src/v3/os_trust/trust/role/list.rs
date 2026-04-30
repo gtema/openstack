@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_trust::trust::role::list;
-use openstack_types::identity::v3::os_trust::trust::role::response::list::RoleResponse;
 
 /// GET operation on /v3/OS-TRUST/trusts/{trust_id}/roles
 #[derive(Args)]
@@ -84,9 +83,7 @@ impl RolesCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<RoleResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

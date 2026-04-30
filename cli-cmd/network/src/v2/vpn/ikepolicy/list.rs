@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::vpn::ikepolicy::response::list::IkepolicyResponse;
+use openstack_types::network::v2::vpn::ikepolicy::response;
 
 /// Lists IKE policies.
 ///
@@ -144,7 +144,8 @@ impl IkepoliciesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<IkepolicyResponse>(data)?;
+
+        op.output_list::<response::list::IkepolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

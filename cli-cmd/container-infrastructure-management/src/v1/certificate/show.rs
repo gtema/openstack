@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::certificate::get;
-use openstack_types::container_infrastructure_management::v1::certificate::response::get::CertificateResponse;
+use openstack_types::container_infrastructure_management::v1::certificate::response;
 
 /// Show CA certificate details that are associated with the created cluster
 /// based on the given CA certificate type.
@@ -85,8 +85,9 @@ impl CertificateCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CertificateResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::CertificateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

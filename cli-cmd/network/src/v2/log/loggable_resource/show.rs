@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::log::loggable_resource::get;
-use openstack_types::network::v2::log::loggable_resource::response::get::LoggableResourceResponse;
+use openstack_types::network::v2::log::loggable_resource::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -84,8 +84,9 @@ impl LoggableResourceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LoggableResourceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::LoggableResourceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

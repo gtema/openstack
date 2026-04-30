@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::info::usage::list;
-use openstack_types::image::v2::info::usage::response::list::UsageResponse;
+use openstack_types::image::v2::info::usage::response;
 
 /// The user’s quota and current usage are displayed, if enabled by server-side
 /// configuration.
@@ -75,7 +75,8 @@ impl UsagesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<UsageResponse>(data)?;
+
+        op.output_list::<response::list::UsageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

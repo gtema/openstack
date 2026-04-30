@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::create_351;
-use openstack_types::block_storage::v3::backup::response::create::BackupResponse;
+use openstack_types::block_storage::v3::backup::response;
 
 /// Create a new backup.
 #[derive(Args)]
@@ -199,8 +199,9 @@ impl BackupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<BackupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::BackupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

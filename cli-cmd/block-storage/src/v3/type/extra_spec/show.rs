@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::extra_spec::get;
-use openstack_types::block_storage::v3::r#type::extra_spec::response::get::ExtraSpecResponse;
+use openstack_types::block_storage::v3::r#type::extra_spec::response;
 
 /// Return a single extra spec item.
 #[derive(Args)]
@@ -92,8 +92,9 @@ impl ExtraSpecCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ExtraSpecResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ExtraSpecResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

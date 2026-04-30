@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::find;
 use openstack_sdk::api::block_storage::v3::qos_spec::set;
 use openstack_sdk::api::find;
-use openstack_types::block_storage::v3::qos_spec::response::set::QosSpecResponse;
+use openstack_types::block_storage::v3::qos_spec::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -109,8 +109,9 @@ impl QosSpecCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QosSpecResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::QosSpecResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

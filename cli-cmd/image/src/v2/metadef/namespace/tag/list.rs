@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::tag::list;
-use openstack_types::image::v2::metadef::namespace::tag::response::list::TagResponse;
+use openstack_types::image::v2::metadef::namespace::tag::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -85,7 +85,8 @@ impl TagsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TagResponse>(data)?;
+
+        op.output_list::<response::list::TagResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

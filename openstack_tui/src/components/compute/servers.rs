@@ -19,7 +19,7 @@ use serde_json::json;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
-use openstack_types::compute::v2::server::response::list_detailed::ServerResponse;
+use openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse;
 
 use crate::{
     action::Action,
@@ -73,7 +73,9 @@ impl TryFrom<&ServerResponse> for ComputeServerDelete {
     fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
         let mut builder = ComputeServerDeleteBuilder::default();
         builder.id(value.id.clone());
-        builder.name(value.name.clone());
+        if let Some(name) = &value.name {
+            builder.name(name.clone());
+        }
         builder.build()
     }
 }
@@ -83,7 +85,9 @@ impl TryFrom<&ServerResponse> for ComputeServerInstanceActionList {
     fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
         let mut builder = ComputeServerInstanceActionListBuilder::default();
         builder.server_id(value.id.clone());
-        builder.server_name(value.name.clone());
+        if let Some(name) = &value.name {
+            builder.server_name(name.clone());
+        }
         builder.build()
     }
 }
@@ -182,9 +186,9 @@ impl Component for ComputeServers<'_> {
                     ))));
                 }
             }
-            Action::ShowComputeServerInstanceActions => {
+            Action::ShowComputeServerInstanceActions
                 // only if we are currently in the servers mode
-                if current_mode == Mode::ComputeServers {
+                if current_mode == Mode::ComputeServers => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -204,10 +208,9 @@ impl Component for ComputeServers<'_> {
                         }
                     }
                 }
-            }
-            Action::DeleteComputeServer => {
+            Action::DeleteComputeServer
                 // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::ComputeServers {
+                if current_mode == Mode::ComputeServers => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -222,7 +225,6 @@ impl Component for ComputeServers<'_> {
                         }
                     }
                 }
-            }
             _ => {}
         };
         Ok(None)

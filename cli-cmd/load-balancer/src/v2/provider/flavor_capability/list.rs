@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::provider::flavor_capability::list;
-use openstack_types::load_balancer::v2::provider::flavor_capability::response::list::FlavorCapabilityResponse;
+use openstack_types::load_balancer::v2::provider::flavor_capability::response;
 
 /// Shows the provider driver flavor capabilities. These are the features of
 /// the provider driver that can be configured in an Octavia flavor. This API
@@ -94,7 +94,8 @@ impl FlavorCapabilitiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<FlavorCapabilityResponse>(data)?;
+
+        op.output_list::<response::list::FlavorCapabilityResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

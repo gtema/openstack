@@ -31,7 +31,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::create;
-use openstack_types::dns::v2::zone::response::create::ZoneResponse;
+use openstack_types::dns::v2::zone::response;
 
 /// Create a zone
 #[derive(Args)]
@@ -155,8 +155,9 @@ impl ZoneCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ZoneResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

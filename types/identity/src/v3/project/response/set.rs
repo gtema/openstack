@@ -32,8 +32,8 @@ pub struct ProjectResponse {
     #[structable(optional)]
     pub domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     #[serde(default)]
     #[structable(optional)]
     pub enabled: Option<bool>,
@@ -43,8 +43,8 @@ pub struct ProjectResponse {
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     #[serde(default)]
     #[structable(optional)]
     pub is_domain: Option<bool>,
@@ -72,7 +72,6 @@ pub struct ProjectResponse {
     #[structable(optional)]
     pub parent_id: Option<String>,
 
-    /// A list of simple strings assigned to a project.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,

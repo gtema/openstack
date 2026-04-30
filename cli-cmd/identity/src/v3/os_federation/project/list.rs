@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::project::list;
-use openstack_types::identity::v3::os_federation::project::response::list::ProjectResponse;
+use openstack_types::identity::v3::os_federation::project::response;
 
 /// Get possible project scopes for token.
 ///
@@ -77,7 +77,8 @@ impl ProjectsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ProjectResponse>(data)?;
+
+        op.output_list::<response::list::ProjectResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::service_provider::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::service_provider::response::list::ServiceProviderResponse;
+use openstack_types::network::v2::service_provider::response;
 
 /// Lists service providers and their associated service types.
 ///
@@ -145,7 +145,8 @@ impl ServiceProvidersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ServiceProviderResponse>(data)?;
+
+        op.output_list::<response::list::ServiceProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

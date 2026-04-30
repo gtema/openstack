@@ -16,5 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of dns
-pub mod get;
 pub mod list;

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::list;
-use openstack_types::identity::v3::os_ep_filter::endpoint_group::response::list::EndpointGroupResponse;
+use openstack_types::identity::v3::os_ep_filter::endpoint_group::response;
 
 /// List all endpoint groups.
 ///
@@ -85,7 +85,8 @@ impl EndpointGroupsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<EndpointGroupResponse>(data)?;
+
+        op.output_list::<response::list::EndpointGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

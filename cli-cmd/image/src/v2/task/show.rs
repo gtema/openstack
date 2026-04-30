@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::get;
-use openstack_types::image::v2::task::response::get::TaskResponse;
+use openstack_types::image::v2::task::response;
 
 /// Shows details for a task.
 ///
@@ -85,8 +85,9 @@ impl TaskCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<TaskResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::TaskResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

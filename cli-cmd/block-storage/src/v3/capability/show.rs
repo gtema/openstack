@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::capability::get;
-use openstack_types::block_storage::v3::capability::response::get::CapabilityResponse;
+use openstack_types::block_storage::v3::capability::response;
 
 /// Return capabilities list of given backend.
 #[derive(Args)]
@@ -81,8 +81,9 @@ impl CapabilityCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CapabilityResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::CapabilityResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

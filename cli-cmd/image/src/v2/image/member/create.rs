@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::member::create;
-use openstack_types::image::v2::image::member::response::create::MemberResponse;
+use openstack_types::image::v2::image::member::response;
 use serde_json::Value;
 
 /// Adds a tenant ID as an image member. *(Since Image API v2.1)*
@@ -103,8 +103,9 @@ impl MemberCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MemberResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::MemberResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::subnet::create;
-use openstack_types::network::v2::subnet::response::create::SubnetResponse;
+use openstack_types::network::v2::subnet::response;
 use serde_json::Value;
 
 /// Creates a subnet on a network.
@@ -358,8 +358,9 @@ impl SubnetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<SubnetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::SubnetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

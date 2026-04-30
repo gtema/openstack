@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::topology::list;
-use openstack_types::compute::v2::server::topology::response::list::TopologyResponse;
+use openstack_types::compute::v2::server::topology::response;
 
 /// Shows NUMA topology information for a server.
 ///
@@ -90,7 +90,8 @@ impl TopologiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TopologyResponse>(data)?;
+
+        op.output_list::<response::list_278::TopologyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::ec2token::get;
-use openstack_types::identity::v3::ec2token::response::get::Ec2tokenResponse;
 
 /// GET operation on /v3/ec2tokens
 #[derive(Args)]
@@ -69,9 +68,7 @@ impl Ec2TokenCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<Ec2tokenResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

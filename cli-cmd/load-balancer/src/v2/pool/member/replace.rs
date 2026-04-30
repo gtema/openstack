@@ -32,7 +32,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::pool::member::find;
 use openstack_sdk::api::load_balancer::v2::pool::member::replace;
-use openstack_types::load_balancer::v2::pool::member::response::replace::MemberResponse;
 use serde_json::Value;
 
 /// Set the state of members for a pool in one API call. This may include
@@ -140,9 +139,7 @@ impl MemberCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<MemberResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

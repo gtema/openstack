@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::limit::model::get;
-use openstack_types::identity::v3::limit::model::response::get::ModelResponse;
+use openstack_types::identity::v3::limit::model::response;
 
 /// Return the configured limit enforcement model.
 ///
@@ -73,8 +73,9 @@ impl ModelCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ModelResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ModelResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

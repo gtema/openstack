@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::keypair::find;
 use openstack_sdk::api::find;
-use openstack_types::compute::v2::keypair::response::get::KeypairResponse;
+use openstack_types::compute::v2::keypair::response;
 
 /// Shows details for a keypair that is associated with the account.
 ///
@@ -105,7 +105,10 @@ impl KeypairCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<KeypairResponse>(find_data)?;
+        op.output_single::<response::get_20::KeypairResponse>(find_data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_22::KeypairResponse>(find_data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

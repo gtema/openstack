@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::aggregate::create_20;
-use openstack_types::compute::v2::aggregate::response::create::AggregateResponse;
 
 /// Creates an aggregate. If specifying an option availability_zone, the
 /// aggregate is created as an availability zone and the availability zone is
@@ -121,9 +120,7 @@ impl AggregateCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AggregateResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

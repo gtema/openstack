@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::group::set;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
-use openstack_types::identity::v3::domain::config::group::response::set::GroupResponse;
+use openstack_types::identity::v3::domain::config::group::response;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use tracing::warn;
@@ -185,8 +185,9 @@ impl GroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::GroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

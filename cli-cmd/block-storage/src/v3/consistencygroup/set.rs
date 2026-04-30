@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::consistencygroup::set;
-use openstack_types::block_storage::v3::consistencygroup::response::set::ConsistencygroupResponse;
+use openstack_types::block_storage::v3::consistencygroup::response;
 use serde_json::Value;
 
 /// Update the consistency group.
@@ -176,8 +176,9 @@ impl ConsistencygroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ConsistencygroupResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ConsistencygroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

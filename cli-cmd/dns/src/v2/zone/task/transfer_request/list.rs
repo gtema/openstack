@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::transfer_request::list;
-use openstack_types::dns::v2::zone::task::transfer_request::response::list::TransferRequestResponse;
 
 /// This will list all your outgoing requests, and any incoming requests that
 /// have been scoped to your project.
@@ -106,9 +105,7 @@ impl TransferRequestsCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<TransferRequestResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

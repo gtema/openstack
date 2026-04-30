@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::role::create;
-use openstack_types::identity::v3::role::response::create::RoleResponse;
+use openstack_types::identity::v3::role::response;
 
 /// Creates a role.
 ///
@@ -150,8 +150,9 @@ impl RoleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RoleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::RoleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

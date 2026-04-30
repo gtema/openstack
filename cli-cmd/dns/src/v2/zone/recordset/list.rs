@@ -32,7 +32,7 @@ use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::list;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::dns::v2::zone::recordset::response::list::RecordsetResponse;
+use openstack_types::dns::v2::zone::recordset::response;
 use tracing::warn;
 
 /// This lists all recordsets in a zone
@@ -254,7 +254,8 @@ impl RecordsetsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<RecordsetResponse>(data)?;
+
+        op.output_list::<response::list::RecordsetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

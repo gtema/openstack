@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::pool::member::find;
-use openstack_types::load_balancer::v2::pool::member::response::get::MemberResponse;
+use openstack_types::load_balancer::v2::pool::member::response;
 
 /// Shows the details of a pool member.
 ///
@@ -102,7 +102,7 @@ impl MemberCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<MemberResponse>(find_data)?;
+        op.output_single::<response::get::MemberResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

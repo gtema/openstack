@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::metering::metering_label_rule::response::list::MeteringLabelRuleResponse;
+use openstack_types::network::v2::metering::metering_label_rule::response;
 
 /// Lists a summary of all L3 metering label rules that belong to the project.
 ///
@@ -213,7 +213,8 @@ impl MeteringLabelRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<MeteringLabelRuleResponse>(data)?;
+
+        op.output_list::<response::list::MeteringLabelRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

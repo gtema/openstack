@@ -23,33 +23,38 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct IdentityProviderResponse {
     /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database.
+    /// through mapping and persisted in the database. If left unset, the
+    /// default value configured in keystone will be used, if enabled.
     #[serde(default)]
     #[structable(optional, wide)]
-    pub authorization_ttl: Option<i32>,
+    pub authorization_ttl: Option<u32>,
 
-    /// The Identity Provider description
+    /// The identity provider description
     #[serde(default)]
     #[structable(optional, wide)]
     pub description: Option<String>,
 
-    /// The ID of a domain that is associated with the Identity Provider.
-    #[serde(default)]
-    #[structable(optional, wide)]
-    pub domain_id: Option<String>,
-
-    /// Whether the Identity Provider is enabled or not
+    /// Whether the identity provider is enabled or not
     #[serde(default)]
     #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
-    /// The Identity Provider unique ID
+    /// The identity provider ID
     #[serde(default)]
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// List of the unique Identity Provider’s remote IDs
+    /// List of the unique identity provider's remote IDs
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub remote_ids: Option<Vec<String>>,
+}
+
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    #[serde(default)]
+    pub protocols: Option<String>,
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
 }

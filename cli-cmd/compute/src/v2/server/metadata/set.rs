@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::metadata::set;
-use openstack_types::compute::v2::server::metadata::response::set::MetadataResponse;
+use openstack_types::compute::v2::server::metadata::response;
 
 /// Creates or replaces a metadata item, by key, for a server.
 ///
@@ -112,8 +112,9 @@ impl MetadataCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MetadataResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::MetadataResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

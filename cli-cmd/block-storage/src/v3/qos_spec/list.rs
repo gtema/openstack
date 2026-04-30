@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::qos_spec::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::qos_spec::response::list::QosSpecResponse;
+use openstack_types::block_storage::v3::qos_spec::response;
 
 /// Returns the list of qos_specs.
 #[derive(Args)]
@@ -139,7 +139,8 @@ impl QosSpecsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<QosSpecResponse>(data)?;
+
+        op.output_list::<response::list::QosSpecResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

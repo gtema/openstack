@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::dns::v2::zone::response::list::ZoneResponse;
+use openstack_types::dns::v2::zone::response;
 
 /// List all zones
 #[derive(Args)]
@@ -199,7 +199,8 @@ impl ZonesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ZoneResponse>(data)?;
+
+        op.output_list::<response::list::ZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

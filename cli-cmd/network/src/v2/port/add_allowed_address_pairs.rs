@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::add_allowed_address_pairs;
-use openstack_types::network::v2::port::response::add_allowed_address_pairs::PortResponse;
+use openstack_types::network::v2::port::response;
 use serde_json::Value;
 
 /// Request of the ports/port_id/add_allowed_address_pairs:put operation
@@ -97,8 +97,9 @@ impl PortCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PortResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::add_allowed_address_pairs::PortResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

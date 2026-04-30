@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server_group::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::server_group::response::list::ServerGroupResponse;
+use openstack_types::compute::v2::server_group::response;
 
 /// Lists all server groups for the tenant.
 ///
@@ -114,7 +114,11 @@ impl ServerGroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ServerGroupResponse>(data)?;
+
+        op.output_list::<response::list_21::ServerGroupResponse>(data.clone())
+            .or_else(|_| op.output_list::<response::list_213::ServerGroupResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::list_215::ServerGroupResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::list_264::ServerGroupResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

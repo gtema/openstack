@@ -31,7 +31,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_volume::create_30;
-use openstack_types::block_storage::v3::manageable_volume::response::create::ManageableVolumeResponse;
 use serde_json::Value;
 
 /// Instruct Cinder to manage a storage object.
@@ -245,9 +244,7 @@ impl ManageableVolumeCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<ManageableVolumeResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

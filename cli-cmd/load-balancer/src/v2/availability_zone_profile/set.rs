@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::find;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::set;
-use openstack_types::load_balancer::v2::availability_zone_profile::response::set::AvailabilityZoneProfileResponse;
+use openstack_types::load_balancer::v2::availability_zone_profile::response;
 
 /// Updates an Availability Zone Profile.
 #[derive(Args)]
@@ -138,8 +138,9 @@ impl AvailabilityZoneProfileCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AvailabilityZoneProfileResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::AvailabilityZoneProfileResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

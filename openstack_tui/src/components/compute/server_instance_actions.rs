@@ -17,7 +17,7 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_types::compute::v2::server::instance_action::response::list::InstanceActionResponse;
+use openstack_types::compute::v2::server::instance_action::response::list_21::InstanceActionResponse;
 
 use crate::{
     action::Action,
@@ -104,9 +104,9 @@ impl Component for ComputeServerInstanceActions<'_> {
                     )),
                 ))));
             }
-            Action::ShowComputeServerInstanceActionEvents => {
+            Action::ShowComputeServerInstanceActionEvents
                 // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::ComputeServerInstanceActions {
+                if current_mode == Mode::ComputeServerInstanceActions => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -114,9 +114,7 @@ impl Component for ComputeServerInstanceActions<'_> {
                             // send action to set server instance action filters
                             let mut req = ComputeServerInstanceActionShowBuilder::default();
                             req.id(selected_entry.request_id.clone());
-                            if let Some(sid) = &selected_entry.instance_uuid {
-                                req.server_id(sid.clone());
-                            }
+                            req.server_id(selected_entry.instance_uuid.clone());
                             if let Some(name) = &self.get_filters().server_name {
                                 req.server_name(name.clone());
                             }
@@ -131,7 +129,6 @@ impl Component for ComputeServerInstanceActions<'_> {
                         }
                     }
                 }
-            }
 
             _ => {}
         };

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::l3_agent::list;
-use openstack_types::network::v2::router::l3_agent::response::list::L3AgentResponse;
+use openstack_types::network::v2::router::l3_agent::response;
 
 /// Lists l3 agents hosting a specific router.
 ///
@@ -149,8 +149,9 @@ impl L3AgentsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<L3AgentResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::L3AgentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

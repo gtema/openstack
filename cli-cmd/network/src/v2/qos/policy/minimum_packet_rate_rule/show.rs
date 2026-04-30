@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::minimum_packet_rate_rule::get;
-use openstack_types::network::v2::qos::policy::minimum_packet_rate_rule::response::get::MinimumPacketRateRuleResponse;
+use openstack_types::network::v2::qos::policy::minimum_packet_rate_rule::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -94,8 +94,9 @@ impl MinimumPacketRateRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MinimumPacketRateRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MinimumPacketRateRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

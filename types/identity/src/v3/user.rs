@@ -18,8 +18,6 @@
 //! `Identity` Service bindings
 pub mod access_rule;
 pub mod application_credential;
-pub mod credential;
 pub mod group;
-pub mod os_oauth1;
 pub mod project;
 pub mod response;

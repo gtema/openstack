@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::floating_ip::list;
-use openstack_types::compute::v2::floating_ip::response::list::FloatingIpResponse;
+use openstack_types::compute::v2::floating_ip::response;
 
 /// Lists floating IP addresses associated with the tenant or account.
 ///
@@ -80,7 +80,8 @@ impl FloatingIpsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<FloatingIpResponse>(data)?;
+
+        op.output_list::<response::list_21::FloatingIpResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

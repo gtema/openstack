@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::info::import::get;
-use openstack_types::image::v2::info::import::response::get::ImportResponse;
+use openstack_types::image::v2::info::import::response;
 
 /// Returns information concerning the constraints around image import in the
 /// cloud in which the call is made, for example, supported container formats,
@@ -80,8 +80,9 @@ impl ImportCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ImportResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ImportResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

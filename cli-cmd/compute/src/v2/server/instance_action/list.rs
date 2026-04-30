@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::instance_action::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::server::instance_action::response::list::InstanceActionResponse;
+use openstack_types::compute::v2::server::instance_action::response;
 
 /// Lists actions for a server.
 ///
@@ -141,7 +141,11 @@ impl InstanceActionsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<InstanceActionResponse>(data)?;
+
+        op.output_list::<response::list_21::InstanceActionResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_258::InstanceActionResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::project::list;
-use openstack_types::identity::v3::auth::project::response::list::ProjectResponse;
+use openstack_types::identity::v3::auth::project::response;
 
 /// New in version 3.3
 ///
@@ -81,7 +81,8 @@ impl ProjectsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ProjectResponse>(data)?;
+
+        op.output_list::<response::list::ProjectResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -34,7 +34,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::task::pool_move;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::task::response::pool_move::TaskResponse;
 use serde_json::Value;
 use tracing::warn;
 
@@ -137,9 +136,7 @@ impl TaskCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<TaskResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

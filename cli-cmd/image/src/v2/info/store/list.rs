@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::info::store::list_detailed;
-use openstack_types::image::v2::info::store::response::list_detailed::StoreResponse;
+use openstack_types::image::v2::info::store::response;
 
 /// Lists all the backend stores, with detail, accessible to admins, for
 /// non-admin user API will return bad request.
@@ -77,7 +77,8 @@ impl StoresCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<StoreResponse>(data)?;
+
+        op.output_list::<response::list_detailed::StoreResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

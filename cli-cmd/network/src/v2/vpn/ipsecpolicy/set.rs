@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::ipsecpolicy::find;
 use openstack_sdk::api::network::v2::vpn::ipsecpolicy::set;
-use openstack_types::network::v2::vpn::ipsecpolicy::response::set::IpsecpolicyResponse;
+use openstack_types::network::v2::vpn::ipsecpolicy::response;
 
 /// Updates policy settings in an IPsec policy.
 ///
@@ -338,8 +338,9 @@ impl IpsecpolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IpsecpolicyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::IpsecpolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

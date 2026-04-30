@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::create_311;
-use openstack_types::block_storage::v3::group_type::response::create::GroupTypeResponse;
+use openstack_types::block_storage::v3::group_type::response;
 
 /// Creates a new group type.
 #[derive(Args)]
@@ -134,8 +134,9 @@ impl GroupTypeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupTypeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::GroupTypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

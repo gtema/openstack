@@ -17,4 +17,3 @@
 
 //! `response` REST operations of identity
 pub mod response;
-pub mod role;

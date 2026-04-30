@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_trust::trust::list;
-use openstack_types::identity::v3::os_trust::trust::response::list::TrustResponse;
+use openstack_types::identity::v3::os_trust::trust::response;
 
 /// Dispatch for LIST trusts.
 ///
@@ -91,7 +91,8 @@ impl TrustsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TrustResponse>(data)?;
+
+        op.output_list::<response::list::TrustResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::find;
-use openstack_types::load_balancer::v2::availability_zone_profile::response::get::AvailabilityZoneProfileResponse;
+use openstack_types::load_balancer::v2::availability_zone_profile::response;
 
 /// Gets an Availability Zone Profile's detail.
 #[derive(Args)]
@@ -86,7 +86,7 @@ impl AvailabilityZoneProfileCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<AvailabilityZoneProfileResponse>(find_data)?;
+        op.output_single::<response::get::AvailabilityZoneProfileResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

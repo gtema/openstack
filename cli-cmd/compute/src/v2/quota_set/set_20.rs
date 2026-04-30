@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_set::set_20;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::compute::v2::quota_set::response::set::QuotaSetResponse;
+use openstack_types::compute::v2::quota_set::response;
 use tracing::warn;
 
 /// Update the quotas for a project or a project and a user.
@@ -328,8 +328,9 @@ impl QuotaSetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaSetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set_20::QuotaSetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

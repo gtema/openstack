@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::segment::find;
 use openstack_sdk::api::network::v2::segment::set;
-use openstack_types::network::v2::segment::response::set::SegmentResponse;
+use openstack_types::network::v2::segment::response;
 
 /// Updates a segment.
 ///
@@ -139,8 +139,9 @@ impl SegmentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<SegmentResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::SegmentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

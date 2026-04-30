@@ -30,12 +30,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use eyre::eyre;
 use openstack_cli_core::common::parse_key_val;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_inherit::project::user::role::inherited_to_project::inherited_to_projects;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_sdk::api::QueryAsync;
-use openstack_types::identity::v3::os_inherit::project::user::role::inherited_to_project::response::inherited_to_projects::InheritedToProjectResponse;
 use serde_json::Value;
 use tracing::warn;
 
@@ -236,9 +235,7 @@ impl InheritedToProjectCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<InheritedToProjectResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

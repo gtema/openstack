@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::find;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::set;
-use openstack_types::network::v2::vpn::ikepolicy::response::set::IkepolicyResponse;
+use openstack_types::network::v2::vpn::ikepolicy::response;
 
 /// Updates policy settings in an IKE policy.
 ///
@@ -334,8 +334,9 @@ impl IkepolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IkepolicyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::IkepolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

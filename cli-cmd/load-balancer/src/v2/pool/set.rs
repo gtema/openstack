@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::pool::find;
 use openstack_sdk::api::load_balancer::v2::pool::set;
-use openstack_types::load_balancer::v2::pool::response::set::PoolResponse;
+use openstack_types::load_balancer::v2::pool::response;
 
 /// Update an existing pool.
 ///
@@ -324,8 +324,9 @@ impl PoolCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PoolResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::PoolResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

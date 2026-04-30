@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::find;
-use openstack_types::network::v2::vpn::ikepolicy::response::get::IkepolicyResponse;
+use openstack_types::network::v2::vpn::ikepolicy::response;
 
 /// Shows details for an IKE policy.
 ///
@@ -90,7 +90,7 @@ impl IkepolicyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<IkepolicyResponse>(find_data)?;
+        op.output_single::<response::get::IkepolicyResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

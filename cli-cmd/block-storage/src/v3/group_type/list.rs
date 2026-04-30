@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::group_type::response::list::GroupTypeResponse;
+use openstack_types::block_storage::v3::group_type::response;
 
 /// Returns the list of group types.
 #[derive(Args)]
@@ -146,7 +146,8 @@ impl GroupTypesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<GroupTypeResponse>(data)?;
+
+        op.output_list::<response::list::GroupTypeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

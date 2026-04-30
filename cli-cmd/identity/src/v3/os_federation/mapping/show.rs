@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::mapping::get;
-use openstack_types::identity::v3::os_federation::mapping::response::get::MappingResponse;
+use openstack_types::identity::v3::os_federation::mapping::response;
 
 /// GET operation on /v3/OS-FEDERATION/mappings/{mapping_id}
 #[derive(Args)]
@@ -83,8 +83,9 @@ impl MappingCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<MappingResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::MappingResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

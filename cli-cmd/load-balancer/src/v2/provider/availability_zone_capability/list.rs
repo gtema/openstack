@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::provider::availability_zone_capability::list;
-use openstack_types::load_balancer::v2::provider::availability_zone_capability::response::list::AvailabilityZoneCapabilityResponse;
+use openstack_types::load_balancer::v2::provider::availability_zone_capability::response;
 
 /// Shows the provider driver availability zone capabilities. These are the
 /// features of the provider driver that can be configured in an Octavia
@@ -94,7 +94,8 @@ impl AvailabilityZoneCapabilitiesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<AvailabilityZoneCapabilityResponse>(data)?;
+
+        op.output_list::<response::list::AvailabilityZoneCapabilityResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -22,11 +22,6 @@ use structable::{StructTable, StructTableOptions};
 /// Service response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceResponse {
-    /// The service description.
-    #[serde(default)]
-    #[structable(optional, wide)]
-    pub description: Option<String>,
-
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
@@ -50,4 +45,12 @@ pub struct ServiceResponse {
     #[serde(default, rename = "type")]
     #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
+}
+
+/// The links for the `service` resource.
+/// `Links` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Links {
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
 }

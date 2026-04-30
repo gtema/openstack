@@ -33,7 +33,7 @@ pub struct ImplyResponse {
     pub prior_role: Option<PriorRole>,
 }
 
-/// The link to the resources in question.
+/// The link to the resource in question.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
@@ -41,12 +41,10 @@ pub struct Links {
     pub _self: Option<String>,
 }
 
-/// A prior role object.
+/// An implied role object.
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {
-    #[serde(default)]
-    pub description: Option<String>,
     #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
@@ -55,16 +53,22 @@ pub struct Implies {
     pub name: Option<String>,
 }
 
+/// The link to the resources in question.
+/// `PriorRoleLinks` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PriorRoleLinks {
+    #[serde(default, rename = "self")]
+    pub _self: Option<String>,
+}
+
 /// A prior role object.
 /// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
     #[serde(default)]
-    pub description: Option<String>,
-    #[serde(default)]
     pub id: Option<String>,
     #[serde(default)]
-    pub links: Option<Links>,
+    pub links: Option<PriorRoleLinks>,
     #[serde(default)]
     pub name: Option<String>,
 }

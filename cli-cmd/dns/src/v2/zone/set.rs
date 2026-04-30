@@ -31,7 +31,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find;
 use openstack_sdk::api::dns::v2::zone::set;
 use openstack_sdk::api::find;
-use openstack_types::dns::v2::zone::response::set::ZoneResponse;
+use openstack_types::dns::v2::zone::response;
 
 /// Update the attribute(s) for an existing zone.
 #[derive(Args)]
@@ -124,8 +124,9 @@ impl ZoneCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ZoneResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

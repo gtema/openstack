@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::quota_set::defaults;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use openstack_types::block_storage::v3::quota_set::response::defaults::QuotaSetResponse;
+use openstack_types::block_storage::v3::quota_set::response;
 use tracing::warn;
 
 /// Command without description in OpenAPI
@@ -147,8 +147,9 @@ impl QuotaSetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaSetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::defaults::QuotaSetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

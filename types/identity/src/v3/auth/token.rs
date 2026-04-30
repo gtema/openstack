@@ -16,5 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of identity
-pub mod os_pki;
 pub mod response;

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::list;
-use openstack_types::identity::v3::os_federation::identity_provider::protocol::response::list::ProtocolResponse;
+use openstack_types::identity::v3::os_federation::identity_provider::protocol::response;
 
 /// List protocols for an IDP.
 ///
@@ -87,7 +87,8 @@ impl ProtocolsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ProtocolResponse>(data)?;
+
+        op.output_list::<response::list::ProtocolResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

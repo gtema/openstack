@@ -34,7 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::domain::user::role::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::identity::v3::domain::user::role::response::list::RoleResponse;
+use openstack_types::identity::v3::domain::user::role::response;
 use tracing::warn;
 
 /// Lists role assignments for a user on a domain.
@@ -221,7 +221,8 @@ impl RolesCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<RoleResponse>(data)?;
+
+        op.output_list::<response::list::RoleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

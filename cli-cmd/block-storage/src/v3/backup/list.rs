@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::backup::response::list_detailed::BackupResponse;
+use openstack_types::block_storage::v3::backup::response;
 
 /// Returns a detailed list of backups.
 #[derive(Args)]
@@ -153,7 +153,8 @@ impl BackupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<BackupResponse>(data)?;
+
+        op.output_list::<response::list_detailed::BackupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

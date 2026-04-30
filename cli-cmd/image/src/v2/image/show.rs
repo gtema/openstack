@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::find;
-use openstack_types::image::v2::image::response::get::ImageResponse;
+use openstack_types::image::v2::image::response;
 
 /// Shows details for an image. *(Since Image API v2.0)*
 ///
@@ -90,7 +90,7 @@ impl ImageCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ImageResponse>(find_data)?;
+        op.output_single::<response::get::ImageResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

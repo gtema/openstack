@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::cluster::get;
-use openstack_types::block_storage::v3::cluster::response::get::ClusterResponse;
+use openstack_types::block_storage::v3::cluster::response;
 
 /// Return data for a given cluster name with optional binary.
 #[derive(Args)]
@@ -80,8 +80,9 @@ impl ClusterCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ClusterResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ClusterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

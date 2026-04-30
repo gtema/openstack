@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group_type::group_spec::get;
-use openstack_types::block_storage::v3::group_type::group_spec::response::get::GroupSpecResponse;
+use openstack_types::block_storage::v3::group_type::group_spec::response;
 
 /// Return a single extra spec item.
 #[derive(Args)]
@@ -93,8 +93,9 @@ impl GroupSpecCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<GroupSpecResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::GroupSpecResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

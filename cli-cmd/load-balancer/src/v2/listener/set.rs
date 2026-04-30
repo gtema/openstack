@@ -34,7 +34,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::listener::find;
 use openstack_sdk::api::load_balancer::v2::listener::set;
-use openstack_types::load_balancer::v2::listener::response::set::ListenerResponse;
+use openstack_types::load_balancer::v2::listener::response;
 
 /// Update an existing listener.
 ///
@@ -396,8 +396,9 @@ impl ListenerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ListenerResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::ListenerResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

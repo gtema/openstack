@@ -31,7 +31,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::metadef::namespace::set;
-use openstack_types::image::v2::metadef::namespace::response::set::NamespaceResponse;
+use openstack_types::image::v2::metadef::namespace::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -201,8 +201,9 @@ impl NamespaceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<NamespaceResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::NamespaceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

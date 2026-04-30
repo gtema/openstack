@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::stat::get;
-use openstack_types::container_infrastructure_management::v1::stat::response::get::StatResponse;
+use openstack_types::container_infrastructure_management::v1::stat::response;
 
 /// Show overall Magnum system stats. If the requester is non-admin user show
 /// self stats.
@@ -75,8 +75,9 @@ impl StatCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<StatResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::StatResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::create;
-use openstack_types::network::v2::port::response::create::PortResponse;
+use openstack_types::network::v2::port::response;
 use serde_json::Value;
 
 /// Creates a port on a network.
@@ -436,8 +436,9 @@ impl PortCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PortResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::PortResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -31,7 +31,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_oauth1::access_token::create;
-use openstack_types::identity::v3::os_oauth1::access_token::response::create::AccessTokenResponse;
 use serde_json::Value;
 
 /// POST operation on /v3/OS-OAUTH1/access_token
@@ -84,9 +83,7 @@ impl AccessTokenCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AccessTokenResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

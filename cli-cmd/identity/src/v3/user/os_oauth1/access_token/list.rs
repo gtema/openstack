@@ -33,7 +33,6 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::list;
-use openstack_types::identity::v3::user::os_oauth1::access_token::response::list::AccessTokenResponse;
 use tracing::warn;
 
 /// List OAuth1 Access Tokens for user.
@@ -143,9 +142,7 @@ impl AccessTokensCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<AccessTokenResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

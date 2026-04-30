@@ -17,6 +17,8 @@
 
 //! `response` REST operations of container-infrastructure-management
 pub mod create;
+pub mod create_a;
+pub mod create_b;
 pub mod get;
 pub mod list;
 pub mod set;

@@ -108,9 +108,9 @@ impl Component for BlockStorageVolumes<'_> {
                     self.set_data(data)?;
                 }
             }
-            Action::DeleteBlockStorageVolume => {
+            Action::DeleteBlockStorageVolume
                 // only if we are currently in the Volumes mode
-                if current_mode == Mode::BlockStorageVolumes {
+                if current_mode == Mode::BlockStorageVolumes => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -125,7 +125,6 @@ impl Component for BlockStorageVolumes<'_> {
                         }
                     }
                 }
-            }
             _ => {}
         };
         Ok(None)

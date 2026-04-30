@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::availability_zone::set;
-use openstack_types::load_balancer::v2::availability_zone::response::set::AvailabilityZoneResponse;
+use openstack_types::load_balancer::v2::availability_zone::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -116,8 +116,9 @@ impl AvailabilityZoneCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AvailabilityZoneResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::AvailabilityZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

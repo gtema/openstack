@@ -31,7 +31,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::nameserver::list;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::nameserver::response::list::NameserverResponse;
+use openstack_types::dns::v2::zone::nameserver::response;
 use tracing::warn;
 
 /// Show the nameservers for a zone
@@ -157,7 +157,8 @@ impl NameserversCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<NameserverResponse>(data)?;
+
+        op.output_list::<response::list::NameserverResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

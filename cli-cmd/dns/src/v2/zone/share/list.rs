@@ -34,7 +34,7 @@ use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::share::list;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::dns::v2::zone::share::response::list::ShareResponse;
+use openstack_types::dns::v2::zone::share::response;
 use tracing::warn;
 
 /// List all zone shares.
@@ -196,8 +196,9 @@ impl SharesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ShareResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::ShareResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

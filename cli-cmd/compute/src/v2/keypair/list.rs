@@ -33,7 +33,7 @@ use openstack_sdk::api::compute::v2::keypair::list;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::keypair::response::list::KeypairResponse;
+use openstack_types::compute::v2::keypair::response;
 use tracing::warn;
 
 /// Lists keypairs that are associated with the account.
@@ -173,7 +173,10 @@ impl KeypairsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<KeypairResponse>(data)?;
+
+        op.output_list::<response::list_20::KeypairResponse>(data.clone())
+            .or_else(|_| op.output_list::<response::list_22::KeypairResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::list_235::KeypairResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

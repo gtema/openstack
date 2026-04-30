@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ipsec_site_connection::create;
-use openstack_types::network::v2::vpn::ipsec_site_connection::response::create::IpsecSiteConnectionResponse;
+use openstack_types::network::v2::vpn::ipsec_site_connection::response;
 
 /// Creates a site-to-site IPsec connection for a service.
 ///
@@ -278,8 +278,9 @@ impl IpsecSiteConnectionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IpsecSiteConnectionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::IpsecSiteConnectionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::quota::set;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
-use openstack_types::dns::v2::quota::response::set::QuotaResponse;
+use openstack_types::dns::v2::quota::response;
 use tracing::warn;
 
 /// Set a projects quotas
@@ -189,8 +189,9 @@ impl QuotaCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::QuotaResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

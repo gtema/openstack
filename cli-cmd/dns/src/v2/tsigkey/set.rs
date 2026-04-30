@@ -31,7 +31,6 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::tsigkey::set;
-use openstack_types::dns::v2::tsigkey::response::set::TsigkeyResponse;
 use serde_json::Value;
 
 /// Update the attribute(s) of an existing tsigkey
@@ -91,9 +90,7 @@ impl TsigkeyCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<TsigkeyResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

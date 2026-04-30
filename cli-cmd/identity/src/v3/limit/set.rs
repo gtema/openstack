@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::limit::set;
-use openstack_types::identity::v3::limit::response::set::LimitResponse;
+use openstack_types::identity::v3::limit::response;
 
 /// Updates the specified limit. It only supports to update `resource_limit` or
 /// `description` for the limit.
@@ -124,8 +124,9 @@ impl LimitCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<LimitResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::LimitResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

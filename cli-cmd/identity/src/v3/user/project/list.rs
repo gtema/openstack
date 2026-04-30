@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::project::list;
-use openstack_types::identity::v3::user::project::response::list::ProjectResponse;
+use openstack_types::identity::v3::user::project::response;
 use tracing::warn;
 
 /// List projects to which the user has authorization to access.
@@ -143,7 +143,8 @@ impl ProjectsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ProjectResponse>(data)?;
+
+        op.output_list::<response::list::ProjectResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

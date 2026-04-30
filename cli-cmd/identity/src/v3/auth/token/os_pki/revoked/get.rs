@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::token::os_pki::revoked::get;
-use openstack_types::identity::v3::auth::token::os_pki::revoked::response::get::RevokedResponse;
 
 /// Lists revoked PKI tokens.
 ///
@@ -77,9 +76,7 @@ impl RevokedCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<RevokedResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

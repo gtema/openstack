@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::flavor::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::flavor::response::list::FlavorResponse;
+use openstack_types::load_balancer::v2::flavor::response;
 
 /// Lists all flavors.
 #[derive(Args)]
@@ -135,7 +135,8 @@ impl FlavorsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<FlavorResponse>(data)?;
+
+        op.output_list::<response::list::FlavorResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::placement::v1::usage::list;
-use openstack_types::placement::v1::usage::response::list::UsageResponse;
+use openstack_types::placement::v1::usage::response;
 use tracing::warn;
 
 /// Return a report of usage information for resources associated with the
@@ -220,8 +220,9 @@ impl UsagesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<UsageResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::UsageResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

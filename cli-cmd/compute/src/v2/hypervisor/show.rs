@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::get;
-use openstack_types::compute::v2::hypervisor::response::get::HypervisorResponse;
+use openstack_types::compute::v2::hypervisor::response;
 
 /// Shows details for a given hypervisor.
 ///
@@ -96,8 +96,12 @@ impl HypervisorCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<HypervisorResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::HypervisorResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::get_228::HypervisorResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::get_253::HypervisorResponse>(data.clone()))
+            .or_else(|_| op.output_single::<response::get_288::HypervisorResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

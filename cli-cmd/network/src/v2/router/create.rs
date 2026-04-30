@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::create;
-use openstack_types::network::v2::router::response::create::RouterResponse;
+use openstack_types::network::v2::router::response;
 use serde_json::Value;
 
 /// Creates a logical router.
@@ -235,8 +235,9 @@ impl RouterCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RouterResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::RouterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

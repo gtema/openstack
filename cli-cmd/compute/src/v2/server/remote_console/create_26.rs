@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::remote_console::create_26;
-use openstack_types::compute::v2::server::remote_console::response::create::RemoteConsoleResponse;
+use openstack_types::compute::v2::server::remote_console::response;
 
 /// The API provides a unified request for creating a remote console. The user
 /// can get a URL to connect the console from this API. The URL includes the
@@ -167,8 +167,9 @@ impl RemoteConsoleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<RemoteConsoleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_26::RemoteConsoleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

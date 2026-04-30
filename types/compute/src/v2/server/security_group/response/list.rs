@@ -38,13 +38,11 @@ pub struct SecurityGroupResponse {
     #[structable(serialize, wide)]
     pub rules: Vec<Rules>,
 
-    /// The UUID of the tenant that owns this security group.
+    /// The UUID of the tenant in a multi-tenancy cloud.
     #[structable(wide)]
     pub tenant_id: String,
 }
 
-/// A `group` object. Includes the `tenant_id` and the source security group
-/// `name`.
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
@@ -54,7 +52,6 @@ pub struct Group {
     pub tenant_id: Option<String>,
 }
 
-/// An IP range object. Includes the security group rule `cidr`.
 /// `IpRange` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct IpRange {
@@ -62,7 +59,6 @@ pub struct IpRange {
     pub cidr: Option<String>,
 }
 
-/// A `security_group_rule` object.
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {

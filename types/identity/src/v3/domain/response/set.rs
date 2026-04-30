@@ -38,12 +38,12 @@ pub struct DomainResponse {
     #[structable(optional)]
     pub id: Option<String>,
 
-    /// The link to the resources in question.
+    /// The links to the `domain` resource.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub links: Option<Links>,
 
-    /// The name of the project.
+    /// The name of the domain.
     #[serde(default)]
     #[structable(optional)]
     pub name: Option<String>,
@@ -54,13 +54,12 @@ pub struct DomainResponse {
     #[structable(optional, serialize)]
     pub options: Option<Options>,
 
-    /// A list of simple strings assigned to a project.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 }
 
-/// The link to the resources in question.
+/// The links to the `domain` resource.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::ip::list;
-use openstack_types::compute::v2::server::ip::response::list::IpResponse;
+use openstack_types::compute::v2::server::ip::response;
 
 /// Lists IP addresses that are assigned to an instance.
 ///
@@ -88,8 +88,9 @@ impl IpsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IpResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::IpResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

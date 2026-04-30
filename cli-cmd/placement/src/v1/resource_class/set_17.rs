@@ -29,7 +29,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::placement::v1::resource_class::set_17;
-use openstack_types::placement::v1::resource_class::response::set::ResourceClassResponse;
 
 /// Create or validate the existence of single resource class identified by
 /// {name}.
@@ -93,9 +92,7 @@ impl ResourceClassCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResourceClassResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

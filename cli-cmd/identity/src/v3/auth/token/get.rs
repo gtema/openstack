@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::token::get;
-use openstack_types::identity::v3::auth::token::response::get::TokenResponse;
+use openstack_types::identity::v3::auth::token::response;
 
 /// Validates and shows information for a token, including its expiration date
 /// and authorization scope.
@@ -100,8 +100,9 @@ impl TokenCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<TokenResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::TokenResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

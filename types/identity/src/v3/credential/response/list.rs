@@ -49,7 +49,7 @@ pub struct CredentialResponse {
     pub user_id: Option<String>,
 }
 
-/// The link to the resources in question.
+/// The links for the `credentials` resource.
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {

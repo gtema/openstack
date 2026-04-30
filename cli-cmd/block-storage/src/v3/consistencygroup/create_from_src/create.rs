@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::consistencygroup::create_from_src::create;
-use openstack_types::block_storage::v3::consistencygroup::create_from_src::response::create::CreateFromSrcResponse;
+use openstack_types::block_storage::v3::consistencygroup::create_from_src::response;
 use serde_json::Value;
 
 /// Create a new consistency group from a source.
@@ -149,8 +149,9 @@ impl CreateFromSrcCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<CreateFromSrcResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::CreateFromSrcResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

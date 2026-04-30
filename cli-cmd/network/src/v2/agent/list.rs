@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::agent::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::agent::response::list::AgentResponse;
+use openstack_types::network::v2::agent::response;
 
 /// Lists all agents.
 ///
@@ -206,7 +206,8 @@ impl AgentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AgentResponse>(data)?;
+
+        op.output_list::<response::list::AgentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

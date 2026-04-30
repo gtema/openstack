@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::router::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::router::response::list::RouterResponse;
+use openstack_types::network::v2::router::response;
 
 /// Lists logical routers that the project who submits the request can access.
 ///
@@ -224,7 +224,8 @@ impl RoutersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<RouterResponse>(data)?;
+
+        op.output_list::<response::list::RouterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

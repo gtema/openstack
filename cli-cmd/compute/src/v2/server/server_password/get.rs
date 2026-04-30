@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::server_password::get;
-use openstack_types::compute::v2::server::server_password::response::get::ServerPasswordResponse;
+use openstack_types::compute::v2::server::server_password::response;
 
 /// Shows the administrative password for a server.
 ///
@@ -100,8 +100,9 @@ impl ServerPasswordCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ServerPasswordResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ServerPasswordResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

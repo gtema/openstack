@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::alias_minimum_bandwidth_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::qos::alias_minimum_bandwidth_rule::response::list::AliasMinimumBandwidthRuleResponse;
+use openstack_types::network::v2::qos::alias_minimum_bandwidth_rule::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -152,7 +152,8 @@ impl AliasMinimumBandwidthRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AliasMinimumBandwidthRuleResponse>(data)?;
+
+        op.output_list::<response::list::AliasMinimumBandwidthRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

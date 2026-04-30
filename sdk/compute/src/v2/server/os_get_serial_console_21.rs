@@ -118,7 +118,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("console".into())
     }
 
     /// Returns headers to be set into the request
@@ -162,7 +162,7 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(
+        assert_eq!(
             Request::builder()
                 .os_get_serial_console(
                     OsGetSerialConsoleBuilder::default()
@@ -173,8 +173,9 @@ mod tests {
                 .build()
                 .unwrap()
                 .response_key()
-                .is_none()
-        )
+                .unwrap(),
+            "console"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -188,7 +189,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "console": {} }));
         });
 
         let endpoint = Request::builder()
@@ -217,7 +218,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "console": {} }));
         });
 
         let endpoint = Request::builder()

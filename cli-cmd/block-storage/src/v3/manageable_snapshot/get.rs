@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_snapshot::get;
-use openstack_types::block_storage::v3::manageable_snapshot::response::get::ManageableSnapshotResponse;
+use openstack_types::block_storage::v3::manageable_snapshot::response;
 
 /// Returns a summary list of volumes available to manage.
 #[derive(Args)]
@@ -136,7 +136,7 @@ impl ManageableSnapshotCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ManageableSnapshotResponse>(data)?;
+        op.output_list::<response::get::ManageableSnapshotResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::availability_zone::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::availability_zone::response::list::AvailabilityZoneResponse;
+use openstack_types::network::v2::availability_zone::response;
 
 /// Lists all availability zones.
 ///
@@ -168,7 +168,8 @@ impl AvailabilityZonesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<AvailabilityZoneResponse>(data)?;
+
+        op.output_list::<response::list::AvailabilityZoneResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

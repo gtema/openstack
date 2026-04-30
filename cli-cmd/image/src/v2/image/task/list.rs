@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::image::task::list;
-use openstack_types::image::v2::image::task::response::list::TaskResponse;
+use openstack_types::image::v2::image::task::response;
 
 /// Shows tasks associated with an image. *(Since Image API v2.12)*
 ///
@@ -91,7 +91,8 @@ impl TasksCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<TaskResponse>(data)?;
+
+        op.output_list::<response::list::TaskResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

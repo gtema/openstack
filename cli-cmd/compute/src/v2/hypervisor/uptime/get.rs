@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::uptime::get;
-use openstack_types::compute::v2::hypervisor::uptime::response::get::UptimeResponse;
+use openstack_types::compute::v2::hypervisor::uptime::response;
 
 /// Shows the uptime for a given hypervisor.
 ///
@@ -91,8 +91,10 @@ impl UptimeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<UptimeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::UptimeResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::get_253::UptimeResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

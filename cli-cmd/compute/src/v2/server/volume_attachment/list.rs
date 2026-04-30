@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::volume_attachment::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::server::volume_attachment::response::list::VolumeAttachmentResponse;
+use openstack_types::compute::v2::server::volume_attachment::response;
 
 /// List volume attachments for an instance.
 ///
@@ -118,7 +118,17 @@ impl VolumeAttachmentsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<VolumeAttachmentResponse>(data)?;
+
+        op.output_list::<response::list_20::VolumeAttachmentResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_270::VolumeAttachmentResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_279::VolumeAttachmentResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_289::VolumeAttachmentResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

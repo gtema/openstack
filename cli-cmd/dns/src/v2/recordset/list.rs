@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::recordset::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::dns::v2::recordset::response::list::RecordsetResponse;
+use openstack_types::dns::v2::recordset::response;
 
 /// This lists all recordsets owned by a project in Designate
 #[derive(Args)]
@@ -206,7 +206,8 @@ impl RecordsetsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<RecordsetResponse>(data)?;
+
+        op.output_list::<response::list::RecordsetResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -338,13 +338,12 @@ impl ServiceEndpoints {
                 continue;
             }
             match (&region_name, candidate.region()) {
-                (Some(requested_region), Some(candidate_region)) => {
+                (Some(requested_region), Some(candidate_region))
                     if candidate_region.as_str() == requested_region.as_ref()
                         && candidate.interface.as_ref().map(|x| x.as_ref())
-                            == interface.as_ref().map(|x| x.as_ref())
-                    {
-                        return Some(candidate);
-                    }
+                            == interface.as_ref().map(|x| x.as_ref()) =>
+                {
+                    return Some(candidate);
                 }
                 (None, _) => {
                     return Some(candidate);
@@ -381,10 +380,10 @@ impl ServiceEndpoints {
                 continue;
             }
             match (&region_name, candidate.region()) {
-                (Some(requested_region), Some(candidate_region)) => {
-                    if candidate_region.as_str() == requested_region.as_ref() {
-                        return Some(candidate);
-                    }
+                (Some(requested_region), Some(candidate_region))
+                    if candidate_region.as_str() == requested_region.as_ref() =>
+                {
+                    return Some(candidate);
                 }
                 (None, _) => {
                     return Some(candidate);

@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::resource_filter::list;
-use openstack_types::block_storage::v3::resource_filter::response::list::ResourceFilterResponse;
+use openstack_types::block_storage::v3::resource_filter::response;
 
 /// Return a list of resource filters.
 #[derive(Args)]
@@ -74,7 +74,8 @@ impl ResourceFiltersCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ResourceFilterResponse>(data)?;
+
+        op.output_list::<response::list::ResourceFilterResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

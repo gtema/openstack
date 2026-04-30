@@ -17,8 +17,6 @@
 
 //! `response` REST operations of image
 pub mod create;
-pub mod deactivate;
 pub mod get;
 pub mod list;
 pub mod patch;
-pub mod reactivate;

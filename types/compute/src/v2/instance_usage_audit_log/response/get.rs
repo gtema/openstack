@@ -17,57 +17,35 @@
 //! Response type for the GET `os-instance_usage_audit_log/{id}` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
 /// InstanceUsageAuditLog response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InstanceUsageAuditLogResponse {
-    /// The number of errors.
-    #[serde(default)]
-    #[structable(optional)]
-    pub errors: Option<i32>,
-
     /// A list of the hosts whose instance audit tasks have not run.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub hosts_not_run: Option<Vec<String>>,
-
-    /// The number of instances.
-    #[serde(default)]
-    #[structable(optional)]
-    pub instances: Option<i32>,
+    #[structable(serialize)]
+    pub hosts_not_run: Vec<String>,
 
     /// The object of instance usage audit logs.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub log: Option<BTreeMap<String, Value>>,
-
-    /// The log message of the instance usage audit task.
-    #[serde(default)]
-    #[structable(optional)]
-    pub message: Option<String>,
+    #[structable(serialize)]
+    pub log: BTreeMap<String, Log>,
 
     /// The number of the hosts.
-    #[serde(default)]
-    #[structable(optional)]
-    pub num_hosts: Option<i32>,
+    #[structable()]
+    pub num_hosts: u32,
 
     /// The number of the hosts whose instance audit tasks have been done.
-    #[serde(default)]
-    #[structable(optional)]
-    pub num_hosts_done: Option<i32>,
+    #[structable()]
+    pub num_hosts_done: u32,
 
     /// The number of the hosts whose instance audit tasks have not run.
-    #[serde(default)]
-    #[structable(optional)]
-    pub num_hosts_not_run: Option<i32>,
+    #[structable()]
+    pub num_hosts_not_run: u32,
 
     /// The number of the hosts whose instance audit tasks are running.
-    #[serde(default)]
-    #[structable(optional)]
-    pub num_hosts_running: Option<i32>,
+    #[structable()]
+    pub num_hosts_running: u32,
 
     /// The overall status of instance audit tasks.
     ///
@@ -84,36 +62,26 @@ pub struct InstanceUsageAuditLogResponse {
     /// ```text
     /// ALL hosts done. K errors.
     /// ```
-    #[serde(default)]
-    #[structable(optional)]
-    pub overall_status: Option<String>,
+    #[structable()]
+    pub overall_status: String,
 
     /// The beginning time of the instance usage audit period. For example,
     /// `2016-05-01 00:00:00`.
-    #[serde(default)]
-    #[structable(optional)]
-    pub period_beginning: Option<String>,
+    #[structable()]
+    pub period_beginning: String,
 
     /// The ending time of the instance usage audit period. For example,
     /// `2016-06-01 00:00:00`.
-    #[serde(default)]
-    #[structable(optional)]
-    pub period_ending: Option<String>,
-
-    /// The state of the instance usage audit task. `DONE` or `RUNNING`.
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub state: Option<State>,
+    #[structable()]
+    pub period_ending: String,
 
     /// The total number of instance audit task errors.
-    #[serde(default)]
-    #[structable(optional)]
-    pub total_errors: Option<i32>,
+    #[structable()]
+    pub total_errors: u32,
 
     /// The total number of VM instances in the period.
-    #[serde(default)]
-    #[structable(optional)]
-    pub total_instances: Option<i32>,
+    #[structable()]
+    pub total_instances: u32,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -136,4 +104,17 @@ impl std::str::FromStr for State {
             _ => Err(()),
         }
     }
+}
+
+/// `Log` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Log {
+    #[serde(default)]
+    pub errors: Option<u32>,
+    #[serde(default)]
+    pub instances: Option<u32>,
+    #[serde(default)]
+    pub message: Option<String>,
+    #[serde(default)]
+    pub state: Option<State>,
 }

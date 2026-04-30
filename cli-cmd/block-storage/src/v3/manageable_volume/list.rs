@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::manageable_volume::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::manageable_volume::response::list_detailed::ManageableVolumeResponse;
+use openstack_types::block_storage::v3::manageable_volume::response;
 
 /// Returns a detailed list of volumes available to manage.
 #[derive(Args)]
@@ -143,7 +143,8 @@ impl ManageableVolumesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ManageableVolumeResponse>(data)?;
+
+        op.output_list::<response::list_detailed::ManageableVolumeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

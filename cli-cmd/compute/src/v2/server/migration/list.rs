@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::migration::list;
-use openstack_types::compute::v2::server::migration::response::list::MigrationResponse;
+use openstack_types::compute::v2::server::migration::response;
 
 /// Lists in-progress live migrations for a given server.
 ///
@@ -90,7 +90,10 @@ impl MigrationsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<MigrationResponse>(data)?;
+
+        op.output_list::<response::list_223::MigrationResponse>(data.clone())
+            .or_else(|_| op.output_list::<response::list_259::MigrationResponse>(data.clone()))
+            .or_else(|_| op.output_list::<response::list_280::MigrationResponse>(data.clone()))?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::find;
 use openstack_sdk::api::block_storage::v3::volume::set_30;
 use openstack_sdk::api::find;
-use openstack_types::block_storage::v3::volume::response::set::VolumeResponse;
+use openstack_types::block_storage::v3::volume::response;
 
 /// Update a volume.
 #[derive(Args)]
@@ -179,8 +179,9 @@ impl VolumeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VolumeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::VolumeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

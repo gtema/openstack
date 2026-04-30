@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::instance_action::get;
-use openstack_types::compute::v2::server::instance_action::response::get::InstanceActionResponse;
+use openstack_types::compute::v2::server::instance_action::response;
 
 /// Shows details for a server action.
 ///
@@ -105,8 +105,21 @@ impl InstanceActionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<InstanceActionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::InstanceActionResponse>(data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_251::InstanceActionResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_258::InstanceActionResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_262::InstanceActionResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_284::InstanceActionResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

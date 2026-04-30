@@ -34,7 +34,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::compute::v2::server::response::list_detailed::ServerResponse;
+use openstack_types::compute::v2::server::response;
 use tracing::warn;
 
 /// For each server, shows server details including config drive, extended
@@ -563,7 +563,61 @@ impl ServersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ServerResponse>(data)?;
+
+        op.output_list::<response::list_detailed_21::ServerResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_2100_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_2100_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_216::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_219::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_226::ServerResponse>(data.clone())
+            })
+            .or_else(|_| op.output_list::<response::list_detailed_23::ServerResponse>(data.clone()))
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_247::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_263::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_269_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_269_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_273_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_273_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| op.output_list::<response::list_detailed_29::ServerResponse>(data.clone()))
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_290_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_290_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_296_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_296_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_298_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_298_b::ServerResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

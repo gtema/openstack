@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::network::dhcp_agent::create;
-use openstack_types::network::v2::network::dhcp_agent::response::create::DhcpAgentResponse;
+use openstack_types::network::v2::network::dhcp_agent::response;
 use serde_json::Value;
 
 /// Command without description in OpenAPI
@@ -96,8 +96,9 @@ impl DhcpAgentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<DhcpAgentResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::DhcpAgentResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

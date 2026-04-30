@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_scope::create;
-use openstack_types::network::v2::address_scope::response::create::AddressScopeResponse;
+use openstack_types::network::v2::address_scope::response;
 
 /// Creates an address scope.
 ///
@@ -128,8 +128,9 @@ impl AddressScopeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<AddressScopeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::AddressScopeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

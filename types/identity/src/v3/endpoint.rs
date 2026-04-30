@@ -16,5 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `Identity` Service bindings
-pub mod os_endpoint_policy;
 pub mod response;

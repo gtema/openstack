@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::endpoint::list;
-use openstack_types::identity::v3::endpoint::response::list::EndpointResponse;
+use openstack_types::identity::v3::endpoint::response;
 
 /// Lists all available endpoints.
 ///
@@ -101,7 +101,8 @@ impl EndpointsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<EndpointResponse>(data)?;
+
+        op.output_list::<response::list::EndpointResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -17,7 +17,6 @@
 //! Response type for the GET `os-availability-zone/detail` operation
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::BTreeMap;
 use structable::{StructTable, StructTableOptions};
 
@@ -28,9 +27,8 @@ pub struct AvailabilityZoneResponse {
     /// is comprised of host and service objects. The service object returns
     /// three parameters representing the states of the service: `active`,
     /// `available`, and `updated_at`.
-    #[serde(default)]
     #[structable(optional, serialize)]
-    pub hosts: Option<BTreeMap<String, Value>>,
+    pub hosts: Option<BTreeMap<String, BTreeMap<String, HostsItemItem>>>,
 
     /// The availability zone name.
     #[serde(rename = "zoneName")]
@@ -41,6 +39,14 @@ pub struct AvailabilityZoneResponse {
     #[serde(rename = "zoneState")]
     #[structable(serialize, title = "zoneState")]
     pub zone_state: ZoneState,
+}
+
+/// `HostsItemItem` type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct HostsItemItem {
+    pub active: bool,
+    pub available: bool,
+    pub updated_at: Option<String>,
 }
 
 /// The current state of the availability zone.

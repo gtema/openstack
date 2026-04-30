@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::ikepolicy::create;
-use openstack_types::network::v2::vpn::ikepolicy::response::create::IkepolicyResponse;
+use openstack_types::network::v2::vpn::ikepolicy::response;
 
 /// Creates an IKE policy.
 ///
@@ -321,8 +321,9 @@ impl IkepolicyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<IkepolicyResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::IkepolicyResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

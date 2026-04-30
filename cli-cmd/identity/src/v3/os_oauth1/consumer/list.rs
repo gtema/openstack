@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::os_oauth1::consumer::list;
-use openstack_types::identity::v3::os_oauth1::consumer::response::list::ConsumerResponse;
 
 /// GET operation on /v3/OS-OAUTH1/consumers
 #[derive(Args)]
@@ -73,9 +72,7 @@ impl ConsumersCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data = ep.query_async(client).await?;
-        op.output_single::<ConsumerResponse>(data)?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

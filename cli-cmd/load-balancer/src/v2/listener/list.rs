@@ -33,7 +33,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::listener::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::load_balancer::v2::listener::response::list::ListenerResponse;
+use openstack_types::load_balancer::v2::listener::response;
 use tracing::warn;
 
 /// Lists all listeners for the project.
@@ -379,7 +379,8 @@ impl ListenersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<ListenerResponse>(data)?;
+
+        op.output_list::<response::list::ListenerResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

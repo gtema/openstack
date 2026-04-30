@@ -91,9 +91,9 @@ impl Component for IdentityGroups<'_> {
                     IdentityGroupApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
-            Action::ShowIdentityGroupUsers => {
+            Action::ShowIdentityGroupUsers
                 // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::IdentityGroups {
+                if current_mode == Mode::IdentityGroups => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -111,7 +111,6 @@ impl Component for IdentityGroups<'_> {
                         }
                     }
                 }
-            }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,

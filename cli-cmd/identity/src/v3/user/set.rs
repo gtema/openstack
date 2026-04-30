@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::find;
 use openstack_sdk::api::identity::v3::user::set;
-use openstack_types::identity::v3::user::response::set::UserResponse;
+use openstack_types::identity::v3::user::response;
 use serde_json::Value;
 
 /// Updates a user.
@@ -287,8 +287,9 @@ impl UserCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<UserResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::UserResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

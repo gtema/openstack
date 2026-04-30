@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::quota_class_set::get;
-use openstack_types::compute::v2::quota_class_set::response::get::QuotaClassSetResponse;
+use openstack_types::compute::v2::quota_class_set::response;
 
 /// Show the quota for the Quota Class.
 ///
@@ -85,8 +85,13 @@ impl QuotaClassSetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<QuotaClassSetResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::QuotaClassSetResponse>(data.clone())
+            .or_else(|_| op.output_single::<response::get_250::QuotaClassSetResponse>(data.clone()))
+            .or_else(|_| {
+                op.output_single::<response::get_257::QuotaClassSetResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

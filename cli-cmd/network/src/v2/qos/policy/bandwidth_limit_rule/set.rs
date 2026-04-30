@@ -31,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use clap::ValueEnum;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::set;
-use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response::set::BandwidthLimitRuleResponse;
+use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response;
 
 /// Updates a bandwidth limit rule for a QoS policy.
 ///
@@ -156,8 +156,9 @@ impl BandwidthLimitRuleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<BandwidthLimitRuleResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::set::BandwidthLimitRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

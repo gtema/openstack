@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::local_ip::port_association::create;
-use openstack_types::network::v2::local_ip::port_association::response::create::PortAssociationResponse;
+use openstack_types::network::v2::local_ip::port_association::response;
 
 /// Creates a Local IP association with a given Port. If a Port has multiple
 /// fixed IPs user must specify which IP to use for association.
@@ -139,8 +139,9 @@ impl PortAssociationCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<PortAssociationResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::PortAssociationResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response::list::BandwidthLimitRuleResponse;
+use openstack_types::network::v2::qos::policy::bandwidth_limit_rule::response;
 
 /// Lists all bandwidth limit rules for a QoS policy.
 ///
@@ -183,7 +183,8 @@ impl BandwidthLimitRulesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<BandwidthLimitRuleResponse>(data)?;
+
+        op.output_list::<response::list::BandwidthLimitRuleResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

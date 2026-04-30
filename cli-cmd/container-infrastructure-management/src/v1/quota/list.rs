@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::container_infrastructure_management::v1::quota::list;
-use openstack_types::container_infrastructure_management::v1::quota::response::list::QuotaResponse;
+use openstack_types::container_infrastructure_management::v1::quota::response;
 
 /// List all quotas in Magnum.
 #[derive(Args)]
@@ -75,7 +75,8 @@ impl QuotasCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<QuotaResponse>(data)?;
+
+        op.output_list::<response::list::QuotaResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

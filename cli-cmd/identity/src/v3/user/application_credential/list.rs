@@ -32,7 +32,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_types::identity::v3::user::application_credential::response::list::ApplicationCredentialResponse;
+use openstack_types::identity::v3::user::application_credential::response;
 use tracing::warn;
 
 /// List all application credentials for a user.
@@ -154,7 +154,8 @@ impl ApplicationCredentialsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<ApplicationCredentialResponse>(data)?;
+
+        op.output_list::<response::list::ApplicationCredentialResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

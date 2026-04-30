@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
-use openstack_types::network::v2::network::response::get::NetworkResponse;
+use openstack_types::network::v2::network::response;
 
 /// Shows details for a network.
 ///
@@ -89,7 +89,7 @@ impl NetworkCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<NetworkResponse>(find_data)?;
+        op.output_single::<response::get::NetworkResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

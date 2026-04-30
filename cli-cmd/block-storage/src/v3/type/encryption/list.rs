@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::r#type::encryption::list;
-use openstack_types::block_storage::v3::r#type::encryption::response::list::EncryptionResponse;
+use openstack_types::block_storage::v3::r#type::encryption::response;
 
 /// Returns the encryption specs for a given volume type.
 #[derive(Args)]
@@ -83,8 +83,9 @@ impl EncryptionsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<EncryptionResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::list::EncryptionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

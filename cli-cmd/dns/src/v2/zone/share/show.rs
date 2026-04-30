@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::share::get;
 use openstack_sdk::api::find_by_name;
-use openstack_types::dns::v2::zone::share::response::get::ShareResponse;
+use openstack_types::dns::v2::zone::share::response;
 use tracing::warn;
 
 /// Show a single zone share.
@@ -170,8 +170,9 @@ impl ShareCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ShareResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get::ShareResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

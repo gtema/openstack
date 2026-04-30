@@ -156,9 +156,9 @@ impl Component for NetworkSecurityGroupRules<'_> {
                     self.set_loading(false);
                 }
             }
-            Action::DeleteNetworkSecurityGroupRule => {
+            Action::DeleteNetworkSecurityGroupRule
                 // only if we are currently in the right mode
-                if current_mode == Mode::NetworkSecurityGroupRules {
+                if current_mode == Mode::NetworkSecurityGroupRules => {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
@@ -173,7 +173,6 @@ impl Component for NetworkSecurityGroupRules<'_> {
                         }
                     }
                 }
-            }
             Action::CreateNetworkSecurityGroupRule => {
                 if let Some(command_tx) = self.get_command_tx() {
                     command_tx.send(Action::Edit {

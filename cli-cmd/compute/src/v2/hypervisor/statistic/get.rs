@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::statistic::get;
-use openstack_types::compute::v2::hypervisor::statistic::response::get::StatisticResponse;
+use openstack_types::compute::v2::hypervisor::statistic::response;
 
 /// Shows summary statistics for all enabled hypervisors over all compute
 /// nodes.
@@ -84,8 +84,9 @@ impl StatisticCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<StatisticResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_21::StatisticResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

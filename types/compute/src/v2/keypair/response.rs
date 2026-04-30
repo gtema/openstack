@@ -16,6 +16,11 @@
 // `openstack-codegenerator`.
 
 //! `response` REST operations of compute
-pub mod create;
-pub mod get;
-pub mod list;
+pub mod create_20;
+pub mod create_22;
+pub mod create_292;
+pub mod get_20;
+pub mod get_22;
+pub mod list_20;
+pub mod list_22;
+pub mod list_235;

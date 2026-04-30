@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::share::create_297;
-use openstack_types::compute::v2::server::share::response::create::ShareResponse;
+use openstack_types::compute::v2::server::share::response;
 
 /// Attach a share to an instance.
 ///
@@ -124,8 +124,9 @@ impl ShareCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ShareResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create_297::ShareResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

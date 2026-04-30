@@ -16,10 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `Image` Service bindings
-pub mod file;
 pub mod location;
 pub mod member;
 pub mod response;
-pub mod stage;
-pub mod tag;
 pub mod task;

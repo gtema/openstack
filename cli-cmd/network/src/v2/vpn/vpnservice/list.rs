@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::vpnservice::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::vpn::vpnservice::response::list::VpnserviceResponse;
+use openstack_types::network::v2::vpn::vpnservice::response;
 
 /// Lists all VPN services.
 ///
@@ -146,7 +146,8 @@ impl VpnservicesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<VpnserviceResponse>(data)?;
+
+        op.output_list::<response::list::VpnserviceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

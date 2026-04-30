@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::vpn::endpoint_group::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::vpn::endpoint_group::response::list::EndpointGroupResponse;
+use openstack_types::network::v2::vpn::endpoint_group::response;
 
 /// Lists VPN endpoint groups.
 ///
@@ -147,7 +147,8 @@ impl EndpointGroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<EndpointGroupResponse>(data)?;
+
+        op.output_list::<response::list::EndpointGroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

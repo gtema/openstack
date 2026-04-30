@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::subnet::find;
-use openstack_types::network::v2::subnet::response::get::SubnetResponse;
+use openstack_types::network::v2::subnet::response;
 
 /// Shows details for a subnet.
 ///
@@ -91,7 +91,7 @@ impl SubnetCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<SubnetResponse>(find_data)?;
+        op.output_single::<response::get::SubnetResponse>(find_data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

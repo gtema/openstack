@@ -32,7 +32,7 @@ use clap::ValueEnum;
 use dialoguer::Password;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::token::create;
-use openstack_types::identity::v3::auth::token::response::create::TokenResponse;
+use openstack_types::identity::v3::auth::token::response;
 use serde_json::Value;
 
 /// Authenticates an identity and generates a token. Uses the password
@@ -447,8 +447,9 @@ impl TokenCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<TokenResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::TokenResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

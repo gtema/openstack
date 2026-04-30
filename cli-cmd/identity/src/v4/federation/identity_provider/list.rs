@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers` with `GET` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -30,7 +31,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v4::federation::identity_provider::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::identity::v4::federation::identity_provider::response::list::IdentityProviderResponse;
+use openstack_types::identity::v4::federation::identity_provider::response;
 
 /// List identity providers. Without any filters only global identity providers
 /// are returned. With the `domain_id` identity providers owned by the
@@ -121,7 +122,8 @@ impl IdentityProvidersCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<IdentityProviderResponse>(data)?;
+
+        op.output_list::<response::list::IdentityProviderResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

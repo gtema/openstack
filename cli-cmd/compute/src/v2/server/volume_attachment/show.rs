@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::volume_attachment::get;
-use openstack_types::compute::v2::server::volume_attachment::response::get::VolumeAttachmentResponse;
+use openstack_types::compute::v2::server::volume_attachment::response;
 
 /// Show a detail of a volume attachment.
 ///
@@ -99,8 +99,18 @@ impl VolumeAttachmentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<VolumeAttachmentResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::get_20::VolumeAttachmentResponse>(data.clone())
+            .or_else(|_| {
+                op.output_single::<response::get_270::VolumeAttachmentResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_279::VolumeAttachmentResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_289::VolumeAttachmentResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -27,7 +27,7 @@ pub struct GroupResponse {
     #[structable(optional)]
     pub description: Option<String>,
 
-    /// The ID of the domain.
+    /// The ID of the domain of the group.
     #[serde(default)]
     #[structable(optional)]
     pub domain_id: Option<String>,

@@ -28,9 +28,9 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::container_infrastructure_management::v1::cluster::action::resize::create;
 use openstack_sdk::api::QueryAsync;
-use openstack_types::container_infrastructure_management::v1::cluster::action::resize::response::create::ResizeResponse;
+use openstack_sdk::api::container_infrastructure_management::v1::cluster::action::resize::create;
+use openstack_types::container_infrastructure_management::v1::cluster::action::resize::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -114,8 +114,9 @@ impl ResizeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResizeResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::ResizeResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

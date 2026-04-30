@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group::list_detailed;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::block_storage::v3::group::response::list_detailed::GroupResponse;
+use openstack_types::block_storage::v3::group::response;
 
 /// Returns a detailed list of groups.
 #[derive(Args)]
@@ -145,7 +145,8 @@ impl GroupsCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<GroupResponse>(data)?;
+
+        op.output_list::<response::list_detailed::GroupResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

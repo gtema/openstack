@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::registered_limit::list;
-use openstack_types::identity::v3::registered_limit::response::list::RegisteredLimitResponse;
+use openstack_types::identity::v3::registered_limit::response;
 
 /// Lists Registered Limits.
 ///
@@ -101,7 +101,8 @@ impl RegisteredLimitsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<RegisteredLimitResponse>(data)?;
+
+        op.output_list::<response::list::RegisteredLimitResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

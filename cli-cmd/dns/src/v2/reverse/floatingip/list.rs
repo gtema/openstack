@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::reverse::floatingip::list;
-use openstack_types::dns::v2::reverse::floatingip::response::list::FloatingipResponse;
+use openstack_types::dns::v2::reverse::floatingip::response;
 
 /// List FloatingIP PTR records
 #[derive(Args)]
@@ -103,7 +103,8 @@ impl FloatingipsCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-        op.output_list::<FloatingipResponse>(data)?;
+
+        op.output_list::<response::list::FloatingipResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::flavor_profile::create;
-use openstack_types::load_balancer::v2::flavor_profile::response::create::FlavorProfileResponse;
+use openstack_types::load_balancer::v2::flavor_profile::response;
 
 /// Creates a flavor Profile.
 #[derive(Args)]
@@ -107,8 +107,9 @@ impl FlavorProfileCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<FlavorProfileResponse>(data)?;
+        let data: serde_json::Value = ep.query_async(client).await?;
+
+        op.output_single::<response::create::FlavorProfileResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

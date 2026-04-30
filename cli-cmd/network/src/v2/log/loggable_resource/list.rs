@@ -30,7 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::log::loggable_resource::list;
 use openstack_sdk::api::{Pagination, paged};
-use openstack_types::network::v2::log::loggable_resource::response::list::LoggableResourceResponse;
+use openstack_types::network::v2::log::loggable_resource::response;
 
 /// Lists all resource log types are supporting.
 ///
@@ -147,7 +147,8 @@ impl LoggableResourcesCommand {
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
-        op.output_list::<LoggableResourceResponse>(data)?;
+
+        op.output_list::<response::list::LoggableResourceResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

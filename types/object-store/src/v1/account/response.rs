@@ -17,4 +17,3 @@
 
 //! `response` REST operations of object-store
 pub mod get;
-pub mod head;
