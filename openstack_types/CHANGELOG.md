@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack_types-v0.22.5...openstack_types-v0.22.6) - 2026-05-07
+
+### Added
+
+- Respect MV based responses ([#1745](https://github.com/gtema/openstack/pull/1745))
+- Start respecting MV response candidates ([#1744](https://github.com/gtema/openstack/pull/1744))
+- Sync changes from codegenerator ([#1662](https://github.com/gtema/openstack/pull/1662))
+- Update to 2024 rust edition ([#1658](https://github.com/gtema/openstack/pull/1658))
+
+### Fixed
+
+- Try deserialization to multiple schemas ([#1746](https://github.com/gtema/openstack/pull/1746))
+
+### Other
+
+- Render types to separate crates ([#1716](https://github.com/gtema/openstack/pull/1716))
+- Introduce dedicated types crates ([#1715](https://github.com/gtema/openstack/pull/1715))
+- *(sdk)* Make sdk service impls standalone crates ([#1714](https://github.com/gtema/openstack/pull/1714))
+- Unvendor nova.server_diagnostics schema ([#1712](https://github.com/gtema/openstack/pull/1712))
+- *(deps)* Bump uuid from 1.22.0 to 1.23.0 ([#1702](https://github.com/gtema/openstack/pull/1702))
+- Repair codegenerator ([#1701](https://github.com/gtema/openstack/pull/1701))
+- *(deps)* Bump uuid from 1.21.0 to 1.22.0 ([#1674](https://github.com/gtema/openstack/pull/1674))
+- *(deps)* Bump uuid from 1.20.0 to 1.21.0 ([#1648](https://github.com/gtema/openstack/pull/1648))
+- *(deps)* Bump uuid from 1.19.0 to 1.20.0 ([#1627](https://github.com/gtema/openstack/pull/1627))
+- Add trailing punctuation ([#1623](https://github.com/gtema/openstack/pull/1623))
+
 ## [0.22.4](https://github.com/gtema/openstack/compare/openstack_types-v0.22.3...openstack_types-v0.22.4) - 2026-01-16
 
 ### Added

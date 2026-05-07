@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack-sdk-core-v0.22.5...openstack-sdk-core-v0.22.6) - 2026-05-07
+
+### Added
+
+- Start respecting MV response candidates ([#1744](https://github.com/gtema/openstack/pull/1744))
+
+### Fixed
+
+- Respect `response_list_item_key` outside of pagination ([#1753](https://github.com/gtema/openstack/pull/1753))
+- Add endpoint interface handling ([#1728](https://github.com/gtema/openstack/pull/1728))
+
+### Other
+
+- Split sdk crate into subcrates ([#1713](https://github.com/gtema/openstack/pull/1713))
+
 ## [0.22.5](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.4...openstack_sdk-v0.22.5) - 2026-01-17
 
 ### Fixed
