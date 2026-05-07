@@ -70,7 +70,7 @@ hyper = { version = "^1.9" }
 hyper-util = { version = "^0.1" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.14" }
-json-patch = { version = "^4.1" }
+json-patch = { version = "^4.2" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.3" }
 regex = { version = "^1.12" }
