@@ -18,7 +18,7 @@ on:
       - 'openstack_sdk/**'
       - 'openstack_tui/**'
       - 'openstack_types/**'
-      - 'sdk-*/**'
+      - 'sdk/**'
       - 'fuzz/**'
 
 env:
