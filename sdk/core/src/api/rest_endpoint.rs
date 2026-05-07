@@ -214,6 +214,11 @@ where
         if let Some(root_key) = self.response_key() {
             v = v[root_key.as_ref()].take();
         }
+        if let (Some(item_key), Some(array)) = (self.response_list_item_key(), v.as_array_mut()) {
+            for elem in array {
+                *elem = elem[item_key.as_ref()].take();
+            }
+        }
 
         let headers = rsp.headers();
         // Process headers which endpoint wants to capture
@@ -258,6 +263,12 @@ where
 
         if let Some(root_key) = self.response_key() {
             v = v[root_key.as_ref()].take();
+        }
+
+        if let (Some(item_key), Some(array)) = (self.response_list_item_key(), v.as_array_mut()) {
+            for elem in array {
+                *elem = elem[item_key.as_ref()].take();
+            }
         }
 
         let headers = rsp.headers();
@@ -376,7 +387,6 @@ where
     }
 }
 
-#[cfg(feature = "sync")]
 #[cfg(test)]
 mod tests {
     use http::StatusCode;
@@ -384,8 +394,12 @@ mod tests {
     use serde::Deserialize;
     use serde_json::json;
 
+    use crate::api::ApiError;
+    #[cfg(feature = "sync")]
+    use crate::api::Query;
+    #[cfg(feature = "async")]
+    use crate::api::QueryAsync;
     use crate::api::rest_endpoint_prelude::*;
-    use crate::api::{ApiError, Query};
     use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;
 
@@ -405,11 +419,12 @@ mod tests {
         }
     }
 
-    #[derive(Debug, Deserialize)]
+    #[derive(Debug, Deserialize, PartialEq)]
     struct DummyResult {
         value: u8,
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_non_json_response() {
         let server = MockServer::start();
@@ -429,6 +444,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_empty_response() {
         let server = MockServer::start();
@@ -448,6 +464,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_not_found() {
         let server = MockServer::start();
@@ -466,6 +483,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_bad_json() {
         let server = MockServer::start();
@@ -485,6 +503,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_detection() {
         let server = MockServer::start();
@@ -511,6 +530,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_detection_unknown() {
         let server = MockServer::start();
@@ -537,6 +557,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_bad_deserialization() {
         let server = MockServer::start();
@@ -560,6 +581,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_good_deserialization() {
         let server = MockServer::start();
@@ -571,6 +593,68 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         assert_eq!(res.unwrap().value, 0);
+        mock.assert();
+    }
+
+    struct DummyLi;
+    impl RestEndpoint for DummyLi {
+        fn method(&self) -> http::Method {
+            http::Method::GET
+        }
+
+        fn endpoint(&self) -> Cow<'static, str> {
+            "dummy".into()
+        }
+
+        fn service_type(&self) -> ServiceType {
+            ServiceType::from("dummy")
+        }
+        fn response_key(&self) -> Option<Cow<'static, str>> {
+            Some("container".into())
+        }
+
+        fn response_list_item_key(&self) -> Option<Cow<'static, str>> {
+            Some("data".into())
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_resource_with_list_inside() {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummy");
+            then.status(200).json_body(json!({
+                "container": [
+                    {"data": {"value": 0}},
+                    {"data": {"value": 2}}
+            ]}));
+        });
+
+        let res: Vec<DummyResult> = DummyLi.query(&client).unwrap();
+        assert!(res.contains(&DummyResult { value: 0 }));
+        assert!(res.contains(&DummyResult { value: 2 }));
+        mock.assert();
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_resource_with_list_inside_async() {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummy");
+            then.status(200).json_body(json!({
+            "container": [
+                {"data": {"value": 0}},
+                {"data": {"value": 1}}
+            ]}));
+        });
+
+        let res: Vec<DummyResult> = DummyLi.query_async(&client).await.unwrap();
+        assert!(res.contains(&DummyResult { value: 0 }), "{:?}", res);
+        assert!(res.contains(&DummyResult { value: 1 }), "{:?}", res);
         mock.assert();
     }
 }
