@@ -22,17 +22,90 @@ use structable::{StructTable, StructTableOptions};
 /// Host response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct HostResponse {
-    #[structable(serialize)]
-    pub resource: Resource,
+    /// The name of the host that hosts the storage backend, may take the
+    /// format of `host@backend`.
+    #[structable()]
+    pub host_name: String,
+
+    /// The date and time when the resource was updated.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC. In the previous example, the offset value is `-05:00`.
+    ///
+    /// If the `updated_at` date and time stamp is not set, its value is
+    /// `null`.
+    #[serde(rename = "last-update")]
+    #[structable(optional, title = "last-update", wide)]
+    pub last_update: Option<String>,
+
+    /// The name of the service which is running on the host.
+    #[structable()]
+    pub service: String,
+
+    /// The state of the service. One of `enabled` or `disabled`.
+    #[serde(rename = "service-state")]
+    #[structable(serialize, title = "service-state", wide)]
+    pub service_state: ServiceState,
+
+    /// The status of the service. One of `available` or `unavailable`.
+    #[serde(rename = "service-status")]
+    #[structable(serialize, title = "service-status", wide)]
+    pub service_status: ServiceStatus,
+
+    /// The availability zone name.
+    #[structable()]
+    pub zone: String,
 }
 
-/// `Resource` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Resource {
-    pub host: String,
-    pub project: String,
-    pub snapshot_count: String,
-    pub total_snapshot_gb: String,
-    pub total_volume_gb: String,
-    pub volume_count: String,
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum ServiceState {
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
+
+    // Enabled
+    #[serde(rename = "enabled")]
+    Enabled,
+}
+
+impl std::str::FromStr for ServiceState {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "disabled" => Ok(Self::Disabled),
+            "enabled" => Ok(Self::Enabled),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum ServiceStatus {
+    // Available
+    #[serde(rename = "available")]
+    Available,
+
+    // Unavailable
+    #[serde(rename = "unavailable")]
+    Unavailable,
+}
+
+impl std::str::FromStr for ServiceStatus {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "available" => Ok(Self::Available),
+            "unavailable" => Ok(Self::Unavailable),
+            _ => Err(()),
+        }
+    }
 }

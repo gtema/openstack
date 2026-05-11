@@ -90,6 +90,10 @@ impl RestEndpoint for Request<'_> {
         Some("host".into())
     }
 
+    fn response_list_item_key(&self) -> Option<Cow<'static, str>> {
+        Some("resource".into())
+    }
+
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()

@@ -27,10 +27,10 @@ paths:
       - health
       summary: Health check endpoint.
       description: |-
-        Perform diverse checks to identify the overall status of the system. It can be `OK`,
-        `SERVICE_UNAVAILABLE`. In difference to the `/ready` check this does not return
-        `SERVICE_UNAVAILABLE` when components are in the degraded state to prevent from the restart. It
-        is similar to the `/live` check.
+        Perform diverse checks to identify the overall status of the system. It can
+        be `OK`, `SERVICE_UNAVAILABLE`. In difference to the `/ready` check this
+        does not return `SERVICE_UNAVAILABLE` when components are in the degraded
+        state to prevent from the restart. It is similar to the `/live` check.
       operationId: health
       responses:
         '200':
@@ -51,8 +51,9 @@ paths:
       - health
       summary: Readiness health check endpoint.
       description: |-
-        Perform relevant checks only returning `OK` when all of them are ok. Any check in the
-        degraded/warn state would result in `SERVICE_UNAVAILABLE` response.
+        Perform relevant checks only returning `OK` when all of them are ok. Any
+        check in the degraded/warn state would result in `SERVICE_UNAVAILABLE`
+        response.
       operationId: ready
       responses:
         '200':
@@ -526,14 +527,13 @@ paths:
     post:
       tags:
       - roles
-      summary: Create Role
-      description: Create a new role
+      summary: Create a new Role.
       operationId: create
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoleCreate'
+              $ref: '#/components/schemas/RoleCreateRequest'
         required: true
       responses:
         '201':
@@ -654,7 +654,7 @@ paths:
       - users
       summary: Delete user
       description: Delete user by ID
-      operationId: remove
+      operationId: delete
       parameters:
       - name: user_id
         in: path
@@ -2019,14 +2019,13 @@ paths:
     post:
       tags:
       - roles
-      summary: Create Role
-      description: Create a new role
+      summary: Create a new Role.
       operationId: create
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoleCreate'
+              $ref: '#/components/schemas/RoleCreateRequest'
         required: true
       responses:
         '201':
@@ -4494,6 +4493,15 @@ components:
           description: The role name.
       additionalProperties:
         description: Extra attributes for the role.
+    RoleCreateRequest:
+      type: object
+      description: New role creation request.
+      required:
+      - role
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleCreate'
+          description: Role object.
     RoleList:
       type: object
       description: Roles.

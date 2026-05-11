@@ -14649,42 +14649,62 @@ components:
             A OpenStack Block Storage host.
           items:
             additionalProperties: false
-            description: A host object.
             properties:
-              resource:
-                additionalProperties: false
-                properties:
-                  host:
-                    description: The name of the host that hosts the storage 
-                      backend, may take the format of host@backend.
-                    type: string
-                  project:
-                    description: The Project ID which the host resource belongs 
-                      to. In the summary resource, the value is (total).
-                    type: string
-                  snapshot_count:
-                    description: The total number of snapshots used.
-                    type: string
-                  total_snapshot_gb:
-                    description: The total number of gibibytes (GiB) used by 
-                      snapshots.
-                    type: string
-                  total_volume_gb:
-                    description: The total number of gibibytes (GiB) used.
-                    type: string
-                  volume_count:
-                    description: Total number of volumes.
-                    type: string
-                required:
-                  - host
-                  - project
-                  - snapshot_count
-                  - total_snapshot_gb
-                  - total_volume_gb
-                  - volume_count
-                type: object
+              host_name:
+                description: |-
+                  The name of the host that hosts the storage backend,
+                  may take the format of `host@backend`.
+                type: string
+              last-update:
+                description: |-
+                  The date and time when the resource was updated.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `±hh:mm` value, if included, is the time zone as an offset
+                  from UTC. In the previous example, the offset value is `-05:00`.
+
+                  If the `updated_at` date and time stamp is not set, its value is
+                  `null`.
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+              service:
+                description: |-
+                  The name of the service which is running on the host.
+                type: string
+              service-state:
+                description: |-
+                  The state of the service. One of `enabled` or `disabled`.
+                enum:
+                  - disabled
+                  - enabled
+                type: string
+              service-status:
+                description: |-
+                  The status of the service. One of `available` or `unavailable`.
+                enum:
+                  - available
+                  - unavailable
+                type: string
+              zone:
+                description: |-
+                  The availability zone name.
+                type: string
             required:
-              - resource
+              - host_name
+              - last-update
+              - service
+              - service-state
+              - service-status
+              - zone
             type: object
           type: array
       type: object

@@ -83,9 +83,9 @@ impl EncryptionsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: serde_json::Value = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
-        op.output_single::<response::list::EncryptionResponse>(data.clone())?;
+        op.output_list::<response::list::EncryptionResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
