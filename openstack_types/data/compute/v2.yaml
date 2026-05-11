@@ -91827,6 +91827,9 @@ components:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -93731,8 +93734,6 @@ components:
             additionalProperties: false
             properties:
               id:
-                description: |-
-                  The UUID of the server.
                 format: uuid
                 type: string
               links:

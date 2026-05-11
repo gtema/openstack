@@ -22,17 +22,29 @@ use structable::{StructTable, StructTableOptions};
 /// Host response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct HostResponse {
-    #[structable(serialize)]
-    pub resource: Resource,
-}
-
-/// `Resource` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Resource {
+    /// The name of the host that hosts the storage backend, may take the
+    /// format of host@backend.
+    #[structable()]
     pub host: String,
+
+    /// The Project ID which the host resource belongs to. In the summary
+    /// resource, the value is `(total)`.
+    #[structable()]
     pub project: String,
+
+    /// The total number of snapshots used.
+    #[structable()]
     pub snapshot_count: String,
+
+    /// The total number of gibibytes (GiB) used by snapshots.
+    #[structable()]
     pub total_snapshot_gb: String,
+
+    /// The total number of gibibytes (GiB) used.
+    #[structable()]
     pub total_volume_gb: String,
+
+    /// Total number of volumes.
+    #[structable()]
     pub volume_count: String,
 }

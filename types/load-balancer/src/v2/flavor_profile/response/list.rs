@@ -23,34 +23,18 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorProfileResponse {
     #[serde(default)]
-    #[structable(optional, serialize)]
-    pub flavorprofile_links: Option<Vec<FlavorprofileLinks>>,
-
-    #[serde(default)]
-    #[structable(optional, serialize)]
-    pub flavorprofiles: Option<Vec<Flavorprofiles>>,
-}
-
-/// Base type for complex types
-/// `FlavorprofileLinks` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FlavorprofileLinks {
-    #[serde(default)]
-    pub href: Option<String>,
-    #[serde(default)]
-    pub rel: Option<String>,
-}
-
-/// Defines which attributes are to be shown on any response.
-/// `Flavorprofiles` type
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Flavorprofiles {
-    #[serde(default)]
+    #[structable(optional, wide)]
     pub flavor_data: Option<String>,
+
     #[serde(default)]
+    #[structable(optional)]
     pub id: Option<String>,
+
     #[serde(default)]
+    #[structable(optional)]
     pub name: Option<String>,
+
     #[serde(default)]
+    #[structable(optional, wide)]
     pub provider_name: Option<String>,
 }
