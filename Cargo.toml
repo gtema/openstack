@@ -1,8 +1,7 @@
 [workspace]
 resolver = "3"
 members = [
-  "cli-core",
-  "cli-cmd/*",
+  "cli/*",
   "openstack_sdk",
   "openstack_cli",
   "openstack_tui",
@@ -15,6 +14,7 @@ members = [
 # webauthn-rs should not land in the default members since it pulls openssl that
 # is not available for alpine
 default-members = [
+  "cli/*",
   "sdk/auth-core",
   "sdk/auth-application-credential",
   "sdk/auth-multifactor",
@@ -34,10 +34,9 @@ default-members = [
   "sdk/network",
   "sdk/object-store",
   "sdk/placement",
-  "cli-core",
-  "cli-cmd/*",
   "types/*",
-  "openstack_*"]
+  "openstack_*"
+]
 
 [workspace.package]
 license = "Apache-2.0"

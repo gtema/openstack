@@ -1,6 +1,5 @@
 [package]
-name = "openstack-cli-api"
-description = "OpenStack CLI Api commands"
+name = "openstack-cli-network"
 version = "0.1.0"
 license.workspace = true
 edition.workspace = true
@@ -11,8 +10,10 @@ repository.workspace = true
 
 [dependencies]
 clap = { workspace = true }
-openstack-cli-core = { version = "0.13", path = "../../cli-core/" }
-openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "identity"] }
+openstack-cli-core = { version = "0.13", path = "../core/" }
+openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "network"] }
+openstack_sdk_core = { path="../../sdk/core", version = "^0.22" }
+openstack_types = { path="../../openstack_types", version = "^0.22" }
 eyre = { workspace = true }
 http = { workspace = true }
 serde_json = {workspace = true}

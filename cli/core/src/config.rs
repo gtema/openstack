@@ -15,7 +15,7 @@
 //!
 //! It is possible to configure different aspects of the OpenStackClient (not the clouds connection
 //! credentials) using the configuration file (`$XDG_CONFIG_DIR/osc/config.yaml`). This enables
-//! user to configurate which columns should be returned when no corresponding run time arguments
+//! user to configure which columns should be returned when no corresponding run time arguments
 //! on a resource base.
 //!
 //! ```yaml
@@ -39,7 +39,7 @@ use std::{
 use thiserror::Error;
 use tracing::error;
 
-const CONFIG: &str = include_str!("../../openstack_cli/.config/config.yaml");
+const CONFIG: &str = include_str!("../../../openstack_cli/.config/config.yaml");
 
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.
