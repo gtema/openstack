@@ -25,6 +25,7 @@ async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let _res: Vec<VolumeResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
         .query_async(&client)
         .await?;
+    // TODO
 
     Ok(())
 }
