@@ -36,7 +36,7 @@ load_balancer = ["dep:openstack-sdk-load-balancer"]
 network = ["dep:openstack-sdk-network"]
 object_store = ["dep:openstack-sdk-object-store"]
 placement = ["dep:openstack-sdk-placement"]
-sync = ["openstack-sdk-core/sync", 
+sync = ["openstack_sdk_core/sync", 
   "openstack-sdk-block-storage/sync",
   "openstack-sdk-compute/sync",
   "openstack-sdk-container-infrastructure-management/sync",
@@ -48,7 +48,7 @@ sync = ["openstack-sdk-core/sync",
   "openstack-sdk-object-store/sync",
   "openstack-sdk-placement/sync"
 ]
-async = ["openstack-sdk-core/async", 
+async = ["openstack_sdk_core/async", 
   "openstack-sdk-block-storage/async",
   "openstack-sdk-compute/async",
   "openstack-sdk-container-infrastructure-management/async",
@@ -85,7 +85,7 @@ openstack-sdk-auth-receipt = { version = "0.1", path = "../sdk/auth-receipt/" }
 openstack-sdk-auth-token = { version = "0.1", path = "../sdk/auth-token/" }
 openstack-sdk-auth-totp = { version = "0.1", path = "../sdk/auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.1", path = "../sdk/auth-websso/" }
-openstack-sdk-core = { path = "../sdk/core/", version = "^0.22" }
+openstack_sdk_core = { path = "../sdk/core/", version = "^0.22" }
 openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.1", optional = true }
 openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.1", optional = true }
 openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.1", optional = true }
