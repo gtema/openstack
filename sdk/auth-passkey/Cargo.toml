@@ -1,6 +1,6 @@
 [package]
 name = "openstack-sdk-auth-passkey"
-version = "0.1.0"
+version = "0.22.5"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
