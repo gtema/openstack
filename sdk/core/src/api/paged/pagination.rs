@@ -50,6 +50,18 @@ pub enum PaginationError {
     MissingEndpointUrlPort(String),
 }
 
+impl PaginationError {
+    pub fn parse<S>(url: S, error: url::ParseError) -> Self
+    where
+        S: Into<String>,
+    {
+        Self::InvalidUrl {
+            url: url.into(),
+            source: error,
+        }
+    }
+}
+
 /// Pagination options
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum Pagination {

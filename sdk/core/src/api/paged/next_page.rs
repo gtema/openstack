@@ -18,6 +18,7 @@ use http::HeaderMap;
 use serde_json::Value;
 use std::borrow::Cow;
 use thiserror::Error;
+use tracing::warn;
 use url::Url;
 
 use crate::api::PaginationError;
@@ -187,10 +188,10 @@ pub(crate) fn next_page_from_body(
         if let Some(n) = next {
             // We expect that the link contains all initial query parameters and we do NOT read them.
             if let Some(next_url) = n.as_str() {
-                let next: String = if !next_url.starts_with("http") {
+                if !next_url.starts_with("http") {
                     // Some services (i.e. Glance) has a relative link without
                     // domain. So we need to construct it back.
-                    String::from(base_endpoint.scheme())
+                    let next = String::from(base_endpoint.scheme())
                         + "://"
                         + base_endpoint.domain().ok_or_else(|| {
                             PaginationError::MissingEndpointUrlDomain(base_endpoint.to_string())
@@ -203,15 +204,31 @@ pub(crate) fn next_page_from_body(
                             })?
                             //.expect("Port is unknown")
                             .to_string()
-                        + next_url
+                        + next_url;
+
+                    return Some(
+                        Url::parse(&next).map_err(|err| PaginationError::parse(next, err)),
+                    )
+                    .transpose();
                 } else {
-                    next_url.to_string()
+                    let mut next: Url = next_url
+                        .parse()
+                        .map_err(|err| PaginationError::parse(next_url, err))?;
+                    if next.host_str() != base_endpoint.host_str() {
+                        warn!(
+                            "The pagination link points at the different domain `{:?}`. Replacing it with the domain the result was retrieved.",
+                            base_endpoint.host_str()
+                        );
+                        next.set_host(base_endpoint.host_str())
+                            .map_err(|err| PaginationError::parse(next.clone(), err))?;
+                    }
+                    return Ok(Some(next));
                 };
-                return Some(Url::parse(&next).map_err(|x| PaginationError::InvalidUrl {
-                    source: x,
-                    url: next,
-                }))
-                .transpose();
+                //return Some(Url::parse(&next).map_err(|x| PaginationError::InvalidUrl {
+                //    source: x,
+                //    url: next,
+                //}))
+                //.transpose();
             }
         }
     }
@@ -231,17 +248,31 @@ mod tests {
 
     #[test]
     fn test_body_links() {
-        let data = json!({"links": [{"rel": "next", "href": "http://foo.bar"}]});
-        let res = next_page_from_body(&data, &None, Url::parse("http://dummy").unwrap());
-        assert_eq!(res.unwrap().unwrap(), Url::parse("http://foo.bar").unwrap());
+        let data = json!({"links": [{"rel": "next", "href": "http://foo.bar/2"}]});
+        let res = next_page_from_body(&data, &None, Url::parse("http://foo.bar/1").unwrap());
+        assert_eq!(
+            res.unwrap().unwrap(),
+            Url::parse("http://foo.bar/2").unwrap(),
+        );
+
+        let data = json!({"links": [{"rel": "next", "href": "http://foo.bar/2"}]});
+        let res = next_page_from_body(&data, &None, Url::parse("http://example.org/1").unwrap());
+        assert_eq!(
+            res.unwrap().unwrap(),
+            Url::parse("http://example.org/2").unwrap(),
+            "domain differs, need to replace it to the current one"
+        );
     }
 
     #[test]
     fn test_body_nova_links() {
-        let data = json!({"flavors_links": [{"rel": "next", "href": "http://foo.bar"}]});
+        let data = json!({"flavors_links": [{"rel": "next", "href": "http://foo.bar/2"}]});
         let key: Cow<'static, str> = Cow::Owned("flavors".into());
-        let res = next_page_from_body(&data, &Some(key), Url::parse("http://dummy").unwrap());
-        assert_eq!(res.unwrap().unwrap(), Url::parse("http://foo.bar").unwrap());
+        let res = next_page_from_body(&data, &Some(key), Url::parse("http://foo.bar/1").unwrap());
+        assert_eq!(
+            res.unwrap().unwrap(),
+            Url::parse("http://foo.bar/2").unwrap()
+        );
     }
 
     #[test]
