@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::user::list::Request;
-use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::identity::v3::user::response::list::UserResponse;
 
 use crate::get_client;
@@ -22,9 +22,7 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("identity");
 
-    let _res: Vec<UserResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
-        .query_async(&client)
-        .await?;
+    let _res: Vec<UserResponse> = Request::builder().build()?.query_async(&client).await?;
 
     Ok(())
 }

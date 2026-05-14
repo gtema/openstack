@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::floatingip::list::Request;
-use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::network::v2::floatingip::response::list::FloatingipResponse;
 
 use crate::get_client;
@@ -22,9 +22,7 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("network");
 
-    let _res: Vec<FloatingipResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
-        .query_async(&client)
-        .await?;
+    let _res: Vec<FloatingipResponse> = Request::builder().build()?.query_async(&client).await?;
 
     Ok(())
 }

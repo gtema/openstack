@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::list::Request;
-use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::compute::v2::server::response;
 
 use crate::get_client;
@@ -22,9 +22,7 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("compute");
 
-    let res: Vec<serde_json::Value> = paged(Request::builder().build()?, Pagination::Limit(10))
-        .query_async(&client)
-        .await?;
+    let res: Vec<serde_json::Value> = Request::builder().build()?.query_async(&client).await?;
 
     // Need to iterate over all possible candidate schemas
     if let Some(val) = res.first() {

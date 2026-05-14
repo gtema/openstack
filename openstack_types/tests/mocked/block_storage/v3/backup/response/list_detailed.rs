@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::backup::list_detailed::Request;
-use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::block_storage::v3::backup::response::list_detailed::BackupResponse;
 
 use crate::get_client;
@@ -22,9 +22,7 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("block-storage");
 
-    let _res: Vec<BackupResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
-        .query_async(&client)
-        .await?;
+    let _res: Vec<BackupResponse> = Request::builder().build()?.query_async(&client).await?;
 
     Ok(())
 }

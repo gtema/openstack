@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::list::Request;
-use openstack_sdk::api::{paged, Pagination, QueryAsync};
 use openstack_types::dns::v2::zone::response::list::ZoneResponse;
 
 use crate::get_client;
@@ -22,9 +22,7 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("dns");
 
-    let _res: Vec<ZoneResponse> = paged(Request::builder().build()?, Pagination::Limit(10))
-        .query_async(&client)
-        .await?;
+    let _res: Vec<ZoneResponse> = Request::builder().build()?.query_async(&client).await?;
 
     Ok(())
 }

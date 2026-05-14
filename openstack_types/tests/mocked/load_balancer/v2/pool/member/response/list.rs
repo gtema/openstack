@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::load_balancer::v2::pool::member::list::Request;
-use openstack_sdk::api::{Pagination, QueryAsync, paged};
 use openstack_types::load_balancer::v2::pool::member::response::list::MemberResponse;
 
 use crate::get_client;
@@ -22,12 +22,11 @@ use crate::get_client;
 async fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let client = get_client("load-balancer");
 
-    let _res: Vec<MemberResponse> = paged(
-        Request::builder().pool_id("dummy").build()?,
-        Pagination::Limit(10),
-    )
-    .query_async(&client)
-    .await?;
+    let _res: Vec<MemberResponse> = Request::builder()
+        .pool_id("dummy")
+        .build()?
+        .query_async(&client)
+        .await?;
 
     Ok(())
 }
