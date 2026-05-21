@@ -1,6 +1,6 @@
 [package]
 name = "openstack-types-image"
-description = "OpenStack API Types"
+description = "OpenStack API Types - Image"
 version = "0.1.0"
 license.workspace = true
 edition.workspace = true
@@ -11,7 +11,7 @@ repository.workspace = true
 
 [dependencies]
 chrono = { workspace= true }
-openstack-types-core = { path = "../core" }
+openstack-types-core.workspace = true
 serde = { workspace = true }
 serde_json = { workspace = true }
 structable = { workspace = true }

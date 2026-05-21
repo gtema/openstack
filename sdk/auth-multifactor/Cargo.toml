@@ -1,5 +1,6 @@
 [package]
 name = "openstack-sdk-auth-multifactor"
+description = "OpenStack SDK auth plugin for multifactor authentication"
 version = "0.1.0"
 license.workspace = true
 edition.workspace = true
@@ -12,7 +13,7 @@ repository.workspace = true
 async-trait.workspace = true
 bytes.workspace = true
 inventory.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-core.workspace = true
 openstack-sdk-auth-password = { version = "0.1", path = "../auth-password" }
 openstack-sdk-auth-token = { version = "0.1", path = "../auth-token" }
 openstack-sdk-auth-totp = { version = "0.1", path = "../auth-totp" }

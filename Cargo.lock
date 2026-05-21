@@ -2747,7 +2747,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2760,7 +2760,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-auth"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "clap",
@@ -2777,7 +2777,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-block-storage"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2792,7 +2792,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-catalog"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "openstack-cli-core",
@@ -2806,7 +2806,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-compute"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2821,7 +2821,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-container-infrastructure-management"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2836,7 +2836,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-core"
-version = "0.13.5"
+version = "0.13.6"
 dependencies = [
  "base64 0.22.1",
  "clap",
@@ -2868,7 +2868,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-dns"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2883,7 +2883,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-identity"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "clap",
@@ -2902,7 +2902,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-image"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2918,7 +2918,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-load-balancer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2933,7 +2933,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-network"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",
@@ -2948,7 +2948,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-object-store"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "bytes",
  "clap",
@@ -2967,7 +2967,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-placement"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eyre",

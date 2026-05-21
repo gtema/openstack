@@ -39,7 +39,7 @@ use std::{
 use thiserror::Error;
 use tracing::error;
 
-const CONFIG: &str = include_str!("../../../openstack_cli/.config/config.yaml");
+const CONFIG: &str = include_str!("../.config/config.yaml");
 
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.

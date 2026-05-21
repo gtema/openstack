@@ -34,7 +34,7 @@ futures-util.workspace = true
 http.workspace = true
 inventory.workspace = true
 itertools.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core/" }
+openstack-sdk-auth-core.workspace = true
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 regex.workspace = true
 reqwest = { workspace = true, default-features = false }
