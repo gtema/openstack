@@ -1,5 +1,6 @@
 [package]
 name = "openstack-sdk-auth-oidcaccesstoken"
+description = "OpenStack SDK auth plugin for authenticating with OIDC token"
 version = "0.22.5"
 license.workspace = true
 edition.workspace = true
@@ -11,7 +12,7 @@ repository.workspace = true
 [dependencies]
 async-trait.workspace = true
 inventory.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-core.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

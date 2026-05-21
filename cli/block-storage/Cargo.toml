@@ -1,7 +1,7 @@
 [package]
 name = "openstack-cli-block-storage"
 description = "OpenStack CLI Block Storage commands"
-version = "0.1.0"
+version = "0.2.0"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -11,10 +11,10 @@ repository.workspace = true
 
 [dependencies]
 clap = { workspace = true }
-openstack-cli-core = { version = "0.13", path = "../core/" }
-openstack_sdk = { path="../../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "block_storage", "identity"] }
-openstack_sdk_core = { path="../../sdk/core", version = "^0.22" }
-openstack_types = { path="../../openstack_types", version = "^0.22" }
+openstack-cli-core.workspace = true
+openstack_sdk = { workspace = true, features = ["async", "block_storage", "identity"] }
+openstack_sdk_core.workspace = true
+openstack_types.workspace = true
 eyre = { workspace = true }
 http = { workspace = true }
 serde_json = {workspace = true}

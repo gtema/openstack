@@ -23,7 +23,7 @@ use std::io::IsTerminal;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::path::Path;
 use tokio::fs;
-use tokio::io::{self};
+use tokio::io::{self, copy};
 use tokio_util::compat::{FuturesAsyncReadCompatExt, TokioAsyncReadCompatExt};
 use tokio_util::io::InspectReader;
 
@@ -122,7 +122,7 @@ pub async fn download_file(
         );
 
         let mut writer = io::stdout();
-        io::copy(&mut inspect_reader, &mut writer).await?;
+        copy(&mut inspect_reader, &mut writer).await?;
     } else {
         let path = Path::new(&dst_name);
         let fname = path

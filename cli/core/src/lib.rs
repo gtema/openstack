@@ -24,6 +24,9 @@ pub mod error;
 pub mod output;
 pub mod tracing_stats;
 
+pub use openstack_sdk_auth_core;
+pub use openstack_sdk_core;
+
 use crate::tracing_stats::HttpRequestStats;
 
 /// Build a table of HTTP request timings

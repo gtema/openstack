@@ -1,0 +1,405 @@
+---
+views:
+  # block storage
+  block-storage.attachment:
+    default_fields: [id, instance, volume_id, status, attach_mode, attached_at]
+    fields:
+      - name: id
+        width: 38
+      - name: instance
+        width: 38
+      - name: volume_id
+        width: 38
+  block-storage.backup:
+    default_fields: [id, name, availability_zone, description, fail_reason, is_incremental, metadata, object_count, size, snapshot_id, status, volume_id, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: volume_id
+        width: 38
+  block-storage.snapshot:
+    default_fields: [id, name, description, "os-extended-snapshot-attributes:progress", size, status, volume_id, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: volume_id
+        width: 38
+      - name: group_snapshot_id
+        width: 38
+  block-storage.volume:
+    default_fields: [id, name, availability_zone, bootable, description, encrypted, imetadata, migration_status, multiattach, replication_status, size, status, volume_type]
+    fields:
+      - name: id
+        width: 38
+      - name: service_uuid
+        width: 38
+      - name: user_id
+        width: 34
+      - name: volume_type_id
+        width: 38
+  # compute
+  compute.aggregate:
+    default_fields: [name, uuid, az, updated_at]
+    fields:
+      - name: uuid
+        width: 38
+  compute.flavor:
+    default_fields: [id, name, vcpus, ram, disk, swap, description]
+    fields:
+      - name: id
+        width: 38
+  compute.hypervisor:
+    default_fields: [ip, hostname, status, state]
+    fields:
+      - name: id
+        width: 38
+  compute.server/instance_action/event:
+    default_fields: [event, result, start_time, finish_time, host]
+    fields:
+      - name: id
+        width: 38
+  compute.server/instance_action:
+    default_fields: [id, action, message, start_time, user_id]
+    fields:
+      - name: id
+        width: 38
+  compute.server:
+    default_fields: [id, name, status, created, address, image, flavor, security_groups]
+    fields:
+      - name: id
+        width: 38
+      - name: hostId
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: locked
+        width: 7
+      - name: status
+        width: 8
+      - name: flavor
+        json_pointer: "/original_name"
+      - name: image
+        json_pointer: "/id"
+  # dns
+  dns.recordset:
+    default_fields: [id, name, description, records, status, type, zone_id, zone_name, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: zone_id
+        width: 38
+      - name: project_id
+        width: 34
+  dns.zone/recordset:
+    default_fields: [id, name, description, records, status, type, zone_name, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: zone_id
+        width: 38
+      - name: project_id
+        width: 34
+  dns.zone:
+    default_fields: [id, name, description, email, shared, status, ttl, type, created_at, updated_at]
+    fields:
+      - name: id
+        width: 38
+      - name: pool_id
+        width: 38
+      - name: project_id
+        width: 34
+  # identity
+  identity.domain:
+    default_fields: [id, name, enabled, description, options, tags]
+    fields:
+      - name: id
+        width: 34
+  identity.endpoint:
+    default_fields: [id, url, interface, region_id, service_id, enabled]
+    fields:
+      - name: id
+        width: 34
+  identity.group:
+    default_fields: [id, name, domain_id, description]
+    fields:
+      - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+  identity.federation/identity_provider:
+    default_fields: [id, name, domain_id, oidc_discovery_url, oidc_client_id, oidc_response_mode, oidc_response_types, default_mapping_name, jwks_url, jwt_validation_pubkeys, bound_issuer, provider_config]
+    fields:
+      - name: id
+        min_width: 34
+      - name: domain_id
+        min_width: 34
+  identity.federation/mapping:
+    default_fields: [id, name, idp_id, domain_id, domain_id_claim, type, oidc_scopes, allowed_redirect_uris, user_id_claim, user_name_claim, groups_claim, bound_audiences, bound_subject, bound_claims, token_user_id, token_project_id, token_role_ids]
+    fields:
+      - name: id
+        width: 38
+      - name: idp_id
+        min_width: 34
+      - name: domain_id
+        min_width: 34
+  identity.project:
+    default_fields: [id, name, domain_id, enabled, parent_id, description, options, tags]
+    fields:
+      - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+      - name: parent_id
+        width: 34
+  identity.region:
+    default_fields: [id, parent_id, description]
+    fields:
+      - name: id
+        width: 34
+      - name: parent_id
+        width: 34
+  identity.role:
+    default_fields: [id, name, domain_id, description, options]
+    fields:
+      - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+  identity.role_assignment:
+    default_fields: [role, group, user, scope]
+  identity.service:
+    default_fields: [id, name, type, description, enabled]
+    fields:
+      - name: id
+        width: 34
+  identity.user/application_credential:
+    default_fields: [id, name, description, project_id, expires_at, roles, unrestricted]
+    fields:
+      - name: id
+        width: 34
+      - name: project_id
+        width: 34
+  identity.user/access_rule:
+    default_fields: [id, service, path, method]
+    fields:
+      - name: id
+        width: 34
+  identity.user:
+    default_fields: [id, name, domain_id, enabled, description, password_expires_at]
+    fields:
+      - name: id
+        width: 34
+      - name: domain_id
+        width: 34
+      - name: default_project_id
+        width: 34
+  # image
+  image.image:
+    default_fields: [id, name, distro, version, arch, min_disk, min_ram, os_hidden, protected, status, visibility, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: owner
+        width: 34
+  # load balancer
+  load-balancer.healthmonitor:
+    default_fields: [id, name, admin_state_up, delay, http_method, timeout, type, operating_status, provisioning_status, url_path, tags]
+    fields:
+      - name: id
+        width: 38
+  load-balancer.listener:
+    default_fields: [id, name, description, admin_state_up, default_pool_id, l7policies, loadbalancers, operating_status, protocol, protocol_port, provisioning_status, port, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: default_pool_id
+        width: 38
+  load-balancer.loadbalancer:
+    default_fields: [id, name, admin_state_up, description, listeners, operating_status, pools, provisioning_status, status, vip_address, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: vip_network_id
+        width: 38
+      - name: vip_subnet_id
+        width: 38
+      - name: vip_port_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
+  load-balancer.pool/member:
+    default_fields: [id, name, address, admin_state_up, backup, monitor_address, monitor_port, operating_status, protocol_port, provisioning_status, subnet_id, weight, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: subnet_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
+  load-balancer.pool:
+    default_fields: [id, name, admin_state_up, description, healthmonitor_id, lb_algorithm, listeners, loadbalancers, members, operating_status, protocol, provisioning_status, tls_enabled, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: healthmonitor_id
+        width: 38
+      - name: admin_state_up
+        min_width: 5
+      - name: tenant_id
+        width: 34
+      - name: project_id
+        width: 34
+  # network
+  network.network:
+    default_fields: [id, name, admin_state_up, dns_domain, "provider:network_type", "router:external", shared, status, subnets, created_at, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: subnets
+        min_width: 42
+      - name: tenant_id
+        width: 34
+  network.port:
+    default_fields: [id, name, admin_state_up, device_id, device_owner, dns_assignment, fixed_ips, network_id, security_groups, status, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: device_id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: security_groups
+        min_width: 42
+      - name: admin_state_up
+        min_width: 6
+      - name: port_security_enabled
+        min_width: 6
+      - name: status
+        min_width: 8
+      - name: tenant_id
+        width: 34
+  network.router:
+    default_fields: [id, name, admin_state_up, description, external_gateway_info, status, created_at, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: tenant_id
+        width: 34
+  network.subnet:
+    default_fields: [id, name, allocation_pools, cidr, created_at, description, dns_nameservers, gateway_ip, ip_version, tags]
+    fields:
+      - name: id
+        width: 38
+      - name: network_id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: cidr
+        min_width: 13
+  network.security_group_rule:
+    default_fields: [id, ethertype, description, direction, protocol, port_range_min, port_range_max, remote_group_id, remote_ip_prefix]
+    fields:
+      - name: id
+        width: 38
+      - name: remote_group_id
+        max_width: 38
+      - name: tenant_id
+        width: 34
+  network.security_group:
+    default_fields: [id, name, description, created_at]
+    fields:
+      - name: id
+        width: 38
+      - name: tenant_id
+        width: 34
+      - name: security_group_rules
+        max_width: 70
+  object-store.container:
+    default_fields: [name, count, bytes, last_modified]
+  object-store.object:
+    default_fields: [name, bytes, content_type, last_modified, hash, symlink_path]
+hints:
+  - >
+    You can configure which fields are returned for the resource by setting the
+    `default_fields` option in the `general` section of the configuration file
+    ($XDG_CONFIG_DIR/osc/config.yaml).
+  - >
+    Use $XDG_CONFIG_DIR/osc/config.yaml configuration file to modify default
+    fields, column width constraints or hints.
+  - "Use `-o json | jq -r '.[].id'` to return list of resource ids only."
+  - "Use `--pretty` to apply pretty formatting of the serialized data in the table."
+  - "List operations support `--max-items <NUM>` argument to limit the number of items returned."
+  - "Place you custom hints in the `hints` or `command_hints` section of the configuration file."
+  - "Disable hints by setting `enable_hints: false` in the configuration file."
+  - "If you think that by default other resource fields should be returned consider reporting that."
+  - "`osc` supports authenticated API calls (similar to curl) with `osc api <SERVICE_TYPE> <URL> ...`. Use this if certain API is not natively supported yet."
+command_hints:
+  auth:
+    show:
+      - "Auth token can be set to the shell variable with `TOKEN=$(osc auth login)`"
+      - "A full authentication response can be seen with `osc auth show -o json --pretty`"
+    login:
+      - "You can force new token instead of the cached one with the `--renew` argument."
+  block-storage.quota_set:
+    defaults:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --current-project`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-name <PROJECT_NAME>`"
+    show:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+      - "Block storage quota with the usage can be seen with `osc block-storage quota-set show [--current-project|--project-id <PROJECT_ID>|--project-name <PROJECT_NAME>] --usage true`"
+    set:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+    delete:
+      - "You can specify `--project-id <PROJECT_ID>` or `--project-name <PROJECT_NAME>` or `--current-project` in the quota-set commands. Use \"name\" with caution."
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --current-project --quota-set gigabyes=10`"
+      - "Block storage quota for the project can be set with `osc block-storage quota-set set --project-id <PROJECT_ID> --quota-set <QUOTA_TYPE>=<VALUE>`"
+      - "Block storage quota defaults for the project can be seen with `osc block-storage quota-set defaults --project-id <PROJECT_ID>`"
+  network.router:
+    list:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    show:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    create:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    add_router_interface:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+    remove_router_interface:
+      - "Router interfaces can be seen with `osc network port list --device-id <ROUTER_ID>` command."
+  object-store.container:
+    create:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    delete:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    list:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    set:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    show:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+  object-store.object:
+    delete:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    download:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    list:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    show:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"
+    upload:
+      - "Container can be pruned with `osc object-store container prune [--prefix <PREFIX>] <CONTAINER>`"

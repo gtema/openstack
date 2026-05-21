@@ -12,7 +12,7 @@ repository.workspace = true
 [dependencies]
 derive_builder.workspace = true
 http.workspace = true
-openstack_sdk_core = { path = "../core/", version = "^0.22" }
+openstack_sdk_core.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

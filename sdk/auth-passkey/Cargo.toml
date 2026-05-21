@@ -1,5 +1,6 @@
 [package]
 name = "openstack-sdk-auth-passkey"
+description = "OpenStack SDK auth plugin for authenticating with Webauthn credentials"
 version = "0.22.5"
 license.workspace = true
 edition.workspace = true
@@ -13,7 +14,7 @@ async-trait.workspace = true
 base64.workspace = true
 derive_builder.workspace = true
 inventory.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-core.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

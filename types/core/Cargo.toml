@@ -12,7 +12,6 @@ repository.workspace = true
 [dependencies]
 chrono = { workspace= true }
 serde = { workspace = true }
-#structable = { workspace = true }
 
 [dev-dependencies]
 serde_json = { workspace = true }

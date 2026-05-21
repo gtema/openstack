@@ -1,5 +1,6 @@
 [package]
 name = "openstack-sdk-auth-federation"
+description = "OpenStack SDK auth plugin for authenticating with v4 federation"
 version = "0.22.5"
 license.workspace = true
 edition.workspace = true
@@ -21,14 +22,14 @@ hyper = { workspace = true, features = ["full"] }
 hyper-util = { workspace = true, features = ["full"] }
 inventory.workspace = true
 open.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-core.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 serde_urlencoded.workspace = true
 reqwest = { workspace = true, features = ["form"] }
 thiserror.workspace = true
-tokio.workspace = true
+tokio = { workspace = true, features = ["signal"] }
 tokio-util.workspace = true
 tracing.workspace = true
 url.workspace = true

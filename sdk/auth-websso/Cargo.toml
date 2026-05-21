@@ -1,5 +1,6 @@
 [package]
 name = "openstack-sdk-auth-websso"
+description = "OpenStack SDK auth plugin for authenticating with a WebSSO method"
 version = "0.22.5"
 license.workspace = true
 edition.workspace = true
@@ -21,7 +22,7 @@ hyper = { workspace = true, features = ["full"] }
 hyper-util = { workspace = true, features = ["full"] }
 inventory.workspace = true
 open.workspace = true
-openstack-sdk-auth-core = { version = "0.22", path = "../auth-core" }
+openstack-sdk-auth-core.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

@@ -64,21 +64,21 @@ clap_complete = { workspace = true, features = ["unstable-dynamic"] }
 color-eyre = { workspace = true }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
-openstack-cli-api = { path="../cli/api", version = "^0.1" }
-openstack-cli-auth = { path="../cli/auth", version = "^0.1" }
-openstack-cli-block-storage = { path="../cli/block-storage/", version = "^0.1" }
-openstack-cli-catalog = { path="../cli/catalog/", version = "^0.1" }
-openstack-cli-compute = { path="../cli/compute/", version = "^0.1" }
-openstack-cli-container-infrastructure-management = { path="../cli/container-infrastructure-management/", version = "^0.1" }
-openstack-cli-core = { path="../cli/core", version = "^0.13" }
-openstack-cli-dns = { path="../cli/dns/", version = "^0.1" }
-openstack-cli-identity = { path="../cli/identity/", version = "^0.1" }
-openstack-cli-image = { path="../cli/image/", version = "^0.1" }
-openstack-cli-load-balancer = { path="../cli/load-balancer/", version = "^0.1" }
-openstack-cli-network = { path="../cli/network/", version = "^0.1" }
-openstack-cli-object-store = { path="../cli/object-store/", version = "^0.1" }
-openstack-cli-placement = { path="../cli/placement/", version = "^0.1" }
-openstack_sdk = { path="../openstack_sdk", version = "^0.22", default-features = false, features = ["async"] }
+openstack-cli-api.workspace = true
+openstack-cli-auth.workspace = true
+openstack-cli-block-storage.workspace = true
+openstack-cli-catalog.workspace = true
+openstack-cli-compute.workspace = true
+openstack-cli-container-infrastructure-management.workspace = true
+openstack-cli-core.workspace = true
+openstack-cli-dns.workspace = true
+openstack-cli-identity.workspace = true
+openstack-cli-image.workspace = true
+openstack-cli-load-balancer.workspace = true
+openstack-cli-network.workspace = true
+openstack-cli-object-store.workspace = true
+openstack-cli-placement.workspace = true
+openstack_sdk = { workspace = true, features = ["async"] }
 strip-ansi-escapes = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true}
