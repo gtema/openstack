@@ -36,6 +36,32 @@ paths:
       summary: Query cache status
       tags:
         - cache
+  /v2/cache/nodes/{image_id}:
+    get:
+      description: |-
+        GET /cache/nodes/<IMAGE_ID> - Get all nodes where image is cached
+
+        Returns a list of node URLs where the specified image is cached.
+
+        |  |  |
+        | --- | --- |
+        | param req: | The request object |
+        | param image_id: | The image ID to check for cached nodes |
+        | returns: | List of node URLs where the image is cached |
+        | raises HTTPConflict: | |
+        |  | If centralized caching is not enabled |
+        | raises HTTPNotFound: | |
+        |  | If the image does not exist |
+        | raises HTTPForbidden: | |
+        |  | If policy enforcement fails |
+      operationId: cache/nodes/image_id:get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - cache
+    parameters:
+      - $ref: '#/components/parameters/cache_nodes_image_id'
   /v2/cache/{image_id}:
     delete:
       description: |-
@@ -1743,6 +1769,13 @@ components:
   parameters:
     cache_image_id:
       description: image_id parameter for /v2/cache/{image_id} API
+      in: path
+      name: image_id
+      required: true
+      schema:
+        type: string
+    cache_nodes_image_id:
+      description: image_id parameter for /v2/cache/nodes/{image_id} API
       in: path
       name: image_id
       required: true

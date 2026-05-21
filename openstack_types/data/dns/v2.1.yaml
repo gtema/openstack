@@ -631,6 +631,8 @@ paths:
     post:
       description: |-
         Import a zone.
+
+        The API supports two content types for zone import:
       operationId: zones/tasks/imports:post
       requestBody:
         content:

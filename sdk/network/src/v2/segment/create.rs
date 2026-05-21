@@ -42,7 +42,7 @@ pub struct Segment<'a> {
     /// Human-readable name of the segment.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Option<Cow<'a, str>>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// The ID of the attached network.
     #[serde(skip_serializing_if = "Option::is_none")]

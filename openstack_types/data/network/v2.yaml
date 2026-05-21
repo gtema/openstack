@@ -7849,7 +7849,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     address_groups_project_id:
       description: project_id query parameter for /v2.0/address-groups API
@@ -7894,7 +7893,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     address_scopes_shared:
       description: shared query parameter for /v2.0/address-scopes API
@@ -8575,7 +8573,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     flavors_service_type:
       description: service_type query parameter for /v2.0/flavors API
@@ -8808,7 +8805,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     local_ips_network_id:
       description: network_id query parameter for /v2.0/local-ips API
@@ -8881,7 +8877,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     logs_project_id:
       description: project_id query parameter for /v2.0/log/logs API
@@ -9030,7 +9025,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     metering_labels_shared:
       description: shared query parameter for /v2.0/metering/metering-labels API
@@ -9151,7 +9145,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     ndp_proxies_ndp_proxy_id:
       description: id parameter for /v2.0/ndp-proxies/{id} API
@@ -9221,7 +9214,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     network_segment_ranges_network_segment_range_id:
       description: id parameter for /v2.0/network-segment-ranges/{id} API
@@ -9382,7 +9374,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     networks_network_network_id:
       description: network_id parameter for /v2.0/networks/{network_id} API
@@ -9626,7 +9617,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     policies_not-tags:
       description: not-tags query parameter for /v2.0/qos/policies API
@@ -9905,7 +9895,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     ports_network_id:
       description: network_id query parameter for /v2.0/ports API
@@ -10124,7 +10113,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     routers_not-tags:
       description: not-tags query parameter for /v2.0/routers API
@@ -10476,10 +10464,7 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
-        type:
-          - 'null'
-          - string
+        type: string
     segments_network_id:
       description: network_id query parameter for /v2.0/segments API
       in: query
@@ -10831,7 +10816,6 @@ components:
       in: query
       name: name
       schema:
-        maxLength: 255
         type: string
     subnets_network_id:
       description: network_id query parameter for /v2.0/subnets API
@@ -10999,7 +10983,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -11028,7 +11011,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -11060,7 +11042,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -11106,7 +11087,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             project_id:
               maxLength: 255
@@ -11141,7 +11121,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -11181,7 +11160,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               project_id:
                 description: |-
@@ -11231,7 +11209,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -11257,7 +11234,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -11293,7 +11269,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -11328,7 +11303,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -11372,7 +11346,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -11413,7 +11386,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               shared:
                 description: |-
@@ -12555,7 +12527,6 @@ components:
             name:
               description: |-
                 Name of the flavor.
-              maxLength: 255
               type: string
             service_profiles:
               description: |-
@@ -12594,7 +12565,6 @@ components:
             name:
               description: |-
                 Name of the flavor.
-              maxLength: 255
               type: string
             service_profiles:
               items:
@@ -12632,7 +12602,6 @@ components:
             name:
               description: |-
                 Name of the flavor.
-              maxLength: 255
               type: string
             service_profiles:
               description: |-
@@ -12671,7 +12640,6 @@ components:
             name:
               description: |-
                 Name of the flavor.
-              maxLength: 255
               type: string
             service_profiles:
               items:
@@ -12713,7 +12681,6 @@ components:
             name:
               description: |-
                 Name of the flavor.
-              maxLength: 255
               type: string
             service_profiles:
               description: |-
@@ -12758,7 +12725,6 @@ components:
               name:
                 description: |-
                   Name of the flavor.
-                maxLength: 255
                 type: string
               service_profiles:
                 description: |-
@@ -14432,7 +14398,6 @@ components:
               format: uuid
               type: string
             name:
-              maxLength: 255
               type: string
             network_id:
               format: uuid
@@ -14455,7 +14420,6 @@ components:
               maxLength: 255
               type: string
             name:
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -14485,7 +14449,6 @@ components:
               format: uuid
               type: string
             name:
-              maxLength: 255
               type: string
             network_id:
               format: uuid
@@ -14520,7 +14483,6 @@ components:
               format: uuid
               type: string
             name:
-              maxLength: 255
               type: string
             network_id:
               format: uuid
@@ -14556,7 +14518,6 @@ components:
               format: uuid
               type: string
             name:
-              maxLength: 255
               type: string
             network_id:
               format: uuid
@@ -14597,7 +14558,6 @@ components:
                 format: uuid
                 type: string
               name:
-                maxLength: 255
                 type: string
               network_id:
                 format: uuid
@@ -14785,7 +14745,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -14844,7 +14803,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -14887,7 +14845,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -15013,7 +14970,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -15083,7 +15039,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             project_id:
               description: |-
@@ -15159,7 +15114,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               project_id:
                 description: |-
@@ -15215,7 +15169,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -15249,7 +15202,6 @@ components:
             id:
               type: string
             name:
-              maxLength: 255
               type: string
             shared:
               type:
@@ -15492,7 +15444,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -15530,7 +15481,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -15566,7 +15516,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               shared:
                 description: |-
@@ -15596,7 +15545,6 @@ components:
                 - 'null'
                 - string
             name:
-              maxLength: 255
               type: string
             port_id:
               format: uuid
@@ -15627,7 +15575,6 @@ components:
                 - 'null'
                 - string
             name:
-              maxLength: 255
               type: string
             port_id:
               format: uuid
@@ -15663,7 +15610,6 @@ components:
                   - 'null'
                   - string
               name:
-                maxLength: 255
                 type: string
               port_id:
                 format: uuid
@@ -15699,7 +15645,6 @@ components:
                 - 'null'
                 - string
             name:
-              maxLength: 255
               type: string
             port_id:
               format: uuid
@@ -15725,7 +15670,6 @@ components:
               maxLength: 255
               type: string
             name:
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -15747,7 +15691,6 @@ components:
                 - 'null'
                 - string
             name:
-              maxLength: 255
               type: string
             port_id:
               format: uuid
@@ -15841,7 +15784,6 @@ components:
             name:
               description: |-
                 Human-readable name of the network.
-              maxLength: 255
               type: string
             port_security_enabled:
               description: |-
@@ -16000,7 +15942,6 @@ components:
             name:
               description: |-
                 Human-readable name of the network.
-              maxLength: 255
               type: string
             port_security_enabled:
               description: |-
@@ -16147,7 +16088,6 @@ components:
             name:
               description: |-
                 Human-readable name of the network.
-              maxLength: 255
               type: string
             port_security_enabled:
               description: |-
@@ -16441,7 +16381,6 @@ components:
                 - integer
                 - string
             name:
-              maxLength: 255
               type: string
             network_type:
               enum:
@@ -16493,7 +16432,6 @@ components:
                 - integer
                 - string
             name:
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -16529,7 +16467,6 @@ components:
                 - integer
                 - string
             name:
-              maxLength: 255
               type: string
             network_type:
               enum:
@@ -16581,7 +16518,6 @@ components:
                 - integer
                 - string
             name:
-              maxLength: 255
               type: string
             network_type:
               enum:
@@ -16634,7 +16570,6 @@ components:
                 - integer
                 - string
             name:
-              maxLength: 255
               type: string
             network_type:
               enum:
@@ -16698,7 +16633,6 @@ components:
                   - integer
                   - string
               name:
-                maxLength: 255
                 type: string
               network_type:
                 enum:
@@ -16822,7 +16756,6 @@ components:
             name:
               description: |-
                 Human-readable name of the network.
-              maxLength: 255
               type: string
             port_security_enabled:
               description: |-
@@ -16990,7 +16923,6 @@ components:
             name:
               description: |-
                 Human-readable name of the network.
-              maxLength: 255
               type: string
             port_security_enabled:
               description: |-
@@ -17205,7 +17137,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the network.
-                maxLength: 255
                 type: string
               port_security_enabled:
                 description: |-
@@ -17760,7 +17691,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -18042,7 +17972,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             numa_affinity_policy:
               description: |-
@@ -18290,7 +18219,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -18855,7 +18783,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -19128,7 +19055,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -19439,7 +19365,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               network_id:
                 description: |-
@@ -20444,7 +20369,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -20493,7 +20417,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -20859,7 +20782,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               revision_number:
                 description: |-
@@ -21306,7 +21228,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -21407,7 +21328,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             shared:
               description: |-
@@ -21448,7 +21368,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -22411,7 +22330,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -22543,7 +22461,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             routes:
               description: |-
@@ -22684,7 +22601,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -23231,7 +23147,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             tenant_id:
               description: |-
@@ -23366,7 +23281,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             revision_number:
               description: |-
@@ -23536,7 +23450,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               revision_number:
                 description: |-
@@ -25123,10 +25036,7 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
-              type:
-                - 'null'
-                - string
+              type: string
             network_id:
               description: |-
                 The ID of the attached network.
@@ -25179,10 +25089,7 @@ components:
             name:
               description: |-
                 Human-readable name of the segment.
-              maxLength: 255
-              type:
-                - 'null'
-                - string
+              type: string
           type: object
       type: object
     SegmentUpdateResponse:
@@ -25207,10 +25114,7 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
-              type:
-                - 'null'
-                - string
+              type: string
             network_id:
               description: |-
                 The ID of the attached network.
@@ -25263,10 +25167,7 @@ components:
             name:
               description: |-
                 Human-readable name of the segment.
-              maxLength: 255
-              type:
-                - 'null'
-                - string
+              type: string
             network_id:
               description: |-
                 The ID of the attached network.
@@ -25322,10 +25223,7 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
-              type:
-                - 'null'
-                - string
+              type: string
             network_id:
               description: |-
                 The ID of the attached network.
@@ -25387,10 +25285,7 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
-                type:
-                  - 'null'
-                  - string
+                type: string
               network_id:
                 description: |-
                   The ID of the attached network.
@@ -25840,7 +25735,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -25962,7 +25856,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             segment_id:
               description: |-
@@ -26088,7 +25981,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -26965,7 +26857,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource. Default is an empty string.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -27128,7 +27019,6 @@ components:
             name:
               description: |-
                 Human-readable name of the resource.
-              maxLength: 255
               type: string
             network_id:
               description: |-
@@ -27289,7 +27179,6 @@ components:
               name:
                 description: |-
                   Human-readable name of the resource.
-                maxLength: 255
                 type: string
               network_id:
                 description: |-
@@ -27435,7 +27324,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             tenant_id:
               description: |-
@@ -27472,7 +27360,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -27503,7 +27390,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             tenant_id:
               description: |-
@@ -27547,7 +27433,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             tenant_id:
               description: |-
@@ -27596,7 +27481,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             tenant_id:
               description: |-
@@ -27646,7 +27530,6 @@ components:
                 description: |-
                   Human-readable name of the resource.
                   Default is an empty string.
-                maxLength: 255
                 type: string
               tenant_id:
                 description: |-
@@ -27751,7 +27634,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -27882,7 +27764,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -28014,7 +27895,6 @@ components:
                 description: |-
                   Human-readable name of the resource.
                   Default is an empty string.
-                maxLength: 255
                 type: string
               pfs:
                 description: |-
@@ -28146,7 +28026,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -28272,7 +28151,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -28398,7 +28276,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -28531,7 +28408,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             peer_address:
               description: |-
@@ -28661,7 +28537,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             peer_address:
               description: |-
@@ -28791,7 +28666,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             peer_address:
               description: |-
@@ -28931,7 +28805,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             peer_address:
               description: |-
@@ -29071,7 +28944,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             peer_address:
               description: |-
@@ -29222,7 +29094,6 @@ components:
                 description: |-
                   Human-readable name of the resource.
                   Default is an empty string.
-                maxLength: 255
                 type: string
               peer_address:
                 description: |-
@@ -29368,7 +29239,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -29500,7 +29370,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -29633,7 +29502,6 @@ components:
                 description: |-
                   Human-readable name of the resource.
                   Default is an empty string.
-                maxLength: 255
                 type: string
               pfs:
                 description: |-
@@ -29766,7 +29634,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -29893,7 +29760,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -30020,7 +29886,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             pfs:
               description: |-
@@ -30113,7 +29978,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             router_id:
               format: uuid
@@ -30165,7 +30029,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
           type: object
       type: object
@@ -30217,7 +30080,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             router_id:
               format: uuid
@@ -30276,7 +30138,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             router_id:
               format: uuid
@@ -30346,7 +30207,6 @@ components:
               description: |-
                 Human-readable name of the resource.
                 Default is an empty string.
-              maxLength: 255
               type: string
             router_id:
               format: uuid
@@ -30423,7 +30283,6 @@ components:
                 description: |-
                   Human-readable name of the resource.
                   Default is an empty string.
-                maxLength: 255
                 type: string
               router_id:
                 format: uuid

@@ -80,10 +80,6 @@ struct Segment {
     /// Human-readable name of the segment.
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-
-    /// Set explicit NULL for the name
-    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "name")]
-    no_name: bool,
 }
 
 impl SegmentCommand {
@@ -124,9 +120,7 @@ impl SegmentCommand {
         }
 
         if let Some(val) = &args.name {
-            segment_builder.name(Some(val.into()));
-        } else if args.no_name {
-            segment_builder.name(None);
+            segment_builder.name(val);
         }
 
         ep_builder.segment(
