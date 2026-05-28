@@ -8,7 +8,7 @@ license.workspace = true
 [dependencies]
 clap = { workspace = true }
 openstack_cli = { path="../openstack_cli" }
-mdbook = { version = "^0.5.2", default-features = false }
+mdbook = { version = "^0.5.3", default-features = false }
 serde_json = { workspace = true }
 semver = { version = "^1.0" }
 regex = { workspace = true }
