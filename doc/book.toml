@@ -1,7 +1,6 @@
 [book]
 authors = ["gtema"]
 language = "en"
-multilingual = false
 src = "src"
 title = "OpenStack Client Tools"
 
@@ -18,3 +17,6 @@ level = 2
 
 [preprocessor.osc-cli]
 command = "cargo run -p xtask --bin osc-cli-md"
+
+[preprocessor.config-schema-md]
+command = "cargo run -p xtask --bin config-schema-md"

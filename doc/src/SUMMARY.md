@@ -1,6 +1,7 @@
 # Summary
 
 [Introduction](./intro.md)
+[Clouds.yaml](./clouds.yaml.md)
 
 # Design
 

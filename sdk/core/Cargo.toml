@@ -18,6 +18,7 @@ default = [
 ]
 sync = ["reqwest/blocking"]
 async = []
+json-schema = ["schemars"]
 
 [dependencies]
 async-trait.workspace = true
@@ -38,6 +39,7 @@ openstack-sdk-auth-core.workspace = true
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 regex.workspace = true
 reqwest = { workspace = true, default-features = false }
+schemars = { version = "^1.0", optional = true }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true

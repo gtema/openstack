@@ -211,6 +211,7 @@ impl ConfigFileBuilder {
 /// CacheConfig structure.
 ///
 /// A configuration for the built-in authentication caching.
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[derive(Deserialize, Debug, Clone)]
 pub struct CacheConfig {
     /// Enables/disables authentication caching.
@@ -218,6 +219,7 @@ pub struct CacheConfig {
 }
 
 /// ConfigFile structure.
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[derive(Deserialize, Debug, Clone)]
 pub struct ConfigFile {
     /// Cache configuration.
@@ -226,6 +228,7 @@ pub struct ConfigFile {
     pub clouds: Option<HashMap<String, CloudConfig>>,
     /// vendor clouds information (profiles).
     #[serde(rename = "public-clouds")]
+    #[cfg_attr(feature = "json-schema", schemars(rename = "public-clouds"))]
     pub public_clouds: Option<HashMap<String, CloudConfig>>,
 }
 
@@ -234,6 +237,7 @@ pub struct ConfigFile {
 /// Sensitive fields are wrapped into the
 /// [SensitiveString](https://docs.rs/secrecy/0.10.3/secrecy/type.SecretString.html) to prevent
 /// accidental exposure in logs.
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[derive(Clone, Default, Deserialize, Serialize)]
 pub struct Auth {
     /// Authentication URL.
@@ -242,6 +246,7 @@ pub struct Auth {
     pub endpoint: Option<String>,
     /// Auth Token.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub token: Option<SecretString>,
 
     /// Auth User.Name.
@@ -254,10 +259,12 @@ pub struct Auth {
     pub user_domain_id: Option<String>,
     /// Auth User password.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub password: Option<SecretString>,
 
     /// Auth (totp) MFA passcode.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub passcode: Option<SecretString>,
 
     /// `Domain` scope Domain.ID.
@@ -281,11 +288,13 @@ pub struct Auth {
     pub attribute_mapping_name: Option<String>,
     /// OIDC access token.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub access_token: Option<SecretString>,
     /// OIDC access token type (when not access_token).
     pub access_token_type: Option<String>,
     /// JWT token.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub jwt: Option<SecretString>,
 
     /// `Application Credential` ID.
@@ -294,6 +303,7 @@ pub struct Auth {
     pub application_credential_name: Option<String>,
     /// `Application Credential` Secret.
     #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub application_credential_secret: Option<SecretString>,
 
     /// `System scope`.
@@ -344,11 +354,13 @@ impl fmt::Debug for Auth {
 /// Configuration object representing a single connection to the concrete cloud.
 ///
 /// Connection to the cloud uses this object.
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[derive(Deserialize, Default, Clone)]
 pub struct CloudConfig {
     /// Authorization data.
     pub auth: Option<Auth>,
     /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations.
+    /// Known values: `password`, `v3password`, `multifactor`, `application_credential`, `token`, `v2password`, `jwt`, `websso`, `applicationcredential`, `tokenv3`, `federation`.
     pub auth_type: Option<String>,
     /// Authorization methods (in the case when auth_type = `multifactor`).
     pub auth_methods: Option<Vec<String>>,
@@ -370,8 +382,10 @@ pub struct CloudConfig {
     /// Verify SSL Certificates.
     pub verify: Option<bool>,
 
-    /// All other options.
+    /// Catch-all for additional configuration fields not explicitly typed.
+    /// Any extra YAML keys at this level are captured here.
     #[serde(flatten)]
+    #[cfg_attr(feature = "json-schema", schemars(skip))]
     pub options: HashMap<String, config::Value>,
 }
 
