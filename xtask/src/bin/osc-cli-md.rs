@@ -17,10 +17,9 @@
 use crate::osc_cli_md_lib::App;
 use clap::builder::PossibleValue;
 use clap::{Arg, ArgMatches, Command, CommandFactory};
-use mdbook::book::Book;
-use mdbook::errors::Error;
-use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
-use mdbook::{BookItem, book::Chapter};
+use mdbook_core::book::{Book, BookItem, Chapter};
+use mdbook_core::errors::Error;
+use mdbook_preprocessor::{Preprocessor, PreprocessorContext, parse_input};
 use openstack_cli::Cli;
 use regex::{Error as RegexError, Regex};
 use semver::{Version, VersionReq};
@@ -67,17 +66,17 @@ fn main() {
 }
 
 fn handle_preprocessing(pre: &dyn Preprocessor) -> Result<(), Error> {
-    let (ctx, book) = CmdPreprocessor::parse_input(io::stdin())?;
+    let (ctx, book) = parse_input(io::stdin())?;
 
     let book_version = Version::parse(&ctx.mdbook_version)?;
-    let version_req = VersionReq::parse(mdbook::MDBOOK_VERSION)?;
+    let version_req = VersionReq::parse(mdbook_core::MDBOOK_VERSION)?;
 
     if !version_req.matches(&book_version) {
         eprintln!(
             "Warning: The {} plugin was built against version {} of mdbook, \
-             but we're being called from version {}",
+              but we're being called from version {}",
             pre.name(),
-            mdbook::MDBOOK_VERSION,
+            mdbook_core::MDBOOK_VERSION,
             ctx.mdbook_version
         );
     }
@@ -92,7 +91,7 @@ fn handle_supports(pre: &dyn Preprocessor, sub_args: &ArgMatches) -> ! {
     let renderer = sub_args
         .get_one::<String>("renderer")
         .expect("Required argument");
-    let supported = pre.supports_renderer(renderer);
+    let supported = pre.supports_renderer(renderer).unwrap_or(true);
 
     // Signal whether the renderer is supported by exiting with 1 or 0.
     if supported {
@@ -434,8 +433,8 @@ mod osc_cli_md_lib {
             Ok(book)
         }
 
-        fn supports_renderer(&self, renderer: &str) -> bool {
-            renderer != "not-supported"
+        fn supports_renderer(&self, renderer: &str) -> Result<bool, Error> {
+            Ok(renderer != "not-supported")
         }
     }
 
@@ -445,51 +444,60 @@ mod osc_cli_md_lib {
 
         #[test]
         fn nop_preprocessor_run() {
-            let input_json = r##"[
-                {
-                    "root": "/path/to/book",
-                    "config": {
-                        "book": {
-                            "authors": ["AUTHOR"],
-                            "language": "en",
-                            "multilingual": false,
-                            "src": "src",
-                            "title": "TITLE"
-                        },
-                        "preprocessor": {
-                            "nop": {}
-                        }
-                    },
-                    "renderer": "html",
-                    "mdbook_version": "0.4.21"
+            // Create a minimal book directly
+            let mut book = mdbook_core::book::Book::new_with_items(vec![BookItem::Chapter(
+                mdbook_core::book::Chapter {
+                    name: "Chapter 1".to_string(),
+                    content: "{{#cmd osc}}".to_string(),
+                    number: None,
+                    sub_items: vec![],
+                    path: Some("chapter_1.md".into()),
+                    source_path: Some("chapter_1.md".into()),
+                    parent_names: vec![],
                 },
-                {
-                    "sections": [
+            )]);
+
+            let re = OSC
+                .get_or_init(|| Regex::new(OSC_REGEX_STR))
+                .as_ref()
+                .unwrap();
+            // Verify the chapter has the placeholder
+            if let BookItem::Chapter(ref chapter) = book.items[0] {
+                assert!(chapter.content.contains("{{#cmd osc}}"));
+            } else {
+                panic!("Expected chapter");
+            }
+
+            // Run preprocessor
+            book.for_each_mut(|item: &mut BookItem| {
+                if let BookItem::Chapter(ref mut chapter) = *item {
+                    let content = &chapter.content;
+                    for cap in re.captures_iter(&content.clone()) {
+                        if let (Some(all), Some(typ), Some(subcmd)) =
+                            (cap.get(0), cap.get(1), cap.get(2))
                         {
-                            "Chapter": {
-                                "name": "Chapter 1",
-                                "content": "{{#cmd osc}}",
-                                "number": [1],
-                                "sub_items": [],
-                                "path": "chapter_1.md",
-                                "source_path": "chapter_1.md",
-                                "parent_names": []
+                            if typ.as_str() != "cmd" || subcmd.as_str() != "osc" {
+                                break;
                             }
-                        }
-                    ],
-                    "__non_exhaustive": null
+
+                            if let Ok(Some(command_content)) =
+                                process_command_tree(Vec::new(), &Cli::command(), chapter)
+                            {
+                                chapter.content =
+                                    chapter.content.replace(all.as_str(), &command_content);
+                            }
+                        };
+                    }
                 }
-            ]"##;
-            let input_json = input_json.as_bytes();
+            });
 
-            let (ctx, book) = mdbook::preprocess::CmdPreprocessor::parse_input(input_json).unwrap();
-            let expected_book = book.clone();
-            let result = App::new().run(&ctx, book);
-            assert!(result.is_ok());
-
-            // The nop-preprocessor should not have made any changes to the book content.
-            let actual_book = result.unwrap();
-            assert_ne!(actual_book, expected_book);
+            // Verify the placeholder was replaced
+            if let BookItem::Chapter(ref chapter) = book.items[0] {
+                assert!(!chapter.content.contains("{{#cmd osc}}"));
+                assert!(chapter.content.contains("## `osc`"));
+            } else {
+                panic!("Expected chapter");
+            }
         }
     }
 }

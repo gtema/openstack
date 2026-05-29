@@ -8,10 +8,14 @@ license.workspace = true
 [dependencies]
 clap = { workspace = true }
 openstack_cli = { path="../openstack_cli" }
-mdbook = { version = "^0.5.3", default-features = false }
+openstack_sdk_core = { workspace = true, features = ["json-schema"] }
+mdbook-core = { version = "^0.5.3" }
+mdbook-preprocessor = { version = "^0.5.3" }
 serde_json = { workspace = true }
+schemars = { workspace = true }
 semver = { version = "^1.0" }
 regex = { workspace = true }
+syn = { version = "^2.0", features = ["full", "extra-traits"] }
 
 [package.metadata.dist]
 dist = false
@@ -22,4 +26,18 @@ path = "src/bin/osc-cli-md.rs"
 test = true
 bench = false
 
+[[bin]]
+name = "config-schema"
+path = "src/bin/config-schema.rs"
+test = true
+bench = false
+
+[[bin]]
+name = "config-schema-md"
+path = "src/bin/config-schema-md.rs"
+test = true
+bench = false
+
 [lib]
+name = "xtask"
+path = "src/lib.rs"
