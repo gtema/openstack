@@ -1,7 +1,7 @@
 [package]
 name = "openstack_types"
 description = "OpenStack API Types"
-version = "0.22.6"
+version = "0.22.7"
 keywords = ["api", "openstack"]
 categories = ["api-bindings"]
 authors = ["Artem Goncharov (gtema)"]
@@ -40,16 +40,16 @@ keystone_ng = ["openstack-types-identity/keystone_ng"]
 
 [dependencies]
 chrono = { workspace= true }
-openstack-types-block-storage = { path = "../types/block-storage/", version = "0.1", optional = true}
-openstack-types-compute = { path = "../types/compute/", version = "0.1", optional = true}
-openstack-types-container-infrastructure-management = { path = "../types/container-infrastructure-management/", version = "0.1", optional = true}
-openstack-types-dns = { path = "../types/dns/", version = "0.1", optional = true}
-openstack-types-identity = { path = "../types/identity/", version = "0.1", optional = true}
-openstack-types-image = { path = "../types/image/", version = "0.1", optional = true}
-openstack-types-load-balancer = { path = "../types/load-balancer/", version = "0.1", optional = true}
-openstack-types-network = { path = "../types/network/", version = "0.1", optional = true}
-openstack-types-object-store = { path = "../types/object-store/", version = "0.1", optional = true}
-openstack-types-placement = { path = "../types/placement/", version = "0.1", optional = true}
+openstack-types-block-storage = { path = "../types/block-storage/", version = "0.22", optional = true}
+openstack-types-compute = { path = "../types/compute/", version = "0.22", optional = true}
+openstack-types-container-infrastructure-management = { path = "../types/container-infrastructure-management/", version = "0.22", optional = true}
+openstack-types-dns = { path = "../types/dns/", version = "0.22", optional = true}
+openstack-types-identity = { path = "../types/identity/", version = "0.22", optional = true}
+openstack-types-image = { path = "../types/image/", version = "0.22", optional = true}
+openstack-types-load-balancer = { path = "../types/load-balancer/", version = "0.22", optional = true}
+openstack-types-network = { path = "../types/network/", version = "0.22", optional = true}
+openstack-types-object-store = { path = "../types/object-store/", version = "0.22", optional = true}
+openstack-types-placement = { path = "../types/placement/", version = "0.22", optional = true}
 serde = { workspace = true }
 serde_json = { workspace = true }
 structable = { workspace = true }
