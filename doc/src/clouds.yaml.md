@@ -1,0 +1,3 @@
+# Clouds.yaml configuration
+
+{{#configschema}}
