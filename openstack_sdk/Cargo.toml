@@ -1,7 +1,7 @@
 [package]
 name = "openstack_sdk"
 description = "OpenStack SDK"
-version = "0.22.6"
+version = "0.22.7"
 keywords = ["api", "openstack"]
 categories = ["api-bindings"]
 authors = ["Artem Goncharov (gtema)"]
@@ -80,22 +80,22 @@ openstack-sdk-auth-federation = { version = "0.22", path = "../sdk/auth-federati
 openstack-sdk-auth-jwt = { version = "0.22", path = "../sdk/auth-jwt/", optional = true }
 openstack-sdk-auth-oidcaccesstoken = { version = "0.22", path = "../sdk/auth-oidcaccesstoken/" }
 openstack-sdk-auth-passkey = { version = "0.22", path = "../sdk/auth-passkey/", optional = true }
-openstack-sdk-auth-password = { version = "0.1", path = "../sdk/auth-password/" }
-openstack-sdk-auth-receipt = { version = "0.1", path = "../sdk/auth-receipt/" }
-openstack-sdk-auth-token = { version = "0.1", path = "../sdk/auth-token/" }
-openstack-sdk-auth-totp = { version = "0.1", path = "../sdk/auth-totp/" }
+openstack-sdk-auth-password = { version = "0.22", path = "../sdk/auth-password/" }
+openstack-sdk-auth-receipt = { version = "0.22", path = "../sdk/auth-receipt/" }
+openstack-sdk-auth-token = { version = "0.22", path = "../sdk/auth-token/" }
+openstack-sdk-auth-totp = { version = "0.22", path = "../sdk/auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.22", path = "../sdk/auth-websso/" }
 openstack_sdk_core.workspace = true
-openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.1", optional = true }
-openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.1", optional = true }
-openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.1", optional = true }
-openstack-sdk-dns = { path = "../sdk/dns/", version = "^0.1", optional = true }
-openstack-sdk-identity = { path = "../sdk/identity/", version = "^0.1", optional = true }
-openstack-sdk-image = { path = "../sdk/image/", version = "^0.1", optional = true }
-openstack-sdk-load-balancer = { path = "../sdk/load-balancer/", version = "^0.1", optional = true }
-openstack-sdk-network = { path = "../sdk/network/", version = "^0.1", optional = true }
-openstack-sdk-object-store = { path = "../sdk/object-store/", version = "^0.1", optional = true }
-openstack-sdk-placement= { path = "../sdk/placement/", version = "^0.1", optional = true }
+openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.22", optional = true }
+openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.22", optional = true }
+openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.22", optional = true }
+openstack-sdk-dns = { path = "../sdk/dns/", version = "^0.22", optional = true }
+openstack-sdk-identity = { path = "../sdk/identity/", version = "^0.22", optional = true }
+openstack-sdk-image = { path = "../sdk/image/", version = "^0.22", optional = true }
+openstack-sdk-load-balancer = { path = "../sdk/load-balancer/", version = "^0.22", optional = true }
+openstack-sdk-network = { path = "../sdk/network/", version = "^0.22", optional = true }
+openstack-sdk-object-store = { path = "../sdk/object-store/", version = "^0.22", optional = true }
+openstack-sdk-placement= { path = "../sdk/placement/", version = "^0.22", optional = true }
 reqwest = { workspace = true, features = ["rustls", "stream", "gzip", "deflate", "json", "http2",
   "socks", "system-proxy"] }
 secrecy.workspace = true

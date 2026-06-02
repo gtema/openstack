@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.7](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.6...openstack_sdk_core-v0.22.7) - 2026-06-01
+
+### Added
+
+- Start building documentation for clouds.yaml ([#1780](https://github.com/gtema/openstack/pull/1780))
+
+### Other
+
+- *(ci)* Changes necessary for making initial release ([#1768](https://github.com/gtema/openstack/pull/1768))
+
 ## [0.22.6](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.5...openstack_sdk_core-v0.22.6) - 2026-05-14
 
 ### Added

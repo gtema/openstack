@@ -72,25 +72,25 @@ itertools = { version = "^0.14" }
 json-patch = { version = "^4.2" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.3" }
-openstack-cli-api = { path="cli/api", version = "0.2.0" }
-openstack-cli-auth = { path="cli/auth", version = "0.2.0" }
-openstack-cli-block-storage = { path="cli/block-storage/", version = "0.2.0" }
-openstack-cli-catalog = { path="cli/catalog/", version = "0.2.0" }
-openstack-cli-compute = { path="cli/compute/", version = "0.2.0" }
-openstack-cli-container-infrastructure-management = { path="cli/container-infrastructure-management/", version = "0.2.0" }
-openstack-cli-core = { path="cli/core", version = "0.13.6" }
-openstack-cli-dns = { path="cli/dns/", version = "0.2.0" }
-openstack-cli-identity = { path="cli/identity/", version = "0.2.0" }
-openstack-cli-image = { path="cli/image/", version = "0.2.0" }
-openstack-cli-load-balancer = { path="cli/load-balancer/", version = "0.2.0" }
-openstack-cli-network = { path="cli/network/", version = "0.2.0" }
-openstack-cli-object-store = { path="cli/object-store/", version = "0.2.0" }
-openstack-cli-placement = { path="cli/placement/", version = "^0.2" }
-openstack-sdk-auth-core = { version = "0.22.5", path = "sdk/auth-core" }
-openstack_sdk_core = { version = "0.22.6", path = "sdk/core" }
-openstack_sdk = { version = "0.22.6", path = "openstack_sdk" }
-openstack_types = { version = "0.22.6", path = "openstack_types" }
-openstack-types-core = { version = "0.1", path = "types/core" }
+openstack-cli-api = { path="cli/api", version = "0.13.7" }
+openstack-cli-auth = { path="cli/auth", version = "0.13.7" }
+openstack-cli-block-storage = { path="cli/block-storage/", version = "0.13.7" }
+openstack-cli-catalog = { path="cli/catalog/", version = "0.13.7" }
+openstack-cli-compute = { path="cli/compute/", version = "0.13.7" }
+openstack-cli-container-infrastructure-management = { path="cli/container-infrastructure-management/", version = "0.13.7" }
+openstack-cli-core = { path="cli/core", version = "0.13.7" }
+openstack-cli-dns = { path="cli/dns/", version = "0.13.7" }
+openstack-cli-identity = { path="cli/identity/", version = "0.13.7" }
+openstack-cli-image = { path="cli/image/", version = "0.13.7" }
+openstack-cli-load-balancer = { path="cli/load-balancer/", version = "0.13.7" }
+openstack-cli-network = { path="cli/network/", version = "0.13.7" }
+openstack-cli-object-store = { path="cli/object-store/", version = "0.13.7" }
+openstack-cli-placement = { path="cli/placement/", version = "^0.13" }
+openstack-sdk-auth-core = { version = "0.22.6", path = "sdk/auth-core" }
+openstack_sdk_core = { version = "0.22.7", path = "sdk/core" }
+openstack_sdk = { version = "0.22.7", path = "openstack_sdk" }
+openstack_types = { version = "0.22.7", path = "openstack_types" }
+openstack-types-core = { version = "0.22", path = "types/core" }
 regex = { version = "^1.12" }
 reqwest = { version = "^0.13", default-features = false }
 reserve-port = "^2.4"

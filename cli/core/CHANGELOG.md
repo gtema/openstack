@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.7](https://github.com/gtema/openstack/compare/openstack-cli-core-v0.13.6...openstack-cli-core-v0.13.7) - 2026-06-01
+
+### Other
+
+- *(ci)* Changes necessary for making initial release ([#1768](https://github.com/gtema/openstack/pull/1768))
+
 ## [0.13.5](https://github.com/gtema/openstack/releases/tag/openstack-cli-core-v0.13.5) - 2026-05-14
 
 ### Other

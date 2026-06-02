@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.6](https://github.com/gtema/openstack/compare/openstack-sdk-auth-multifactor-v0.1.0...openstack-sdk-auth-multifactor-v0.22.6) - 2026-06-01
+
+### Other
+
+- *(ci)* Changes necessary for making initial release ([#1768](https://github.com/gtema/openstack/pull/1768))
+- release ([#1758](https://github.com/gtema/openstack/pull/1758))
+- Split sdk crate into subcrates ([#1713](https://github.com/gtema/openstack/pull/1713))
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack-sdk-auth-multifactor-v0.1.0) - 2026-05-14
 
 ### Other

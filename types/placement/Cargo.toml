@@ -1,7 +1,7 @@
 [package]
 name = "openstack-types-placement"
 description = "OpenStack API Types - Placement"
-version = "0.1.0"
+version = "0.22.7"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true

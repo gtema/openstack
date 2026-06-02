@@ -1,7 +1,7 @@
 [package]
 name = "openstack-sdk-auth-passkey"
 description = "OpenStack SDK auth plugin for authenticating with Webauthn credentials"
-version = "0.22.5"
+version = "0.22.6"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
