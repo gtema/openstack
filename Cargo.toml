@@ -121,7 +121,9 @@ debug = 0
 # The profile that 'cargo dist' will build with
 [profile.dist]
 inherits = "release"
-lto = "thin"
+# rust 1.96 use llvm 1.22 (bitcode) while Mac does not have support for it
+lto = false
+#lto = "thin"
 
 [workspace.lints.clippy]
 result_large_err = "allow"

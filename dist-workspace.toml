@@ -27,6 +27,7 @@ github-attestations = true
 # Path that installers should place binaries in
 install-path = "CARGO_HOME"
 github-build-setup = "../parts/build-setup.yml"
+precise-builds = true
 
 [dist.github-custom-runners]
 global = "ubuntu-latest"
@@ -36,3 +37,16 @@ x86_64-apple-darwin = "macos-latest"
 x86_64-unknown-linux-gnu = "ubuntu-latest"
 x86_64-unknown-linux-musl = "ubuntu-latest"
 x86_64-pc-windows-msvc = "windows-2025"
+
+[dist.dependencies.apt]
+libudev1 = '*'
+libssl-dev = '*'
+librust-libudev-sys-dev = '*'
+musl-tools = '*'
+
+[dist.dependencies.homebrew]
+openssl = '*'
+pkg-config = '*'
+
+[dist.dependencies.chocolatey]
+openssl = '*'
