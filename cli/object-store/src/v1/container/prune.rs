@@ -23,7 +23,7 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::container::prune::PruneAsyncExt;
 use openstack_sdk::{
     AsyncOpenStack,
-    api::RestClient,
+    api::AsyncClient,
     types::{ApiVersion, ServiceType},
 };
 
@@ -56,10 +56,12 @@ impl ContainerCommand {
             OutputProcessor::from_args(parsed_args, Some("object-store.container"), Some("prune"));
         op.validate_args(parsed_args)?;
 
-        let ep = client.get_service_endpoint(
-            &ServiceType::ObjectStore,
-            Some(ApiVersion::new(1, 0)).as_ref(),
-        )?;
+        let ep = client
+            .get_service_endpoint(
+                &ServiceType::ObjectStore,
+                Some(ApiVersion::new(1, 0)).as_ref(),
+            )
+            .await?;
         let account = ep
             .url()
             .path_segments()

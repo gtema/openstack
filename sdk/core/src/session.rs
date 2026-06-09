@@ -1,0 +1,79 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+//! Session context for auth, catalog, and state management.
+
+use crate::auth::Auth;
+use crate::catalog::Catalog;
+use crate::state::State;
+
+use crate::config::{CloudConfig, get_config_identity_hash};
+use crate::error::OpenStackError;
+
+use openstack_sdk_auth_core::authtoken::AuthTokenError;
+
+/// Holds auth, catalog and state together to enable interior mutation.
+///
+/// Wrapping this behind an `Arc<RwLock>` allows session-mutating operations
+/// to take `&self`, which is required by trait methods and eliminates the
+/// need for a temporary `session_clone` in re-auth scenarios.
+pub struct SessionContext {
+    pub auth: Auth,
+    pub catalog: Catalog,
+    pub state: State,
+}
+
+impl SessionContext {
+    /// Construct a new SessionContext from CloudConfig.
+    ///
+    /// This is shared between sync and async clients — the ~30 lines of
+    /// catalog/state initialization are identical.
+    pub fn new(
+        config: &CloudConfig,
+        auth: Auth,
+        auth_cache_enabled: bool,
+    ) -> Result<Self, OpenStackError> {
+        let mut catalog = Catalog::default();
+
+        let auth_data = config
+            .auth
+            .as_ref()
+            .ok_or(AuthTokenError::MissingAuthData)?;
+
+        let identity_service_url = auth_data
+            .auth_url
+            .as_ref()
+            .ok_or(AuthTokenError::MissingAuthUrl)?;
+
+        catalog.register_catalog_endpoint(
+            "identity",
+            identity_service_url,
+            config.region_name.as_ref(),
+            Some("public"),
+        )?;
+
+        catalog.configure(config)?;
+
+        let mut state = State::new();
+        state
+            .set_auth_hash_key(get_config_identity_hash(config))
+            .enable_auth_cache(auth_cache_enabled);
+
+        Ok(Self {
+            auth,
+            catalog,
+            state,
+        })
+    }
+}

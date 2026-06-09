@@ -20,15 +20,12 @@ use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 #[tokio::test]
 async fn async_connection() -> Result<(), Box<dyn std::error::Error>> {
     let cfg = ConfigFile::new().unwrap();
-    // Get connection config from clouds.yaml/secure.yaml
     let profile = cfg
         .get_cloud_config(env::var("OS_CLOUD").expect("OS_CLOUD variable set"))
         .unwrap()
         .unwrap();
-    // Establish connection
-    let mut session = AsyncOpenStack::new(&profile).await?;
+    let session = AsyncOpenStack::new(&profile).await?;
 
-    // Invoke service discovery when desired.
     session
         .discover_service_endpoint(&ServiceType::Compute)
         .await?;

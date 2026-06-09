@@ -3397,6 +3397,7 @@ dependencies = [
  "tokio-util",
  "tracing",
  "tracing-test",
+ "url",
 ]
 
 [[package]]

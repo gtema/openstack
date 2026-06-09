@@ -109,8 +109,11 @@ tracing.workspace = true
 [dev-dependencies]
 bytes.workspace = true
 httpmock.workspace = true
+reqwest = { workspace = true, features = ["rustls", "blocking"] }
+secrecy.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 tracing-test.workspace = true
+url.workspace = true
 
 [[test]]
 name = "functional"

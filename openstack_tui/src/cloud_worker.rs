@@ -87,9 +87,12 @@ impl Cloud {
             .cloud_configs
             .get_cloud_config(cloud.clone())?
             .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
-        let mut session =
-            AsyncOpenStack::new_with_authentication_helper(&profile, &mut self.auth_helper, false)
-                .await?;
+        let session = AsyncOpenStack::new_with_authentication_helper(
+            &profile,
+            self.auth_helper.clone(),
+            false,
+        )
+        .await?;
 
         session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
@@ -211,6 +214,7 @@ impl Cloud {
     }
 }
 
+#[derive(Clone)]
 struct TuiAuthHelper {
     app_tx: Option<UnboundedSender<Action>>,
     auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
@@ -231,7 +235,7 @@ impl TuiAuthHelper {
 
     #[instrument(skip(self))]
     async fn initiate(
-        &mut self,
+        &self,
         prompt: String,
         connection_name: Option<String>,
         is_sensitive: bool,
@@ -257,9 +261,13 @@ impl TuiAuthHelper {
 
 #[async_trait]
 impl AuthHelper for TuiAuthHelper {
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        Box::new(self.clone())
+    }
+
     #[instrument(skip(self))]
     async fn get(
-        &mut self,
+        &self,
         prompt: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
@@ -284,7 +292,7 @@ impl AuthHelper for TuiAuthHelper {
 
     #[instrument(skip(self))]
     async fn get_secret(
-        &mut self,
+        &self,
         prompt: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {

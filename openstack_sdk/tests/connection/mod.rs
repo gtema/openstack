@@ -12,7 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! All connection tests share the same auth cache file on disk (same OS_CLOUD
+//! config). They are serialized via the `serial-connection` test group in
+//! `.config/nextest.toml` (nextest only). Running with regular `cargo test`
+//! assumes the caller handles serialization.
+
 #[cfg(feature = "async")]
 mod r#async;
+#[cfg(all(feature = "async", feature = "sync", feature = "identity"))]
+mod reauth;
 #[cfg(feature = "sync")]
 mod sync;

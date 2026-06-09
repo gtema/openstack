@@ -25,11 +25,7 @@ use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::common::parse_key_val;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
-use openstack_sdk::{
-    AsyncOpenStack,
-    api::{AsyncClient, RestClient},
-    types::ServiceType,
-};
+use openstack_sdk::{AsyncOpenStack, api::AsyncClient, types::ServiceType};
 
 /// Supported http methods
 #[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
@@ -114,7 +110,7 @@ impl ApiCommand {
 
         client.discover_service_endpoint(&service_type).await?;
 
-        let service_endpoint = client.get_service_endpoint(&service_type, None)?;
+        let service_endpoint = client.get_service_endpoint(&service_type, None).await?;
 
         let endpoint = service_endpoint.build_request_url(&self.url)?;
 

@@ -153,6 +153,16 @@ impl State {
         None
     }
 
+    /// Remove all cached auth from both memory and file.
+    pub fn clear_all_auth(&mut self) {
+        trace!("Clearing all cached auth");
+        self.auth_state.0.clear();
+        if self.auth_cache_enabled {
+            let fname = self.get_auth_state_filename(self.auth_hash);
+            let _ = std::fs::remove_file(fname);
+        }
+    }
+
     /// Locate authz for requested scope in the state
     fn find_scope_authz(
         &self,

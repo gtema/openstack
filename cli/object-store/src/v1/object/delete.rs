@@ -32,11 +32,10 @@ use tracing::info;
 use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::object_store::v1::object::delete::Request;
+use openstack_sdk::api::{AsyncClient, RawQueryAsync};
 use openstack_sdk::{
     AsyncOpenStack,
-    api::RestClient,
     types::{ApiVersion, ServiceType},
 };
 use structable::{StructTable, StructTableOptions};
@@ -89,10 +88,12 @@ impl ObjectCommand {
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
-        let ep = client.get_service_endpoint(
-            &ServiceType::ObjectStore,
-            Some(ApiVersion::new(1, 0)).as_ref(),
-        )?;
+        let ep = client
+            .get_service_endpoint(
+                &ServiceType::ObjectStore,
+                Some(ApiVersion::new(1, 0)).as_ref(),
+            )
+            .await?;
         let account = ep
             .url()
             .path_segments()

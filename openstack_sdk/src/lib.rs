@@ -22,6 +22,8 @@ pub mod catalog {
 }
 pub mod types;
 
+mod session;
+
 #[cfg(feature = "async")]
 mod openstack_async;
 #[cfg(feature = "async")]

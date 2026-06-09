@@ -1,0 +1,11 @@
+# Connection tests share the same auth cache file on disk (~/.osc/<auth_hash>)
+# and must run serially to avoid one test revoking a token that another test
+# is still using.
+
+[test-groups]
+serial-connection = { max-threads = 1 }
+
+[[profile.default.overrides]]
+# Serialize all connection tests — they share the same auth cache file.
+test-group = 'serial-connection'
+filter = 'test(connection::)'

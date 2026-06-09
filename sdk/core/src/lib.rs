@@ -95,6 +95,7 @@ pub mod auth;
 pub mod catalog;
 pub mod config;
 pub mod error;
+pub mod session;
 pub mod state;
 pub mod types;
 pub mod utils;

@@ -33,13 +33,6 @@ pub trait RestClient {
 
     /// Get current token project information
     fn get_current_project(&self) -> Option<Project>;
-
-    /// Get service endpoint information
-    fn get_service_endpoint(
-        &self,
-        service_type: &ServiceType,
-        version: Option<&ApiVersion>,
-    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>>;
 }
 
 /// A trait representing a client which can communicate with a OpenStack cloud APIs.
@@ -51,6 +44,13 @@ pub trait Client: RestClient {
         request: RequestBuilder,
         body: Vec<u8>,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>>;
+
+    /// Get service endpoint information.
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>>;
 }
 
 /// A trait representing an asynchronous client which can communicate with OpenStack cloud.
@@ -77,6 +77,13 @@ pub trait AsyncClient: RestClient {
         request: RequestBuilder,
         body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>>;
+
+    /// Get service endpoint information asynchronously.
+    async fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>>;
 
     // Send a REST query asynchronously with body provided by AsyncRead.
     //    async fn upload_async(

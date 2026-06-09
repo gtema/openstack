@@ -35,7 +35,7 @@ use crate::error::OpenStackError;
 pub async fn gather_auth_data<A>(
     requirements: &serde_json::Value,
     config: &CloudConfig,
-    auth_helper: &mut A,
+    auth_helper: &A,
 ) -> Result<HashMap<String, SecretString>, OpenStackError>
 where
     A: AuthHelper,
@@ -82,7 +82,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_required() {
-        let mut auth_helper = Noop::default();
+        let auth_helper = Noop::default();
         let auth = config::Auth {
             application_credential_secret: Some("foo".into()),
             application_credential_name: Some("bar".into()),
@@ -94,7 +94,7 @@ mod tests {
                 auth: Some(auth),
                 ..Default::default()
             },
-            &mut auth_helper,
+            &auth_helper,
         )
         .await
         .unwrap();
@@ -102,7 +102,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_available() {
-        let mut auth_helper = Noop::default();
+        let auth_helper = Noop::default();
         let auth = config::Auth {
             application_credential_secret: Some("foo".into()),
             application_credential_name: Some("bar".into()),
@@ -121,7 +121,7 @@ mod tests {
                 auth: Some(auth),
                 ..Default::default()
             },
-            &mut auth_helper,
+            &auth_helper,
         )
         .await
         .unwrap();
