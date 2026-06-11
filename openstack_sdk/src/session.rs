@@ -12,23 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use std::env;
+//! Session context for auth, catalog, and state management.
 
-use openstack_sdk::types::ServiceType;
-use openstack_sdk::{OpenStack, config::ConfigFile};
-
-#[test]
-fn sync_connection() -> Result<(), Box<dyn std::error::Error>> {
-    let cfg = ConfigFile::new().unwrap();
-    let profile = cfg
-        .get_cloud_config(env::var("OS_CLOUD").expect("OS_CLOUD variable set"))
-        .unwrap()
-        .unwrap();
-    let session = OpenStack::new(&profile)?;
-
-    session.discover_service_endpoint(&ServiceType::Compute)?;
-
-    assert!(session.get_auth_token().is_some());
-
-    Ok(())
-}
+pub use openstack_sdk_core::session::SessionContext;
+#[cfg(test)]
+pub use openstack_sdk_core::state;

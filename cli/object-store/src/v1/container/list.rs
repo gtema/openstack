@@ -27,7 +27,7 @@ use openstack_sdk::api::object_store::v1::account::get::Request;
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::{
     AsyncOpenStack,
-    api::RestClient,
+    api::AsyncClient,
     types::{ApiVersion, ServiceType},
 };
 use structable::{StructTable, StructTableOptions};
@@ -118,10 +118,12 @@ impl ContainersCommand {
         op.validate_args(parsed_args)?;
         let mut ep_builder = Request::builder();
         // Set path parameters
-        let ep = client.get_service_endpoint(
-            &ServiceType::ObjectStore,
-            Some(ApiVersion::new(1, 0)).as_ref(),
-        )?;
+        let ep = client
+            .get_service_endpoint(
+                &ServiceType::ObjectStore,
+                Some(ApiVersion::new(1, 0)).as_ref(),
+            )
+            .await?;
         let account = ep
             .url()
             .path_segments()

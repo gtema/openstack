@@ -24,6 +24,7 @@ use async_trait::async_trait;
 use dialoguer::{Input, Password};
 use secrecy::SecretString;
 use std::process::Command;
+use std::sync::Arc;
 use thiserror::Error;
 use tracing::warn;
 
@@ -55,18 +56,21 @@ pub enum AuthHelperError {
 /// Authentication helper trait for providing certain functionality, such as interactive querying
 /// the user for the username, password, token and similar.
 #[async_trait]
-pub trait AuthHelper {
+pub trait AuthHelper: Send + Sync {
+    /// Clone this helper into a boxed trait object.
+    fn clone_box(&self) -> Box<dyn AuthHelper>;
+
     /// Interactive query to get the regular not sensitive authentication data (i.e. username,
     /// project name, ...)
     async fn get(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError>;
 
     /// Interactive query to get the sensitive data (i.e. password or token)
     async fn get_secret(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError>;
@@ -82,8 +86,12 @@ pub struct Dialoguer {
 
 #[async_trait]
 impl AuthHelper for Dialoguer {
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        Box::new(self.clone())
+    }
+
     async fn get(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
@@ -96,7 +104,7 @@ impl AuthHelper for Dialoguer {
     }
 
     async fn get_secret(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
@@ -116,8 +124,12 @@ pub struct Noop {}
 
 #[async_trait]
 impl AuthHelper for Noop {
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        Box::new(self.clone())
+    }
+
     async fn get(
-        &mut self,
+        &self,
         _key: String,
         _connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
@@ -125,7 +137,7 @@ impl AuthHelper for Noop {
     }
 
     async fn get_secret(
-        &mut self,
+        &self,
         _key: String,
         _connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
@@ -151,8 +163,12 @@ impl ExternalCmd {
 
 #[async_trait]
 impl AuthHelper for ExternalCmd {
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        Box::new(self.clone())
+    }
+
     async fn get(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
@@ -180,7 +196,7 @@ impl AuthHelper for ExternalCmd {
     }
 
     async fn get_secret(
-        &mut self,
+        &self,
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
@@ -205,5 +221,57 @@ impl AuthHelper for ExternalCmd {
                 return Err(AuthHelperError::Other(e.to_string()));
             }
         }
+    }
+}
+
+/// Virtual clone pattern for trait objects.
+/// The `#[allow(unconditional_recursion)]` is intentional: `self.clone_box()`
+/// dispatches to the concrete impl of the boxed type, not this blanket impl.
+#[async_trait]
+impl AuthHelper for Box<dyn AuthHelper + 'static> {
+    #[allow(unconditional_recursion)]
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        #[allow(unconditional_recursion)]
+        self.clone_box()
+    }
+
+    async fn get(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<String, AuthHelperError> {
+        self.get(key, connection_name).await
+    }
+
+    async fn get_secret(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<SecretString, AuthHelperError> {
+        self.get_secret(key, connection_name).await
+    }
+}
+
+#[async_trait]
+impl AuthHelper for Arc<dyn AuthHelper + 'static> {
+    #[allow(unconditional_recursion)]
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        self.clone_box()
+    }
+
+    async fn get(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<String, AuthHelperError> {
+        self.get(key, connection_name).await
+    }
+
+    async fn get_secret(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<SecretString, AuthHelperError> {
+        self.get_secret(key, connection_name).await
     }
 }

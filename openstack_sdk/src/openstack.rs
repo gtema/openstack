@@ -14,11 +14,10 @@
 
 //! Synchronous OpenStack client
 
-//#![deny(dead_code, unused_imports, unused_mut)]
-
 use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
+use std::sync::{Arc, RwLock};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
 
@@ -27,7 +26,7 @@ use chrono::TimeDelta;
 use http::{Response as HttpResponse, StatusCode};
 use reqwest::{
     Certificate, Url,
-    blocking::{Client, Request, Response},
+    blocking::{Client as HttpClient, Request, Response},
 };
 use secrecy::SecretString;
 use tokio::runtime::Runtime;
@@ -47,7 +46,7 @@ use openstack_sdk_auth_core::{
 };
 
 use openstack_sdk_core::api::{
-    self, RestClient,
+    self, Client,
     query::{self},
 };
 use openstack_sdk_core::auth::{
@@ -55,20 +54,19 @@ use openstack_sdk_core::auth::{
     auth_helper::{AuthHelper, Dialoguer, Noop},
     gather_auth_data,
 };
-use openstack_sdk_core::catalog::{Catalog, CatalogError, ServiceEndpoint};
-use openstack_sdk_core::config::{CloudConfig, ConfigFile, get_config_identity_hash};
+use openstack_sdk_core::catalog::{CatalogError, ServiceEndpoint};
+use openstack_sdk_core::config::{CloudConfig, ConfigFile};
 use openstack_sdk_core::error::{OpenStackError, OpenStackResult, RestError};
-use openstack_sdk_core::state;
 use openstack_sdk_core::types::{ApiVersion, ServiceType};
 use openstack_sdk_core::utils::expand_tilde;
 
 use crate::auth::authtoken::AuthType;
+use crate::session;
 
 // Private enum that enables the parsing of the cert bytes to be
 // delayed until the client is built rather than when they're passed
 // to a builder.
 #[allow(dead_code)]
-#[derive(Clone)]
 enum ClientCert {
     None,
     #[cfg(feature = "client_der")]
@@ -97,42 +95,53 @@ enum ClientCert {
 ///     // Get connection config from clouds.yaml/secure.yaml
 ///     let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 ///     // Establish connection
-///     let mut session = OpenStack::new(&profile)?;
+///     let mut s = OpenStack::new(&profile)?;
 ///
 ///     // Invoke service discovery when desired.
-///     session.discover_service_endpoint(&ServiceType::Compute)?;
+///     s.discover_service_endpoint(&ServiceType::Compute)?;
 ///
 ///     // Execute the call with pagination limiting maximum amount of entries to 1000
 ///     let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(1000))
-///         .query(&session)
+///         .query(&s)
 ///         .unwrap();
 ///
 ///     println!("Data = {:?}", data);
 ///     Ok(())
 /// }
 /// ```
-#[derive(Clone)]
 pub struct OpenStack {
     /// The client to use for API calls.
-    client: Client,
+    client: HttpClient,
     /// Cloud configuration
     config: CloudConfig,
-    /// The authentication information to use when communicating with OpenStack.
-    auth: Auth,
-    /// Endpoints catalog
-    catalog: Catalog,
-    /// Session state.
-    ///
-    /// In order to save authentication roundtrips save/load authentication
-    /// information in the file (similar to how other cli tools are doing)
-    /// and check auth expiration upon load.
-    state: state::State,
+    /// Session context (auth, catalog, state)
+    session: Arc<RwLock<session::SessionContext>>,
+    /// Auth helper for re-authentication on 401.
+    auth_helper: Option<Arc<dyn AuthHelper>>,
+    /// Max retries on 401.
+    max_auth_retries: u32,
+}
+
+impl Clone for OpenStack {
+    fn clone(&self) -> Self {
+        Self {
+            client: self.client.clone(),
+            config: self.config.clone(),
+            session: Arc::clone(&self.session),
+            auth_helper: self.auth_helper.clone(),
+            max_auth_retries: self.max_auth_retries,
+        }
+    }
 }
 
 impl Debug for OpenStack {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let catalog = self
+            .session
+            .read()
+            .unwrap_or_else(|_| panic!("Debug: session lock poisoned"));
         f.debug_struct("OpenStack")
-            .field("service_endpoints", &self.catalog)
+            .field("service_endpoints", &catalog.catalog)
             .finish()
     }
 }
@@ -147,9 +156,45 @@ enum CertPolicy {
 }
 
 impl OpenStack {
-    /// Basic constructor
+    /// Lock the session for reading.
+    fn session_read(
+        &self,
+        location: &str,
+    ) -> OpenStackResult<std::sync::RwLockReadGuard<'_, session::SessionContext>> {
+        self.session
+            .read()
+            .map_err(|e| OpenStackError::SessionPoisoned {
+                msg: format!("{}: session read lock poisoned: {}", location, e),
+            })
+    }
+
+    /// Lock the session for writing.
+    fn session_write(
+        &self,
+        location: &str,
+    ) -> OpenStackResult<std::sync::RwLockWriteGuard<'_, session::SessionContext>> {
+        self.session
+            .write()
+            .map_err(|e| OpenStackError::SessionPoisoned {
+                msg: format!("{}: session write lock poisoned: {}", location, e),
+            })
+    }
+
+    /// Lock the session for reading in RestClient/AsyncClient trait methods.
+    fn session_read_rest(
+        &self,
+        location: &str,
+    ) -> Result<std::sync::RwLockReadGuard<'_, session::SessionContext>, api::ApiError<RestError>>
+    {
+        self.session.read().map_err(|e| {
+            api::ApiError::client(RestError::SessionPoisoned {
+                msg: format!("{}: session read lock poisoned: {}", location, e),
+            })
+        })
+    }
+
     fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
-        let mut client_builder = Client::builder();
+        let mut client_builder = HttpClient::builder();
 
         if let Some(cacert) = &config.cacert {
             let mut buf = Vec::new();
@@ -174,96 +219,62 @@ impl OpenStack {
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
 
-        let mut session = OpenStack {
+        let auth_cache = ConfigFile::new()
+            .ok()
+            .is_some_and(|c| c.is_auth_cache_enabled());
+        let session_ctx = session::SessionContext::new(config, auth, auth_cache)?;
+
+        Ok(OpenStack {
             client: client_builder.build()?,
             config: config.clone(),
-            auth,
-            catalog: Catalog::default(),
-            state: state::State::new(),
-        };
-
-        let auth_data = session
-            .config
-            .auth
-            .as_ref()
-            .ok_or(AuthTokenError::MissingAuthData)?;
-
-        let identity_service_url = auth_data
-            .auth_url
-            .as_ref()
-            .ok_or(AuthTokenError::MissingAuthUrl)?;
-
-        session.catalog.register_catalog_endpoint(
-            "identity",
-            identity_service_url,
-            config.region_name.as_ref(),
-            Some("public"),
-        )?;
-
-        session.catalog.configure(config)?;
-
-        session
-            .state
-            .set_auth_hash_key(get_config_identity_hash(config))
-            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
-
-        Ok(session)
+            session: Arc::new(RwLock::new(session_ctx)),
+            auth_helper: None,
+            max_auth_retries: 1,
+        })
     }
 
-    /// Create a new OpenStack API session from CloudConfig
     #[instrument(name = "connect", level = "trace", skip(config))]
     pub fn new(config: &CloudConfig) -> OpenStackResult<Self> {
-        let mut session = Self::new_impl(config, Auth::None)?;
-
-        // Ensure we resolve identity endpoint using version discovery
+        let session = Self::new_impl(config, Auth::None)?;
         session.discover_service_endpoint(&ServiceType::Identity)?;
-
         session.authorize(None, false, false)?;
-
         Ok(session)
     }
 
-    /// Set the authorization to be used by the client
-    fn set_auth(&mut self, auth: Auth, skip_cache_update: bool) -> &mut Self {
-        self.auth = auth;
-        if !skip_cache_update && let Auth::AuthToken(auth) = &self.auth {
-            // For app creds we should save auth as unscoped since:
-            // - on request it is disallowed to specify scope
-            // - response contain fixed scope
-            // With this it is not possible to find auth in the cache if we use the real
-            // scope
-            let scope = match &auth.auth_info {
+    fn set_auth(&self, auth: Auth, skip_cache_update: bool) -> Result<(), OpenStackError> {
+        let mut session = self.session_write("set_auth")?;
+        session.auth = auth;
+        if !skip_cache_update && let Auth::AuthToken(a) = &session.auth {
+            let a_clone = a.clone();
+            let scope = match &a_clone.auth_info {
                 Some(info) => {
                     if info.token.application_credential.is_some() {
                         AuthTokenScope::Unscoped
                     } else {
-                        auth.get_scope()
+                        a_clone.get_scope()
                     }
                 }
-                _ => auth.get_scope(),
+                _ => a_clone.get_scope(),
             };
-            self.state.set_scope_auth(&scope, auth);
+            session.state.set_scope_auth(&scope, &a_clone);
         }
-        self
+        Ok(())
     }
 
-    /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
-        &mut self,
+        &self,
         scope: Option<AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
         if interactive {
-            self.authorize_with_auth_helper(scope, &mut Dialoguer::default(), renew_auth)
+            self.authorize_with_auth_helper(scope, &Dialoguer::default(), renew_auth)
         } else {
-            self.authorize_with_auth_helper(scope, &mut Noop::default(), renew_auth)
+            self.authorize_with_auth_helper(scope, &Noop::default(), renew_auth)
         }
     }
 
-    /// Re-authenticate with the existing auth for the given scope.
     fn reauth(&self, auth: &AuthToken, scope: &AuthTokenScope) -> Result<Auth, OpenStackError> {
-        // Create the runtime
         let rt = Runtime::new()?;
         let client = reqwest::Client::new();
         Ok(rt.block_on(
@@ -277,55 +288,83 @@ impl OpenStack {
             ),
         )?)
     }
-    /// Authorize against the cloud using provided credentials and get the session token
+
+    fn handle_401_retry(&self) -> Result<(), OpenStackError> {
+        let scope = AuthTokenScope::try_from(&self.config)?;
+        let auth_helper_opt = self.auth_helper.clone();
+        if let Some(auth_helper) = auth_helper_opt {
+            {
+                let mut session = self.session_write("handle_401_retry")?;
+                session.state.clear_all_auth();
+            }
+            self.authorize_with_auth_helper(Some(scope), &auth_helper, true)?;
+        } else {
+            // No auth helper available - try to reauth with the current token
+            if let Auth::AuthToken(token) = {
+                let session = self.session_read("handle_401_retry")?;
+                session.auth.clone()
+            } && let Ok(new_auth) = self.reauth(&token, &scope)
+            {
+                self.set_auth(new_auth, false)?;
+                return Ok(());
+            }
+            // Reauth failed, clear state and try full auth as fallback
+            {
+                let mut session = self.session_write("handle_401_retry clear")?;
+                session.state.clear_all_auth();
+            }
+            self.authorize_with_auth_helper(Some(scope), &Noop::default(), true)?;
+        }
+        Ok(())
+    }
+
+    pub fn set_max_auth_retries(&mut self, n: u32) -> &mut Self {
+        self.max_auth_retries = n;
+        self
+    }
+
     pub fn authorize_with_auth_helper<A>(
-        &mut self,
+        &self,
         scope: Option<AuthTokenScope>,
-        auth_helper: &mut A,
+        auth_helper: &A,
         renew_auth: bool,
     ) -> Result<(), OpenStackError>
     where
         A: AuthHelper + Send,
     {
-        // Create the runtime
         let rt = Runtime::new()?;
         let requested_scope = scope.unwrap_or(AuthTokenScope::try_from(&self.config)?);
 
-        if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
-            // Valid authorization is already available and no renewal is required
+        let cached_auth = {
+            let mut session = self.session_write("authorize_with_auth_helper_cached")?;
+            session.state.get_scope_auth(&requested_scope)
+        };
+
+        if let Some(auth) = cached_auth
+            && !renew_auth
+        {
             trace!("Auth already available");
-            self.auth = Auth::AuthToken(Box::new(auth.clone()));
+            self.set_auth(Auth::AuthToken(Box::new(auth.clone())), true)?;
         } else {
-            // No valid authorization data is available in the state or
-            // renewal is requested
             let auth_type = AuthType::from_cloud_config(&self.config)?;
-            let mut force_new_auth = renew_auth;
-            if let AuthType::V3ApplicationCredential = auth_type {
-                // application_credentials token can not be used to get new token without again
-                // supplying application credentials.
-                // So for AppCred we just force a brand new auth
-                force_new_auth = true;
-            }
-            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), force_new_auth)
-            {
-                // State contain valid authentication for different
-                // scope/unscoped. It is possible to request new authz
-                // using this other auth
+            let force_new_auth = matches!(auth_type, AuthType::V3ApplicationCredential);
+            let available_auth_opt = {
+                let mut session = self.session_write("authorize_with_auth_helper_available")?;
+                session.state.get_any_valid_auth()
+            };
+            if let (Some(available_auth), false) = (available_auth_opt, force_new_auth) {
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
                 let token_auth = self.reauth(&available_auth, &requested_scope)?;
-                self.set_auth(token_auth.clone(), false);
+                self.set_auth(token_auth.clone(), false)?;
             } else {
-                // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
                 let auth_type = auth_type.as_str();
-                // Find authenticator supporting the auth_type
                 if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
                     .into_iter()
                     .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
                     .map(|x| x.method)
                 {
-                    // authenticate
                     let auth_hints = self
                         .config
                         .auth_methods
@@ -351,12 +390,9 @@ impl OpenStack {
                         ),
                     ) {
                         Ok(token_auth) => {
-                            self.set_auth(token_auth.clone(), false);
+                            self.set_auth(token_auth.clone(), false)?;
                         }
-
                         Err(AuthError::AuthReceipt(receipt)) => {
-                            // Auth Receipt is received
-                            // Find the receipt auth plugin
                             if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
                                 .into_iter()
                                 .find(|x| {
@@ -364,14 +400,12 @@ impl OpenStack {
                                 })
                                 .map(|x| x.method)
                             {
-                                // Convert the receipt into auth hints
                                 let auth_hints = serde_json::to_value(&receipt)?;
                                 let auth_data = rt.block_on(gather_auth_data(
                                     &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
                                     &self.config,
                                     auth_helper,
                                 ))?;
-                                // Authenticate
                                 let token_auth = rt.block_on(
                                     token_receipt::PLUGIN.auth(
                                         &client,
@@ -385,7 +419,7 @@ impl OpenStack {
                                         Some(&auth_hints),
                                     ),
                                 )?;
-                                self.set_auth(token_auth.clone(), false);
+                                self.set_auth(token_auth.clone(), false)?;
                             }
                         }
                         Err(other) => {
@@ -400,138 +434,158 @@ impl OpenStack {
             }
         }
 
-        if let Auth::AuthToken(token_data) = &self.auth {
-            match &token_data.auth_info {
-                Some(auth_data) => {
-                    if let Some(project) = &auth_data.token.project {
-                        self.catalog.set_project_id(project.id.clone());
-                        // Reconfigure catalog since we know now the project_id
-                        self.catalog.configure(&self.config)?;
+        // All paths fall through to catalog update
+        {
+            let mut session = self.session_write("authorize_with_auth_helper_catalog")?;
+            let auth_data = {
+                if let Auth::AuthToken(token_data) = &session.auth {
+                    match &token_data.auth_info {
+                        Some(ad) => ad.clone(),
+                        _ => return Err(OpenStackError::NoAuth),
                     }
-                    if let Some(endpoints) = &auth_data.token.catalog {
-                        self.catalog.process_catalog_endpoints(endpoints)?;
-                    } else {
-                        error!("No catalog information");
-                    }
+                } else {
+                    return Err(OpenStackError::NoAuth);
                 }
-                _ => return Err(OpenStackError::NoAuth),
+            };
+            if let Some(project) = &auth_data.token.project {
+                session.catalog.set_project_id(project.id.clone());
+                session.catalog.configure(&self.config)?;
+            }
+            if let Some(endpoints) = &auth_data.token.catalog {
+                session.catalog.process_catalog_endpoints(endpoints)?;
+            } else {
+                error!("No catalog information");
             }
         }
-        // TODO: without AuthToken authorization we may want to read catalog separately
         Ok(())
     }
 
     #[instrument(skip(self))]
     pub fn discover_service_endpoint(
-        &mut self,
+        &self,
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        if let Ok(ep) = self.catalog.get_service_endpoint(
-            service_type.to_string(),
-            None,
-            self.config.region_name.as_ref(),
-            self.config.interface.as_ref(),
-        ) {
-            if self.catalog.discovery_allowed(service_type.to_string()) {
-                info!("Performing `{}` endpoint version discovery", service_type);
+        let ep_opt = {
+            let session = self.session_read("discover_service_endpoint_ep")?;
+            session
+                .catalog
+                .get_service_endpoint(
+                    service_type.to_string(),
+                    None,
+                    self.config.region_name.as_ref(),
+                    self.config.interface.as_ref(),
+                )
+                .ok()
+                .cloned()
+        };
 
-                let orig_url = ep.url().clone();
-                let mut try_url = ep.url().clone();
-                // Version discovery document must logically end with "/" since API url goes even
-                // deeper.
-                try_url
-                    .path_segments_mut()
-                    .map_err(|_| CatalogError::cannot_be_base(ep.url()))?
-                    .pop_if_empty()
-                    .push("");
-                let mut max_depth = 10;
-                loop {
-                    let req = http::Request::builder()
-                        .method(http::Method::GET)
-                        .uri(query::url_to_http_uri(try_url.clone())?);
+        let ep = match ep_opt {
+            Some(e) => e,
+            None => return Ok(()),
+        };
 
-                    match self.rest_with_auth(req, Vec::new(), &self.auth) {
-                        Ok(rsp) => {
-                            if rsp.status() != StatusCode::NOT_FOUND
-                                && self
-                                    .catalog
-                                    .process_endpoint_discovery(
-                                        service_type,
-                                        &try_url,
-                                        rsp.body(),
-                                        self.config.region_name.as_ref(),
-                                        self.config.interface.as_ref(),
-                                    )
-                                    .is_ok()
-                            {
-                                debug!(
-                                    "Finished service version discovery at {}",
-                                    try_url.as_str()
-                                );
-                                return Ok(());
-                            }
+        let discovery_allowed = {
+            let session = self.session_read("discover_service_endpoint_discovery_allowed")?;
+            session.catalog.discovery_allowed(service_type.to_string())
+        };
+        if !discovery_allowed {
+            return Ok(());
+        }
+
+        info!("Performing `{}` endpoint version discovery", service_type);
+
+        let orig_url = ep.url().clone();
+        let mut try_url = ep.url().clone();
+        try_url
+            .path_segments_mut()
+            .map_err(|_| CatalogError::cannot_be_base(ep.url()))?
+            .pop_if_empty()
+            .push("");
+        let mut max_depth = 10;
+        loop {
+            let req = http::Request::builder()
+                .method(http::Method::GET)
+                .uri(query::url_to_http_uri(try_url.clone())?);
+
+            let auth = {
+                let session = self.session_read("discover_loop_read_auth")?;
+                session.auth.clone()
+            };
+            match self.rest_with_auth(req, Vec::new(), &auth) {
+                Ok(rsp) => {
+                    if rsp.status() != StatusCode::NOT_FOUND {
+                        let ok = {
+                            let mut session =
+                                self.session_write("discover_loop_process_endpoint")?;
+                            session
+                                .catalog
+                                .process_endpoint_discovery(
+                                    service_type,
+                                    &try_url,
+                                    rsp.body(),
+                                    self.config.region_name.as_ref(),
+                                    self.config.interface.as_ref(),
+                                )
+                                .is_ok()
+                        };
+                        if ok {
+                            debug!("Finished service version discovery at {}", try_url.as_str());
+                            return Ok(());
                         }
-                        Err(err) => {
-                            error!(
-                                "Error querying {} for the version discovery. It is most likely a misconfiguration on the cloud side. {}",
-                                try_url.as_str(),
-                                err
-                            );
-                        }
-                    };
-                    if try_url.path() != "/" {
-                        // We are not at the root yet and have not found a
-                        // valid version document so far, try one level up
-                        try_url
-                            .path_segments_mut()
-                            .map_err(|_| CatalogError::cannot_be_base(&orig_url))?
-                            .pop();
-                    } else {
-                        return Err(OpenStackError::Discovery {
-                            service: service_type.to_string(),
-                            url: orig_url.into(),
-                            msg: match service_type {
-                                ServiceType::Identity => "Service is not working.".into(),
-                                _ => "No Version document found. Either service is not supporting version discovery, or API is not working".into(),
-                            }
-                        });
-                    }
-
-                    max_depth -= 1;
-                    if max_depth == 0 {
-                        break;
                     }
                 }
+                Err(err) => {
+                    error!(
+                        "Error querying {} for the version discovery. It is most likely a misconfiguration on the cloud side. {}",
+                        try_url.as_str(),
+                        err
+                    );
+                }
+            };
+            if try_url.path() != "/" {
+                try_url
+                    .path_segments_mut()
+                    .map_err(|_| CatalogError::cannot_be_base(&orig_url))?
+                    .pop();
+            } else {
                 return Err(OpenStackError::Discovery {
                     service: service_type.to_string(),
                     url: orig_url.into(),
-                    msg: "Unknown".into(),
+                    msg: match service_type {
+                        ServiceType::Identity => "Service is not working.".into(),
+                        _ => "No Version document found. Either service is not supporting version discovery, or API is not working".into(),
+                    }
                 });
             }
-            return Ok(());
+
+            max_depth -= 1;
+            if max_depth == 0 {
+                break;
+            }
         }
-        Ok(())
+        Err(OpenStackError::Discovery {
+            service: service_type.to_string(),
+            url: orig_url.into(),
+            msg: "Unknown".into(),
+        })
     }
 
-    /// Return current authentication token
     pub fn get_auth_token(&self) -> Option<SecretString> {
-        if let Auth::AuthToken(token) = &self.auth {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        if let Auth::AuthToken(token) = &session.auth {
             return Some(token.token.clone());
         }
         None
     }
 
-    /// Return current authentication status
-    ///
-    /// Offset can be used to calculate imminent expiration.
     pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
-        if let Auth::AuthToken(token) = &self.auth {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        if let Auth::AuthToken(token) = &session.auth {
             return Some(token.get_state(offset));
         }
         None
     }
 
-    /// Perform HTTP request with given request and return raw response.
     #[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
     fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
         info!("Sending request {:?}", request);
@@ -544,18 +598,17 @@ impl OpenStack {
         event!(
             name: "http_request",
             Level::INFO,
-            url=url.as_str(),
-            duration_ms=elapsed.as_millis(),
-            status=rsp.status().as_u16(),
-            method=method.as_str(),
-            request_id=rsp.headers().get("x-openstack-request-id").map(|v| v.to_str().unwrap_or("")),
+            url = url.as_str(),
+            duration_ms = elapsed.as_millis(),
+            status = rsp.status().as_u16(),
+            method = method.as_str(),
+            request_id = rsp.headers().get("x-openstack-request-id").map(|v| v.to_str().unwrap_or("")),
             "Request completed with status {}",
             rsp.status(),
         );
         Ok(rsp)
     }
 
-    /// Perform a REST query with a given auth.
     fn rest_with_auth(
         &self,
         mut request: http::request::Builder,
@@ -588,22 +641,9 @@ impl OpenStack {
 impl api::RestClient for OpenStack {
     type Error = RestError;
 
-    /// Get service endpoint from the catalog
-    fn get_service_endpoint(
-        &self,
-        service_type: &ServiceType,
-        version: Option<&ApiVersion>,
-    ) -> Result<&ServiceEndpoint, api::ApiError<Self::Error>> {
-        Ok(self.catalog.get_service_endpoint(
-            service_type.to_string(),
-            version,
-            self.config.region_name.as_ref(),
-            self.config.interface.as_ref(),
-        )?)
-    }
-
     fn get_current_project(&self) -> Option<Project> {
-        if let Auth::AuthToken(token) = &self.auth {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        if let Auth::AuthToken(token) = &session.auth {
             return token.auth_info.clone().and_then(|x| x.token.project);
         }
         None
@@ -611,12 +651,593 @@ impl api::RestClient for OpenStack {
 }
 
 impl api::Client for OpenStack {
-    /// Perform the query with the client specifics
     fn rest(
         &self,
         request: http::request::Builder,
         body: Vec<u8>,
-    ) -> Result<HttpResponse<Bytes>, api::ApiError<Self::Error>> {
-        self.rest_with_auth(request, body, &self.auth)
+    ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
+        let mut auth = {
+            let session = self.session_read_rest("Client::rest")?;
+            session.auth.clone()
+        };
+        let mut retries = 0;
+
+        let orig_method = request.method_ref().cloned().unwrap_or(http::Method::GET);
+        let orig_uri = request.uri_ref().cloned().unwrap_or_default();
+
+        let mut request = request;
+        loop {
+            let result = self.rest_with_auth(request, body.clone(), &auth);
+            let is_401 = match &result {
+                Ok(rsp) => rsp.status() == http::StatusCode::UNAUTHORIZED,
+                Err(_) => false,
+            };
+            if is_401 && retries < self.max_auth_retries {
+                warn!(
+                    "Received 401 Unauthorized, retry {} of {}",
+                    retries + 1,
+                    self.max_auth_retries
+                );
+                match self.handle_401_retry() {
+                    Ok(_) => {
+                        auth = {
+                            let session = self.session_read_rest("Client::rest_401_retry")?;
+                            session.auth.clone()
+                        };
+                        retries += 1;
+                        request = http::Request::builder()
+                            .method(orig_method.clone())
+                            .uri(orig_uri.clone());
+                        continue;
+                    }
+                    Err(e) => {
+                        warn!("401 retry failed: {}", e);
+                        return result;
+                    }
+                }
+            }
+            return result;
+        }
+    }
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
+        let session = self.session.read().map_err(|e| {
+            api::ApiError::client(RestError::SessionPoisoned {
+                msg: format!("get_service_endpoint: session read lock poisoned: {}", e),
+            })
+        })?;
+        session
+            .catalog
+            .get_service_endpoint(
+                service_type.to_string(),
+                version,
+                self.config.region_name.as_ref(),
+                self.config.interface.as_ref(),
+            )
+            .cloned()
+            .map_err(api::ApiError::catalog)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::Utc;
+    use httpmock::MockServer;
+    use secrecy::ExposeSecret;
+    use serde_json::json;
+    use std::time::Duration;
+
+    use openstack_sdk_core::api::{Client, RestClient};
+    use openstack_sdk_core::catalog::Catalog;
+
+    use super::*;
+    use crate::config::Auth as ConfigAuth;
+
+    fn create_test_client(
+        server: &MockServer,
+        token: &str,
+        max_retries: u32,
+        auth_helper: Option<Arc<dyn AuthHelper>>,
+    ) -> OpenStack {
+        let base_url = url::Url::parse(&server.base_url()).unwrap();
+
+        let config = CloudConfig {
+            auth: Some(ConfigAuth {
+                auth_url: Some(base_url.as_str().to_string()),
+                project_id: Some("test-project".into()),
+                ..Default::default()
+            }),
+            region_name: Some("RegionOne".into()),
+            ..Default::default()
+        };
+
+        let token_info = openstack_sdk_auth_core::types::AuthResponse {
+            token: openstack_sdk_auth_core::types::AuthToken {
+                expires_at: Utc::now() + chrono::TimeDelta::hours(1),
+                project: Some(openstack_sdk_auth_core::types::Project {
+                    id: Some("test-project".into()),
+                    name: Some("TestProject".into()),
+                    domain: None,
+                }),
+                user: openstack_sdk_auth_core::types::User {
+                    id: "test-user".into(),
+                    name: "test-user".into(),
+                    domain: None,
+                    password_expires_at: None,
+                },
+                ..Default::default()
+            },
+        };
+
+        let auth = Auth::AuthToken(Box::new(openstack_sdk_auth_core::AuthToken {
+            token: SecretString::from(token),
+            auth_info: Some(token_info),
+        }));
+
+        let mut catalog = Catalog::default();
+        catalog
+            .register_catalog_endpoint(
+                "identity",
+                base_url.as_str(),
+                Some("RegionOne"),
+                Some("public"),
+            )
+            .unwrap();
+
+        let mut state = session::state::State::new();
+        state.set_auth_hash_key(0);
+
+        OpenStack {
+            client: reqwest::blocking::Client::builder()
+                .timeout(Duration::from_secs(10))
+                .build()
+                .unwrap(),
+            config,
+            session: Arc::new(RwLock::new(session::SessionContext {
+                auth,
+                catalog,
+                state,
+            })),
+            auth_helper,
+            max_auth_retries: max_retries,
+        }
+    }
+
+    #[test]
+    fn test_401_no_retry_on_success() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "old-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "old-token", 1, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::OK);
+        mock.assert();
+    }
+
+    #[test]
+    fn test_401_retry_succeeds() {
+        let server = MockServer::start();
+
+        let mock_401 = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "old-token");
+            then.status(StatusCode::UNAUTHORIZED)
+                .body(r#"{"error": {"message": "Unauthorized"}, "message": "Unauthorized"}"#);
+        });
+
+        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let _mock_reauth = server.mock(|when, then| {
+            when.method(httpmock::Method::POST).path("/auth/tokens");
+            then.status(StatusCode::CREATED)
+                .header("x-subject-token", "new-token")
+                .json_body(json!({
+                    "token": {
+                        "id": "token-id",
+                        "expires_at": &expires,
+                        "project": { "id": "test-project", "name": "TestProject" },
+                        "user": { "id": "test-user", "name": "test-user" }
+                    }
+                }));
+        });
+
+        let mock_200 = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "new-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "old-token", 1, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok(), "expected Ok, got {:?}", result);
+        assert_eq!(result.unwrap().status(), StatusCode::OK);
+
+        mock_401.assert();
+        mock_200.assert();
+    }
+
+    #[test]
+    fn test_401_non_401_not_retried() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/api/test");
+            then.status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(r#"{"error": {"message": "Server Error"}, "message": "Server Error"}"#);
+        });
+
+        let client = create_test_client(&server, "old-token", 5, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::INTERNAL_SERVER_ERROR);
+        mock.assert();
+    }
+
+    #[test]
+    fn test_401_max_retries_zero() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "old-token");
+            then.status(StatusCode::UNAUTHORIZED)
+                .body(r#"{"error": {"message": "Unauthorized"}, "message": "Unauthorized"}"#);
+        });
+
+        let client = create_test_client(&server, "old-token", 0, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::UNAUTHORIZED);
+        mock.assert();
+    }
+
+    #[test]
+    fn test_clone_shares_session() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "shared-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "shared-token", 0, None);
+
+        assert_eq!(
+            client.get_auth_token().unwrap().expose_secret(),
+            "shared-token"
+        );
+
+        let clone = client.clone();
+        assert_eq!(
+            clone.get_auth_token().unwrap().expose_secret(),
+            "shared-token"
+        );
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+        let result = clone.rest(request, Vec::new());
+        assert!(result.is_ok());
+
+        mock.assert_calls(2);
+    }
+
+    #[test]
+    fn test_retry_token_update_visible_to_clone() {
+        let server = MockServer::start();
+
+        let mock_401 = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "old-token");
+            then.status(StatusCode::UNAUTHORIZED)
+                .body(r#"{"error": {"message": "Unauthorized"}, "message": "Unauthorized"}"#);
+        });
+
+        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let _mock_reauth = server.mock(|when, then| {
+            when.method(httpmock::Method::POST).path("/auth/tokens");
+            then.status(StatusCode::CREATED)
+                .header("x-subject-token", "new-token")
+                .json_body(json!({
+                    "token": {
+                        "id": "token-id",
+                        "expires_at": &expires,
+                        "project": { "id": "test-project", "name": "TestProject" },
+                        "user": { "id": "test-user", "name": "test-user" }
+                    }
+                }));
+        });
+
+        let mock_new = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "new-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "old-token", 1, None);
+        let clone = client.clone();
+
+        // Original client triggers 401 → re-auth → 200
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::OK);
+
+        // Clone should now have the new token (shared session)
+        assert_eq!(clone.get_auth_token().unwrap().expose_secret(), "new-token");
+
+        // Clone uses new token successfully
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+        let result = clone.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::OK);
+
+        mock_401.assert();
+        mock_new.assert_calls(2);
+    }
+
+    #[test]
+    fn test_concurrent_clones_in_threads() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "shared-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "shared-token", 0, None);
+
+        let handles: Vec<_> = (0..4)
+            .map(|i| {
+                let client = client.clone();
+                let base_url = server.base_url();
+                std::thread::spawn(move || {
+                    let request = http::Request::builder()
+                        .method(http::Method::GET)
+                        .uri(format!("{}/api/test?i={}", base_url, i));
+                    client.rest(request, Vec::new())
+                })
+            })
+            .collect();
+
+        for h in handles {
+            let result = h.join().unwrap();
+            assert!(result.is_ok(), "expected Ok, got {:?}", result);
+            assert_eq!(result.unwrap().status(), StatusCode::OK);
+        }
+
+        mock.assert_calls(4);
+    }
+
+    #[test]
+    fn test_get_service_endpoint_identity() {
+        let server = MockServer::start();
+        let _client = create_test_client(&server, "test-token", 0, None);
+        let base_url = server.base_url();
+
+        let client = create_test_client(&server, "test-token", 0, None);
+        let ep = client
+            .get_service_endpoint(&ServiceType::Identity, None)
+            .unwrap();
+
+        assert!(ep.url_str().starts_with(&base_url));
+    }
+
+    #[test]
+    fn test_get_service_endpoint_not_found() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        let result = client.get_service_endpoint(&ServiceType::Compute, None);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_get_service_endpoint_with_version() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        let v3 = ApiVersion::new(3, 0);
+        let ep = client
+            .get_service_endpoint(&ServiceType::Identity, Some(&v3))
+            .unwrap();
+
+        assert!(ep.url_str().starts_with(server.base_url().as_str()));
+    }
+
+    #[test]
+    fn test_get_current_project() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        let project = client.get_current_project();
+        assert!(project.is_some());
+        let project = project.unwrap();
+        assert_eq!(project.id.as_deref(), Some("test-project"));
+        assert_eq!(project.name.as_deref(), Some("TestProject"));
+    }
+
+    #[test]
+    fn test_get_auth_token() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "my-secret-token", 0, None);
+
+        let token = client.get_auth_token();
+        assert!(token.is_some());
+        assert_eq!(token.unwrap().expose_secret(), "my-secret-token");
+    }
+
+    #[test]
+    fn test_get_auth_state() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        let auth_state = client.get_auth_state(None);
+        assert!(matches!(auth_state.unwrap(), AuthState::Valid));
+    }
+
+    #[test]
+    fn test_get_auth_state_with_offset() {
+        let server = MockServer::start();
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        // Token expires in 1 hour, offset 2 hours → not valid
+        let auth_state = client.get_auth_state(Some(TimeDelta::hours(2)));
+        assert!(!matches!(auth_state.unwrap(), AuthState::Valid));
+
+        // Token expires in 1 hour, offset 30 minutes → valid
+        let auth_state = client.get_auth_state(Some(TimeDelta::minutes(30)));
+        assert!(matches!(auth_state.unwrap(), AuthState::Valid));
+    }
+
+    #[test]
+    fn test_401_retry_exhaustion() {
+        let server = MockServer::start();
+
+        // Always 401 for old token
+        let mock_401_old = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "old-token");
+            then.status(StatusCode::UNAUTHORIZED);
+        });
+
+        // Re-auth also returns 401-like (reauth returns new token, but it's still 401)
+        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let _mock_reauth = server.mock(|when, then| {
+            when.method(httpmock::Method::POST).path("/auth/tokens");
+            then.status(StatusCode::CREATED)
+                .header("x-subject-token", "new-token")
+                .json_body(json!({
+                    "token": {
+                        "id": "token-id",
+                        "expires_at": &expires,
+                        "project": { "id": "test-project", "name": "TestProject" },
+                        "user": { "id": "test-user", "name": "test-user" }
+                    }
+                }));
+        });
+
+        // New token also gets 401
+        let mock_401_new = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "new-token");
+            then.status(StatusCode::UNAUTHORIZED);
+        });
+
+        let client = create_test_client(&server, "old-token", 1, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()));
+
+        // Should return 401 after exhausting retries
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().status(), StatusCode::UNAUTHORIZED);
+
+        // Two 401s: one for old token, one after retry with new token
+        mock_401_old.assert();
+        mock_401_new.assert();
+    }
+
+    #[test]
+    fn test_mixed_read_write_concurrency() {
+        let server = MockServer::start();
+
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("X-Auth-Token", "shared-token");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "shared-token", 0, None);
+
+        let rest_handles: Vec<_> = (0..4)
+            .map(|i| {
+                let client = client.clone();
+                let base_url = server.base_url();
+                std::thread::spawn(move || {
+                    let request = http::Request::builder()
+                        .method(http::Method::GET)
+                        .uri(format!("{}/api/test?i={}", base_url, i));
+                    client.rest(request, Vec::new())
+                })
+            })
+            .collect();
+
+        let auth_handles: Vec<_> = (0..4)
+            .map(|_| {
+                let client = client.clone();
+                std::thread::spawn(move || {
+                    let _token = client.get_auth_token();
+                    Some(client.get_auth_token())
+                })
+            })
+            .collect();
+
+        for h in rest_handles {
+            let result = h.join().unwrap();
+            assert!(result.is_ok(), "expected Ok, got {:?}", result);
+            assert_eq!(result.unwrap().status(), StatusCode::OK);
+        }
+
+        for h in auth_handles {
+            let result = h.join().unwrap();
+            assert!(result.is_some());
+        }
+
+        mock.assert_calls(4);
     }
 }

@@ -280,14 +280,6 @@ where
 impl<T> RestClient for PagedTestClient<T> {
     type Error = TestClientError;
 
-    fn get_service_endpoint(
-        &self,
-        _service_type: &ServiceType,
-        _version: Option<&ApiVersion>,
-    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
-        Ok(&self.endpoint)
-    }
-
     fn get_current_project(&self) -> Option<Project> {
         None
     }
@@ -304,6 +296,14 @@ where
         body: Vec<u8>,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         self._query(request, body)
+    }
+
+    fn get_service_endpoint(
+        &self,
+        _service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(self.endpoint.clone())
     }
 }
 
@@ -335,5 +335,13 @@ where
         _body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
         todo!();
+    }
+
+    async fn get_service_endpoint(
+        &self,
+        _service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(self.endpoint.clone())
     }
 }

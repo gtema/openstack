@@ -369,7 +369,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_latest_microversion(&mut req, ep, &self.paged.endpoint);
+        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
         let rsp = client.rest(req, data)?;
         self.process_response::<C, _>(rsp, url.clone())
     }
@@ -384,10 +384,12 @@ where
     C: AsyncClient + Sync,
 {
     async fn query_async(&self, client: &C) -> Result<Vec<T>, ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(
-            &self.paged.endpoint.service_type(),
-            self.paged.endpoint.api_version().as_ref(),
-        )?;
+        let ep = client
+            .get_service_endpoint(
+                &self.paged.endpoint.service_type(),
+                self.paged.endpoint.api_version().as_ref(),
+            )
+            .await?;
         let url = if let Some(url) =
             self.page_url::<C>(ep.build_request_url(&self.paged.endpoint.endpoint())?)?
         {
@@ -397,7 +399,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_latest_microversion(&mut req, ep, &self.paged.endpoint);
+        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
         let rsp = client.rest_async(req, data).await?;
         self.process_response::<C, _>(rsp, url.clone())
     }

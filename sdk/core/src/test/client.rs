@@ -139,21 +139,6 @@ impl FakeOpenStackClient {
 impl RestClient for FakeOpenStackClient {
     type Error = RestError;
 
-    fn get_service_endpoint(
-        &self,
-        service_type: &ServiceType,
-        _version: Option<&ApiVersion>,
-    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
-        self.endpoints
-            .get(&service_type.to_string())
-            .or(self.endpoints.get("default"))
-            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured {
-                srv_type: service_type.to_string(),
-                region: None,
-                interface: None,
-            }))
-    }
-
     fn get_current_project(&self) -> Option<Project> {
         None
     }
@@ -189,6 +174,22 @@ impl Client for FakeOpenStackClient {
             Ok(http_rsp.body(rsp.bytes()?)?)
         };
         call().map_err(ApiError::client)
+    }
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        self.endpoints
+            .get(&service_type.to_string())
+            .or(self.endpoints.get("default"))
+            .cloned()
+            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured {
+                srv_type: service_type.to_string(),
+                region: None,
+                interface: None,
+            }))
     }
 }
 
@@ -240,5 +241,21 @@ impl AsyncClient for FakeOpenStackClient {
         _body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
         todo!();
+    }
+
+    async fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        self.endpoints
+            .get(&service_type.to_string())
+            .or(self.endpoints.get("default"))
+            .cloned()
+            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured {
+                srv_type: service_type.to_string(),
+                region: None,
+                interface: None,
+            }))
     }
 }

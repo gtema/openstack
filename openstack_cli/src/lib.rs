@@ -147,30 +147,27 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     }
 
     // Connect to the selected cloud with the possible AuthHelper
-    let mut session =
-        if let Some(external_auth_helper) = &cli.global_opts.connection.auth_helper_cmd {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                &mut ExternalCmd::new(external_auth_helper.clone()),
-                renew_auth,
-            )
+    let mut session = if let Some(external_auth_helper) =
+        &cli.global_opts.connection.auth_helper_cmd
+    {
+        AsyncOpenStack::new_with_authentication_helper(
+            &cloud_config,
+            ExternalCmd::new(external_auth_helper.clone()),
+            renew_auth,
+        )
+        .await
+    } else if std::io::stdin().is_terminal() {
+        AsyncOpenStack::new_with_authentication_helper(
+            &cloud_config,
+            Dialoguer::default(),
+            renew_auth,
+        )
+        .await
+    } else {
+        AsyncOpenStack::new_with_authentication_helper(&cloud_config, Noop::default(), renew_auth)
             .await
-        } else if std::io::stdin().is_terminal() {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                &mut Dialoguer::default(),
-                renew_auth,
-            )
-            .await
-        } else {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                &mut Noop::default(),
-                renew_auth,
-            )
-            .await
-        }
-        .map_err(|err| OpenStackCliError::Auth { source: err })?;
+    }
+    .map_err(|err| OpenStackCliError::Auth { source: err })?;
 
     // Does the user want to connect to different project?
     if cli.global_opts.connection.os_project_id.is_some()

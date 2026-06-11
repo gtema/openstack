@@ -204,7 +204,7 @@ where
     fn query(&self, client: &C) -> Result<T, ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
         let url = ep.build_request_url(&self.endpoint())?;
-        let (req, data) = prepare_request::<C, E>(ep, url, self)?;
+        let (req, data) = prepare_request::<C, E>(&ep, url, self)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest(req, data)?;
@@ -253,9 +253,11 @@ where
 {
     #[instrument(name = "query", level = "debug", skip_all)]
     async fn query_async(&self, client: &C) -> Result<T, ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let ep = client
+            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
+            .await?;
         let (req, data) =
-            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
@@ -305,7 +307,7 @@ where
     fn raw_query(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
         let (req, data) =
-            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -327,9 +329,11 @@ where
         client: &C,
         inspect_error: Option<bool>,
     ) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let ep = client
+            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
+            .await?;
         let (req, data) =
-            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
@@ -350,13 +354,15 @@ where
         client: &C,
         data: BoxedAsyncRead,
     ) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let ep = client
+            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
+            .await?;
         let mut url = ep.build_request_url(&self.endpoint())?;
         self.parameters().add_to_url(&mut url);
         let mut req = Request::builder()
             .method(self.method())
             .uri(query::url_to_http_uri(url)?);
-        set_latest_microversion(&mut req, ep, self);
+        set_latest_microversion(&mut req, &ep, self);
         if let Some(request_headers) = self.request_headers()
             && let Some(headers) = req.headers_mut()
         {
@@ -377,9 +383,11 @@ where
         &self,
         client: &C,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let ep = client
+            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
+            .await?;
         let (req, data) =
-            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.download_async(req, data).await?;
 

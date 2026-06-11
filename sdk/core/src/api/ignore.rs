@@ -53,7 +53,7 @@ where
             self.endpoint.api_version().as_ref(),
         )?;
         let (req, data) = prepare_request::<C, E>(
-            ep,
+            &ep,
             ep.build_request_url(&self.endpoint.endpoint())?,
             &self.endpoint,
         )?;
@@ -83,12 +83,14 @@ where
     C: AsyncClient + Sync,
 {
     async fn query_async(&self, client: &C) -> Result<(), ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(
-            &self.endpoint.service_type(),
-            self.endpoint.api_version().as_ref(),
-        )?;
+        let ep = client
+            .get_service_endpoint(
+                &self.endpoint.service_type(),
+                self.endpoint.api_version().as_ref(),
+            )
+            .await?;
         let (req, data) = prepare_request::<C, E>(
-            ep,
+            &ep,
             ep.build_request_url(&self.endpoint.endpoint())?,
             &self.endpoint,
         )?;
