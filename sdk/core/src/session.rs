@@ -16,9 +16,9 @@
 
 use crate::auth::Auth;
 use crate::catalog::Catalog;
+use crate::config::{CloudConfig, ConfigFile, get_config_identity_hash};
 use crate::state::State;
 
-use crate::config::{CloudConfig, get_config_identity_hash};
 use crate::error::OpenStackError;
 
 use openstack_sdk_auth_core::authtoken::AuthTokenError;
@@ -39,10 +39,14 @@ impl SessionContext {
     ///
     /// This is shared between sync and async clients — the ~30 lines of
     /// catalog/state initialization are identical.
+    ///
+    /// The `auth_cache` parameter is the session-level override. When `None`,
+    /// the CloudConfig's `auth_cache` field is checked, then the global
+    /// `ConfigFile` fallback, then defaults to `true`.
     pub fn new(
         config: &CloudConfig,
         auth: Auth,
-        auth_cache_enabled: bool,
+        auth_cache: Option<bool>,
     ) -> Result<Self, OpenStackError> {
         let mut catalog = Catalog::default();
 
@@ -64,6 +68,20 @@ impl SessionContext {
         )?;
 
         catalog.configure(config)?;
+
+        // Resolve auth cache priority:
+        //   1. explicit parameter override
+        //   2. CloudConfig.auth_cache
+        //   3. ConfigFile.cache.auth
+        //   4. default true
+        let auth_cache_enabled = auth_cache
+            .or(config.auth_cache)
+            .or_else(|| {
+                ConfigFile::new()
+                    .ok()
+                    .and_then(|cf| cf.cache.as_ref().and_then(|c| c.auth))
+            })
+            .unwrap_or(true);
 
         let mut state = State::new();
         state

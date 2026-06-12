@@ -103,6 +103,17 @@ impl State {
         self
     }
 
+    /// Disable all authorization caching (in-memory and on-disk).
+    ///
+    /// When disabled, `get_scope_auth()` and `get_any_valid_auth()` will
+    /// always return `None`, and `set_scope_auth()` will skip both the
+    /// in-memory store and file persistence.
+    pub fn disable_auth_cache(&mut self) -> &mut Self {
+        self.auth_cache_enabled = false;
+        self.auth_state.0.clear();
+        self
+    }
+
     /// Set authz into the state
     pub fn set_scope_auth(&mut self, scope: &AuthTokenScope, authz: &AuthToken) {
         self.auth_state.filter_invalid_auths();

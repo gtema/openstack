@@ -382,6 +382,13 @@ pub struct CloudConfig {
     /// Verify SSL Certificates.
     pub verify: Option<bool>,
 
+    /// Override for authentication caching.
+    ///
+    /// If `Some(true)`, enables; if `Some(false)`, disables.
+    /// If `None`, falls back to the global `cache.auth` setting in the
+    /// `clouds.yaml` ConfigFile (default: `true`).
+    pub auth_cache: Option<bool>,
+
     /// Catch-all for additional configuration fields not explicitly typed.
     /// Any extra YAML keys at this level are captured here.
     #[serde(flatten)]
