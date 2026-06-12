@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.7...openstack_tui-v0.13.8) - 2026-06-12
+
+### Other
+
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.13.7](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.6...openstack_tui-v0.13.7) - 2026-06-01
 
 ### Other

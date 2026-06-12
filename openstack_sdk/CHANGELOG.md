@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.7...openstack_sdk-v0.22.8) - 2026-06-12
+
+### Added
+
+- Introduce possibility to skip auth cache ([#1791](https://github.com/gtema/openstack/pull/1791))
+
+### Other
+
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.6...openstack_sdk-v0.22.7) - 2026-06-01
 
 ### Added
