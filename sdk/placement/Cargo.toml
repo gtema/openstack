@@ -1,7 +1,7 @@
 [package]
 name = "openstack-sdk-placement"
 description = "OpenStack SDK Placement service bindings"
-version = "0.22.7"
+version = "0.22.8"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
