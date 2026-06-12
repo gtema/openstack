@@ -68,7 +68,7 @@ use openstack_sdk_core::auth::{
     gather_auth_data,
 };
 use openstack_sdk_core::catalog::{CatalogError, ServiceEndpoint};
-use openstack_sdk_core::config::{CloudConfig, ConfigFile};
+use openstack_sdk_core::config::CloudConfig;
 use openstack_sdk_core::error::{OpenStackError, OpenStackResult, RestError};
 use openstack_sdk_core::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 use openstack_sdk_core::utils::expand_tilde;
@@ -351,10 +351,8 @@ impl AsyncOpenStack {
         client_builder = client_builder.gzip(true);
         client_builder = client_builder.deflate(true);
 
-        let auth_cache = ConfigFile::new()
-            .ok()
-            .is_some_and(|c| c.is_auth_cache_enabled());
-        let session_ctx = session::SessionContext::new(config, auth, auth_cache)?;
+        // Pass CloudConfig.auth_cache as override; SessionContext resolves priority chain.
+        let session_ctx = session::SessionContext::new(config, auth, config.auth_cache)?;
 
         Ok(AsyncOpenStack {
             client: client_builder.build()?,
@@ -502,6 +500,18 @@ impl AsyncOpenStack {
                 .await?;
         }
         Ok(())
+    }
+
+    /// Disable authentication caching for this session.
+    ///
+    /// Clears any cached tokens and prevents further caching — both the
+    /// in-memory store and the on-disk state file. Useful for scenarios
+    /// requiring fresh authentication on every request.
+    pub fn disable_auth_cache(&self) -> &Self {
+        if let Ok(mut session) = self.session.write() {
+            session.state.disable_auth_cache();
+        }
+        self
     }
 
     /// Authorize against the cloud using provided credentials and get the session token with the
