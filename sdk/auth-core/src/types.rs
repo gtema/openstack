@@ -97,21 +97,57 @@ pub struct User {
 /// While in the response `id` and `name` and mandatorily set this type is
 /// also reused to manage authentications where at least one of them must be
 /// present
-#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq)]
 #[builder(build_fn(error = "BuilderError"))]
 #[builder(setter(strip_option))]
+#[serde(default)]
 pub struct Project {
     #[builder(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
 
     #[builder(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 
     #[builder(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub domain: Option<Domain>,
+}
+
+impl Serialize for Project {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            #[derive(Serialize)]
+            struct ProjectJson<'a> {
+                #[serde(skip_serializing_if = "Option::is_none")]
+                id: Option<&'a str>,
+                #[serde(skip_serializing_if = "Option::is_none")]
+                name: Option<&'a str>,
+                #[serde(skip_serializing_if = "Option::is_none")]
+                domain: Option<&'a Domain>,
+            }
+            let helper = ProjectJson {
+                id: self.id.as_deref(),
+                name: self.name.as_deref(),
+                domain: self.domain.as_ref(),
+            };
+            helper.serialize(serializer)
+        } else {
+            #[derive(Serialize)]
+            struct ProjectRaw<'a> {
+                id: &'a Option<String>,
+                name: &'a Option<String>,
+                domain: &'a Option<Domain>,
+            }
+            let helper = ProjectRaw {
+                id: &self.id,
+                name: &self.name,
+                domain: &self.domain,
+            };
+            helper.serialize(serializer)
+        }
+    }
 }
 
 impl PartialEq for Project {
@@ -130,17 +166,49 @@ impl Hash for Project {
     }
 }
 
-#[derive(Builder, Clone, Debug, Default, Deserialize, Eq, Serialize)]
+#[derive(Builder, Clone, Debug, Default, Deserialize, Eq)]
 #[builder(build_fn(error = "BuilderError"))]
 #[builder(setter(strip_option))]
+#[serde(default)]
 pub struct Domain {
     #[builder(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
 
     #[builder(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+}
+
+impl Serialize for Domain {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            #[derive(Serialize)]
+            struct DomainJson<'a> {
+                #[serde(skip_serializing_if = "Option::is_none")]
+                id: Option<&'a str>,
+                #[serde(skip_serializing_if = "Option::is_none")]
+                name: Option<&'a str>,
+            }
+            let helper = DomainJson {
+                id: self.id.as_deref(),
+                name: self.name.as_deref(),
+            };
+            helper.serialize(serializer)
+        } else {
+            #[derive(Serialize)]
+            struct DomainRaw<'a> {
+                id: &'a Option<String>,
+                name: &'a Option<String>,
+            }
+            let helper = DomainRaw {
+                id: &self.id,
+                name: &self.name,
+            };
+            helper.serialize(serializer)
+        }
+    }
 }
 
 impl PartialEq for Domain {
