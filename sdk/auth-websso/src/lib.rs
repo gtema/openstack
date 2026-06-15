@@ -88,7 +88,7 @@ impl OpenStackAuthType for WebSSOAuthenticator {
         &self,
         _http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         _scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
@@ -227,7 +227,7 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { websso_callback_server(addr, state, cancel_token).await }
+            async move { websso_callback_server(addr, state, cancel_token, None).await }
         });
         open::that(url.as_str())?;
 
@@ -247,9 +247,13 @@ async fn websso_callback_server(
     addr: SocketAddr,
     state: Arc<Mutex<Option<String>>>,
     cancel_token: CancellationToken,
+    start_tx: Option<tokio::sync::oneshot::Sender<()>>,
 ) -> Result<(), WebSsoError> {
     let listener = TcpListener::bind(addr).await?;
     info!("Starting webserver to receive SSO callback");
+    if let Some(tx) = start_tx {
+        let _ = tx.send(());
+    }
     // Wait maximum 2 minute for auth processing
     let webserver_timeout = Duration::from_secs(120);
     loop {
@@ -326,18 +330,71 @@ async fn handle_request(
 
 #[cfg(test)]
 mod tests {
-    use reserve_port::ReservedSocketAddr;
     use std::sync::{Arc, Mutex};
+    use tokio::net::TcpListener;
     use tokio::signal;
     use tokio_util::sync::CancellationToken;
+    use tracing::{info, warn};
 
-    use super::websso_callback_server;
+    use super::WebSsoError;
+    use super::handle_request;
+
+    /// Test-only variant that accepts a pre-bound listener to avoid port reservation races
+    async fn websso_callback_server_test(
+        listener: TcpListener,
+        state: Arc<Mutex<Option<String>>>,
+        cancel_token: CancellationToken,
+    ) -> Result<(), WebSsoError> {
+        use hyper::server::conn::http1;
+        use hyper::service::service_fn;
+
+        use hyper_util::rt::TokioIo;
+        use tracing::error;
+
+        info!("Starting webserver to receive SSO callback");
+        let webserver_timeout = std::time::Duration::from_secs(120);
+        loop {
+            let state_clone = state.clone();
+
+            tokio::select! {
+                Ok((stream, _addr)) = listener.accept() => {
+                    let io = TokioIo::new(stream);
+                    let cancel_token_srv = cancel_token.clone();
+                    let cancel_token_conn = cancel_token.clone();
+
+                    let service = service_fn(move |req| {
+                        let state_clone = state_clone.clone();
+                        let cancel_token = cancel_token_srv.clone();
+                        handle_request(req, state_clone, cancel_token)
+                    });
+
+                    tokio::task::spawn(async move {
+                        let cancel_token = cancel_token_conn.clone();
+                        if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
+                            error!("Failed to serve connection: {:?}", err);
+                            cancel_token.cancel();
+                        }
+                    });
+                },
+                _ = cancel_token.cancelled() => {
+                    info!("Stopping webserver");
+                    break;
+                },
+                _ = tokio::time::sleep(webserver_timeout) => {
+                    warn!("Timeout of {} sec waiting for authentication expired. Shutting down", webserver_timeout.as_secs());
+                    cancel_token.cancel();
+                }
+            }
+        }
+        Ok(())
+    }
 
     #[tokio::test]
     async fn test_callback() {
-        let addr = ReservedSocketAddr::reserve_random_socket_addr()
-            .expect("port available")
-            .socket_addr();
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("port available");
+        let addr = listener.local_addr().expect("listener address");
         let cancel_token = CancellationToken::new();
 
         tokio::spawn({
@@ -353,7 +410,7 @@ mod tests {
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { websso_callback_server(addr, state, cancel_token).await }
+            async move { websso_callback_server_test(listener, state, cancel_token).await }
         });
 
         let params = [("token", "foo_bar_baz")];
@@ -371,9 +428,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_callback_no_token() {
-        let addr = ReservedSocketAddr::reserve_random_socket_addr()
-            .expect("port available")
-            .socket_addr();
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("port available");
+        let addr = listener.local_addr().expect("listener address");
         let cancel_token = CancellationToken::new();
 
         tokio::spawn({
@@ -389,7 +447,7 @@ mod tests {
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { websso_callback_server(addr, state, cancel_token).await }
+            async move { websso_callback_server_test(listener, state, cancel_token).await }
         });
 
         let client = reqwest::Client::new();

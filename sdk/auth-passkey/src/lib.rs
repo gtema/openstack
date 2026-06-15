@@ -67,7 +67,7 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         _scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {

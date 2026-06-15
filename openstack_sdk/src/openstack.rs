@@ -280,7 +280,7 @@ impl OpenStack {
                 &client,
                 self.get_service_endpoint(&ServiceType::Identity, Some(&ApiVersion::from((3, 0))))?
                     .url(),
-                HashMap::from([("token".into(), auth.token.clone())]),
+                &HashMap::from([("token".into(), auth.token.clone())]),
                 Some(scope),
                 None,
             ),
@@ -394,7 +394,7 @@ impl OpenStack {
                                 Some(&ApiVersion::from(authenticator.api_version())),
                             )?
                             .url(),
-                            auth_data,
+                            &auth_data,
                             Some(&requested_scope),
                             auth_hints.as_ref(),
                         ),
@@ -424,7 +424,7 @@ impl OpenStack {
                                             Some(&ApiVersion::from(authenticator.api_version())),
                                         )?
                                         .url(),
-                                        auth_data,
+                                        &auth_data,
                                         Some(&requested_scope),
                                         Some(&auth_hints),
                                     ),
@@ -766,7 +766,7 @@ mod tests {
         };
 
         let token_info = openstack_sdk_auth_core::types::AuthResponse {
-            token: openstack_sdk_auth_core::types::AuthToken {
+            token: openstack_sdk_auth_core::types::TokenInfo {
                 expires_at: Utc::now() + chrono::TimeDelta::hours(1),
                 project: Some(openstack_sdk_auth_core::types::Project {
                     id: Some("test-project".into()),

@@ -44,7 +44,7 @@ pub enum Action {
     /// Request rescoping current connection
     CloudChangeScope(openstack_sdk::auth::authtoken::AuthTokenScope),
     /// New cloud connection established
-    ConnectedToCloud(Box<openstack_sdk::types::identity::v3::AuthToken>),
+    ConnectedToCloud(Box<openstack_sdk::types::identity::v3::TokenInfo>),
     /// Perform API request
     PerformApiRequest(cloud_types::ApiRequest),
     /// Propagate single resource data to components

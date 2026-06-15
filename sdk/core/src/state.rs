@@ -162,19 +162,20 @@ impl State {
     pub fn get_scope_auth(&mut self, scope: &AuthTokenScope) -> Option<AuthToken> {
         trace!("Get authz information for {:?}", scope);
         self.auth_state.filter_invalid_auths();
-        match self.auth_state.0.get(scope) {
-            Some(authz) => Some(authz.clone()),
-            None => {
-                if let (Some(state), true) = (self.load_auth_state(None), self.auth_cache_enabled)
-                    && let Some((scope, authz)) = self.find_scope_authz(&state, scope)
-                {
-                    trace!("Found valid authz in the state file");
-                    self.auth_state.0.insert(scope, authz.clone());
-                    return Some(authz);
-                }
-                None
-            }
+
+        // Find the best matching scope using wildcard matching
+        if let Some((_, authz)) = self.auth_state.0.iter().find(|(k, _)| scope.matches(k)) {
+            return Some(authz.clone());
         }
+
+        if let (Some(state), true) = (self.load_auth_state(None), self.auth_cache_enabled)
+            && let Some((scope, authz)) = self.find_scope_authz(&state, scope)
+        {
+            trace!("Found valid authz in the state file");
+            self.auth_state.0.insert(scope, authz.clone());
+            return Some(authz);
+        }
+        None
     }
 
     fn find_valid_auth(&self, state: &ScopeAuths) -> Option<AuthToken> {
@@ -222,50 +223,8 @@ impl State {
         trace!("Searching requested scope authz in state");
         for (k, v) in state.0.iter() {
             trace!("Analyse known auth for scope {:?}", k);
-            match scope {
-                AuthTokenScope::Project(project) => {
-                    if let AuthTokenScope::Project(cached) = k {
-                        // Scope type matches
-                        if project.id.is_some() && project.id == cached.id {
-                            // Match by ID is definite
-                            return Some((k.clone(), v.clone()));
-                        } else if project.name == cached.name {
-                            // Match by Name requires verifying domain match
-                            if let (Some(requested_domain), Some(state_domain)) =
-                                (&project.domain, &cached.domain)
-                                && ((requested_domain.id.is_some()
-                                    && requested_domain.id == state_domain.id)
-                                    || (requested_domain.id.is_none()
-                                        && requested_domain.name == state_domain.name))
-                            {
-                                return Some((k.clone(), v.clone()));
-                            }
-                        }
-                    }
-                }
-                AuthTokenScope::Domain(domain) => {
-                    if let AuthTokenScope::Domain(cached) = k {
-                        // Scope type matches
-                        if domain.id == cached.id
-                            || (domain.id.is_none() && domain.name == cached.name)
-                        {
-                            return Some((k.clone(), v.clone()));
-                        }
-                    }
-                }
-                AuthTokenScope::System(system) => {
-                    if let AuthTokenScope::System(cached) = k {
-                        // Scope type matches
-                        if system.all == cached.all {
-                            return Some((k.clone(), v.clone()));
-                        }
-                    }
-                }
-                AuthTokenScope::Unscoped => {
-                    if let AuthTokenScope::Unscoped = k {
-                        return Some((k.clone(), v.clone()));
-                    }
-                }
+            if scope.matches(k) {
+                return Some((k.clone(), v.clone()));
             }
         }
         None
@@ -492,7 +451,7 @@ mod tests {
 
     use secrecy::ExposeSecret;
 
-    use openstack_sdk_auth_core::types::Project;
+    use openstack_sdk_auth_core::types::{Domain, Project};
 
     use super::*;
 
@@ -524,7 +483,7 @@ mod tests {
     }
 
     fn make_token(name: &str) -> AuthToken {
-        use openstack_sdk_auth_core::types::{AuthResponse, AuthToken as AuthTokenType};
+        use openstack_sdk_auth_core::types::{AuthResponse, TokenInfo as AuthTokenType};
         AuthToken::new(
             name,
             Some(AuthResponse {
@@ -675,5 +634,186 @@ mod tests {
             let loaded = s.get_scope_auth(scope);
             assert!(loaded.is_some(), "Token for scope {:?} was lost", scope);
         }
+    }
+
+    #[test]
+    fn test_wildcard_lookup_by_partial_scope() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 20);
+        let scope_cached = AuthTokenScope::Project(Project {
+            id: Some("p-wildcard".to_string()),
+            name: Some("Wildcard".to_string()),
+            domain: None,
+        });
+        let token = make_token("tok-wildcard");
+        s.set_scope_auth(&scope_cached, &token);
+
+        // Lookup by name only (id=None) should find the cached token
+        let scope_req_by_name = AuthTokenScope::Project(Project {
+            id: None,
+            name: Some("Wildcard".to_string()),
+            domain: None,
+        });
+        let loaded = s.get_scope_auth(&scope_req_by_name);
+        assert!(loaded.is_some());
+        assert_eq!(loaded.unwrap().token.expose_secret(), "tok-wildcard");
+    }
+
+    #[test]
+    fn test_multiple_scopes_in_same_cache() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 21);
+        let scope1 = make_project_scope("multi-p1");
+        let scope2 = make_project_scope("multi-p2");
+        let scope3 = make_project_scope("multi-p3");
+        let token1 = make_token("tok-multi-1");
+        let token2 = make_token("tok-multi-2");
+        let token3 = make_token("tok-multi-3");
+        s.set_scope_auth(&scope1, &token1);
+        s.set_scope_auth(&scope2, &token2);
+        s.set_scope_auth(&scope3, &token3);
+
+        assert_eq!(s.auth_state.0.len(), 3);
+
+        let t1 = s.get_scope_auth(&scope1).unwrap();
+        let t2 = s.get_scope_auth(&scope2).unwrap();
+        let t3 = s.get_scope_auth(&scope3).unwrap();
+        assert_eq!(t1.token.expose_secret(), "tok-multi-1");
+        assert_eq!(t2.token.expose_secret(), "tok-multi-2");
+        assert_eq!(t3.token.expose_secret(), "tok-multi-3");
+    }
+
+    #[test]
+    fn test_domain_scope_cache() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 22);
+        let scope_d = AuthTokenScope::Domain(Domain {
+            id: Some("d-22".to_string()),
+            name: Some("Default".to_string()),
+        });
+        let token_d = make_token("tok-domain");
+        s.set_scope_auth(&scope_d, &token_d);
+
+        let loaded = s.get_scope_auth(&scope_d);
+        assert!(loaded.is_some());
+        assert_eq!(loaded.unwrap().token.expose_secret(), "tok-domain");
+    }
+
+    #[test]
+    fn test_unscoped_token_cache() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 23);
+        let scope_u = AuthTokenScope::Unscoped;
+        let token_u = make_token("tok-unscoped");
+        s.set_scope_auth(&scope_u, &token_u);
+
+        let loaded = s.get_scope_auth(&scope_u);
+        assert!(loaded.is_some());
+        assert_eq!(loaded.unwrap().token.expose_secret(), "tok-unscoped");
+    }
+
+    #[test]
+    fn test_invalid_token_is_filtered_on_set() {
+        use openstack_sdk_auth_core::{
+            authtoken::AuthToken as TestAuthToken,
+            types::{AuthResponse, TokenInfo},
+        };
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 24);
+        let scope = make_project_scope("p-24");
+        let valid_token = make_token("tok-valid");
+        s.set_scope_auth(&scope, &valid_token);
+        assert_eq!(s.auth_state.0.len(), 1);
+
+        // Create an expired token
+        let expired_token = TestAuthToken::new(
+            "tok-expired".to_string(),
+            Some(AuthResponse {
+                token: TokenInfo {
+                    user: Default::default(),
+                    catalog: Some(vec![]),
+                    expires_at: chrono::Utc::now() - chrono::TimeDelta::hours(1),
+                    ..Default::default()
+                },
+            }),
+        );
+        // Setting the expired token should filter out the valid one (since it's the only valid one and now a new expired one is set)
+        s.set_scope_auth(&scope, &expired_token);
+        // filter_invalid_auths removes all invalid tokens; the expired one should be removed too
+        // Actually, filter runs before insert, so it keeps the old valid token but then the new one replaces it
+        assert_eq!(s.auth_state.0.len(), 1);
+        // The expired token should have been filtered out on the next get
+        s.auth_state.filter_invalid_auths();
+        assert_eq!(s.auth_state.0.len(), 0);
+    }
+
+    #[test]
+    fn test_postcard_roundtrip_multiple_scopes() {
+        let scope1 = make_project_scope("postcard-p1");
+        let scope2 = make_project_scope("postcard-p2");
+        let scope3 = AuthTokenScope::Domain(Domain {
+            id: Some("d-postcard".to_string()),
+            name: Some("Default".to_string()),
+        });
+        let token1 = make_token("tok-pc-1");
+        let token2 = make_token("tok-pc-2");
+        let token3 = make_token("tok-pc-3");
+        let mut sa = ScopeAuths::default();
+        sa.0.insert(scope1, token1);
+        sa.0.insert(scope2, token2);
+        sa.0.insert(scope3, token3);
+        let bytes = postcard::to_stdvec(&sa).unwrap();
+        let deserialized: ScopeAuths = postcard::from_bytes(&bytes).unwrap();
+        assert_eq!(deserialized.0.len(), 3);
+    }
+
+    #[test]
+    fn test_wildcard_lookup_in_file_cache() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 25);
+        let scope_cached = AuthTokenScope::Project(Project {
+            id: Some("file-wildcard".to_string()),
+            name: Some("FileLookup".to_string()),
+            domain: None,
+        });
+        let token = make_token("tok-file-wildcard");
+        s.set_scope_auth(&scope_cached, &token);
+
+        // Create a new state with cleared memory to force file lookup
+        let mut s2 = new_state_in(&dir, 25);
+        s2.auth_state.0.clear();
+
+        // Lookup by name only (id=None) should find the cached token in the file
+        let scope_req_by_name = AuthTokenScope::Project(Project {
+            id: None,
+            name: Some("FileLookup".to_string()),
+            domain: None,
+        });
+        let loaded = s2.get_scope_auth(&scope_req_by_name);
+        assert!(loaded.is_some());
+        assert_eq!(loaded.unwrap().token.expose_secret(), "tok-file-wildcard");
+    }
+
+    #[test]
+    fn test_project_and_domain_scope_coexist() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 26);
+        let scope_p = make_project_scope("coexist-p");
+        let scope_d = AuthTokenScope::Domain(Domain {
+            id: Some("d-26".to_string()),
+            name: Some("Default".to_string()),
+        });
+        let token_p = make_token("tok-p-coexist");
+        let token_d = make_token("tok-d-coexist");
+        s.set_scope_auth(&scope_p, &token_p);
+        s.set_scope_auth(&scope_d, &token_d);
+        assert_eq!(s.auth_state.0.len(), 2);
+
+        let tp = s.get_scope_auth(&scope_p);
+        let td = s.get_scope_auth(&scope_d);
+        assert!(tp.is_some());
+        assert!(td.is_some());
+        assert_eq!(tp.unwrap().token.expose_secret(), "tok-p-coexist");
+        assert_eq!(td.unwrap().token.expose_secret(), "tok-d-coexist");
     }
 }

@@ -70,7 +70,7 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, secrecy::SecretString>,
+        values: &std::collections::HashMap<String, secrecy::SecretString>,
         _scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
