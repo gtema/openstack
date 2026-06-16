@@ -121,7 +121,7 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         _scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
@@ -253,7 +253,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([
+                &HashMap::from([
                     (
                         "application_credential_id".into(),
                         SecretString::from("app_cred_id"),
@@ -282,7 +282,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([(
+                &HashMap::from([(
                     "application_credential_secret".into(),
                     SecretString::from("secret"),
                 )]),

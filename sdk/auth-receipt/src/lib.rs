@@ -105,7 +105,7 @@ impl OpenStackAuthType for ReceiptAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         scope: Option<&AuthTokenScope>,
         hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
@@ -132,7 +132,7 @@ impl OpenStackAuthType for ReceiptAuthenticator {
                     })
                     .map(|x| x.method)
                 {
-                    let (method, method_identity) = authenticator.get_auth_data(&values)?;
+                    let (method, method_identity) = authenticator.get_auth_data(values)?;
                     methods.insert(method.into());
                     deep_merge_value(&mut identity, method_identity);
                 }
@@ -312,7 +312,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([
+                &HashMap::from([
                     ("token".into(), SecretString::from("secret")),
                     ("passcode".into(), SecretString::from("passcode")),
                     ("user_id".into(), SecretString::from("uid")),

@@ -461,7 +461,7 @@ impl AsyncOpenStack {
                 self.get_service_endpoint(&ServiceType::Identity, Some(&ApiVersion::from((3, 0))))
                     .await?
                     .url(),
-                HashMap::from([("token".into(), auth.token.clone())]),
+                &HashMap::from([("token".into(), auth.token.clone())]),
                 Some(scope),
                 None,
             )
@@ -579,7 +579,7 @@ impl AsyncOpenStack {
                             )
                             .await?
                             .url(),
-                            gather_auth_data(
+                            &gather_auth_data(
                                 &authenticator.requirements(auth_hints.as_ref())?,
                                 &self.config,
                                 auth_helper,
@@ -608,7 +608,7 @@ impl AsyncOpenStack {
                                     )
                                     .await?
                                     .url(),
-                                    gather_auth_data(
+                                    &gather_auth_data(
                                         &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
                                         &self.config,
                                         auth_helper,
@@ -680,7 +680,7 @@ impl AsyncOpenStack {
                 }
             }
         } else {
-            return Err(AuthError::AuthTokenNotInResponse)?;
+            return Err(OpenStackError::NoAuth)?;
         }
 
         {
@@ -1045,7 +1045,7 @@ mod tests {
         };
 
         let token_info = AuthResponse {
-            token: openstack_sdk_auth_core::types::AuthToken {
+            token: openstack_sdk_auth_core::types::TokenInfo {
                 expires_at: Utc::now() + chrono::TimeDelta::hours(1),
                 project: Some(openstack_sdk_auth_core::types::Project {
                     id: Some("test-project".into()),

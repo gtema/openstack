@@ -167,11 +167,11 @@ impl OpenStackAuthType for PasswordAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: HashMap<String, SecretString>,
+        values: &HashMap<String, SecretString>,
         scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
-        let (method, data) = self._get_auth_data(&values)?;
+        let (method, data) = self._get_auth_data(values)?;
         let mut body = json!({ "auth": { "identity": data } });
         body["auth"]["identity"]["methods"] = [method].into();
         if let Some(scope) = scope {
@@ -356,7 +356,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([
+                &HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("user_id".into(), SecretString::from("uid")),
                 ]),
@@ -424,7 +424,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([
+                &HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("user_id".into(), SecretString::from("uid")),
                 ]),

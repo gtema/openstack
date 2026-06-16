@@ -85,7 +85,7 @@ impl OpenStackAuthType for OidcAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         _scope: Option<&AuthTokenScope>,
         _hints: Option<&Value>,
     ) -> Result<Auth, AuthError> {
@@ -140,7 +140,7 @@ impl OpenStackAuthType for OidcAuthenticator {
 
             Ok(Auth::AuthToken(Box::new(auth_token)))
         } else {
-            return Err(AuthError::AuthTokenNotInResponse);
+            return Err(FederationError::CallbackNoToken.into());
         }
     }
 }
@@ -279,7 +279,7 @@ async fn get_auth_code(
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(socket_addr, state, cancel_token).await }
+            async move { auth_callback_server(socket_addr, state, cancel_token, None).await }
         });
         open::that(url.as_str())?;
 
@@ -299,9 +299,13 @@ async fn auth_callback_server(
     addr: SocketAddr,
     state: Arc<Mutex<Option<FederationAuthCodeCallbackResponse>>>,
     cancel_token: CancellationToken,
+    start_tx: Option<tokio::sync::oneshot::Sender<()>>,
 ) -> Result<(), FederationError> {
     let listener = TcpListener::bind(addr).await?;
     info!("Starting webserver to receive OAUTH2 authorization callback");
+    if let Some(tx) = start_tx {
+        let _ = tx.send(());
+    }
     // Wait maximum 2 minute for auth processing
     let webserver_timeout = Duration::from_secs(120);
     loop {
@@ -470,11 +474,15 @@ mod tests {
         });
 
         let state = Arc::new(Mutex::new(None));
+        let (start_tx, start_rx) = tokio::sync::oneshot::channel();
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token).await }
+            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
         });
+
+        // Wait for the server to start listening
+        start_rx.await.unwrap();
 
         let client = reqwest::Client::new();
         client
@@ -516,11 +524,15 @@ mod tests {
         });
 
         let state = Arc::new(Mutex::new(None));
+        let (start_tx, start_rx) = tokio::sync::oneshot::channel();
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token).await }
+            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
         });
+
+        // Wait for the server to start listening
+        start_rx.await.unwrap();
 
         let params = [("code", "foo"), ("state", "bar")];
         let client = reqwest::Client::new();
@@ -561,11 +573,15 @@ mod tests {
         });
 
         let state = Arc::new(Mutex::new(None));
+        let (start_tx, start_rx) = tokio::sync::oneshot::channel();
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token).await }
+            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
         });
+
+        // Wait for the server to start listening
+        start_rx.await.unwrap();
 
         let client = reqwest::Client::new();
         client

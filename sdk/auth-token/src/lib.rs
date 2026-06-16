@@ -128,7 +128,7 @@ impl OpenStackAuthType for TokenAuthenticator {
         &self,
         http_client: &reqwest::Client,
         identity_url: &url::Url,
-        values: std::collections::HashMap<String, SecretString>,
+        values: &std::collections::HashMap<String, SecretString>,
         scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
@@ -254,7 +254,7 @@ mod tests {
             .auth(
                 &http_client,
                 &base_url,
-                HashMap::from([("token".into(), SecretString::from("secret"))]),
+                &HashMap::from([("token".into(), SecretString::from("secret"))]),
                 None,
                 None,
             )
