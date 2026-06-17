@@ -12,7 +12,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # Receipt based authentication method for [`openstack_sdk`]
+//! # Authentication receipt completion for multifactor flows in [`openstack_sdk`]
+//!
+//! This plugin completes a multifactor authentication flow by consuming an
+//! authentication receipt. When the initial authentication returns a receipt
+//! (HTTP 401 with an `openstack-auth-receipt` header), this plugin can be used
+//! to provide the additional required authentication methods.
+//!
+//! The receipt contains information about which authentication methods have already
+//! been completed and which additional methods are required. This plugin queries
+//! the registered auth method plugins for the required methods' data and sends
+//! them along with the receipt token to complete authentication.
 use std::collections::BTreeSet;
 
 use async_trait::async_trait;
@@ -30,7 +40,10 @@ use openstack_sdk_auth_password as _;
 use openstack_sdk_auth_token as _;
 use openstack_sdk_auth_totp as _;
 
-/// Receipt Authentication for OpenStack SDK.
+/// Receipt-based authentication completion for OpenStack SDK.
+///
+/// Completes a multifactor authentication flow by providing the additional
+/// required methods identified in an authentication receipt.
 pub struct ReceiptAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -39,6 +52,9 @@ pub static PLUGIN: ReceiptAuthenticator = ReceiptAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+
+#[used]
+pub static ANCHOR: ReceiptAuthenticator = ReceiptAuthenticator;
 
 fn deep_merge_value(a: &mut Value, b: Value) {
     match (a, b) {
@@ -163,7 +179,7 @@ impl OpenStackAuthType for ReceiptAuthenticator {
     }
 }
 
-/// Token related errors
+/// Receipt-based authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ReceiptAuthError {

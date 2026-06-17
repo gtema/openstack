@@ -12,24 +12,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # User password authentication method for [`openstack_sdk`]
+//! # Password authentication method for [`openstack_sdk`]
 //!
-//! Authorization using Token look like:
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! a username and password. The user can be identified by either ID or name (with domain).
+//! This plugin also implements [`OpenStackMultifactorAuthMethod`] to support use as part
+//! of multifactor authentication flows.
+//!
+//! The resulting authentication request body looks like:
 //!
 //! ```json
 //! {
 //!     "auth": {
 //!         "identity": {
-//!             "methods": [
-//!                 "password"
-//!             ],
+//!             "methods": ["password"],
 //!             "password": {
 //!                 "user": {
 //!                     "name": "admin",
-//!                     "domain": {
-//!                         "name": "Default"
-//!                     },
-//!                     "password": "devstacker"
+//!                     "domain": {"name": "Default"},
+//!                     "password": "secret"
 //!                 }
 //!             }
 //!         }
@@ -50,7 +51,10 @@ use openstack_sdk_auth_core::{
     AuthTokenScope, OpenStackAuthType, OpenStackMultifactorAuthMethod, execute_auth_request,
 };
 
-/// Token Authentication for OpenStack SDK.
+/// Password authentication for OpenStack SDK.
+///
+/// Authenticates using username and password credentials.
+/// Also implements [`OpenStackMultifactorAuthMethod`] for multifactor flows.
 pub struct PasswordAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -61,6 +65,8 @@ inventory::submit! {
 inventory::submit! {
     AuthMethodPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: PasswordAuthenticator = PasswordAuthenticator;
 
 impl PasswordAuthenticator {
     fn _get_supported_auth_methods(&self) -> Vec<&'static str> {
@@ -189,7 +195,7 @@ impl OpenStackAuthType for PasswordAuthenticator {
     }
 }
 
-/// Token related errors
+/// Password authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum PasswordAuthError {
@@ -257,7 +263,7 @@ mod tests {
                 json!({"password": {"user": {"id": "uid", "password": "password"}}})
             ),
             authenticator
-                .get_auth_data(&HashMap::from([
+                ._get_auth_data(&HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("user_id".into(), SecretString::from("uid")),
                 ]))
@@ -265,7 +271,7 @@ mod tests {
         );
         assert!(
             authenticator
-                .get_auth_data(&HashMap::from([
+                ._get_auth_data(&HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("username".into(), SecretString::from("uname")),
                 ]))
@@ -277,7 +283,7 @@ mod tests {
                 json!({"password": {"user": {"name": "uname", "password": "password", "domain": {"name": "udname"}}}})
             ),
             authenticator
-                .get_auth_data(&HashMap::from([
+                ._get_auth_data(&HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("username".into(), SecretString::from("uname")),
                     ("user_domain_name".into(), SecretString::from("udname")),
@@ -290,7 +296,7 @@ mod tests {
                 json!({"password": {"user": {"name": "uname", "password": "password", "domain": {"id": "udid"}}}})
             ),
             authenticator
-                .get_auth_data(&HashMap::from([
+                ._get_auth_data(&HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("username".into(), SecretString::from("uname")),
                     ("user_domain_id".into(), SecretString::from("udid")),
@@ -303,7 +309,7 @@ mod tests {
                 json!({"password": {"user": {"name": "uname", "password": "password", "domain": {"id": "udid"}}}})
             ),
             authenticator
-                .get_auth_data(&HashMap::from([
+                ._get_auth_data(&HashMap::from([
                     ("password".into(), SecretString::from("password")),
                     ("username".into(), SecretString::from("uname")),
                     ("user_domain_id".into(), SecretString::from("udid")),
@@ -311,6 +317,51 @@ mod tests {
                 ]))
                 .unwrap()
         );
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_password() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([
+            ("username".into(), SecretString::from("uname")),
+            ("user_domain_name".into(), SecretString::from("udname")),
+        ]));
+        assert!(matches!(err, Err(PasswordAuthError::MissingPassword)));
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_user() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([(
+            "password".into(),
+            SecretString::from("password"),
+        )]));
+        assert!(matches!(err, Err(PasswordAuthError::MissingUser)));
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_user_domain() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([
+            ("password".into(), SecretString::from("password")),
+            ("username".into(), SecretString::from("uname")),
+        ]));
+        assert!(matches!(err, Err(PasswordAuthError::MissingUserDomain)));
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_password() {
+        let authenticator = &PLUGIN;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([("user_id".into(), SecretString::from("uid"))]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
     }
 
     #[tokio::test]

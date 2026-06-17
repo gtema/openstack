@@ -12,24 +12,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # Token authentication method for [`openstack_sdk`]
+//! # TOTP authentication method for [`openstack_sdk`]
 //!
-//! Authorization using Token look like:
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! a Time-based One-Time Password (TOTP) passcode. The user can be identified by either
+//! ID or name (with domain). This plugin also implements [`OpenStackMultifactorAuthMethod`]
+//! to support use as part of multifactor authentication flows.
+//!
+//! The resulting authentication request body looks like:
 //!
 //! ```json
 //! {
 //!     "auth": {
 //!         "identity": {
-//!             "methods": [
-//!                 "totp"
-//!             ],
+//!             "methods": ["totp"],
 //!             "totp": {
 //!                 "user": {
 //!                     "id": "ee4dfb6e5540447cb3741905149d9b6e",
 //!                     "passcode": "123456"
 //!                 }
 //!             }
-//!         },
+//!         }
 //!     }
 //! }
 //! ```
@@ -47,7 +50,10 @@ use openstack_sdk_auth_core::{
     AuthTokenScope, OpenStackAuthType, OpenStackMultifactorAuthMethod, execute_auth_request,
 };
 
-/// Token Authentication for OpenStack SDK.
+/// TOTP authentication for OpenStack SDK.
+///
+/// Authenticates using a Time-based One-Time Password (TOTP) passcode.
+/// Also implements [`OpenStackMultifactorAuthMethod`] for multifactor flows.
 pub struct TotpAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -58,6 +64,8 @@ inventory::submit! {
 inventory::submit! {
     AuthMethodPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: TotpAuthenticator = TotpAuthenticator;
 
 impl TotpAuthenticator {
     fn _get_supported_auth_methods(&self) -> Vec<&'static str> {
@@ -187,7 +195,7 @@ impl OpenStackAuthType for TotpAuthenticator {
     }
 }
 
-/// Token related errors
+/// TOTP authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum TotpAuthError {
@@ -261,6 +269,99 @@ mod tests {
                 ]))
                 .unwrap()
         );
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_passcode() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([(
+            "user_id".into(),
+            SecretString::from("uid"),
+        )]));
+        assert!(matches!(err, Err(TotpAuthError::MissingPasscode)));
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_user() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([(
+            "passcode".into(),
+            SecretString::from("passcode"),
+        )]));
+        assert!(matches!(err, Err(TotpAuthError::MissingUser)));
+    }
+
+    #[test]
+    fn test_get_auth_data_missing_user_domain() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::from([
+            ("passcode".into(), SecretString::from("passcode")),
+            ("username".into(), SecretString::from("uname")),
+        ]));
+        assert!(matches!(err, Err(TotpAuthError::MissingUserDomain)));
+    }
+
+    #[tokio::test]
+    async fn test_auth_with_username_domain() {
+        let server = MockServer::start_async().await;
+        let base_url = Url::parse(&server.base_url()).unwrap();
+
+        let mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST)
+                    .path("/auth/tokens")
+                    .json_body(json!({
+                        "auth": {
+                            "identity": {
+                                "methods": ["totp"],
+                                "totp": {
+                                    "user": {
+                                        "name": "uname",
+                                        "domain": {"name": "Default"},
+                                        "passcode": "passcode"
+                                    }
+                                }
+                            }
+                        }
+                    }));
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "foo")
+                    .json_body(json!({
+                        "token": {
+                            "user": {
+                                "id": "uid",
+                                "name": "uname"
+                            },
+                            "expires_at": "2099-01-15T22:14:05.000000Z",
+                        }
+                    }));
+            })
+            .await;
+        let http_client = Client::new();
+        let authenticator = &PLUGIN;
+
+        match authenticator
+            .auth(
+                &http_client,
+                &base_url,
+                &HashMap::from([
+                    ("passcode".into(), SecretString::from("passcode")),
+                    ("username".into(), SecretString::from("uname")),
+                    ("user_domain_name".into(), SecretString::from("Default")),
+                ]),
+                None,
+                None,
+            )
+            .await
+        {
+            Ok(Auth::AuthToken(token)) => {
+                assert_eq!(token.token.expose_secret(), "foo");
+            }
+            other => {
+                panic!("success was expected, instead it is {:?}", other);
+            }
+        }
+        mock.assert_async().await;
     }
 
     #[tokio::test]
@@ -395,5 +496,20 @@ mod tests {
             }
         }
         mock.assert_async().await;
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_passcode() {
+        let authenticator = &PLUGIN;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([("user_id".into(), SecretString::from("uid"))]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
     }
 }

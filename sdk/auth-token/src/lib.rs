@@ -14,19 +14,22 @@
 
 //! # Token authentication method for [`openstack_sdk`]
 //!
-//! Authorization using Token look like:
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! an existing Keystone token. The token is sent in the request body to refresh or
+//! re-scope the authentication. This plugin also implements [`OpenStackMultifactorAuthMethod`]
+//! to support use as part of multifactor authentication flows.
+//!
+//! The resulting authentication request body looks like:
 //!
 //! ```json
 //! {
 //!     "auth": {
 //!         "identity": {
-//!             "methods": [
-//!                 "token"
-//!             ],
+//!             "methods": ["token"],
 //!             "token": {
-//!                 "id": "'$OS_TOKEN'"
+//!                 "id": "$OS_TOKEN"
 //!             }
-//!         },
+//!         }
 //!     }
 //! }
 //! ```
@@ -43,7 +46,10 @@ use openstack_sdk_auth_core::{
     AuthTokenScope, OpenStackAuthType, OpenStackMultifactorAuthMethod, execute_auth_request,
 };
 
-/// Token Authentication for OpenStack SDK.
+/// Token authentication for OpenStack SDK.
+///
+/// Authenticates using an existing Keystone token.
+/// Also implements [`OpenStackMultifactorAuthMethod`] for multifactor flows.
 pub struct TokenAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -54,6 +60,8 @@ inventory::submit! {
 inventory::submit! {
     AuthMethodPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: TokenAuthenticator = TokenAuthenticator;
 
 impl TokenAuthenticator {
     fn _get_supported_auth_methods(&self) -> Vec<&'static str> {
@@ -150,7 +158,7 @@ impl OpenStackAuthType for TokenAuthenticator {
     }
 }
 
-/// Token related errors
+/// Token authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum TokenAuthError {
@@ -214,6 +222,28 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_get_auth_data_missing_token() {
+        let authenticator = &PLUGIN;
+        let err = authenticator._get_auth_data(&HashMap::new());
+        assert!(matches!(err, Err(TokenAuthError::MissingToken)));
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_token() {
+        let authenticator = &PLUGIN;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::new(),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
     #[tokio::test]
     async fn test_auth() {
         let server = MockServer::start_async().await;
@@ -234,14 +264,14 @@ mod tests {
                         }
                     }));
                 then.status(StatusCode::CREATED)
-                    .header("x-subject-token", "foo")
+                    .header("x-subject-token", "new-token")
                     .json_body(json!({
                         "token": {
                             "user": {
                                 "id": "uid",
                                 "name": "uname"
                             },
-                            "expires_at": "2018-01-15T22:14:05.000000Z",
+                            "expires_at": "2099-01-15T22:14:05.000000Z",
                         }
                     }));
             })
@@ -261,7 +291,7 @@ mod tests {
             .await
         {
             Ok(Auth::AuthToken(token)) => {
-                assert_eq!(token.token.expose_secret(), "foo");
+                assert_eq!(token.token.expose_secret(), "new-token");
             }
 
             other => {

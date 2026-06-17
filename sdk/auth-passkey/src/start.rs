@@ -12,8 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Initialize passkey (security device) based login.
+//! Initialize passkey (WebAuthn) authentication.
 //!
+//! This module defines the types exchanged during the WebAuthn authentication
+//! start phase. Keystone generates a challenge and a list of allowed credentials,
+//! which are then presented to the user's authenticator.
 
 use base64::{Engine as _, engine::general_purpose::URL_SAFE};
 use serde::Deserialize;

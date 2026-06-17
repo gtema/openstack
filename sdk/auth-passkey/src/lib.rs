@@ -11,7 +11,20 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//! # Passkey authentication for OpenStack based on the Keystone-rs project
+//! # Passkey (WebAuthn) authentication for [`openstack_sdk`]
+//!
+//! This plugin implements FIDO2/WebAuthn passkey authentication against
+//! OpenStack's Identity service (Keystone). It uses a cryptographic challenge-response
+//! protocol where the authenticator (hardware security key or platform authenticator)
+//! signs a challenge, proving possession of the private key.
+//!
+//! The flow is:
+//! 1. Start authentication by sending the user ID to Keystone
+//! 2. Receive a WebAuthn challenge from Keystone
+//! 3. Present the challenge to the user's authenticator (e.g., YubiKey, Touch ID)
+//! 4. Receive the signed response from the authenticator
+//! 5. Finish authentication by sending the signed response to Keystone
+//! 6. Receive an authenticated token
 
 use async_trait::async_trait;
 
@@ -31,7 +44,10 @@ pub use error::PasskeyError;
 use finish::*;
 use start::PasskeyAuthenticationStartResponse;
 
-/// WebAuthN Authentication for OpenStack SDK.
+/// WebAuthn/Passkey authentication for OpenStack SDK.
+///
+/// Authenticates using FIDO2/WebAuthn passkeys (hardware security keys
+/// and platform authenticators) via a challenge-response protocol.
 pub struct WebAuthnAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -39,6 +55,8 @@ static PLUGIN: WebAuthnAuthenticator = WebAuthnAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: WebAuthnAuthenticator = WebAuthnAuthenticator;
 
 #[async_trait]
 impl OpenStackAuthType for WebAuthnAuthenticator {

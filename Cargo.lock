@@ -2844,6 +2844,7 @@ version = "0.22.6"
 dependencies = [
  "async-trait",
  "derive_builder",
+ "httpmock",
  "inventory",
  "openstack-sdk-auth-core",
  "reqwest",
@@ -2851,6 +2852,7 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.18",
+ "tokio",
  "url",
 ]
 
@@ -2882,6 +2884,7 @@ name = "openstack-sdk-auth-oidcaccesstoken"
 version = "0.22.6"
 dependencies = [
  "async-trait",
+ "httpmock",
  "inventory",
  "openstack-sdk-auth-core",
  "reqwest",
