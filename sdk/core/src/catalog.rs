@@ -25,6 +25,12 @@ use std::collections::{HashMap, HashSet};
 use tracing::{debug, error, trace, warn};
 use url::Url;
 
+#[cfg(feature = "async")]
+use crate::api::AsyncClient;
+#[cfg(feature = "sync")]
+use crate::api::Client;
+use crate::api::query::url_to_http_uri;
+
 use openstack_sdk_auth_core::types::ServiceEndpoints as ApiServiceEndpoints;
 
 pub use crate::catalog::error::CatalogError;
@@ -380,6 +386,121 @@ impl Catalog {
         self.token_catalog.clone()
     }
 
+    /// Read the auth catalog from the Identity service and update this catalog (async).
+    ///
+    /// Makes a `GET /v3/auth/catalog` request using the provided async client and updates
+    /// internal catalog state with the fetched endpoints.
+    ///
+    /// Useful when the token was obtained without a catalog (e.g., `?nocatalog`)
+    /// or when the catalog needs to be refreshed.
+    #[cfg(feature = "async")]
+    pub async fn read_auth_catalog_async<C>(&mut self, client: &C) -> Result<(), CatalogError>
+    where
+        C: AsyncClient + Sync,
+    {
+        let identity_ep = self.get_service_endpoint(
+            "identity",
+            None::<&ApiVersion>,
+            None::<String>,
+            None::<String>,
+        )?;
+
+        let mut catalog_url = identity_ep.url().clone();
+        catalog_url
+            .path_segments_mut()
+            .map_err(|_| CatalogError::cannot_be_base(identity_ep.url()))?
+            .extend(["auth", "catalog"]);
+
+        let rsp = client
+            .rest_async(
+                http::Request::builder()
+                    .method(http::Method::GET)
+                    .uri(url_to_http_uri(catalog_url.clone())?)
+                    .header(
+                        http::header::ACCEPT,
+                        http::HeaderValue::from_static("application/json"),
+                    ),
+                Vec::new(),
+            )
+            .await
+            .map_err(CatalogError::api_error)?;
+
+        let v: serde_json::Value = serde_json::from_slice(rsp.body())?;
+        if !rsp.status().is_success() {
+            let status = rsp.status();
+            return Err(CatalogError::Http {
+                status,
+                body: String::from("request failed"),
+            });
+        }
+
+        let endpoints: Vec<ApiServiceEndpoints> =
+            if let Some(catalog) = v.get("catalog").and_then(|v| v.as_array()) {
+                serde_json::from_value(serde_json::Value::Array(catalog.clone()))?
+            } else {
+                Vec::new()
+            };
+
+        self.process_catalog_endpoints(&endpoints)?;
+        Ok(())
+    }
+
+    /// Read the auth catalog from the Identity service and update the catalog (sync).
+    ///
+    /// Makes a `GET /v3/auth/catalog` request using the provided sync client and updates
+    /// internal catalog state with the fetched endpoints.
+    ///
+    /// Useful when the token was obtained without a catalog (e.g., `?nocatalog`)
+    /// or when the catalog needs to be refreshed.
+    #[cfg(feature = "sync")]
+    pub fn read_auth_catalog<C>(&mut self, client: &C) -> Result<(), CatalogError>
+    where
+        C: Client,
+    {
+        let identity_ep = self.get_service_endpoint(
+            "identity",
+            None::<&ApiVersion>,
+            None::<String>,
+            None::<String>,
+        )?;
+
+        let mut catalog_url = identity_ep.url().clone();
+        catalog_url
+            .path_segments_mut()
+            .map_err(|_| CatalogError::cannot_be_base(identity_ep.url()))?
+            .extend(["auth", "catalog"]);
+        let query_uri = url_to_http_uri(catalog_url.clone())?;
+
+        let rsp = client
+            .rest(
+                http::Request::builder()
+                    .method(http::Method::GET)
+                    .uri(query_uri)
+                    .header(
+                        http::header::ACCEPT,
+                        http::HeaderValue::from_static("application/json"),
+                    ),
+                Vec::new(),
+            )
+            .map_err(CatalogError::api_error)?;
+        let v: serde_json::Value = serde_json::from_slice(rsp.body())?;
+        if !rsp.status().is_success() {
+            return Err(CatalogError::Http {
+                status: rsp.status(),
+                body: String::from("request failed"),
+            });
+        }
+
+        let endpoints: Vec<ApiServiceEndpoints> = if let Some(catalog_value) = v.get("catalog") {
+            serde_json::from_value(catalog_value.clone())?
+        } else {
+            Vec::new()
+        };
+
+        self.process_catalog_endpoints(&endpoints)?;
+        Ok(())
+    }
+
     // Save endpoint overrides given in the config
     pub fn configure(&mut self, config: &CloudConfig) -> Result<&mut Self, CatalogError> {
         for (name, val) in config.options.iter() {
@@ -425,6 +546,7 @@ mod tests {
     use serde_json::json;
     use url::Url;
 
+    use crate::test::client::FakeOpenStackClient;
     use crate::types::api_version::ApiVersion;
 
     #[test]
@@ -440,6 +562,378 @@ mod tests {
             cat.set_project_id(Some("bar")).project_id.as_deref()
         );
         assert!(cat.set_project_id(None::<String>).project_id.is_none());
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_read_auth_catalog_async_success() {
+        let server = httpmock::MockServer::start_async().await;
+        let catalog_json = json!({
+            "catalog": [
+                {
+                    "type": "compute",
+                    "name": "nova",
+                    "endpoints": [
+                        {
+                            "id": "ep1",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://compute.example.com/v2.1",
+                            "availability_zone_hints": ["nova"]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let _mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::GET).path("/auth/catalog");
+                then.status(200)
+                    .header("content-type", "application/json")
+                    .body(catalog_json.to_string());
+            })
+            .await;
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog_async(&_client).await.unwrap();
+
+        let eps = cat.catalog_endpoints.get("compute").unwrap();
+        let ep = eps
+            .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+            .unwrap();
+        assert_eq!(ep.url_str(), "http://compute.example.com/v2.1");
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_read_auth_catalog_sync_success() {
+        let server = httpmock::MockServer::start();
+        let catalog_json = json!({
+            "catalog": [
+                {
+                    "type": "compute",
+                    "name": "nova",
+                    "endpoints": [
+                        {
+                            "id": "ep1",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://compute.example.com/v2.1",
+                            "availability_zone_hints": ["nova"]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let _mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/auth/catalog");
+            then.status(200)
+                .header("content-type", "application/json")
+                .body(catalog_json.to_string());
+        });
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog(&_client).unwrap();
+
+        let eps = cat.catalog_endpoints.get("compute").unwrap();
+        let ep = eps
+            .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+            .unwrap();
+        assert_eq!(ep.url_str(), "http://compute.example.com/v2.1");
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_read_auth_catalog_async_empty_catalog() {
+        let server = httpmock::MockServer::start_async().await;
+
+        let _mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::GET).path("/auth/catalog");
+                then.status(200)
+                    .header("content-type", "application/json")
+                    .body("{}");
+            })
+            .await;
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog_async(&_client).await.unwrap();
+
+        assert!(!cat.catalog_endpoints.contains_key("compute"));
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_read_auth_catalog_sync_empty_catalog() {
+        let server = httpmock::MockServer::start();
+
+        let _mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/auth/catalog");
+            then.status(200)
+                .header("content-type", "application/json")
+                .body("{}");
+        });
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog(&_client).unwrap();
+
+        assert!(!cat.catalog_endpoints.contains_key("compute"));
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_read_auth_catalog_async_error_401() {
+        let server = httpmock::MockServer::start_async().await;
+
+        let _mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::GET).path("/auth/catalog");
+                then.status(401)
+                    .header("content-type", "application/json")
+                    .body(r#"{"Error": "Unauthorized"}"#);
+            })
+            .await;
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        let err = cat.read_auth_catalog_async(&_client).await.unwrap_err();
+        assert!(matches!(err, CatalogError::Http { .. }));
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_read_auth_catalog_sync_error_401() {
+        let server = httpmock::MockServer::start();
+
+        let _mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/auth/catalog");
+            then.status(401)
+                .header("content-type", "application/json")
+                .body(r#"{"Error": "Unauthorized"}"#);
+        });
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        let err = cat.read_auth_catalog(&_client).unwrap_err();
+        assert!(matches!(err, CatalogError::Http { .. }));
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_read_auth_catalog_async_no_identity_endpoint() {
+        let mut cat = Catalog::default();
+        let _client = FakeOpenStackClient::new("http://localhost:0");
+        let err = cat.read_auth_catalog_async(&_client).await.unwrap_err();
+        assert!(matches!(err, CatalogError::ServiceNotConfigured { .. }));
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_read_auth_catalog_sync_no_identity_endpoint() {
+        let mut cat = Catalog::default();
+        let _client = FakeOpenStackClient::new("http://localhost:0");
+        let err = cat.read_auth_catalog(&_client).unwrap_err();
+        assert!(matches!(err, CatalogError::ServiceNotConfigured { .. }));
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_read_auth_catalog_async_multiple_services() {
+        let server = httpmock::MockServer::start_async().await;
+        let catalog_json = json!({
+            "catalog": [
+                {
+                    "type": "compute",
+                    "name": "nova",
+                    "endpoints": [
+                        {
+                            "id": "ep1",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://compute.example.com/v2.1",
+                            "availability_zone_hints": ["nova"]
+                        }
+                    ]
+                },
+                {
+                    "type": "object-store",
+                    "name": "swift",
+                    "endpoints": [
+                        {
+                            "id": "ep2",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://swift.example.com/v1/AUTH_test",
+                            "availability_zone_hints": []
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let _mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::GET).path("/auth/catalog");
+                then.status(200)
+                    .header("content-type", "application/json")
+                    .body(catalog_json.to_string());
+            })
+            .await;
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog_async(&_client).await.unwrap();
+
+        let compute_eps = cat.catalog_endpoints.get("compute").unwrap();
+        assert!(
+            compute_eps
+                .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+                .is_some()
+        );
+
+        let swift_eps = cat.catalog_endpoints.get("object-store").unwrap();
+        assert!(
+            swift_eps
+                .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+                .is_some()
+        );
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_read_auth_catalog_sync_multiple_services() {
+        let server = httpmock::MockServer::start();
+        let catalog_json = json!({
+            "catalog": [
+                {
+                    "type": "compute",
+                    "name": "nova",
+                    "endpoints": [
+                        {
+                            "id": "ep1",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://compute.example.com/v2.1",
+                            "availability_zone_hints": ["nova"]
+                        }
+                    ]
+                },
+                {
+                    "type": "object-store",
+                    "name": "swift",
+                    "endpoints": [
+                        {
+                            "id": "ep2",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://swift.example.com/v1/AUTH_test",
+                            "availability_zone_hints": []
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let _mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/auth/catalog");
+            then.status(200)
+                .header("content-type", "application/json")
+                .body(catalog_json.to_string());
+        });
+
+        let mut cat = Catalog::default();
+        cat.register_catalog_endpoint(
+            "identity",
+            &server.base_url(),
+            None::<String>,
+            Some("public"),
+        )
+        .unwrap();
+
+        let _client = FakeOpenStackClient::new(server.base_url());
+        cat.read_auth_catalog(&_client).unwrap();
+
+        let compute_eps = cat.catalog_endpoints.get("compute").unwrap();
+        assert!(
+            compute_eps
+                .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+                .is_some()
+        );
+
+        let swift_eps = cat.catalog_endpoints.get("object-store").unwrap();
+        assert!(
+            swift_eps
+                .get_by_region_and_interface(Some("RegionOne"), Some("public"))
+                .is_some()
+        );
     }
 
     #[test]

@@ -20,6 +20,8 @@
 #[cfg(feature = "async")]
 mod r#async;
 #[cfg(all(feature = "async", feature = "sync", feature = "identity"))]
+mod catalog;
+#[cfg(all(feature = "async", feature = "sync", feature = "identity"))]
 mod reauth;
 #[cfg(feature = "sync")]
 mod sync;

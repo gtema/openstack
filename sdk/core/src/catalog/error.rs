@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use std::boxed::Box;
 use thiserror::Error;
 use url::Url;
 
@@ -22,6 +23,11 @@ use crate::types::api_version::{ApiVersion, ApiVersionError};
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum CatalogError {
+    #[error("Cannot parse catalog data: {}", source)]
+    Json {
+        #[from]
+        source: serde_json::Error,
+    },
     #[error("Cannot parse Api Version: {}", source)]
     ApiVersion {
         #[from]
@@ -47,11 +53,11 @@ pub enum CatalogError {
         url: String,
     },
 
-    /// A transparent url::ParseError error for unwrapped cases
-    #[error("Failed to parse url: `{}`", source)]
-    UrlParseError {
+    /// Invalid URI
+    #[error("Invalid URI: `{}`", source)]
+    InvalidUri {
         #[from]
-        source: url::ParseError,
+        source: http::uri::InvalidUri,
     },
 
     /// Invalid URL scheme
@@ -88,6 +94,19 @@ pub enum CatalogError {
         ver
     )]
     VersionUnsupported { ver: ApiVersion },
+
+    /// HTTP error with status code
+    #[error("HTTP request failed with status {}: {}", status, body)]
+    Http {
+        status: http::StatusCode,
+        body: String,
+    },
+
+    /// Generic API error wrapper
+    #[error("API error: {err}")]
+    ApiError {
+        err: Box<dyn std::error::Error + Send + Sync>,
+    },
 }
 
 impl CatalogError {
@@ -100,5 +119,13 @@ impl CatalogError {
 
     pub fn cannot_be_base(url: &Url) -> Self {
         Self::UrlCannotBeBase(url.as_str().into())
+    }
+
+    /// Wrap an ApiError in CatalogError for generic error types
+    pub fn api_error<E>(err: crate::api::ApiError<E>) -> Self
+    where
+        E: std::error::Error + Send + Sync + 'static,
+    {
+        Self::ApiError { err: Box::new(err) }
     }
 }
