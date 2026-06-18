@@ -12,8 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # Federated (OAUTH2/OIDC) authentication using the OIDC access token
+//! # OIDC Access Token authentication for [`openstack_sdk`]
 //!
+//! This plugin authenticates against OpenStack's Identity service (Keystone) using
+//! a federated OIDC access token. It sends the access token as a Bearer credential
+//! to the Keystone federation endpoint.
 
 use async_trait::async_trait;
 use secrecy::ExposeSecret;
@@ -25,7 +28,10 @@ use openstack_sdk_auth_core::{
     execute_auth_request,
 };
 
-/// V3 OIDCAccessToken Authentication for OpenStack SDK.
+/// OIDC Access Token authentication for OpenStack SDK.
+///
+/// Authenticates by presenting a Bearer token (OIDC access token) to the
+/// Keystone federation endpoint.
 pub struct OidcAccessTokenAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -33,6 +39,8 @@ static PLUGIN: OidcAccessTokenAuthenticator = OidcAccessTokenAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: OidcAccessTokenAuthenticator = OidcAccessTokenAuthenticator;
 
 #[async_trait]
 impl OpenStackAuthType for OidcAccessTokenAuthenticator {
@@ -55,12 +63,12 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
                 },
                 "protocol": {
                     "type": "string",
-                    "description": "Protocol"
+                    "description": "Federation protocol (e.g., oidc)"
                 },
                 "access_token": {
                     "type": "string",
                     "format": "password",
-                    "description": "Access token"
+                    "description": "OIDC access token from the identity provider"
                 },
             }
         }))
@@ -80,6 +88,9 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         let protocol = values
             .get("protocol")
             .ok_or(OidcAccessTokenError::MissingProtocolId)?;
+        let access_token = values
+            .get("access_token")
+            .ok_or(OidcAccessTokenError::MissingAccessToken)?;
 
         let endpoint = identity_url.join(
             format!(
@@ -90,7 +101,10 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
             .as_str(),
         )?;
 
-        let request = http_client.post(endpoint).build()?;
+        let request = http_client
+            .post(endpoint)
+            .bearer_auth(access_token.expose_secret())
+            .build()?;
         let response = execute_auth_request(http_client, request).await?;
 
         let auth_token = AuthToken::from_reqwest_response(response).await?;
@@ -98,24 +112,24 @@ impl OpenStackAuthType for OidcAccessTokenAuthenticator {
         Ok(Auth::AuthToken(Box::new(auth_token)))
     }
 }
-/// OidcAccessToken related errors
+/// OIDC Access Token authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum OidcAccessTokenError {
-    /// Auth data is missing
+    /// Auth data is missing.
     #[error("auth data is missing")]
     MissingAuthData,
 
-    /// Identity provider ID is missing
+    /// Identity provider ID is missing.
     #[error("identity_provider ID is missing")]
     MissingIdpId,
 
-    /// Federation protocol ID is missing
+    /// Federation protocol ID is missing.
     #[error("federation protocol ID is missing")]
     MissingProtocolId,
 
-    /// Access token is missing
-    #[error("access token is missing")]
+    /// Access token is missing.
+    #[error("OIDC access token is missing")]
     MissingAccessToken,
 }
 
@@ -126,4 +140,159 @@ impl From<OidcAccessTokenError> for AuthError {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use httpmock::MockServer;
+    use reqwest::{Client, StatusCode};
+    use secrecy::{ExposeSecret, SecretString};
+    use serde_json::json;
+    use std::collections::HashMap;
+    use url::Url;
+
+    use openstack_sdk_auth_core::Auth;
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_auth_success() {
+        let server = MockServer::start_async().await;
+        let base_url = Url::parse(&server.base_url()).unwrap();
+
+        let mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST)
+                    .path("/OS-FEDERATION/identity_providers/idp1/protocols/oidc/auth")
+                    .header("authorization", "Bearer my-access-token");
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "new-token")
+                    .json_body(json!({
+                        "token": {
+                            "user": {
+                                "id": "uid",
+                                "name": "uname"
+                            },
+                            "expires_at": "2099-01-15T22:14:05.000000Z",
+                        }
+                    }));
+            })
+            .await;
+
+        let http_client = Client::new();
+        let authenticator = OidcAccessTokenAuthenticator;
+
+        match authenticator
+            .auth(
+                &http_client,
+                &base_url,
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    ("protocol".into(), SecretString::from("oidc")),
+                    ("access_token".into(), SecretString::from("my-access-token")),
+                ]),
+                None,
+                None,
+            )
+            .await
+        {
+            Ok(Auth::AuthToken(token)) => {
+                assert_eq!(token.token.expose_secret(), "new-token");
+            }
+            other => {
+                panic!("success expected, got {:?}", other);
+            }
+        }
+        mock.assert_async().await;
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_idp() {
+        let authenticator = OidcAccessTokenAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    ("protocol".into(), SecretString::from("oidc")),
+                    ("access_token".into(), SecretString::from("token")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_protocol() {
+        let authenticator = OidcAccessTokenAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    ("access_token".into(), SecretString::from("token")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_access_token() {
+        let authenticator = OidcAccessTokenAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    ("protocol".into(), SecretString::from("oidc")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn test_get_supported_auth_methods() {
+        let authenticator = OidcAccessTokenAuthenticator;
+        assert!(
+            authenticator
+                .get_supported_auth_methods()
+                .contains(&"v3oidcaccesstoken")
+        );
+        assert!(
+            authenticator
+                .get_supported_auth_methods()
+                .contains(&"accesstoken")
+        );
+    }
+
+    #[test]
+    fn test_requirements() {
+        let authenticator = OidcAccessTokenAuthenticator;
+        let req = authenticator.requirements(None).unwrap();
+        assert!(
+            req["required"]
+                .as_array()
+                .unwrap()
+                .contains(&"access_token".into())
+        );
+        assert!(
+            req["required"]
+                .as_array()
+                .unwrap()
+                .contains(&"identity_provider".into())
+        );
+        assert!(
+            req["required"]
+                .as_array()
+                .unwrap()
+                .contains(&"protocol".into())
+        );
+    }
+}

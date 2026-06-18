@@ -32,13 +32,9 @@ use secrecy::SecretString;
 use tokio::runtime::Runtime;
 use tracing::{Level, debug, error, event, info, instrument, trace, warn};
 
-// Force the linker to include crate plugins
-use openstack_sdk_auth_applicationcredential as _;
-use openstack_sdk_auth_oidcaccesstoken as _;
-use openstack_sdk_auth_password as _;
+// Private use of auth plugins for token refresh and receipt handling.
 use openstack_sdk_auth_receipt as token_receipt;
 use openstack_sdk_auth_token as token_auth;
-use openstack_sdk_auth_totp as _;
 
 use openstack_sdk_auth_core::{
     Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,

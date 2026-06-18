@@ -13,6 +13,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! # Multifactor authentication method for [`openstack_sdk`]
+//!
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! multiple authentication factors. It discovers the required methods from the hints
+//! provided by an initial authentication attempt, then invokes each method's
+//! corresponding plugin to build the combined authentication request.
+//!
+//! This plugin does not handle authentication directly but rather coordinates
+//! multiple authentication methods (e.g., password + TOTP) into a single request.
 use std::collections::BTreeSet;
 
 use async_trait::async_trait;
@@ -30,7 +38,10 @@ use openstack_sdk_auth_password as _;
 use openstack_sdk_auth_token as _;
 use openstack_sdk_auth_totp as _;
 
-/// Multifactor Authentication for OpenStack SDK.
+/// Multifactor authentication for OpenStack SDK.
+///
+/// Coordinates multiple authentication factors into a single request
+/// by discovering required methods from an authentication receipt.
 pub struct MultifactorAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -39,6 +50,9 @@ static PLUGIN: MultifactorAuthenticator = MultifactorAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+
+#[used]
+pub static ANCHOR: MultifactorAuthenticator = MultifactorAuthenticator;
 
 fn deep_merge_value(a: &mut Value, b: Value) {
     match (a, b) {
@@ -156,7 +170,7 @@ impl OpenStackAuthType for MultifactorAuthenticator {
     }
 }
 
-/// Token related errors
+/// Multifactor authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum MultifactorAuthError {

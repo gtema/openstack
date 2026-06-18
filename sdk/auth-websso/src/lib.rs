@@ -12,15 +12,21 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! WebSSO callback server handling
+//! # WebSSO authentication for [`openstack_sdk`]
 //!
-//! This module implements a tiny WebServer based on the Hyper library. It waits for a /callback
-//! endpoint to be invoked with POST method and a form data containing OpenStack token. Once
-//! endpoint is invoked the server stops and returns `SsoState` structure with the populated token.
+//! This plugin implements single-sign-on (WebSSO) authentication against OpenStack's
+//! Identity service (Keystone). It starts a temporary local HTTP callback server
+//! to receive the authentication token from Keystone's WebSSO redirect URL.
+//!
+//! The flow is:
+//! 1. Start a local HTTP callback server on an available port
+//! 2. Construct the WebSSO URL with the callback origin
+//! 3. Open the user's browser to the WebSSO page
+//! 4. Receive the Keystone token via the callback server
+//! 5. Return the authenticated token
 
 use std::collections::HashMap;
 use std::convert::Infallible;
-use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
@@ -48,7 +54,10 @@ use openstack_sdk_auth_core::{
     OpenStackAuthType,
 };
 
-/// V3 WebSSO Authentication for OpenStack SDK.
+/// WebSSO authentication for OpenStack SDK.
+///
+/// Authenticates via a browser-based single-sign-on (WebSSO) flow
+/// with a local callback server to receive the token.
 pub struct WebSSOAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -56,6 +65,8 @@ static PLUGIN: WebSSOAuthenticator = WebSSOAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: WebSSOAuthenticator = WebSSOAuthenticator;
 
 #[async_trait]
 impl OpenStackAuthType for WebSSOAuthenticator {
@@ -76,6 +87,10 @@ impl OpenStackAuthType for WebSSOAuthenticator {
                     "type": "string",
                     "description": "Protocol"
                 },
+                "callback_port": {
+                    "type": "integer",
+                    "description": "The local port to use for the authentication callback server. If omitted, the default (8050) is used."
+                },
             }
         }))
     }
@@ -94,6 +109,10 @@ impl OpenStackAuthType for WebSSOAuthenticator {
     ) -> Result<Auth, AuthError> {
         let protocol_id = values.get("protocol").ok_or(WebSsoError::MissingProtocol)?;
 
+        let callback_port = values
+            .get("callback_port")
+            .and_then(|v| v.expose_secret().parse::<u16>().ok());
+
         let endpoint = if let Some(idp_id) = values.get("identity_provider") {
             format!(
                 "auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso",
@@ -109,7 +128,7 @@ impl OpenStackAuthType for WebSSOAuthenticator {
 
         let mut auth_url = identity_url.join(&endpoint)?;
 
-        let token_auth = get_token_auth(&mut auth_url).await?;
+        let token_auth = get_token_auth(&mut auth_url, callback_port).await?;
 
         Ok(Auth::AuthToken(Box::new(token_auth)))
     }
@@ -119,7 +138,7 @@ impl OpenStackAuthType for WebSSOAuthenticator {
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum WebSsoError {
-    /// Callback did not returned a token.
+    /// WebSSO callback did not return a token.
     #[error("WebSSO callback didn't return a token")]
     CallbackNoToken,
 
@@ -190,8 +209,13 @@ impl From<WebSsoError> for AuthError {
 }
 
 /// Return [`AuthToken`] obtained using the WebSSO (Keystone behind mod_auth_oidc)
-pub async fn get_token_auth(url: &mut Url) -> Result<AuthToken, AuthTokenError> {
-    let token = get_token(url, None).await.map_err(AuthTokenError::plugin)?;
+pub async fn get_token_auth(
+    url: &mut Url,
+    callback_port: Option<u16>,
+) -> Result<AuthToken, AuthTokenError> {
+    let token = get_token(url, callback_port)
+        .await
+        .map_err(AuthTokenError::plugin)?;
     Ok(AuthToken::new(token, None))
 }
 
@@ -200,8 +224,15 @@ pub async fn get_token_auth(url: &mut Url) -> Result<AuthToken, AuthTokenError> 
 /// - start callback server
 /// - open browser pointing to the SSO url
 /// - wait for the response with the OpenStack token
-async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<String, WebSsoError> {
-    url.set_query(Some("origin=http://localhost:8050/callback"));
+async fn get_token(url: &mut Url, callback_port: Option<u16>) -> Result<String, WebSsoError> {
+    let port = callback_port.unwrap_or(8050);
+    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).await?;
+    let addr = listener
+        .local_addr()
+        .map_err(|_| WebSsoError::MissingAuthData)?;
+    url.set_query(Some(
+        format!("origin=http://localhost:{}/callback", addr.port()).as_str(),
+    ));
     let confirmation = Confirm::new()
         .with_prompt(format!(
             "A default browser is going to be opened at `{}`. Do you want to continue?",
@@ -210,7 +241,6 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
         .interact()?;
     if confirmation {
         info!("Opening browser at {:?}", url.as_str());
-        let addr = socket_addr.unwrap_or(SocketAddr::from(([127, 0, 0, 1], 8050)));
         let cancel_token = CancellationToken::new();
         let state: Arc<Mutex<Option<String>>> = Arc::new(Mutex::new(None));
 
@@ -227,7 +257,7 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { websso_callback_server(addr, state, cancel_token, None).await }
+            async move { websso_callback_server(listener, state, cancel_token, None).await }
         });
         open::that(url.as_str())?;
 
@@ -242,15 +272,17 @@ async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<Str
     }
 }
 
-/// Start the WebSSO callback server
+/// Start the WebSSO callback server on a pre-bound listener
 async fn websso_callback_server(
-    addr: SocketAddr,
+    listener: TcpListener,
     state: Arc<Mutex<Option<String>>>,
     cancel_token: CancellationToken,
     start_tx: Option<tokio::sync::oneshot::Sender<()>>,
 ) -> Result<(), WebSsoError> {
-    let listener = TcpListener::bind(addr).await?;
-    info!("Starting webserver to receive SSO callback");
+    let addr = listener
+        .local_addr()
+        .map_err(|_| WebSsoError::MissingAuthData)?;
+    info!("Starting webserver to receive SSO callback on {}", addr);
     if let Some(tx) = start_tx {
         let _ = tx.send(());
     }

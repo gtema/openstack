@@ -12,8 +12,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Passkey (security device) based login.
+//! Error types for passkey (WebAuthn) authentication.
 //!
+//! This module defines the error types that can occur during the WebAuthn
+//! authentication flow, including cryptographic errors and missing data.
 
 use thiserror::Error;
 

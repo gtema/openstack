@@ -40,20 +40,9 @@ use openstack_sdk_auth_core::{
     types::{AuthResponse, Project, ServiceEndpoints},
 };
 
-// Force the linker to include crate plugins
-use openstack_sdk_auth_applicationcredential as _;
-#[cfg(feature = "keystone_ng")]
-use openstack_sdk_auth_federation as _;
-#[cfg(feature = "keystone_ng")]
-use openstack_sdk_auth_jwt as _;
-use openstack_sdk_auth_oidcaccesstoken as _;
-#[cfg(feature = "passkey")]
-use openstack_sdk_auth_passkey as _;
-use openstack_sdk_auth_password as _;
+// Private use of auth plugins for token refresh and receipt handling.
 use openstack_sdk_auth_receipt as token_receipt;
 use openstack_sdk_auth_token as token_auth;
-use openstack_sdk_auth_totp as _;
-use openstack_sdk_auth_websso as _;
 
 use crate::auth::authtoken::{AuthType, build_token_info_endpoint};
 use crate::session;

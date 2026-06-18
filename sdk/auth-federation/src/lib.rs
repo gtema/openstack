@@ -12,12 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # Federated (OAUTH2/OIDC) login callback server handling
+//! # Federated OIDC authentication for [`openstack_sdk`]
 //!
-//! This crate implements a tiny WebServer based on the Hyper library. It waits for a
-//! /federation/oidc/callback endpoint to be invoked with POST or GET method and a form data
-//! containing OAUTH2 authorization code. Once endpoint is invoked the server stops and returns
-//! [`FederationAuthCodeCallbackResponse`] structure with the populated token.
+//! This plugin implements federated authentication against OpenStack using the
+//! OIDC (OpenID Connect) protocol. It starts a temporary local HTTP callback server
+//! to receive the authorization code from the identity provider after the user
+//! completes authentication in their browser.
+//!
+//! The flow is:
+//! 1. Request a federation auth URL from Keystone
+//! 2. Start a local callback server on an available port
+//! 3. Open the user's browser to the IDP authentication page
+//! 4. Receive the authorization code via the callback server
+//! 5. Exchange the authorization code for a Keystone token
 
 use std::collections::HashMap;
 use std::convert::Infallible;
@@ -49,7 +56,10 @@ use openstack_sdk_auth_core::{
     execute_auth_request,
 };
 
-/// V4 OIDC Authentication for OpenStack SDK.
+/// Federation OIDC authentication for OpenStack SDK.
+///
+/// Authenticates via an OIDC identity provider using a browser-based
+/// authentication flow with a local callback server.
 pub struct OidcAuthenticator;
 
 // Submit the plugin to the registry at compile-time
@@ -57,6 +67,8 @@ static PLUGIN: OidcAuthenticator = OidcAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: OidcAuthenticator = OidcAuthenticator;
 
 #[async_trait]
 impl OpenStackAuthType for OidcAuthenticator {
@@ -72,6 +84,10 @@ impl OpenStackAuthType for OidcAuthenticator {
                 "identity_provider": {
                     "type": "string",
                     "description": "Identity Provider ID"
+                },
+                "callback_port": {
+                    "type": "integer",
+                    "description": "The local port to use for the authentication callback server. If omitted, the default (8050) is used."
                 },
             }
         }))
@@ -94,7 +110,11 @@ impl OpenStackAuthType for OidcAuthenticator {
         // client would need to contact.
         // TODO: If we know the scope we can request it from the very beginning
         // saving 1 call.
-        let callback_addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8050));
+        let port = values
+            .get("callback_port")
+            .and_then(|v| v.expose_secret().parse::<u16>().ok())
+            .unwrap_or(8050);
+        let callback_addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
 
         let idp_id = values
             .get("identity_provider")
@@ -107,7 +127,10 @@ impl OpenStackAuthType for OidcAuthenticator {
             )
             .as_str(),
         )?;
-        let mut body = json!({"redirect_uri": format!("http://localhost:{}/oidc/callback", callback_addr.port())});
+        let mut body = json!({"redirect_uri": format!(
+            "http://localhost:{}/oidc/callback",
+            callback_addr.port()
+        )});
 
         // TODO: check this
         if let Some(scope) = values.get("scope") {
@@ -122,7 +145,12 @@ impl OpenStackAuthType for OidcAuthenticator {
 
         // Perform the magic directing user's browser at the IDP url and waiting
         // for the callback to be invoked with the authorization code
-        let oauth2_code = get_auth_code(&auth_info.auth_url, callback_addr).await?;
+        let oauth2_code = {
+            let listener = tokio::net::TcpListener::bind(callback_addr)
+                .await
+                .map_err(|e| FederationError::IO { source: e })?;
+            get_auth_code(&auth_info.auth_url, callback_addr, listener).await?
+        };
 
         // Construct the request to Keystone to finish the authorization exchanging
         // received authorization code for the (unscoped) token
@@ -145,11 +173,11 @@ impl OpenStackAuthType for OidcAuthenticator {
     }
 }
 
-/// Federation related errors
+/// Federation authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum FederationError {
-    /// Callback did not returned a token.
+    /// Callback did not return a token.
     #[error("federation callback didn't return a token")]
     CallbackNoToken,
 
@@ -247,12 +275,13 @@ pub struct FederationAuthCodeCallbackResponse {
 /// Perform authorization request by opening a browser window with tiny webserver started to
 /// capture the callback and return [`FederationAuthCodeCallbackResponse`]
 ///
-/// - start callback server
+/// - start callback server on the provided listener
 /// - open browser pointing to the IDP authorization url
 /// - wait for the response with the OpenIDC authorization code
 async fn get_auth_code(
     url: &Url,
     socket_addr: SocketAddr,
+    listener: TcpListener,
 ) -> Result<FederationAuthCodeCallbackResponse, FederationError> {
     let confirmation = Confirm::new()
         .with_prompt(format!(
@@ -265,6 +294,8 @@ async fn get_auth_code(
         let cancel_token = CancellationToken::new();
         let state: Arc<Mutex<Option<FederationAuthCodeCallbackResponse>>> =
             Arc::new(Mutex::new(None));
+
+        let _ = socket_addr;
 
         tokio::spawn({
             let cancel_token = cancel_token.clone();
@@ -279,7 +310,7 @@ async fn get_auth_code(
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(socket_addr, state, cancel_token, None).await }
+            async move { auth_callback_server(listener, state, cancel_token, None).await }
         });
         open::that(url.as_str())?;
 
@@ -294,15 +325,20 @@ async fn get_auth_code(
     }
 }
 
-/// Start the OAUTH2 callback server
+/// Start the OAUTH2 callback server on a pre-bound listener
 async fn auth_callback_server(
-    addr: SocketAddr,
+    listener: TcpListener,
     state: Arc<Mutex<Option<FederationAuthCodeCallbackResponse>>>,
     cancel_token: CancellationToken,
     start_tx: Option<tokio::sync::oneshot::Sender<()>>,
 ) -> Result<(), FederationError> {
-    let listener = TcpListener::bind(addr).await?;
-    info!("Starting webserver to receive OAUTH2 authorization callback");
+    let addr = listener
+        .local_addr()
+        .map_err(|_| FederationError::MissingAuthData)?;
+    info!(
+        "Starting webserver to receive OAUTH2 authorization callback on {}",
+        addr
+    );
     if let Some(tx) = start_tx {
         let _ = tx.send(());
     }
@@ -449,7 +485,6 @@ async fn handle_request(
 
 #[cfg(test)]
 mod tests {
-    use reserve_port::ReservedSocketAddr;
     use std::sync::{Arc, Mutex};
     use tokio::signal;
     use tokio_util::sync::CancellationToken;
@@ -459,9 +494,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_callback_get() {
-        let addr = ReservedSocketAddr::reserve_random_socket_addr()
-            .expect("port available")
-            .socket_addr();
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
         let cancel_token = CancellationToken::new();
 
         tokio::spawn({
@@ -478,7 +512,7 @@ mod tests {
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
+            async move { auth_callback_server(listener, state, cancel_token, Some(start_tx)).await }
         });
 
         // Wait for the server to start listening
@@ -509,9 +543,8 @@ mod tests {
     #[traced_test]
     #[tokio::test]
     async fn test_callback_post() {
-        let addr = ReservedSocketAddr::reserve_random_socket_addr()
-            .expect("port available")
-            .socket_addr();
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
         let cancel_token = CancellationToken::new();
 
         tokio::spawn({
@@ -528,7 +561,7 @@ mod tests {
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
+            async move { auth_callback_server(listener, state, cancel_token, Some(start_tx)).await }
         });
 
         // Wait for the server to start listening
@@ -558,9 +591,8 @@ mod tests {
     #[traced_test]
     #[tokio::test]
     async fn test_callback_no_token() {
-        let addr = ReservedSocketAddr::reserve_random_socket_addr()
-            .expect("port available")
-            .socket_addr();
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
         let cancel_token = CancellationToken::new();
 
         tokio::spawn({
@@ -577,7 +609,7 @@ mod tests {
         let handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
             let state = state.clone();
-            async move { auth_callback_server(addr, state, cancel_token, Some(start_tx)).await }
+            async move { auth_callback_server(listener, state, cancel_token, Some(start_tx)).await }
         });
 
         // Wait for the server to start listening

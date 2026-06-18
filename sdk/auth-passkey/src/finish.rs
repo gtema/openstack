@@ -12,7 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Finish passkey (security device) auth: exchange signed challenge with Keystone token.
+//! Complete passkey (WebAuthn) authentication.
+//!
+//! This module defines the types used to finalize WebAuthn authentication.
+//! After the authenticator signs the challenge, this module handles the
+//! response data sent back to Keystone to complete authentication.
 
 use std::borrow::Cow;
 

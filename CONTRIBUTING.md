@@ -27,6 +27,52 @@ All generated modules have a corresponding notice in the header.
 
 if you have an idea how generated code can be improved open an issue or discussion.
 
+## Auth Plugins Loading Mechanics
+
+Authentication plugins use a two-layer approach to ensure they are loaded at runtime:
+
+### Plugin Registration
+
+Each auth plugin crate (e.g., `openstack-sdk-auth-password`) registers itself at
+compile time using the [`inventory`](https://docs.rs/inventory) crate:
+
+```rust
+static PLUGIN: PasswordAuthenticator = PasswordAuthenticator;
+
+inventory::submit! {
+    openstack_sdk_auth_core::AuthPluginRegistration { method: &PLUGIN }
+}
+```
+
+The SDK iterates `inventory::iter::<AuthPluginRegistration>` at runtime to discover
+available authenticators. The `inventory` crate uses linker sections to collect
+registrations across crates, which means the plugin crate must be linked for its
+registration to appear.
+
+### Linker Anchoring
+
+Without explicit references, the Rust linker may strip unused plugin crates.
+The `openstack_sdk` crate uses a `build.rs` script to automatically generate
+`plugin_anchors.rs` with `#[cfg]`-gated imports that reference each plugin's
+`#[used] ANCHOR` static. This ensures the linker includes all enabled plugins.
+
+Key points:
+
+- Non-optional plugins are always anchored (e.g., password, token, application_credential).
+- Optional plugins are feature-gated (e.g., `keystone_ng` enables JWT and federation,
+  `passkey` enables WebAuthn).
+- Adding a new plugin requires adding it as a dependency in `openstack_sdk/Cargo.toml`.
+  The `build.rs` will automatically anchor it (with appropriate `#[cfg]` if optional).
+
+### Adding a New Auth Plugin
+
+1. Create the plugin crate under `sdk/auth-<name>/`.
+2. Implement `OpenStackAuthType` and submit `AuthPluginRegistration` via `inventory::submit!`.
+3. Optionally implement `OpenStackMultifactorAuthMethod` for multifactor support.
+4. Add a `#[used] ANCHOR` static to prevent linker stripping.
+5. Add the crate as a dependency in `openstack_sdk/Cargo.toml`.
+6. Add a feature flag if the plugin is optional.
+
 ## Rust design decisions:
 
 - If a function needs to take ownership of the data, pass by value

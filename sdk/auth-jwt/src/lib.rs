@@ -12,9 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! # JWT authentication for OpenStack based on the Keystone-rs
+//! # JWT authentication for OpenStack
 //!
-//! This module implements login using the JWT token by exchanging it for a regular Keystone token.
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! a JSON Web Token (JWT). The JWT is sent as a Bearer token to the Keystone
+//! federation JWT endpoint along with the identity provider ID and attribute mapping name.
 
 use async_trait::async_trait;
 use secrecy::ExposeSecret;
@@ -26,7 +28,7 @@ use openstack_sdk_auth_core::{
     execute_auth_request,
 };
 
-/// JWT related errors.
+/// JWT authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum JwtError {
@@ -34,8 +36,8 @@ pub enum JwtError {
     #[error("auth data is missing")]
     MissingAuthData,
 
-    /// Identity provider id is missing.
-    #[error("identity provider id is missing")]
+    /// Identity provider ID is missing.
+    #[error("identity provider ID is missing")]
     MissingIdentityProvider,
 
     /// Attribute mapping name is missing.
@@ -53,13 +55,19 @@ impl From<JwtError> for AuthError {
     }
 }
 
-/// JWT Authentication for OpenStack SDK.
+/// JWT authentication for OpenStack SDK.
+///
+/// Authenticates by presenting a JWT Bearer token to the Keystone federation
+/// endpoint along with the identity provider ID and attribute mapping name.
 pub struct JwtAuthenticator;
+
 // Submit the plugin to the registry at compile-time
 static PLUGIN: JwtAuthenticator = JwtAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
+#[used]
+pub static ANCHOR: JwtAuthenticator = JwtAuthenticator;
 
 #[async_trait]
 impl OpenStackAuthType for JwtAuthenticator {
@@ -132,5 +140,170 @@ impl OpenStackAuthType for JwtAuthenticator {
         let auth_token = AuthToken::from_reqwest_response(response).await?;
 
         Ok(Auth::AuthToken(Box::new(auth_token)))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use httpmock::MockServer;
+    use reqwest::{Client, StatusCode};
+    use secrecy::{ExposeSecret, SecretString};
+    use serde_json::json;
+    use std::collections::HashMap;
+    use url::Url;
+
+    use openstack_sdk_auth_core::Auth;
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_auth_success() {
+        let server = MockServer::start_async().await;
+        let base_url = Url::parse(&server.base_url()).unwrap();
+
+        let mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST)
+                    .path("/federation/identity_providers/idp1/jwt")
+                    .header("authorization", "Bearer my-jwt-token")
+                    .header("openstack-mapping", "mapping1");
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "new-token")
+                    .json_body(json!({
+                        "token": {
+                            "user": {
+                                "id": "uid",
+                                "name": "uname"
+                            },
+                            "expires_at": "2099-01-15T22:14:05.000000Z",
+                        }
+                    }));
+            })
+            .await;
+        let http_client = Client::new();
+
+        let authenticator = JwtAuthenticator;
+
+        match authenticator
+            .auth(
+                &http_client,
+                &base_url,
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    (
+                        "attribute_mapping_name".into(),
+                        SecretString::from("mapping1"),
+                    ),
+                    ("jwt".into(), SecretString::from("my-jwt-token")),
+                ]),
+                None,
+                None,
+            )
+            .await
+        {
+            Ok(Auth::AuthToken(token)) => {
+                assert_eq!(token.token.expose_secret(), "new-token");
+            }
+            other => {
+                panic!("success expected, got {:?}", other);
+            }
+        }
+        mock.assert_async().await;
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_idp() {
+        let authenticator = JwtAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    (
+                        "attribute_mapping_name".into(),
+                        SecretString::from("mapping1"),
+                    ),
+                    ("jwt".into(), SecretString::from("token")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_jwt() {
+        let authenticator = JwtAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    (
+                        "attribute_mapping_name".into(),
+                        SecretString::from("mapping1"),
+                    ),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_mapping() {
+        let authenticator = JwtAuthenticator;
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    ("identity_provider".into(), SecretString::from("idp1")),
+                    ("jwt".into(), SecretString::from("token")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn test_get_supported_auth_methods() {
+        let authenticator = JwtAuthenticator;
+        assert!(
+            authenticator
+                .get_supported_auth_methods()
+                .contains(&"v4jwt")
+        );
+        assert!(authenticator.get_supported_auth_methods().contains(&"jwt"));
+    }
+
+    #[test]
+    fn test_requirements() {
+        let authenticator = JwtAuthenticator;
+        let req = authenticator.requirements(None).unwrap();
+        assert!(
+            req["required"]
+                .as_array()
+                .unwrap()
+                .contains(&"identity_provider".into())
+        );
+        assert!(
+            req["required"]
+                .as_array()
+                .unwrap()
+                .contains(&"attribute_mapping_name".into())
+        );
+        assert!(req["required"].as_array().unwrap().contains(&"jwt".into()));
+    }
+
+    #[test]
+    fn test_api_version() {
+        let authenticator = JwtAuthenticator;
+        assert_eq!(authenticator.api_version(), (4, 0));
     }
 }

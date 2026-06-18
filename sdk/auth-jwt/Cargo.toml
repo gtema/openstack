@@ -23,3 +23,7 @@ url.workspace = true
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+httpmock.workspace = true
+tokio.workspace = true

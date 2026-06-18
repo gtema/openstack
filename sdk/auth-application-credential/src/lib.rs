@@ -14,6 +14,12 @@
 
 //! # Application credentials authentication method for [`openstack_sdk`]
 //!
+//! This plugin authenticates against the OpenStack Identity service (Keystone) using
+//! an application credential. Two modes are supported:
+//!
+//! 1. **ID + Secret**: Authenticate using the application credential ID and its secret.
+//! 2. **Name + Secret + User**: Authenticate using the application credential name, its secret,
+//!    and the associated user's identity (ID or name with domain).
 //! Authentication using Application Credentials look like:
 //!
 //! With ID and Secret
@@ -65,16 +71,21 @@ use openstack_sdk_auth_core::{
 };
 
 /// Application Credential Authentication for OpenStack SDK.
-pub struct AppilcationCredentialAuthenticator;
+///
+/// Authenticates using an application credential ID+secret or name+secret+user.
+pub struct ApplicationCredentialAuthenticator;
 
 // Submit the plugin to the registry at compile-time
-static PLUGIN: AppilcationCredentialAuthenticator = AppilcationCredentialAuthenticator;
+static PLUGIN: ApplicationCredentialAuthenticator = ApplicationCredentialAuthenticator;
 inventory::submit! {
     AuthPluginRegistration { method: &PLUGIN }
 }
 
+#[used]
+pub static ANCHOR: ApplicationCredentialAuthenticator = ApplicationCredentialAuthenticator;
+
 #[async_trait]
-impl OpenStackAuthType for AppilcationCredentialAuthenticator {
+impl OpenStackAuthType for ApplicationCredentialAuthenticator {
     fn get_supported_auth_methods(&self) -> Vec<&'static str> {
         vec!["v3applicationcredential", "applicationcredential"]
     }
@@ -169,7 +180,7 @@ impl OpenStackAuthType for AppilcationCredentialAuthenticator {
     }
 }
 
-/// Application Credential related errors
+/// Application Credential authentication errors.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ApplicationCredentialError {
@@ -247,7 +258,7 @@ mod tests {
             .await;
         let http_client = Client::new();
 
-        let authenticator = AppilcationCredentialAuthenticator {};
+        let authenticator = ApplicationCredentialAuthenticator {};
 
         match authenticator
             .auth(
@@ -294,5 +305,135 @@ mod tests {
         } else {
             panic!("id or name missing must raise error");
         }
+    }
+
+    #[tokio::test]
+    async fn test_auth_with_name_and_user() {
+        let server = MockServer::start_async().await;
+        let base_url = Url::parse(&server.base_url()).unwrap();
+
+        let mock = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST)
+                    .path("/auth/tokens")
+                    .json_body(json!({
+                        "auth": {
+                            "identity": {
+                                "methods": ["application_credential"],
+                                "application_credential": {
+                                    "name": "my_cred",
+                                    "secret": "secret",
+                                    "user": {
+                                        "name": "testuser",
+                                        "user_domain_id": "domain_id"
+                                    }
+                                }
+                            }
+                        }
+                    }));
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "bar")
+                    .json_body(json!({
+                        "token": {
+                            "user": {
+                                "id": "uid",
+                                "name": "uname"
+                            },
+                            "expires_at": "2018-01-15T22:14:05.000000Z",
+                        }
+                    }));
+            })
+            .await;
+        let http_client = Client::new();
+
+        let authenticator = ApplicationCredentialAuthenticator {};
+
+        match authenticator
+            .auth(
+                &http_client,
+                &base_url,
+                &HashMap::from([
+                    (
+                        "application_credential_name".into(),
+                        SecretString::from("my_cred"),
+                    ),
+                    (
+                        "application_credential_secret".into(),
+                        SecretString::from("secret"),
+                    ),
+                    ("username".into(), SecretString::from("testuser")),
+                    ("user_domain_id".into(), SecretString::from("domain_id")),
+                ]),
+                None,
+                None,
+            )
+            .await
+        {
+            Ok(Auth::AuthToken(token)) => {
+                assert_eq!(token.token.expose_secret(), "bar");
+            }
+            other => {
+                panic!("success was expected, instead it is {:?}", other);
+            }
+        }
+        mock.assert_async().await;
+    }
+
+    #[tokio::test]
+    async fn test_auth_missing_secret() {
+        let authenticator = ApplicationCredentialAuthenticator {};
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([(
+                    "application_credential_id".into(),
+                    SecretString::from("app_cred_id"),
+                )]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_auth_name_missing_user_domain() {
+        let authenticator = ApplicationCredentialAuthenticator {};
+        let err = authenticator
+            .auth(
+                &Client::new(),
+                &Url::parse("http://localhost").unwrap(),
+                &HashMap::from([
+                    (
+                        "application_credential_name".into(),
+                        SecretString::from("my_cred"),
+                    ),
+                    (
+                        "application_credential_secret".into(),
+                        SecretString::from("secret"),
+                    ),
+                    ("username".into(), SecretString::from("testuser")),
+                ]),
+                None,
+                None,
+            )
+            .await;
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn test_get_supported_auth_methods() {
+        let authenticator = ApplicationCredentialAuthenticator {};
+        assert!(
+            authenticator
+                .get_supported_auth_methods()
+                .contains(&"v3applicationcredential")
+        );
+        assert!(
+            authenticator
+                .get_supported_auth_methods()
+                .contains(&"applicationcredential")
+        );
     }
 }

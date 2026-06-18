@@ -606,6 +606,20 @@ pub async fn execute_auth_request(
 }
 
 /// An OpenStack Authentication type
+#[inline(never)]
+pub fn anchor_plugins() {
+    // This function forces the linker to include all auth plugin crates
+    // by iterating over the inventory registries. Call this during
+    // initialization if plugins are being stripped by the linker.
+    let _ = inventory::iter::<AuthPluginRegistration>
+        .into_iter()
+        .count();
+    let _ = inventory::iter::<AuthMethodPluginRegistration>
+        .into_iter()
+        .count();
+}
+
+/// An OpenStack Authentication type
 #[derive(Clone)]
 #[non_exhaustive]
 pub enum Auth {
@@ -1191,5 +1205,10 @@ mod tests {
         assert!(json.contains("receipt"));
         assert!(json.contains("password"));
         assert!(json.contains("totp"));
+    }
+
+    #[test]
+    fn test_anchor_plugins() {
+        anchor_plugins();
     }
 }
