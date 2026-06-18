@@ -523,7 +523,7 @@ impl App {
                     self.action_tx.send(action)?;
                 };
             }
-            for (mode, component) in self.components.iter_mut() {
+            for (mode, component) in &mut self.components {
                 // only update component if it belongs to the current mode or it is not refresh
                 // event
                 if *mode == self.mode

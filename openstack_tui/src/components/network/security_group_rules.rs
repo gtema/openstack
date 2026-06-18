@@ -68,8 +68,7 @@ impl NetworkSecurityGroupRules<'_> {
 
     /// Normalized filters
     fn normalized_filters(&self) -> NetworkSecurityGroupRuleList {
-        self.normalize_filters(self.get_filters().clone())
-            .to_owned()
+        self.normalize_filters(self.get_filters().clone()).clone()
     }
 }
 

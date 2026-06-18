@@ -133,7 +133,7 @@ impl Component for ProjectSelect {
                 }),
             };
             let new_scope = openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
-            return Ok(Some(Action::CloudChangeScope(new_scope)));
+            return Ok(Some(Action::CloudChangeScope(Box::new(new_scope))));
         }
         Ok(None)
     }

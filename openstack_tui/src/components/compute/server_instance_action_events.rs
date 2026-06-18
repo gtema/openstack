@@ -123,11 +123,11 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
                     && let Some(events) = data.get("events")
                     && let Some(ar) = events.as_array()
                 {
-                    self.set_data(ar.to_vec())?;
+                    self.set_data(ar.clone())?;
                 }
             }
-            Action::SetComputeServerInstanceActionShowFilters(req) => {
-                self.set_filters(req);
+            Action::SetComputeServerInstanceActionShowFilters(f) => {
+                self.set_filters(*f);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
                     ComputeServerInstanceActionApiRequest::Get(Box::new(

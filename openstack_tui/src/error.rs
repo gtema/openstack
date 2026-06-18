@@ -33,17 +33,17 @@ pub enum TuiError {
     #[error("error sending action: {}", source)]
     ActionSenderError {
         /// The source of the error.
-        #[from]
-        source: tokio::sync::mpsc::error::SendError<action::Action>,
+        source: Box<tokio::sync::mpsc::error::SendError<action::Action>>,
     },
 
     /// Error sending the AuthAction.
     #[error("error sending action: {}", source)]
     AuthActionSenderError {
         /// The source of the error.
-        #[from]
-        source: tokio::sync::mpsc::error::SendError<
-            tokio::sync::oneshot::Sender<crate::cloud_worker::AuthAction>,
+        source: Box<
+            tokio::sync::mpsc::error::SendError<
+                tokio::sync::oneshot::Sender<crate::cloud_worker::AuthAction>,
+            >,
         >,
     },
 
@@ -51,15 +51,13 @@ pub enum TuiError {
     #[error(transparent)]
     OpenStackError {
         /// The source of the error.
-        #[from]
-        source: openstack_sdk::OpenStackError,
+        source: Box<openstack_sdk::OpenStackError>,
     },
 
     #[error(transparent)]
     CloudWorker {
         /// The source of the error.
-        #[from]
-        source: crate::cloud_worker::CloudWorkerError,
+        source: Box<crate::cloud_worker::CloudWorkerError>,
     },
 
     /// IO communication error
@@ -97,4 +95,46 @@ pub enum TuiError {
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
+}
+
+impl From<tokio::sync::mpsc::error::SendError<action::Action>> for TuiError {
+    fn from(source: tokio::sync::mpsc::error::SendError<action::Action>) -> Self {
+        TuiError::ActionSenderError {
+            source: Box::new(source),
+        }
+    }
+}
+
+impl
+    From<
+        tokio::sync::mpsc::error::SendError<
+            tokio::sync::oneshot::Sender<crate::cloud_worker::AuthAction>,
+        >,
+    > for TuiError
+{
+    fn from(
+        source: tokio::sync::mpsc::error::SendError<
+            tokio::sync::oneshot::Sender<crate::cloud_worker::AuthAction>,
+        >,
+    ) -> Self {
+        TuiError::AuthActionSenderError {
+            source: Box::new(source),
+        }
+    }
+}
+
+impl From<openstack_sdk::OpenStackError> for TuiError {
+    fn from(source: openstack_sdk::OpenStackError) -> Self {
+        TuiError::OpenStackError {
+            source: Box::new(source),
+        }
+    }
+}
+
+impl From<crate::cloud_worker::CloudWorkerError> for TuiError {
+    fn from(source: crate::cloud_worker::CloudWorkerError) -> Self {
+        TuiError::CloudWorker {
+            source: Box::new(source),
+        }
+    }
 }

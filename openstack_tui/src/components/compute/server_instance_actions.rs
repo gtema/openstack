@@ -119,7 +119,7 @@ impl Component for ComputeServerInstanceActions<'_> {
                                 req.server_name(name.clone());
                             }
                             command_tx.send(Action::SetComputeServerInstanceActionShowFilters(
-                                req.build().wrap_err("cannot prepare request")?,
+                                Box::new(req.build().wrap_err("cannot prepare request")?),
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {

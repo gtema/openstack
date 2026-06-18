@@ -55,8 +55,7 @@ impl ComputeFlavors<'_> {
 
     /// Normalized filters
     fn normalized_filters(&self) -> ComputeFlavorList {
-        self.normalize_filters(self.get_filters().clone())
-            .to_owned()
+        self.normalize_filters(self.get_filters().clone()).clone()
     }
 }
 

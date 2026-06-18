@@ -140,7 +140,7 @@ impl OpenStackAuthType for TokenAuthenticator {
         scope: Option<&AuthTokenScope>,
         _hints: Option<&serde_json::Value>,
     ) -> Result<Auth, AuthError> {
-        let (method, data) = self._get_auth_data(&values)?;
+        let (method, data) = self._get_auth_data(values)?;
         let mut body = json!({ "auth": { "identity": data } });
         body["auth"]["identity"]["methods"] = [method].into();
         if let Some(scope) = scope {

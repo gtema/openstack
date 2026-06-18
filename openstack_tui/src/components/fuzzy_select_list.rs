@@ -183,7 +183,7 @@ impl Component for FuzzySelectList {
             .borders(Borders::ALL)
             .border_style(Style::default().fg(self.config.styles.fg));
 
-        let input = Paragraph::new(self.input.clone().unwrap_or_default()).block(input_block);
+        let input = Paragraph::new(self.input.as_deref().unwrap_or_default()).block(input_block);
 
         frame.render_widget(input, layout[0]);
 
@@ -191,13 +191,12 @@ impl Component for FuzzySelectList {
             .borders(Borders::ALL)
             .border_style(Style::default().fg(self.config.styles.buffer_bg));
 
-        let mut rows: Vec<ListItem> = Vec::new();
+        let mut list_items = Vec::new();
         for item in &self.filtered_items {
-            rows.push(ListItem::new(item.clone().fg(self.config.styles.item_fg)));
+            list_items.push(ListItem::new(item.as_str()).fg(self.config.styles.item_fg));
         }
-
         let list = List::default()
-            .items(self.filtered_items.clone())
+            .items(list_items)
             .style(self.config.styles.popup_item_title_fg)
             .highlight_style(Style::new().bg(self.config.styles.item_selected_bg))
             .block(data_block);
