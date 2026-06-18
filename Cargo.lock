@@ -2899,6 +2899,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-sdk-auth-oidcclientcredentials"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "httpmock",
+ "inventory",
+ "openstack-sdk-auth-core",
+ "reqwest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "openstack-sdk-auth-passkey"
 version = "0.22.6"
 dependencies = [
@@ -3374,6 +3392,7 @@ dependencies = [
  "openstack-sdk-auth-federation",
  "openstack-sdk-auth-jwt",
  "openstack-sdk-auth-oidcaccesstoken",
+ "openstack-sdk-auth-oidcclientcredentials",
  "openstack-sdk-auth-passkey",
  "openstack-sdk-auth-password",
  "openstack-sdk-auth-receipt",
