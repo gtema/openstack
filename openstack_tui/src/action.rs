@@ -42,7 +42,7 @@ pub enum Action {
     /// Trigger connection to the cloud
     ConnectToCloud(String),
     /// Request rescoping current connection
-    CloudChangeScope(openstack_sdk::auth::authtoken::AuthTokenScope),
+    CloudChangeScope(Box<openstack_sdk::auth::authtoken::AuthTokenScope>),
     /// New cloud connection established
     ConnectedToCloud(Box<openstack_sdk::types::identity::v3::TokenInfo>),
     /// Perform API request
@@ -109,7 +109,7 @@ pub enum Action {
     // Compute (Nova)
     SetComputeServerListFilters(Box<cloud_types::ComputeServerList>),
     SetComputeServerInstanceActionListFilters(Box<cloud_types::ComputeServerInstanceActionList>),
-    SetComputeServerInstanceActionShowFilters(cloud_types::ComputeServerInstanceActionShow),
+    SetComputeServerInstanceActionShowFilters(Box<cloud_types::ComputeServerInstanceActionShow>),
     /// Show servers provisioned with selected flavor
     ShowComputeServersWithFlavor,
     /// Delete selected server

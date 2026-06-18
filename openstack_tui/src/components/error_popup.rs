@@ -134,7 +134,7 @@ impl Component for ErrorPopup {
         } = action
         {
             self.msg = Some(strip_ansi_escapes::strip_str(msg));
-            self.source = action.clone();
+            self.source.clone_from(action);
 
             self.text = strip_ansi_escapes::strip_str(msg)
                 .split("\n")

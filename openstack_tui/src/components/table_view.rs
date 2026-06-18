@@ -320,23 +320,10 @@ where
     }
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
-        let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))
-            //.map_err(|err| {
-            //    TuiError::deserialize(
-            //        err,
-            //        serde_json::to_string(&serde_json::Value::Array(
-            //            data.clone()
-            //                .into_iter()
-            //                .filter(|item| serde_json::from_value::<T>(item.clone()).is_err())
-            //                .collect(),
-            //        ))
-            //        .unwrap_or_else(|v| format!("{:?}", v)),
-            //    )
-            //})
-        ?;
         if data != self.raw_items {
+            let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))?;
             self.items = items;
-            self.raw_items = data.clone();
+            self.raw_items = data;
             self.state.select_first();
             self.scroll_state =
                 ScrollbarState::new(self.items.len().saturating_sub(1) * ITEM_HEIGHT);
@@ -368,7 +355,7 @@ where
                     // Swap headers between current and should pos
                     if default_idx - idx_offset < headers.len() {
                         headers.swap(default_idx - idx_offset, curr_idx);
-                        for row in rows.iter_mut() {
+                        for row in &mut rows {
                             // Swap also data columns
                             row.swap(default_idx - idx_offset, curr_idx);
                         }
@@ -379,7 +366,7 @@ where
                     if default_idx - idx_offset < headers.len() {
                         let curr_hdr = headers.remove(default_idx - idx_offset);
                         headers.push(curr_hdr);
-                        for row in rows.iter_mut() {
+                        for row in &mut rows {
                             let curr_cell = row.remove(default_idx - idx_offset);
                             row.push(curr_cell);
                         }
@@ -418,8 +405,11 @@ where
         let view_config = self.get_output_config().clone();
         let data = build_list_table(self.items.iter(), &view_config);
         let (table_headers, table_rows, _table_constraints) = self.prepare_table(data.0, data.1);
-        let mut statuses: Vec<Option<String>> =
-            self.items.iter().map(|item| item.status()).collect();
+        let mut statuses: Vec<Option<String>> = self
+            .items
+            .iter()
+            .map(structable::StructTable::status)
+            .collect();
 
         // Ensure we have as many statuses as rows to zip them properly
         statuses.resize_with(table_rows.len(), Default::default);
@@ -535,7 +525,7 @@ where
             .zip(self.table_row_styles.clone())
             .map(|(data, row_style)| {
                 data.iter()
-                    .map(|content| Cell::from(Text::from(content.to_string())))
+                    .map(|content| Cell::from(Text::from(content.clone())))
                     .collect::<Row>()
                     .style(row_style)
                     .height(1)

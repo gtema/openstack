@@ -20,6 +20,7 @@
 //! 1. **ID + Secret**: Authenticate using the application credential ID and its secret.
 //! 2. **Name + Secret + User**: Authenticate using the application credential name, its secret,
 //!    and the associated user's identity (ID or name with domain).
+//!
 //! Authentication using Application Credentials look like:
 //!
 //! With ID and Secret

@@ -102,7 +102,7 @@ impl Header {
             let mut descriptions_width: usize = 0;
             // Collect data into rows simultaneously counting max widths
             let (bindings, descriptions): (Vec<ListItem>, Vec<ListItem>) = col_bindings
-                .map(|x| (x.0.clone().into(), x.1.clone().into()))
+                .map(|x| (x.0.as_str().into(), x.1.as_str().into()))
                 .map(|(k, d): (ListItem, ListItem)| {
                     bindings_width = max(bindings_width, k.width());
                     descriptions_width = max(descriptions_width, d.width());
@@ -110,10 +110,8 @@ impl Header {
                 })
                 .collect();
 
-            let bindings_list = List::default().items(bindings.clone()).style(style);
-            let descriptions_list = List::default()
-                .items(descriptions.clone())
-                .style(Style::new());
+            let bindings_list = List::default().items(bindings).style(style);
+            let descriptions_list = List::default().items(descriptions).style(Style::new());
 
             // Split current area into 3 (binding, description, remainder)
             let cols = Layout::default()
@@ -147,7 +145,7 @@ impl Component for Header {
             Action::Render => self.render_tick()?,
             Action::ConnectToCloud(ref cloud) => {
                 // Save information about reconnecting to the cloud
-                self.cloud_name = cloud.clone();
+                self.cloud_name.clone_from(cloud);
                 self.project_name.clear();
                 self.domain_name.clear();
                 self.connection_data_rows.clear();
@@ -195,19 +193,19 @@ impl Component for Header {
                     if let Some(domain) = &project.domain
                         && let Some(name) = &domain.name
                     {
-                        self.domain_name = name.clone();
+                        self.domain_name.clone_from(name);
                         self.connection_data_rows
                             .push((String::from("Domain:"), self.domain_name.clone()));
                     }
                     if let Some(name) = &project.name {
-                        self.project_name = name.clone();
+                        self.project_name.clone_from(name);
                         self.connection_data_rows
                             .push((String::from("Project:"), self.project_name.clone()));
                     }
                 } else if let Some(domain) = &auth_token.domain
                     && let Some(name) = &domain.name
                 {
-                    self.domain_name = name.clone();
+                    self.domain_name.clone_from(name);
                     self.connection_data_rows
                         .push((String::from("Domain:"), self.domain_name.clone()));
                 }
@@ -236,13 +234,13 @@ impl Component for Header {
             let (c1, c2): (Vec<ListItem>, Vec<ListItem>) = self
                 .connection_data_rows
                 .iter()
-                .map(|x| (x.0.clone().into(), x.1.clone().into()))
+                .map(|x| (x.0.as_str().into(), x.1.as_str().into()))
                 .collect();
 
             let c1_list = List::default()
-                .items(c1.clone())
+                .items(c1)
                 .style(Style::new().fg(Color::Yellow));
-            let c2_list = List::default().items(c2.clone()).style(Style::new());
+            let c2_list = List::default().items(c2).style(Style::new());
 
             let cols = Layout::default()
                 .direction(Direction::Horizontal)

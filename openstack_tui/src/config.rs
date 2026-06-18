@@ -131,8 +131,8 @@ impl ConfigFileBuilder {
     pub fn build(self) -> Result<Config, ConfigFileBuilderError> {
         let mut config = config::Config::builder();
 
-        for source in &self.sources {
-            config = config.add_source(source.clone());
+        for source in self.sources {
+            config = config.add_source(source);
         }
 
         config

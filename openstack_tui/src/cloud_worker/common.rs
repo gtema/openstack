@@ -23,22 +23,35 @@ pub trait ConfirmableRequest {
 
 #[derive(Error, Debug)]
 pub enum CloudWorkerError {
-    /// OpenStack API error.
     #[error(transparent)]
     OpenStackApi {
         /// The source of the error.
-        #[from]
-        source: openstack_sdk::api::ApiError<openstack_sdk::RestError>,
+        source: Box<openstack_sdk::api::ApiError<openstack_sdk::RestError>>,
     },
 
     #[error("error sending action: {}", source)]
     SenderError {
         /// The source of the error.
-        #[from]
-        source: tokio::sync::mpsc::error::SendError<action::Action>,
+        source: Box<tokio::sync::mpsc::error::SendError<action::Action>>,
     },
 
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
+}
+
+impl From<tokio::sync::mpsc::error::SendError<action::Action>> for CloudWorkerError {
+    fn from(source: tokio::sync::mpsc::error::SendError<action::Action>) -> Self {
+        CloudWorkerError::SenderError {
+            source: Box::new(source),
+        }
+    }
+}
+
+impl From<openstack_sdk::api::ApiError<openstack_sdk::RestError>> for CloudWorkerError {
+    fn from(source: openstack_sdk::api::ApiError<openstack_sdk::RestError>) -> Self {
+        CloudWorkerError::OpenStackApi {
+            source: Box::new(source),
+        }
+    }
 }

@@ -47,8 +47,8 @@ pub struct IdentityCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IdentityCommands {
-    Federation(federation::FederationCommand),
-    User(user::UserCommand),
+    Federation(Box<federation::FederationCommand>),
+    User(Box<user::UserCommand>),
 }
 
 impl IdentityCommand {
