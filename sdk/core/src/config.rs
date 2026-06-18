@@ -292,6 +292,18 @@ pub struct Auth {
     pub access_token: Option<SecretString>,
     /// OIDC access token type (when not access_token).
     pub access_token_type: Option<String>,
+    /// OIDC/Discovery endpoint URL.
+    pub access_token_endpoint: Option<String>,
+    /// OIDC client ID.
+    pub client_id: Option<String>,
+    /// OIDC client secret.
+    #[serde(serialize_with = "serialize_secret_string")]
+    #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
+    pub client_secret: Option<SecretString>,
+    /// OIDC discovery document endpoint URL.
+    pub discovery_endpoint: Option<String>,
+    /// OIDC scope.
+    pub scope: Option<String>,
     /// JWT token.
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
@@ -341,6 +353,11 @@ impl fmt::Debug for Auth {
             .field("identity_provider", &self.identity_provider)
             .field("mapping_name", &self.attribute_mapping_name)
             .field("access_token_type", &self.access_token_type)
+            .field("client_id", &self.client_id)
+            .field("client_secret", &"<secret>")
+            .field("access_token_endpoint", &self.access_token_endpoint)
+            .field("discovery_endpoint", &self.discovery_endpoint)
+            .field("scope", &self.scope)
             .field("application_credential_id", &self.application_credential_id)
             .field(
                 "application_credential_name",

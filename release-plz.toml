@@ -99,6 +99,9 @@ name = "openstack-sdk-auth-multifactor"
 version_group = "sdk-auth"
 [[package]]
 name = "openstack-sdk-auth-oidcaccesstoken"
+
+[[package]]
+name = "openstack-sdk-auth-oidcclientcredentials"
 version_group = "sdk-auth"
 [[package]]
 name = "openstack-sdk-auth-passkey"

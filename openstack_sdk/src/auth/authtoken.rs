@@ -33,6 +33,8 @@ pub enum AuthType {
     V3ApplicationCredential,
     /// OIDC Access token
     V3OidcAccessToken,
+    /// OIDC Client Credentials
+    V3OidcClientCredentials,
     /// v3 Password
     V3Password,
     /// v3 Token
@@ -64,6 +66,7 @@ impl FromStr for AuthType {
             }
             "v3password" | "password" => Ok(Self::V3Password),
             "v3oidcaccesstoken" | "accesstoken" => Ok(Self::V3OidcAccessToken),
+            "v3oidcclientcredentials" | "clientcredentials" => Ok(Self::V3OidcClientCredentials),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
             "v3multifactor" => Ok(Self::V3Multifactor),
@@ -97,6 +100,7 @@ impl AuthType {
             Self::V3ApplicationCredential => "v3applicationcredential",
             Self::V3Password => "v3password",
             Self::V3OidcAccessToken => "v3oidcaccesstoken",
+            Self::V3OidcClientCredentials => "v3oidcclientcredentials",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
             Self::V3Totp => "v3totp",

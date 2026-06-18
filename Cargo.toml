@@ -19,6 +19,7 @@ default-members = [
   "sdk/auth-application-credential",
   "sdk/auth-multifactor",
   "sdk/auth-oidcaccesstoken",
+  "sdk/auth-oidcclientcredentials",
   "sdk/auth-password",
   "sdk/auth-receipt",
   "sdk/auth-totp",

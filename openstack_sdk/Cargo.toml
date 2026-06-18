@@ -80,6 +80,7 @@ openstack-sdk-auth-core.workspace = true
 openstack-sdk-auth-federation = { version = "0.22", path = "../sdk/auth-federation/", optional = true }
 openstack-sdk-auth-jwt = { version = "0.22", path = "../sdk/auth-jwt/", optional = true }
 openstack-sdk-auth-oidcaccesstoken = { version = "0.22", path = "../sdk/auth-oidcaccesstoken/" }
+openstack-sdk-auth-oidcclientcredentials = { version = "0.1", path = "../sdk/auth-oidcclientcredentials/" }
 openstack-sdk-auth-passkey = { version = "0.22", path = "../sdk/auth-passkey/", optional = true }
 openstack-sdk-auth-password = { version = "0.22", path = "../sdk/auth-password/" }
 openstack-sdk-auth-receipt = { version = "0.22", path = "../sdk/auth-receipt/" }
