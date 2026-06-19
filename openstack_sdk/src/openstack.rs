@@ -38,7 +38,9 @@ use openstack_sdk_auth_token as token_auth;
 
 use openstack_sdk_auth_core::{
     Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
-    authtoken::AuthTokenError, authtoken_scope::AuthTokenScope, types::Project,
+    authtoken::AuthTokenError,
+    authtoken_scope::AuthTokenScope,
+    types::{AuthResponse, Project},
 };
 
 use openstack_sdk_core::api::{
@@ -50,7 +52,7 @@ use openstack_sdk_core::auth::{
     auth_helper::{AuthHelper, Dialoguer, Noop},
     gather_auth_data,
 };
-use openstack_sdk_core::catalog::{CatalogError, ServiceEndpoint};
+use openstack_sdk_core::catalog::{Catalog, CatalogError, ServiceEndpoint};
 use openstack_sdk_core::config::CloudConfig;
 use openstack_sdk_core::error::{OpenStackError, OpenStackResult, RestError};
 use openstack_sdk_core::types::{ApiVersion, ServiceType};
@@ -584,6 +586,69 @@ impl OpenStack {
         None
     }
 
+    /// Return current authentication information
+    pub fn get_auth_info(&self) -> Option<AuthResponse> {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        if let Auth::AuthToken(token) = &session.auth {
+            return token.auth_info.clone();
+        }
+        None
+    }
+
+    /// Fetch auth catalog using the /v3/auth/catalog endpoint and update the session catalog.
+    ///
+    /// This retrieves the service catalog from the Identity API using the
+    /// `GET /v3/auth/catalog` endpoint and updates the session's catalog with
+    /// the fetched endpoints. Useful when the token was obtained without a
+    /// catalog or when the catalog needs to be refreshed.
+    pub fn fetch_auth_catalog(&self) -> OpenStackResult<()> {
+        self.refresh_catalog()?;
+        self.persist_catalog_to_cache();
+        Ok(())
+    }
+
+    /// Refresh the catalog from the /v3/auth/catalog endpoint and update the in-memory
+    /// session catalog without persisting to the on-disk auth cache.
+    pub fn refresh_catalog(&self) -> OpenStackResult<()> {
+        let mut catalog: Catalog = {
+            let session = self.session_read("refresh_catalog")?;
+            session.catalog.clone()
+        };
+        catalog.read_auth_catalog(self)?;
+        let mut session = self.session_write("refresh_catalog: update")?;
+
+        // Update session catalog
+        session.catalog = catalog.clone();
+
+        // Update auth token's catalog
+        if let Auth::AuthToken(authz) = &mut session.auth
+            && let Some(ref mut auth_info) = authz.auth_info
+        {
+            auth_info.token.catalog = catalog.get_token_catalog();
+        }
+        Ok(())
+    }
+
+    /// Persist the session's updated catalog to the on-disk auth cache.
+    pub fn persist_catalog_to_cache(&self) {
+        let mut session = match self.session_write("persist_catalog_to_cache") {
+            Ok(s) => s,
+            Err(e) => {
+                warn!(
+                    "Failed to acquire session write lock for catalog persistence: {}",
+                    e
+                );
+                return;
+            }
+        };
+
+        if let Auth::AuthToken(authz) = &session.auth {
+            let scope = authz.get_scope();
+            let authz_clone = authz.clone();
+            session.state.set_scope_auth(&scope, &authz_clone);
+        }
+    }
+
     pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
         let session = self.session.read().unwrap_or_else(|e| e.into_inner());
         if let Auth::AuthToken(token) = &session.auth {
@@ -711,21 +776,51 @@ impl api::Client for OpenStack {
         service_type: &ServiceType,
         version: Option<&ApiVersion>,
     ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
-        let session = self.session.read().map_err(|e| {
-            api::ApiError::client(RestError::SessionPoisoned {
-                msg: format!("get_service_endpoint: session read lock poisoned: {}", e),
-            })
-        })?;
-        session
-            .catalog
-            .get_service_endpoint(
-                service_type.to_string(),
-                version,
-                self.config.region_name.as_ref(),
-                self.config.interface.as_ref(),
-            )
-            .cloned()
-            .map_err(api::ApiError::catalog)
+        let lookup = || {
+            let session = self.session.read().map_err(|e| {
+                api::ApiError::client(RestError::SessionPoisoned {
+                    msg: format!("get_service_endpoint: session read lock poisoned: {}", e),
+                })
+            })?;
+            session
+                .catalog
+                .get_service_endpoint(
+                    service_type.to_string(),
+                    version,
+                    self.config.region_name.as_ref(),
+                    self.config.interface.as_ref(),
+                )
+                .cloned()
+                .map_err(api::ApiError::catalog)
+        };
+
+        let ep = match lookup() {
+            Ok(ep) => return Ok(ep),
+            Err(api::ApiError::Catalog { source }) => {
+                if matches!(source, CatalogError::ServiceNotConfigured { .. }) {
+                    info!(
+                        "Service '{}' not in catalog, attempting refresh via auth/catalog",
+                        service_type
+                    );
+                    if let Err(e) = self.refresh_catalog() {
+                        warn!("Catalog refresh failed: {}", e);
+                    }
+                    match lookup() {
+                        Ok(ep) => {
+                            debug!("Service '{}' found after catalog refresh", service_type);
+                            self.persist_catalog_to_cache();
+                            ep
+                        }
+                        Err(e) => return Err(e),
+                    }
+                } else {
+                    return Err(api::ApiError::Catalog { source });
+                }
+            }
+            Err(e) => return Err(e),
+        };
+
+        Ok(ep)
     }
 }
 
@@ -1245,5 +1340,46 @@ mod tests {
         }
 
         mock.assert_calls(4);
+    }
+
+    #[test]
+    fn test_get_service_endpoint_refresh_catalog_on_missing() {
+        let server = MockServer::start();
+
+        let catalog_json = serde_json::json!({
+            "catalog": [
+                {
+                    "type": "compute",
+                    "name": "nova",
+                    "endpoints": [
+                        {
+                            "id": "ep-compute-1",
+                            "region_id": "RegionOne",
+                            "region": "RegionOne",
+                            "interface": "public",
+                            "url": "http://nova.example.com/v2.1",
+                            "availability_zone_hints": ["nova"]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let _mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/auth/catalog")
+                .header("X-Auth-Token", "test-token");
+            then.status(StatusCode::OK)
+                .header("content-type", "application/json")
+                .body(catalog_json.to_string());
+        });
+
+        let client = create_test_client(&server, "test-token", 0, None);
+
+        let ep = client
+            .get_service_endpoint(&ServiceType::Compute, None)
+            .unwrap();
+
+        assert_eq!(ep.url_str(), "http://nova.example.com/v2.1");
     }
 }
