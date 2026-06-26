@@ -25,11 +25,13 @@ adapted where necessary. This approach forces code to be consistent.
 
 All generated modules have a corresponding notice in the header.
 
-if you have an idea how generated code can be improved open an issue or discussion.
+if you have an idea how generated code can be improved open an issue or
+discussion.
 
 ## Auth Plugins Loading Mechanics
 
-Authentication plugins use a two-layer approach to ensure they are loaded at runtime:
+Authentication plugins use a two-layer approach to ensure they are loaded at
+runtime:
 
 ### Plugin Registration
 
@@ -44,31 +46,35 @@ inventory::submit! {
 }
 ```
 
-The SDK iterates `inventory::iter::<AuthPluginRegistration>` at runtime to discover
-available authenticators. The `inventory` crate uses linker sections to collect
-registrations across crates, which means the plugin crate must be linked for its
-registration to appear.
+The SDK iterates `inventory::iter::<AuthPluginRegistration>` at runtime to
+discover available authenticators. The `inventory` crate uses linker sections to
+collect registrations across crates, which means the plugin crate must be linked
+for its registration to appear.
 
 ### Linker Anchoring
 
-Without explicit references, the Rust linker may strip unused plugin crates.
-The `openstack_sdk` crate uses a `build.rs` script to automatically generate
+Without explicit references, the Rust linker may strip unused plugin crates. The
+`openstack_sdk` crate uses a `build.rs` script to automatically generate
 `plugin_anchors.rs` with `#[cfg]`-gated imports that reference each plugin's
 `#[used] ANCHOR` static. This ensures the linker includes all enabled plugins.
 
 Key points:
 
-- Non-optional plugins are always anchored (e.g., password, token, application_credential).
-- Optional plugins are feature-gated (e.g., `keystone_ng` enables JWT and federation,
-  `passkey` enables WebAuthn).
-- Adding a new plugin requires adding it as a dependency in `openstack_sdk/Cargo.toml`.
-  The `build.rs` will automatically anchor it (with appropriate `#[cfg]` if optional).
+- Non-optional plugins are always anchored (e.g., `password`, `token`,
+  `application_credential`).
+- Optional plugins are feature-gated (e.g., `keystone_ng` enables JWT and
+  federation, `passkey` enables WebAuthn).
+- Adding a new plugin requires adding it as a dependency in
+  `openstack_sdk/Cargo.toml`. The `build.rs` will automatically anchor it (with
+  appropriate `#[cfg]` if optional).
 
 ### Adding a New Auth Plugin
 
 1. Create the plugin crate under `sdk/auth-<name>/`.
-2. Implement `OpenStackAuthType` and submit `AuthPluginRegistration` via `inventory::submit!`.
-3. Optionally implement `OpenStackMultifactorAuthMethod` for multifactor support.
+2. Implement `OpenStackAuthType` and submit `AuthPluginRegistration` via
+   `inventory::submit!`.
+3. Optionally implement `OpenStackMultifactorAuthMethod` for multifactor
+   support.
 4. Add a `#[used] ANCHOR` static to prevent linker stripping.
 5. Add the crate as a dependency in `openstack_sdk/Cargo.toml`.
 6. Add a feature flag if the plugin is optional.
@@ -90,9 +96,9 @@ Key points:
 - spell checking is performed using 'crate-ci/typos' and is a mandatory check.
 
 - doctstrings in generated files are produced from OpenStack services code.
-  There is no point fixing them here and instead syntax or typos should be
-  fixed upstream. The only exception is that during code generation spelling
-  issues are automatically addressed by `typos -w`.
+  There is no point fixing them here and instead syntax or typos should be fixed
+  upstream. The only exception is that during code generation spelling issues
+  are automatically addressed by `typos -w`.
 
 - Merge commits are forbidden. Whenever you open a PR please update it with
   rebase and not a merge commit. It is also recommended to "allow edits from
@@ -105,17 +111,152 @@ Key points:
 There are 2 projects being used to take care of release process:
 
 - `release-plz` validates challenges and prepares PR to cut a release proposing
-  the corresponding version. Merging PR will trigger `release-plz` to create
-  new version, tag it, perform Rust release to <crates.io>.
+  the corresponding version. Merging PR will trigger `release-plz` to create new
+  version, tag it, perform Rust release to <crates.io>.
 
 - `cargo dist` builds and uploads binary artifacts to the GH releases. This is
   triggered by creating a git tag `CRATE_NAME_vMAJ.MIN.PATCH`. Part of the
   normal PR CI `cargo dist` is also building artifacts and stores them as CI
   artifacts.
 
-Since every crate in the workspace is currently having independent versioning
-it is not trivial to rely on "latest" release. This is explicitly harming
-publishing binary artifacts. As of now every crate is released in a separate
-tag with binary artifacts included in the corresponding release. Maybe combined
-tag (i.e. in a form YYYY-MM-DD) may be produced repackaging binaries, but it is
-not the case right now.
+Since every crate in the workspace is currently having independent versioning it
+is not trivial to rely on "latest" release. This is explicitly harming
+publishing binary artifacts. As of now every crate is released in a separate tag
+with binary artifacts included in the corresponding release. Maybe combined tag
+(i.e. in a form YYYY-MM-DD) may be produced repackaging binaries, but it is not
+the case right now.
+
+## 📦 Project Overview (AI‑friendly)
+
+The repository is a **Rust workspace** that bundles:
+
+| Category          | Crates (paths)                                |
+| ----------------- | --------------------------------------------- |
+| CLI entry points  | `cli/*` (e.g. `cli/compute`, `cli/network` …) |
+| SDK core          | `openstack_sdk`                               |
+| SDK sub‑modules   | `sdk/*` (auth, compute, identity, …)          |
+| Types             | `openstack_types`, `types/*`                  |
+| TUI (terminal UI) | `openstack_tui`                               |
+| Misc utilities    | `xtask`, `fuzz`                               |
+
+_The workspace definition lives in `Cargo.toml` (members / default‑members).
+Agents can discover all crates by grepping `members =` in that file._
+
+## 🏗️ Build & Test Quick Reference (AI‑friendly)
+
+| Goal                              | Command (run from repository root)      |
+| --------------------------------- | --------------------------------------- |
+| Build every binary (release)      | `cargo build --workspace --release`     |
+| Run all unit + integration tests  | `cargo test --workspace --all-features` |
+| Run only the TUI tests            | `cargo test -p openstack_tui`           |
+| Lint & format (pre‑commit)        | `pre-commit run --all-files`            |
+| Check code generation consistency | `cargo run -p codegenerator -- --check` |
+| Generate documentation            | `cargo doc --workspace --no-deps`       |
+
+## ⚙️ Code Generation (AI‑friendly)
+
+- Most SDK/Types/Cli crates are **generated** by
+  <https://opendev.org/openstack/codegenerator>. Generated files contain a
+  header comment `// AUTO‑GENERATED` – those files should be **never edited**
+  directly.
+- To modify generated behavior, edit the **code‑generator templates** or the
+  **service OpenAPI specs** and then re‑run:
+
+```bash
+cargo run -p codegenerator -- generate
+```
+
+- After regeneration, run the lint step above to ensure the workspace stays
+  clean.
+
+## 🔐 Authentication Plugins (AI‑friendly)
+
+### Registration (runtime discovery)
+
+Each auth plugin crate (e.g. `sdk/auth-password`) registers a static via:
+
+```rust
+inventory::submit! {
+    openstack_sdk_auth_core::AuthPluginRegistration { method: &PLUGIN }
+}
+```
+
+The SDK iterates `inventory::iter::<AuthPluginRegistration>` at runtime.
+
+### Linker anchoring (to avoid stripping)
+
+`openstack_sdk/build.rs` creates `plugin_anchors.rs` that **imports** every
+plugin’s `#[used] ANCHOR` static behind feature gates.
+
+**What agents should look for:**
+
+| Item                   | Location                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| Plugin list generation | `openstack_sdk/build.rs`                                                         |
+| Anchor definitions     | `#[used] static ANCHOR: u8 = 0;` in each auth crate                              |
+| Feature‑gate mapping   | `Cargo.toml` feature sections for optional plugins (`keystone_ng`, `passkey`, …) |
+
+### Adding a new plugin (step list)
+
+1. Create `sdk/auth-<name>/Cargo.toml` and add a `#[used] ANCHOR` static.
+2. Implement `OpenStackAuthType` and submit registration.
+3. Add the crate as a dependency in `openstack_sdk/Cargo.toml`.
+4. (Optional) Add a feature flag in `openstack_sdk/Cargo.toml`.
+5. Run `cargo build`; the `build.rs` will automatically anchor it.
+
+Agents can verify step 3 by grepping the workspace `Cargo.toml` for the new
+crate name.
+
+## 📂 Repository Layout (AI‑friendly)
+
+```
+/                   – workspace root
+├─ Cargo.toml       – workspace definition
+├─ openstack_cli/   – CLI entry point
+├─ openstack_sdk/   – SDK entry point (runtime glue)
+├─ openstack_tui/   – terminal UI binary
+├─ openstack_types/ – REST response type definitions
+├─ cli/             – individual service CLIs (e.g. `cli/compute`)
+├─ sdk/auth_*       – Authentication plugins for SDK
+├─ sdk/             – generated service binding crates (compute, identity, …)
+├─ types/           – shared type definitions per service
+├─ xtask/           – custom cargo tasks (build scripts)
+├─ doc/             – MkDocs source for documentation
+└─ .github/…        – CI / release scripts
+```
+
+## 🛡️ Commit Requirements (AI‑friendly)
+
+- **DCO sign‑off**: use `git commit -s` to automatically add a `Signed-off-by:`
+  line with the configured user name and email, satisfying the Developer
+  Certificate of Origin requirement.
+- **Pre‑commit checks**: run `pre-commit run --all-files` before pushing.
+- **Committed verification**: ensure the repository passes the `committed`
+  checks defined in `committed.toml` (run `committed`).
+- **Commit message format** (conventional commits):
+  - Conventional commit type in the subject line
+  - Subject line capitalized and ≤ 50 characters.
+  - Body lines wrapped at ≤ 72 characters.
+  - Separate subject and body with a blank line.
+  - End with a `Signed-off-by:` trailer.
+
+## 👾 AI_AGENT_METADATA (machine‑parseable)
+
+```html
+<!--
+AI_AGENT_METADATA
+{
+  "workspace_root": "openstack",
+  "cargo_toml": "Cargo.toml",
+  "generated_crates_path": "sdk/",
+  "auth_plugin_crate_prefix": "sdk/auth-",
+  "tui_entry": "openstack_tui",
+  "cli_entry_prefix": "cli/",
+  "cli_root": "openstack_cli",
+  "types_root": "openstack_types"
+}
+-->
+```
+
+_The JSON can be read by automation tools to locate key paths without fragile
+string matching._
