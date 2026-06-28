@@ -54,5 +54,8 @@ tracing-error = { workspace = true }
 tracing-subscriber = { workspace = true }
 url.workspace = true
 
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }
+
 [lints]
 workspace = true

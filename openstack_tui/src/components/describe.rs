@@ -12,10 +12,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{Component, Frame};
+use super::Component;
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use eyre::{OptionExt, Result};
-use ratatui::{prelude::*, widgets::*};
+use ratatui::{
+    prelude::*,
+    style::palette::tailwind,
+    widgets::{
+        Block, BorderType, Borders, Clear, Padding, Paragraph, Scrollbar, ScrollbarOrientation,
+        ScrollbarState,
+    },
+};
 use serde_json::Value;
 use std::cmp;
 
@@ -155,14 +162,29 @@ impl Describe {
     }
 
     pub fn cursor_left(&mut self) -> Result<()> {
-        if self.max_row_length > self.content_size.height {
+        if self.max_row_length > self.content_size.width {
             self.content_scroll.1 = self.content_scroll.1.saturating_sub(1);
             self.hscroll_state = self.hscroll_state.position(self.content_scroll.1.into());
         }
         Ok(())
     }
 
-    fn render(&mut self, f: &mut Frame<'_>, area: Rect) {
+    fn render_inner(&mut self, area: Rect, buf: &mut Buffer) {
+        let (focus_title_style, border_type, border_col, text_col) = match self.is_focused {
+            true => (
+                Style::new().white(),
+                BorderType::Double,
+                self.config.styles.border_fg,
+                self.config.styles.fg,
+            ),
+            false => (
+                Style::default(),
+                BorderType::Plain,
+                tailwind::SLATE.c600,
+                Color::Rgb(128, 128, 128),
+            ),
+        };
+
         let mut title = vec![
             self.title
                 .clone()
@@ -178,76 +200,48 @@ impl Describe {
         let block = Block::default()
             .title(title)
             .title_alignment(Alignment::Center)
-            .title_style(match self.is_focused {
-                true => Style::new().white(),
-                false => Style::default(),
-            })
+            .title_style(focus_title_style)
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(self.config.styles.border_fg))
-            .style(
-                match self.is_focused {
-                    true => Style::new().fg(self.config.styles.fg),
-                    false => Style::new().gray(),
-                }
-                .bg(self.config.styles.buffer_bg),
-            );
+            .border_type(border_type)
+            .border_style(Style::default().fg(border_col))
+            .style(Style::new().fg(text_col).bg(self.config.styles.buffer_bg));
         self.content_size = block.inner(area).as_size();
+        let inner = block.inner(area);
 
-        let text: Vec<Line> = self.text.clone().into_iter().map(Line::from).collect();
-        let paragraph = Paragraph::new(text)
-            .block(block)
-            .scroll((self.content_scroll.0, self.content_scroll.1));
-        f.render_widget(paragraph, area);
+        block.render(area, buf);
+        let text: Vec<Line> = self.text.iter().map(|s| Line::from(s.as_str())).collect();
+        let paragraph = Paragraph::new(text).scroll((self.content_scroll.0, self.content_scroll.1));
+        paragraph.render(inner, buf);
 
         if usize::from(self.content_size.height) < self.text.len() {
-            self.render_vscrollbar(f, area);
+            self.vscroll_state = self
+                .vscroll_state
+                .content_length(
+                    (self.text.len() as u16)
+                        .saturating_sub(self.content_size.height)
+                        .into(),
+                )
+                .viewport_content_length(self.content_size.height.into());
+            let scrollbar = Scrollbar::default()
+                .orientation(ScrollbarOrientation::VerticalRight)
+                .style(Style::default().fg(self.config.styles.border_fg));
+            <Scrollbar as StatefulWidget>::render(scrollbar, inner, buf, &mut self.vscroll_state);
         }
         if self.content_size.width < self.max_row_length {
-            self.render_hscrollbar(f, area);
-        }
-    }
-
-    pub fn render_vscrollbar(&mut self, f: &mut Frame, area: Rect) {
-        self.vscroll_state = self
-            .vscroll_state
-            .content_length(
-                (self.text.len() as u16)
-                    .saturating_sub(self.content_size.height)
-                    .into(),
-            )
-            .viewport_content_length(self.content_size.height.into());
-        f.render_stateful_widget(
-            Scrollbar::default()
-                .orientation(ScrollbarOrientation::VerticalRight)
-                .style(Style::default().fg(self.config.styles.border_fg)),
-            area.inner(Margin {
-                vertical: 1,
-                horizontal: 1,
-            }),
-            &mut self.vscroll_state,
-        );
-    }
-
-    pub fn render_hscrollbar(&mut self, f: &mut Frame, area: Rect) {
-        self.hscroll_state = self
-            .hscroll_state
-            .content_length(
-                self.max_row_length
-                    .saturating_sub(self.content_size.width)
-                    .into(),
-            )
-            .viewport_content_length(self.content_size.height.into());
-        f.render_stateful_widget(
-            Scrollbar::default()
+            self.hscroll_state = self
+                .hscroll_state
+                .content_length(
+                    self.max_row_length
+                        .saturating_sub(self.content_size.width)
+                        .into(),
+                )
+                .viewport_content_length(self.content_size.width.into());
+            let scrollbar = Scrollbar::default()
                 .orientation(ScrollbarOrientation::HorizontalBottom)
-                .style(Style::default().fg(self.config.styles.border_fg)),
-            area.inner(Margin {
-                vertical: 1,
-                horizontal: 1,
-            }),
-            &mut self.hscroll_state,
-        );
+                .style(Style::default().fg(self.config.styles.border_fg));
+            <Scrollbar as StatefulWidget>::render(scrollbar, inner, buf, &mut self.hscroll_state);
+        }
     }
 }
 
@@ -288,7 +282,8 @@ impl Component for Describe {
     }
 
     fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.render(f, area);
+        Widget::render(Clear, area, f.buffer_mut());
+        self.render_inner(area, f.buffer_mut());
         Ok(())
     }
 }

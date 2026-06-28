@@ -6,234 +6,398 @@
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use serde_json::json;
-use tokio::sync::mpsc::UnboundedSender;
-use tracing::debug;
-
+use crate::action::Action;
+use crate::cloud_worker::compute::v2::{
+    ComputeServerApiRequest, ComputeServerDelete, ComputeServerGetConsoleOutputBuilder,
+    ComputeServerInstanceActionList, ComputeServerList,
+};
+use crate::cloud_worker::types::{ApiRequest, ComputeApiRequest};
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
-        ComputeServerDeleteBuilder, ComputeServerDeleteBuilderError,
-        ComputeServerGetConsoleOutputBuilder, ComputeServerInstanceActionList,
-        ComputeServerInstanceActionListBuilder, ComputeServerInstanceActionListBuilderError,
-        ComputeServerList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
+/// Behaviour implementation for ComputeServers.
+pub struct ComputeServersBehaviour;
 
-const TITLE: &str = "Compute Servers";
-const VIEW_CONFIG_KEY: &str = "compute.server";
+impl ResourceBehaviour for ComputeServersBehaviour {
+    type Item = ServerResponse;
+    type Filter = ComputeServerList;
 
-impl ResourceKey for ServerResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+    fn view_key() -> &'static str {
+        "compute.server"
     }
-}
-
-pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerResponse, ComputeServerList>;
-
-impl ComputeServers<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: ComputeServerList) -> ComputeServerList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some("display_name".into());
-            filters.sort_dir = Some("asc".into());
+    fn title() -> &'static str {
+        "Compute Servers"
+    }
+    fn mode() -> Mode {
+        Mode::ComputeServers
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some("display_name".into());
+            filter.sort_dir = Some("asc".into());
         }
-        filters
+        filter
     }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> ComputeServerList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
+            ComputeServerApiRequest::ListDetailed(Box::new(filter.clone())),
+        )))
     }
-}
-
-impl TryFrom<&ServerResponse> for ComputeServerDelete {
-    type Error = ComputeServerDeleteBuilderError;
-    fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
-        let mut builder = ComputeServerDeleteBuilder::default();
-        builder.id(value.id.clone());
-        if let Some(name) = &value.name {
-            builder.name(name.clone());
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+            if matches!(**boxreq, ComputeServerApiRequest::ListDetailed(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetComputeServerListFilters(f) = action {
+            Some((**f).clone())
+        } else {
+            None
         }
-        builder.build()
     }
-}
-
-impl TryFrom<&ServerResponse> for ComputeServerInstanceActionList {
-    type Error = ComputeServerInstanceActionListBuilderError;
-    fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
-        let mut builder = ComputeServerInstanceActionListBuilder::default();
-        builder.server_id(value.id.clone());
-        if let Some(name) = &value.name {
-            builder.server_name(name.clone());
-        }
-        builder.build()
-    }
-}
-
-impl Component for ComputeServers<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
-    }
-
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
-    }
-
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
+    fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
         match action {
-            Action::CloudChangeScope(_) | Action::ConnectToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
+            Action::DeleteComputeServer => {
+                let del = ComputeServerDelete::try_from(selected?).ok()?;
+                Some(ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
+                    del,
+                ))))
             }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::ComputeServers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::ListDetailed(Box::new(self.normalized_filters())),
-                    ))));
-                }
+            _ => None,
+        }
+    }
+    fn action_to_singular_request(
+        action: &Action,
+        selected: Option<&Self::Item>,
+    ) -> Option<(Vec<Action>, ApiRequest)> {
+        if let Action::ShowServerConsoleOutput = action {
+            let server_id = selected?.id.clone();
+            let req = ComputeServerApiRequest::GetConsoleOutput(Box::new(
+                ComputeServerGetConsoleOutputBuilder::default()
+                    .id(server_id)
+                    .os_get_console_output(
+                        crate::cloud_worker::compute::v2::server::get_console_output::OsGetConsoleOutputBuilder::default()
+                            .build()
+                            .ok()?,
+                    )
+                    .build()
+                    .ok()?,
+            ));
+            Some((
+                vec![
+                    Action::SetDescribeLoading(true),
+                    Action::Mode {
+                        mode: Mode::Describe,
+                        stack: true,
+                    },
+                ],
+                ApiRequest::from(req),
+            ))
+        } else {
+            None
+        }
+    }
+    fn matches_singular_request(request: &ApiRequest) -> bool {
+        matches!(request, ApiRequest::Compute(ComputeApiRequest::Server(boxreq)) if matches!(**boxreq, ComputeServerApiRequest::GetConsoleOutput(_)))
+    }
+    fn handle_singular_response_data(
+        request: &ApiRequest,
+        data: &[serde_json::Value],
+    ) -> Option<Action> {
+        if let ApiRequest::Compute(ComputeApiRequest::Server(boxreq)) = request
+            && let ComputeServerApiRequest::GetConsoleOutput(_) = &**boxreq
+        {
+            return Some(Action::SetDescribeApiResponseData(
+                data.first().cloned().unwrap_or_default(),
+            ));
+        }
+        None
+    }
+    fn custom_action(action: &Action, selected: Option<&Self::Item>) -> Vec<Action> {
+        if let Action::ShowComputeServerInstanceActions = action
+            && let Some(sel) = selected
+        {
+            let sel = sel.clone();
+            if let Ok(list) = ComputeServerInstanceActionList::try_from(&sel) {
+                return vec![
+                    Action::SetComputeServerInstanceActionListFilters(Box::new(list)),
+                    Action::Mode {
+                        mode: Mode::ComputeServerInstanceActions,
+                        stack: true,
+                    },
+                ];
             }
-            Action::Mode {
-                mode: Mode::ComputeServers,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::ListDetailed(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
-                data,
-            } => {
-                if let ComputeServerApiRequest::ListDetailed(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::ApiResponseData {
-                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
-                data,
-            } => {
-                if let ComputeServerApiRequest::GetConsoleOutput(_) = *req {
-                    if let Some(command_tx) = &self.get_command_tx() {
-                        command_tx.send(Action::SetDescribeApiResponseData(
-                            data.get("output")
-                                .unwrap_or(&json!("bad data returned by API"))
-                                .to_owned(),
-                        ))?;
-                        command_tx.send(Action::Mode {
-                            mode: Mode::Describe,
-                            stack: true,
-                        })?;
-                        self.set_loading(false);
-                    } else {
-                        debug!("No command_tx");
-                    }
-                }
-            }
-            Action::SetComputeServerListFilters(filters) => {
-                self.set_filters(*filters);
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::ListDetailed(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::ShowServerConsoleOutput => {
-                if let Some(server_id) = self.get_selected_resource_id()? {
-                    if let Some(command_tx) = &self.get_command_tx() {
-                        command_tx.send(Action::SetDescribeLoading(true))?;
-                        command_tx.send(Action::Mode {
-                            mode: Mode::Describe,
-                            stack: true,
-                        })?;
-                    }
-                    //self.set_loading(true);
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::GetConsoleOutput(Box::new(
-                            ComputeServerGetConsoleOutputBuilder::default()
-                                .id(server_id.clone())
-                                .os_get_console_output(crate::cloud_worker::compute::v2::server::get_console_output::OsGetConsoleOutputBuilder::default().build().wrap_err("cannot prepare os-get-console-output structure")?)
-                                .build()
-                                .wrap_err("cannot prepare request")?,
-                        )),
-                    ))));
-                }
-            }
-            Action::ShowComputeServerInstanceActions
-                // only if we are currently in the servers mode
-                if current_mode == Mode::ComputeServers => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesList
-                            command_tx.send(Action::SetComputeServerInstanceActionListFilters(
-                                Box::new(
-                                    ComputeServerInstanceActionList::try_from(selected_entry)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                ),
-                            ))?;
-                            // and switch mode
-                            command_tx.send(Action::Mode {
-                                mode: Mode::ComputeServerInstanceActions,
-                                stack: true,
-                            })?;
-                        }
-                    }
-                }
-            Action::DeleteComputeServer
-                // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::ComputeServers => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesList
-                            command_tx.send(Action::Confirm(ApiRequest::from(
-                                ComputeServerApiRequest::Delete(Box::new(
-                                    ComputeServerDelete::try_from(selected_entry)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                )),
-                            )))?;
-                        }
-                    }
-                }
-            _ => {}
+        }
+        Vec::new()
+    }
+}
+
+/// Public component for ComputeServers using the generic view.
+pub type ComputeServers = GenericResourceView<'static, ComputeServersBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cloud_worker::compute::v2::ComputeServerDelete;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse;
+
+    fn make_server(id: &str, name: &str) -> ServerResponse {
+        serde_json::from_value(serde_json::json!({
+            "id": id,
+            "name": name,
+            "status": "ACTIVE",
+            "tenant_id": "tenant1",
+            "user_id": "user1",
+            "created": "2024-01-01T00:00:00Z",
+            "updated": "2024-01-01T00:00:00Z",
+            "accessIPv4": "",
+            "accessIPv6": "",
+            "flavor": {"id": "flavor1"},
+            "image": "image1",
+            "OS-DCF:diskConfig": "AUTO",
+            "OS-EXT-AZ:availability_zone": "nova",
+            "OS-EXT-STS:power_state": 1,
+            "os-extended-volumes:volumes_attached": [],
+            "metadata": {},
+            "addresses": {},
+            "config_drive": "",
+            "hostId": "host1",
+            "key_name": null,
+            "security_groups": []
+        }))
+        .unwrap()
+    }
+
+    #[test]
+    fn normalise_filter_sets_defaults_when_sort_key_none() {
+        let filter = ComputeServerList::default();
+        let normalized = ComputeServersBehaviour::normalise_filter(filter);
+        assert_eq!(normalized.sort_key, Some("display_name".into()));
+        assert_eq!(normalized.sort_dir, Some("asc".into()));
+    }
+
+    #[test]
+    fn normalise_filter_preserves_existing_sort_key() {
+        let filter = ComputeServerList {
+            sort_key: Some("id".into()),
+            sort_dir: Some("desc".into()),
+            ..Default::default()
         };
-        Ok(None)
+        let normalized = ComputeServersBehaviour::normalise_filter(filter);
+        assert_eq!(normalized.sort_key, Some("id".into()));
+        assert_eq!(normalized.sort_dir, Some("desc".into()));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(ComputeServersBehaviour::view_key(), "compute.server");
+        assert_eq!(ComputeServersBehaviour::title(), "Compute Servers");
+        assert_eq!(ComputeServersBehaviour::mode(), Mode::ComputeServers);
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = ComputeServerList::default();
+        let request = ComputeServersBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+            if matches!(*boxreq, ComputeServerApiRequest::ListDetailed(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list_detailed() {
+        let filter = ComputeServerList::default();
+        let request = ComputeServersBehaviour::request_from_filter(&filter);
+        assert!(ComputeServersBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_non_matching() {
+        let request = ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
+            ComputeServerDelete {
+                id: "test".into(),
+                name: None,
+            },
+        )));
+        assert!(!ComputeServersBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = ComputeServerList {
+            sort_key: Some("name".into()),
+            ..Default::default()
+        };
+        let action = Action::SetComputeServerListFilters(Box::new(filter));
+        let result = ComputeServersBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+        assert_eq!(result.unwrap().sort_key, Some("name".into()));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated_action() {
+        let action = Action::Tick;
+        let result = ComputeServersBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_request_delete_with_selected_server() {
+        let server = make_server("server-1", "test-server");
+        let result =
+            ComputeServersBehaviour::action_to_request(&Action::DeleteComputeServer, Some(&server));
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+            if matches!(*boxreq, ComputeServerApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn action_to_request_delete_without_selected_server() {
+        let result = ComputeServersBehaviour::action_to_request(&Action::DeleteComputeServer, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_request_returns_none_for_unrelated_action() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::action_to_request(&Action::Tick, Some(&server));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_singular_request_console_output_with_server() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::action_to_singular_request(
+            &Action::ShowServerConsoleOutput,
+            Some(&server),
+        );
+        assert!(result.is_some());
+        let (actions, request) = result.unwrap();
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(actions[0], Action::SetDescribeLoading(true)));
+        assert!(matches!(
+            actions[1],
+            Action::Mode {
+                mode: Mode::Describe,
+                stack: true
+            }
+        ));
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+            if matches!(*boxreq, ComputeServerApiRequest::GetConsoleOutput(_))
+        ));
+    }
+
+    #[test]
+    fn action_to_singular_request_console_output_without_server() {
+        let result = ComputeServersBehaviour::action_to_singular_request(
+            &Action::ShowServerConsoleOutput,
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_singular_request_returns_none_for_unrelated_action() {
+        let server = make_server("server-1", "test-server");
+        let result =
+            ComputeServersBehaviour::action_to_singular_request(&Action::Tick, Some(&server));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn matches_singular_request_returns_true_for_console_output() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::action_to_singular_request(
+            &Action::ShowServerConsoleOutput,
+            Some(&server),
+        );
+        let (_actions, request) = result.unwrap();
+        assert!(ComputeServersBehaviour::matches_singular_request(&request));
+    }
+
+    #[test]
+    fn matches_singular_request_returns_false_for_non_matching() {
+        let filter = ComputeServerList::default();
+        let request = ComputeServersBehaviour::request_from_filter(&filter);
+        assert!(!ComputeServersBehaviour::matches_singular_request(&request));
+    }
+
+    #[test]
+    fn handle_singular_response_data_sets_describe_data() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::action_to_singular_request(
+            &Action::ShowServerConsoleOutput,
+            Some(&server),
+        );
+        let (_actions, request) = result.unwrap();
+        let data = vec![serde_json::json!({ "output": "test" })];
+        let action = ComputeServersBehaviour::handle_singular_response_data(&request, &data);
+        assert!(matches!(
+            action,
+            Some(Action::SetDescribeApiResponseData(_))
+        ));
+    }
+
+    #[test]
+    fn handle_singular_response_data_returns_none_for_non_matching_request() {
+        let filter = ComputeServerList::default();
+        let request = ComputeServersBehaviour::request_from_filter(&filter);
+        let data = vec![serde_json::json!({ "output": "test" })];
+        let action = ComputeServersBehaviour::handle_singular_response_data(&request, &data);
+        assert!(action.is_none());
+    }
+
+    #[test]
+    fn custom_action_instance_actions_with_server() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::custom_action(
+            &Action::ShowComputeServerInstanceActions,
+            Some(&server),
+        );
+        assert_eq!(result.len(), 2);
+        assert!(matches!(
+            result[0],
+            Action::SetComputeServerInstanceActionListFilters(_)
+        ));
+        assert!(matches!(
+            result[1],
+            Action::Mode {
+                mode: Mode::ComputeServerInstanceActions,
+                stack: true
+            }
+        ));
+    }
+
+    #[test]
+    fn custom_action_instance_actions_without_server() {
+        let result =
+            ComputeServersBehaviour::custom_action(&Action::ShowComputeServerInstanceActions, None);
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn custom_action_returns_empty_for_unrelated_action() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::custom_action(&Action::Tick, Some(&server));
+        assert!(result.is_empty());
     }
 }
