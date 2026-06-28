@@ -38,28 +38,28 @@ network = ["dep:openstack-sdk-network"]
 object_store = ["dep:openstack-sdk-object-store"]
 placement = ["dep:openstack-sdk-placement"]
 sync = ["openstack_sdk_core/sync",
-  "openstack-sdk-block-storage/sync",
-  "openstack-sdk-compute/sync",
-  "openstack-sdk-container-infrastructure-management/sync",
-  "openstack-sdk-dns/sync",
-  "openstack-sdk-identity/sync",
-  "openstack-sdk-image/sync",
-  "openstack-sdk-load-balancer/sync",
-  "openstack-sdk-network/sync",
-  "openstack-sdk-object-store/sync",
-  "openstack-sdk-placement/sync"
+  "openstack-sdk-block-storage?/sync",
+  "openstack-sdk-compute?/sync",
+  "openstack-sdk-container-infrastructure-management?/sync",
+  "openstack-sdk-dns?/sync",
+  "openstack-sdk-identity?/sync",
+  "openstack-sdk-image?/sync",
+  "openstack-sdk-load-balancer?/sync",
+  "openstack-sdk-network?/sync",
+  "openstack-sdk-object-store?/sync",
+  "openstack-sdk-placement?/sync"
 ]
 async = ["openstack_sdk_core/async",
-  "openstack-sdk-block-storage/async",
-  "openstack-sdk-compute/async",
-  "openstack-sdk-container-infrastructure-management/async",
-  "openstack-sdk-dns/async",
-  "openstack-sdk-identity/async",
-  "openstack-sdk-image/async",
-  "openstack-sdk-load-balancer/async",
-  "openstack-sdk-network/async",
-  "openstack-sdk-object-store/async",
-  "openstack-sdk-placement/async"
+  "openstack-sdk-block-storage?/async",
+  "openstack-sdk-compute?/async",
+  "openstack-sdk-container-infrastructure-management?/async",
+  "openstack-sdk-dns?/async",
+  "openstack-sdk-identity?/async",
+  "openstack-sdk-image?/async",
+  "openstack-sdk-load-balancer?/async",
+  "openstack-sdk-network?/async",
+  "openstack-sdk-object-store?/async",
+  "openstack-sdk-placement?/async"
 ]
 client_der = []
 client_pem = []
