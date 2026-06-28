@@ -14,22 +14,21 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
-use ratatui::{prelude::*, widgets::*};
+use ratatui::prelude::*;
 
 use crate::{
     action::Action,
-    components::{Component, FuzzySelectList},
+    components::{Component, FuzzySelect, FuzzySelectState},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::centered_rect_fixed,
 };
 
 const TITLE: &str = " Select cloud to connect: ";
 
 pub struct CloudSelect {
     config: Config,
-    fuzzy_list: FuzzySelectList,
+    popup_state: FuzzySelectState,
 }
 
 impl Default for CloudSelect {
@@ -42,7 +41,7 @@ impl CloudSelect {
     pub fn new() -> Self {
         Self {
             config: Config::default(),
-            fuzzy_list: FuzzySelectList::new(),
+            popup_state: FuzzySelectState::new(),
         }
     }
 }
@@ -50,48 +49,34 @@ impl CloudSelect {
 impl Component for CloudSelect {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config.clone();
-        self.fuzzy_list.register_config_handler(config.clone())?;
         Ok(())
     }
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        if let Action::Clouds(ref clouds) = action {
-            self.fuzzy_list.set_items(clouds.clone());
-        };
-        Ok(None)
-    }
-
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.fuzzy_list.handle_key_events(key)?;
-        if key.code == KeyCode::Enter
-            && let Some(cloud) = self.fuzzy_list.selected()
-        {
-            return Ok(Some(Action::ConnectToCloud(cloud.clone())));
+        if let Action::Clouds(clouds) = action {
+            let mut items: Vec<String> = clouds.to_vec();
+            items.sort_by_key(|a| a.to_lowercase());
+            self.popup_state.set_items(items);
         }
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect_fixed(50, 35, frame.area());
-        let popup_block = Block::default()
-            .title_top(Line::from(TITLE.white()).centered())
-            .title_bottom(
-                Line::from(" (↑) move up | (↓) move down | (Enter) to connect ")
-                    .gray()
-                    .right_aligned(), //.alignment(Alignment::Right),
-            )
-            .borders(Borders::ALL)
-            .border_type(BorderType::Thick)
-            .bg(self.config.styles.popup_bg)
-            .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(self.config.styles.popup_border_fg));
-        let inner = popup_block.inner(area);
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
+        self.popup_state.handle_key(&key.code);
+        if key.code == KeyCode::Enter
+            && let Some(cloud) = self.popup_state.selected().cloned()
+        {
+            return Ok(Some(Action::ConnectToCloud(cloud)));
+        }
+        Ok(None)
+    }
 
-        frame.render_widget(Clear, area);
-        frame.render_widget(popup_block, area);
-
-        self.fuzzy_list.draw(frame, inner)?;
-
+    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
+        frame.render_stateful_widget(
+            FuzzySelect::new(&self.config).as_popup(true).title(TITLE),
+            area,
+            &mut self.popup_state,
+        );
         Ok(())
     }
 }
