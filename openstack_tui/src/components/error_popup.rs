@@ -18,8 +18,11 @@ use ratatui::{layout::Rect, prelude::*, widgets::*};
 use std::io::Write;
 
 use crate::{
-    action::Action, components::Component, config::Config, error::TuiError, mode::Mode,
-    utils::centered_rect_fixed,
+    action::Action,
+    components::{Component, Popup},
+    config::Config,
+    error::TuiError,
+    mode::Mode,
 };
 
 const BOTTOM_TITLE: &str = "(Esc) to close";
@@ -137,7 +140,7 @@ impl Component for ErrorPopup {
             self.source.clone_from(action);
 
             self.text = strip_ansi_escapes::strip_str(msg)
-                .split("\n")
+                .split('\n')
                 .map(String::from)
                 .collect::<Vec<_>>();
 
@@ -147,7 +150,7 @@ impl Component for ErrorPopup {
                     "Please consider reporting the issue (press `r`).",
                 ));
             }
-        };
+        }
         Ok(None)
     }
 
@@ -163,32 +166,21 @@ impl Component for ErrorPopup {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let ar = centered_rect_fixed(120, 20, frame.area());
-        let popup_block = Block::default()
-            .title_top(Line::from(" Error ").red().centered())
-            .title_bottom(
-                Line::from(if self.source.is_some() {
-                    BOTTOM_TITLE_WITH_REPORT
-                } else {
-                    BOTTOM_TITLE
-                })
-                .gray()
-                .right_aligned(),
-            )
-            .borders(Borders::ALL)
-            .border_type(BorderType::Thick)
-            .padding(Padding::uniform(1))
-            .bg(self.config.styles.popup_bg)
-            .border_style(Style::default().fg(self.config.styles.popup_border_error_fg));
-        let text: Vec<Line> = self.text.clone().into_iter().map(Line::from).collect();
-        let paragraph = Paragraph::new(text)
-            .block(popup_block)
-            .scroll((self.scroll.1, self.scroll.0));
+    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
+        // Build paragraph with scrolling
+        let lines: Vec<Line> = self.text.iter().map(|s| Line::from(s.clone())).collect();
+        let paragraph = Paragraph::new(lines).scroll((self.scroll.1, self.scroll.0));
 
-        frame.render_widget(Clear, ar);
-        frame.render_widget(paragraph, ar);
+        // Title and optional bottom line
+        let title = Line::from(" Error ").red().centered();
+        let bottom = if self.source.is_some() {
+            Line::from(BOTTOM_TITLE_WITH_REPORT).gray().right_aligned()
+        } else {
+            Line::from(BOTTOM_TITLE).gray().right_aligned()
+        };
 
-        Ok(())
+        // Use generic Popup widget
+        let mut popup = Popup::new(self.config.clone(), title, paragraph).with_bottom_title(bottom);
+        popup.draw(frame, area)
     }
 }
