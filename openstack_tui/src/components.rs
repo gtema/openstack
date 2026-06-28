@@ -32,6 +32,7 @@ pub mod describe;
 pub mod dns;
 pub mod error_popup;
 mod fuzzy_select_list;
+pub mod generic_resource_view;
 pub mod header;
 pub mod home;
 pub mod identity;
@@ -39,10 +40,17 @@ pub mod image;
 pub mod load_balancer;
 pub mod network;
 pub mod project_select_popup;
+pub mod resource_behaviour;
+mod resource_key_impls; // bring ResourceKey impls into scope
 pub mod resource_select_popup;
+pub mod resource_table;
 pub mod table_view;
+// pub mod modal; // removed – replaced by generic Popup widget
+pub mod widgets;
+pub use widgets::fuzzy_select_popup::{FuzzySelectPopup, FuzzySelectPopupState};
+pub use widgets::popup::Popup;
 
-pub use fuzzy_select_list::FuzzySelectList;
+pub use fuzzy_select_list::{FuzzySelectList, FuzzySelectState};
 
 /// `Component` is a trait that represents a visual and interactive element of the user interface.
 /// Implementors of this trait can be registered with the main application loop and will be able to receive events,

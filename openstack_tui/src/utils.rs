@@ -168,18 +168,18 @@ Data directory: {}",
 }
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
-pub fn centered_rect_percent(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+pub fn centered_rect(width: u16, height: u16, r: Rect) -> Rect {
     let popup_layout = Layout::vertical([
-        Constraint::Percentage((100 - percent_y) / 2),
-        Constraint::Percentage(percent_y),
-        Constraint::Percentage((100 - percent_y) / 2),
+        Constraint::Percentage((100 - height) / 2),
+        Constraint::Percentage(height),
+        Constraint::Percentage((100 - height) / 2),
     ])
     .split(r);
 
     Layout::horizontal([
-        Constraint::Percentage((100 - percent_x) / 2),
-        Constraint::Percentage(percent_x),
-        Constraint::Percentage((100 - percent_x) / 2),
+        Constraint::Percentage((100 - width) / 2),
+        Constraint::Percentage(width),
+        Constraint::Percentage((100 - width) / 2),
     ])
     .split(popup_layout[1])[1]
 }

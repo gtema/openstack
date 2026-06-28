@@ -16,7 +16,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
-use ratatui::{prelude::*, widgets::*};
+use ratatui::{prelude::*, style::palette::tailwind, widgets::*};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
@@ -502,10 +502,14 @@ where
     }
 
     pub fn render_table(&mut self, f: &mut Frame, area: Rect) -> Result<()> {
+        let (table_border_color, table_border_type) = match self.focus {
+            Focus::Table => (self.config.styles.border_fg, BorderType::Double),
+            Focus::Describe => (tailwind::SLATE.c600, BorderType::Plain),
+        };
         let block = Block::default()
-            .borders(Borders::RIGHT)
-            .padding(Padding::right(1))
-            .border_style(Style::default().fg(self.config.styles.border_fg));
+            .borders(Borders::ALL)
+            .border_type(table_border_type)
+            .border_style(Style::default().fg(table_border_color));
 
         self.content_size = block.inner(area).as_size();
 
@@ -634,7 +638,7 @@ where
     }
 
     pub fn get_selected(&self) -> Option<&T> {
-        self.state.selected().map(|x| &self.items[x])
+        self.state.selected().and_then(|idx| self.items.get(idx))
     }
 
     /// Get mutable reference to the row with the typed data matching resource id
@@ -670,7 +674,9 @@ where
     }
 
     pub fn get_selected_raw(&self) -> Option<&Value> {
-        self.state.selected().map(|x| &self.raw_items[x])
+        self.state
+            .selected()
+            .and_then(|idx| self.raw_items.get(idx))
     }
 
     pub fn get_selected_resource_id(&self) -> Result<Option<String>, TuiError> {

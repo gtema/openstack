@@ -527,7 +527,9 @@ impl App {
                 // only update component if it belongs to the current mode or it is not refresh
                 // event
                 if *mode == self.mode
-                    || (action != Action::Refresh && action != Action::DescribeApiResponse)
+                    || (action != Action::Refresh
+                        && action != Action::DescribeApiResponse
+                        && !matches!(action, Action::Mode { .. }))
                 {
                     match component.update(action.clone(), self.mode) {
                         Ok(Some(action)) => self.action_tx.send(action)?,

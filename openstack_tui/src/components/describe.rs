@@ -15,7 +15,7 @@
 use super::{Component, Frame};
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use eyre::{OptionExt, Result};
-use ratatui::{prelude::*, widgets::*};
+use ratatui::{prelude::*, style::palette::tailwind, widgets::*};
 use serde_json::Value;
 use std::cmp;
 
@@ -184,7 +184,14 @@ impl Describe {
             })
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(self.config.styles.border_fg))
+            .border_type(match self.is_focused {
+                true => BorderType::Thick,
+                false => BorderType::Plain,
+            })
+            .border_style(Style::default().fg(match self.is_focused {
+                true => self.config.styles.border_fg,
+                false => tailwind::SLATE.c600,
+            }))
             .style(
                 match self.is_focused {
                     true => Style::new().fg(self.config.styles.fg),
