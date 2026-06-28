@@ -14,75 +14,74 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
-use ratatui::{layout::Rect, prelude::*, widgets::*};
+use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    components::{Component, FuzzySelectList},
+    components::{Component, FuzzySelectPopup, FuzzySelectPopupState},
     config::Config,
     error::TuiError,
-    utils::centered_rect_fixed,
 };
 
-#[derive(Default)]
+const TITLE: &str = " Select resource to display ";
+
 pub struct ApiRequestSelect {
-    command_tx: Option<UnboundedSender<Action>>,
     config: Config,
-    fuzzy_list: FuzzySelectList,
+    items: Vec<String>,
+    popup_state: FuzzySelectPopupState,
+}
+
+impl Default for ApiRequestSelect {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl ApiRequestSelect {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            config: Config::default(),
+            items: Vec::new(),
+            popup_state: FuzzySelectPopupState::new(),
+        }
     }
 }
 
 impl Component for ApiRequestSelect {
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.command_tx = Some(tx);
+    fn register_action_handler(&mut self, _tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         Ok(())
     }
 
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.fuzzy_list.set_items(config.mode_aliases.keys());
-        self.config = config;
+        self.config = config.clone();
+        let items: Vec<String> = self.config.mode_aliases.keys().cloned().collect();
+        self.items = items.clone();
+        self.popup_state.set_items(items);
         Ok(())
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.fuzzy_list.handle_key_events(key)?;
+        self.popup_state.handle_key(&key.code);
         if key.code == KeyCode::Enter
-            && let Some(selected) = self.fuzzy_list.selected()
-            && let Some(item) = self.config.mode_aliases.get(selected.as_str())
+            && let Some(selected_name) = self.popup_state.selected()
+            && let Some(mode) = self.config.mode_aliases.get(selected_name.as_str())
         {
-            self.fuzzy_list.reset_filter()?;
+            self.popup_state.inner_mut().reset_filter();
             return Ok(Some(Action::Mode {
-                mode: *item,
+                mode: *mode,
                 stack: false,
             }));
         }
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect_fixed(50, 35, frame.area());
-        let popup_block = Block::default()
-            .title_top(Line::from(" Select resource to display ").centered())
-            .title_bottom(
-                Line::from(" (↑) move up | (↓) move down | (Enter) to select | (Esc) to close ")
-                    .gray()
-                    .right_aligned(),
-            )
-            .borders(Borders::ALL)
-            .bg(self.config.styles.popup_bg)
-            .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(self.config.styles.popup_border_fg));
-        let inner = popup_block.inner(area);
-        frame.render_widget(Clear, area);
-        frame.render_widget(popup_block, area);
-        self.fuzzy_list.draw(frame, inner)?;
-
+    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
+        frame.render_stateful_widget(
+            FuzzySelectPopup::new(&self.config).title(TITLE),
+            area,
+            &mut self.popup_state,
+        );
         Ok(())
     }
 }

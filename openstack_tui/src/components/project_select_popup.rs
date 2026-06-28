@@ -14,10 +14,11 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::{Result, WrapErr};
-use ratatui::{prelude::*, widgets::*};
+use ratatui::prelude::*;
 use serde::Deserialize;
 use serde_json::Value;
 use structable::{StructTable, StructTableOptions};
+use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
@@ -25,16 +26,15 @@ use crate::{
         IdentityApiRequest, IdentityAuthProjectApiRequest, IdentityAuthProjectListBuilder,
     },
     cloud_worker::types::ApiRequest,
-    components::{Component, FuzzySelectList},
+    components::{Component, FuzzySelectPopup, FuzzySelectPopupState},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::centered_rect_fixed,
 };
 
 const TITLE: &str = " Select project to switch to: ";
 
-#[derive(Deserialize, StructTable)]
+#[derive(Debug, Deserialize, StructTable)]
 pub struct ProjectData {
     #[structable(title = "Name")]
     name: String,
@@ -49,8 +49,8 @@ pub struct ProjectData {
 pub struct ProjectSelect {
     config: Config,
     items: Vec<ProjectData>,
+    popup_state: FuzzySelectPopupState,
     is_loading: bool,
-    fuzzy_list: FuzzySelectList,
 }
 
 impl Default for ProjectSelect {
@@ -64,66 +64,53 @@ impl ProjectSelect {
         Self {
             config: Config::default(),
             items: Vec::new(),
-            is_loading: true,
-            fuzzy_list: FuzzySelectList::new(),
+            popup_state: FuzzySelectPopupState::new(),
+            is_loading: false,
         }
-    }
-
-    pub fn set_loading(&mut self, loading: bool) {
-        self.is_loading = loading;
-    }
-
-    fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
-        let mut items: Vec<ProjectData> =
-            serde_json::from_value(serde_json::Value::Array(data.clone()))?;
-        items.sort_by_key(|x| x.name.clone());
-
-        self.items = items;
-        self.fuzzy_list
-            .set_items(self.items.iter().map(|x| x.name.clone()));
-        self.set_loading(false);
-        Ok(())
     }
 }
 
 impl Component for ProjectSelect {
+    fn register_action_handler(&mut self, _tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        Ok(())
+    }
+
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.config = config;
+        self.config = config.clone();
         Ok(())
     }
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::ConnectToCloud(_) => {
-                self.set_loading(true);
-            }
+        match &action {
+            Action::ConnectToCloud(_) | Action::CloudChangeScope(_) => self.is_loading = true,
             Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
+                self.is_loading = true;
+                let req = IdentityAuthProjectListBuilder::default()
+                    .build()
+                    .wrap_err("cannot prepare auth project list request")?;
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityAuthProjectApiRequest::List(Box::new(
-                        IdentityAuthProjectListBuilder::default()
-                            .build()
-                            .wrap_err("cannot prepare auth project list request")?,
-                    )),
+                    IdentityAuthProjectApiRequest::List(Box::new(req)),
                 ))));
             }
             Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::Auth(_req)),
                 data,
-            } => {
-                self.set_data(data)?;
-            }
+                request: ApiRequest::Identity(IdentityApiRequest::Auth(_req)),
+            } => self.on_data(data.clone())?,
             _ => {}
-        };
+        }
         Ok(None)
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.fuzzy_list.handle_key_events(key)?;
+        self.popup_state.handle_key(&key.code);
         if key.code == KeyCode::Enter
-            && let Some(selected) = self.fuzzy_list.selected()
-            && let Some(project) = self.items.iter().find(|item| item.name == *selected)
+            && let Some(selected_name) = self.popup_state.selected()
+            && let Some(idx) = self
+                .items
+                .iter()
+                .position(|p| p.name.to_lowercase() == selected_name.to_lowercase())
         {
+            let project = &self.items[idx];
             let new_project = openstack_sdk::types::identity::v3::Project {
                 id: Some(project.id.clone()),
                 name: Some(project.name.clone()),
@@ -138,34 +125,26 @@ impl Component for ProjectSelect {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect_fixed(50, 35, frame.area());
-        let mut title = vec![TITLE.white()];
-        if self.is_loading {
-            title.push(Span::styled(
-                " ...Loading... ",
-                self.config.styles.title_loading_fg,
-            ));
-        }
+    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
+        frame.render_stateful_widget(
+            FuzzySelectPopup::new(&self.config)
+                .title(TITLE)
+                .loading(self.is_loading),
+            area,
+            &mut self.popup_state,
+        );
+        Ok(())
+    }
+}
 
-        let popup_block = Block::default()
-            .title_top(Line::from(title).centered())
-            .title_bottom(
-                Line::from(" (↑) move up | (↓) move down | (Enter) to select | (Esc) to close ")
-                    .gray()
-                    .right_aligned(),
-            )
-            .borders(Borders::ALL)
-            .border_type(BorderType::Thick)
-            .bg(self.config.styles.popup_bg)
-            .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(self.config.styles.popup_border_fg));
-        let inner = popup_block.inner(area);
-
-        frame.render_widget(Clear, area);
-        frame.render_widget(popup_block, area);
-
-        self.fuzzy_list.draw(frame, inner)?;
+impl ProjectSelect {
+    fn on_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
+        let mut items: Vec<ProjectData> = serde_json::from_value(serde_json::Value::Array(data))?;
+        items.sort_by_key(|x| x.name.to_string().to_lowercase());
+        let names: Vec<String> = items.iter().map(|p| p.name.clone()).collect();
+        self.items = items;
+        self.popup_state.set_items(names);
+        self.is_loading = false;
         Ok(())
     }
 }
