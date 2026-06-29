@@ -518,32 +518,30 @@ impl App {
                 _ => {}
             }
 
+            // Dispatch to global components
+            if let Some(action) = self.header.update(action.clone(), self.mode)? {
+                self.action_tx.send(action)?
+            };
+
             for popup in self.popups.values_mut() {
                 if let Some(action) = popup.update(action.clone(), self.mode)? {
                     self.action_tx.send(action)?;
                 };
             }
-            for (mode, component) in &mut self.components {
-                // only update component if it belongs to the current mode or it is not refresh
-                // event
-                if *mode == self.mode
-                    || (action != Action::Refresh && action != Action::DescribeApiResponse)
-                {
-                    match component.update(action.clone(), self.mode) {
-                        Ok(Some(action)) => self.action_tx.send(action)?,
-                        Err(err @ TuiError::JsonError { .. }) => {
-                            self.action_tx.send(Action::Error {
-                                msg: err.to_string(),
-                                action: Some(Box::new(action.clone())),
-                            })?
-                        }
-                        _ => {}
+
+            // Only the active mode component receives the action
+            if let Some(component) = self.components.get_mut(&self.mode) {
+                match component.update(action.clone(), self.mode) {
+                    Ok(Some(action)) => self.action_tx.send(action)?,
+                    Err(err @ TuiError::JsonError { .. }) => {
+                        self.action_tx.send(Action::Error {
+                            msg: err.to_string(),
+                            action: Some(Box::new(action.clone())),
+                        })?
                     }
+                    _ => {}
                 }
             }
-            if let Some(action) = self.header.update(action.clone(), self.mode)? {
-                self.action_tx.send(action)?
-            };
             self.render(tui)?;
         }
         Ok(())
