@@ -19,6 +19,13 @@ eyre = { workspace = true }
 http = { workspace = true }
 serde_json = {workspace = true}
 tracing = { workspace = true}
+base64 = { workspace = true }
+dialoguer = { workspace = true }
+rsa = { workspace = true }
+ssh-key = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
 
 [lints]
 workspace = true

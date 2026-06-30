@@ -22,6 +22,7 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod delete;
 mod get;
+mod show_plaintext;
 
 /// Servers password
 ///
@@ -41,6 +42,7 @@ pub struct PasswordCommand {
 pub enum PasswordCommands {
     Delete(delete::ServerPasswordCommand),
     Show(get::ServerPasswordCommand),
+    ShowPlaintext(show_plaintext::ShowPlaintextCommand),
 }
 
 impl PasswordCommand {
@@ -53,6 +55,7 @@ impl PasswordCommand {
         match &self.command {
             PasswordCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             PasswordCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            PasswordCommands::ShowPlaintext(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
