@@ -12,38 +12,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
-use openstack_types::image::v2::image::response::list::ImageResponse;
-
-use crate::{
-    action::Action,
-    cloud_worker::image::v2::{
-        ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageDeleteBuilder,
-        ImageImageDeleteBuilderError, ImageImageList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
+use crate::action::Action;
+use crate::cloud_worker::image::v2::{
+    ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageDeleteBuilder,
+    ImageImageList,
 };
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::mode::Mode;
+use openstack_types::image::v2::image::response::list::ImageResponse;
+use serde_json::Value;
 
-const TITLE: &str = "Images";
 const VIEW_CONFIG_KEY: &str = "image.image";
 
-impl ResourceKey for ImageResponse {
+impl crate::utils::ResourceKey for ImageResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&ImageResponse> for ImageImageDelete {
-    type Error = ImageImageDeleteBuilderError;
+    type Error = crate::cloud_worker::image::v2::ImageImageDeleteBuilderError;
     fn try_from(value: &ImageResponse) -> Result<Self, Self::Error> {
         let mut builder = ImageImageDeleteBuilder::default();
         if let Some(val) = &value.id {
@@ -56,99 +46,183 @@ impl TryFrom<&ImageResponse> for ImageImageDelete {
     }
 }
 
-pub type Images<'a> = TableViewComponentBase<'a, ImageResponse, ImageImageList>;
+pub struct ImageImagesBehaviour;
 
-impl Component for Images<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for ImageImagesBehaviour {
+    type Item = ImageResponse;
+    type Filter = ImageImageList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Images"
+    }
+    fn mode() -> Mode {
+        Mode::ImageImages
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(ImageImageApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Image(ImageApiRequest::Image(boxreq))
+            if matches!(**boxreq, ImageImageApiRequest::List(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetImageListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::DeleteImage = action {
+            let del = ImageImageDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(ImageImageApiRequest::Delete(Box::new(
+                del,
+            ))))
+        } else {
+            None
+        }
+    }
+    fn handle_mutation_response(request: &ApiRequest, _data: &Value) -> Option<Vec<Mutation>> {
+        if let ApiRequest::Image(ImageApiRequest::Image(req)) = request
+            && let ImageImageApiRequest::Delete(del) = &**req
+        {
+            return Some(vec![Mutation::DeleteRow(del.id.clone())]);
+        }
+        None
+    }
+}
+
+pub type Images = GenericResourceView<'static, ImageImagesBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::image::v2::image::response::list::ImageResponse;
+
+    fn make_image(id: &str, name: &str) -> ImageResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "status": "active",
+            "schema": "/v2/schemas/image",
+            "tags": [],
+            "container_format": "bare",
+            "disk_format": "qcow2",
+            "min_disk": 0,
+            "min_ram": 0,
+            "visibility": "public",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(ImageImagesBehaviour::view_key(), "image.image");
+        assert_eq!(ImageImagesBehaviour::title(), "Images");
+        assert_eq!(ImageImagesBehaviour::mode(), Mode::ImageImages);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::ImageImages = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::ImageImages,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Image(ImageApiRequest::Image(res)),
-                data,
-            } => {
-                if let ImageImageApiRequest::List(_) = *res {
-                    self.set_data(data)?;
-                }
-            }
-            Action::ApiResponseData {
-                request: ApiRequest::Image(ImageApiRequest::Image(req)),
-                ..
-            } => {
-                if let ImageImageApiRequest::Delete(del) = *req {
-                    let ImageImageDelete { ref id, .. } = *del;
-                    if self.delete_item_row_by_res_id_mut(id)?.is_none() {
-                        return Ok(Some(Action::Refresh));
-                    }
-                    self.sync_table_data()?;
-                    self.set_loading(false);
-                }
-            }
-            Action::SetImageListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DeleteImage
-                // only if we are currently in the right mode
-                if current_mode == Mode::ImageImages => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesListFilters
-                            command_tx.send(Action::Confirm(ApiRequest::from(
-                                ImageImageApiRequest::Delete(Box::new(
-                                    ImageImageDelete::try_from(selected_entry)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                )),
-                            )))?;
-                        }
-                    }
-                }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = ImageImageList::default();
+        let request = ImageImagesBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Image(ImageApiRequest::Image(boxreq))
+            if matches!(*boxreq, ImageImageApiRequest::List(_))
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = ImageImageList::default();
+        let request = ImageImagesBehaviour::request_from_filter(&filter);
+        assert!(ImageImagesBehaviour::matches_request(&request));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let del = ImageImageDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let req = ApiRequest::from(ImageImageApiRequest::Delete(Box::new(del)));
+        assert!(!ImageImagesBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = ImageImageList::default();
+        let action = Action::SetImageListFilters(filter);
+        let result = ImageImagesBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = ImageImagesBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_delete_with_selected() {
+        let img = make_image("img-1", "test-image");
+        let result = ImageImagesBehaviour::confirm_request(&Action::DeleteImage, Some(&img));
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Image(ImageApiRequest::Image(boxreq))
+            if matches!(*boxreq, ImageImageApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn confirm_request_delete_without_selected() {
+        let result = ImageImagesBehaviour::confirm_request(&Action::DeleteImage, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_returns_none_for_unrelated() {
+        let img = make_image("img-1", "test-image");
+        let result = ImageImagesBehaviour::confirm_request(&Action::Tick, Some(&img));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn handle_mutation_response_delete() {
+        let del = ImageImageDeleteBuilder::default()
+            .id("img-1".into())
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(ImageImageApiRequest::Delete(Box::new(del)));
+        let data = serde_json::json!({});
+        let result = ImageImagesBehaviour::handle_mutation_response(&request, &data);
+        let muts = result.unwrap();
+        assert_eq!(muts.len(), 1);
+        if let Mutation::DeleteRow(found_id) = &muts[0] {
+            assert_eq!(found_id, "img-1");
+        } else {
+            panic!("Expected DeleteRow mutation");
+        }
+    }
+
+    #[test]
+    fn handle_mutation_response_non_matching() {
+        let filter = ImageImageList::default();
+        let request = ImageImagesBehaviour::request_from_filter(&filter);
+        let data = serde_json::json!({});
+        let result = ImageImagesBehaviour::handle_mutation_response(&request, &data);
+        assert!(result.is_none());
     }
 }

@@ -12,39 +12,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::network::v2::{
+    NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
+    NetworkSecurityGroupRuleList, NetworkSecurityGroupRuleListBuilder,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
-        NetworkSecurityGroupRuleList, NetworkSecurityGroupRuleListBuilder,
-        NetworkSecurityGroupRuleListBuilderError,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "SecurityGroups";
 const VIEW_CONFIG_KEY: &str = "network.security_group";
 
-impl ResourceKey for SecurityGroupResponse {
+impl crate::utils::ResourceKey for SecurityGroupResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&SecurityGroupResponse> for NetworkSecurityGroupRuleList {
-    type Error = NetworkSecurityGroupRuleListBuilderError;
+    type Error = crate::cloud_worker::network::v2::NetworkSecurityGroupRuleListBuilderError;
     fn try_from(value: &SecurityGroupResponse) -> Result<Self, Self::Error> {
         let mut builder = NetworkSecurityGroupRuleListBuilder::default();
         if let Some(val) = &value.id {
@@ -57,101 +45,179 @@ impl TryFrom<&SecurityGroupResponse> for NetworkSecurityGroupRuleList {
     }
 }
 
-pub type NetworkSecurityGroups<'a> =
-    TableViewComponentBase<'a, SecurityGroupResponse, NetworkSecurityGroupList>;
+pub struct NetworkSecurityGroupsBehaviour;
 
-impl NetworkSecurityGroups<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: NetworkSecurityGroupList) -> NetworkSecurityGroupList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some(Vec::from(["name".into()]));
-            filters.sort_dir = Some(Vec::from(["asc".into()]));
-        }
-        filters
+impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
+    type Item = SecurityGroupResponse;
+    type Filter = NetworkSecurityGroupList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
     }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> NetworkSecurityGroupList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn title() -> &'static str {
+        "SecurityGroups"
+    }
+    fn mode() -> Mode {
+        Mode::NetworkSecurityGroups
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some(Vec::from(["name".into()]));
+            filter.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filter
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(NetworkSecurityGroupApiRequest::List(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::SecurityGroup(boxreq))
+            if matches!(**boxreq, NetworkSecurityGroupApiRequest::List(_))
+        )
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowNetworkSecurityGroupRules = action
+            && let Some(sel) = selected
+            && let Ok(list) = NetworkSecurityGroupRuleList::try_from(sel)
+        {
+            return vec![
+                Action::SetNetworkSecurityGroupRuleListFilters(list),
+                Action::Mode {
+                    mode: Mode::NetworkSecurityGroupRules,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
     }
 }
 
-impl Component for NetworkSecurityGroups<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub type NetworkSecurityGroups = GenericResourceView<'static, NetworkSecurityGroupsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
+
+    fn make_sg(id: &str, name: &str) -> SecurityGroupResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "description": "test sg",
+            "tenant_id": "tenant1",
+            "security_group_rules": [],
+            "created_at": "2024-01-01T00:00:00",
+            "updated_at": "2024-01-01T00:00:00"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            NetworkSecurityGroupsBehaviour::view_key(),
+            "network.security_group"
+        );
+        assert_eq!(NetworkSecurityGroupsBehaviour::title(), "SecurityGroups");
+        assert_eq!(
+            NetworkSecurityGroupsBehaviour::mode(),
+            Mode::NetworkSecurityGroups
+        );
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::NetworkSecurityGroups = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkSecurityGroupApiRequest::List(Box::new(self.normalized_filters())),
-                    ))));
-                }
-            }
+    #[test]
+    fn normalise_filter_sets_defaults() {
+        let filter = NetworkSecurityGroupList::default();
+        let norm = NetworkSecurityGroupsBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some(Vec::from(["name".into()])));
+        assert_eq!(norm.sort_dir, Some(Vec::from(["asc".into()])));
+    }
+
+    #[test]
+    fn normalise_filter_preserves_existing() {
+        let mut f = NetworkSecurityGroupList::default();
+        f.sort_key = Some(Vec::from(["id".into()]));
+        let norm = NetworkSecurityGroupsBehaviour::normalise_filter(f);
+        assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
+    }
+
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = NetworkSecurityGroupList::default();
+        let request = NetworkSecurityGroupsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::SecurityGroup(boxreq))
+            if matches!(*boxreq, NetworkSecurityGroupApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = NetworkSecurityGroupList::default();
+        let request = NetworkSecurityGroupsBehaviour::request_from_filter(&filter);
+        assert!(NetworkSecurityGroupsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Network(NetworkApiRequest::Network(Box::new(
+            crate::cloud_worker::types::NetworkNetworkApiRequest::List(Box::new(
+                crate::cloud_worker::types::NetworkNetworkList::default(),
+            )),
+        )));
+        assert!(!NetworkSecurityGroupsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn filter_carry_action_show_rules_with_selected() {
+        let sg = make_sg("sg-1", "test-sg");
+        let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
+            &Action::ShowNetworkSecurityGroupRules,
+            Some(&sg),
+            &NetworkSecurityGroupList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(
+            actions[0],
+            Action::SetNetworkSecurityGroupRuleListFilters(_)
+        ));
+        assert!(matches!(
+            actions[1],
             Action::Mode {
-                mode: Mode::NetworkSecurityGroups,
-                ..
+                mode: Mode::NetworkSecurityGroupRules,
+                stack: true
             }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSecurityGroupApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::ShowNetworkSecurityGroupRules
-                // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::NetworkSecurityGroups => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesListFilters
-                            command_tx.send(Action::SetNetworkSecurityGroupRuleListFilters(
-                                NetworkSecurityGroupRuleList::try_from(selected_entry)
-                                    .wrap_err("error preparing OpenStack request")?,
-                            ))?;
-                            // and switch mode
-                            command_tx.send(Action::Mode {
-                                mode: Mode::NetworkSecurityGroupRules,
-                                stack: true,
-                            })?;
-                        }
-                    }
-                }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Network(NetworkApiRequest::SecurityGroup(req)),
-                data,
-            } => {
-                if let NetworkSecurityGroupApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn filter_carry_action_without_selected() {
+        let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
+            &Action::ShowNetworkSecurityGroupRules,
+            None,
+            &NetworkSecurityGroupList::default(),
+        );
+        assert!(actions.is_empty());
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let sg = make_sg("sg-1", "test-sg");
+        let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&sg),
+            &NetworkSecurityGroupList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

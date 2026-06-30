@@ -489,15 +489,22 @@ impl App {
                 Action::Confirm(ref request) => {
                     debug!("Need to confirm {:?}", request);
                     self.active_popup = Some(Popup::Confirm);
-                    let mut popup = ConfirmPopup::new(request);
-                    popup.register_action_handler(self.action_tx.clone())?;
-                    self.popups.insert(Popup::Confirm, Box::new(popup));
+                    if let Some(popup) = self.popups.get_mut(&Popup::Confirm) {
+                        // ConfirmPopup already exists, reuse by downcasting
+                        unsafe {
+                            let ptr = popup as *mut Box<dyn Component> as *mut ConfirmPopup;
+                            (*ptr).update_request(request);
+                        }
+                    } else {
+                        let mut confirm_popup = ConfirmPopup::new(request);
+                        confirm_popup.register_action_handler(self.action_tx.clone())?;
+                        self.popups.insert(Popup::Confirm, Box::new(confirm_popup));
+                    }
                     self.render(tui)?;
                 }
                 Action::ConfirmRejected(ref _request) => {
                     debug!("Action not confirmed");
                     self.active_popup = None;
-                    self.popups.remove(&Popup::Confirm);
                     self.render(tui)?;
                 }
                 Action::ConfirmAccepted(ref request) => {
@@ -506,7 +513,6 @@ impl App {
                         .send(Action::PerformApiRequest(request.clone()))?;
 
                     self.active_popup = None;
-                    self.popups.remove(&Popup::Confirm);
                     self.render(tui)?;
                 }
                 Action::Error { .. } => {
@@ -523,10 +529,12 @@ impl App {
                 self.action_tx.send(action)?
             };
 
-            for popup in self.popups.values_mut() {
-                if let Some(action) = popup.update(action.clone(), self.mode)? {
-                    self.action_tx.send(action)?;
-                };
+            // Only the active popup receives actions
+            if let Some(popup_type) = self.active_popup.as_ref()
+                && let Some(popup) = self.popups.get_mut(popup_type)
+                && let Some(action) = popup.update(action.clone(), self.mode)?
+            {
+                self.action_tx.send(action)?;
             }
 
             // Only the active mode component receives the action

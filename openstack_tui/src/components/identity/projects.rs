@@ -12,106 +12,157 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::identity::v3::{
+    IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::identity::v3::project::response::list::ProjectResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Identity Projects";
 const VIEW_CONFIG_KEY: &str = "identity.project";
 
-impl ResourceKey for ProjectResponse {
+impl crate::utils::ResourceKey for ProjectResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectResponse, IdentityProjectList>;
+pub struct IdentityProjectsBehaviour;
 
-impl Component for IdentityProjects<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for IdentityProjectsBehaviour {
+    type Item = ProjectResponse;
+    type Filter = IdentityProjectList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Identity Projects"
+    }
+    fn mode() -> Mode {
+        Mode::IdentityProjects
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(IdentityProjectApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Project(boxreq))
+            if matches!(**boxreq, IdentityProjectApiRequest::List(_))
+        )
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::SwitchToProject = action
+            && let Some(sel) = selected
+        {
+            let scope = openstack_sdk::types::identity::v3::Project {
+                id: sel.id.clone(),
+                name: sel.name.clone(),
+                domain: Some(openstack_sdk::types::identity::v3::Domain {
+                    id: sel.domain_id.clone(),
+                    name: None,
+                }),
+            };
+            return vec![Action::CloudChangeScope(Box::new(
+                openstack_sdk::auth::authtoken::AuthTokenScope::Project(scope),
+            ))];
+        }
+        Vec::new()
+    }
+}
+
+pub type IdentityProjects = GenericResourceView<'static, IdentityProjectsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::identity::v3::project::response::list::ProjectResponse;
+
+    fn make_project(id: &str, name: &str, domain_id: &str) -> ProjectResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "domain_id": domain_id,
+            "enabled": true,
+            "description": "test project"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(IdentityProjectsBehaviour::view_key(), "identity.project");
+        assert_eq!(IdentityProjectsBehaviour::title(), "Identity Projects");
+        assert_eq!(IdentityProjectsBehaviour::mode(), Mode::IdentityProjects);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::IdentityProjects = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityProjectApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::IdentityProjects,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityProjectApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::Project(req)),
-                data,
-            } => {
-                if let IdentityProjectApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::SwitchToProject => {
-                if let Some(project) = self.get_selected() {
-                    let new_project = openstack_sdk::types::identity::v3::Project {
-                        id: project.id.clone(),
-                        name: project.name.clone(),
-                        domain: Some(openstack_sdk::types::identity::v3::Domain {
-                            id: project.domain_id.clone(),
-                            name: None,
-                        }),
-                    };
-                    let new_scope =
-                        openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
-                    return Ok(Some(Action::CloudChangeScope(Box::new(new_scope))));
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = IdentityProjectList::default();
+        let request = IdentityProjectsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Project(boxreq))
+            if matches!(*boxreq, IdentityProjectApiRequest::List(_))
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = IdentityProjectList::default();
+        let request = IdentityProjectsBehaviour::request_from_filter(&filter);
+        assert!(IdentityProjectsBehaviour::matches_request(&request));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let del = crate::cloud_worker::identity::v3::IdentityProjectDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let req = ApiRequest::from(IdentityProjectApiRequest::Delete(Box::new(del)));
+        assert!(!IdentityProjectsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn filter_carry_action_switch_project_with_selected() {
+        let project = make_project("proj-1", "test-proj", "domain-1");
+        let actions = IdentityProjectsBehaviour::filter_carry_action(
+            &Action::SwitchToProject,
+            Some(&project),
+            &IdentityProjectList::default(),
+        );
+        assert_eq!(actions.len(), 1);
+        assert!(matches!(actions[0], Action::CloudChangeScope(_)));
+    }
+
+    #[test]
+    fn filter_carry_action_without_selected() {
+        let actions = IdentityProjectsBehaviour::filter_carry_action(
+            &Action::SwitchToProject,
+            None,
+            &IdentityProjectList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let project = make_project("proj-1", "test-proj", "domain-1");
+        let actions = IdentityProjectsBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&project),
+            &IdentityProjectList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

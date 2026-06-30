@@ -12,38 +12,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::network::v2::{
+    NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList, NetworkSubnetList,
+    NetworkSubnetListBuilder,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::network::v2::network::response::list::NetworkResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList, NetworkSubnetList,
-        NetworkSubnetListBuilder, NetworkSubnetListBuilderError,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Networks";
 const VIEW_CONFIG_KEY: &str = "network.network";
 
-impl ResourceKey for NetworkResponse {
+impl crate::utils::ResourceKey for NetworkResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&NetworkResponse> for NetworkSubnetList {
-    type Error = NetworkSubnetListBuilderError;
+    type Error = crate::cloud_worker::network::v2::NetworkSubnetListBuilderError;
     fn try_from(value: &NetworkResponse) -> Result<Self, Self::Error> {
         let mut builder = NetworkSubnetListBuilder::default();
         if let Some(val) = &value.id {
@@ -56,98 +45,170 @@ impl TryFrom<&NetworkResponse> for NetworkSubnetList {
     }
 }
 
-pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkResponse, NetworkNetworkList>;
+pub struct NetworkNetworksBehaviour;
 
-impl NetworkNetworks<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: NetworkNetworkList) -> NetworkNetworkList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some(Vec::from(["name".into()]));
-            filters.sort_dir = Some(Vec::from(["asc".into()]));
-        }
-        filters
+impl ResourceBehaviour for NetworkNetworksBehaviour {
+    type Item = NetworkResponse;
+    type Filter = NetworkNetworkList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
     }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> NetworkNetworkList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn title() -> &'static str {
+        "Networks"
+    }
+    fn mode() -> Mode {
+        Mode::NetworkNetworks
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some(Vec::from(["name".into()]));
+            filter.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filter
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(NetworkNetworkApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Network(boxreq))
+            if matches!(**boxreq, NetworkNetworkApiRequest::List(_))
+        )
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowNetworkSubnets = action
+            && let Some(sel) = selected
+            && let Ok(list) = NetworkSubnetList::try_from(sel)
+        {
+            return vec![
+                Action::SetNetworkSubnetListFilters(list),
+                Action::Mode {
+                    mode: Mode::NetworkSubnets,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
     }
 }
 
-impl Component for NetworkNetworks<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub type NetworkNetworks = GenericResourceView<'static, NetworkNetworksBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::network::v2::network::response::list::NetworkResponse;
+
+    fn make_network(id: &str, name: &str) -> NetworkResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "tenant_id": "tenant1",
+            "subnets": [],
+            "network_type": "vxlan",
+            "segments": [],
+            "status": "ACTIVE",
+            "admin_state_up": true,
+            "shared": false
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(NetworkNetworksBehaviour::view_key(), "network.network");
+        assert_eq!(NetworkNetworksBehaviour::title(), "Networks");
+        assert_eq!(NetworkNetworksBehaviour::mode(), Mode::NetworkNetworks);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::NetworkNetworks = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkNetworkApiRequest::List(Box::new(self.normalized_filters())),
-                    ))));
-                }
-            }
+    #[test]
+    fn normalise_filter_sets_defaults() {
+        let filter = NetworkNetworkList::default();
+        let norm = NetworkNetworksBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some(Vec::from(["name".into()])));
+        assert_eq!(norm.sort_dir, Some(Vec::from(["asc".into()])));
+    }
+
+    #[test]
+    fn normalise_filter_preserves_existing() {
+        let mut f = NetworkNetworkList::default();
+        f.sort_key = Some(Vec::from(["id".into()]));
+        let norm = NetworkNetworksBehaviour::normalise_filter(f);
+        assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
+    }
+
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = NetworkNetworkList::default();
+        let request = NetworkNetworksBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Network(boxreq))
+            if matches!(*boxreq, NetworkNetworkApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = NetworkNetworkList::default();
+        let request = NetworkNetworksBehaviour::request_from_filter(&filter);
+        assert!(NetworkNetworksBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Network(NetworkApiRequest::Subnet(Box::new(
+            crate::cloud_worker::network::v2::NetworkSubnetApiRequest::List(Box::new(
+                crate::cloud_worker::network::v2::NetworkSubnetList::default(),
+            )),
+        )));
+        assert!(!NetworkNetworksBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn filter_carry_action_show_subnets_with_selected() {
+        let net = make_network("net-1", "test-net");
+        let actions = NetworkNetworksBehaviour::filter_carry_action(
+            &Action::ShowNetworkSubnets,
+            Some(&net),
+            &NetworkNetworkList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(actions[0], Action::SetNetworkSubnetListFilters(_)));
+        assert!(matches!(
+            actions[1],
             Action::Mode {
-                mode: Mode::NetworkNetworks,
-                ..
+                mode: Mode::NetworkSubnets,
+                stack: true
             }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkNetworkApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::ShowNetworkSubnets
-                // only if we are currently in the expected mode
-                if current_mode == Mode::NetworkNetworks => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            command_tx.send(Action::SetNetworkSubnetListFilters(
-                                NetworkSubnetList::try_from(selected_entry)
-                                    .wrap_err("error preparing OpenStack request")?,
-                            ))?;
-                            return Ok(Some(Action::Mode {
-                                mode: Mode::NetworkSubnets,
-                                stack: true,
-                            }));
-                        }
-                    }
-                }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Network(NetworkApiRequest::Network(req)),
-                data,
-            } => {
-                if let NetworkNetworkApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn filter_carry_action_without_selected() {
+        let actions = NetworkNetworksBehaviour::filter_carry_action(
+            &Action::ShowNetworkSubnets,
+            None,
+            &NetworkNetworkList::default(),
+        );
+        assert!(actions.is_empty());
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let net = make_network("net-1", "test-net");
+        let actions = NetworkNetworksBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&net),
+            &NetworkNetworkList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

@@ -6,102 +6,97 @@
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::cloud_worker::block_storage::v3::{
+    BlockStorageApiRequest, BlockStorageSnapshotApiRequest, BlockStorageSnapshotList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::block_storage::v3::snapshot::response::list_detailed::SnapshotResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageSnapshotApiRequest, BlockStorageSnapshotList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
+/// Behaviour implementation for BlockStorageSnapshots.
+pub struct BlockStorageSnapshotsBehaviour;
 
-const TITLE: &str = "Snapshots";
-const VIEW_CONFIG_KEY: &str = "block_storage.snapshot";
+impl ResourceBehaviour for BlockStorageSnapshotsBehaviour {
+    type Item = SnapshotResponse;
+    type Filter = BlockStorageSnapshotList;
 
-impl ResourceKey for SnapshotResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+    fn view_key() -> &'static str {
+        "block_storage.snapshot"
+    }
+    fn title() -> &'static str {
+        "Snapshots"
+    }
+    fn mode() -> Mode {
+        Mode::BlockStorageSnapshots
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(BlockStorageSnapshotApiRequest::ListDetailed(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(boxreq))
+            if matches!(**boxreq, BlockStorageSnapshotApiRequest::ListDetailed(_))
+        )
     }
 }
 
-pub type BlockStorageSnapshots<'a> =
-    TableViewComponentBase<'a, SnapshotResponse, BlockStorageSnapshotList>;
+/// Public component for BlockStorageSnapshots using the generic view.
+pub type BlockStorageSnapshots = GenericResourceView<'static, BlockStorageSnapshotsBehaviour>;
 
-impl Component for BlockStorageSnapshots<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            BlockStorageSnapshotsBehaviour::view_key(),
+            "block_storage.snapshot"
+        );
+        assert_eq!(BlockStorageSnapshotsBehaviour::title(), "Snapshots");
+        assert_eq!(
+            BlockStorageSnapshotsBehaviour::mode(),
+            Mode::BlockStorageSnapshots
+        );
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn request_from_filter_creates_request() {
+        let filter = BlockStorageSnapshotList::default();
+        let request = BlockStorageSnapshotsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(boxreq))
+            if matches!(*boxreq, BlockStorageSnapshotApiRequest::ListDetailed(_))
+        ));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::BlockStorageSnapshots = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        BlockStorageSnapshotApiRequest::ListDetailed(Box::new(
-                            self.get_filters().clone(),
-                        )),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::BlockStorageSnapshots,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    BlockStorageSnapshotApiRequest::ListDetailed(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(req)),
-                data,
-            } => {
-                if let BlockStorageSnapshotApiRequest::ListDetailed(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn matches_request_returns_true_for_matching() {
+        let filter = BlockStorageSnapshotList::default();
+        let request = BlockStorageSnapshotsBehaviour::request_from_filter(&filter);
+        assert!(BlockStorageSnapshotsBehaviour::matches_request(&request));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
-    }
-
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(Box::new(
+            crate::cloud_worker::block_storage::v3::BlockStorageVolumeApiRequest::ListDetailed(
+                Box::new(crate::cloud_worker::block_storage::v3::BlockStorageVolumeList::default()),
+            ),
+        )));
+        assert!(!BlockStorageSnapshotsBehaviour::matches_request(&req));
     }
 }

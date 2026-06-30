@@ -12,31 +12,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::dns::v2::{
+    DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList, DnsZoneApiRequest,
+    DnsZoneRecordsetApiRequest, DnsZoneRecordsetList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::dns::v2::recordset::response::list::RecordsetResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::dns::v2::{
-        DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList, DnsZoneApiRequest,
-        DnsZoneRecordsetApiRequest, DnsZoneRecordsetList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "DNS Recordsets";
 const VIEW_CONFIG_KEY: &str = "dns.recordset";
 
-impl ResourceKey for RecordsetResponse {
+impl crate::utils::ResourceKey for RecordsetResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
@@ -61,116 +50,129 @@ impl From<DnsRecordsetList> for DnsZoneRecordsetList {
     }
 }
 
-pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetResponse, DnsRecordsetList>;
+pub struct DnsRecordsetsBehaviour;
 
-impl Component for DnsRecordsets<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for DnsRecordsetsBehaviour {
+    type Item = RecordsetResponse;
+    type Filter = DnsRecordsetList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "DNS Recordsets"
+    }
+    fn mode() -> Mode {
+        Mode::DnsRecordsets
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        if filter.zone_id.is_some() {
+            ApiRequest::from(DnsZoneRecordsetApiRequest::List(Box::new(
+                filter.clone().into(),
+            )))
+        } else {
+            ApiRequest::from(DnsRecordsetApiRequest::List(Box::new(filter.clone())))
+        }
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        match request {
+            ApiRequest::Dns(DnsApiRequest::Recordset(_)) => true,
+            ApiRequest::Dns(DnsApiRequest::Zone(sub)) => {
+                matches!(**sub, DnsZoneApiRequest::Recordset(_))
+            }
+            _ => false,
+        }
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetDnsRecordsetListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+}
+
+pub type DnsRecordsets = GenericResourceView<'static, DnsRecordsetsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    fn make_filter_with_zone() -> DnsRecordsetList {
+        DnsRecordsetList {
+            zone_id: Some("zone-1".into()),
+            ..Default::default()
+        }
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    fn make_filter_without_zone() -> DnsRecordsetList {
+        DnsRecordsetList::default()
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::DnsRecordsets = current_mode {
-                    if self.get_filters().zone_id.is_some() {
-                        return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                            DnsZoneRecordsetApiRequest::List(Box::new(
-                                self.get_filters().clone().into(),
-                            )),
-                        ))));
-                    } else {
-                        return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                            DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                        ))));
-                    }
-                }
-            }
-            Action::Mode {
-                mode: Mode::DnsRecordsets,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                if self.get_filters().zone_id.is_some() {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsZoneRecordsetApiRequest::List(Box::new(
-                            self.get_filters().clone().into(),
-                        )),
-                    ))));
-                } else {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Dns(req),
-                data,
-            } => match req {
-                DnsApiRequest::Recordset(_) => {
-                    self.set_data(data)?;
-                }
-                DnsApiRequest::Zone(sub) => {
-                    if let DnsZoneApiRequest::Recordset(_) = *sub {
-                        self.set_data(data)?;
-                    }
-                }
-            },
-            Action::SetDnsRecordsetListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_loading(true);
-                if self.get_filters().zone_id.is_some() {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsZoneRecordsetApiRequest::List(Box::new(
-                            self.get_filters().clone().into(),
-                        )),
-                    ))));
-                } else {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
-            //Action::DeleteDnsRecordset => {
-            //    // only if we are currently in the right mode
-            //    if current_mode == Mode::DnsRecordsets {
-            //        // and have command_tx
-            //        if let Some(command_tx) = self.get_command_tx() {
-            //            // and have a selected entry
-            //            if let Some(selected_entry) = self.get_selected() {
-            //                // send action to set SecurityGroupRulesListFilters
-            //                command_tx.send(Action::Confirm(ApiRequest::DnsRecordsetDelete(
-            //                    DnsRecordsetDelete {
-            //                        zone_id: selected_entry.id.clone(),
-            //                        zone_name: Some(selected_entry.name.clone()),
-            //                    },
-            //                )))?;
-            //            }
-            //        }
-            //    }
-            //}
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(DnsRecordsetsBehaviour::view_key(), "dns.recordset");
+        assert_eq!(DnsRecordsetsBehaviour::title(), "DNS Recordsets");
+        assert_eq!(DnsRecordsetsBehaviour::mode(), Mode::DnsRecordsets);
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn request_from_filter_with_zone_id_creates_zone_recordset_list() {
+        let filter = make_filter_with_zone();
+        let request = DnsRecordsetsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Dns(DnsApiRequest::Zone(boxreq))
+            if matches!(*boxreq, DnsZoneApiRequest::Recordset(_))
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn request_from_filter_without_zone_id_creates_recordset_list() {
+        let filter = make_filter_without_zone();
+        let request = DnsRecordsetsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Dns(DnsApiRequest::Recordset(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_recordset_list() {
+        let filter = make_filter_without_zone();
+        let request = DnsRecordsetsBehaviour::request_from_filter(&filter);
+        assert!(DnsRecordsetsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_zone_recordset() {
+        let filter = make_filter_with_zone();
+        let request = DnsRecordsetsBehaviour::request_from_filter(&filter);
+        assert!(DnsRecordsetsBehaviour::matches_request(&request));
+    }
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let del = crate::cloud_worker::dns::v2::DnsZoneDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let unrelated = ApiRequest::from(DnsZoneApiRequest::Delete(Box::new(del)));
+        assert!(!DnsRecordsetsBehaviour::matches_request(&unrelated));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = make_filter_with_zone();
+        let action = Action::SetDnsRecordsetListFilters(filter);
+        let result = DnsRecordsetsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+        assert_eq!(result.unwrap().zone_id, Some("zone-1".into()));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = DnsRecordsetsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

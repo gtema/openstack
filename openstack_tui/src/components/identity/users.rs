@@ -12,41 +12,29 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
-use openstack_types::identity::v3::user::response::list::UserResponse;
-
-use crate::{
-    action::Action,
-    cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialList,
-        IdentityUserApplicationCredentialListBuilder,
-        IdentityUserApplicationCredentialListBuilderError, IdentityUserDelete,
-        IdentityUserDeleteBuilder, IdentityUserDeleteBuilderError, IdentityUserList,
-        IdentityUserSetBuilder,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
+use crate::action::Action;
+use crate::cloud_worker::identity::v3::{
+    IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialList,
+    IdentityUserApplicationCredentialListBuilder, IdentityUserDelete, IdentityUserDeleteBuilder,
+    IdentityUserList, IdentityUserSetBuilder,
 };
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::mode::Mode;
+use openstack_types::identity::v3::user::response::list::UserResponse;
+use serde_json::Value;
 
-const TITLE: &str = "Identity Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-impl ResourceKey for UserResponse {
+impl crate::utils::ResourceKey for UserResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&UserResponse> for IdentityUserDelete {
-    type Error = IdentityUserDeleteBuilderError;
+    type Error = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserDeleteBuilder::default();
         builder.id(value.id.clone());
@@ -56,7 +44,8 @@ impl TryFrom<&UserResponse> for IdentityUserDelete {
 }
 
 impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
-    type Error = IdentityUserApplicationCredentialListBuilderError;
+    type Error =
+        crate::cloud_worker::identity::v3::IdentityUserApplicationCredentialListBuilderError;
     fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserApplicationCredentialListBuilder::default();
         builder.user_id(value.id.clone());
@@ -65,142 +54,309 @@ impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
     }
 }
 
-pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserResponse, IdentityUserList>;
+pub struct IdentityUsersBehaviour;
 
-impl Component for IdentityUsers<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for IdentityUsersBehaviour {
+    type Item = UserResponse;
+    type Filter = IdentityUserList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Identity Users"
+    }
+    fn mode() -> Mode {
+        Mode::IdentityUsers
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(IdentityUserApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+            if matches!(**boxreq, IdentityUserApiRequest::List(_))
+        )
+    }
+    fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::IdentityUserFlipEnable = action {
+            let sel = selected?;
+            let req: crate::cloud_worker::identity::v3::user::set::User =
+                crate::cloud_worker::identity::v3::user::set::UserBuilder::default()
+                    .enabled(!sel.enabled)
+                    .build()
+                    .ok()?;
+            let set_req = IdentityUserSetBuilder::default()
+                .id(sel.id.clone())
+                .user(req)
+                .build()
+                .ok()?;
+            Some(ApiRequest::from(IdentityUserApiRequest::Set(Box::new(
+                set_req,
+            ))))
+        } else {
+            None
+        }
+    }
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::IdentityUserDelete = action {
+            let del = IdentityUserDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(
+                del,
+            ))))
+        } else {
+            None
+        }
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowIdentityUserApplicationCredentials = action
+            && let Some(sel) = selected
+            && let Ok(list) = IdentityUserApplicationCredentialList::try_from(sel)
+        {
+            return vec![
+                Action::SetIdentityApplicationCredentialListFilters(list),
+                Action::Mode {
+                    mode: Mode::IdentityApplicationCredentials,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
+    }
+    fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
+        if let ApiRequest::Identity(IdentityApiRequest::User(req)) = request {
+            if let IdentityUserApiRequest::Delete(del) = &**req {
+                return Some(vec![Mutation::DeleteRow(del.id.clone())]);
+            }
+            if let IdentityUserApiRequest::Set(_) = &**req
+                && let Some(id) = data.get("id").and_then(|v| v.as_str().map(String::from))
+            {
+                return Some(vec![Mutation::UpdateRow(id, data.clone())]);
+            }
+        }
+        None
+    }
+}
+
+pub type IdentityUsers = GenericResourceView<'static, IdentityUsersBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::identity::v3::user::response::list::UserResponse;
+
+    fn make_user(id: &str, name: &str, enabled: bool) -> UserResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "enabled": enabled,
+            "domain_id": "default"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(IdentityUsersBehaviour::view_key(), "identity.user");
+        assert_eq!(IdentityUsersBehaviour::title(), "Identity Users");
+        assert_eq!(IdentityUsersBehaviour::mode(), Mode::IdentityUsers);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityUserApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
+    #[test]
+    fn normalise_filter_passthrough() {
+        let filter = IdentityUserList::default();
+        let filter_clone = filter.clone();
+        let norm = IdentityUsersBehaviour::normalise_filter(filter);
+        assert_eq!(norm, filter_clone);
+    }
+
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = IdentityUserList::default();
+        let request = IdentityUsersBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, IdentityUserApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = IdentityUserList::default();
+        let request = IdentityUsersBehaviour::request_from_filter(&filter);
+        assert!(IdentityUsersBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_delete() {
+        let del = IdentityUserDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(del)));
+        assert!(!IdentityUsersBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none() {
+        let result = IdentityUsersBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_request_flip_enable_with_selected() {
+        let user = make_user("user-1", "test-user", true);
+        let result =
+            IdentityUsersBehaviour::action_to_request(&Action::IdentityUserFlipEnable, Some(&user));
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, IdentityUserApiRequest::Set(_))
+        ));
+    }
+
+    #[test]
+    fn action_to_request_flip_enable_without_selected() {
+        let result =
+            IdentityUsersBehaviour::action_to_request(&Action::IdentityUserFlipEnable, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_request_returns_none_for_unrelated_action() {
+        let user = make_user("user-1", "test-user", true);
+        let result = IdentityUsersBehaviour::action_to_request(&Action::Tick, Some(&user));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_delete_with_selected() {
+        let user = make_user("user-1", "test-user", true);
+        let result =
+            IdentityUsersBehaviour::confirm_request(&Action::IdentityUserDelete, Some(&user));
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, IdentityUserApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn confirm_request_delete_without_selected() {
+        let result = IdentityUsersBehaviour::confirm_request(&Action::IdentityUserDelete, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_returns_none_for_unrelated_action() {
+        let user = make_user("user-1", "test-user", true);
+        let result = IdentityUsersBehaviour::confirm_request(&Action::Tick, Some(&user));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn filter_carry_action_show_credentials_with_selected() {
+        let user = make_user("user-1", "test-user", true);
+        let actions = IdentityUsersBehaviour::filter_carry_action(
+            &Action::ShowIdentityUserApplicationCredentials,
+            Some(&user),
+            &IdentityUserList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(
+            actions[0],
+            Action::SetIdentityApplicationCredentialListFilters(_)
+        ));
+        assert!(matches!(
+            actions[1],
             Action::Mode {
-                mode: Mode::IdentityUsers,
-                ..
+                mode: Mode::IdentityApplicationCredentials,
+                stack: true
             }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityUserApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::IdentityUserFlipEnable
-                // only if we are currently in the proper mode
-                if current_mode == Mode::IdentityUsers => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_row) = self.get_selected() {
-                            // send action to set GroupUserListFilters
-                            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                                IdentityUserApiRequest::Set(Box::new(
-                                    IdentityUserSetBuilder::default()
-                                        .id(selected_row.id.clone())
-                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled).build().wrap_err("cannot prepare user data structure")?)
-                                        .build().wrap_err("error preparing OpenStack request")?
-                                )))))?;
-                            self.set_loading(true);
-                        }
-                    }
-                }
-            Action::IdentityUserDelete
-                // only if we are currently in the proper mode
-                if current_mode == Mode::IdentityUsers => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_row) = self.get_selected() {
-                            // send action to set Delete User
-                            command_tx.send(Action::Confirm(ApiRequest::from(
-                                IdentityUserApiRequest::Delete(Box::new(
-                                    IdentityUserDelete::try_from(selected_row)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                )),
-                            )))?;
-                        }
-                    }
-                }
-            Action::ShowIdentityUserApplicationCredentials
-                // only if we are currently in the proper mode
-                if current_mode == Mode::IdentityUsers => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_row) = self.get_selected() {
-                            // send action to set GroupUserListFilters
-                            command_tx.send(
-                                Action::SetIdentityApplicationCredentialListFilters(
-                                    IdentityUserApplicationCredentialList::try_from(selected_row)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                ),
-                            )?;
-                            command_tx.send(Action::Mode {
-                                mode: Mode::IdentityApplicationCredentials,
-                                stack: true,
-                            })?;
-                        }
-                    }
-                }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
-                data,
-            } => {
-                if let IdentityUserApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::ApiResponseData {
-                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
-                data,
-            } => {
-                if let IdentityUserApiRequest::Set(_) = *req {
-                    // Since user update only returns some info (i.e. it doesn't contain email) we need
-                    // to update record manually
-                    let updated_user: UserResponse = serde_json::from_value(data.clone())?;
-                    if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
-                        item_row.enabled = updated_user.enabled;
-                        item_row.name = updated_user.name;
-                        self.sync_table_data()?;
-                    }
-                    self.set_loading(false);
-                } else if let IdentityUserApiRequest::Delete(del) = *req {
-                    let IdentityUserDelete { id, .. } = *del;
-                    if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
-                        return Ok(Some(Action::Refresh));
-                    }
-                    self.sync_table_data()?;
-                    self.set_loading(false);
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn filter_carry_action_show_credentials_without_selected() {
+        let actions = IdentityUsersBehaviour::filter_carry_action(
+            &Action::ShowIdentityUserApplicationCredentials,
+            None,
+            &IdentityUserList::default(),
+        );
+        assert!(actions.is_empty());
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let user = make_user("user-1", "test-user", true);
+        let actions = IdentityUsersBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&user),
+            &IdentityUserList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn handle_mutation_response_delete() {
+        let del = IdentityUserDeleteBuilder::default()
+            .id("user-1".into())
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(del)));
+        let data = serde_json::json!({});
+        let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);
+        let muts = result.unwrap();
+        assert_eq!(muts.len(), 1);
+        if let Mutation::DeleteRow(found_id) = &muts[0] {
+            assert_eq!(found_id, "user-1");
+        } else {
+            panic!("Expected DeleteRow mutation");
+        }
+    }
+
+    #[test]
+    fn handle_mutation_response_set() {
+        let set_req = IdentityUserSetBuilder::default()
+            .id("user-1".into())
+            .user(
+                crate::cloud_worker::identity::v3::user::set::UserBuilder::default()
+                    .enabled(false)
+                    .build()
+                    .unwrap(),
+            )
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(IdentityUserApiRequest::Set(Box::new(set_req)));
+        let data = serde_json::json!({ "id": "user-1", "name": "test" });
+        let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);
+        assert!(matches!(result, Some(ref muts) if muts.len() == 1));
+        if let Some(ref muts) = result {
+            if let Mutation::UpdateRow(found_id, _) = &muts[0] {
+                assert_eq!(found_id, "user-1");
+            } else {
+                panic!("Expected UpdateRow mutation");
+            }
+        }
+    }
+
+    #[test]
+    fn handle_mutation_response_non_matching() {
+        let filter = IdentityUserList::default();
+        let request = IdentityUsersBehaviour::request_from_filter(&filter);
+        let data = serde_json::json!({ "id": "user-1" });
+        let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);
+        assert!(result.is_none());
     }
 }

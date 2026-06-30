@@ -58,9 +58,30 @@ pub trait ResourceBehaviour {
     }
 
     /// Return custom Actions that do not map to an ApiRequest (e.g., mode switches, filter updates).
+    /// The `filter` parameter provides access to the current filter state for sub-view drill actions.
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        filter: &Self::Filter,
+    ) -> Vec<Action> {
+        let _ = (action, selected, filter);
+        Vec::new()
+    }
+
+    /// Return custom Actions (deprecated, use filter_carry_action instead for filter access).
     fn custom_action(action: &Action, selected: Option<&Self::Item>) -> Vec<Action> {
         let _ = (action, selected);
         Vec::new()
+    }
+
+    /// Return a YAML editor template for a create action. Returns (template_string, api_request_to_send_on_confirm).
+    fn editor_template(_action: &Action, _filter: &Self::Filter) -> Option<(String, ApiRequest)> {
+        None
+    }
+
+    /// Deserialize the edited YAML back into an ApiRequest.
+    fn deserialize_edit_result(_data: &Value) -> Option<ApiRequest> {
+        None
     }
 
     /// Map an action to a singular API request that should populate the describe pane,
@@ -80,8 +101,41 @@ pub trait ResourceBehaviour {
     }
 
     /// Handle the response data for a singular request. Return None if not handled.
+    /// Data comes from ApiResponsesData as a single-element Vec.
     fn handle_singular_response_data(request: &ApiRequest, data: &[Value]) -> Option<Action> {
         let _ = (request, data);
         None
     }
+
+    /// Translate an Action into a confirmable ApiRequest (e.g., delete). Return Some(ApiRequest)
+    /// to send via Action::Confirm instead of Action::PerformApiRequest.
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        let _ = (action, selected);
+        None
+    }
+
+    /// Handle a singular API response from a mutation (delete/create/update). Returns the actions
+    /// to take, if any. Called with the original request that produced this response.
+    fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
+        let _ = (request, data);
+        None
+    }
+
+    /// Return true to `set_data(Vec::new())` before a filter change. The list response will
+    /// be handled by ApiResponsesData. Default is false.
+    fn clear_data_on_filter_change() -> bool {
+        false
+    }
+}
+
+/// Result of handling a mutation API response.
+pub enum Mutation {
+    /// Find and delete the row matching this identifier.
+    DeleteRow(String),
+    /// Find and update the row matching this identifier with the given data.
+    UpdateRow(String, Value),
+    /// Append a new row with the given data.
+    AppendRow(Value),
+    /// Refresh the entire list.
+    Refresh,
 }

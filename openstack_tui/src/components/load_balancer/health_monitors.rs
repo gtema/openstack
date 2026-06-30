@@ -12,119 +12,125 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::load_balancer::v2::{
+    LoadBalancerApiRequest, LoadBalancerHealthmonitorApiRequest, LoadBalancerHealthmonitorList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::load_balancer::v2::healthmonitor::response::list::HealthmonitorResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerHealthmonitorApiRequest, LoadBalancerHealthmonitorList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "LB HealthMonitors";
 const VIEW_CONFIG_KEY: &str = "load-balancer.healthmonitor";
 
-impl ResourceKey for HealthmonitorResponse {
+impl crate::utils::ResourceKey for HealthmonitorResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type LoadBalancerHealthMonitors<'a> =
-    TableViewComponentBase<'a, HealthmonitorResponse, LoadBalancerHealthmonitorList>;
+pub struct LoadBalancerHealthMonitorsBehaviour;
 
-impl Component for LoadBalancerHealthMonitors<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for LoadBalancerHealthMonitorsBehaviour {
+    type Item = HealthmonitorResponse;
+    type Filter = LoadBalancerHealthmonitorList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "LB HealthMonitors"
+    }
+    fn mode() -> Mode {
+        Mode::LoadBalancerHealthMonitors
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(LoadBalancerHealthmonitorApiRequest::List(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Healthmonitor(boxreq))
+            if matches!(**boxreq, LoadBalancerHealthmonitorApiRequest::List(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetLoadBalancerHealthMonitorListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+}
+
+pub type LoadBalancerHealthMonitors =
+    GenericResourceView<'static, LoadBalancerHealthMonitorsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            LoadBalancerHealthMonitorsBehaviour::view_key(),
+            "load-balancer.healthmonitor"
+        );
+        assert_eq!(
+            LoadBalancerHealthMonitorsBehaviour::title(),
+            "LB HealthMonitors"
+        );
+        assert_eq!(
+            LoadBalancerHealthMonitorsBehaviour::mode(),
+            Mode::LoadBalancerHealthMonitors
+        );
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = LoadBalancerHealthmonitorList::default();
+        let request = LoadBalancerHealthMonitorsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Healthmonitor(boxreq))
+            if matches!(*boxreq, LoadBalancerHealthmonitorApiRequest::List(_))
+        ));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::LoadBalancerHealthMonitors = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        LoadBalancerHealthmonitorApiRequest::List(Box::new(
-                            self.get_filters().clone(),
-                        )),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::LoadBalancerHealthMonitors,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerHealthmonitorApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancer(LoadBalancerApiRequest::Healthmonitor(res)),
-                data,
-            } => {
-                if let LoadBalancerHealthmonitorApiRequest::List(_) = *res {
-                    self.set_data(data)?;
-                }
-            }
-            Action::SetLoadBalancerHealthMonitorListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerHealthmonitorApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            // Action::DeleteLoadBalancer => {
-            //     // only if we are currently in the right mode
-            //     if current_mode == Mode::LoadBalancerLoadBalancers {
-            //         // and have command_tx
-            //         if let Some(command_tx) = self.get_command_tx() {
-            //             // and have a selected entry
-            //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesListFilters
-            //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
-            //                     LoadBalancerLoadBalancerDelete {
-            //                         image_id: selected_entry.id.clone(),
-            //                         image_name: Some(selected_entry.name.clone()),
-            //                     },
-            //                 )))?;
-            //             }
-            //         }
-            //     }
-            // }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = LoadBalancerHealthmonitorList::default();
+        let request = LoadBalancerHealthMonitorsBehaviour::request_from_filter(&filter);
+        assert!(LoadBalancerHealthMonitorsBehaviour::matches_request(
+            &request
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
+            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(Box::new(
+                crate::cloud_worker::load_balancer::v2::LoadBalancerListenerList::default(),
+            )),
+        )));
+        assert!(!LoadBalancerHealthMonitorsBehaviour::matches_request(&req));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = LoadBalancerHealthmonitorList::default();
+        let action = Action::SetLoadBalancerHealthMonitorListFilters(filter);
+        let result = LoadBalancerHealthMonitorsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = LoadBalancerHealthMonitorsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }
