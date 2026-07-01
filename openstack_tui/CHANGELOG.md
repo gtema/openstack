@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.7...openstack_tui-v0.13.8) - 2026-07-01
+
+### Fixed
+
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- Migrate to GenericResourceView pattern ([#1818](https://github.com/gtema/openstack/pull/1818))
+- *(tui)* Extract GenericResourceView ([#1814](https://github.com/gtema/openstack/pull/1814))
+- *(tui)* Implement FuzzySelect and Popup widget ([#1813](https://github.com/gtema/openstack/pull/1813))
+- Address clippy issues ([#1799](https://github.com/gtema/openstack/pull/1799))
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.13.7](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.6...openstack_tui-v0.13.7) - 2026-06-01
 
 ### Other

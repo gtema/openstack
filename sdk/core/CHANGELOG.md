@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.7...openstack_sdk_core-v0.22.8) - 2026-07-01
+
+### Added
+
+- Enable catalog refresh ([#1800](https://github.com/gtema/openstack/pull/1800))
+- Add OIDC client credentials authentication plugin ([#1798](https://github.com/gtema/openstack/pull/1798))
+- *(state)* Add file locking to auth cache ([#1793](https://github.com/gtema/openstack/pull/1793))
+- Introduce possibility to skip auth cache ([#1791](https://github.com/gtema/openstack/pull/1791))
+
+### Fixed
+
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.6...openstack_sdk_core-v0.22.7) - 2026-06-01
 
 ### Added
