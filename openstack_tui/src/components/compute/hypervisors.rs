@@ -6,100 +6,97 @@
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::cloud_worker::compute::v2::{
+    ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::compute::v2::hypervisor::response::list_detailed_253::HypervisorResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
+/// Behaviour implementation for ComputeHypervisors.
+pub struct ComputeHypervisorsBehaviour;
 
-const TITLE: &str = "Compute Hypervisors";
-const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
+impl ResourceBehaviour for ComputeHypervisorsBehaviour {
+    type Item = HypervisorResponse;
+    type Filter = ComputeHypervisorList;
 
-impl ResourceKey for HypervisorResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+    fn view_key() -> &'static str {
+        "compute.hypervisor"
+    }
+    fn title() -> &'static str {
+        "Compute Hypervisors"
+    }
+    fn mode() -> Mode {
+        Mode::ComputeHypervisors
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(ComputeHypervisorApiRequest::ListDetailed(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Hypervisor(boxreq))
+            if matches!(**boxreq, ComputeHypervisorApiRequest::ListDetailed(_))
+        )
     }
 }
 
-pub type ComputeHypervisors<'a> =
-    TableViewComponentBase<'a, HypervisorResponse, ComputeHypervisorList>;
+/// Public component for ComputeHypervisors using the generic view.
+pub type ComputeHypervisors = GenericResourceView<'static, ComputeHypervisorsBehaviour>;
 
-impl Component for ComputeHypervisors<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            ComputeHypervisorsBehaviour::view_key(),
+            "compute.hypervisor"
+        );
+        assert_eq!(ComputeHypervisorsBehaviour::title(), "Compute Hypervisors");
+        assert_eq!(
+            ComputeHypervisorsBehaviour::mode(),
+            Mode::ComputeHypervisors
+        );
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn request_from_filter_creates_request() {
+        let filter = ComputeHypervisorList::default();
+        let request = ComputeHypervisorsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Hypervisor(boxreq))
+            if matches!(*boxreq, ComputeHypervisorApiRequest::ListDetailed(_))
+        ));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::ComputeHypervisors = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeHypervisorApiRequest::ListDetailed(Box::new(
-                            self.get_filters().clone(),
-                        )),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::ComputeHypervisors,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeHypervisorApiRequest::ListDetailed(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Compute(ComputeApiRequest::Hypervisor(req)),
-                data,
-            } => {
-                if let ComputeHypervisorApiRequest::ListDetailed(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn matches_request_returns_true_for_matching() {
+        let filter = ComputeHypervisorList::default();
+        let request = ComputeHypervisorsBehaviour::request_from_filter(&filter);
+        assert!(ComputeHypervisorsBehaviour::matches_request(&request));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
-    }
-
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Compute(ComputeApiRequest::Flavor(Box::new(
+            crate::cloud_worker::compute::v2::ComputeFlavorApiRequest::ListDetailed(Box::new(
+                crate::cloud_worker::compute::v2::ComputeFlavorList::default(),
+            )),
+        )));
+        assert!(!ComputeHypervisorsBehaviour::matches_request(&req));
     }
 }

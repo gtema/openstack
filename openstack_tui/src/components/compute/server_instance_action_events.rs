@@ -12,28 +12,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use serde::Deserialize;
-use structable::{StructTable, StructTableOptions};
-use tokio::sync::mpsc::UnboundedSender;
-
-use crate::{
-    action::Action,
-    cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionApiRequest,
-        ComputeServerInstanceActionShow,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
+use crate::action::Action;
+use crate::cloud_worker::compute::v2::{
+    ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionApiRequest,
+    ComputeServerInstanceActionShow,
 };
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
+use serde::Deserialize;
+use serde_json::Value;
+use structable::{StructTable, StructTableOptions};
 
-const TITLE: &str = "InstanceAction Events";
 const VIEW_CONFIG_KEY: &str = "compute.server/instance_action/event";
 
 /// Event type
@@ -71,81 +62,191 @@ pub struct ServerInstanceActionEventData {
     pub traceback: Option<String>,
 }
 
-impl ResourceKey for ServerInstanceActionEventData {
+impl crate::utils::ResourceKey for ServerInstanceActionEventData {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeServerInstanceActionEvents<'a> =
-    TableViewComponentBase<'a, ServerInstanceActionEventData, ComputeServerInstanceActionShow>;
+pub struct ComputeServerInstanceActionEventsBehaviour;
 
-impl Component for ComputeServerInstanceActionEvents<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for ComputeServerInstanceActionEventsBehaviour {
+    type Item = ServerInstanceActionEventData;
+    type Filter = ComputeServerInstanceActionShow;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "InstanceAction Events"
+    }
+    fn mode() -> Mode {
+        Mode::ComputeServerInstanceActionEvents
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(ComputeServerInstanceActionApiRequest::Get(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+                if matches!(&**boxreq, ComputeServerApiRequest::InstanceAction(inner)
+                    if matches!(&**inner, ComputeServerInstanceActionApiRequest::Get(_))
+                )
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetComputeServerInstanceActionShowFilters(f) = action {
+            Some((**f).clone())
+        } else {
+            None
+        }
+    }
+    fn matches_singular_request(request: &ApiRequest) -> bool {
+        Self::matches_request(request)
+    }
+    fn handle_singular_response_data(request: &ApiRequest, data: &[Value]) -> Option<Action> {
+        for d in data {
+            if let Some(events) = d.get("events")
+                && let Some(ar) = events.as_array()
+            {
+                return Some(Action::ApiResponsesData {
+                    request: request.clone(),
+                    data: ar.to_vec(),
+                });
+            }
+        }
+        None
+    }
+}
+
+pub type ComputeServerInstanceActionEvents =
+    GenericResourceView<'static, ComputeServerInstanceActionEventsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cloud_worker::compute::v2::ComputeServerInstanceActionShowBuilder;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    fn make_filter() -> ComputeServerInstanceActionShow {
+        ComputeServerInstanceActionShowBuilder::default()
+            .server_id("test-server".into())
+            .id("action-1".into())
+            .build()
+            .unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            ComputeServerInstanceActionEventsBehaviour::view_key(),
+            "compute.server/instance_action/event"
+        );
+        assert_eq!(
+            ComputeServerInstanceActionEventsBehaviour::title(),
+            "InstanceAction Events"
+        );
+        assert_eq!(
+            ComputeServerInstanceActionEventsBehaviour::mode(),
+            Mode::ComputeServerInstanceActionEvents
+        );
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(false);
-                self.set_data(Vec::new())?;
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(false);
-                self.set_data(Vec::new())?;
-            }
-            Action::Mode {
-                mode: Mode::ComputeServerInstanceActionEvents,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerInstanceActionApiRequest::Get(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponseData {
-                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
-                data,
-            } => {
-                if let ComputeServerApiRequest::InstanceAction(x) = *req
-                    && let ComputeServerInstanceActionApiRequest::Get(_) = *x
-                    && let Some(events) = data.get("events")
-                    && let Some(ar) = events.as_array()
-                {
-                    self.set_data(ar.clone())?;
-                }
-            }
-            Action::SetComputeServerInstanceActionShowFilters(f) => {
-                self.set_filters(*f);
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerInstanceActionApiRequest::Get(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn request_from_filter_creates_get_request() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
+                if matches!(&*boxreq, ComputeServerApiRequest::InstanceAction(inner)
+                    if matches!(&**inner, ComputeServerInstanceActionApiRequest::Get(_))
+                )
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_true_for_get() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        assert!(ComputeServerInstanceActionEventsBehaviour::matches_request(
+            &request
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let delete_request = ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
+            ComputeServerApiRequest::Delete(Box::new(
+                crate::cloud_worker::compute::v2::ComputeServerDelete {
+                    id: "test".into(),
+                    name: None,
+                },
+            )),
+        )));
+        assert!(!ComputeServerInstanceActionEventsBehaviour::matches_request(&delete_request));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = make_filter();
+        let action = Action::SetComputeServerInstanceActionShowFilters(Box::new(filter));
+        let result = ComputeServerInstanceActionEventsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result =
+            ComputeServerInstanceActionEventsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn matches_singular_request_delegates_to_matches_request() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        assert!(ComputeServerInstanceActionEventsBehaviour::matches_singular_request(&request));
+    }
+
+    #[test]
+    fn handle_singular_response_data_returns_events() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        let data = vec![serde_json::json!({
+            "events": [
+                {"event": "boot started", "result": "SUCCESS"},
+                {"event": "boot finished", "result": "SUCCESS"}
+            ]
+        })];
+        let result = ComputeServerInstanceActionEventsBehaviour::handle_singular_response_data(
+            &request, &data,
+        );
+        assert!(matches!(result, Some(Action::ApiResponsesData { .. })));
+    }
+
+    #[test]
+    fn handle_singular_response_data_no_events_key() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        let data = vec![serde_json::json!({})];
+        let result = ComputeServerInstanceActionEventsBehaviour::handle_singular_response_data(
+            &request, &data,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn handle_singular_response_data_events_not_array() {
+        let filter = make_filter();
+        let request = ComputeServerInstanceActionEventsBehaviour::request_from_filter(&filter);
+        let data = vec![serde_json::json!({ "events": "not-an-array" })];
+        let result = ComputeServerInstanceActionEventsBehaviour::handle_singular_response_data(
+            &request, &data,
+        );
+        assert!(result.is_none());
     }
 }

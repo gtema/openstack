@@ -12,68 +12,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
-use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
-
-use crate::{
-    action::Action,
-    cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleDelete,
-        NetworkSecurityGroupRuleDeleteBuilder, NetworkSecurityGroupRuleDeleteBuilderError,
-        NetworkSecurityGroupRuleList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
+use crate::action::Action;
+use crate::cloud_worker::network::v2::{
+    NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleDelete,
+    NetworkSecurityGroupRuleDeleteBuilder, NetworkSecurityGroupRuleList,
 };
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::mode::Mode;
+use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
+use serde_json::Value;
 
-const TITLE: &str = "SecurityGroupRules";
 const VIEW_CONFIG_KEY: &str = "network.security_group_rule";
 
-impl ResourceKey for SecurityGroupRuleResponse {
+impl crate::utils::ResourceKey for SecurityGroupRuleResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkSecurityGroupRules<'a> =
-    TableViewComponentBase<'a, SecurityGroupRuleResponse, NetworkSecurityGroupRuleList>;
-
-impl NetworkSecurityGroupRules<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(
-        &self,
-        mut filters: NetworkSecurityGroupRuleList,
-    ) -> NetworkSecurityGroupRuleList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some(vec![
-                "ethertype".into(),
-                "direction".into(),
-                "protocol".into(),
-                "port_range_min".into(),
-            ]);
-            filters.sort_dir = Some(vec!["asc".into(), "asc".into(), "asc".into(), "asc".into()]);
-        }
-        filters
-    }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> NetworkSecurityGroupRuleList {
-        self.normalize_filters(self.get_filters().clone()).clone()
-    }
-}
-
 impl TryFrom<&SecurityGroupRuleResponse> for NetworkSecurityGroupRuleDelete {
-    type Error = NetworkSecurityGroupRuleDeleteBuilderError;
+    type Error = crate::cloud_worker::network::v2::NetworkSecurityGroupRuleDeleteBuilderError;
     fn try_from(value: &SecurityGroupRuleResponse) -> Result<Self, Self::Error> {
         let mut builder = NetworkSecurityGroupRuleDeleteBuilder::default();
         if let Some(val) = &value.id {
@@ -83,176 +43,247 @@ impl TryFrom<&SecurityGroupRuleResponse> for NetworkSecurityGroupRuleDelete {
     }
 }
 
-impl Component for NetworkSecurityGroupRules<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub struct NetworkSecurityGroupRulesBehaviour;
+
+impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
+    type Item = SecurityGroupRuleResponse;
+    type Filter = NetworkSecurityGroupRuleList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "SecurityGroupRules"
+    }
+    fn mode() -> Mode {
+        Mode::NetworkSecurityGroupRules
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some(vec![
+                "ethertype".into(),
+                "direction".into(),
+                "protocol".into(),
+                "port_range_min".into(),
+            ]);
+            filter.sort_dir = Some(vec!["asc".into(), "asc".into(), "asc".into(), "asc".into()]);
+        }
+        filter
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(NetworkSecurityGroupRuleApiRequest::List(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(boxreq))
+            if matches!(**boxreq, NetworkSecurityGroupRuleApiRequest::List(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetNetworkSecurityGroupRuleListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::DeleteNetworkSecurityGroupRule = action {
+            let del = NetworkSecurityGroupRuleDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(
+                NetworkSecurityGroupRuleApiRequest::Delete(Box::new(del)),
+            ))
+        } else {
+            None
+        }
+    }
+    // TODO: editor_template for CreateNetworkSecurityGroupRule needs filter.security_group_id
+    // and deserialize_edit_result needs to deserialize NetworkSecurityGroupRuleCreate.
+    // This is left as a manual implementation for now.
+    fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
+        if let ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)) = request {
+            if let NetworkSecurityGroupRuleApiRequest::Delete(del) = &**req {
+                return Some(vec![Mutation::DeleteRow(del.id.clone())]);
+            }
+            if let NetworkSecurityGroupRuleApiRequest::Create(_) = &**req {
+                return Some(vec![Mutation::AppendRow(data.clone())]);
+            }
+        }
+        None
+    }
+    fn clear_data_on_filter_change() -> bool {
+        true
+    }
+}
+
+pub type NetworkSecurityGroupRules =
+    GenericResourceView<'static, NetworkSecurityGroupRulesBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
+
+    fn make_rule(id: &str) -> SecurityGroupRuleResponse {
+        let json = serde_json::json!({ "id": id });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            NetworkSecurityGroupRulesBehaviour::view_key(),
+            "network.security_group_rule"
+        );
+        assert_eq!(
+            NetworkSecurityGroupRulesBehaviour::title(),
+            "SecurityGroupRules"
+        );
+        assert_eq!(
+            NetworkSecurityGroupRulesBehaviour::mode(),
+            Mode::NetworkSecurityGroupRules
+        );
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::NetworkSecurityGroupRules = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkSecurityGroupRuleApiRequest::List(Box::new(
-                            self.normalized_filters(),
-                        )),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::NetworkSecurityGroupRules,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSecurityGroupRuleApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::SetNetworkSecurityGroupRuleListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_data(Vec::new())?;
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSecurityGroupRuleApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)),
-                data,
-            } => {
-                if let NetworkSecurityGroupRuleApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                } else if let NetworkSecurityGroupRuleApiRequest::Create(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::ApiResponseData {
-                request: ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)),
-                data,
-            } => {
-                if let NetworkSecurityGroupRuleApiRequest::Delete(del) = *req {
-                    let NetworkSecurityGroupRuleDelete { ref id, .. } = *del;
-                    if self.delete_item_row_by_res_id_mut(id)?.is_none() {
-                        return Ok(Some(Action::Refresh));
-                    }
-                    self.sync_table_data()?;
-                    self.set_loading(false);
-                } else if let NetworkSecurityGroupRuleApiRequest::Create(_) = *req {
-                    self.append_new_row(data)?;
-                    self.set_loading(false);
-                }
-            }
-            Action::DeleteNetworkSecurityGroupRule
-                // only if we are currently in the right mode
-                if current_mode == Mode::NetworkSecurityGroupRules => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to delete the selected SecurityGroupRule
-                            command_tx.send(Action::Confirm(ApiRequest::from(
-                                NetworkSecurityGroupRuleApiRequest::Delete(Box::new(
-                                    NetworkSecurityGroupRuleDelete::try_from(selected_entry)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                )),
-                            )))?;
-                        }
-                    }
-                }
-            Action::CreateNetworkSecurityGroupRule => {
-                if let Some(command_tx) = self.get_command_tx() {
-                    command_tx.send(Action::Edit {
-                        template: format!(
-                            r#"# Please provide the SecurityGroupRule data as YAML
-security_group_rule:
-  #  /// The security group ID to associate with this security group rule.
-  security_group_id: "{}"
-
-  #  /// The minimum port number in the range that is matched by the security
-  #  /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
-  #  /// value must be less than or equal to the `port_range_max` attribute
-  #  /// value. If the protocol is ICMP, this value must be an ICMP type.
-  # port_range_min: 
-
-  #  /// The maximum port number in the range that is matched by the security
-  #  /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
-  #  /// value must be greater than or equal to the `port_range_min` attribute
-  #  /// value. If the protocol is ICMP, this value must be an ICMP code.
-  # port_range_max: 
-
-  #  /// The IP protocol can be represented by a string, an integer, or `null`.
-  #  /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
-  #  /// or `33`, `egp` or `8`, `esp` or `50`, `gre` or `47`, `icmp` or `1`,
-  #  /// `icmpv6` or `58`, `igmp` or `2`, `ipip` or `4`, `ipv6-encap` or `41`,
-  #  /// `ipv6-frag` or `44`, `ipv6-icmp` or `58`, `ipv6-nonxt` or `59`,
-  #  /// `ipv6-opts` or `60`, `ipv6-route` or `43`, `ospf` or `89`, `pgm` or
-  #  /// `113`, `rsvp` or `46`, `sctp` or `132`, `tcp` or `6`, `udp` or `17`,
-  #  /// `udplite` or `136`, `vrrp` or `112`. Additionally, any integer value
-  #  /// between [0-255] is also valid. The string `any` (or integer `0`) means
-  #  /// `all` IP protocols. See the constants in `neutron_lib.constants` for
-  #  /// the most up-to-date list of supported strings.
-
-  # protocol: 
-  #  /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
-  #  /// ingress or egress rules.
-
-  # ethertype: 
-
-  #  /// Ingress or egress, which is the direction in which the security group
-  #  /// rule is applied.
-  # direction: 
-
-  #  /// A human-readable description for the resource. Default is an empty
-  #  /// string.
-  # description:
-"#,
-                            self.get_filters()
-                                .security_group_id
-                                .clone()
-                                .unwrap_or("<HERE>".to_string())
-                        ),
-                        original_action: Box::new(Action::CreateNetworkSecurityGroupRule),
-                    })?;
-                }
-            }
-            Action::EditResult {
-                result,
-                original_action,
-            } => {
-                if let Action::CreateNetworkSecurityGroupRule = *original_action {
-                    tracing::debug!("Would be creating sgr with {:?}", result);
-                    self.set_loading(true);
-                    if let Some(command_tx) = self.get_command_tx() {
-                        let data: crate::cloud_worker::network::v2::security_group_rule::NetworkSecurityGroupRuleCreate = serde_json::from_value(result)?;
-                        command_tx.send(Action::Confirm(ApiRequest::from(
-                            NetworkSecurityGroupRuleApiRequest::Create(Box::new(data)),
-                        )))?;
-                    }
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn normalise_filter_sets_4_field_sort() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let norm = NetworkSecurityGroupRulesBehaviour::normalise_filter(filter);
+        assert_eq!(
+            norm.sort_key,
+            Some(vec![
+                "ethertype".into(),
+                "direction".into(),
+                "protocol".into(),
+                "port_range_min".into(),
+            ])
+        );
+        assert_eq!(
+            norm.sort_dir,
+            Some(vec!["asc".into(), "asc".into(), "asc".into(), "asc".into()])
+        );
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn normalise_filter_preserves_existing_sort_key() {
+        let mut filter = NetworkSecurityGroupRuleList::default();
+        filter.sort_key = Some(vec!["id".into()]);
+        let norm = NetworkSecurityGroupRulesBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some(vec!["id".into()]));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let request = NetworkSecurityGroupRulesBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(boxreq))
+            if matches!(*boxreq, NetworkSecurityGroupRuleApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let request = NetworkSecurityGroupRulesBehaviour::request_from_filter(&filter);
+        assert!(NetworkSecurityGroupRulesBehaviour::matches_request(
+            &request
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_delete() {
+        let del = NetworkSecurityGroupRuleDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(NetworkSecurityGroupRuleApiRequest::Delete(Box::new(del)));
+        assert!(!NetworkSecurityGroupRulesBehaviour::matches_request(
+            &request
+        ));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let action = Action::SetNetworkSecurityGroupRuleListFilters(filter);
+        let result = NetworkSecurityGroupRulesBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = NetworkSecurityGroupRulesBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_delete_with_selected() {
+        let rule = make_rule("rule-1");
+        let result = NetworkSecurityGroupRulesBehaviour::confirm_request(
+            &Action::DeleteNetworkSecurityGroupRule,
+            Some(&rule),
+        );
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(boxreq))
+            if matches!(*boxreq, NetworkSecurityGroupRuleApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn confirm_request_delete_without_selected() {
+        let result = NetworkSecurityGroupRulesBehaviour::confirm_request(
+            &Action::DeleteNetworkSecurityGroupRule,
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn handle_mutation_response_delete() {
+        let del = NetworkSecurityGroupRuleDeleteBuilder::default()
+            .id("rule-1".into())
+            .build()
+            .unwrap();
+        let request = ApiRequest::from(NetworkSecurityGroupRuleApiRequest::Delete(Box::new(del)));
+        let data = serde_json::json!({});
+        let result = NetworkSecurityGroupRulesBehaviour::handle_mutation_response(&request, &data);
+        let muts = result.unwrap();
+        assert_eq!(muts.len(), 1);
+        if let Mutation::DeleteRow(found_id) = &muts[0] {
+            assert_eq!(found_id, "rule-1");
+        } else {
+            panic!("Expected DeleteRow mutation");
+        }
+    }
+
+    #[test]
+    fn handle_mutation_response_create() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let request = NetworkSecurityGroupRulesBehaviour::request_from_filter(&filter);
+        let data = serde_json::json!({ "id": "new-rule" });
+        let result = NetworkSecurityGroupRulesBehaviour::handle_mutation_response(&request, &data);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn handle_mutation_response_list_returns_none() {
+        let filter = NetworkSecurityGroupRuleList::default();
+        let request = NetworkSecurityGroupRulesBehaviour::request_from_filter(&filter);
+        let data = serde_json::json!({});
+        let result = NetworkSecurityGroupRulesBehaviour::handle_mutation_response(&request, &data);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn clear_data_on_filter_change() {
+        assert!(NetworkSecurityGroupRulesBehaviour::clear_data_on_filter_change());
     }
 }

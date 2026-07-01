@@ -12,43 +12,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-use tracing::debug;
-
+use crate::action::Action;
+use crate::cloud_worker::block_storage::v3::{
+    BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
+    BlockStorageVolumeDeleteBuilder, BlockStorageVolumeList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::block_storage::v3::volume::response::list_detailed::VolumeResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
-        BlockStorageVolumeDeleteBuilder, BlockStorageVolumeDeleteBuilderError,
-        BlockStorageVolumeList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Volumes";
 const VIEW_CONFIG_KEY: &str = "block_storage.volume";
 
-impl ResourceKey for VolumeResponse {
+impl crate::utils::ResourceKey for VolumeResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type BlockStorageVolumes<'a> =
-    TableViewComponentBase<'a, VolumeResponse, BlockStorageVolumeList>;
-
 impl TryFrom<&VolumeResponse> for BlockStorageVolumeDelete {
-    type Error = BlockStorageVolumeDeleteBuilderError;
+    type Error = crate::cloud_worker::block_storage::v3::BlockStorageVolumeDeleteBuilderError;
     fn try_from(value: &VolumeResponse) -> Result<Self, Self::Error> {
         let mut builder = BlockStorageVolumeDeleteBuilder::default();
         builder.id(value.id.clone());
@@ -59,82 +43,151 @@ impl TryFrom<&VolumeResponse> for BlockStorageVolumeDelete {
     }
 }
 
-impl Component for BlockStorageVolumes<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub struct BlockStorageVolumesBehaviour;
+
+impl ResourceBehaviour for BlockStorageVolumesBehaviour {
+    type Item = VolumeResponse;
+    type Filter = BlockStorageVolumeList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Volumes"
+    }
+    fn mode() -> Mode {
+        Mode::BlockStorageVolumes
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(BlockStorageVolumeApiRequest::ListDetailed(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
+            if matches!(**boxreq, BlockStorageVolumeApiRequest::ListDetailed(_))
+        )
+    }
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::DeleteBlockStorageVolume = action {
+            let del = BlockStorageVolumeDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(BlockStorageVolumeApiRequest::Delete(
+                Box::new(del),
+            )))
+        } else {
+            None
+        }
+    }
+}
+
+pub type BlockStorageVolumes = GenericResourceView<'static, BlockStorageVolumesBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::block_storage::v3::volume::response::list_detailed::VolumeResponse;
+
+    fn make_volume(id: &str, name: &str) -> VolumeResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "status": "available",
+            "size": 10,
+            "user_id": "user-1",
+            "availability_zone": "nova",
+            "created_at": "2024-01-01T00:00:00Z",
+            "volume_type": "lvmdriver-1",
+            "attachments": [],
+            "description": null,
+            "snapshot_id": null,
+            "source_volid": null,
+            "bootable": "true",
+            "replicas": [],
+            "encrypted": false,
+            "consistencygroup_id": null,
+            "os-vol-mig-Status.migration_status": null,
+            "os-vol-host-attr.host": null,
+            "os-vol-tenant-attr.tenant_id": "tenant-1",
+            "os-vol-mig-status.migration_status": null,
+            "os-vol-host-attr:host": null,
+            "os-vol-tenant-attr:tenant_id": "tenant-1"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            BlockStorageVolumesBehaviour::view_key(),
+            "block_storage.volume"
+        );
+        assert_eq!(BlockStorageVolumesBehaviour::title(), "Volumes");
+        assert_eq!(
+            BlockStorageVolumesBehaviour::mode(),
+            Mode::BlockStorageVolumes
+        );
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::BlockStorageVolumes = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        BlockStorageVolumeApiRequest::ListDetailed(Box::new(
-                            self.get_filters().clone(),
-                        )),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::BlockStorageVolumes,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    BlockStorageVolumeApiRequest::ListDetailed(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(req)),
-                data,
-            } => {
-                if let BlockStorageVolumeApiRequest::ListDetailed(_) = *req {
-                    debug!("Data is {:?}", data);
-                    self.set_data(data)?;
-                }
-            }
-            Action::DeleteBlockStorageVolume
-                // only if we are currently in the Volumes mode
-                if current_mode == Mode::BlockStorageVolumes => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesList
-                            command_tx.send(Action::Confirm(ApiRequest::from(
-                                BlockStorageVolumeApiRequest::Delete(Box::new(
-                                    BlockStorageVolumeDelete::try_from(selected_entry)
-                                        .wrap_err("error preparing OpenStack request")?,
-                                )),
-                            )))?;
-                        }
-                    }
-                }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn request_from_filter_creates_list_detailed() {
+        let filter = BlockStorageVolumeList::default();
+        let request = BlockStorageVolumesBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
+            if matches!(*boxreq, BlockStorageVolumeApiRequest::ListDetailed(_))
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_true_for_list_detailed() {
+        let filter = BlockStorageVolumeList::default();
+        let request = BlockStorageVolumesBehaviour::request_from_filter(&filter);
+        assert!(BlockStorageVolumesBehaviour::matches_request(&request));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(Box::new(
+            crate::cloud_worker::block_storage::v3::BlockStorageSnapshotApiRequest::ListDetailed(
+                Box::new(
+                    crate::cloud_worker::block_storage::v3::BlockStorageSnapshotList::default(),
+                ),
+            ),
+        )));
+        assert!(!BlockStorageVolumesBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn confirm_request_delete_with_selected() {
+        let vol = make_volume("vol-1", "test-vol");
+        let result = BlockStorageVolumesBehaviour::confirm_request(
+            &Action::DeleteBlockStorageVolume,
+            Some(&vol),
+        );
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
+            if matches!(*boxreq, BlockStorageVolumeApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn confirm_request_delete_without_selected() {
+        let result =
+            BlockStorageVolumesBehaviour::confirm_request(&Action::DeleteBlockStorageVolume, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_returns_none_for_unrelated() {
+        let vol = make_volume("vol-1", "test-vol");
+        let result = BlockStorageVolumesBehaviour::confirm_request(&Action::Tick, Some(&vol));
+        assert!(result.is_none());
     }
 }

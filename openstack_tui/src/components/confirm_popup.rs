@@ -53,6 +53,11 @@ impl ConfirmPopup {
         }
     }
 
+    pub fn update_request(&mut self, request: &ApiRequest) {
+        self.request = request.clone();
+        self.button_group_state = ButtonGroupState::new(Some(0));
+    }
+
     pub fn render_tick(&mut self) {}
 }
 

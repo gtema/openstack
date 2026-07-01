@@ -12,111 +12,134 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::network::v2::{
+    NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::network::v2::subnet::response::list::SubnetResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::network::v2::{NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList},
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Subnets";
 const VIEW_CONFIG_KEY: &str = "network.subnet";
 
-impl ResourceKey for SubnetResponse {
+impl crate::utils::ResourceKey for SubnetResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetResponse, NetworkSubnetList>;
+pub struct NetworkSubnetsBehaviour;
 
-impl NetworkSubnets<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: NetworkSubnetList) -> NetworkSubnetList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some(Vec::from(["name".into()]));
-            filters.sort_dir = Some(Vec::from(["asc".into()]));
-        }
-        filters
+impl ResourceBehaviour for NetworkSubnetsBehaviour {
+    type Item = SubnetResponse;
+    type Filter = NetworkSubnetList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
     }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> NetworkSubnetList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn title() -> &'static str {
+        "Subnets"
+    }
+    fn mode() -> Mode {
+        Mode::NetworkSubnets
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some(Vec::from(["name".into()]));
+            filter.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filter
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(NetworkSubnetApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Subnet(boxreq))
+            if matches!(**boxreq, NetworkSubnetApiRequest::List(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetNetworkSubnetListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
     }
 }
 
-impl Component for NetworkSubnets<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub type NetworkSubnets = GenericResourceView<'static, NetworkSubnetsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(NetworkSubnetsBehaviour::view_key(), "network.subnet");
+        assert_eq!(NetworkSubnetsBehaviour::title(), "Subnets");
+        assert_eq!(NetworkSubnetsBehaviour::mode(), Mode::NetworkSubnets);
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn normalise_filter_sets_defaults() {
+        let filter = NetworkSubnetList::default();
+        let norm = NetworkSubnetsBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some(Vec::from(["name".into()])));
+        assert_eq!(norm.sort_dir, Some(Vec::from(["asc".into()])));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::NetworkSubnets = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkSubnetApiRequest::List(Box::new(self.normalized_filters())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::NetworkSubnets,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSubnetApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Network(NetworkApiRequest::Subnet(req)),
-                data,
-            } => {
-                if let NetworkSubnetApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::SetNetworkSubnetListFilters(filters) => {
-                self.set_filters(filters);
-                return Ok(Some(Action::Refresh));
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn normalise_filter_preserves_existing() {
+        let mut f = NetworkSubnetList::default();
+        f.sort_key = Some(Vec::from(["id".into()]));
+        let norm = NetworkSubnetsBehaviour::normalise_filter(f);
+        assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = NetworkSubnetList::default();
+        let request = NetworkSubnetsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Subnet(boxreq))
+            if matches!(*boxreq, NetworkSubnetApiRequest::List(_))
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = NetworkSubnetList::default();
+        let request = NetworkSubnetsBehaviour::request_from_filter(&filter);
+        assert!(NetworkSubnetsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Network(NetworkApiRequest::Network(Box::new(
+            crate::cloud_worker::types::NetworkNetworkApiRequest::List(Box::new(
+                crate::cloud_worker::types::NetworkNetworkList::default(),
+            )),
+        )));
+        assert!(!NetworkSubnetsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = NetworkSubnetList::default();
+        let action = Action::SetNetworkSubnetListFilters(filter);
+        let result = NetworkSubnetsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = NetworkSubnetsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

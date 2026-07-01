@@ -12,102 +12,118 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::identity::v3::{
+    IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserApiRequest, IdentityGroupUserList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::identity::v3::group::user::response::list::UserResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserApiRequest,
-        IdentityGroupUserList,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Identity Group Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-impl ResourceKey for UserResponse {
+impl crate::utils::ResourceKey for UserResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserResponse, IdentityGroupUserList>;
+pub struct IdentityGroupUsersBehaviour;
 
-impl Component for IdentityGroupUsers<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for IdentityGroupUsersBehaviour {
+    type Item = UserResponse;
+    type Filter = IdentityGroupUserList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Identity Group Users"
+    }
+    fn mode() -> Mode {
+        Mode::IdentityGroupUsers
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(IdentityGroupUserApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Group(boxreq))
+                if matches!(&**boxreq, IdentityGroupApiRequest::User(inner)
+                    if matches!(&**inner, IdentityGroupUserApiRequest::List(_))
+                )
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetIdentityGroupUserListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+}
+
+pub type IdentityGroupUsers = GenericResourceView<'static, IdentityGroupUsersBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(IdentityGroupUsersBehaviour::view_key(), "identity.user");
+        assert_eq!(IdentityGroupUsersBehaviour::title(), "Identity Group Users");
+        assert_eq!(
+            IdentityGroupUsersBehaviour::mode(),
+            Mode::IdentityGroupUsers
+        );
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = IdentityGroupUserList::default();
+        let request = IdentityGroupUsersBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Group(boxreq))
+            if matches!(&*boxreq, IdentityGroupApiRequest::User(inner)
+                if matches!(&**inner, IdentityGroupUserApiRequest::List(_))
+            )
+        ));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::IdentityGroupUsers,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::SetIdentityGroupUserListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_data(Vec::new())?;
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::Group(req)),
-                data,
-            } => {
-                if let IdentityGroupApiRequest::User(x) = *req
-                    && let IdentityGroupUserApiRequest::List(_) = *x
-                {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = IdentityGroupUserList::default();
+        let request = IdentityGroupUsersBehaviour::request_from_filter(&filter);
+        assert!(IdentityGroupUsersBehaviour::matches_request(&request));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Identity(IdentityApiRequest::User(Box::new(
+            crate::cloud_worker::identity::v3::IdentityUserApiRequest::List(Box::new(
+                crate::cloud_worker::identity::v3::IdentityUserList::default(),
+            )),
+        )));
+        assert!(!IdentityGroupUsersBehaviour::matches_request(&req));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = IdentityGroupUserList::default();
+        let action = Action::SetIdentityGroupUserListFilters(filter);
+        let result = IdentityGroupUsersBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = IdentityGroupUsersBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

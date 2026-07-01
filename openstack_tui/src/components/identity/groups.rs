@@ -12,38 +12,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::identity::v3::{
+    IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupDelete, IdentityGroupDeleteBuilder,
+    IdentityGroupList, IdentityGroupUserList, IdentityGroupUserListBuilder,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::identity::v3::group::response::list::GroupResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupList, IdentityGroupUserList,
-        IdentityGroupUserListBuilder, IdentityGroupUserListBuilderError,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Identity Groups";
 const VIEW_CONFIG_KEY: &str = "identity.group";
 
-impl ResourceKey for GroupResponse {
+impl crate::utils::ResourceKey for GroupResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&GroupResponse> for IdentityGroupUserList {
-    type Error = IdentityGroupUserListBuilderError;
+    type Error = crate::cloud_worker::identity::v3::IdentityGroupUserListBuilderError;
     fn try_from(value: &GroupResponse) -> Result<Self, Self::Error> {
         let mut builder = IdentityGroupUserListBuilder::default();
         if let Some(val) = &value.id {
@@ -56,82 +45,196 @@ impl TryFrom<&GroupResponse> for IdentityGroupUserList {
     }
 }
 
-pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupResponse, IdentityGroupList>;
+impl TryFrom<&GroupResponse> for IdentityGroupDelete {
+    type Error = crate::cloud_worker::identity::v3::IdentityGroupDeleteBuilderError;
+    fn try_from(value: &GroupResponse) -> Result<Self, Self::Error> {
+        let mut builder = IdentityGroupDeleteBuilder::default();
+        if let Some(val) = &value.id {
+            builder.id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.name(val.clone());
+        }
+        builder.build()
+    }
+}
 
-impl Component for IdentityGroups<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub struct IdentityGroupsBehaviour;
+
+impl ResourceBehaviour for IdentityGroupsBehaviour {
+    type Item = GroupResponse;
+    type Filter = IdentityGroupList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Identity Groups"
+    }
+    fn mode() -> Mode {
+        Mode::IdentityGroups
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(IdentityGroupApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Group(boxreq))
+            if matches!(**boxreq, IdentityGroupApiRequest::List(_))
+        )
+    }
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::IdentityGroupDelete = action {
+            let del = IdentityGroupDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(IdentityGroupApiRequest::Delete(Box::new(
+                del,
+            ))))
+        } else {
+            None
+        }
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowIdentityGroupUsers = action
+            && let Some(sel) = selected
+            && let Ok(list) = IdentityGroupUserList::try_from(sel)
+        {
+            return vec![
+                Action::SetIdentityGroupUserListFilters(list),
+                Action::Mode {
+                    mode: Mode::IdentityGroupUsers,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
+    }
+}
+
+pub type IdentityGroups = GenericResourceView<'static, IdentityGroupsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::identity::v3::group::response::list::GroupResponse;
+
+    fn make_group(id: &str, name: &str) -> GroupResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "domain_id": "default",
+            "description": "test group"
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(IdentityGroupsBehaviour::view_key(), "identity.group");
+        assert_eq!(IdentityGroupsBehaviour::title(), "Identity Groups");
+        assert_eq!(IdentityGroupsBehaviour::mode(), Mode::IdentityGroups);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::IdentityGroups = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityGroupApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = IdentityGroupList::default();
+        let request = IdentityGroupsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Group(boxreq))
+            if matches!(*boxreq, IdentityGroupApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = IdentityGroupList::default();
+        let request = IdentityGroupsBehaviour::request_from_filter(&filter);
+        assert!(IdentityGroupsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let del = IdentityGroupDeleteBuilder::default()
+            .id("test".into())
+            .build()
+            .unwrap();
+        let req = ApiRequest::from(IdentityGroupApiRequest::Delete(Box::new(del)));
+        assert!(!IdentityGroupsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn confirm_request_delete_with_selected() {
+        let group = make_group("group-1", "test-group");
+        let result =
+            IdentityGroupsBehaviour::confirm_request(&Action::IdentityGroupDelete, Some(&group));
+        assert!(result.is_some());
+        let request = result.unwrap();
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::Group(boxreq))
+            if matches!(*boxreq, IdentityGroupApiRequest::Delete(_))
+        ));
+    }
+
+    #[test]
+    fn confirm_request_delete_without_selected() {
+        let result = IdentityGroupsBehaviour::confirm_request(&Action::IdentityGroupDelete, None);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_returns_none_for_unrelated() {
+        let group = make_group("group-1", "test-group");
+        let result = IdentityGroupsBehaviour::confirm_request(&Action::Tick, Some(&group));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn filter_carry_action_show_group_users_with_selected() {
+        let group = make_group("group-1", "test-group");
+        let actions = IdentityGroupsBehaviour::filter_carry_action(
+            &Action::ShowIdentityGroupUsers,
+            Some(&group),
+            &IdentityGroupList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(
+            actions[0],
+            Action::SetIdentityGroupUserListFilters(_)
+        ));
+        assert!(matches!(
+            actions[1],
             Action::Mode {
-                mode: Mode::IdentityGroups,
-                ..
+                mode: Mode::IdentityGroupUsers,
+                stack: true
             }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityGroupApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::ShowIdentityGroupUsers
-                // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::IdentityGroups => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
-                            // send action to set GroupUserListFilters
-                            command_tx.send(Action::SetIdentityGroupUserListFilters(
-                                IdentityGroupUserList::try_from(group_row)
-                                    .wrap_err("error preparing OpenStack request")?,
-                            ))?;
-                            // and switch mode
-                            command_tx.send(Action::Mode {
-                                mode: Mode::IdentityGroupUsers,
-                                stack: true,
-                            })?;
-                        }
-                    }
-                }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::Group(req)),
-                data,
-            } => {
-                if let IdentityGroupApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn filter_carry_action_without_selected() {
+        let actions = IdentityGroupsBehaviour::filter_carry_action(
+            &Action::ShowIdentityGroupUsers,
+            None,
+            &IdentityGroupList::default(),
+        );
+        assert!(actions.is_empty());
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let group = make_group("group-1", "test-group");
+        let actions = IdentityGroupsBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&group),
+            &IdentityGroupList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

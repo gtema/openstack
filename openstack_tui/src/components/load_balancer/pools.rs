@@ -12,40 +12,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::load_balancer::v2::{
+    LoadBalancerApiRequest, LoadBalancerHealthmonitorList, LoadBalancerHealthmonitorListBuilder,
+    LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
+    LoadBalancerPoolMemberListBuilder,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::load_balancer::v2::pool::response::list::PoolResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerHealthmonitorList,
-        LoadBalancerHealthmonitorListBuilder, LoadBalancerHealthmonitorListBuilderError,
-        LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
-        LoadBalancerPoolMemberListBuilder, LoadBalancerPoolMemberListBuilderError,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "LB Pools";
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
 
-impl ResourceKey for PoolResponse {
+impl crate::utils::ResourceKey for PoolResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 impl TryFrom<&PoolResponse> for LoadBalancerPoolMemberList {
-    type Error = LoadBalancerPoolMemberListBuilderError;
+    type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerPoolMemberListBuilderError;
     fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerPoolMemberListBuilder::default();
         if let Some(val) = &value.id {
@@ -59,7 +47,7 @@ impl TryFrom<&PoolResponse> for LoadBalancerPoolMemberList {
 }
 
 impl TryFrom<&PoolResponse> for LoadBalancerHealthmonitorList {
-    type Error = LoadBalancerHealthmonitorListBuilderError;
+    type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerHealthmonitorListBuilderError;
     fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerHealthmonitorListBuilder::default();
         if let Some(val) = &value.id {
@@ -72,123 +60,213 @@ impl TryFrom<&PoolResponse> for LoadBalancerHealthmonitorList {
     }
 }
 
-pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolResponse, LoadBalancerPoolList>;
+pub struct LoadBalancerPoolsBehaviour;
 
-impl Component for LoadBalancerPools<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
+    type Item = PoolResponse;
+    type Filter = LoadBalancerPoolList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "LB Pools"
+    }
+    fn mode() -> Mode {
+        Mode::LoadBalancerPools
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(LoadBalancerPoolApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(boxreq))
+            if matches!(**boxreq, LoadBalancerPoolApiRequest::List(_))
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetLoadBalancerPoolListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowLoadBalancerPoolMembers = action
+            && let Some(sel) = selected
+            && let Ok(list) = LoadBalancerPoolMemberList::try_from(sel)
+        {
+            return vec![
+                Action::SetLoadBalancerPoolMemberListFilters(list),
+                Action::Mode {
+                    mode: Mode::LoadBalancerPoolMembers,
+                    stack: true,
+                },
+            ];
+        }
+        if let Action::ShowLoadBalancerPoolHealthMonitors = action
+            && let Some(sel) = selected
+            && let Ok(list) = LoadBalancerHealthmonitorList::try_from(sel)
+        {
+            return vec![
+                Action::SetLoadBalancerHealthMonitorListFilters(list),
+                Action::Mode {
+                    mode: Mode::LoadBalancerHealthMonitors,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
+    }
+}
+
+pub type LoadBalancerPools = GenericResourceView<'static, LoadBalancerPoolsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::load_balancer::v2::pool::response::list::PoolResponse;
+
+    fn make_pool(id: &str, name: &str) -> PoolResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": name,
+            "description": "test pool",
+            "lb_algorithm": "ROUND_ROBIN",
+            "protocol": "HTTP",
+            "provisioning_status": "ACTIVE",
+            "operating_status": "ONLINE",
+            "created_at": "2024-01-01T00:00:00",
+            "updated_at": "2024-01-01T00:00:00",
+            "project_id": "tenant-1",
+            "loadbalancers": [],
+            "listeners": [],
+            "members": [],
+            "health_monitors": [],
+            "session_persistence": null,
+            "monitor_ports": [],
+            "tags": []
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(LoadBalancerPoolsBehaviour::view_key(), "load-balancer.pool");
+        assert_eq!(LoadBalancerPoolsBehaviour::title(), "LB Pools");
+        assert_eq!(LoadBalancerPoolsBehaviour::mode(), Mode::LoadBalancerPools);
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::LoadBalancerPools = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
-                    ))));
-                }
-            }
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = LoadBalancerPoolList::default();
+        let request = LoadBalancerPoolsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(boxreq))
+            if matches!(*boxreq, LoadBalancerPoolApiRequest::List(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = LoadBalancerPoolList::default();
+        let request = LoadBalancerPoolsBehaviour::request_from_filter(&filter);
+        assert!(LoadBalancerPoolsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
+            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(Box::new(
+                crate::cloud_worker::load_balancer::v2::LoadBalancerListenerList::default(),
+            )),
+        )));
+        assert!(!LoadBalancerPoolsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = LoadBalancerPoolList::default();
+        let action = Action::SetLoadBalancerPoolListFilters(filter);
+        let result = LoadBalancerPoolsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = LoadBalancerPoolsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn filter_carry_action_show_members_with_selected() {
+        let pool = make_pool("pool-1", "test-pool");
+        let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
+            &Action::ShowLoadBalancerPoolMembers,
+            Some(&pool),
+            &LoadBalancerPoolList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(
+            actions[0],
+            Action::SetLoadBalancerPoolMemberListFilters(_)
+        ));
+        assert!(matches!(
+            actions[1],
             Action::Mode {
-                mode: Mode::LoadBalancerPools,
-                ..
+                mode: Mode::LoadBalancerPoolMembers,
+                stack: true
             }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(res)),
-                data,
-            } => {
-                if let LoadBalancerPoolApiRequest::List(_) = *res {
-                    self.set_data(data)?;
-                }
-            }
-            Action::SetLoadBalancerPoolListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
-                ))));
-            }
-            Action::ShowLoadBalancerPoolMembers
-                // only if we are currently in the expected mode
-                if current_mode == Mode::LoadBalancerPools => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            command_tx.send(Action::SetLoadBalancerPoolMemberListFilters(
-                                LoadBalancerPoolMemberList::try_from(selected_entry)
-                                    .wrap_err("error preparing OpenStack request")?,
-                            ))?;
-                            return Ok(Some(Action::Mode {
-                                mode: Mode::LoadBalancerPoolMembers,
-                                stack: true,
-                            }));
-                        }
-                    }
-                }
-            Action::ShowLoadBalancerPoolHealthMonitors
-                // only if we are currently in the expected mode
-                if current_mode == Mode::LoadBalancerPools => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            command_tx.send(Action::SetLoadBalancerHealthMonitorListFilters(
-                                LoadBalancerHealthmonitorList::try_from(selected_entry)
-                                    .wrap_err("error preparing OpenStack request")?,
-                            ))?;
-                            return Ok(Some(Action::Mode {
-                                mode: Mode::LoadBalancerHealthMonitors,
-                                stack: true,
-                            }));
-                        }
-                    }
-                }
-            // Action::DeleteLoadBalancer => {
-            //     // only if we are currently in the right mode
-            //     if current_mode == Mode::LoadBalancerLoadBalancers {
-            //         // and have command_tx
-            //         if let Some(command_tx) = self.get_command_tx() {
-            //             // and have a selected entry
-            //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesListFilters
-            //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
-            //                     LoadBalancerLoadBalancerDelete {
-            //                         image_id: selected_entry.id.clone(),
-            //                         image_name: Some(selected_entry.name.clone()),
-            //                     },
-            //                 )))?;
-            //             }
-            //         }
-            //     }
-            // }
-            _ => {}
-        };
-        Ok(None)
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn filter_carry_action_show_health_monitors_with_selected() {
+        let pool = make_pool("pool-1", "test-pool");
+        let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
+            &Action::ShowLoadBalancerPoolHealthMonitors,
+            Some(&pool),
+            &LoadBalancerPoolList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        assert!(matches!(
+            actions[0],
+            Action::SetLoadBalancerHealthMonitorListFilters(_)
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::Mode {
+                mode: Mode::LoadBalancerHealthMonitors,
+                stack: true
+            }
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn filter_carry_action_without_selected() {
+        let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
+            &Action::ShowLoadBalancerPoolMembers,
+            None,
+            &LoadBalancerPoolList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_returns_empty_for_unrelated() {
+        let pool = make_pool("pool-1", "test-pool");
+        let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&pool),
+            &LoadBalancerPoolList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

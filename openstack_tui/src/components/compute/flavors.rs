@@ -12,20 +12,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
 use openstack_types::compute::v2::flavor::response::list_detailed_255::FlavorResponse;
 
 use crate::{
     action::Action,
-    cloud_worker::compute::v2::{ComputeFlavorList, ComputeServerListBuilder},
-    cloud_worker::types::*,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
+    cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeFlavorApiRequest, ComputeFlavorList, ComputeServerListBuilder,
+    },
+    cloud_worker::types::ApiRequest,
+    components::generic_resource_view::GenericResourceView,
+    components::resource_behaviour::{Mutation, ResourceBehaviour},
     mode::Mode,
     utils::ResourceKey,
 };
@@ -39,102 +35,200 @@ impl ResourceKey for FlavorResponse {
     }
 }
 
-pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorResponse, ComputeFlavorList>;
+pub struct ComputeFlavorsBehaviour;
 
-impl ComputeFlavors<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: ComputeFlavorList) -> ComputeFlavorList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some("name".into());
-            filters.sort_dir = Some("asc".into());
-        }
-        filters
+impl ResourceBehaviour for ComputeFlavorsBehaviour {
+    type Item = FlavorResponse;
+    type Filter = ComputeFlavorList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
     }
 
-    /// Normalized filters
-    fn normalized_filters(&self) -> ComputeFlavorList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn title() -> &'static str {
+        TITLE
+    }
+
+    fn mode() -> Mode {
+        Mode::ComputeFlavors
+    }
+
+    fn normalise_filter(filter: Self::Filter) -> Self::Filter {
+        let mut f = filter;
+        if f.sort_key.is_none() {
+            f.sort_key = Some("name".into());
+            f.sort_dir = Some("asc".into());
+        }
+        f
+    }
+
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(ComputeFlavorApiRequest::ListDetailed(Box::new(
+            filter.clone(),
+        )))
+    }
+
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Flavor(inner))
+                if matches!(&**inner, ComputeFlavorApiRequest::ListDetailed(_))
+        )
+    }
+
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
+        if let Action::ShowComputeServersWithFlavor = action
+            && let Some(sel) = selected
+            && let Ok(server_list) = ComputeServerListBuilder::default()
+                .flavor(sel.id.clone())
+                .build()
+        {
+            return vec![
+                Action::SetComputeServerListFilters(Box::new(server_list)),
+                Action::Mode {
+                    mode: Mode::ComputeServers,
+                    stack: true,
+                },
+            ];
+        }
+        Vec::new()
+    }
+
+    fn handle_mutation_response(
+        request: &ApiRequest,
+        data: &serde_json::Value,
+    ) -> Option<Vec<Mutation>> {
+        let _ = (request, data);
+        None
     }
 }
 
-impl Component for ComputeFlavors<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub type ComputeFlavors = GenericResourceView<'static, ComputeFlavorsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cloud_worker::compute::v2::ComputeServerApiRequest;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+    use openstack_types::compute::v2::flavor::response::list_detailed_255::FlavorResponse;
+
+    fn make_flavor(id: &str) -> FlavorResponse {
+        let json = serde_json::json!({
+            "id": id,
+            "name": "test",
+            "vcpus": 1,
+            "ram": 512,
+            "disk": 10,
+            "OS-FLV-DISABLED:disabled": false,
+            "rxtx_factor": 1,
+            "swap": 0,
+            "OS-FLV-EXT-DATA:ephemeral": 0,
+            "metadata": {},
+            "os-flavor-access:is_public": true,
+        });
+        serde_json::from_value(json).unwrap()
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn normalise_filter_sets_defaults() {
+        let filter = ComputeFlavorList::default();
+        let norm = ComputeFlavorsBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some("name".into()));
+        assert_eq!(norm.sort_dir, Some("asc".into()));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                self.set_loading(true);
-                self.set_data(Vec::new())?;
-                if let Mode::ComputeFlavors = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeFlavorApiRequest::ListDetailed(Box::new(self.normalized_filters())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::ComputeFlavors,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeFlavorApiRequest::ListDetailed(Box::new(self.normalized_filters())),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Compute(ComputeApiRequest::Flavor(req)),
-                data,
-            } => {
-                if let ComputeFlavorApiRequest::ListDetailed(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            Action::ShowComputeServersWithFlavor
-                // only if we are currently in the flavors mode
-                if current_mode == Mode::ComputeFlavors => {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesList
-                            command_tx.send(Action::SetComputeServerListFilters(Box::new(
-                                ComputeServerListBuilder::default()
-                                    .flavor(selected_entry.id.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare filters")?,
-                            )))?;
-                            // and switch mode
-                            command_tx.send(Action::Mode {
-                                mode: Mode::ComputeServers,
-                                stack: true,
-                            })?;
-                        }
-                    }
-                }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn normalise_filter_preserves_existing() {
+        let mut filter = ComputeFlavorList::default();
+        filter.sort_key = Some("id".into());
+        let norm = ComputeFlavorsBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some("id".into()));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(ComputeFlavorsBehaviour::view_key(), "compute.flavor");
+        assert_eq!(ComputeFlavorsBehaviour::title(), "Compute Flavors");
+        assert_eq!(ComputeFlavorsBehaviour::mode(), Mode::ComputeFlavors);
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = ComputeFlavorList::default();
+        let request = ComputeFlavorsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Compute(ComputeApiRequest::Flavor(boxreq))
+                if matches!(*boxreq, ComputeFlavorApiRequest::ListDetailed(_))
+        ));
+    }
+
+    #[test]
+    fn matches_request_returns_true_for_list_detailed() {
+        let filter = ComputeFlavorList::default();
+        let request = ComputeFlavorsBehaviour::request_from_filter(&filter);
+        assert!(ComputeFlavorsBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_non_matching() {
+        let filter = ComputeFlavorList::default();
+        let request = ComputeFlavorsBehaviour::request_from_filter(&filter);
+        assert!(!ComputeFlavorsBehaviour::matches_request(
+            &ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
+                ComputeServerApiRequest::ListDetailed(Box::new(
+                    crate::cloud_worker::compute::v2::ComputeServerList::default(),
+                ))
+            )))
+        ));
+    }
+
+    #[test]
+    fn filter_carry_action_show_servers_with_flavor() {
+        let flavor = make_flavor("flavor-123");
+        let actions = ComputeFlavorsBehaviour::filter_carry_action(
+            &Action::ShowComputeServersWithFlavor,
+            Some(&flavor),
+            &ComputeFlavorList::default(),
+        );
+        assert_eq!(actions.len(), 2);
+        match &actions[0] {
+            Action::SetComputeServerListFilters(f) => {
+                assert_eq!(f.flavor, Some("flavor-123".into()));
+            }
+            _ => panic!("Expected SetComputeServerListFilters, got {:?}", actions[0]),
+        }
+        match &actions[1] {
+            Action::Mode { mode, stack } => {
+                assert_eq!(*mode, crate::mode::Mode::ComputeServers);
+                assert!(*stack);
+            }
+            _ => panic!("Expected Mode switch, got {:?}", actions[1]),
+        }
+    }
+
+    #[test]
+    fn filter_carry_action_no_selected() {
+        let actions = ComputeFlavorsBehaviour::filter_carry_action(
+            &Action::ShowComputeServersWithFlavor,
+            None,
+            &ComputeFlavorList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_unrelated_action() {
+        let flavor = make_flavor("f");
+        let actions = ComputeFlavorsBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&flavor),
+            &ComputeFlavorList::default(),
+        );
+        assert!(actions.is_empty());
     }
 }

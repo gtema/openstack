@@ -12,110 +12,133 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::action::Action;
+use crate::cloud_worker::identity::v3::{
+    IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
+    IdentityUserApplicationCredentialList,
+};
+use crate::cloud_worker::types::ApiRequest;
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::identity::v3::user::application_credential::response::list::ApplicationCredentialResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
-        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
-    },
-    cloud_worker::types::ApiRequest,
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Application Credentials";
 const VIEW_CONFIG_KEY: &str = "identity.user/application_credential";
 
-impl ResourceKey for ApplicationCredentialResponse {
+impl crate::utils::ResourceKey for ApplicationCredentialResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityApplicationCredentials<'a> = TableViewComponentBase<
-    'a,
-    ApplicationCredentialResponse,
-    IdentityUserApplicationCredentialList,
->;
+pub struct IdentityApplicationCredentialsBehaviour;
 
-impl Component for IdentityApplicationCredentials<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+impl ResourceBehaviour for IdentityApplicationCredentialsBehaviour {
+    type Item = ApplicationCredentialResponse;
+    type Filter = IdentityUserApplicationCredentialList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+    fn title() -> &'static str {
+        "Application Credentials"
+    }
+    fn mode() -> Mode {
+        Mode::IdentityApplicationCredentials
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(IdentityUserApplicationCredentialApiRequest::List(Box::new(
+            filter.clone(),
+        )))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+                if matches!(&**boxreq, IdentityUserApiRequest::ApplicationCredential(inner)
+                    if matches!(&**inner, IdentityUserApplicationCredentialApiRequest::List(_))
+                )
+        )
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        if let Action::SetIdentityApplicationCredentialListFilters(f) = action {
+            Some(f.clone())
+        } else {
+            None
+        }
+    }
+}
+
+pub type IdentityApplicationCredentials =
+    GenericResourceView<'static, IdentityApplicationCredentialsBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(
+            IdentityApplicationCredentialsBehaviour::view_key(),
+            "identity.user/application_credential"
+        );
+        assert_eq!(
+            IdentityApplicationCredentialsBehaviour::title(),
+            "Application Credentials"
+        );
+        assert_eq!(
+            IdentityApplicationCredentialsBehaviour::mode(),
+            Mode::IdentityApplicationCredentials
+        );
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = IdentityUserApplicationCredentialList::default();
+        let request = IdentityApplicationCredentialsBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
+            if matches!(&*boxreq, IdentityUserApiRequest::ApplicationCredential(inner)
+                if matches!(&**inner, IdentityUserApplicationCredentialApiRequest::List(_))
+            )
+        ));
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::ConnectedToCloud(auth) => {
-                self.set_loading(true);
-                // Unset the filters since in new cloud everything is different
-                self.set_data(Vec::new())?;
-                self.set_filters(
-                    IdentityUserApplicationCredentialListBuilder::default()
-                        .user_id(auth.user.id)
-                        .user_name(auth.user.name)
-                        .build()
-                        .wrap_err("cannot prepare listing application credentials request")?,
-                );
-            }
-            Action::Mode {
-                mode: Mode::IdentityApplicationCredentials,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityUserApplicationCredentialApiRequest::List(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-            Action::SetIdentityApplicationCredentialListFilters(filters) => {
-                self.set_filters(filters);
-                self.set_data(Vec::new())?;
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityUserApplicationCredentialApiRequest::List(Box::new(
-                        self.get_filters().clone(),
-                    )),
-                ))));
-            }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
-                data,
-            } => {
-                if let IdentityUserApiRequest::ApplicationCredential(x) = *req
-                    && let IdentityUserApplicationCredentialApiRequest::List(_) = *x
-                {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = IdentityUserApplicationCredentialList::default();
+        let request = IdentityApplicationCredentialsBehaviour::request_from_filter(&filter);
+        assert!(IdentityApplicationCredentialsBehaviour::matches_request(
+            &request
+        ));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Identity(IdentityApiRequest::Group(Box::new(
+            crate::cloud_worker::identity::v3::IdentityGroupApiRequest::List(Box::new(
+                crate::cloud_worker::identity::v3::IdentityGroupList::default(),
+            )),
+        )));
+        assert!(!IdentityApplicationCredentialsBehaviour::matches_request(
+            &req
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = IdentityUserApplicationCredentialList::default();
+        let action = Action::SetIdentityApplicationCredentialListFilters(filter);
+        let result = IdentityApplicationCredentialsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result =
+            IdentityApplicationCredentialsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

@@ -12,126 +12,111 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
-use eyre::Result;
-use ratatui::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-
+use crate::cloud_worker::types::{
+    ApiRequest, NetworkApiRequest, NetworkRouterApiRequest, NetworkRouterList,
+};
+use crate::components::generic_resource_view::GenericResourceView;
+use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::mode::Mode;
 use openstack_types::network::v2::router::response::list::RouterResponse;
 
-use crate::{
-    action::Action,
-    cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkRouterApiRequest, NetworkRouterList,
-    },
-    components::{Component, table_view::TableViewComponentBase},
-    config::Config,
-    error::TuiError,
-    mode::Mode,
-    utils::ResourceKey,
-};
-
-const TITLE: &str = "Routers";
 const VIEW_CONFIG_KEY: &str = "network.router";
 
-impl ResourceKey for RouterResponse {
+impl crate::utils::ResourceKey for RouterResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkRouters<'a> = TableViewComponentBase<'a, RouterResponse, NetworkRouterList>;
+pub struct NetworkRoutersBehaviour;
 
-impl NetworkRouters<'_> {
-    /// Normalize filters
-    ///
-    /// Add preferred sorting
-    fn normalize_filters(&self, mut filters: NetworkRouterList) -> NetworkRouterList {
-        if filters.sort_key.is_none() {
-            filters.sort_key = Some(Vec::from(["name".into()]));
-            filters.sort_dir = Some(Vec::from(["asc".into()]));
-        }
-        filters
+impl ResourceBehaviour for NetworkRoutersBehaviour {
+    type Item = RouterResponse;
+    type Filter = NetworkRouterList;
+
+    fn view_key() -> &'static str {
+        VIEW_CONFIG_KEY
     }
-
-    /// Normalized filters
-    fn normalized_filters(&self) -> NetworkRouterList {
-        self.normalize_filters(self.get_filters().clone()).clone()
+    fn title() -> &'static str {
+        "Routers"
+    }
+    fn mode() -> Mode {
+        Mode::NetworkRouters
+    }
+    fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
+        if filter.sort_key.is_none() {
+            filter.sort_key = Some(Vec::from(["name".into()]));
+            filter.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filter
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        ApiRequest::from(NetworkRouterApiRequest::List(Box::new(filter.clone())))
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Router(boxreq))
+            if matches!(**boxreq, NetworkRouterApiRequest::List(_))
+        )
     }
 }
 
-impl Component for NetworkRouters<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
-        self.set_config(config)
+pub type NetworkRouters = GenericResourceView<'static, NetworkRoutersBehaviour>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::components::resource_behaviour::ResourceBehaviour;
+
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(NetworkRoutersBehaviour::view_key(), "network.router");
+        assert_eq!(NetworkRoutersBehaviour::title(), "Routers");
+        assert_eq!(NetworkRoutersBehaviour::mode(), Mode::NetworkRouters);
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
-        self.set_command_tx(tx)
+    #[test]
+    fn normalise_filter_sets_defaults() {
+        let filter = NetworkRouterList::default();
+        let norm = NetworkRoutersBehaviour::normalise_filter(filter);
+        assert_eq!(norm.sort_key, Some(Vec::from(["name".into()])));
+        assert_eq!(norm.sort_dir, Some(Vec::from(["asc".into()])));
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
-        match action {
-            Action::CloudChangeScope(_) => {
-                self.set_loading(true);
-            }
-            Action::ConnectedToCloud(_) => {
-                if let Mode::NetworkRouters = current_mode {
-                    self.set_loading(true);
-                    self.set_data(Vec::new())?;
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkRouterApiRequest::List(Box::new(self.normalized_filters())),
-                    ))));
-                }
-            }
-            Action::Mode {
-                mode: Mode::NetworkRouters,
-                ..
-            }
-            | Action::Refresh => {
-                self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkRouterApiRequest::List(Box::new(self.normalized_filters())),
-                ))));
-            }
-            // Action::ShowRouterSubnets => {
-            //     // only if we are currently in the IdentityGroup mode
-            //     if current_mode == Mode::RouterNetworks {
-            //         // and have command_tx
-            //         if let Some(command_tx) = self.get_command_tx() {
-            //             // and have a selected entry
-            //             if let Some(group_row) = self.get_selected() {
-            //                 command_tx.send(Action::SetRouterSubnetListFilters(
-            //                     RouterSubnetListFilters {
-            //                         network_id: Some(group_row.id.clone()),
-            //                         network_name: Some(group_row.name.clone()),
-            //                     },
-            //                 ))?;
-            //                 return Ok(Some(Action::Mode(Mode::RouterSubnets)));
-            //             }
-            //         }
-            //     }
-            // }
-            Action::DescribeApiResponse => self.describe_selected_entry()?,
-            Action::Tick => self.app_tick()?,
-            Action::Render => self.render_tick()?,
-            Action::ApiResponsesData {
-                request: ApiRequest::Network(NetworkApiRequest::Router(req)),
-                data,
-            } => {
-                if let NetworkRouterApiRequest::List(_) = *req {
-                    self.set_data(data)?;
-                }
-            }
-            _ => {}
-        };
-        Ok(None)
+    #[test]
+    fn normalise_filter_preserves_existing() {
+        let mut f = NetworkRouterList::default();
+        f.sort_key = Some(Vec::from(["id".into()]));
+        let norm = NetworkRoutersBehaviour::normalise_filter(f);
+        assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
-        self.handle_key_events(key)
+    #[test]
+    fn request_from_filter_creates_list_request() {
+        let filter = NetworkRouterList::default();
+        let request = NetworkRoutersBehaviour::request_from_filter(&filter);
+        assert!(matches!(
+            request,
+            ApiRequest::Network(NetworkApiRequest::Router(boxreq))
+            if matches!(*boxreq, NetworkRouterApiRequest::List(_))
+        ));
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
-        self.draw(f, area, TITLE)
+    #[test]
+    fn matches_request_returns_true_for_list() {
+        let filter = NetworkRouterList::default();
+        let request = NetworkRoutersBehaviour::request_from_filter(&filter);
+        assert!(NetworkRoutersBehaviour::matches_request(&request));
+    }
+
+    #[test]
+    fn matches_request_returns_false_for_unrelated() {
+        let req = ApiRequest::Network(NetworkApiRequest::Subnet(Box::new(
+            crate::cloud_worker::network::v2::NetworkSubnetApiRequest::List(Box::new(
+                crate::cloud_worker::network::v2::NetworkSubnetList::default(),
+            )),
+        )));
+        assert!(!NetworkRoutersBehaviour::matches_request(&req));
     }
 }
