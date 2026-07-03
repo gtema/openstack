@@ -51,6 +51,8 @@ pub struct ProjectSelect {
     items: Vec<ProjectData>,
     popup_state: FuzzySelectState,
     is_loading: bool,
+    action_tx: Option<UnboundedSender<Action>>,
+    items_fetched: bool,
 }
 
 impl Default for ProjectSelect {
@@ -66,12 +68,15 @@ impl ProjectSelect {
             items: Vec::new(),
             popup_state: FuzzySelectState::new(),
             is_loading: true,
+            action_tx: None,
+            items_fetched: false,
         }
     }
 }
 
 impl Component for ProjectSelect {
-    fn register_action_handler(&mut self, _tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.action_tx = Some(tx);
         Ok(())
     }
 
@@ -82,15 +87,20 @@ impl Component for ProjectSelect {
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match &action {
-            Action::ConnectToCloud(_) | Action::CloudChangeScope(_) => self.is_loading = true,
-            Action::ConnectedToCloud(_) => {
+            Action::ConnectToCloud(_) | Action::CloudChangeScope(_) => {
                 self.is_loading = true;
-                let req = IdentityAuthProjectListBuilder::default()
-                    .build()
-                    .wrap_err("cannot prepare auth project list request")?;
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityAuthProjectApiRequest::List(Box::new(req)),
-                ))));
+                self.items_fetched = false;
+            }
+            Action::ConnectedToCloud(_) | Action::SelectProject => {
+                if !self.items_fetched {
+                    self.is_loading = true;
+                    let req = IdentityAuthProjectListBuilder::default()
+                        .build()
+                        .wrap_err("cannot prepare auth project list request")?;
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        IdentityAuthProjectApiRequest::List(Box::new(req)),
+                    ))));
+                }
             }
             Action::ApiResponsesData {
                 data,
@@ -141,6 +151,7 @@ impl ProjectSelect {
         let names: Vec<String> = items.iter().map(|p| p.name.clone()).collect();
         self.items = items;
         self.popup_state.set_items(names);
+        self.items_fetched = true;
         self.is_loading = false;
         Ok(())
     }
