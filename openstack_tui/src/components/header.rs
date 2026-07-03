@@ -36,6 +36,7 @@ pub struct Header {
     cloud_name: String,
     project_name: String,
     domain_name: String,
+    region_name: Option<String>,
     /// Connection data
     connection_data_rows: Vec<(String, String)>,
     /// Global bindings rows
@@ -63,6 +64,7 @@ impl Header {
             cloud_name: String::new(),
             project_name: String::new(),
             domain_name: String::new(),
+            region_name: None,
             mode_action_keybindings: Vec::new(),
             mode_filter_keybindings: Vec::new(),
             connection_data_rows: Vec::new(),
@@ -70,6 +72,7 @@ impl Header {
                 (String::from("<:>"), String::from("Select resource")),
                 (String::from("<F2>"), String::from("Switch cloud")),
                 (String::from("<F4>"), String::from("Switch project")),
+                (String::from("<F5>"), String::from("Switch region")),
             ],
         }
     }
@@ -148,6 +151,7 @@ impl Component for Header {
                 self.cloud_name.clone_from(cloud);
                 self.project_name.clear();
                 self.domain_name.clear();
+                self.region_name = None;
                 self.connection_data_rows.clear();
                 self.connection_data_rows
                     .extend([(String::from("Cloud:"), self.cloud_name.clone())]);
@@ -184,11 +188,18 @@ impl Component for Header {
                         });
                 }
             }
-            Action::ConnectedToCloud(ref auth_token) => {
+            Action::SwitchToRegion(ref region) => {
+                self.region_name = Some(region.clone());
+            }
+            Action::ConnectedToCloud(auth_token) => {
                 // Update information about cloud we are connected to
                 self.connection_data_rows.clear();
                 self.connection_data_rows
                     .push((String::from("Cloud:"), self.cloud_name.clone()));
+                if let Some(region) = &self.region_name {
+                    self.connection_data_rows
+                        .push((String::from("Region:"), region.clone()));
+                }
                 if let Some(project) = &auth_token.project {
                     if let Some(domain) = &project.domain
                         && let Some(name) = &domain.name

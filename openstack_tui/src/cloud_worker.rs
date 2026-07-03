@@ -186,6 +186,52 @@ impl Cloud {
                         action: Some(Box::new(action.clone())),
                     })?,
                 },
+                Action::SwitchToRegion(ref region) => match self.cloud {
+                    Some(ref mut session) => {
+                        debug!("Switching region to {}", region);
+                        if let Err(err) = session.set_region_name(region.clone()) {
+                            app_tx.send(Action::Error {
+                                msg: format!("Cannot switch region: {err:?}"),
+                                action: Some(Box::new(action.clone())),
+                            })?;
+                        } else {
+                            session
+                                .discover_service_endpoint(
+                                    &openstack_sdk::types::ServiceType::Compute,
+                                )
+                                .await?;
+                            session
+                                .discover_service_endpoint(
+                                    &openstack_sdk::types::ServiceType::BlockStorage,
+                                )
+                                .await?;
+                            session
+                                .discover_service_endpoint(
+                                    &openstack_sdk::types::ServiceType::Image,
+                                )
+                                .await?;
+                            session
+                                .discover_service_endpoint(
+                                    &openstack_sdk::types::ServiceType::Network,
+                                )
+                                .await?;
+                            if let Some(auth_info) = session.get_auth_info() {
+                                app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+                            }
+                        }
+                    }
+                    _ => app_tx.send(Action::Error {
+                        msg: String::from("Cannot switch region without being connected first"),
+                        action: Some(Box::new(action.clone())),
+                    })?,
+                },
+                Action::ListRegions => {
+                    if let Some(ref session) = self.cloud
+                        && let Some(regions) = session.get_available_regions()
+                    {
+                        app_tx.send(Action::Regions(regions))?;
+                    }
+                }
                 ref ac @ Action::PerformApiRequest(ref request) => {
                     if let Some(ref mut conn) = self.cloud {
                         // Check if reauth is necessary

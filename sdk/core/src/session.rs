@@ -32,6 +32,8 @@ pub struct SessionContext {
     pub auth: Auth,
     pub catalog: Catalog,
     pub state: State,
+    /// Runtime region override (set by region switch, takes priority over CloudConfig).
+    pub region_name: Option<String>,
 }
 
 impl SessionContext {
@@ -92,6 +94,7 @@ impl SessionContext {
             auth,
             catalog,
             state,
+            region_name: None,
         })
     }
 }

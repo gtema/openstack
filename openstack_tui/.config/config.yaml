@@ -275,6 +275,9 @@ global_keybindings:
   "<F4>":
     action: SelectProject
     description: Select project
+  "<F5>":
+    action: SelectRegion
+    description: Select region
   "<ctrl-r>":
     action: Refresh
     description: Reload data

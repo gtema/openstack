@@ -80,6 +80,14 @@ pub enum Action {
     CloudSelect,
     /// Open project selection popup
     SelectProject,
+    /// Switch current region to the selected region
+    SwitchToRegion(String),
+    /// Open region selection popup
+    SelectRegion,
+    /// Query list of available regions
+    ListRegions,
+    /// List of available regions
+    Regions(Vec<String>),
     /// Query list of configured cloud connections
     ListClouds,
     /// List of configured cloud connections

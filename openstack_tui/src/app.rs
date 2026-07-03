@@ -63,6 +63,7 @@ use crate::{
             subnets::NetworkSubnets,
         },
         project_select_popup::ProjectSelect,
+        region_select_popup::RegionSelect,
         resource_select_popup::ApiRequestSelect,
     },
     config::Config,
@@ -79,6 +80,7 @@ enum Popup {
     SelectApiRequest,
     SwitchCloud,
     SwitchProject,
+    SwitchRegion,
     //CreateNetworkSecurityGroupRule,
     Confirm,
 }
@@ -200,6 +202,7 @@ impl App {
 
         let mut popups: HashMap<Popup, Box<dyn Component>> = HashMap::new();
         popups.insert(Popup::SwitchProject, Box::new(ProjectSelect::new()));
+        popups.insert(Popup::SwitchRegion, Box::new(RegionSelect::new()));
         popups.insert(Popup::Error, Box::new(ErrorPopup::new()));
         popups.insert(Popup::SwitchCloud, Box::new(CloudSelect::new()));
         popups.insert(Popup::SelectApiRequest, Box::new(ApiRequestSelect::new()));
@@ -407,7 +410,7 @@ impl App {
 
                 Action::ConnectedToCloud(_) => {
                     if let Some(popup) = &self.active_popup
-                        && popup == &Popup::SwitchProject
+                        && (popup == &Popup::SwitchProject || popup == &Popup::SwitchRegion)
                     {
                         // Hide popup
                         self.active_popup = None;
@@ -417,7 +420,7 @@ impl App {
                 }
                 Action::CloudChangeScope(ref scope) => {
                     if let Some(popup) = &self.active_popup
-                        && popup == &Popup::SwitchProject
+                        && (popup == &Popup::SwitchProject || popup == &Popup::SwitchRegion)
                     {
                         // Hide popup
                         self.active_popup = None;
@@ -425,6 +428,17 @@ impl App {
                     self.render(tui)?;
                     self.cloud_worker_tx
                         .send(Action::CloudChangeScope(scope.clone()))?;
+                }
+                Action::SwitchToRegion(ref region) => {
+                    if let Some(popup) = &self.active_popup
+                        && popup == &Popup::SwitchRegion
+                    {
+                        // Hide popup
+                        self.active_popup = None;
+                    }
+                    self.render(tui)?;
+                    self.cloud_worker_tx
+                        .send(Action::SwitchToRegion(region.clone()))?;
                 }
                 Action::ApiRequestSelect => {
                     self.active_popup = Some(Popup::SelectApiRequest);
@@ -440,6 +454,13 @@ impl App {
                 }
                 Action::ListClouds => {
                     self.cloud_worker_tx.send(Action::ListClouds)?;
+                }
+                Action::ListRegions => {
+                    self.cloud_worker_tx.send(Action::ListRegions)?;
+                }
+                Action::SelectRegion => {
+                    self.active_popup = Some(Popup::SwitchRegion);
+                    self.render(tui)?;
                 }
                 Action::AuthDataRequired { .. } => {
                     self.active_popup = Some(Popup::AuthHelper);
