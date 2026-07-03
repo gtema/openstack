@@ -15,6 +15,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use ratatui::prelude::*;
+use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
@@ -29,6 +30,8 @@ const TITLE: &str = " Select cloud to connect: ";
 pub struct CloudSelect {
     config: Config,
     popup_state: FuzzySelectState,
+    action_tx: Option<UnboundedSender<Action>>,
+    items_fetched: bool,
 }
 
 impl Default for CloudSelect {
@@ -42,11 +45,18 @@ impl CloudSelect {
         Self {
             config: Config::default(),
             popup_state: FuzzySelectState::new(),
+            action_tx: None,
+            items_fetched: false,
         }
     }
 }
 
 impl Component for CloudSelect {
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.action_tx = Some(tx);
+        Ok(())
+    }
+
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config.clone();
         Ok(())
@@ -57,6 +67,11 @@ impl Component for CloudSelect {
             let mut items: Vec<String> = clouds.to_vec();
             items.sort_by_key(|a| a.to_lowercase());
             self.popup_state.set_items(items);
+            self.items_fetched = true;
+        } else if action == Action::CloudSelect && !self.items_fetched {
+            if let Some(tx) = &self.action_tx {
+                tx.send(Action::ListClouds)?;
+            }
         }
         Ok(None)
     }

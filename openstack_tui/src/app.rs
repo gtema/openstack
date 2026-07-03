@@ -438,6 +438,9 @@ impl App {
                     self.active_popup = Some(Popup::SwitchProject);
                     self.render(tui)?;
                 }
+                Action::ListClouds => {
+                    self.cloud_worker_tx.send(Action::ListClouds)?;
+                }
                 Action::AuthDataRequired { .. } => {
                     self.active_popup = Some(Popup::AuthHelper);
                     self.render(tui)?;
