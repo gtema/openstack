@@ -538,6 +538,28 @@ impl Catalog {
         }
         Ok(self)
     }
+
+    /// Collect all unique region names from catalog and discovered endpoints.
+    pub fn get_regions(&self) -> Vec<String> {
+        let mut regions = HashSet::new();
+        for eps in self.catalog_endpoints.values() {
+            for ep in eps.get_all() {
+                if let Some(r) = ep.region() {
+                    regions.insert(r.clone());
+                }
+            }
+        }
+        for eps in self.service_endpoints.values() {
+            for ep in eps.get_all() {
+                if let Some(r) = ep.region() {
+                    regions.insert(r.clone());
+                }
+            }
+        }
+        let mut result: Vec<String> = regions.into_iter().collect();
+        result.sort();
+        result
+    }
 }
 
 #[cfg(test)]

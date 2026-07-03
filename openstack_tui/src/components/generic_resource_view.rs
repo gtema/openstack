@@ -105,6 +105,12 @@ where
             return Ok(None);
         }
 
+        // --- Region switch: reload data for the new region ---
+        if let Action::SwitchToRegion(_) = &action {
+            self.base.set_loading(true);
+            return Ok(None);
+        }
+
         // --- Connected to cloud: only request data if we are the current mode ---
         if let Action::ConnectedToCloud(_) = &action {
             self.base.set_loading(true);

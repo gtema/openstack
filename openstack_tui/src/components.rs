@@ -39,6 +39,7 @@ pub mod image;
 pub mod load_balancer;
 pub mod network;
 pub mod project_select_popup;
+pub mod region_select_popup;
 pub mod resource_behaviour;
 mod resource_key_impls; // bring ResourceKey impls into scope
 pub mod resource_select_popup;

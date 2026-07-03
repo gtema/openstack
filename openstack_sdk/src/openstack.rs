@@ -475,12 +475,16 @@ impl OpenStack {
     ) -> Result<(), OpenStackError> {
         let ep_opt = {
             let session = self.session_read("discover_service_endpoint_ep")?;
+            let region = session
+                .region_name
+                .as_ref()
+                .or(self.config.region_name.as_ref());
             session
                 .catalog
                 .get_service_endpoint(
                     service_type.to_string(),
                     None,
-                    self.config.region_name.as_ref(),
+                    region,
                     self.config.interface.as_ref(),
                 )
                 .ok()
@@ -522,16 +526,25 @@ impl OpenStack {
             match self.rest_with_auth(req, Vec::new(), &auth) {
                 Ok(rsp) => {
                     if rsp.status() != StatusCode::NOT_FOUND {
+                        let region = {
+                            let session =
+                                self.session_read("discover_service_endpoint: get region")?;
+                            session
+                                .region_name
+                                .as_deref()
+                                .or(self.config.region_name.as_deref())
+                                .map(|s| s.to_string())
+                        };
                         let ok = {
                             let mut session =
-                                self.session_write("discover_loop_process_endpoint")?;
+                                self.session_write("discover_service_endpoint: process catalog")?;
                             session
                                 .catalog
                                 .process_endpoint_discovery(
                                     service_type,
                                     &try_url,
                                     rsp.body(),
-                                    self.config.region_name.as_ref(),
+                                    region.as_deref(),
                                     self.config.interface.as_ref(),
                                 )
                                 .is_ok()
@@ -655,6 +668,43 @@ impl OpenStack {
             return Some(token.get_state(offset));
         }
         None
+    }
+
+    /// Set the region name for endpoint resolution.
+    ///
+    /// This overrides the region from `CloudConfig` at runtime without requiring
+    /// re-authentication. The token's service catalog already contains endpoints
+    /// for all regions, so switching region only changes which endpoint is selected.
+    pub fn set_region_name(&self, region: String) -> Result<(), OpenStackError> {
+        let mut session = self.session_write("set_region_name")?;
+        session.region_name = Some(region);
+        Ok(())
+    }
+
+    /// Return the current effective region name.
+    ///
+    /// Returns the runtime override (if set via [`set_region_name`]) or falls back
+    /// to the region from [`CloudConfig`].
+    pub fn get_region_name(&self) -> Option<String> {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        session
+            .region_name
+            .clone()
+            .or_else(|| self.config.region_name.clone())
+    }
+
+    /// List available regions from catalog endpoints.
+    ///
+    /// Collects unique region names from both the service catalog and any
+    /// discovered version endpoints.
+    pub fn get_available_regions(&self) -> Option<Vec<String>> {
+        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let regions = session.catalog.get_regions();
+        if regions.is_empty() {
+            None
+        } else {
+            Some(regions)
+        }
     }
 
     #[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
@@ -782,12 +832,16 @@ impl api::Client for OpenStack {
                     msg: format!("get_service_endpoint: session read lock poisoned: {}", e),
                 })
             })?;
+            let region = session
+                .region_name
+                .as_ref()
+                .or(self.config.region_name.as_ref());
             session
                 .catalog
                 .get_service_endpoint(
                     service_type.to_string(),
                     version,
-                    self.config.region_name.as_ref(),
+                    region,
                     self.config.interface.as_ref(),
                 )
                 .cloned()
@@ -902,6 +956,7 @@ mod tests {
                 auth,
                 catalog,
                 state,
+                region_name: None,
             })),
             auth_helper,
             max_auth_retries: max_retries,
