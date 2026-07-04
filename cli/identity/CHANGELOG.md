@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-identity-v0.13.7...openstack-cli-identity-v0.13.8) - 2026-07-04
+
+### Other
+
+- Address clippy issues ([#1799](https://github.com/gtema/openstack/pull/1799))
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack-cli-identity-v0.1.0) - 2026-05-14
 
 ### Other
