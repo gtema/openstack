@@ -42,8 +42,9 @@ use ssh_key::PrivateKey;
 /// Provide the matching SSH private key to obtain the plaintext password.
 ///
 /// Supports OpenSSH (`BEGIN OPENSSH PRIVATE KEY`), PEM RSA
-/// (`BEGIN RSA PRIVATE KEY`), and PKCS#8 (`BEGIN PRIVATE KEY`) key formats.
-/// Passphrase-protected OpenSSH keys trigger an interactive prompt.
+/// (`BEGIN RSA PRIVATE KEY`), and PKCS#8 (`BEGIN PRIVATE KEY`,
+/// `BEGIN ENCRYPTED PRIVATE KEY`) key formats. Passphrase-protected
+/// OpenSSH and PKCS#8 keys trigger an interactive prompt.
 ///
 /// To retrieve the raw (encrypted) password instead, use
 /// `osc compute server password show`.
@@ -124,57 +125,97 @@ impl ShowPlaintextCommand {
 /// - OpenSSH (`BEGIN OPENSSH PRIVATE KEY`) — passphrase-protected keys prompt
 ///   interactively.
 /// - Traditional PEM RSA (`BEGIN RSA PRIVATE KEY`)
-/// - PKCS#8 PEM (`BEGIN PRIVATE KEY`)
+/// - PKCS#8 PEM (`BEGIN PRIVATE KEY`, `BEGIN ENCRYPTED PRIVATE KEY`) —
+///   encrypted keys prompt interactively.
 ///
-/// Encrypted traditional PEM keys return a helpful conversion hint.
+/// Encrypted traditional PEM keys (`Proc-Type: 4,ENCRYPTED` headers) return
+/// a conversion hint.
 fn load_rsa_key(key_path: &Path) -> Result<RsaPrivateKey, OpenStackCliError> {
     let content = std::fs::read_to_string(key_path)?;
+    load_rsa_key_from_pem(&content, &prompt_passphrase)
+}
 
-    if content.contains("BEGIN OPENSSH PRIVATE KEY") {
-        let private_key = PrivateKey::from_openssh(&content).map_err(|e| {
-            OpenStackCliError::InputParameters(format!("failed to parse SSH key: {e}"))
-        })?;
+/// Prompt the user interactively for the private key passphrase.
+fn prompt_passphrase() -> Result<String, OpenStackCliError> {
+    Ok(Password::new()
+        .with_prompt("Private key passphrase")
+        .interact()?)
+}
 
-        let private_key = if private_key.is_encrypted() {
-            let passphrase = Password::new()
-                .with_prompt("SSH key passphrase")
-                .interact()?;
-            private_key.decrypt(passphrase.as_bytes()).map_err(|e| {
-                OpenStackCliError::InputParameters(format!(
-                    "failed to decrypt SSH key (wrong passphrase?): {e}"
-                ))
-            })?
-        } else {
-            private_key
-        };
+/// Parse an RSA private key from PEM content, dispatching on the PEM tag.
+///
+/// `passphrase_prompt` is invoked when the key is passphrase-protected;
+/// injectable for testing.
+fn load_rsa_key_from_pem(
+    content: &str,
+    passphrase_prompt: &dyn Fn() -> Result<String, OpenStackCliError>,
+) -> Result<RsaPrivateKey, OpenStackCliError> {
+    let document = pem::parse(content).map_err(|e| {
+        OpenStackCliError::InputParameters(format!(
+            "unrecognized private key format (expected OpenSSH, PEM RSA, or PKCS#8): {e}"
+        ))
+    })?;
 
-        let rsa_keypair = private_key.key_data().rsa().ok_or_else(|| {
-            OpenStackCliError::InputParameters(
-                "private key must be RSA (Ed25519/ECDSA keys are not supported)".into(),
-            )
-        })?;
+    match document.tag() {
+        "OPENSSH PRIVATE KEY" => {
+            // ssh-key parses the full armored text, not the decoded contents.
+            let private_key = PrivateKey::from_openssh(content).map_err(|e| {
+                OpenStackCliError::InputParameters(format!("failed to parse SSH key: {e}"))
+            })?;
 
-        RsaPrivateKey::try_from(rsa_keypair).map_err(|e| {
-            OpenStackCliError::InputParameters(format!("failed to extract RSA key: {e}"))
-        })
-    } else if content.contains("BEGIN RSA PRIVATE KEY") {
-        RsaPrivateKey::from_pkcs1_pem(&content).map_err(|e| {
-            OpenStackCliError::InputParameters(format!("failed to parse RSA PEM key: {e}"))
-        })
-    } else if content.contains("BEGIN PRIVATE KEY") {
-        RsaPrivateKey::from_pkcs8_pem(&content).map_err(|e| {
+            let private_key = if private_key.is_encrypted() {
+                let passphrase = passphrase_prompt()?;
+                private_key.decrypt(passphrase.as_bytes()).map_err(|e| {
+                    OpenStackCliError::InputParameters(format!(
+                        "failed to decrypt SSH key (wrong passphrase?): {e}"
+                    ))
+                })?
+            } else {
+                private_key
+            };
+
+            let rsa_keypair = private_key.key_data().rsa().ok_or_else(|| {
+                OpenStackCliError::InputParameters(
+                    "private key must be RSA (Ed25519/ECDSA keys are not supported)".into(),
+                )
+            })?;
+
+            RsaPrivateKey::try_from(rsa_keypair).map_err(|e| {
+                OpenStackCliError::InputParameters(format!("failed to extract RSA key: {e}"))
+            })
+        }
+        "RSA PRIVATE KEY" => {
+            // Traditional PEM signals encryption via RFC 1421 headers.
+            if document
+                .headers()
+                .get("Proc-Type")
+                .is_some_and(|v| v.contains("ENCRYPTED"))
+            {
+                return Err(OpenStackCliError::InputParameters(
+                    "encrypted traditional PEM keys are not supported; \
+                     convert first with: ssh-keygen -p -m OpenSSH -f <key>"
+                        .into(),
+                ));
+            }
+            RsaPrivateKey::from_pkcs1_der(document.contents()).map_err(|e| {
+                OpenStackCliError::InputParameters(format!("failed to parse RSA PEM key: {e}"))
+            })
+        }
+        "PRIVATE KEY" => RsaPrivateKey::from_pkcs8_der(document.contents()).map_err(|e| {
             OpenStackCliError::InputParameters(format!("failed to parse PKCS#8 key: {e}"))
-        })
-    } else if content.contains("ENCRYPTED") {
-        Err(OpenStackCliError::InputParameters(
-            "encrypted traditional PEM keys are not supported; \
-             convert first with: ssh-keygen -p -m OpenSSH -f <key>"
-                .into(),
-        ))
-    } else {
-        Err(OpenStackCliError::InputParameters(
-            "unrecognized private key format (expected OpenSSH, PEM RSA, or PKCS#8)".into(),
-        ))
+        }),
+        "ENCRYPTED PRIVATE KEY" => {
+            let passphrase = passphrase_prompt()?;
+            RsaPrivateKey::from_pkcs8_encrypted_der(document.contents(), passphrase.as_bytes())
+                .map_err(|e| {
+                    OpenStackCliError::InputParameters(format!(
+                        "failed to decrypt PKCS#8 key (wrong passphrase?): {e}"
+                    ))
+                })
+        }
+        tag => Err(OpenStackCliError::InputParameters(format!(
+            "unsupported PEM tag {tag:?} (expected OpenSSH, PEM RSA, or PKCS#8)"
+        ))),
     }
 }
 
@@ -288,13 +329,54 @@ mod tests {
     }
 
     #[test]
-    fn test_encrypted_traditional_pem_returns_helpful_error() {
-        let content =
-            b"-----BEGIN ENCRYPTED PRIVATE KEY-----\nfake\n-----END ENCRYPTED PRIVATE KEY-----\n";
-        let mut f = NamedTempFile::new().expect("tempfile");
-        f.write_all(content).expect("write");
+    fn test_decrypt_encrypted_pkcs8_pem() {
+        let (priv_key, pub_key) = make_test_keypair();
+        let encrypted_b64 = nova_encrypt(&pub_key, "s3cr3t");
 
-        let err = load_rsa_key(f.path()).expect_err("should fail");
+        let pem = priv_key
+            .to_pkcs8_encrypted_pem(&mut OsRng, b"letmein", Pkcs8LineEnding::LF)
+            .expect("encrypted pkcs8 pem");
+
+        let key = load_rsa_key_from_pem(&pem, &|| Ok("letmein".to_string())).expect("load key");
+        let plaintext = key
+            .decrypt(
+                Pkcs1v15Encrypt,
+                &BASE64.decode(&encrypted_b64).expect("base64"),
+            )
+            .expect("decrypt");
+        assert_eq!(plaintext, b"s3cr3t");
+    }
+
+    #[test]
+    fn test_encrypted_pkcs8_wrong_passphrase_returns_error() {
+        let (priv_key, _) = make_test_keypair();
+        let pem = priv_key
+            .to_pkcs8_encrypted_pem(&mut OsRng, b"letmein", Pkcs8LineEnding::LF)
+            .expect("encrypted pkcs8 pem");
+
+        let err = load_rsa_key_from_pem(&pem, &|| Ok("wrong".to_string()))
+            .expect_err("should fail with wrong passphrase");
+        assert!(
+            matches!(err, OpenStackCliError::InputParameters(_)),
+            "expected InputParameters, got {err:?}"
+        );
+    }
+
+    #[test]
+    fn test_encrypted_traditional_pem_returns_helpful_error() {
+        // Traditional encrypted PEM: the tag is still "RSA PRIVATE KEY";
+        // encryption is signaled by RFC 1421 Proc-Type/DEK-Info headers.
+        // The body is not a key, just valid base64.
+        let content = concat!(
+            "-----BEGIN RSA PRIVATE KEY-----\n", // gitleaks:allow
+            "Proc-Type: 4,ENCRYPTED\n",
+            "DEK-Info: AES-128-CBC,A1B2C3D4E5F60718293A4B5C6D7E8F90\n",
+            "\n",
+            "bm90IGEgcmVhbCBrZXkgYm9keSwganVzdCB2YWxpZCBiYXNlNjQ=\n",
+            "-----END RSA PRIVATE KEY-----\n",
+        );
+
+        let err = load_rsa_key_from_pem(content, &no_passphrase).expect_err("should fail");
         match err {
             OpenStackCliError::InputParameters(msg) => {
                 assert!(
@@ -304,6 +386,28 @@ mod tests {
             }
             other => panic!("expected InputParameters, got {other:?}"),
         }
+    }
+
+    #[test]
+    fn test_unsupported_pem_tag_returns_error() {
+        let content = "-----BEGIN CERTIFICATE-----\n\
+            bm90IGEga2V5\n\
+            -----END CERTIFICATE-----\n";
+
+        let err = load_rsa_key_from_pem(content, &no_passphrase).expect_err("should fail");
+        match err {
+            OpenStackCliError::InputParameters(msg) => {
+                assert!(
+                    msg.contains("CERTIFICATE"),
+                    "expected unsupported tag to be named in: {msg}"
+                );
+            }
+            other => panic!("expected InputParameters, got {other:?}"),
+        }
+    }
+
+    fn no_passphrase() -> Result<String, OpenStackCliError> {
+        panic!("passphrase prompt must not be invoked for this input");
     }
 
     #[test]
