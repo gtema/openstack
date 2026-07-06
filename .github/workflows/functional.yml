@@ -17,6 +17,10 @@ on:
       - 'openstack_sdk/**'
       - 'sdk-*/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   functional:
     strategy:
