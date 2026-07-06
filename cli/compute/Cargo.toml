@@ -25,6 +25,7 @@ pem = { workspace = true }
 pkcs8 = { workspace = true }
 rsa = { workspace = true }
 ssh-key = { workspace = true }
+zeroize = { workspace = true }
 
 [dev-dependencies]
 tempfile = { workspace = true }

@@ -35,6 +35,7 @@ use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::pkcs8::DecodePrivateKey;
 use rsa::{Pkcs1v15Encrypt, RsaPrivateKey};
 use ssh_key::PrivateKey;
+use zeroize::Zeroizing;
 
 /// Retrieve and decrypt the administrative password for a server.
 ///
@@ -113,7 +114,7 @@ impl ShowPlaintextCommand {
         }
 
         let plaintext = decrypt_password(&self.private_key, encrypted_b64)?;
-        let decrypted = serde_json::json!({ "password": plaintext });
+        let decrypted = serde_json::json!({ "password": plaintext.as_str() });
         op.output_single::<response::get::ServerPasswordResponse>(decrypted)?;
         op.show_command_hint()?;
         Ok(())
@@ -244,20 +245,29 @@ fn load_rsa_key_from_pem(
 }
 
 /// Base64-decode and RSA PKCS#1 v1.5 decrypt a Nova server password.
-fn decrypt_password(key_path: &Path, encrypted_b64: &str) -> Result<String, OpenStackCliError> {
+///
+/// The plaintext is wrapped in [`Zeroizing`] so it is wiped from memory
+/// on drop.
+fn decrypt_password(
+    key_path: &Path,
+    encrypted_b64: &str,
+) -> Result<Zeroizing<String>, OpenStackCliError> {
     let rsa_key = load_rsa_key(key_path)?;
 
     let ciphertext = BASE64.decode(encrypted_b64)?;
 
-    let plaintext_bytes = rsa_key.decrypt(Pkcs1v15Encrypt, &ciphertext).map_err(|_| {
-        OpenStackCliError::InputParameters(
-            "failed to decrypt password — is this the right key?".into(),
-        )
+    let plaintext_bytes =
+        Zeroizing::new(rsa_key.decrypt(Pkcs1v15Encrypt, &ciphertext).map_err(|_| {
+            OpenStackCliError::InputParameters(
+                "failed to decrypt password — is this the right key?".into(),
+            )
+        })?);
+
+    let plaintext = std::str::from_utf8(&plaintext_bytes).map_err(|_| {
+        OpenStackCliError::InputParameters("decrypted password is not valid UTF-8".into())
     })?;
 
-    String::from_utf8(plaintext_bytes).map_err(|_| {
-        OpenStackCliError::InputParameters("decrypted password is not valid UTF-8".into())
-    })
+    Ok(Zeroizing::new(plaintext.to_string()))
 }
 
 #[cfg(test)]
@@ -295,7 +305,9 @@ mod tests {
         f.write_all(pem.as_bytes()).expect("write");
 
         assert_eq!(
-            decrypt_password(f.path(), &encrypted_b64).expect("decrypt"),
+            decrypt_password(f.path(), &encrypted_b64)
+                .expect("decrypt")
+                .as_str(),
             "s3cr3t"
         );
     }
@@ -312,7 +324,9 @@ mod tests {
         f.write_all(pem.as_bytes()).expect("write");
 
         assert_eq!(
-            decrypt_password(f.path(), &encrypted_b64).expect("decrypt"),
+            decrypt_password(f.path(), &encrypted_b64)
+                .expect("decrypt")
+                .as_str(),
             "p@ssw0rd"
         );
     }
@@ -476,7 +490,9 @@ mod tests {
         std::fs::set_permissions(f.path(), std::fs::Permissions::from_mode(0o400)).expect("chmod");
 
         assert_eq!(
-            decrypt_password(f.path(), &encrypted_b64).expect("decrypt"),
+            decrypt_password(f.path(), &encrypted_b64)
+                .expect("decrypt")
+                .as_str(),
             "s3cr3t"
         );
     }
