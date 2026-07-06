@@ -58,6 +58,7 @@ pub struct ShowPlaintextCommand {
     /// Path to the SSH private key used to decrypt the password.
     /// Supports OpenSSH, PEM RSA, and PKCS#8 key formats.
     /// If the key is passphrase-protected you will be prompted interactively.
+    /// The key file must not be accessible by group/others (chmod 600).
     #[arg(
         long,
         value_name = "PATH",
@@ -131,8 +132,31 @@ impl ShowPlaintextCommand {
 /// Encrypted traditional PEM keys (`Proc-Type: 4,ENCRYPTED` headers) return
 /// a conversion hint.
 fn load_rsa_key(key_path: &Path) -> Result<RsaPrivateKey, OpenStackCliError> {
+    check_key_permissions(key_path)?;
     let content = std::fs::read_to_string(key_path)?;
     load_rsa_key_from_pem(&content, &prompt_passphrase)
+}
+
+/// Refuse group/other-accessible private key files, mirroring ssh behavior.
+#[cfg(unix)]
+fn check_key_permissions(key_path: &Path) -> Result<(), OpenStackCliError> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mode = std::fs::metadata(key_path)?.permissions().mode();
+    if mode & 0o077 != 0 {
+        return Err(OpenStackCliError::InputParameters(format!(
+            "permissions {:04o} for {} are too open; the private key must only \
+             be accessible by its owner (chmod 600 or stricter)",
+            mode & 0o7777,
+            key_path.display()
+        )));
+    }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn check_key_permissions(_key_path: &Path) -> Result<(), OpenStackCliError> {
+    Ok(())
 }
 
 /// Prompt the user interactively for the private key passphrase.
@@ -408,6 +432,53 @@ mod tests {
 
     fn no_passphrase() -> Result<String, OpenStackCliError> {
         panic!("passphrase prompt must not be invoked for this input");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_key_with_open_permissions_rejected() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let (priv_key, _) = make_test_keypair();
+        let pem = priv_key
+            .to_pkcs1_pem(Pkcs1LineEnding::LF)
+            .expect("pkcs1 pem");
+        let mut f = NamedTempFile::new().expect("tempfile");
+        f.write_all(pem.as_bytes()).expect("write");
+        std::fs::set_permissions(f.path(), std::fs::Permissions::from_mode(0o644)).expect("chmod");
+
+        let err = load_rsa_key(f.path()).expect_err("group/other-readable key must be rejected");
+        match err {
+            OpenStackCliError::InputParameters(msg) => {
+                assert!(
+                    msg.contains("0644") && msg.contains("too open"),
+                    "unexpected message: {msg}"
+                );
+            }
+            other => panic!("expected InputParameters, got {other:?}"),
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_key_with_owner_read_only_permissions_accepted() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let (priv_key, pub_key) = make_test_keypair();
+        let encrypted_b64 = nova_encrypt(&pub_key, "s3cr3t");
+
+        let pem = priv_key
+            .to_pkcs1_pem(Pkcs1LineEnding::LF)
+            .expect("pkcs1 pem");
+        let mut f = NamedTempFile::new().expect("tempfile");
+        f.write_all(pem.as_bytes()).expect("write");
+        // 0400 is stricter than 0600 and must be accepted, like ssh does.
+        std::fs::set_permissions(f.path(), std::fs::Permissions::from_mode(0o400)).expect("chmod");
+
+        assert_eq!(
+            decrypt_password(f.path(), &encrypted_b64).expect("decrypt"),
+            "s3cr3t"
+        );
     }
 
     #[test]
