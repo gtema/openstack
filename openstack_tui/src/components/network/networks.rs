@@ -87,11 +87,11 @@ impl ResourceBehaviour for NetworkNetworksBehaviour {
             && let Ok(list) = NetworkSubnetList::try_from(sel)
         {
             return vec![
-                Action::SetNetworkSubnetListFilters(list),
                 Action::Mode {
                     mode: Mode::NetworkSubnets,
                     stack: true,
                 },
+                Action::SetNetworkSubnetListFilters(list),
             ];
         }
         Vec::new()
@@ -181,14 +181,14 @@ mod tests {
             &NetworkNetworkList::default(),
         );
         assert_eq!(actions.len(), 2);
-        assert!(matches!(actions[0], Action::SetNetworkSubnetListFilters(_)));
         assert!(matches!(
-            actions[1],
+            actions[0],
             Action::Mode {
                 mode: Mode::NetworkSubnets,
                 stack: true
             }
         ));
+        assert!(matches!(actions[1], Action::SetNetworkSubnetListFilters(_)));
     }
 
     #[test]

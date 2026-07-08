@@ -45,22 +45,6 @@ pub struct ComputeServerInstanceActionList {
     pub server_name: Option<String>,
 }
 
-// Conversion from ServerResponse to ComputeServerInstanceActionList
-impl TryFrom<&openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse>
-    for ComputeServerInstanceActionList
-{
-    type Error = eyre::Report;
-    fn try_from(
-        value: &openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse,
-    ) -> Result<Self, Self::Error> {
-        Ok(ComputeServerInstanceActionList {
-            server_id: value.id.clone(),
-            server_name: value.name.clone(),
-            ..Default::default()
-        })
-    }
-}
-
 impl fmt::Display for ComputeServerInstanceActionList {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();

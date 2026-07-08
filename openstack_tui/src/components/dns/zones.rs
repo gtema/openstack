@@ -109,11 +109,11 @@ impl ResourceBehaviour for DnsZonesBehaviour {
             && let Ok(list) = DnsRecordsetList::try_from(sel)
         {
             return vec![
-                Action::SetDnsRecordsetListFilters(list),
                 Action::Mode {
                     mode: Mode::DnsRecordsets,
                     stack: true,
                 },
+                Action::SetDnsRecordsetListFilters(list),
             ];
         }
         Vec::new()
@@ -233,14 +233,14 @@ mod tests {
             &DnsZoneList::default(),
         );
         assert_eq!(actions.len(), 2);
-        assert!(matches!(actions[0], Action::SetDnsRecordsetListFilters(_)));
         assert!(matches!(
-            actions[1],
+            actions[0],
             Action::Mode {
                 mode: Mode::DnsRecordsets,
                 stack: true
             }
         ));
+        assert!(matches!(actions[1], Action::SetDnsRecordsetListFilters(_)));
     }
 
     #[test]

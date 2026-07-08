@@ -135,9 +135,6 @@ where
         if let Action::Mode { mode, .. } = &action {
             if *mode == B::mode() {
                 self.base.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(B::request_from_filter(
-                    self.base.get_filters(),
-                ))));
             }
             return Ok(None);
         }
@@ -303,7 +300,7 @@ mod tests {
     }
 
     #[test]
-    fn mode_switch_requests_data_when_switching_to_match() {
+    fn mode_switch_sets_loading_when_switching_to_match() {
         let mut comp: ComputeServers = GenericResourceView::new();
         let result = comp.update(
             Action::Mode {
@@ -313,10 +310,7 @@ mod tests {
             Mode::ComputeServers,
         );
         assert!(result.is_ok());
-        assert!(matches!(
-            result.unwrap(),
-            Some(Action::PerformApiRequest(_))
-        ));
+        assert_eq!(result.unwrap(), None);
     }
 
     #[test]
@@ -495,18 +489,15 @@ mod tests {
     }
 
     #[test]
-    fn action_to_request_dispatches_perform_api_request() {
+    fn confirm_request_dispatches_confirm_action() {
         let mut comp = setup_comp_with_selected_server();
         let result = comp.update(Action::DeleteComputeServer, Mode::ComputeServers);
         assert!(result.is_ok());
-        assert!(matches!(
-            result.unwrap(),
-            Some(Action::PerformApiRequest(_))
-        ));
+        assert!(matches!(result.unwrap(), Some(Action::Confirm(_))));
     }
 
     #[test]
-    fn confirm_request_dispatches_confirm_action() {
+    fn confirm_request_dispatches_confirm_action_block_storage() {
         use crate::cloud_worker::block_storage::v3::{
             BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeList,
         };
@@ -604,10 +595,7 @@ mod tests {
         assert!(result.is_ok());
         assert!(matches!(
             result.unwrap(),
-            Some(Action::Mode {
-                mode: Mode::ComputeServers,
-                stack: true
-            })
+            Some(Action::SetComputeServerListFilters(_))
         ));
     }
 }

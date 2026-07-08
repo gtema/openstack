@@ -89,11 +89,11 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
             && let Ok(list) = NetworkSecurityGroupRuleList::try_from(sel)
         {
             return vec![
-                Action::SetNetworkSecurityGroupRuleListFilters(list),
                 Action::Mode {
                     mode: Mode::NetworkSecurityGroupRules,
                     stack: true,
                 },
+                Action::SetNetworkSecurityGroupRuleListFilters(list),
             ];
         }
         Vec::new()
@@ -189,14 +189,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetNetworkSecurityGroupRuleListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::NetworkSecurityGroupRules,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetNetworkSecurityGroupRuleListFilters(_)
         ));
     }
 

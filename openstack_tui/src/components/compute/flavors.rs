@@ -88,11 +88,11 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
                 .build()
         {
             return vec![
-                Action::SetComputeServerListFilters(Box::new(server_list)),
                 Action::Mode {
                     mode: Mode::ComputeServers,
                     stack: true,
                 },
+                Action::SetComputeServerListFilters(Box::new(server_list)),
             ];
         }
         Vec::new()
@@ -197,17 +197,17 @@ mod tests {
         );
         assert_eq!(actions.len(), 2);
         match &actions[0] {
-            Action::SetComputeServerListFilters(f) => {
-                assert_eq!(f.flavor, Some("flavor-123".into()));
-            }
-            _ => panic!("Expected SetComputeServerListFilters, got {:?}", actions[0]),
-        }
-        match &actions[1] {
             Action::Mode { mode, stack } => {
                 assert_eq!(*mode, crate::mode::Mode::ComputeServers);
                 assert!(*stack);
             }
-            _ => panic!("Expected Mode switch, got {:?}", actions[1]),
+            _ => panic!("Expected Mode switch, got {:?}", actions[0]),
+        }
+        match &actions[1] {
+            Action::SetComputeServerListFilters(f) => {
+                assert_eq!(f.flavor, Some("flavor-123".into()));
+            }
+            _ => panic!("Expected SetComputeServerListFilters, got {:?}", actions[1]),
         }
     }
 

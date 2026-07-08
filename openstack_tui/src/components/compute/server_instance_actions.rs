@@ -83,11 +83,11 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
             }
             if let Ok(list) = req.build() {
                 return vec![
-                    Action::SetComputeServerInstanceActionShowFilters(Box::new(list)),
                     Action::Mode {
                         mode: Mode::ComputeServerInstanceActionEvents,
                         stack: true,
                     },
+                    Action::SetComputeServerInstanceActionShowFilters(Box::new(list)),
                 ];
             }
         }
@@ -205,14 +205,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetComputeServerInstanceActionShowFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::ComputeServerInstanceActionEvents,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetComputeServerInstanceActionShowFilters(_)
         ));
     }
 

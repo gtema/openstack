@@ -104,11 +104,11 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
             && let Ok(list) = IdentityGroupUserList::try_from(sel)
         {
             return vec![
-                Action::SetIdentityGroupUserListFilters(list),
                 Action::Mode {
                     mode: Mode::IdentityGroupUsers,
                     stack: true,
                 },
+                Action::SetIdentityGroupUserListFilters(list),
             ];
         }
         Vec::new()
@@ -206,14 +206,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetIdentityGroupUserListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::IdentityGroupUsers,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetIdentityGroupUserListFilters(_)
         ));
     }
 
