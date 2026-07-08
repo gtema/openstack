@@ -119,11 +119,11 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
             && let Ok(list) = IdentityUserApplicationCredentialList::try_from(sel)
         {
             return vec![
-                Action::SetIdentityApplicationCredentialListFilters(list),
                 Action::Mode {
                     mode: Mode::IdentityApplicationCredentials,
                     stack: true,
                 },
+                Action::SetIdentityApplicationCredentialListFilters(list),
             ];
         }
         Vec::new()
@@ -276,14 +276,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetIdentityApplicationCredentialListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::IdentityApplicationCredentials,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetIdentityApplicationCredentialListFilters(_)
         ));
     }
 

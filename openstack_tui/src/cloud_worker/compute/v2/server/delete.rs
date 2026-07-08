@@ -38,21 +38,6 @@ pub struct ComputeServerDelete {
     pub name: Option<String>,
 }
 
-// Conversion from ServerResponse to ComputeServerDelete
-impl TryFrom<&openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse>
-    for ComputeServerDelete
-{
-    type Error = eyre::Report;
-    fn try_from(
-        value: &openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse,
-    ) -> Result<Self, Self::Error> {
-        Ok(ComputeServerDelete {
-            id: value.id.clone(),
-            name: value.name.clone(),
-        })
-    }
-}
-
 impl fmt::Display for ComputeServerDelete {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();

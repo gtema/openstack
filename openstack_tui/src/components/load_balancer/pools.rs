@@ -102,11 +102,11 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
             && let Ok(list) = LoadBalancerPoolMemberList::try_from(sel)
         {
             return vec![
-                Action::SetLoadBalancerPoolMemberListFilters(list),
                 Action::Mode {
                     mode: Mode::LoadBalancerPoolMembers,
                     stack: true,
                 },
+                Action::SetLoadBalancerPoolMemberListFilters(list),
             ];
         }
         if let Action::ShowLoadBalancerPoolHealthMonitors = action
@@ -114,11 +114,11 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
             && let Ok(list) = LoadBalancerHealthmonitorList::try_from(sel)
         {
             return vec![
-                Action::SetLoadBalancerHealthMonitorListFilters(list),
                 Action::Mode {
                     mode: Mode::LoadBalancerHealthMonitors,
                     stack: true,
                 },
+                Action::SetLoadBalancerHealthMonitorListFilters(list),
             ];
         }
         Vec::new()
@@ -216,14 +216,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetLoadBalancerPoolMemberListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::LoadBalancerPoolMembers,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetLoadBalancerPoolMemberListFilters(_)
         ));
     }
 
@@ -238,14 +238,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetLoadBalancerHealthMonitorListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::LoadBalancerHealthMonitors,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetLoadBalancerHealthMonitorListFilters(_)
         ));
     }
 

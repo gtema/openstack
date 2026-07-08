@@ -14,8 +14,8 @@
 
 use crate::action::Action;
 use crate::cloud_worker::compute::v2::{
-    ComputeServerApiRequest, ComputeServerDelete, ComputeServerGetConsoleOutputBuilder,
-    ComputeServerInstanceActionList, ComputeServerList,
+    ComputeServerApiRequest, ComputeServerDeleteBuilder, ComputeServerGetConsoleOutputBuilder,
+    ComputeServerInstanceActionListBuilder, ComputeServerList,
 };
 use crate::cloud_worker::types::{ApiRequest, ComputeApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
@@ -65,15 +65,20 @@ impl ResourceBehaviour for ComputeServersBehaviour {
             None
         }
     }
-    fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        match action {
-            Action::DeleteComputeServer => {
-                let del = ComputeServerDelete::try_from(selected?).ok()?;
-                Some(ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
-                    del,
-                ))))
+    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+        if let Action::DeleteComputeServer = action {
+            let sel = selected?;
+            let mut del_builder = ComputeServerDeleteBuilder::default();
+            del_builder.id(sel.id.clone());
+            if let Some(name) = &sel.name {
+                del_builder.name(name.clone());
             }
-            _ => None,
+            let del = del_builder.build().ok()?;
+            Some(ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
+                del,
+            ))))
+        } else {
+            None
         }
     }
     fn action_to_singular_request(
@@ -123,18 +128,26 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         }
         None
     }
-    fn custom_action(action: &Action, selected: Option<&Self::Item>) -> Vec<Action> {
+    fn filter_carry_action(
+        action: &Action,
+        selected: Option<&Self::Item>,
+        _filter: &Self::Filter,
+    ) -> Vec<Action> {
         if let Action::ShowComputeServerInstanceActions = action
             && let Some(sel) = selected
         {
-            let sel = sel.clone();
-            if let Ok(list) = ComputeServerInstanceActionList::try_from(&sel) {
+            let mut list_builder = ComputeServerInstanceActionListBuilder::default();
+            list_builder.server_id(sel.id.clone());
+            if let Some(name) = &sel.name {
+                list_builder.server_name(name.clone());
+            }
+            if let Ok(list) = list_builder.build() {
                 return vec![
-                    Action::SetComputeServerInstanceActionListFilters(Box::new(list)),
                     Action::Mode {
                         mode: Mode::ComputeServerInstanceActions,
                         stack: true,
                     },
+                    Action::SetComputeServerInstanceActionListFilters(Box::new(list)),
                 ];
             }
         }
@@ -255,10 +268,10 @@ mod tests {
     }
 
     #[test]
-    fn action_to_request_delete_with_selected_server() {
+    fn confirm_request_delete_with_selected_server() {
         let server = make_server("server-1", "test-server");
         let result =
-            ComputeServersBehaviour::action_to_request(&Action::DeleteComputeServer, Some(&server));
+            ComputeServersBehaviour::confirm_request(&Action::DeleteComputeServer, Some(&server));
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -269,15 +282,15 @@ mod tests {
     }
 
     #[test]
-    fn action_to_request_delete_without_selected_server() {
-        let result = ComputeServersBehaviour::action_to_request(&Action::DeleteComputeServer, None);
+    fn confirm_request_delete_without_selected_server() {
+        let result = ComputeServersBehaviour::confirm_request(&Action::DeleteComputeServer, None);
         assert!(result.is_none());
     }
 
     #[test]
-    fn action_to_request_returns_none_for_unrelated_action() {
+    fn confirm_request_returns_none_for_unrelated_action() {
         let server = make_server("server-1", "test-server");
-        let result = ComputeServersBehaviour::action_to_request(&Action::Tick, Some(&server));
+        let result = ComputeServersBehaviour::confirm_request(&Action::Tick, Some(&server));
         assert!(result.is_none());
     }
 
@@ -367,37 +380,45 @@ mod tests {
     }
 
     #[test]
-    fn custom_action_instance_actions_with_server() {
+    fn filter_carry_action_instance_actions_with_server() {
         let server = make_server("server-1", "test-server");
-        let result = ComputeServersBehaviour::custom_action(
+        let result = ComputeServersBehaviour::filter_carry_action(
             &Action::ShowComputeServerInstanceActions,
             Some(&server),
+            &ComputeServerList::default(),
         );
         assert_eq!(result.len(), 2);
         assert!(matches!(
             result[0],
-            Action::SetComputeServerInstanceActionListFilters(_)
-        ));
-        assert!(matches!(
-            result[1],
             Action::Mode {
                 mode: Mode::ComputeServerInstanceActions,
                 stack: true
             }
         ));
+        assert!(matches!(
+            result[1],
+            Action::SetComputeServerInstanceActionListFilters(_)
+        ));
     }
 
     #[test]
-    fn custom_action_instance_actions_without_server() {
-        let result =
-            ComputeServersBehaviour::custom_action(&Action::ShowComputeServerInstanceActions, None);
+    fn filter_carry_action_instance_actions_without_server() {
+        let result = ComputeServersBehaviour::filter_carry_action(
+            &Action::ShowComputeServerInstanceActions,
+            None,
+            &ComputeServerList::default(),
+        );
         assert!(result.is_empty());
     }
 
     #[test]
-    fn custom_action_returns_empty_for_unrelated_action() {
+    fn filter_carry_action_returns_empty_for_unrelated_action() {
         let server = make_server("server-1", "test-server");
-        let result = ComputeServersBehaviour::custom_action(&Action::Tick, Some(&server));
+        let result = ComputeServersBehaviour::filter_carry_action(
+            &Action::Tick,
+            Some(&server),
+            &ComputeServerList::default(),
+        );
         assert!(result.is_empty());
     }
 }

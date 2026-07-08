@@ -104,11 +104,11 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
             && let Ok(list) = LoadBalancerListenerList::try_from(sel)
         {
             return vec![
-                Action::SetLoadBalancerListenerListFilters(list),
                 Action::Mode {
                     mode: Mode::LoadBalancerListeners,
                     stack: true,
                 },
+                Action::SetLoadBalancerListenerListFilters(list),
             ];
         }
         if let Action::ShowLoadBalancerPools = action
@@ -116,11 +116,11 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
             && let Ok(list) = LoadBalancerPoolList::try_from(sel)
         {
             return vec![
-                Action::SetLoadBalancerPoolListFilters(list),
                 Action::Mode {
                     mode: Mode::LoadBalancerPools,
                     stack: true,
                 },
+                Action::SetLoadBalancerPoolListFilters(list),
             ];
         }
         Vec::new()
@@ -220,14 +220,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetLoadBalancerListenerListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::LoadBalancerListeners,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetLoadBalancerListenerListFilters(_)
         ));
     }
 
@@ -242,14 +242,14 @@ mod tests {
         assert_eq!(actions.len(), 2);
         assert!(matches!(
             actions[0],
-            Action::SetLoadBalancerPoolListFilters(_)
-        ));
-        assert!(matches!(
-            actions[1],
             Action::Mode {
                 mode: Mode::LoadBalancerPools,
                 stack: true
             }
+        ));
+        assert!(matches!(
+            actions[1],
+            Action::SetLoadBalancerPoolListFilters(_)
         ));
     }
 

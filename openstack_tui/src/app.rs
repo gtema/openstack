@@ -495,6 +495,7 @@ impl App {
                         }
                         self.mode_switch_stack.push(mode);
                         self.mode = mode;
+                        self.action_tx.send(Action::Refresh)?;
                         self.render(tui)?;
                     }
                 Action::PerformApiRequest(ref request) => {
