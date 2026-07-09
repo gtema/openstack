@@ -340,3 +340,337 @@ regenerated, several improvements are cheap to roll out:
 | 12 | Microversion + error-schema metadata in templates | codegen | M/L |
 | 13 | Optional keyring backend for auth cache | core | M |
 | 14 | Explicit/anchored plugin registry | auth-core | S |
+
+---
+
+# Part 2: Deeper SDK implementation review + `Waitable` design
+
+## 7. Structure and dependencies
+
+### 7.1 `sdk/core` dependency weight
+
+`openstack_sdk_core` is the crate every consumer must compile, and it currently
+pulls in concerns that are not "core":
+
+- **`dialoguer`** — an interactive terminal prompting library — is an
+  unconditional dependency because the `Dialoguer` `AuthHelper` lives in
+  `sdk/core/src/auth/auth_helper.rs`. Server-side/embedded SDK users pay for a
+  TTY prompt stack they can never use. Move interactive helpers to a small
+  `openstack-sdk-auth-helpers` crate (or gate behind an `interactive` feature,
+  off by default); `AuthHelper`/`Noop` stay in core.
+- **`tokio` / `tokio-util`** are unconditional even though the crate has a
+  `sync`-only configuration; gate them under the `async` feature.
+- **`config` (+yaml), `dirs`** are only needed by `ConfigFile`/`CloudConfig`
+  parsing; a `config-file` feature would let programmatic-config users
+  (constructing `CloudConfig` in code) drop them.
+- `inventory`, `postcard`, `tempfile` are justified but tie into §1.5/§2 — if
+  the state store becomes a trait (§2.2), `postcard`/`tempfile` move behind the
+  file-backend feature.
+
+Rule of thumb worth adopting: *core = types + traits + transport*; anything that
+does terminal I/O, file formats, or OS integration should be a feature or a
+leaf crate. This also improves compile times for the generated service crates,
+all of which depend on core.
+
+### 7.2 Facade and crate layout
+
+- Two crates per service (`sdk/<service>` requests + `types/<service>`
+  responses) is a defensible split (CLI/TUI consume response types without the
+  request machinery), but it doubles the release/version surface. If the split
+  isn't load-bearing anywhere, folding response types into the service crate
+  under a `types` module (still a separate codegen template) would halve the
+  crate count. If it is load-bearing, document the dependency rule ("types
+  crates must not depend on sdk crates") in CONTRIBUTING to keep it that way.
+- `openstack_sdk/src/api/<service>.rs` files are pure `pub use` shims — fine.
+  Consider generating them too, so adding a service is a codegen-only change.
+- Duplicated request execution/telemetry: `execute_auth_request` in
+  `auth-core/src/lib.rs` and `AsyncOpenStack::execute_request` are near-copies
+  (same `http_request` event). Move the instrumented executor into core and use
+  it from both, so tracing fields stay consistent (the auth one lacks body
+  censoring, the client one lacks nothing — one implementation, one truth).
+
+## 8. Interface patterns
+
+### 8.1 Untyped request→response coupling (biggest ergonomic gap)
+
+`query_async::<T>` accepts any `T: DeserializeOwned`; nothing connects
+`compute::v2::server::get::Request` to
+`openstack_types::compute::v2::server::response::get::ServerResponse`. Users
+must find the right response struct by convention, and a mismatch compiles fine
+and fails at deserialization time. Since both sides are generated from the same
+spec, the linkage is known at codegen time. Template change:
+
+```rust
+impl RestEndpoint for Request<'_> {
+    // existing items...
+}
+// generated alongside:
+impl TypedEndpoint for Request<'_> {
+    type Response = openstack_types::compute::v2::server::response::get::ServerResponse;
+}
+```
+
+plus one blanket combinator in core:
+
+```rust
+#[async_trait]
+pub trait SendAsync<C: AsyncClient>: TypedEndpoint {
+    async fn send(&self, client: &C) -> Result<Self::Response, ApiError<C::Error>>;
+}
+```
+
+`query_async` stays for raw/`serde_json::Value` use. This one change removes
+the most common user error, makes examples self-documenting, and is a
+prerequisite for a *typed* waiter (§10).
+
+### 8.2 Pagination should offer a `Stream`
+
+`paged(ep, Pagination::Limit(n))` materializes the whole `Vec<T>` — O(n) memory
+and no early exit. Add `paged(...).into_stream(client)` returning
+`impl Stream<Item = Result<T, ApiError<_>>>` (page-by-page fetch under the
+hood; `futures::stream::try_unfold` fits the existing code shape almost 1:1),
+with the collecting `QueryAsync` impl kept for compatibility. The CLI's
+`--limit`-less list commands and the TUI's incremental table fill are the
+immediate beneficiaries; sync gets the analogous `Iterator`.
+
+### 8.3 Microversioned endpoint variants
+
+Generated modules like `create_21`, `create_257`, `rebuild_254` push the
+microversion choice to the user with no guidance at the call site. Two
+template-level mitigations:
+
+- generate a `latest` re-export per operation (`pub use create_257 as create_latest;`)
+  so casual users have an obvious default; and
+- emit `pub const API_VERSION: ApiVersion` on each request so runtime
+  negotiation ("pick the newest variant ≤ endpoint max") becomes possible for
+  tooling — today that information is only in the module name.
+
+### 8.4 `Findable` details
+
+- `locate_resource_in_list` clones `data[0]`; take `mut data` and
+  `data.swap_remove(0)` (values can be large server documents).
+- Treating `400` as "not an ID, fall back to list" is pragmatic but also
+  swallows genuine bad requests (e.g. a malformed query the user should see).
+  Consider limiting the fallback to the name-lookup path, or attaching the
+  original GET error to the final `ResourceNotFound` as context.
+
+## 9. Testability
+
+The layering is already test-friendly at the bottom: generated endpoints are
+client-generic, `FakeOpenStackClient` + `httpmock` covers endpoint behavior,
+and `sdk/core` has real concurrency tests for the state file. Gaps are at the
+top:
+
+- **`AsyncOpenStack` is a concrete type**, so the CLI's `take_action` and the
+  TUI's `cloud_worker` cannot be tested without a live Keystone. Extract the
+  session surface they actually use into a trait (`OpenStackSession`:
+  `AsyncClient + RestClient` + `authorize`/`discover_service_endpoint`/
+  `get_auth_*`), implemented by both `AsyncOpenStack` and a fake. The TUI
+  worker in particular is pure message-plumbing that would become trivially
+  testable.
+- **`authorize_with_auth_helper` is a ~190-line method** mixing cache lookup,
+  plugin selection, receipt handling, token introspection, rescoping and
+  catalog processing — each with its own failure modes, none independently
+  testable. Decompose into named steps (`try_cached_auth`, `login_with_plugin`,
+  `handle_receipt`, `rescope`, `apply_catalog`) on `SessionContext`; the
+  orchestration shrinks to ~20 lines and each step can be unit-tested against
+  the fake client. This is also the precondition for reusing the flow from the
+  sync client (§1.3).
+- **Scope matching is load-bearing for cache correctness** (`AuthTokenScope::matches`
+  decides which cached token a request gets) but only example-tested. Property
+  tests (proptest: reflexivity, `matches` ⊇ equality, None-field wildcard
+  behavior) are cheap insurance against credential-mixing regressions.
+- **Cache format regression**: add a golden-file test (committed postcard blob
+  from the current schema) so an innocent struct change that silently
+  invalidates every user's cache shows up in review.
+- `ApiError` carries no `x-openstack-request-id`; capturing it (header is
+  already logged) into `ApiError::OpenStack`/`OpenStackService` makes bug
+  reports actionable and is easy to assert in tests.
+
+## 10. `Waitable`: waiting for a resource to reach a status
+
+Prior art worth matching semantically: python-openstacksdk
+`wait_for_status(res, status, failures, interval, wait)` and gophercloud
+`WaitFor`. The requested semantics — *periodically refetch until the resource
+reaches a status, or disappears* — decompose into three layers, of which only
+the third needs codegen.
+
+### 10.1 Layer 1: a generic `Wait` combinator in `sdk/core` (no codegen)
+
+Follow the existing combinator pattern (`Find`, `Paged`): a wrapper that is
+generic over a GET `RestEndpoint` and implements `QueryAsync`. Generated
+request structs already derive `Clone`, so re-issuing the GET is free.
+
+```rust
+/// What a single poll observed.
+pub enum Observation<T> {
+    /// Resource exists; deserialized body.
+    Present(T),
+    /// GET returned 404 — resource is gone.
+    Gone,
+}
+
+/// Caller's verdict after each poll.
+pub enum WaitDecision {
+    /// Keep polling.
+    Continue,
+    /// Terminal: condition met.
+    Done,
+    /// Terminal: resource entered a failure state (e.g. ERROR).
+    Fail(String),
+}
+
+pub struct Wait<E, F> {
+    endpoint: E,
+    check: F,
+    interval: Backoff,          // fixed or expo-capped, with jitter
+    timeout: Option<Duration>,
+}
+
+pub fn wait<E, F, T>(endpoint: E, check: F) -> Wait<E, F>
+where
+    F: FnMut(Observation<&T>) -> WaitDecision;
+
+/// Convenience: wait until the resource disappears (deletion).
+pub fn wait_deleted<E>(endpoint: E) -> Wait<E, impl FnMut(Observation<&Value>) -> WaitDecision>;
+```
+
+Execution loop (async; sync mirrors with `thread::sleep`):
+
+```rust
+loop {
+    match self.endpoint.query_async(client).await {
+        Ok(body) => match (self.check)(Observation::Present(&body)) {
+            WaitDecision::Done => return Ok(body),
+            WaitDecision::Fail(reason) =>
+                return Err(ApiError::WaitFailed { reason, last: Some(body) }),
+            WaitDecision::Continue => {}
+        },
+        Err(e) if e.is_not_found() => match (self.check)(Observation::Gone) {
+            WaitDecision::Done => return Ok(/* Gone marker */),
+            _ => return Err(ApiError::WaitResourceVanished),
+        },
+        Err(e) if e.is_transient() => { /* tolerate N transient errors, then bail */ }
+        Err(e) => return Err(e),
+    }
+    if deadline_exceeded() {
+        return Err(ApiError::WaitTimeout { last_status });
+    }
+    tokio::time::sleep(self.interval.next()).await;
+}
+```
+
+Design decisions embedded there:
+
+- **"Disappears" is an outcome, not an error, and its meaning depends on
+  intent**: for `wait_deleted` a 404 is success; for wait-for-ACTIVE it is a
+  hard failure (`WaitResourceVanished`). Routing 404 through the same `check`
+  closure keeps one loop for both.
+- **Fail-fast on error states.** Waiting for `ACTIVE` must terminate
+  immediately when the resource hits `ERROR` — that is what `Fail` is for.
+  Timeouts alone (gophercloud's early mistake) make failed creates take the
+  full timeout to report.
+- **Transient tolerance**: a single 503 or connection reset mid-wait should
+  not abort a 10-minute server build; budget a small number of consecutive
+  transient errors. The existing 401-retry in `rest_async` already covers token
+  expiry mid-wait — and the auto-renew task (§3) removes even that.
+- **Backoff with jitter, capped** (e.g. start 1s, ×1.5, cap 15s, ±20% jitter):
+  polling APIs at fixed 1s across a fleet of CLI invocations is how clouds get
+  hammered. No `Retry-After` exists on OpenStack GETs, so client-side policy is
+  it.
+- **Cancellation is free**: dropping the future stops the wait (important for
+  the TUI, which can drop it when the user navigates away). No token needed.
+- **Progress**: emit a `tracing` event per poll
+  (`wait_progress{resource, status, elapsed}`); the CLI renders a spinner from
+  it via its existing tracing collector, the TUI its status bar — no callback
+  plumbing in the API.
+
+This layer alone already satisfies the requirement, with the caller supplying
+the predicate over `serde_json::Value` (status extraction by pointer, e.g.
+`body.pointer("/status")`).
+
+### 10.2 Layer 2: typed status trait (small core trait, generated impls)
+
+The generated response types already have typed `Status` enums
+(`types/compute/src/v2/server/response/get_2100_a.rs:397`). A one-method trait
+in core:
+
+```rust
+pub trait HasStatus {
+    type Status: PartialEq + Debug + Clone;
+    fn status(&self) -> Option<Self::Status>;
+}
+```
+
+with template-generated impls for every response struct that has a
+spec-declared `status` field, enables the ergonomic form on top of layer 1 +
+`TypedEndpoint` (§8.1):
+
+```rust
+pub fn wait_for_status<E>(
+    ep: E,
+    target: <E::Response as HasStatus>::Status,
+    failures: &[<E::Response as HasStatus>::Status],
+) -> Wait<E, impl FnMut(...)>
+where E: TypedEndpoint, E::Response: HasStatus;
+
+// usage:
+let server = wait_for_status(
+        server::get::Request::builder().id(id).build()?,
+        server::Status::Active,
+        &[server::Status::Error],
+    )
+    .timeout(Duration::from_secs(600))
+    .query_async(&session)
+    .await?;
+```
+
+Notes:
+
+- Response types are per-microversion; the impl is generated per struct, so
+  this costs nothing extra at codegen time.
+- Status enums should be generated `#[non_exhaustive]` with an
+  `Unknown(String)` catch-all variant (clouds add states; a wait must not
+  fail to deserialize on `SHELVED_OFFLOADED` from a newer cloud than the spec).
+  Worth doing regardless of the waiter — today an unknown enum value is a
+  deserialization error for any consumer.
+- Some resources signal failure in a companion field (`fault.message` on
+  servers) — an optional `fn failure_detail(&self) -> Option<String>` on
+  `HasStatus` (generated where the spec has such a field) turns
+  `Fail("status=ERROR")` into `Fail("No valid host was found")`.
+
+### 10.3 Layer 3: spec/metadata-driven defaults (optional, later)
+
+OpenAPI specs do not encode state machines, but the codegenerator's metadata
+overlays could: per resource, `wait: { ready: [ACTIVE], failed: [ERROR],
+deleted_ok: true }`. That would let templates emit
+`server.wait_ready(&session)` one-liners and let the CLI templates grow a
+`--wait`/`--wait-timeout` flag on create/delete commands uniformly — the same
+metadata serving SDK, CLI and TUI. Recommended sequencing: ship layers 1–2
+first (they are pure Rust + one template touch), collect the metadata
+incrementally for the handful of resources people actually wait on (server,
+volume, image, load balancer, stack, cluster).
+
+### 10.4 Placement and naming
+
+- `sdk/core/src/api/wait.rs` next to `find.rs`/`paged.rs`; exported as
+  `api::{wait, wait_deleted, wait_for_status}` — consistent with the existing
+  free-function combinator style (`find(...)`, `paged(...)`).
+- Add `ApiError::{WaitTimeout, WaitFailed, WaitResourceVanished}` variants
+  (the enum is `#[non_exhaustive]`, so this is non-breaking).
+- Both `sync` and `async` impls behind the existing features, like `Find`.
+
+## 11. Additional prioritized actions (part 2)
+
+| # | Item | Area | Effort |
+|---|------|------|--------|
+| 15 | `TypedEndpoint` (request→response linkage) in templates + `send()` | codegen/core | M |
+| 16 | `wait`/`wait_deleted` combinator + error variants | core | M |
+| 17 | `HasStatus` trait + generated impls, `wait_for_status` | codegen/core | S (after 15/16) |
+| 18 | `Unknown(String)` catch-all on generated status enums | codegen | S |
+| 19 | Move `dialoguer` helper out of core; feature-gate tokio/config | core | S |
+| 20 | Stream-based pagination | core | M |
+| 21 | Session trait for CLI/TUI testability | sdk/cli/tui | M |
+| 22 | Decompose `authorize_with_auth_helper` into testable steps | sdk | M |
+| 23 | Request-id in `ApiError`; property tests for scope matching; cache golden file | core | S |
+| 24 | `--wait` CLI flags from wait metadata | codegen/cli | M (after 17) |
