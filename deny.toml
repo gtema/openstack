@@ -71,7 +71,8 @@ feature-depth = 1
 # output a note when they are encountered.
 ignore = [
     { id = "RUSTSEC-2021-0127", reason = "serde_cbor as optional transitive dep: https://github.com/mozilla/authenticator-rs/issues/327"},
-    { id = "RUSTSEC-2026-0097", reason = "log feature is not enabled, deps need to update"}
+    { id = "RUSTSEC-2026-0097", reason = "log feature is not enabled, deps need to update"},
+    { id = "RUSTSEC-2023-0071", reason = "rsa crate is only used on the localhost"}
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
