@@ -674,3 +674,218 @@ volume, image, load balancer, stack, cluster).
 | 22 | Decompose `authorize_with_auth_helper` into testable steps | sdk | M |
 | 23 | Request-id in `ApiError`; property tests for scope matching; cache golden file | core | S |
 | 24 | `--wait` CLI flags from wait metadata | codegen/cli | M (after 17) |
+
+---
+
+# Part 3: TUI resource coverage scaling and schema-driven create/edit
+
+## 12. Making TUI resource coverage cheaper to extend
+
+### 12.1 Anatomy of adding a resource today
+
+The heavy lifting is already done well: `cloud_worker/<service>/<version>/<resource>/*`
+request types are **generated** (with `ExecuteApiRequest` impls), and
+`GenericResourceView<B: ResourceBehaviour>` means a view is ~120 lines of
+mostly-declarative behaviour impl. What remains manual per resource:
+
+| Touch point | Kind |
+|---|---|
+| `components/<service>/<resource>.rs` (`ResourceBehaviour` impl + tests) | ~120 + ~160 lines, largely mechanical |
+| `mode.rs` — `Mode` enum variant | enum edit |
+| `action.rs` — `Show*`, `Create*`, `Delete*`, `Set*ListFilters` variants | enum edit |
+| `app.rs` — `Mode → component` registration | match/map edit |
+| `.config/config.yaml` — mode keybindings | config edit |
+
+Roughly five files must be touched in sync; forgetting one produces silent
+gaps (a mode with no keybinding, an action nobody translates). Two levels of
+fix, in order of ambition:
+
+### 12.2 Generate the behaviour layer (near-term)
+
+The codegenerator already targets the TUI (cloud_worker types carry the
+"automatically generated" header). The `ResourceBehaviour` impls are ~90%
+derivable from the same metadata:
+
+- `view_key`/`title`/`mode` — naming convention.
+- `request_from_filter`, `matches_request`, `handle_set_filter_action`,
+  `confirm_request` (delete), `handle_mutation_response` — pure boilerplate
+  over the generated request enums; the existing
+  `security_group_rules.rs` shows the pattern verbatim.
+- Leave hooks for the genuinely resource-specific parts: `normalise_filter`
+  (default sort), `filter_carry_action` (drill-down), overridden via a
+  companion hand-written file or codegen metadata (`tui: {sort: [...], drill: ...}`).
+
+The tests in these files are equally mechanical and can be generated alongside
+(or dropped in favor of one generic test parameterized over the behaviour
+trait — testing generated code with generated tests has limited value).
+
+### 12.3 De-enum `Mode` and `Action` (the structural fix)
+
+Per-resource enum variants (`ShowNetworkSecurityGroupRules`,
+`DeleteNetworkSecurityGroupRule`, `SetNetworkSecurityGroupRuleListFilters(...)`)
+are the reason five files need coordinated edits. Replace them with
+parameterized variants keyed by the `view_key` string that already exists:
+
+```rust
+pub enum Action {
+    ShowResource(ResourceKey),                       // "network.security_group_rule"
+    ResourceOp { key: ResourceKey, op: ResourceOp }, // Create | Delete | Describe...
+    SetListFilters { key: ResourceKey, filter: serde_json::Value },
+    ...
+}
+```
+
+with a registry mapping `ResourceKey → Box<dyn ResourceViewFactory>`, populated
+by one generated `register_all(&mut registry)` function (an explicit generated
+registry is preferable to `inventory` here — see §1.5 for the linker
+experience). `Mode` collapses to `Mode::Resource(ResourceKey)` plus the few
+non-resource modes (Home, Describe). Keybindings in `config.yaml` already
+address actions by name, so `action: ShowResource("network.security_group_rule")`
+(or a serde alias preserving today's names) keeps configs working. After this,
+**adding a resource = one generated module + one registry line**, and the
+generated default keybindings section can come from the same metadata.
+
+### 12.4 Related cleanups noticed on the way
+
+- `app.rs` `Action::Confirm` uses an `unsafe` raw-pointer downcast of
+  `Box<dyn Component>` to `ConfirmPopup`. `dyn Any`-based `downcast_mut`
+  (add `fn as_any_mut(&mut self) -> &mut dyn Any` to `Component`) removes the
+  UB risk for zero cost.
+- The hardcoded `discover_service_endpoint` sweep (§4.2) can be driven from the
+  same resource registry: discover lazily per service on first resource view.
+
+## 13. Create/edit via external editor: schema hinting and validation
+
+### 13.1 Current flow and its failure modes
+
+`ResourceBehaviour::editor_template` → `Action::Edit{template}` → TUI suspends,
+`edit::edit()` → `serde_yaml::from_str` → `Action::EditResult` →
+`deserialize_edit_result` → `Confirm` → worker executes. Problems:
+
+1. **A YAML typo crashes the TUI and loses the edit**: in `app.rs:477` the
+   parse result is propagated with `?` out of `handle_actions` → `run()` →
+   `main`. This must become a re-open-editor loop, never an exit.
+2. **The template is a hand-maintained string** — no field documentation, no
+   knowledge of what's required, and the security-group-rule TODO
+   (`security_group_rules.rs:102`) shows even parent-id prefill is manual.
+3. **Validation is whatever serde says**, after the editor closes, one error
+   at a time, with no line numbers.
+
+All three are solved by making the OpenAPI schema, which the codegenerator
+already holds, available at runtime.
+
+### 13.2 Ship the schema with the generated request types
+
+Two options:
+
+- **(A) `schemars`**: derive `JsonSchema` on the generated TUI request structs
+  (the `json-schema` feature already exists in core for config types). Schema is
+  assembled at runtime from the Rust types.
+- **(B) Embed the OpenAPI subschema** (recommended): the codegenerator emits the
+  request-body schema it generated the struct *from*, as a static string next to
+  the struct:
+
+```rust
+impl NetworkSecurityGroupRuleCreate {
+    /// JSON Schema of the request body (from the OpenAPI spec).
+    pub const BODY_SCHEMA: &'static str = r#"{ "type": "object", ... }"#;
+}
+```
+
+(B) is preferable because it preserves everything the spec knows that the Rust
+type system doesn't express — descriptions, `format`, ranges
+(`port_range_min: 0..65535`), patterns, defaults, and cross-field notes —
+with zero runtime dependencies and exact fidelity. It also matches existing
+precedent: auth plugins already communicate their input requirements as JSON
+Schema (`OpenStackAuthType::requirements()`).
+
+### 13.3 Generate the template from the schema
+
+`editor_template` becomes generated: render the schema as commented YAML, the
+`kubectl`/git-commit convention — required fields uncommented with
+placeholders, optional fields commented out, docs and enums inline:
+
+```yaml
+# Create Security Group Rule  (network.security_group_rule)
+# Lines starting with '#' are ignored. Required fields are uncommented.
+security_group_rule:
+  # The security group to attach the rule to. (required)
+  security_group_id: "a7734e61-..."     # prefilled from current view
+  # Ingress or egress. One of: ingress, egress  (required)
+  direction: ingress
+  # IP protocol: tcp, udp, icmp, ... or number. Default: any
+  # protocol: tcp
+  # Port range start (0..65535).
+  # port_range_min: 443
+```
+
+Context prefill (the TODO): `editor_template(action, filter)` already receives
+the filter; the generated impl maps parent identifiers from the filter into the
+template via codegen metadata (`prefill: {security_group_id: filter.security_group_id}`)
+— the same overlay mechanism as §10.3/§12.2.
+
+For editors that understand it, prepend the modeline and drop the schema next
+to the temp file — completion and live validation for free in VS Code /
+neovim+yamlls, harmless elsewhere:
+
+```yaml
+# yaml-language-server: $schema=/tmp/.../security_group_rule.create.schema.json
+```
+
+### 13.4 Post-edit validation pipeline
+
+Validate in three stages before anything is sent, all inside a retry loop:
+
+1. **YAML parse** → `serde_yaml::Value` (syntax errors carry line/column).
+2. **JSON Schema validation** with the `jsonschema` crate against
+   `BODY_SCHEMA`: reports *all* violations at once with JSON pointers
+   (`/security_group_rule/port_range_min: 70000 is greater than maximum 65535`),
+   covering enums, ranges, formats, required — things serde reports poorly or
+   not at all.
+3. **Typed deserialization** into the generated request struct via
+   `serde_path_to_error` (precise path on the residual errors), then the
+   existing builder → `ApiRequest`.
+
+On any failure: re-open the editor with the user's buffer **preserved** and the
+errors prepended as comments (git `COMMIT_EDITMSG` pattern), plus an "abandon"
+escape (empty buffer = cancel). The `Action::Edit` handler needs a small state
+machine (`EditSession { schema, buffer, attempt }`) instead of the current
+one-shot; that also fixes crash-on-typo (§13.1.1) since errors are consumed,
+not propagated.
+
+### 13.5 Edit (update) of existing resources
+
+Same machinery, two additions, both schema-driven:
+
+- Template = the *current* resource serialized to YAML, filtered to the fields
+  present in the **update** request schema (which encodes writability — the
+  read-only fields simply aren't in it), with the rest shown as trailing
+  comments for context.
+- On save, diff edited vs. original and build the update body from changed
+  fields only (OpenStack PUTs are mostly merge-patch-ish per-field; sending
+  unchanged fields risks policy errors on fields the user may not set).
+  Include the resource's current `updated_at`/revision in the session so a
+  concurrent change can at least be warned about.
+
+### 13.6 Later: in-TUI forms from the same schema
+
+Once `BODY_SCHEMA` ships, a ratatui form (enum → select list, boolean →
+toggle, string+format → input with inline validation) can be generated *at
+runtime* from the schema for simple resources, keeping the external editor as
+the fallback for complex bodies. This is strictly additive — same schema, same
+validation pipeline, different front end — which is the main argument for
+putting the schema, not the template, into the generated code.
+
+## 14. Prioritized actions (part 3)
+
+| # | Item | Area | Effort |
+|---|------|------|--------|
+| 25 | Editor loop: never crash on invalid YAML; retry with buffer + errors preserved | tui | S |
+| 26 | Emit `BODY_SCHEMA` const on generated create/update request types | codegen | S |
+| 27 | Generate editor templates (commented YAML) from schema, with filter prefill metadata | codegen/tui | M |
+| 28 | Validation pipeline: `jsonschema` + `serde_path_to_error` before send | tui | S |
+| 29 | `yaml-language-server` modeline + schema temp file | tui | S |
+| 30 | Generate `ResourceBehaviour` impls from codegen metadata | codegen/tui | M |
+| 31 | Parameterize `Action`/`Mode` by `ResourceKey`; generated registry | tui | M/L |
+| 32 | Update-flow: writable-field template from update schema + minimal diff body | codegen/tui | M |
+| 33 | Replace `unsafe` popup downcast with `Any` | tui | S |
