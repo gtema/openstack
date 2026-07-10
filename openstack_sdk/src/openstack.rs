@@ -785,10 +785,15 @@ impl api::Client for OpenStack {
 
         let orig_method = request.method_ref().cloned().unwrap_or(http::Method::GET);
         let orig_uri = request.uri_ref().cloned().unwrap_or_default();
+        let orig_headers = request.headers_ref().cloned().unwrap_or_default();
 
-        let mut request = request;
+        let mut request = Some(request);
         loop {
-            let result = self.rest_with_auth(request, body.clone(), &auth);
+            let current_request = match request.take() {
+                Some(r) => r,
+                None => unreachable!("request missing after retry setup"),
+            };
+            let result = self.rest_with_auth(current_request, body.clone(), &auth);
             let is_401 = match &result {
                 Ok(rsp) => rsp.status() == http::StatusCode::UNAUTHORIZED,
                 Err(_) => false,
@@ -806,9 +811,13 @@ impl api::Client for OpenStack {
                             session.auth.clone()
                         };
                         retries += 1;
-                        request = http::Request::builder()
+                        let mut new_builder = http::Request::builder()
                             .method(orig_method.clone())
                             .uri(orig_uri.clone());
+                        for (name, value) in &orig_headers {
+                            new_builder = new_builder.header(name.clone(), value.clone());
+                        }
+                        request = Some(new_builder);
                         continue;
                     }
                     Err(e) => {
@@ -1436,5 +1445,59 @@ mod tests {
             .unwrap();
 
         assert_eq!(ep.url_str(), "http://nova.example.com/v2.1");
+    }
+
+    #[test]
+    fn test_401_retry_preserves_headers() {
+        let server = MockServer::start();
+
+        let mock_401 = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("x-auth-token", "old-token")
+                .header("content-type", "application/json")
+                .header("x-custom-header", "custom-value");
+            then.status(StatusCode::UNAUTHORIZED)
+                .body(r#"{"error": {"message": "Unauthorized"}, "message": "Unauthorized"}"#);
+        });
+
+        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let _mock_reauth = server.mock(|when, then| {
+            when.method(httpmock::Method::POST).path("/auth/tokens");
+            then.status(StatusCode::CREATED)
+                .header("x-subject-token", "new-token")
+                .json_body(json!({
+                    "token": {
+                        "id": "token-id",
+                        "expires_at": &expires,
+                        "project": { "id": "test-project", "name": "TestProject" },
+                        "user": { "id": "test-user", "name": "test-user" }
+                    }
+                }));
+        });
+
+        let mock_200 = server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/api/test")
+                .header("x-auth-token", "new-token")
+                .header("content-type", "application/json")
+                .header("x-custom-header", "custom-value");
+            then.status(StatusCode::OK).body("{\"result\": \"ok\"}");
+        });
+
+        let client = create_test_client(&server, "old-token", 1, None);
+
+        let request = http::Request::builder()
+            .method(http::Method::GET)
+            .uri(format!("{}/api/test", server.base_url()))
+            .header("Content-Type", "application/json")
+            .header("X-Custom-Header", "custom-value");
+
+        let result = client.rest(request, Vec::new());
+        assert!(result.is_ok(), "expected Ok, got {:?}", result);
+        assert_eq!(result.unwrap().status(), StatusCode::OK);
+
+        mock_401.assert();
+        mock_200.assert();
     }
 }
