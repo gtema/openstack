@@ -28,9 +28,9 @@ mod session;
 mod openstack_async;
 #[cfg(feature = "async")]
 pub use openstack_async::AsyncOpenStack;
-#[cfg(feature = "sync")]
+#[cfg(all(feature = "sync", feature = "async"))]
 mod openstack;
-#[cfg(feature = "sync")]
+#[cfg(all(feature = "sync", feature = "async"))]
 pub use openstack::OpenStack;
 pub use openstack_sdk_core::auth::AuthError;
 pub use openstack_sdk_core::{BuilderError, OpenStackError, RestError};

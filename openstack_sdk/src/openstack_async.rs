@@ -343,8 +343,8 @@ impl AsyncOpenStack {
             })
     }
 
-    /// Basic constructor
-    fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
+    /// Basic constructor — visible to the sync facade.
+    pub fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
         let mut client_builder = reqwest::Client::builder();
 
         if let Some(cacert) = &config.cacert {
@@ -544,6 +544,20 @@ impl AsyncOpenStack {
             session.state.disable_auth_cache();
         }
         self
+    }
+
+    /// Set the maximum number of retries on 401 responses.
+    pub fn set_max_auth_retries(&mut self, n: u32) -> &mut Self {
+        self.max_auth_retries = n;
+        self
+    }
+
+    /// Set the auth helper used for 401 re-authentication.
+    pub fn set_auth_helper<A>(&mut self, auth_helper: A)
+    where
+        A: AuthHelper + Sync + Send + 'static,
+    {
+        self.auth_helper = Some(Arc::new(auth_helper));
     }
 
     /// Authorize against the cloud using provided credentials and get the session token with the

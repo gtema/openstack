@@ -37,7 +37,8 @@ load_balancer = ["dep:openstack-sdk-load-balancer"]
 network = ["dep:openstack-sdk-network"]
 object_store = ["dep:openstack-sdk-object-store"]
 placement = ["dep:openstack-sdk-placement"]
-sync = ["openstack_sdk_core/sync",
+sync = ["async",
+  "openstack_sdk_core/sync",
   "openstack-sdk-block-storage?/sync",
   "openstack-sdk-compute?/sync",
   "openstack-sdk-container-infrastructure-management?/sync",
