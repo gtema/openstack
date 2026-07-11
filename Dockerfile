@@ -1,6 +1,6 @@
 ################
 ##### chef
-FROM rust:1.96.0-slim-trixie AS base
+FROM rust:1.97.0-slim-trixie AS base
 
 RUN cargo install --locked cargo-chef
 
