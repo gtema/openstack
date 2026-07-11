@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-api-v0.13.7...openstack-cli-api-v0.13.8) - 2026-07-11
+
+### Other
+
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack-cli-api-v0.1.0) - 2026-05-14
 
 ### Other
