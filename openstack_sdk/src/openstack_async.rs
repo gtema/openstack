@@ -107,6 +107,11 @@ pub struct AsyncOpenStack {
     auth_helper: Option<Arc<dyn AuthHelper>>,
     /// Max retries on 401.
     max_auth_retries: u32,
+    /// Single-flight guard for re-authentication, shared across all clones.
+    /// Held for the duration of `handle_401_retry` so concurrent 401s queue
+    /// on one re-auth instead of each running their own. Also intended to be
+    /// shared with any future proactive token-renewal task.
+    reauth_lock: Arc<tokio::sync::Mutex<()>>,
 }
 
 impl Clone for AsyncOpenStack {
@@ -117,6 +122,7 @@ impl Clone for AsyncOpenStack {
             session: Arc::clone(&self.session),
             auth_helper: self.auth_helper.clone(),
             max_auth_retries: self.max_auth_retries,
+            reauth_lock: Arc::clone(&self.reauth_lock),
         }
     }
 }
@@ -158,9 +164,9 @@ impl api::AsyncClient for AsyncOpenStack {
         request: http::request::Builder,
         body: Vec<u8>,
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
-        let mut auth = {
+        let (mut auth, mut generation) = {
             let session = self.session_read_rest("AsyncClient::rest")?;
-            session.auth.clone()
+            (session.auth.clone(), session.auth_generation)
         };
         let mut retries = 0;
 
@@ -187,11 +193,11 @@ impl api::AsyncClient for AsyncOpenStack {
                     retries + 1,
                     self.max_auth_retries
                 );
-                match self.handle_401_retry().await {
+                match self.handle_401_retry(generation).await {
                     Ok(_) => {
-                        auth = {
+                        (auth, generation) = {
                             let session = self.session_read_rest("AsyncClient::rest_retry")?;
-                            session.auth.clone()
+                            (session.auth.clone(), session.auth_generation)
                         };
                         retries += 1;
                         let mut new_builder = http::Request::builder()
@@ -392,6 +398,7 @@ impl AsyncOpenStack {
             session: Arc::new(RwLock::new(session_ctx)),
             auth_helper: None,
             max_auth_retries: 1,
+            reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
         })
     }
 
@@ -448,6 +455,7 @@ impl AsyncOpenStack {
     fn set_auth(&self, auth: Auth, skip_cache_update: bool) -> Result<(), OpenStackError> {
         let mut session = self.session_write("set_auth")?;
         session.auth = auth;
+        session.auth_generation = session.auth_generation.wrapping_add(1);
         if !skip_cache_update && let Auth::AuthToken(a) = &session.auth {
             let a_clone = a.clone();
             let scope = match &a_clone.auth_info {
@@ -501,7 +509,23 @@ impl AsyncOpenStack {
     }
 
     /// Handle 401 Unauthorized by re-authenticating.
-    async fn handle_401_retry(&self) -> Result<(), OpenStackError> {
+    ///
+    /// `seen_generation` is the `auth_generation` observed by the caller
+    /// before it hit the 401. Re-auth is single-flighted via `reauth_lock`:
+    /// if another concurrent caller already completed a re-auth while this
+    /// one was waiting for the lock, `auth_generation` will have moved on
+    /// and this call skips its own re-auth.
+    async fn handle_401_retry(&self, seen_generation: u64) -> Result<(), OpenStackError> {
+        let _guard = self.reauth_lock.lock().await;
+
+        let current_generation = self
+            .session_read("handle_401_retry: check generation")?
+            .auth_generation;
+        if current_generation != seen_generation {
+            // Another task already re-authed while we waited for the lock.
+            return Ok(());
+        }
+
         let scope = AuthTokenScope::try_from(&self.config)?;
         // Re-authenticate with current config. First try to reauth with existing token,
         // fall back to full authentication if auth_helper is available.
@@ -1246,9 +1270,11 @@ mod tests {
                 catalog,
                 state,
                 region_name: None,
+                auth_generation: 0,
             })),
             auth_helper,
             max_auth_retries: max_retries,
+            reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
         }
     }
 
@@ -1607,6 +1633,13 @@ mod tests {
             assert!(r.is_ok(), "expected Ok, got {:?}", r);
             assert_eq!(r.unwrap().status(), StatusCode::OK);
         }
+
+        // Single-flight: 3 concurrent 401s must trigger exactly one re-auth.
+        assert_eq!(
+            _mock_reauth.calls_async().await,
+            1,
+            "expected exactly one re-auth call despite 3 concurrent 401s"
+        );
     }
 
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
