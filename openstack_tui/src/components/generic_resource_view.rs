@@ -448,7 +448,7 @@ mod tests {
         let mut comp: ComputeServers = GenericResourceView::new();
         let data = vec![make_server_json()];
         let request = ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
-            ComputeServerApiRequest::ListDetailed(Box::new(ComputeServerList::default())),
+            ComputeServerApiRequest::ListDetailed(Box::default()),
         )));
         comp.update(
             Action::ApiResponsesData { request, data },
@@ -499,7 +499,7 @@ mod tests {
     #[test]
     fn confirm_request_dispatches_confirm_action_block_storage() {
         use crate::cloud_worker::block_storage::v3::{
-            BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeList,
+            BlockStorageApiRequest, BlockStorageVolumeApiRequest,
         };
         use crate::components::block_storage::volumes::BlockStorageVolumes;
 
@@ -529,7 +529,7 @@ mod tests {
             "os-vol-tenant-attr:tenant_id": "tenant-1"
         });
         let request = ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(Box::new(
-            BlockStorageVolumeApiRequest::ListDetailed(Box::new(BlockStorageVolumeList::default())),
+            BlockStorageVolumeApiRequest::ListDetailed(Box::default()),
         )));
         comp.update(
             Action::ApiResponsesData {
@@ -559,9 +559,7 @@ mod tests {
 
     #[test]
     fn filter_carry_action_dispatches_last_action() {
-        use crate::cloud_worker::compute::v2::{
-            ComputeApiRequest, ComputeFlavorApiRequest, ComputeFlavorList,
-        };
+        use crate::cloud_worker::compute::v2::{ComputeApiRequest, ComputeFlavorApiRequest};
         use crate::components::compute::flavors::ComputeFlavors;
 
         let mut comp: ComputeFlavors = GenericResourceView::new();
@@ -579,7 +577,7 @@ mod tests {
             "os-flavor-access:is_public": true
         });
         let request = ApiRequest::Compute(ComputeApiRequest::Flavor(Box::new(
-            ComputeFlavorApiRequest::ListDetailed(Box::new(ComputeFlavorList::default())),
+            ComputeFlavorApiRequest::ListDetailed(Box::default()),
         )));
         comp.update(
             Action::ApiResponsesData {

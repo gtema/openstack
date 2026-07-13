@@ -671,7 +671,7 @@ impl AsyncOpenStack {
                         }
                     }
                 } else {
-                    return Err(AuthTokenError::IdentityMethod {
+                    Err(AuthTokenError::IdentityMethod {
                         auth_type: auth_type.into(),
                     })?;
                 }
@@ -726,7 +726,7 @@ impl AsyncOpenStack {
                 }
             }
         } else {
-            return Err(OpenStackError::NoAuth)?;
+            Err(OpenStackError::NoAuth)?;
         }
 
         {

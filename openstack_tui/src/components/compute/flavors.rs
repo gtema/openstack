@@ -177,12 +177,10 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_non_matching() {
         let filter = ComputeFlavorList::default();
-        let request = ComputeFlavorsBehaviour::request_from_filter(&filter);
+        let _request = ComputeFlavorsBehaviour::request_from_filter(&filter);
         assert!(!ComputeFlavorsBehaviour::matches_request(
             &ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
-                ComputeServerApiRequest::ListDetailed(Box::new(
-                    crate::cloud_worker::compute::v2::ComputeServerList::default(),
-                ))
+                ComputeServerApiRequest::ListDetailed(Box::default())
             )))
         ));
     }

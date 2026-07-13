@@ -122,10 +122,10 @@ impl PasswordAuthenticator {
             } else if let Some(udn) = values.get("user_domain_name") {
                 user["domain"]["name"] = udn.expose_secret().into();
             } else {
-                return Err(PasswordAuthError::MissingUserDomain)?;
+                Err(PasswordAuthError::MissingUserDomain)?;
             }
         } else {
-            return Err(PasswordAuthError::MissingUser)?;
+            Err(PasswordAuthError::MissingUser)?;
         }
         let body = json!({ "password": {"user": user } });
         Ok(("password", body))
