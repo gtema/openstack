@@ -34,6 +34,10 @@ pub struct SessionContext {
     pub state: State,
     /// Runtime region override (set by region switch, takes priority over CloudConfig).
     pub region_name: Option<String>,
+    /// Bumped every time `auth` is replaced. Lets a waiter on the re-auth
+    /// lock detect that another task already refreshed the token while it
+    /// was waiting, so it can skip its own re-auth.
+    pub auth_generation: u64,
 }
 
 impl SessionContext {
@@ -95,6 +99,7 @@ impl SessionContext {
             catalog,
             state,
             region_name: None,
+            auth_generation: 0,
         })
     }
 }
