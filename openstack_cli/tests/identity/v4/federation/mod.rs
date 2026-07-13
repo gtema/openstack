@@ -22,7 +22,13 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.args(["identity4", "federation", "--help"]);
+    cmd.args([
+        "identity",
+        "--os-identity-api-version",
+        "4",
+        "federation",
+        "--help",
+    ]);
     cmd.assert().success();
 
     Ok(())
