@@ -21,7 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod identity_provider;
-pub mod mapping;
+//pub mod mapping;
 
 /// Federated login commands
 ///
@@ -36,7 +36,7 @@ pub struct FederationCommand {
 #[derive(Subcommand)]
 pub enum FederationCommands {
     IdentityProvider(identity_provider::IdentityProviderCommand),
-    Mapping(mapping::MappingCommand),
+    //    Mapping(mapping::MappingCommand),
 }
 
 impl FederationCommand {
@@ -49,8 +49,7 @@ impl FederationCommand {
         match &self.command {
             FederationCommands::IdentityProvider(cmd) => {
                 cmd.take_action(parsed_args, session).await
-            }
-            FederationCommands::Mapping(cmd) => cmd.take_action(parsed_args, session).await,
+            } //            FederationCommands::Mapping(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -114,22 +114,20 @@ impl CliArgs for Cli {
 pub enum TopLevelCommands {
     Api(openstack_cli_api::ApiCommand),
     Auth(openstack_cli_auth::AuthCommand),
-    BlockStorage(openstack_cli_block_storage::v3::BlockStorageCommand),
+    BlockStorage(openstack_cli_block_storage::BlockStorageCommand),
     Catalog(openstack_cli_catalog::CatalogCommand),
-    Compute(openstack_cli_compute::v2::ComputeCommand),
+    Compute(openstack_cli_compute::ComputeCommand),
     #[command(aliases = ["container-infrastructure-management", "container"])]
     ContainerInfrastructure(
-        openstack_cli_container_infrastructure_management::v1::ContainerInfrastructureCommand,
+        openstack_cli_container_infrastructure_management::ContainerInfrastructureCommand,
     ),
-    Dns(openstack_cli_dns::v2::DnsCommand),
-    Identity(openstack_cli_identity::v3::IdentityCommand),
-    //#[cfg(feature = "keystone_ng")]
-    //Identity4(openstack_cli_identity::v4::IdentityCommand),
-    Image(openstack_cli_image::v2::ImageCommand),
-    LoadBalancer(openstack_cli_load_balancer::v2::LoadBalancerCommand),
-    Network(openstack_cli_network::v2::NetworkCommand),
-    ObjectStore(openstack_cli_object_store::v1::ObjectStoreCommand),
-    Placement(openstack_cli_placement::v1::PlacementCommand),
+    Dns(openstack_cli_dns::DnsCommand),
+    Identity(openstack_cli_identity::IdentityCommand),
+    Image(openstack_cli_image::ImageCommand),
+    LoadBalancer(openstack_cli_load_balancer::LoadBalancerCommand),
+    Network(openstack_cli_network::NetworkCommand),
+    ObjectStore(openstack_cli_object_store::ObjectStoreCommand),
+    Placement(openstack_cli_placement::PlacementCommand),
     Completion(CompletionCommand),
 }
 
@@ -145,8 +143,6 @@ impl Cli {
             TopLevelCommands::ContainerInfrastructure(args) => args.take_action(self, client).await,
             TopLevelCommands::Dns(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,
-            //#[cfg(feature = "keystone_ng")]
-            //TopLevelCommands::Identity4(args) => args.take_action(self, client).await,
             TopLevelCommands::Image(args) => args.take_action(self, client).await,
             TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
             TopLevelCommands::Network(args) => args.take_action(self, client).await,

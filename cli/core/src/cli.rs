@@ -154,6 +154,32 @@ pub struct GlobalOpts {
     pub output: OutputOpts,
 }
 
+/// Resolve a per-service API version selector by scanning the real process
+/// arguments directly. This has to happen before clap builds the `Command`
+/// tree (inside `Args::augment_args`), i.e. before any `ArgMatches` exist —
+/// so it can't go through clap itself. Once the tree is built, the actual
+/// (clap-parsed, env-aware, default-applying) value is read normally from
+/// `ArgMatches` in `FromArgMatches::from_arg_matches`; this function is only
+/// ever used to decide *which* version's subcommand tree to attach.
+pub fn resolve_api_version(long_flag: &str, env_var: &str, default: &str) -> String {
+    let needle_eq = format!("--{long_flag}=");
+    let needle = format!("--{long_flag}");
+    let mut result = None;
+    let mut args = std::env::args();
+    while let Some(a) = args.next() {
+        if let Some(v) = a.strip_prefix(&needle_eq) {
+            result = Some(v.to_string());
+        } else if a == needle
+            && let Some(v) = args.next()
+        {
+            result = Some(v);
+        }
+    }
+    result
+        .or_else(|| std::env::var(env_var).ok())
+        .unwrap_or_else(|| default.to_string())
+}
+
 /// Output format.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum OutputFormat {
