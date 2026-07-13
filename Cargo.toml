@@ -98,7 +98,7 @@ regex = { version = "^1.12" }
 rsa = { version = "^0.9", features = ["getrandom"] }
 ssh-key = { version = "^0.6", features = ["rsa", "encryption"] }
 reqwest = { version = "^0.13", default-features = false }
-reserve-port = "^2.4"
+reserve-port = "^2.5"
 schemars = { version = "^1.0" }
 secrecy = { version = "0.10", features = ["serde"] }
 serde = { version="^1.0", features=["derive"] }
