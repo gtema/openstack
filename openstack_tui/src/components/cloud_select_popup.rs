@@ -68,10 +68,11 @@ impl Component for CloudSelect {
             items.sort_by_key(|a| a.to_lowercase());
             self.popup_state.set_items(items);
             self.items_fetched = true;
-        } else if action == Action::CloudSelect && !self.items_fetched {
-            if let Some(tx) = &self.action_tx {
-                tx.send(Action::ListClouds)?;
-            }
+        } else if action == Action::CloudSelect
+            && !self.items_fetched
+            && let Some(tx) = &self.action_tx
+        {
+            tx.send(Action::ListClouds)?;
         }
         Ok(None)
     }

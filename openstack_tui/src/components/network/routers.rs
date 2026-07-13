@@ -113,9 +113,7 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::Network(NetworkApiRequest::Subnet(Box::new(
-            crate::cloud_worker::network::v2::NetworkSubnetApiRequest::List(Box::new(
-                crate::cloud_worker::network::v2::NetworkSubnetList::default(),
-            )),
+            crate::cloud_worker::network::v2::NetworkSubnetApiRequest::List(Box::default()),
         )));
         assert!(!NetworkRoutersBehaviour::matches_request(&req));
     }

@@ -188,9 +188,9 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
-            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(Box::new(
-                crate::cloud_worker::load_balancer::v2::LoadBalancerListenerList::default(),
-            )),
+            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(
+                Box::default(),
+            ),
         )));
         assert!(!LoadBalancersBehaviour::matches_request(&req));
     }

@@ -177,9 +177,7 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::Dns(DnsApiRequest::Recordset(Box::new(
-            crate::cloud_worker::dns::v2::DnsRecordsetApiRequest::List(Box::new(
-                crate::cloud_worker::dns::v2::DnsRecordsetList::default(),
-            )),
+            crate::cloud_worker::dns::v2::DnsRecordsetApiRequest::List(Box::default()),
         )));
         assert!(!DnsZonesBehaviour::matches_request(&req));
     }

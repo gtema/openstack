@@ -170,9 +170,9 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::Compute(ComputeApiRequest::Hypervisor(Box::new(
-            crate::cloud_worker::compute::v2::ComputeHypervisorApiRequest::ListDetailed(Box::new(
-                crate::cloud_worker::compute::v2::ComputeHypervisorList::default(),
-            )),
+            crate::cloud_worker::compute::v2::ComputeHypervisorApiRequest::ListDetailed(
+                Box::default(),
+            ),
         )));
         assert!(!ComputeServerInstanceActionsBehaviour::matches_request(
             &req

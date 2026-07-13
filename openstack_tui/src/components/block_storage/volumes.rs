@@ -153,9 +153,7 @@ mod tests {
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(Box::new(
             crate::cloud_worker::block_storage::v3::BlockStorageSnapshotApiRequest::ListDetailed(
-                Box::new(
-                    crate::cloud_worker::block_storage::v3::BlockStorageSnapshotList::default(),
-                ),
+                Box::default(),
             ),
         )));
         assert!(!BlockStorageVolumesBehaviour::matches_request(&req));

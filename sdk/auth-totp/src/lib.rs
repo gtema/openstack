@@ -121,10 +121,10 @@ impl TotpAuthenticator {
             } else if let Some(udn) = values.get("user_domain_name") {
                 user["domain"]["name"] = udn.expose_secret().into();
             } else {
-                return Err(TotpAuthError::MissingUserDomain)?;
+                Err(TotpAuthError::MissingUserDomain)?;
             }
         } else {
-            return Err(TotpAuthError::MissingUser)?;
+            Err(TotpAuthError::MissingUser)?;
         }
         let body = json!({ "totp": { "user": user } });
         Ok(("totp", body))

@@ -157,12 +157,12 @@ impl OpenStackAuthType for ApplicationCredentialAuthenticator {
                 } else if let Some(udn) = values.get("user_domain_name") {
                     user["user_domain_name"] = udn.expose_secret().into();
                 } else {
-                    return Err(ApplicationCredentialError::MissingUserDomain)?;
+                    Err(ApplicationCredentialError::MissingUserDomain)?;
                 }
             }
             app_cred["user"] = user;
         } else {
-            return Err(ApplicationCredentialError::MissingIdOrName)?;
+            Err(ApplicationCredentialError::MissingIdOrName)?;
         }
         let body = json!({
             "auth": {

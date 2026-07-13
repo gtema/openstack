@@ -94,7 +94,7 @@ mod tests {
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(Box::new(
             crate::cloud_worker::block_storage::v3::BlockStorageVolumeApiRequest::ListDetailed(
-                Box::new(crate::cloud_worker::block_storage::v3::BlockStorageVolumeList::default()),
+                Box::default(),
             ),
         )));
         assert!(!BlockStorageBackupsBehaviour::matches_request(&req));

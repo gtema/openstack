@@ -78,7 +78,7 @@ impl ScopeAuths {
 
     /// Find first matching unscoped authz
     fn find_first_valid_auth(&self) -> Option<AuthToken> {
-        for (_, v) in self.0.iter() {
+        for v in self.0.values() {
             if let AuthState::Valid = v.get_state(None) {
                 return Some(v.clone());
             }

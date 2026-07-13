@@ -118,9 +118,7 @@ mod tests {
     #[test]
     fn matches_request_returns_false_for_unrelated() {
         let req = ApiRequest::Identity(IdentityApiRequest::Group(Box::new(
-            crate::cloud_worker::identity::v3::IdentityGroupApiRequest::List(Box::new(
-                crate::cloud_worker::identity::v3::IdentityGroupList::default(),
-            )),
+            crate::cloud_worker::identity::v3::IdentityGroupApiRequest::List(Box::default()),
         )));
         assert!(!IdentityApplicationCredentialsBehaviour::matches_request(
             &req
