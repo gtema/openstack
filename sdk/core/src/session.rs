@@ -103,3 +103,26 @@ impl SessionContext {
         })
     }
 }
+
+/// Lock-free snapshot of the `SessionContext` fields needed on the
+/// per-request hot path (and by the future background token-renewal task's
+/// wake check): everything except `state`, which is on-disk auth-cache
+/// bookkeeping never read from request handling.
+#[derive(Debug, Clone)]
+pub struct AuthSnapshot {
+    pub auth: Auth,
+    pub auth_generation: u64,
+    pub catalog: Catalog,
+    pub region_name: Option<String>,
+}
+
+impl From<&SessionContext> for AuthSnapshot {
+    fn from(s: &SessionContext) -> Self {
+        Self {
+            auth: s.auth.clone(),
+            auth_generation: s.auth_generation,
+            catalog: s.catalog.clone(),
+            region_name: s.region_name.clone(),
+        }
+    }
+}
