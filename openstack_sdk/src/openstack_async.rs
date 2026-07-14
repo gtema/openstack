@@ -460,6 +460,32 @@ impl AsyncOpenStack {
 
         Ok(session)
     }
+
+    /// Create a new OpenStack API session from `CloudConfig`, loading any
+    /// already-cached authorization but never performing network I/O to
+    /// discover endpoints or obtain a fresh token.
+    ///
+    /// Intended for commands that only need to *report* on locally known
+    /// auth state (e.g. `osc auth status`) and must keep working even when
+    /// the cloud is unreachable or the cached token has expired.
+    #[instrument(name = "connect_cache_only", level = "trace", skip(config))]
+    pub fn new_cache_only(config: &CloudConfig) -> OpenStackResult<Self> {
+        let session = Self::new_impl(config, Auth::None)?;
+
+        let requested_scope = AuthTokenScope::try_from(&session.config).ok();
+        let cached = {
+            let mut inner = session.session_write("new_cache_only: get cache auth");
+            match &requested_scope {
+                Some(scope) => inner.state.get_scope_auth(scope),
+                None => inner.state.get_any_valid_auth(),
+            }
+        };
+        if let Some(auth) = cached {
+            session.set_auth(Auth::AuthToken(Box::new(auth)), true)?;
+        }
+
+        Ok(session)
+    }
     #[instrument(name = "connect", level = "trace", skip(config))]
     #[deprecated(
         since = "0.22.0",
@@ -905,7 +931,7 @@ impl AsyncOpenStack {
                     .auth_info
                     .as_ref()
                     .map(AuthTokenScope::from)
-                    .is_some_and(|scope| requested_scope == scope)
+                    .is_some_and(|scope| requested_scope.matches(&scope))
             {
                 // And now time to rescope the token
                 let token_auth = self.reauth(token_auth, &requested_scope).await?;
@@ -985,6 +1011,57 @@ impl AsyncOpenStack {
             return Ok(());
         }
 
+        let region = {
+            let session = self.session_read("discover_service_endpoint: get region for cache");
+            session
+                .region_name
+                .as_deref()
+                .or(self.config.region_name.as_deref())
+                .map(|s| s.to_string())
+        };
+        let interface = self.config.interface.clone();
+
+        // Try the on-disk discovery cache first: version discovery results almost
+        // never change for a given cloud, so a fresh cache hit lets a one-shot CLI
+        // invocation skip the HTTP round-trip entirely.
+        let cached = {
+            let session = self.session_read("discover_service_endpoint: check cache");
+            session.state.get_discovery_cache(
+                &service_type.to_string(),
+                region.as_deref(),
+                interface.as_deref(),
+            )
+        };
+        if let Some((cached_url, cached_data)) = cached
+            && let Ok(url) = url::Url::parse(&cached_url)
+        {
+            let ok = {
+                let mut session =
+                    self.session_write("discover_service_endpoint: process cached catalog");
+                session
+                    .catalog
+                    .process_endpoint_discovery(
+                        service_type,
+                        &url,
+                        &Bytes::from(cached_data),
+                        region.as_deref(),
+                        interface.as_deref(),
+                    )
+                    .is_ok()
+            };
+            if ok {
+                debug!(
+                    "Restored `{}` endpoint version discovery from cache",
+                    service_type
+                );
+                return Ok(());
+            }
+            debug!(
+                "Discovery cache entry for `{}` was unusable; falling back to live discovery",
+                service_type
+            );
+        }
+
         info!("Performing `{}` endpoint version discovery", service_type);
 
         let orig_url = ep.url().clone();
@@ -1036,6 +1113,17 @@ impl AsyncOpenStack {
                         if ok {
                             debug!("Finished service version discovery at {}", try_url.as_str());
                             debug!("catalog {:?}", self.session.read().catalog.clone());
+                            {
+                                let session =
+                                    self.session_read("discover_service_endpoint: persist cache");
+                                session.state.set_discovery_cache(
+                                    &service_type.to_string(),
+                                    region.as_deref(),
+                                    interface.as_deref(),
+                                    try_url.as_str(),
+                                    rsp.body().to_vec(),
+                                );
+                            }
                             return Ok(());
                         }
                     }
@@ -1153,6 +1241,13 @@ impl AsyncOpenStack {
             return Some(token.get_state(offset));
         }
         None
+    }
+
+    /// Return the path to the on-disk auth cache file in use for the current
+    /// connection, if the on-disk cache is enabled.
+    pub fn get_auth_cache_file(&self) -> Option<std::path::PathBuf> {
+        let session = self.session.read();
+        session.state.cache_file_path()
     }
 
     /// Set the region name for endpoint resolution.

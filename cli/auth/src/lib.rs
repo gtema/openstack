@@ -16,11 +16,15 @@
 
 use clap::{Parser, Subcommand};
 
-use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
+use openstack_cli_core::{
+    cli::{CliArgs, ConnectionRequirements, ConnectionRequirementsProvider},
+    error::OpenStackCliError,
+};
 use openstack_sdk::AsyncOpenStack;
 
 pub mod login;
 pub mod show;
+pub mod status;
 
 /// Cloud Authentication operations
 ///
@@ -38,6 +42,25 @@ pub struct AuthCommand {
 pub enum AuthCommands {
     Login(login::LoginCommand),
     Show(show::ShowCommand),
+    Status(status::StatusCommand),
+}
+
+impl ConnectionRequirementsProvider for AuthCommands {
+    fn connection_requirements(&self) -> ConnectionRequirements {
+        match self {
+            AuthCommands::Login(login::LoginCommand { renew: true, .. }) => {
+                ConnectionRequirements {
+                    needs_auth: true,
+                    renew: true,
+                }
+            }
+            AuthCommands::Status(_) => ConnectionRequirements {
+                needs_auth: false,
+                renew: false,
+            },
+            _ => ConnectionRequirements::connected(),
+        }
+    }
 }
 
 impl AuthCommand {
@@ -50,6 +73,7 @@ impl AuthCommand {
         match &self.command {
             AuthCommands::Show(cmd) => cmd.take_action(parsed_args, client).await,
             AuthCommands::Login(cmd) => cmd.take_action(parsed_args, client).await,
+            AuthCommands::Status(cmd) => cmd.take_action(parsed_args, client).await,
         }
     }
 }

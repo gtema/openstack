@@ -290,6 +290,85 @@ mod tests {
         );
     }
 
+    /// Regression test for a bug where a scoped login (project requested by
+    /// `project_id` only) triggered a *second*, redundant `POST
+    /// /v3/auth/tokens` rescope call immediately after the first successful
+    /// auth, because the requested scope (partial: id set, name `None`) was
+    /// compared with `==` against the scope resolved from the full token
+    /// response (id + name + domain all set). Since project_id-only configs
+    /// never structurally equal the fully-populated resolved scope, this
+    /// forced a network reauth on every single connect, defeating the auth
+    /// cache. The fix uses `AuthTokenScope::matches()` (wildcard-aware)
+    /// instead of strict equality.
+    #[cfg(all(feature = "sync", feature = "async"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_scoped_login_does_not_trigger_redundant_reauth() {
+        let server = MockServer::start_async().await;
+        let base_url = server.base_url();
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/");
+            then.status(StatusCode::OK).json_body(serde_json::json!({
+                "versions": [{
+                    "id": "v3", "status": "SUPPORTED",
+                    "links": [{ "rel": "self", "href": format!("{base_url}/v3/") }]
+                }]
+            }));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v3/");
+            then.status(StatusCode::OK).json_body(serde_json::json!({
+                "versions": [{
+                    "id": "v3", "status": "SUPPORTED",
+                    "links": [{ "rel": "self", "href": format!("{base_url}/v3/") }]
+                }]
+            }));
+        });
+
+        let expires = (chrono::Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        // Token response resolves to a *fully populated* scope (id + name +
+        // domain), while the request config below only sets `project_id`.
+        let token_mock = server.mock(|when, then| {
+            when.method(httpmock::Method::POST).path("/v3/auth/tokens");
+            then.status(StatusCode::CREATED)
+                .header("x-subject-token", "test-token-scoped")
+                .json_body(serde_json::json!({
+                    "token": {
+                        "id": "token-id", "expires_at": expires,
+                        "project": {
+                            "id": "test-project", "name": "TestProject",
+                            "domain": { "id": "default", "name": "Default" }
+                        },
+                        "user": { "id": "test-user", "name": "test-user" },
+                        "methods": ["password"], "audit_ids": ["audit-1"],
+                        "catalog": [
+                            { "type": "identity", "name": "keystone", "endpoints": [{
+                                "id": "identity-1", "url": format!("{}/v3", base_url),
+                                "region": "RegionOne", "interface": "public"
+                            }] }
+                        ]
+                    }
+                }));
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+
+        let _client = AsyncOpenStack::new_with_authentication_helper(
+            &config,
+            crate::auth::auth_helper::Noop::default(),
+            false,
+        )
+        .await
+        .expect("AsyncOpenStack client creation failed");
+
+        assert_eq!(
+            token_mock.calls_async().await,
+            1,
+            "scoped login must obtain the token in a single request; a second \
+             hit means an unnecessary rescope reauth was triggered"
+        );
+    }
+
     /// Test 401 re-auth through the full  flow.
     ///
     /// Simulates a real-world scenario: token is valid at  time, but a subsequent

@@ -14,7 +14,10 @@
 //! CLI top level command and processing
 use clap::Parser;
 
-use openstack_cli_core::cli::{CliArgs, CompletionCommand, GlobalOpts, parse_config, styles};
+use openstack_cli_core::cli::{
+    CliArgs, CompletionCommand, ConnectionRequirements, ConnectionRequirementsProvider, GlobalOpts,
+    parse_config, styles,
+};
 use openstack_cli_core::config::Config;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_sdk::AsyncOpenStack;
@@ -129,6 +132,15 @@ pub enum TopLevelCommands {
     ObjectStore(openstack_cli_object_store::ObjectStoreCommand),
     Placement(openstack_cli_placement::PlacementCommand),
     Completion(CompletionCommand),
+}
+
+impl ConnectionRequirementsProvider for TopLevelCommands {
+    fn connection_requirements(&self) -> ConnectionRequirements {
+        if let TopLevelCommands::Auth(args) = self {
+            return args.command.connection_requirements();
+        }
+        ConnectionRequirements::connected()
+    }
 }
 
 impl Cli {
