@@ -381,7 +381,23 @@ impl Catalog {
         self.consume_discovered_endpoints(service_type, discovered_endpoints)
     }
 
-    /// Return catalog endpoints as returned in the authorization response
+    /// Return catalog endpoints as returned in the authorization response for
+    /// service types for which endpoint version discovery has previously
+    /// succeeded.
+    ///
+    /// `process_catalog_endpoints` wipes discovered endpoint info on every
+    /// re-auth (a rescope may land on a different project_id, invalidating
+    /// prior discovery). Callers that re-auth without a scope change (e.g.
+    /// background token renewal) can use this beforehand to know what to
+    /// re-discover afterwards so version info isn't silently lost.
+    pub fn discovered_service_types(&self) -> Vec<String> {
+        self.service_endpoints
+            .iter()
+            .filter(|(_, eps)| !eps.get_all().is_empty())
+            .map(|(k, _)| k.clone())
+            .collect()
+    }
+
     pub fn get_token_catalog(&self) -> Option<Vec<ApiServiceEndpoints>> {
         self.token_catalog.clone()
     }

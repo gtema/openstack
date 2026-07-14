@@ -18,7 +18,7 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::ops::{Deref, DerefMut};
-use std::sync::Arc;
+use std::sync::{Arc, Weak};
 use std::time::{Duration, SystemTime};
 use std::{fs::File, io::Read};
 
@@ -327,6 +327,18 @@ impl Drop for SessionWriteGuard<'_> {
     }
 }
 
+/// Handle to a background token-renewal task started by
+/// [`AsyncOpenStack::enable_auto_renew`]. Dropping it stops the task; the
+/// task also stops on its own once every `AsyncOpenStack` sharing the
+/// session it was spawned for has been dropped.
+pub struct RenewHandle(tokio::task::JoinHandle<()>);
+
+impl Drop for RenewHandle {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
+
 impl AsyncOpenStack {
     /// Lock the session for reading. `location` is kept as a parameter for
     /// call-site self-documentation (parking_lot never poisons, so it no
@@ -570,6 +582,165 @@ impl AsyncOpenStack {
     pub fn disable_auth_cache(&self) -> &Self {
         self.session.write().state.disable_auth_cache();
         self
+    }
+
+    /// Spawn a background task that proactively re-authenticates `margin`
+    /// before the current token expires, so the request hot path rarely
+    /// hits a 401 to begin with.
+    ///
+    /// This performs a full, non-interactive re-authentication — *not*
+    /// token-exchange (`Self::reauth`, method=`token`). Keystone bakes the
+    /// original token's expiry into any token minted via token-exchange
+    /// (`keystone/auth/plugins/token.py`: `response_data.setdefault(
+    /// 'expires_at', token.expires_at)`, deliberately, to stop callers from
+    /// bumping expiry without reproving identity), so exchanging a token
+    /// for a token never actually extends the session — it would produce a
+    /// new token id with the exact same expiry as the one it replaced.
+    /// Reproving identity is required, so this clears cached auth state and
+    /// replays the credentials in `CloudConfig` (password / application
+    /// credential / client credentials) through [`Self::authorize_with_auth_helper`]
+    /// with [`Noop`] — deliberately never the configured interactive
+    /// `auth_helper`, since a background task cannot block on a prompt.
+    /// Clouds that need MFA/SSO/interactive input therefore don't renew
+    /// here; they keep relying on the interactive 401 retry path when a
+    /// user is actually present.
+    ///
+    /// Re-authentication is single-flighted with the 401 retry path through
+    /// `reauth_lock`, so a concurrent 401 and a renewal wakeup never both
+    /// re-authenticate at once.
+    ///
+    /// The task exits once it observes there is no `Auth::AuthToken` to
+    /// renew (unauthenticated session), once the last `AsyncOpenStack`
+    /// sharing this session is dropped, or when the returned handle is
+    /// dropped.
+    pub fn enable_auto_renew(&self, margin: TimeDelta) -> RenewHandle {
+        // Only `session` is held weakly — it's the field whose refcount
+        // marks "is any AsyncOpenStack for this session still alive".
+        // Everything else is cloned strong: none of it keeps `session`
+        // alive, and the task needs it to build a short-lived client for
+        // each wake-up without holding a strong `session` ref across the
+        // (possibly hours-long) sleep in between.
+        let weak_session: Weak<RwLock<session::SessionContext>> = Arc::downgrade(&self.session);
+        let reqwest_client = self.client.clone();
+        let config = self.config.clone();
+        let auth_snapshot = Arc::clone(&self.auth_snapshot);
+        let auth_helper = self.auth_helper.clone();
+        let max_auth_retries = self.max_auth_retries;
+        let reauth_lock = Arc::clone(&self.reauth_lock);
+
+        let join = tokio::spawn(async move {
+            // Rebuilds a client around the currently-live `session` Arc, or
+            // `None` once the last real `AsyncOpenStack` has been dropped.
+            let upgrade = || {
+                weak_session.upgrade().map(|session| AsyncOpenStack {
+                    client: reqwest_client.clone(),
+                    config: config.clone(),
+                    session,
+                    auth_snapshot: Arc::clone(&auth_snapshot),
+                    auth_helper: auth_helper.clone(),
+                    max_auth_retries,
+                    reauth_lock: Arc::clone(&reauth_lock),
+                })
+            };
+
+            loop {
+                let sleep_for = {
+                    let Some(client) = upgrade() else { return };
+                    let Auth::AuthToken(token) = &client.auth_snapshot.load().auth else {
+                        return;
+                    };
+                    let Some(auth_info) = &token.auth_info else {
+                        return;
+                    };
+                    (auth_info.token.expires_at - margin - chrono::Utc::now())
+                        .to_std()
+                        .unwrap_or(Duration::ZERO)
+                    // `client` (and its strong `session` ref) drops here,
+                    // before the sleep below.
+                };
+                tokio::time::sleep(sleep_for).await;
+
+                let Some(client) = upgrade() else { return };
+
+                let seen_generation = client.auth_snapshot.load().auth_generation;
+                let _guard = client.reauth_lock.lock().await;
+                if client.auth_snapshot.load().auth_generation != seen_generation {
+                    // Another task (401 retry or a previous renewal wakeup)
+                    // already refreshed the token while we waited.
+                    continue;
+                }
+
+                let scope = match AuthTokenScope::try_from(&client.config) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        warn!("background token renewal: cannot determine scope: {e}");
+                        return;
+                    }
+                };
+
+                // `authorize_with_auth_helper` re-processes the token
+                // catalog, which wipes all previously-discovered service
+                // endpoint versions (identity excepted) since a rescope may
+                // land on a different project_id. This renewal keeps the
+                // same scope, so remember what was discovered and redo it
+                // below rather than silently losing it.
+                let discovered_services = {
+                    let session =
+                        client.session_read("enable_auto_renew: snapshot discovered services");
+                    session.catalog.discovered_service_types()
+                };
+
+                // Clear cached auth first: `authorize_with_auth_helper`
+                // would otherwise happily rescope a still-cached token via
+                // token-exchange, which (see doc comment above) preserves
+                // the old expiry instead of extending it. Clearing forces
+                // it down the real-credential path.
+                {
+                    let mut session = client.session_write("enable_auto_renew: clear state");
+                    session.state.clear_all_auth();
+                }
+                match client
+                    .authorize_with_auth_helper(Some(scope), &Noop::default(), true)
+                    .await
+                {
+                    Ok(()) => {
+                        for service_type in &discovered_services {
+                            if let Err(e) = client
+                                .discover_service_endpoint(&ServiceType::from(
+                                    service_type.as_str(),
+                                ))
+                                .await
+                            {
+                                warn!(
+                                    "background token renewal: failed to re-discover endpoint for {service_type}: {e}"
+                                );
+                            }
+                        }
+                        let expires_at =
+                            if let Auth::AuthToken(t) = &client.auth_snapshot.load().auth {
+                                t.auth_info
+                                    .as_ref()
+                                    .map(|i| i.token.expires_at.to_rfc3339())
+                            } else {
+                                None
+                            };
+                        event!(
+                            name: "token_renewed",
+                            Level::DEBUG,
+                            expires_at,
+                            "Background token renewal succeeded"
+                        )
+                    }
+                    Err(e) => {
+                        warn!("background token renewal failed: {e}");
+                        // Rate-limit retries; a subsequent 401 still falls
+                        // back to the normal retry path in the meantime.
+                        tokio::time::sleep(Duration::from_secs(30)).await;
+                    }
+                }
+            }
+        });
+        RenewHandle(join)
     }
 
     /// Set the maximum number of retries on 401 responses.
@@ -2076,5 +2247,107 @@ mod tests {
 
         mock_401.assert_async().await;
         mock_200.assert_async().await;
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_auto_renew_success() {
+        let server = MockServer::start_async().await;
+
+        // Match only on method/path/body-shape ("application_credential"
+        // identity method), so this mock exercises the real-credential
+        // re-authentication path `enable_auto_renew` must take — not
+        // token-exchange (method=`token`), which Keystone pins to the
+        // *original* token's expiry and therefore can never actually renew
+        // a session (see the doc comment on `enable_auto_renew`).
+        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let mock_reauth = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST)
+                    .path("/auth/tokens")
+                    .body_includes("application_credential");
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "renewed-token")
+                    .json_body(json!({
+                        "token": {
+                            "id": "token-id",
+                            "name": "token-name",
+                            "expires_at": &expires,
+                            "project": {
+                                "id": "test-project",
+                                "name": "TestProject"
+                            },
+                            "user": {
+                                "id": "test-user",
+                                "name": "test-user"
+                            }
+                        }
+                    }));
+            })
+            .await;
+
+        let mut client = create_test_client(&server, "old-token", 1, None);
+        // Renewal must actually replay real credentials (app-cred here),
+        // not exchange the still-cached token.
+        client.config.auth_type = Some("v3applicationcredential".into());
+        if let Some(auth) = &mut client.config.auth {
+            auth.application_credential_id = Some("app-cred-id".into());
+            auth.application_credential_secret = Some("app-cred-secret".into());
+        }
+        // Make the token expire almost immediately so the renewal task wakes
+        // right away instead of waiting out the 1h default in the fixture.
+        {
+            let mut guard = client.session_write("test: force near expiry");
+            if let Auth::AuthToken(t) = &mut guard.auth
+                && let Some(info) = &mut t.auth_info
+            {
+                info.token.expires_at = Utc::now() + chrono::TimeDelta::milliseconds(100);
+            }
+        }
+        let generation_before = client.auth_snapshot.load().auth_generation;
+
+        let _handle = client.enable_auto_renew(TimeDelta::milliseconds(50));
+        tokio::time::sleep(Duration::from_millis(500)).await;
+
+        mock_reauth.assert_async().await;
+        let snap = client.auth_snapshot.load();
+        assert_eq!(snap.auth_generation, generation_before + 1);
+        match &snap.auth {
+            Auth::AuthToken(t) => assert_eq!(t.token.expose_secret(), "renewed-token"),
+            _ => panic!("expected AuthToken after renewal"),
+        }
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_auto_renew_stops_when_client_dropped() {
+        let server = MockServer::start_async().await;
+
+        // If the renewal task fires after the client is gone, this mock
+        // would be hit; asserting it was never called proves the task
+        // stopped instead of renewing against a dropped session.
+        let mock_reauth = server
+            .mock_async(|when, then| {
+                when.method(httpmock::Method::POST).path("/auth/tokens");
+                then.status(StatusCode::CREATED)
+                    .header("x-subject-token", "renewed-token")
+                    .json_body(json!({"token": {}}));
+            })
+            .await;
+
+        let client = create_test_client(&server, "old-token", 1, None);
+        {
+            let mut guard = client.session_write("test: force near expiry");
+            if let Auth::AuthToken(t) = &mut guard.auth
+                && let Some(info) = &mut t.auth_info
+            {
+                info.token.expires_at = Utc::now() + chrono::TimeDelta::milliseconds(150);
+            }
+        }
+
+        let handle = client.enable_auto_renew(TimeDelta::milliseconds(50));
+        drop(client);
+        tokio::time::sleep(Duration::from_millis(400)).await;
+
+        mock_reauth.assert_calls_async(0).await;
+        drop(handle);
     }
 }

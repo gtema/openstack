@@ -27,7 +27,7 @@ mod session;
 #[cfg(feature = "async")]
 mod openstack_async;
 #[cfg(feature = "async")]
-pub use openstack_async::AsyncOpenStack;
+pub use openstack_async::{AsyncOpenStack, RenewHandle};
 #[cfg(all(feature = "sync", feature = "async"))]
 mod openstack;
 #[cfg(all(feature = "sync", feature = "async"))]
