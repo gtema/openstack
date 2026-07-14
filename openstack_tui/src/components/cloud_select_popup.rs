@@ -68,6 +68,15 @@ impl Component for CloudSelect {
             items.sort_by_key(|a| a.to_lowercase());
             self.popup_state.set_items(items);
             self.items_fetched = true;
+        } else if matches!(
+            action,
+            Action::ConnectToCloud(_)
+                | Action::CloudChangeScope(_)
+                | Action::SwitchToRegion(_)
+                | Action::ConnectedToCloud(_)
+        ) {
+            self.items_fetched = false;
+            self.popup_state.set_items(Vec::<String>::new());
         } else if action == Action::CloudSelect
             && !self.items_fetched
             && let Some(tx) = &self.action_tx

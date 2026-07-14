@@ -72,7 +72,13 @@ impl Component for RegionSelect {
                 self.items_fetched = false;
                 self.is_loading = true;
             }
-            Action::ConnectedToCloud(_) | Action::SelectRegion => {
+            Action::ConnectedToCloud(_) => {
+                self.is_loading = true;
+                self.items_fetched = true;
+                self.regions.clear();
+                self.popup_state.set_items(Vec::<String>::new());
+            }
+            Action::SelectRegion => {
                 if !self.items_fetched {
                     self.is_loading = true;
                     if let Some(tx) = &self.action_tx {
@@ -87,6 +93,12 @@ impl Component for RegionSelect {
                 self.is_loading = false;
             }
             _ => {}
+        }
+        if self.is_loading && self.action_tx.is_some() {
+            if let Some(tx) = &self.action_tx {
+                tx.send(Action::ListRegions)?;
+            }
+            self.is_loading = false;
         }
         Ok(None)
     }

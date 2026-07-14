@@ -90,16 +90,36 @@ impl Component for ProjectSelect {
             Action::ConnectToCloud(_) | Action::CloudChangeScope(_) => {
                 self.is_loading = true;
                 self.items_fetched = false;
+                self.items.clear();
+                self.popup_state.set_items(Vec::<String>::new());
             }
-            Action::ConnectedToCloud(_) | Action::SelectProject => {
-                if !self.items_fetched {
-                    self.is_loading = true;
+            Action::ConnectedToCloud(_) => {
+                // Mark items_fetched=true so the generic is_loading guard at
+                // the bottom doesn't re-issue. Issue the fetch directly so we
+                // refresh after cloud change.
+                self.items_fetched = true;
+                self.items.clear();
+                self.popup_state.set_items(Vec::<String>::new());
+                self.is_loading = true;
+                if let Some(tx) = &self.action_tx {
                     let req = IdentityAuthProjectListBuilder::default()
                         .build()
                         .wrap_err("cannot prepare auth project list request")?;
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    tx.send(Action::PerformApiRequest(ApiRequest::from(
                         IdentityAuthProjectApiRequest::List(Box::new(req)),
-                    ))));
+                    )))?;
+                }
+                self.is_loading = false;
+            }
+
+            Action::SelectProject => {
+                // Only trigger a fetch when there's no data, nothing in-flight,
+                // and no refresh already initiated by ConnectedToCloud.
+                if !self.items_fetched && self.items.is_empty() && !self.is_loading {
+                    self.is_loading = true;
+                    self.items_fetched = false;
+                    self.items.clear();
+                    self.popup_state.set_items(Vec::<String>::new());
                 }
             }
             Action::ApiResponsesData {
@@ -108,6 +128,17 @@ impl Component for ProjectSelect {
             } => self.on_data(data.clone())?,
             _ => {}
         }
+
+        if self.is_loading && self.action_tx.is_some() && !self.items_fetched {
+            let req = IdentityAuthProjectListBuilder::default()
+                .build()
+                .wrap_err("cannot prepare auth project list request")?;
+            self.is_loading = false;
+            return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                IdentityAuthProjectApiRequest::List(Box::new(req)),
+            ))));
+        }
+
         Ok(None)
     }
 

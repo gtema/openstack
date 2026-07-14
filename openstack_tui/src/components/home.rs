@@ -143,9 +143,17 @@ impl Component for Home {
 
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
-            Action::CloudChangeScope(_) => {
+            Action::ConnectToCloud(_) => {
                 self.is_error = false;
                 self.set_loading(true);
+                self.compute_quota = None;
+                self.network_quota = None;
+            }
+            Action::CloudChangeScope(_) | Action::SwitchToRegion(_) => {
+                self.is_error = false;
+                self.set_loading(true);
+                self.compute_quota = None;
+                self.network_quota = None;
             }
             Action::ConnectedToCloud(auth) => {
                 self.is_error = false;

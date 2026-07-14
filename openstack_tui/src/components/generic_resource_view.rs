@@ -99,15 +99,12 @@ where
             _ => {}
         }
 
-        // --- Cloud change scope: reset loading state ---
-        if let Action::CloudChangeScope(_) = &action {
+        // --- Connect / re-scope / region switch: clear stale data ---
+        if let Action::ConnectToCloud(_) | Action::CloudChangeScope(_) | Action::SwitchToRegion(_) =
+            &action
+        {
             self.base.set_loading(true);
-            return Ok(None);
-        }
-
-        // --- Region switch: reload data for the new region ---
-        if let Action::SwitchToRegion(_) = &action {
-            self.base.set_loading(true);
+            self.base.set_data(Vec::new())?;
             return Ok(None);
         }
 
