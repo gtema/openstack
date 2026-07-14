@@ -425,6 +425,10 @@ impl App {
                         // Hide popup
                         self.active_popup = None;
                     }
+                    // Broadcast to all popups so they can clear stale data
+                    for popup in self.popups.values_mut() {
+                        let _ = popup.update(action.clone(), self.mode);
+                    }
                     self.render(tui)?;
                     self.cloud_worker_tx
                         .send(Action::CloudChangeScope(scope.clone()))?;
@@ -435,6 +439,10 @@ impl App {
                     {
                         // Hide popup
                         self.active_popup = None;
+                    }
+                    // Broadcast to all popups so they can clear stale data
+                    for popup in self.popups.values_mut() {
+                        let _ = popup.update(action.clone(), self.mode);
                     }
                     self.render(tui)?;
                     self.cloud_worker_tx
@@ -506,9 +514,14 @@ impl App {
                 Action::ConnectToCloud(ref cloud) => {
                     self.cloud_worker_tx
                         .send(Action::ConnectToCloud(cloud.clone()))?;
-                    // Hide popup
                     self.active_popup = None;
                     self.cloud_connected = false;
+                    // Broadcast to all popups so they can clear stale data
+                    for popup in self.popups.values_mut() {
+                        let _ = popup.update(action.clone(), self.mode);
+                    }
+                    // Let the active mode component know to refresh
+                    self.action_tx.send(Action::Refresh)?;
                     self.render(tui)?;
                 }
                 Action::Confirm(ref request) => {
