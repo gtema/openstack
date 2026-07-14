@@ -88,7 +88,7 @@ tracing-subscriber = { workspace = true }
 assert_cmd = "^2.2"
 futures.workspace = true
 http.workspace = true
-md5 = "^0.8.0"
+md5 = "^0.8.1"
 rand = "^0.10"
 reqwest.workspace = true
 serde_json.workspace = true

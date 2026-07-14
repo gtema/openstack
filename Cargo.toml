@@ -50,7 +50,7 @@ repository = "https://github.com/gtema/openstack"
 [workspace.dependencies]
 async-trait = { version = "^0.1" }
 base64 = "0.22"
-bytes = "^1.11"
+bytes = "^1.12"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.6", features = ["cargo", "color", "derive", "env"] }
 clap_complete = { version = "^4.6" }
@@ -72,7 +72,7 @@ inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
 json-patch = { version = "^4.2" }
 lazy_static = { version = "^1.5" }
-open = { version = "^5.3" }
+open = { version = "^5.4" }
 openstack-cli-api = { path="cli/api", version = "0.13.7" }
 openstack-cli-auth = { path="cli/auth", version = "0.13.7" }
 openstack-cli-block-storage = { path="cli/block-storage/", version = "0.13.7" }
@@ -93,13 +93,12 @@ openstack_sdk = { version = "0.22.7", path = "openstack_sdk" }
 openstack_types = { version = "0.22.7", path = "openstack_types" }
 openstack-types-core = { version = "0.22", path = "types/core" }
 pem = { version = "^3.0" }
-pkcs8 = { version = "^0.10", features = ["encryption"] }
-regex = { version = "^1.12" }
-rsa = { version = "^0.9", features = ["getrandom"] }
+regex = { version = "^1.13" }
+rsa = { version = "^0.9", features = ["getrandom", "pkcs5"] }
 ssh-key = { version = "^0.6", features = ["rsa", "encryption"] }
 reqwest = { version = "^0.13", default-features = false }
 reserve-port = "^2.5"
-schemars = { version = "^1.0" }
+schemars = { version = "^1.2" }
 secrecy = { version = "0.10", features = ["serde"] }
 serde = { version="^1.0", features=["derive"] }
 serde_json = "^1.0"
@@ -119,7 +118,7 @@ url = { version = "^2.5", features = ["serde"] }
 webauthn-authenticator-rs = { version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "0.5" }
 uuid = { version = "1.23" }
-zeroize = { version = "^1.8" }
+zeroize = { version = "^1.9" }
 
 [profile.dev]
 debug = 0
