@@ -17,16 +17,19 @@
 use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
-use std::sync::{Arc, RwLock};
+use std::ops::{Deref, DerefMut};
+use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 use std::{fs::File, io::Read};
 
+use arc_swap::ArcSwap;
 use async_trait::async_trait;
 use bytes::Bytes;
 use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
 use http::{HeaderMap, HeaderValue, Response as HttpResponse, StatusCode, header};
+use parking_lot::RwLock;
 use reqwest::{Certificate, Request, Response};
 use secrecy::{ExposeSecret, SecretString};
 use tokio_util::codec;
@@ -59,6 +62,7 @@ use openstack_sdk_core::auth::{
 use openstack_sdk_core::catalog::{Catalog, CatalogError, ServiceEndpoint};
 use openstack_sdk_core::config::CloudConfig;
 use openstack_sdk_core::error::{OpenStackError, OpenStackResult, RestError};
+use openstack_sdk_core::session::AuthSnapshot;
 use openstack_sdk_core::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 use openstack_sdk_core::utils::expand_tilde;
 
@@ -103,6 +107,9 @@ pub struct AsyncOpenStack {
     config: CloudConfig,
     /// Session context (auth, catalog, state)
     session: Arc<RwLock<session::SessionContext>>,
+    /// Lock-free snapshot of auth/catalog/region for the per-request hot
+    /// path, republished by `SessionWriteGuard::drop` on every session write.
+    auth_snapshot: Arc<ArcSwap<AuthSnapshot>>,
     /// Auth helper for re-authentication on 401.
     auth_helper: Option<Arc<dyn AuthHelper>>,
     /// Max retries on 401.
@@ -120,6 +127,7 @@ impl Clone for AsyncOpenStack {
             client: self.client.clone(),
             config: self.config.clone(),
             session: Arc::clone(&self.session),
+            auth_snapshot: Arc::clone(&self.auth_snapshot),
             auth_helper: self.auth_helper.clone(),
             max_auth_retries: self.max_auth_retries,
             reauth_lock: Arc::clone(&self.reauth_lock),
@@ -129,17 +137,8 @@ impl Clone for AsyncOpenStack {
 
 impl Debug for AsyncOpenStack {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Use blocking lock on the main thread for debug
-        // This is only for Debug impl, not in async context
         f.debug_struct("OpenStack")
-            .field(
-                "service_endpoints",
-                &self
-                    .session
-                    .read()
-                    .unwrap_or_else(|_| panic!("Debug: session lock poisoned"))
-                    .catalog,
-            )
+            .field("service_endpoints", &self.auth_snapshot.load().catalog)
             .finish()
     }
 }
@@ -149,7 +148,7 @@ impl api::RestClient for AsyncOpenStack {
     type Error = RestError;
 
     fn get_current_project(&self) -> Option<Project> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         if let Auth::AuthToken(token) = &session.auth {
             return token.auth_info.clone().and_then(|x| x.token.project);
         }
@@ -165,8 +164,8 @@ impl api::AsyncClient for AsyncOpenStack {
         body: Vec<u8>,
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
         let (mut auth, mut generation) = {
-            let session = self.session_read_rest("AsyncClient::rest")?;
-            (session.auth.clone(), session.auth_generation)
+            let snap = self.auth_snapshot.load();
+            (snap.auth.clone(), snap.auth_generation)
         };
         let mut retries = 0;
 
@@ -196,8 +195,8 @@ impl api::AsyncClient for AsyncOpenStack {
                 match self.handle_401_retry(generation).await {
                     Ok(_) => {
                         (auth, generation) = {
-                            let session = self.session_read_rest("AsyncClient::rest_retry")?;
-                            (session.auth.clone(), session.auth_generation)
+                            let snap = self.auth_snapshot.load();
+                            (snap.auth.clone(), snap.auth_generation)
                         };
                         retries += 1;
                         let mut new_builder = http::Request::builder()
@@ -224,10 +223,7 @@ impl api::AsyncClient for AsyncOpenStack {
         request: http::request::Builder,
         body: BoxedAsyncRead,
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
-        let auth = {
-            let session = self.session_read_rest("AsyncClient::rest_read_body_async")?;
-            session.auth.clone()
-        };
+        let auth = self.auth_snapshot.load().auth.clone();
         self.rest_with_auth_read_body_async(request, body, &auth)
             .await
     }
@@ -237,10 +233,7 @@ impl api::AsyncClient for AsyncOpenStack {
         request: http::request::Builder,
         body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), api::ApiError<<Self as api::RestClient>::Error>> {
-        let auth = {
-            let session = self.session_read_rest("AsyncClient::download_async")?;
-            session.auth.clone()
-        };
+        let auth = self.auth_snapshot.load().auth.clone();
         self.download_with_auth_async(request, body, &auth).await
     }
 
@@ -250,13 +243,12 @@ impl api::AsyncClient for AsyncOpenStack {
         version: Option<&ApiVersion>,
     ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
         let lookup = || {
-            let session = self.session_read_rest("AsyncClient::get_service_endpoint")?;
-            let region = session
+            let snap = self.auth_snapshot.load();
+            let region = snap
                 .region_name
                 .as_ref()
                 .or(self.config.region_name.as_ref());
-            session
-                .catalog
+            snap.catalog
                 .get_service_endpoint(
                     service_type.to_string(),
                     version,
@@ -297,56 +289,64 @@ impl api::AsyncClient for AsyncOpenStack {
     }
 }
 
+/// Write guard for `SessionContext` that republishes `AuthSnapshot` on drop,
+/// while the write lock is still held (the manual `Drop::drop` below runs
+/// before the `guard` field's own destructor, so the store happens with the
+/// lock still taken). This guarantees a concurrent hot-path reader never
+/// sees a released lock with a stale snapshot: every write path that
+/// mutates `auth`, `auth_generation`, `catalog`, or `region_name` is
+/// automatically reflected, with no per-call-site bookkeeping required.
+///
+/// Trade-off: writes that only touch `state` (auth-cache bookkeeping, e.g.
+/// `get_scope_auth`/`clear_all_auth`) still pay a full `AuthSnapshot`
+/// rebuild — including a `Catalog` clone — since the guard can't tell which
+/// fields changed. These are auth-flow writes, not per-request, so the cost
+/// is bounded; revisit if `Catalog` grows large enough to matter.
+struct SessionWriteGuard<'a> {
+    guard: parking_lot::RwLockWriteGuard<'a, session::SessionContext>,
+    snapshot: &'a ArcSwap<AuthSnapshot>,
+}
+
+impl Deref for SessionWriteGuard<'_> {
+    type Target = session::SessionContext;
+    fn deref(&self) -> &Self::Target {
+        &self.guard
+    }
+}
+
+impl DerefMut for SessionWriteGuard<'_> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.guard
+    }
+}
+
+impl Drop for SessionWriteGuard<'_> {
+    fn drop(&mut self) {
+        self.snapshot
+            .store(Arc::new(AuthSnapshot::from(&*self.guard)));
+    }
+}
+
 impl AsyncOpenStack {
-    /// Lock the session for reading in trait methods (converts PoisonError to RestError).
-    fn session_read_rest(
-        &self,
-        location: &'static str,
-    ) -> Result<std::sync::RwLockReadGuard<'_, session::SessionContext>, api::ApiError<RestError>>
-    {
-        self.session.read().map_err(|e| {
-            api::ApiError::client(RestError::SessionPoisoned {
-                msg: format!("{}: session read lock poisoned: {}", location, e),
-            })
-        })
-    }
-
-    /// Lock the session for writing in trait methods.
-    #[allow(dead_code)]
-    fn session_write_rest(
-        &self,
-        location: &'static str,
-    ) -> Result<std::sync::RwLockWriteGuard<'_, session::SessionContext>, api::ApiError<RestError>>
-    {
-        self.session.write().map_err(|e| {
-            api::ApiError::client(RestError::SessionPoisoned {
-                msg: format!("{}: session write lock poisoned: {}", location, e),
-            })
-        })
-    }
-
-    /// Lock the session for reading in non-trait methods.
+    /// Lock the session for reading. `location` is kept as a parameter for
+    /// call-site self-documentation (parking_lot never poisons, so it no
+    /// longer feeds an error message).
+    #[allow(unused_variables)]
     fn session_read(
         &self,
         location: &'static str,
-    ) -> Result<std::sync::RwLockReadGuard<'_, session::SessionContext>, OpenStackError> {
-        self.session
-            .read()
-            .map_err(|e| OpenStackError::SessionPoisoned {
-                msg: format!("{}: session read lock poisoned: {}", location, e),
-            })
+    ) -> parking_lot::RwLockReadGuard<'_, session::SessionContext> {
+        self.session.read()
     }
 
-    /// Lock the session for writing in non-trait methods.
-    fn session_write(
-        &self,
-        location: &'static str,
-    ) -> Result<std::sync::RwLockWriteGuard<'_, session::SessionContext>, OpenStackError> {
-        self.session
-            .write()
-            .map_err(|e| OpenStackError::SessionPoisoned {
-                msg: format!("{}: session write lock poisoned: {}", location, e),
-            })
+    /// Lock the session for writing. Returns a guard that republishes
+    /// `AuthSnapshot` on drop — see `SessionWriteGuard`.
+    #[allow(unused_variables)]
+    fn session_write(&self, location: &'static str) -> SessionWriteGuard<'_> {
+        SessionWriteGuard {
+            guard: self.session.write(),
+            snapshot: &self.auth_snapshot,
+        }
     }
 
     /// Basic constructor — visible to the sync facade.
@@ -395,11 +395,13 @@ impl AsyncOpenStack {
 
         // Pass CloudConfig.auth_cache as override; SessionContext resolves priority chain.
         let session_ctx = session::SessionContext::new(config, auth, config.auth_cache)?;
+        let auth_snapshot = Arc::new(ArcSwap::new(Arc::new(AuthSnapshot::from(&session_ctx))));
 
         Ok(AsyncOpenStack {
             client: client_builder.build()?,
             config: config.clone(),
             session: Arc::new(RwLock::new(session_ctx)),
+            auth_snapshot,
             auth_helper: None,
             max_auth_retries: 1,
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
@@ -457,7 +459,7 @@ impl AsyncOpenStack {
 
     /// Set the authorization to be used by the client
     fn set_auth(&self, auth: Auth, skip_cache_update: bool) -> Result<(), OpenStackError> {
-        let mut session = self.session_write("set_auth")?;
+        let mut session = self.session_write("set_auth");
         session.auth = auth;
         session.auth_generation = session.auth_generation.wrapping_add(1);
         if !skip_cache_update && let Auth::AuthToken(a) = &session.auth {
@@ -522,9 +524,7 @@ impl AsyncOpenStack {
     async fn handle_401_retry(&self, seen_generation: u64) -> Result<(), OpenStackError> {
         let _guard = self.reauth_lock.lock().await;
 
-        let current_generation = self
-            .session_read("handle_401_retry: check generation")?
-            .auth_generation;
+        let current_generation = self.auth_snapshot.load().auth_generation;
         if current_generation != seen_generation {
             // Another task already re-authed while we waited for the lock.
             return Ok(());
@@ -536,7 +536,7 @@ impl AsyncOpenStack {
         let auth_helper_opt = self.auth_helper.clone();
         if let Some(auth_helper) = auth_helper_opt {
             {
-                let mut session = self.session_write("handle_401_retry: clear state")?;
+                let mut session = self.session_write("handle_401_retry: clear state");
                 session.state.clear_all_auth();
             }
             self.authorize_with_auth_helper(Some(scope), &auth_helper, true)
@@ -544,7 +544,7 @@ impl AsyncOpenStack {
         } else {
             // No auth helper available - try to reauth with the current token
             if let Auth::AuthToken(token) = {
-                let session = self.session_read("handle_401_retry: read auth")?;
+                let session = self.session_read("handle_401_retry: read auth");
                 session.auth.clone()
             } && let Ok(new_auth) = self.reauth(&token, &scope).await
             {
@@ -553,7 +553,7 @@ impl AsyncOpenStack {
             }
             // Reauth failed, clear state and try full auth as fallback
             {
-                let mut session = self.session_write("handle_401_retry: clear state fallback")?;
+                let mut session = self.session_write("handle_401_retry: clear state fallback");
                 session.state.clear_all_auth();
             }
             self.authorize_with_auth_helper(Some(scope), &Noop::default(), true)
@@ -568,9 +568,7 @@ impl AsyncOpenStack {
     /// in-memory store and the on-disk state file. Useful for scenarios
     /// requiring fresh authentication on every request.
     pub fn disable_auth_cache(&self) -> &Self {
-        if let Ok(mut session) = self.session.write() {
-            session.state.disable_auth_cache();
-        }
+        self.session.write().state.disable_auth_cache();
         self
     }
 
@@ -603,7 +601,7 @@ impl AsyncOpenStack {
             scope.map_or_else(|| AuthTokenScope::try_from(&self.config), |v| Ok(v.clone()))?;
 
         let auth_opt = {
-            let mut session = self.session_write("authorize_with_auth_helper: get cache auth")?;
+            let mut session = self.session_write("authorize_with_auth_helper: get cache auth");
             session.state.get_scope_auth(&requested_scope)
         };
         if let Some(auth) = auth_opt
@@ -618,7 +616,7 @@ impl AsyncOpenStack {
             let auth_type = AuthType::from_cloud_config(&self.config)?;
             let force_new_auth = matches!(auth_type, AuthType::V3ApplicationCredential);
             let available_auth_opt = {
-                let mut session = self.session_write("authorize_with_auth_helper: reauthz")?;
+                let mut session = self.session_write("authorize_with_auth_helper: reauthz");
                 session.state.get_any_valid_auth()
             };
             if let (Some(available_auth), false) = (available_auth_opt, force_new_auth) {
@@ -707,7 +705,7 @@ impl AsyncOpenStack {
         }
 
         let auth_opt = {
-            let session = self.session_read("authorize_with_auth_helper: get auth")?;
+            let session = self.session_read("authorize_with_auth_helper: get auth");
             session.auth.clone()
         };
         if let Auth::AuthToken(token_auth) = &auth_opt {
@@ -726,7 +724,7 @@ impl AsyncOpenStack {
                 // Save unscoped token in the cache
                 {
                     let mut session =
-                        self.session_write("authorize_with_auth_helper: set unscoped cache")?;
+                        self.session_write("authorize_with_auth_helper: set unscoped cache");
                     session.state.set_scope_auth(&scope, &resolved_token);
                 }
             }
@@ -747,7 +745,7 @@ impl AsyncOpenStack {
                 // handling).
                 {
                     let mut session =
-                        self.session_write("authorize_with_auth_helper: set unscoped")?;
+                        self.session_write("authorize_with_auth_helper: set unscoped");
                     session
                         .state
                         .set_scope_auth(&AuthTokenScope::Unscoped, token_auth);
@@ -758,7 +756,7 @@ impl AsyncOpenStack {
         }
 
         {
-            let mut session = self.session_write("authorize_with_auth_helper: process catalog")?;
+            let mut session = self.session_write("authorize_with_auth_helper: process catalog");
             let auth_data = match &session.auth {
                 Auth::AuthToken(token_data) => match &token_data.auth_info {
                     Some(ad) => ad.clone(),
@@ -786,7 +784,7 @@ impl AsyncOpenStack {
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
         let ep_opt = {
-            let session = self.session_read("discover_service_endpoint: get ep")?;
+            let session = self.session_read("discover_service_endpoint: get ep");
             let region = session
                 .region_name
                 .as_ref()
@@ -809,7 +807,7 @@ impl AsyncOpenStack {
         };
 
         let discovery_allowed = {
-            let session = self.session_read("discover_service_endpoint: check discovery")?;
+            let session = self.session_read("discover_service_endpoint: check discovery");
             session.catalog.discovery_allowed(service_type.to_string())
         };
         if !discovery_allowed {
@@ -835,7 +833,7 @@ impl AsyncOpenStack {
 
             let auth = {
                 let session =
-                    self.session_read("discover_service_endpoint: get auth for discovery")?;
+                    self.session_read("discover_service_endpoint: get auth for discovery");
                 session.auth.clone()
             };
             match self.rest_with_auth_async(req, Vec::new(), &auth).await {
@@ -843,7 +841,7 @@ impl AsyncOpenStack {
                     if rsp.status() != StatusCode::NOT_FOUND {
                         let region = {
                             let session =
-                                self.session_read("discover_service_endpoint: get region")?;
+                                self.session_read("discover_service_endpoint: get region");
                             session
                                 .region_name
                                 .as_deref()
@@ -852,7 +850,7 @@ impl AsyncOpenStack {
                         };
                         let ok = {
                             let mut session =
-                                self.session_write("discover_service_endpoint: process catalog")?;
+                                self.session_write("discover_service_endpoint: process catalog");
                             session
                                 .catalog
                                 .process_endpoint_discovery(
@@ -866,13 +864,7 @@ impl AsyncOpenStack {
                         };
                         if ok {
                             debug!("Finished service version discovery at {}", try_url.as_str());
-                            debug!("catalog {:?}", {
-                                self.session
-                                    .read()
-                                    .unwrap_or_else(|_| panic!("discover: session lock poisoned"))
-                                    .catalog
-                                    .clone()
-                            });
+                            debug!("catalog {:?}", self.session.read().catalog.clone());
                             return Ok(());
                         }
                     }
@@ -937,11 +929,11 @@ impl AsyncOpenStack {
     /// persisting to the on-disk auth cache.
     async fn refresh_catalog(&self) -> OpenStackResult<()> {
         let mut catalog: Catalog = {
-            let session = self.session_read("refresh_catalog")?;
+            let session = self.session_read("refresh_catalog");
             session.catalog.clone()
         };
         catalog.read_auth_catalog_async(self).await?;
-        let mut session = self.session_write("refresh_catalog: update")?;
+        let mut session = self.session_write("refresh_catalog: update");
 
         // Update session catalog
         session.catalog = catalog.clone();
@@ -957,16 +949,7 @@ impl AsyncOpenStack {
 
     /// Persist the session's updated catalog to the on-disk auth cache.
     fn persist_catalog_to_cache(&self) {
-        let mut session = match self.session_write("persist_catalog_to_cache") {
-            Ok(s) => s,
-            Err(e) => {
-                warn!(
-                    "Failed to acquire session write lock for catalog persistence: {}",
-                    e
-                );
-                return;
-            }
-        };
+        let mut session = self.session_write("persist_catalog_to_cache");
 
         if let Auth::AuthToken(authz) = &session.auth {
             let scope = authz.get_scope();
@@ -977,13 +960,13 @@ impl AsyncOpenStack {
 
     /// Return catalog information given in the token
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         session.catalog.get_token_catalog()
     }
 
     /// Return current authentication information
     pub fn get_auth_info(&self) -> Option<AuthResponse> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         if let Auth::AuthToken(token) = &session.auth {
             return token.auth_info.clone();
         }
@@ -994,7 +977,7 @@ impl AsyncOpenStack {
     ///
     /// Offset can be used to calculate imminent expiration.
     pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         if let Auth::AuthToken(token) = &session.auth {
             return Some(token.get_state(offset));
         }
@@ -1007,7 +990,7 @@ impl AsyncOpenStack {
     /// re-authentication. The token's service catalog already contains endpoints
     /// for all regions, so switching region only changes which endpoint is selected.
     pub fn set_region_name(&self, region: String) -> Result<(), OpenStackError> {
-        let mut session = self.session_write("set_region_name")?;
+        let mut session = self.session_write("set_region_name");
         session.region_name = Some(region);
         Ok(())
     }
@@ -1017,7 +1000,7 @@ impl AsyncOpenStack {
     /// Returns the runtime override (if set via [`set_region_name`]) or falls back
     /// to the region from [`CloudConfig`].
     pub fn get_region_name(&self) -> Option<String> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         session
             .region_name
             .clone()
@@ -1029,7 +1012,7 @@ impl AsyncOpenStack {
     /// Collects unique region names from both the service catalog and any
     /// discovered version endpoints.
     pub fn get_available_regions(&self) -> Option<Vec<String>> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         let regions = session.catalog.get_regions();
         if regions.is_empty() {
             None
@@ -1040,7 +1023,7 @@ impl AsyncOpenStack {
 
     /// Return current authentication token
     pub fn get_auth_token(&self) -> Option<SecretString> {
-        let session = self.session.read().unwrap_or_else(|e| e.into_inner());
+        let session = self.session.read();
         if let Auth::AuthToken(token) = &session.auth {
             return Some(token.token.clone());
         }
@@ -1263,19 +1246,23 @@ mod tests {
         let mut state = session::state::State::new();
         state.set_auth_hash_key(0);
 
+        let session_ctx = session::SessionContext {
+            auth,
+            catalog,
+            state,
+            region_name: None,
+            auth_generation: 0,
+        };
+        let auth_snapshot = Arc::new(ArcSwap::new(Arc::new(AuthSnapshot::from(&session_ctx))));
+
         AsyncOpenStack {
             client: reqwest::Client::builder()
                 .timeout(Duration::from_secs(10))
                 .build()
                 .unwrap(),
             config,
-            session: Arc::new(RwLock::new(session::SessionContext {
-                auth,
-                catalog,
-                state,
-                region_name: None,
-                auth_generation: 0,
-            })),
+            session: Arc::new(RwLock::new(session_ctx)),
+            auth_snapshot,
             auth_helper,
             max_auth_retries: max_retries,
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),

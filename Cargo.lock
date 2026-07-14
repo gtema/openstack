@@ -148,6 +148,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
 
 [[package]]
+name = "arc-swap"
+version = "1.9.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
+dependencies = [
+ "rustversion",
+]
+
+[[package]]
 name = "arraydeque"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3670,6 +3679,7 @@ dependencies = [
 name = "openstack_sdk"
 version = "0.22.7"
 dependencies = [
+ "arc-swap",
  "async-trait",
  "bytes",
  "chrono",
@@ -3702,6 +3712,7 @@ dependencies = [
  "openstack-sdk-object-store",
  "openstack-sdk-placement",
  "openstack_sdk_core",
+ "parking_lot",
  "reqwest",
  "secrecy",
  "serde",
@@ -3726,6 +3737,7 @@ dependencies = [
 name = "openstack_sdk_core"
 version = "0.22.7"
 dependencies = [
+ "arc-swap",
  "async-trait",
  "base64 0.22.1",
  "bytes",

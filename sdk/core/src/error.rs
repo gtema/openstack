@@ -51,10 +51,6 @@ pub enum RestError {
         #[from]
         source: http::Error,
     },
-
-    /// Session lock poisoned.
-    #[error("session lock poisoned: {}", msg)]
-    SessionPoisoned { msg: String },
 }
 
 /// OpenStack Client error
@@ -72,10 +68,6 @@ pub enum OpenStackError {
     /// Authentication error
     #[error("No authentication information available")]
     NoAuth,
-
-    /// Session lock poisoned (another thread panicked while holding the lock).
-    #[error("session lock poisoned: {}", msg)]
-    SessionPoisoned { msg: String },
 
     /// Authentication error
     #[error("error setting auth header: {}", source)]

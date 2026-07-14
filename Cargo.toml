@@ -48,6 +48,7 @@ homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 
 [workspace.dependencies]
+arc-swap = "1.7"
 async-trait = { version = "^0.1" }
 base64 = "0.22"
 bytes = "^1.12"

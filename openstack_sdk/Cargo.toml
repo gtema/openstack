@@ -68,6 +68,7 @@ keystone_ng = ["dep:openstack-sdk-auth-jwt", "dep:openstack-sdk-auth-federation"
 passkey = ["keystone_ng", "dep:openstack-sdk-auth-passkey"]
 
 [dependencies]
+arc-swap.workspace = true
 async-trait.workspace = true
 bytes.workspace = true
 chrono.workspace= true
@@ -89,6 +90,7 @@ openstack-sdk-auth-token = { version = "0.22", path = "../sdk/auth-token/" }
 openstack-sdk-auth-totp = { version = "0.22", path = "../sdk/auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.22", path = "../sdk/auth-websso/" }
 openstack_sdk_core.workspace = true
+parking_lot = "0.12"
 openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.22", optional = true }
 openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.22", optional = true }
 openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.22", optional = true }
