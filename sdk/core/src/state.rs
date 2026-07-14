@@ -50,6 +50,35 @@ use tracing::{debug, info, trace, warn};
 
 use openstack_sdk_auth_core::{AuthState, authtoken::AuthToken, authtoken_scope::AuthTokenScope};
 
+/// Margin applied when deciding whether a cached token is usable for a new request.
+///
+/// A token valid at read time but expiring a few seconds later would still be handed
+/// out and immediately 401 (or worse, land a non-idempotent request exactly at expiry).
+/// This margin is only for "is this usable right now" checks; persistence-time
+/// filtering (deciding what is worth writing to the cache) keeps using `None`.
+const VALIDITY_MARGIN: chrono::TimeDelta = chrono::TimeDelta::seconds(60);
+
+/// Cache files older than this are considered abandoned (stale credentials, a
+/// toolchain bump that changed the hash, ...) and are garbage-collected on
+/// [`State::new()`]. Chosen well above any realistic token lifetime.
+const MAX_CACHE_FILE_AGE: std::time::Duration = std::time::Duration::from_secs(7 * 24 * 60 * 60);
+
+/// On-disk cache format version, written as the first byte of the file ahead of
+/// the postcard payload. Lets a schema change be distinguished from corruption
+/// (and logged as such) instead of both looking like "corrupted → removed".
+const CACHE_FORMAT_VERSION: u8 = 1;
+
+/// Relative priority of a scope when several cached tokens could serve as a
+/// generic "any valid auth" seed for re-scoping. Lower is preferred.
+fn scope_priority(scope: &AuthTokenScope) -> u8 {
+    match scope {
+        AuthTokenScope::Unscoped => 0,
+        AuthTokenScope::Project(_) => 1,
+        AuthTokenScope::Domain(_) => 2,
+        AuthTokenScope::System(_) => 3,
+    }
+}
+
 /// In-memory store of authentication tokens keyed by scope.
 ///
 /// Tokens are kept valid by [`ScopeAuths::filter_invalid_auths`] which is called
@@ -64,26 +93,15 @@ impl ScopeAuths {
         self
     }
 
-    /// Find valid unscoped authz
-    fn find_valid_unscoped_auth(&self) -> Option<AuthToken> {
-        for (k, v) in self.0.iter() {
-            if let AuthTokenScope::Unscoped = k
-                && let AuthState::Valid = v.get_state(None)
-            {
-                return Some(v.clone());
-            }
-        }
-        None
-    }
-
-    /// Find first matching unscoped authz
-    fn find_first_valid_auth(&self) -> Option<AuthToken> {
-        for v in self.0.values() {
-            if let AuthState::Valid = v.get_state(None) {
-                return Some(v.clone());
-            }
-        }
-        None
+    /// Find the best token to seed a new request with: unscoped first, then by
+    /// [`scope_priority`] (in order: unscoped, project, domain, system), deterministically rather
+    /// than in arbitrary `HashMap` iteration order.
+    fn find_valid_auth(&self) -> Option<AuthToken> {
+        self.0
+            .iter()
+            .filter(|(_, v)| AuthState::Valid == v.get_state(Some(VALIDITY_MARGIN)))
+            .min_by_key(|(k, _)| scope_priority(k))
+            .map(|(_, v)| v.clone())
     }
 }
 
@@ -97,14 +115,14 @@ pub struct State {
     /// Auth/Authz state
     auth_state: ScopeAuths,
     base_dir: PathBuf,
-    auth_hash: u64,
+    auth_hash: String,
     auth_cache_enabled: bool,
 }
 
 impl State {
     pub fn new() -> Self {
         let state = Self {
-            auth_hash: 0,
+            auth_hash: String::new(),
             auth_state: Default::default(),
             auth_cache_enabled: false,
             base_dir: dirs::home_dir()
@@ -124,11 +142,50 @@ impl State {
                 let _ = std::fs::set_permissions(&state.base_dir, permissions);
             }
         }
+        state.gc_stale_cache_files();
         state
     }
+
+    /// Best-effort removal of cache/lock files that have not been touched in
+    /// [`MAX_CACHE_FILE_AGE`]. Every credential or toolchain change mints a new
+    /// `<hash>`/`<hash>.lock` pair under `~/.osc/` and the old ones are never
+    /// otherwise cleaned up.
+    ///
+    /// `State::new()` can run more than once per process (e.g. switching clouds
+    /// in the TUI), so this is gated to a single directory scan per process
+    /// rather than repeating the I/O on every construction.
+    fn gc_stale_cache_files(&self) {
+        static DONE: std::sync::Once = std::sync::Once::new();
+        let mut ran = false;
+        DONE.call_once(|| ran = true);
+        if !ran {
+            return;
+        }
+
+        let Ok(entries) = std::fs::read_dir(&self.base_dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let Ok(metadata) = entry.metadata() else {
+                continue;
+            };
+            if !metadata.is_file() {
+                continue;
+            }
+            let is_stale = metadata
+                .modified()
+                .ok()
+                .and_then(|m| m.elapsed().ok())
+                .is_some_and(|age| age > MAX_CACHE_FILE_AGE);
+            if is_stale {
+                let _ = std::fs::remove_file(&path);
+            }
+        }
+    }
     /// Set the unique authentication hash key
-    pub fn set_auth_hash_key(&mut self, auth_hash: u64) -> &mut Self {
-        self.auth_hash = auth_hash;
+    pub fn set_auth_hash_key(&mut self, auth_hash: impl Into<String>) -> &mut Self {
+        self.auth_hash = auth_hash.into();
         self
     }
 
@@ -163,8 +220,11 @@ impl State {
         trace!("Get authz information for {:?}", scope);
         self.auth_state.filter_invalid_auths();
 
-        // Find the best matching scope using wildcard matching
-        if let Some((_, authz)) = self.auth_state.0.iter().find(|(k, _)| scope.matches(k)) {
+        // Find the best matching scope using wildcard matching, applying the
+        // validity margin since this token is about to be used for a request.
+        if let Some((_, authz)) = self.auth_state.0.iter().find(|(k, v)| {
+            scope.matches(k) && AuthState::Valid == v.get_state(Some(VALIDITY_MARGIN))
+        }) {
             return Some(authz.clone());
         }
 
@@ -178,22 +238,12 @@ impl State {
         None
     }
 
-    fn find_valid_auth(&self, state: &ScopeAuths) -> Option<AuthToken> {
-        if let Some(unscoped) = state.find_valid_unscoped_auth() {
-            return Some(unscoped);
-        }
-        if let Some(scoped) = state.find_first_valid_auth() {
-            return Some(scoped);
-        }
-        None
-    }
-
     pub fn get_any_valid_auth(&mut self) -> Option<AuthToken> {
-        if let Some(auth) = self.find_valid_auth(&self.auth_state) {
+        if let Some(auth) = self.auth_state.find_valid_auth() {
             return Some(auth);
         }
         if let (Some(state), true) = (self.load_auth_state(None), self.auth_cache_enabled)
-            && let Some(auth) = self.find_valid_auth(&state)
+            && let Some(auth) = state.find_valid_auth()
         {
             return Some(auth);
         }
@@ -207,9 +257,9 @@ impl State {
     pub fn clear_all_auth(&mut self) {
         trace!("Clearing all cached auth");
         if self.auth_cache_enabled {
-            let fname = self.get_auth_state_filename(self.auth_hash);
+            let fname = self.get_auth_state_filename(&self.auth_hash);
             let _ = std::fs::remove_file(&fname);
-            let _ = std::fs::remove_file(self.get_auth_state_lock_filename(self.auth_hash));
+            let _ = std::fs::remove_file(self.get_auth_state_lock_filename(&self.auth_hash));
         }
         self.auth_state.0.clear();
     }
@@ -223,7 +273,7 @@ impl State {
         trace!("Searching requested scope authz in state");
         for (k, v) in state.0.iter() {
             trace!("Analyse known auth for scope {:?}", k);
-            if scope.matches(k) {
+            if scope.matches(k) && AuthState::Valid == v.get_state(Some(VALIDITY_MARGIN)) {
                 return Some((k.clone(), v.clone()));
             }
         }
@@ -236,37 +286,44 @@ impl State {
     /// during cache read-modify-write operations. It is kept separate from the data
     /// file so that [`NamedTempFile::persist`] can atomically replace the data file
     /// without releasing the lock.
-    fn get_auth_state_lock_filename(&self, auth_hash: u64) -> PathBuf {
+    fn get_auth_state_lock_filename(&self, auth_hash: &str) -> PathBuf {
         let mut fname_buf = self.get_auth_state_filename(auth_hash);
         fname_buf.set_extension("lock");
         fname_buf
     }
 
     /// Returns the path to the on-disk auth cache file for a given auth hash.
-    fn get_auth_state_filename(&self, auth_hash: u64) -> PathBuf {
+    fn get_auth_state_filename(&self, auth_hash: &str) -> PathBuf {
         let mut fname_buf = self.base_dir.clone();
-        fname_buf.push(auth_hash.to_string());
+        fname_buf.push(auth_hash);
         fname_buf
     }
 
-    /// Restricts cache file permissions to owner-only (0o600 on Unix, readonly on Windows).
+    /// Restricts cache file permissions to owner-only (0o600 on Unix).
+    ///
+    /// On Windows this is a no-op: the profile directory's default ACL already
+    /// restricts access to the owning user, and marking the file read-only does
+    /// not add any real confidentiality (a read-only attribute is not an ACL —
+    /// any process running as the same user can still clear it and read the
+    /// file). It actively breaks cache *updates*: the next write goes through
+    /// `NamedTempFile::persist`/`File::create`, both of which fail against a
+    /// read-only target.
+    #[cfg_attr(not(unix), allow(unused_variables, clippy::unnecessary_wraps))]
     fn set_file_permissions(&self, file: &File) -> bool {
-        match file.metadata() {
-            Ok(metadata) => {
-                let mut permissions = metadata.permissions();
-                #[cfg(unix)]
-                {
+        #[cfg(unix)]
+        {
+            match file.metadata() {
+                Ok(metadata) => {
+                    let mut permissions = metadata.permissions();
                     permissions.set_mode(0o600);
+                    file.set_permissions(permissions).is_ok()
                 }
-
-                #[cfg(windows)]
-                {
-                    permissions.set_readonly(true);
-                }
-
-                file.set_permissions(permissions).is_ok()
+                Err(_) => false,
             }
-            Err(_) => false,
+        }
+        #[cfg(not(unix))]
+        {
+            true
         }
     }
 
@@ -279,26 +336,40 @@ impl State {
     /// # Returns
     ///
     /// * `Some(ScopeAuths)` — deserialized state with only valid tokens
-    /// * `None` — file is missing, empty, corrupt, or I/O error
+    /// * `None` — file is missing, empty, corrupt, wrong format version, or I/O error
     fn read_auth_state_from_file(&self, file: &mut File, path: &PathBuf) -> Option<ScopeAuths> {
         let mut contents = vec![];
         match file.read_to_end(&mut contents) {
-            Ok(_) => match postcard::from_bytes::<ScopeAuths>(&contents) {
-                Ok(mut auth) => {
-                    auth.filter_invalid_auths();
-                    trace!("Cached Auth info loaded");
-                    Some(auth)
-                }
-                Err(x) => {
+            Ok(_) => {
+                let (&version, payload) = contents.split_first()?;
+                if version != CACHE_FORMAT_VERSION {
                     info!(
-                        "Corrupted cache file `{}`: {:?}. Removing ",
+                        "Cache file `{}` has format version {} (expected {}); a newer/older \
+                         osc wrote it. Removing.",
                         path.display(),
-                        x
+                        version,
+                        CACHE_FORMAT_VERSION
                     );
                     let _ = std::fs::remove_file(path);
-                    None
+                    return None;
                 }
-            },
+                match postcard::from_bytes::<ScopeAuths>(payload) {
+                    Ok(mut auth) => {
+                        auth.filter_invalid_auths();
+                        trace!("Cached Auth info loaded");
+                        Some(auth)
+                    }
+                    Err(x) => {
+                        info!(
+                            "Corrupted cache file `{}`: {:?}. Removing ",
+                            path.display(),
+                            x
+                        );
+                        let _ = std::fs::remove_file(path);
+                        None
+                    }
+                }
+            }
             Err(e) => {
                 info!("Error reading file `{}`: {:?}", path.display(), e);
                 None
@@ -318,17 +389,19 @@ impl State {
     fn load_auth_state(&self, path: Option<&PathBuf>) -> Option<ScopeAuths> {
         let fname = path
             .cloned()
-            .unwrap_or_else(|| self.get_auth_state_filename(self.auth_hash));
+            .unwrap_or_else(|| self.get_auth_state_filename(&self.auth_hash));
         let lock_fname = if path.is_some() {
             fname.with_extension("lock")
         } else {
-            self.get_auth_state_lock_filename(self.auth_hash)
+            self.get_auth_state_lock_filename(&self.auth_hash)
         };
 
         match File::open(&fname) {
             Ok(mut file) => {
                 if let Ok(lock_file) = OpenOptions::new()
-                    .create(false)
+                    .create(true)
+                    .write(true)
+                    .truncate(false)
                     .read(true)
                     .open(&lock_fname)
                     && let Err(e) = lock_file.lock_shared()
@@ -362,8 +435,8 @@ impl State {
     ///
     /// If the atomic write fails, a fallback path writes directly to the cache file.
     pub fn save_scope_auth_to_file(&self, scope: &AuthTokenScope, data: &AuthToken) {
-        let fname = self.get_auth_state_filename(self.auth_hash);
-        let lock_fname = self.get_auth_state_lock_filename(self.auth_hash);
+        let fname = self.get_auth_state_filename(&self.auth_hash);
+        let lock_fname = self.get_auth_state_lock_filename(&self.auth_hash);
 
         // Acquire exclusive lock on lock file. The lock survives `persist` replacing
         // the data file, so concurrent writes are properly synchronized.
@@ -412,7 +485,8 @@ impl State {
 
         // Try atomic write: create temp file in same directory, persist to replace data file
         if let Ok(mut temp_file) = NamedTempFile::new_in(&self.base_dir) {
-            if postcard::to_io(&state, &mut temp_file).is_ok()
+            if temp_file.write_all(&[CACHE_FORMAT_VERSION]).is_ok()
+                && postcard::to_io(&state, &mut temp_file).is_ok()
                 && self.set_file_permissions(temp_file.as_file())
             {
                 if temp_file.persist(&fname).is_err() {
@@ -431,7 +505,9 @@ impl State {
                 warn!("Cannot set permissions for the cache file");
                 return;
             }
-            if let Err(e) = postcard::to_io(&state, &mut write_file) {
+            if let Err(e) = write_file.write_all(&[CACHE_FORMAT_VERSION]) {
+                warn!("Error writing cache format version: {:?}", e);
+            } else if let Err(e) = postcard::to_io(&state, &mut write_file) {
                 warn!("Error serializing state: {:?}", e);
             }
         } else {
@@ -475,7 +551,7 @@ mod tests {
 
     fn new_state_in(tmp: &Path, hash: u64) -> State {
         State {
-            auth_hash: hash,
+            auth_hash: hash.to_string(),
             auth_state: Default::default(),
             auth_cache_enabled: true,
             base_dir: tmp.to_path_buf(),
@@ -544,7 +620,7 @@ mod tests {
         let scope = make_project_scope("p2");
         let token = make_token("tok2");
         s.set_scope_auth(&scope, &token);
-        let fname = s.get_auth_state_filename(s.auth_hash);
+        let fname = s.get_auth_state_filename(&s.auth_hash);
         assert!(fname.exists());
         s.clear_all_auth();
         assert!(s.get_scope_auth(&scope).is_none());
@@ -555,7 +631,7 @@ mod tests {
     fn test_corrupted_file_is_removed() {
         let dir = make_state_dir();
         let s = new_state_in(&dir, 3);
-        let fname = s.get_auth_state_filename(3);
+        let fname = s.get_auth_state_filename("3");
         OpenOptions::new()
             .write(true)
             .create(true)
@@ -604,7 +680,7 @@ mod tests {
         let scope = make_project_scope("p6");
         let token = make_token("tok6");
         s.set_scope_auth(&scope, &token);
-        let fname = s.get_auth_state_filename(6);
+        let fname = s.get_auth_state_filename("6");
         assert!(!fname.exists());
     }
 

@@ -1415,7 +1415,7 @@ mod tests {
             .unwrap();
 
         let mut state = session::state::State::new();
-        state.set_auth_hash_key(0);
+        state.set_auth_hash_key("0");
 
         let session_ctx = session::SessionContext {
             auth,
