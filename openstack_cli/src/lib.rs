@@ -32,7 +32,7 @@ use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
-use openstack_cli_auth as auth;
+use openstack_cli_core::cli::ConnectionRequirementsProvider;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::{
     build_http_requests_timing_table,
@@ -136,42 +136,49 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         cloud_config.region_name = Some(region_name.clone());
     }
 
-    let mut renew_auth: bool = false;
+    // Certain commands (e.g. `auth login --renew`, `auth status`) need different
+    // pre-connect behavior than the default "connect with a live authenticated
+    // session". See `ConnectionRequirementsProvider`.
+    let connection_requirements = cli.command.connection_requirements();
+    let renew_auth = connection_requirements.renew;
 
-    // Login command need to be analyzed before authorization
-    if let TopLevelCommands::Auth(args) = &cli.command
-        && let auth::AuthCommands::Login(login_args) = &args.command
-        && login_args.renew
-    {
-        renew_auth = true;
-    }
-
-    // Connect to the selected cloud with the possible AuthHelper
-    let mut session = if let Some(external_auth_helper) =
-        &cli.global_opts.connection.auth_helper_cmd
-    {
-        AsyncOpenStack::new_with_authentication_helper(
-            &cloud_config,
-            ExternalCmd::new(external_auth_helper.clone()),
-            renew_auth,
-        )
-        .await
-    } else if std::io::stdin().is_terminal() {
-        AsyncOpenStack::new_with_authentication_helper(
-            &cloud_config,
-            Dialoguer::default(),
-            renew_auth,
-        )
-        .await
+    // Connect to the selected cloud with the possible AuthHelper. Commands that
+    // don't need a live/valid session (e.g. `auth status`) use a cache-only,
+    // network-free path so they keep working even with an expired token or an
+    // unreachable cloud.
+    let mut session = if !connection_requirements.needs_auth {
+        AsyncOpenStack::new_cache_only(&cloud_config)
+            .map_err(|err| OpenStackCliError::Auth { source: err })?
     } else {
-        AsyncOpenStack::new_with_authentication_helper(&cloud_config, Noop::default(), renew_auth)
+        if let Some(external_auth_helper) = &cli.global_opts.connection.auth_helper_cmd {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                ExternalCmd::new(external_auth_helper.clone()),
+                renew_auth,
+            )
             .await
-    }
-    .map_err(|err| OpenStackCliError::Auth { source: err })?;
+        } else if std::io::stdin().is_terminal() {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                Dialoguer::default(),
+                renew_auth,
+            )
+            .await
+        } else {
+            AsyncOpenStack::new_with_authentication_helper(
+                &cloud_config,
+                Noop::default(),
+                renew_auth,
+            )
+            .await
+        }
+        .map_err(|err| OpenStackCliError::Auth { source: err })?
+    };
 
     // Does the user want to connect to different project?
-    if cli.global_opts.connection.os_project_id.is_some()
-        || cli.global_opts.connection.os_project_name.is_some()
+    if connection_requirements.needs_auth
+        && (cli.global_opts.connection.os_project_id.is_some()
+            || cli.global_opts.connection.os_project_name.is_some())
     {
         warn!(
             "Cloud config is being chosen with arguments overriding project. Result may be not as expected."
@@ -183,14 +190,11 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         let project = Project {
             id: cli.global_opts.connection.os_project_id.clone(),
             name: cli.global_opts.connection.os_project_name.clone(),
-            domain: match (current_auth.project, current_auth.domain) {
-                // New project is in the same domain as the original
-                (Some(project), _) => project.domain,
-                // domain scope was used
-                (None, Some(domain)) => Some(domain),
-                // There was no scope thus using user domain
-                _ => current_auth.user.domain,
-            },
+            domain: infer_project_override_domain(
+                current_auth.project,
+                current_auth.domain,
+                current_auth.user.domain,
+            ),
         };
         let scope = AuthTokenScope::Project(project.clone());
         session
@@ -216,4 +220,64 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     }
 
     res
+}
+
+/// Infer the domain to scope a CLI-provided `--os-project-id`/`--os-project-name`
+/// override to, based on the currently authenticated (unscoped/differently-scoped)
+/// token.
+///
+/// Fallback chain (first match wins):
+/// 1. Same domain as the currently scoped project, if any.
+/// 2. The domain of the current domain-scoped token, if any.
+/// 3. The authenticated user's own domain.
+fn infer_project_override_domain(
+    current_project: Option<openstack_sdk::types::identity::v3::Project>,
+    current_domain: Option<openstack_sdk::types::identity::v3::Domain>,
+    user_domain: Option<openstack_sdk::types::identity::v3::Domain>,
+) -> Option<openstack_sdk::types::identity::v3::Domain> {
+    match (current_project, current_domain) {
+        // New project is in the same domain as the original
+        (Some(project), _) => project.domain,
+        // domain scope was used
+        (None, Some(domain)) => Some(domain),
+        // There was no scope thus using user domain
+        _ => user_domain,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openstack_sdk::types::identity::v3::Domain;
+    use openstack_sdk::types::identity::v3::Project as AuthProject;
+
+    fn domain(id: &str) -> Domain {
+        Domain {
+            id: Some(id.to_string()),
+            name: None,
+        }
+    }
+
+    #[test]
+    fn test_infer_domain_from_current_project() {
+        let project = AuthProject {
+            id: Some("p1".into()),
+            name: None,
+            domain: Some(domain("from-project")),
+        };
+        let result = infer_project_override_domain(Some(project), Some(domain("from-token")), None);
+        assert_eq!(result.unwrap().id.as_deref(), Some("from-project"));
+    }
+
+    #[test]
+    fn test_infer_domain_from_domain_scope() {
+        let result = infer_project_override_domain(None, Some(domain("from-token")), None);
+        assert_eq!(result.unwrap().id.as_deref(), Some("from-token"));
+    }
+
+    #[test]
+    fn test_infer_domain_falls_back_to_user_domain() {
+        let result = infer_project_override_domain(None, None, Some(domain("user-domain")));
+        assert_eq!(result.unwrap().id.as_deref(), Some("user-domain"));
+    }
 }

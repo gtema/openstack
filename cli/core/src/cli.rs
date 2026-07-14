@@ -222,3 +222,46 @@ pub struct CompletionCommand {
     #[arg(default_value_t = Shell::Bash)]
     pub shell: Shell,
 }
+
+/// Pre-connect behavior a parsed command wants from the CLI entry point.
+///
+/// Centralizes the "does this command need a live authenticated connection,
+/// and should the token be force-renewed" decision so the entry point does
+/// not need to hand-inspect the parsed command tree for every case (see
+/// `osc auth login --renew` and `osc auth status`).
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ConnectionRequirements {
+    /// Whether the command requires a live, authenticated connection to the cloud.
+    ///
+    /// Commands that only read local/cached state (e.g. `osc auth status`) can set
+    /// this to `false`.
+    pub needs_auth: bool,
+    /// Whether the auth token should be force-renewed before the command runs.
+    pub renew: bool,
+}
+
+impl ConnectionRequirements {
+    /// Default requirements for a normal, connected command: needs a live
+    /// authenticated session, no forced renewal.
+    pub fn connected() -> Self {
+        Self {
+            needs_auth: true,
+            renew: false,
+        }
+    }
+}
+
+/// Provides pre-connect [`ConnectionRequirements`] for a parsed command.
+///
+/// This is implemented by hand for the top-level `Cli`/`TopLevelCommands` dispatch
+/// and the `auth` subcommand (both hand-written, not codegenerated — see
+/// `grep -r TopLevelCommands`). Should more commands need pre-connect behavior
+/// (e.g. a hypothetical purely-local `osc api-version`), a template-level
+/// `connection_requirements()` hook in the code generator would be the long-term
+/// fix; for now the mechanism is only wired where it is needed.
+pub trait ConnectionRequirementsProvider {
+    /// Return the connection requirements for this parsed command.
+    fn connection_requirements(&self) -> ConnectionRequirements {
+        ConnectionRequirements::connected()
+    }
+}

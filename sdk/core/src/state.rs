@@ -68,6 +68,51 @@ const MAX_CACHE_FILE_AGE: std::time::Duration = std::time::Duration::from_secs(7
 /// (and logged as such) instead of both looking like "corrupted → removed".
 const CACHE_FORMAT_VERSION: u8 = 1;
 
+/// Discovered service endpoints almost never change for a given cloud, so a
+/// fairly long TTL is used here (unlike the short [`VALIDITY_MARGIN`] applied
+/// to auth tokens). Entries older than this are treated as a cache miss and
+/// re-discovered over HTTP.
+const MAX_DISCOVERY_CACHE_AGE: chrono::TimeDelta = chrono::TimeDelta::hours(24);
+
+/// On-disk format version for the discovery cache file. Kept separate from
+/// [`CACHE_FORMAT_VERSION`] since the two caches evolve independently.
+const DISCOVERY_CACHE_FORMAT_VERSION: u8 = 1;
+
+/// A single cached version-discovery result.
+///
+/// Rather than caching the parsed [`ServiceEndpoint`](crate::catalog::ServiceEndpoint)
+/// (which is not `Serialize`), the raw discovery document response body is cached
+/// together with the URL it was fetched from. On a cache hit the caller re-parses
+/// the document locally (no network I/O), reusing the exact same parsing path as a
+/// live discovery.
+#[derive(Clone, Deserialize, Serialize, Debug)]
+struct DiscoveryEntry {
+    /// URL the discovery document was fetched from.
+    url: String,
+    /// Raw discovery document response body.
+    data: Vec<u8>,
+    /// Unix timestamp (seconds) when this entry was written.
+    discovered_at: i64,
+}
+
+/// On-disk discovery cache: keyed by `"<service_type>|<region>|<interface>"`.
+#[derive(Clone, Default, Deserialize, Serialize, Debug)]
+struct DiscoveryEntries(HashMap<String, DiscoveryEntry>);
+
+/// Build the cache key for a discovery cache entry.
+fn discovery_cache_key(
+    service_type: &str,
+    region: Option<&str>,
+    interface: Option<&str>,
+) -> String {
+    format!(
+        "{}|{}|{}",
+        service_type,
+        region.unwrap_or(""),
+        interface.unwrap_or("")
+    )
+}
+
 /// Relative priority of a scope when several cached tokens could serve as a
 /// generic "any valid auth" seed for re-scoping. Lower is preferred.
 fn scope_priority(scope: &AuthTokenScope) -> u8 {
@@ -250,6 +295,16 @@ impl State {
         None
     }
 
+    /// Returns the path to the on-disk auth cache file that would be used for the
+    /// current auth hash, if the on-disk cache is enabled.
+    pub fn cache_file_path(&self) -> Option<PathBuf> {
+        if self.auth_cache_enabled {
+            Some(self.get_auth_state_filename(&self.auth_hash))
+        } else {
+            None
+        }
+    }
+
     /// Removes all cached auth tokens from memory and disk.
     ///
     /// When the cache is enabled, both the data file and the companion lock file
@@ -262,6 +317,232 @@ impl State {
             let _ = std::fs::remove_file(self.get_auth_state_lock_filename(&self.auth_hash));
         }
         self.auth_state.0.clear();
+    }
+
+    /// Returns the discovery document body previously cached for
+    /// `(service_type, region, interface)`, along with the URL it was fetched from,
+    /// if a fresh (within [`MAX_DISCOVERY_CACHE_AGE`]) entry exists.
+    ///
+    /// Returns `None` when the cache is disabled, the file is missing/corrupt, or
+    /// the entry is stale.
+    pub fn get_discovery_cache(
+        &self,
+        service_type: &str,
+        region: Option<&str>,
+        interface: Option<&str>,
+    ) -> Option<(String, Vec<u8>)> {
+        if !self.auth_cache_enabled {
+            return None;
+        }
+        let entries = self.load_discovery_state()?;
+        let key = discovery_cache_key(service_type, region, interface);
+        let entry = entries.0.get(&key)?;
+        let now = chrono::Utc::now().timestamp();
+        if now - entry.discovered_at > MAX_DISCOVERY_CACHE_AGE.num_seconds() {
+            trace!("Discovery cache entry for `{}` is stale", key);
+            return None;
+        }
+        Some((entry.url.clone(), entry.data.clone()))
+    }
+
+    /// Persists a discovery document body for `(service_type, region, interface)`
+    /// to the on-disk discovery cache.
+    ///
+    /// Best-effort: locking/IO failures are logged and otherwise ignored.
+    pub fn set_discovery_cache(
+        &self,
+        service_type: &str,
+        region: Option<&str>,
+        interface: Option<&str>,
+        url: &str,
+        data: Vec<u8>,
+    ) {
+        if !self.auth_cache_enabled {
+            return;
+        }
+        let key = discovery_cache_key(service_type, region, interface);
+        let entry = DiscoveryEntry {
+            url: url.to_string(),
+            data,
+            discovered_at: chrono::Utc::now().timestamp(),
+        };
+        self.save_discovery_entry_to_file(&key, &entry);
+    }
+
+    /// Returns the path to the on-disk discovery cache file for the current auth hash.
+    fn get_discovery_state_filename(&self) -> PathBuf {
+        let mut fname_buf = self.base_dir.clone();
+        fname_buf.push(format!("{}.discovery", self.auth_hash));
+        fname_buf
+    }
+
+    /// Returns the path to the lock file guarding the discovery cache file.
+    fn get_discovery_state_lock_filename(&self) -> PathBuf {
+        let mut fname_buf = self.get_discovery_state_filename();
+        fname_buf.set_extension("discovery.lock");
+        fname_buf
+    }
+
+    /// Reads and deserializes the discovery cache file, if present and valid.
+    fn read_discovery_state_from_file(
+        &self,
+        file: &mut File,
+        path: &PathBuf,
+    ) -> Option<DiscoveryEntries> {
+        let mut contents = vec![];
+        match file.read_to_end(&mut contents) {
+            Ok(_) => {
+                let (&version, payload) = contents.split_first()?;
+                if version != DISCOVERY_CACHE_FORMAT_VERSION {
+                    info!(
+                        "Discovery cache file `{}` has format version {} (expected {}); removing.",
+                        path.display(),
+                        version,
+                        DISCOVERY_CACHE_FORMAT_VERSION
+                    );
+                    let _ = std::fs::remove_file(path);
+                    return None;
+                }
+                match postcard::from_bytes::<DiscoveryEntries>(payload) {
+                    Ok(entries) => Some(entries),
+                    Err(x) => {
+                        info!(
+                            "Corrupted discovery cache file `{}`: {:?}. Removing",
+                            path.display(),
+                            x
+                        );
+                        let _ = std::fs::remove_file(path);
+                        None
+                    }
+                }
+            }
+            Err(e) => {
+                info!(
+                    "Error reading discovery cache file `{}`: {:?}",
+                    path.display(),
+                    e
+                );
+                None
+            }
+        }
+    }
+
+    /// Loads the discovery cache with a shared lock (mirrors [`State::load_auth_state`]).
+    fn load_discovery_state(&self) -> Option<DiscoveryEntries> {
+        let fname = self.get_discovery_state_filename();
+        let lock_fname = self.get_discovery_state_lock_filename();
+
+        match File::open(&fname) {
+            Ok(mut file) => {
+                if let Ok(lock_file) = OpenOptions::new()
+                    .create(true)
+                    .write(true)
+                    .truncate(false)
+                    .read(true)
+                    .open(&lock_fname)
+                    && let Err(e) = lock_file.lock_shared()
+                {
+                    warn!(
+                        "Failed to acquire shared lock on `{}`: {:?}",
+                        lock_fname.display(),
+                        e
+                    );
+                }
+                self.read_discovery_state_from_file(&mut file, &fname)
+            }
+            Err(e) => {
+                debug!(
+                    "Error opening discovery cache file `{}`: {:?}",
+                    fname.display(),
+                    e
+                );
+                None
+            }
+        }
+    }
+
+    /// Persists a single discovery entry to the on-disk cache (mirrors
+    /// [`State::save_scope_auth_to_file`]: exclusive lock, read-modify-write, atomic
+    /// replace via [`NamedTempFile::persist`], with a direct-write fallback).
+    fn save_discovery_entry_to_file(&self, key: &str, entry: &DiscoveryEntry) {
+        let fname = self.get_discovery_state_filename();
+        let lock_fname = self.get_discovery_state_lock_filename();
+
+        let lock_file = match OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(false)
+            .open(&lock_fname)
+        {
+            Ok(f) => f,
+            Err(e) => {
+                warn!(
+                    "Failed to open discovery cache lock file `{}`: {:?}",
+                    lock_fname.display(),
+                    e
+                );
+                return;
+            }
+        };
+
+        if let Err(e) = lock_file.lock() {
+            warn!(
+                "Failed to acquire exclusive lock on `{}`: {:?}",
+                lock_fname.display(),
+                e
+            );
+            return;
+        }
+
+        let opt_loaded = if let Ok(mut f) = File::open(&fname) {
+            if let Err(e) = f.lock_shared() {
+                warn!(
+                    "Failed to acquire shared lock on `{}`: {:?}",
+                    fname.display(),
+                    e
+                );
+            }
+            self.read_discovery_state_from_file(&mut f, &fname)
+        } else {
+            None
+        };
+
+        let mut state = opt_loaded.unwrap_or_default();
+        state.0.insert(key.to_string(), entry.clone());
+
+        if let Ok(mut temp_file) = NamedTempFile::new_in(&self.base_dir) {
+            if temp_file
+                .write_all(&[DISCOVERY_CACHE_FORMAT_VERSION])
+                .is_ok()
+                && postcard::to_io(&state, &mut temp_file).is_ok()
+                && self.set_file_permissions(temp_file.as_file())
+            {
+                if temp_file.persist(&fname).is_err() {
+                    warn!(
+                        "Error persisting discovery cache file to `{}`",
+                        fname.display()
+                    );
+                }
+                return;
+            }
+        } else {
+            warn!("Error creating temp file for discovery cache");
+        }
+
+        // Fallback: direct write
+        if let Ok(mut write_file) = File::create(&fname) {
+            if !self.set_file_permissions(&write_file) {
+                warn!("Cannot set permissions for the discovery cache file");
+                return;
+            }
+            if let Err(e) = write_file.write_all(&[DISCOVERY_CACHE_FORMAT_VERSION]) {
+                warn!("Error writing discovery cache format version: {:?}", e);
+            } else if let Err(e) = postcard::to_io(&state, &mut write_file) {
+                warn!("Error serializing discovery cache state: {:?}", e);
+            }
+        } else {
+            warn!("Error writing discovery cache file");
+        }
     }
 
     /// Locate authz for requested scope in the state
@@ -891,5 +1172,71 @@ mod tests {
         assert!(td.is_some());
         assert_eq!(tp.unwrap().token.expose_secret(), "tok-p-coexist");
         assert_eq!(td.unwrap().token.expose_secret(), "tok-d-coexist");
+    }
+
+    #[test]
+    fn test_discovery_cache_roundtrip() {
+        let dir = make_state_dir();
+        let s = new_state_in(&dir, 100);
+        assert!(
+            s.get_discovery_cache("compute", Some("RegionOne"), Some("public"))
+                .is_none()
+        );
+        s.set_discovery_cache(
+            "compute",
+            Some("RegionOne"),
+            Some("public"),
+            "http://example.com/v2.1/",
+            b"{\"version\": {}}".to_vec(),
+        );
+        let cached = s.get_discovery_cache("compute", Some("RegionOne"), Some("public"));
+        assert!(cached.is_some());
+        let (url, data) = cached.unwrap();
+        assert_eq!(url, "http://example.com/v2.1/");
+        assert_eq!(data, b"{\"version\": {}}".to_vec());
+
+        // A different key (region) must miss.
+        assert!(
+            s.get_discovery_cache("compute", Some("RegionTwo"), Some("public"))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn test_discovery_cache_disabled_is_noop() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 101);
+        s.disable_auth_cache();
+        s.set_discovery_cache("compute", None, None, "http://example.com/", vec![1, 2, 3]);
+        assert!(s.get_discovery_cache("compute", None, None).is_none());
+        // No file should have been written.
+        assert!(!s.get_discovery_state_filename().exists());
+    }
+
+    #[test]
+    fn test_discovery_cache_stale_entry_ignored() {
+        let dir = make_state_dir();
+        let s = new_state_in(&dir, 102);
+        let key = discovery_cache_key("compute", None, None);
+        let entry = DiscoveryEntry {
+            url: "http://example.com/".into(),
+            data: vec![9, 9, 9],
+            discovered_at: chrono::Utc::now().timestamp()
+                - MAX_DISCOVERY_CACHE_AGE.num_seconds()
+                - 10,
+        };
+        s.save_discovery_entry_to_file(&key, &entry);
+        assert!(s.get_discovery_cache("compute", None, None).is_none());
+    }
+
+    #[test]
+    fn test_discovery_cache_persists_across_instances() {
+        let dir = make_state_dir();
+        let s1 = new_state_in(&dir, 103);
+        s1.set_discovery_cache("identity", None, None, "http://example.com/v3/", vec![7, 7]);
+        let s2 = new_state_in(&dir, 103);
+        let cached = s2.get_discovery_cache("identity", None, None);
+        assert!(cached.is_some());
+        assert_eq!(cached.unwrap().1, vec![7, 7]);
     }
 }
