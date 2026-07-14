@@ -351,6 +351,10 @@ impl AsyncOpenStack {
 
     /// Basic constructor — visible to the sync facade.
     pub fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
+        // Ensure auth plugin registries are populated even if the linker
+        // would otherwise strip crates with no other references.
+        openstack_sdk_auth_core::anchor_plugins();
+
         let mut client_builder = reqwest::Client::builder();
 
         if let Some(cacert) = &config.cacert {

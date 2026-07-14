@@ -605,18 +605,25 @@ pub async fn execute_auth_request(
     Ok(rsp)
 }
 
-/// An OpenStack Authentication type
+/// Force the linker to include all auth plugin crates by iterating over the
+/// inventory registries. Must be called during client initialization since
+/// plugin crates are otherwise stripped by the linker (no other code
+/// references them), causing `AuthType` lookups to fail at runtime.
 #[inline(never)]
 pub fn anchor_plugins() {
-    // This function forces the linker to include all auth plugin crates
-    // by iterating over the inventory registries. Call this during
-    // initialization if plugins are being stripped by the linker.
-    let _ = inventory::iter::<AuthPluginRegistration>
+    let auth_methods: Vec<&str> = inventory::iter::<AuthPluginRegistration>
         .into_iter()
-        .count();
-    let _ = inventory::iter::<AuthMethodPluginRegistration>
+        .flat_map(|x| x.method.get_supported_auth_methods())
+        .collect();
+    let multifactor_methods: Vec<&str> = inventory::iter::<AuthMethodPluginRegistration>
         .into_iter()
-        .count();
+        .flat_map(|x| x.method.get_supported_auth_methods())
+        .collect();
+    tracing::debug!(
+        "Discovered auth plugins: {:?}; multifactor auth plugins: {:?}",
+        auth_methods,
+        multifactor_methods
+    );
 }
 
 /// An OpenStack Authentication type
