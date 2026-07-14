@@ -20,8 +20,7 @@ use async_trait::async_trait;
 use chrono::TimeDelta;
 use eyre::{Report, Result, eyre};
 use openstack_sdk::{
-    AsyncOpenStack,
-    auth::AuthState,
+    AsyncOpenStack, RenewHandle,
     auth::auth_helper::{AuthHelper, AuthHelperError},
     config::ConfigFile,
     types::identity::v3::AuthResponse,
@@ -49,11 +48,20 @@ pub use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::*;
 use crate::error::TuiError;
 
+/// How long before token expiry the background renewal task re-authenticates.
+/// The TUI is long-running, so it enables proactive renewal unconditionally
+/// instead of checking/renewing per-request.
+const AUTO_RENEW_MARGIN: TimeDelta = TimeDelta::seconds(59 * 60);
+
 /// Cloud worker struct
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     pub(crate) cloud: Option<AsyncOpenStack>,
     auth_helper: TuiAuthHelper,
+    /// Handle to the background token-renewal task for `cloud`. Dropped
+    /// (stopping the task) when replaced by a new connection/scope change,
+    /// or when `Cloud` itself is dropped.
+    _renew_handle: Option<RenewHandle>,
 }
 
 #[derive(Debug)]
@@ -78,6 +86,7 @@ impl Cloud {
             cloud_configs: cfg,
             cloud: None,
             auth_helper: TuiAuthHelper::new(auth_helper_control_tx),
+            _renew_handle: None,
         })
     }
 
@@ -113,7 +122,14 @@ impl Cloud {
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
             .await?;
 
+        // Replacing `self.cloud` also happens here; assigning a new
+        // `_renew_handle` first drops (aborts) any renewal task for the
+        // previous session.
+        self._renew_handle = None;
         self.cloud = Some(session);
+        if let Some(cloud) = &self.cloud {
+            self._renew_handle = Some(cloud.enable_auto_renew(AUTO_RENEW_MARGIN));
+        }
 
         Ok(())
     }
@@ -122,6 +138,13 @@ impl Cloud {
         &mut self,
         scope: &openstack_sdk::auth::authtoken::AuthTokenScope,
     ) -> Result<Option<AuthResponse>, Report> {
+        // Deliberately doesn't touch `_renew_handle`: rescoping goes
+        // through token-exchange, which preserves the original token's
+        // expiry, so the background task's already-computed sleep target
+        // is still correct. It reads live `auth_snapshot` state (shared
+        // via the same session `Arc`) on each wakeup and is guarded by
+        // `auth_generation`, so it naturally observes the new scope
+        // without needing to be respawned.
         match self.cloud {
             Some(ref mut session) => {
                 debug!("Switching connection scope to {:?}", scope);
@@ -234,14 +257,13 @@ impl Cloud {
                 }
                 ref ac @ Action::PerformApiRequest(ref request) => {
                     if let Some(ref mut conn) = self.cloud {
-                        // Check if reauth is necessary
-                        match &conn.get_auth_state(Some(TimeDelta::seconds(10))) {
-                            Some(AuthState::Expired) | Some(AuthState::AboutToExpire) => {
-                                conn.authorize(None, false, true).await?;
-                            }
-                            _ => {}
-                        }
-
+                        // No pre-request expiry check needed: the
+                        // background task from `enable_auto_renew`
+                        // (spawned in `connect_to_cloud`) keeps the token
+                        // fresh proactively. If it can't (e.g. interactive
+                        // MFA/SSO cloud with no stored credentials),
+                        // `rest_async`'s own 401 retry falls back to
+                        // `TuiAuthHelper` and prompts the user.
                         request
                             .execute_request(conn, request, &app_tx)
                             .await
