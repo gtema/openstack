@@ -51,11 +51,12 @@
 //! ```
 //!
 
-use std::collections::{HashMap, HashSet, hash_map::DefaultHasher};
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fmt;
-use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
+
+use sha2::{Digest, Sha256};
 
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize, Serializer};
@@ -427,51 +428,71 @@ impl fmt::Debug for CloudConfig {
 }
 
 /// Get a user authentication hash.
-pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
-    // Calculate hash of the auth information
-    let mut s = DefaultHasher::new();
+///
+/// Hashes a canonical, field-tagged serialization of the identity-relevant
+/// config fields with SHA-256. Tagging each field with its name (rather than
+/// hashing values back-to-back) keeps e.g. `username=Some("x"), user_id=None`
+/// from colliding with `username=None, user_id=Some("x")`, and SHA-256 (unlike
+/// `DefaultHasher`) is stable across Rust toolchain versions, so cache files
+/// keyed by this hash survive a compiler bump.
+pub fn get_config_identity_hash(config: &CloudConfig) -> String {
+    fn push_field(canonical: &mut String, name: &str, value: Option<&str>) {
+        canonical.push_str(name);
+        canonical.push('=');
+        if let Some(v) = value {
+            canonical.push_str(v);
+        }
+        canonical.push('\0');
+    }
+
+    let mut canonical = String::new();
     if let Some(auth) = &config.auth {
-        if let Some(data) = &auth.auth_url {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.username {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.user_id {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.user_domain_id {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.user_domain_name {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.identity_provider {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.protocol {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.attribute_mapping_name {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.access_token_type {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.application_credential_name {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.application_credential_id {
-            data.hash(&mut s);
-        }
-        if let Some(data) = &auth.system_scope {
-            data.hash(&mut s);
-        }
+        push_field(&mut canonical, "auth_url", auth.auth_url.as_deref());
+        push_field(&mut canonical, "username", auth.username.as_deref());
+        push_field(&mut canonical, "user_id", auth.user_id.as_deref());
+        push_field(
+            &mut canonical,
+            "user_domain_id",
+            auth.user_domain_id.as_deref(),
+        );
+        push_field(
+            &mut canonical,
+            "user_domain_name",
+            auth.user_domain_name.as_deref(),
+        );
+        push_field(
+            &mut canonical,
+            "identity_provider",
+            auth.identity_provider.as_deref(),
+        );
+        push_field(&mut canonical, "protocol", auth.protocol.as_deref());
+        push_field(
+            &mut canonical,
+            "attribute_mapping_name",
+            auth.attribute_mapping_name.as_deref(),
+        );
+        push_field(
+            &mut canonical,
+            "access_token_type",
+            auth.access_token_type.as_deref(),
+        );
+        push_field(
+            &mut canonical,
+            "application_credential_name",
+            auth.application_credential_name.as_deref(),
+        );
+        push_field(
+            &mut canonical,
+            "application_credential_id",
+            auth.application_credential_id.as_deref(),
+        );
+        push_field(&mut canonical, "system_scope", auth.system_scope.as_deref());
     }
-    if let Some(data) = &config.profile {
-        data.hash(&mut s);
-    }
-    s.finish()
+    push_field(&mut canonical, "profile", config.profile.as_deref());
+
+    let mut hasher = Sha256::new();
+    hasher.update(canonical.as_bytes());
+    format!("{:x}", hasher.finalize())
 }
 
 /// CloudConfig struct implementation.
