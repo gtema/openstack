@@ -286,6 +286,31 @@ mod tests {
         (private, public)
     }
 
+    /// Encrypted PKCS#8 PEM (password: letmein) used in test_decrypt_encrypted_pkcs8_pem.
+    // gitleaks:allow
+    const ENCRYPTED_PKCS8_PEM: &str = "-----BEGIN ENCRYPTED PRIVATE KEY-----\
+         \nMIIC5TBfBgkqhkiG9w0BBQ0wUjAxBgkqhkiG9w0BBQwwJAQQ+IpGS4wT5FMFGF1s\
+         \nApeSfAICCAAwDAYIKoZIhvcNAgkFADAdBglghkgBZQMEASoEELsr6jhuGVK2ZfaW\
+         \nT8jQ2TEEggKAUmT98YcQVJ4nduHcH8k+tWYYzTLP9t+1EkKLOI5NRZDQqRHNGgrR\
+         \nbNKo1g3e1ZOcsP7/tM7il8as6jfskwaR7tRT5s+P4IuZOYD9Krvhfx80JdLf8c2U\
+         \ngLwwXnAC9JFZiQNeJBuJdGmazUbYq845zocdVxIVqbUfri3dzlZjECwgaU71Ek+2\
+         \nrFaZy605Z7gCEwLG+9y1uYjUz6q4cQ5ky8wItmMVO7YR6+TLT7HlzdkCWTMQ5AQI\
+         \nPrnZ0XeJi8k/XQUsCqTnJPux3hS6dHCrsds0p23+3JIwSIMnZ20zOgjTB49eSy0o\
+         \nzNKCyq7JVs1o+kVtVGeP0EFDPNnvW7YOIGJE/GquzJyfTHQB9OAJSwnSKsupGbx0\
+         \nhZeOoE6rAoPPQBOaDo829wfXEF/FexsNuFQhej3JSBioqRVERe3agWX1xroEHRM9\
+         \nCyjuFtVdjtMrSQqB7xQIwPaf71JZmtZFe9JBnks7dvY0td4/1G2jhOvGVSC+tWea\
+         \nF9GLxHxwLU5a3S80OsCR9RamRnHVf1p1ssYVc7Ct+DJgCXKPMmUHBfk6j8aEwC8c\
+         \nbyc14zsj25FQApnhme6LDLCnqZF4d/B8HmmO9s1gyA1adq27+0ZoofQEf12Vz+7C\
+         \noiheQw1B5bHBF6Q7TiA/+KRT4U5aKOokIfDp2mxKHNksJLJbEhk2GXA8hHStb900\
+         \nPha5Gqy67jXKOFEmNTd+KJFn6x9jHaI7jqPW4DoN+CEKdR+mwFXK7o+rWKmgCODP\
+         \nn8zlDU5hP2w/dJifalDbRsnJBWGp31A/3lLAE8hRqi9/yxZkzGUundmB9gwwT16q\
+         \nazbbZFRIB2ABoaCZDittdd45sQ9yKh9Q2g==\
+         \n-----END ENCRYPTED PRIVATE KEY-----\n";
+
+    /// Base64-encoded ciphertext of "s3cr3t" encrypted with the RSA public key
+    /// corresponding to `ENCRYPTED_PKCS8_PEM`.
+    const ENCRYPTED_MESSAGE: &str = "Sov24W6L4alg9FEGhhfm1Qt54+hkGaYTSsgUGCBKFUUeiiVnzyWA+bDdkyjspI9ZCaWZPrKBbugTMV9GTTP8W6RoJKVFLgvHotnBVXLHaFu4Ql1VeSO91UdwljHZqGVpN+TCewJ1NSh12EDb3a1+osORECq9z09qwlfre0ac8GY=";
+
     fn nova_encrypt(public_key: &RsaPublicKey, plaintext: &str) -> String {
         let ct = public_key
             .encrypt(&mut OsRng, Pkcs1v15Encrypt, plaintext.as_bytes())
@@ -368,18 +393,12 @@ mod tests {
 
     #[test]
     fn test_decrypt_encrypted_pkcs8_pem() {
-        let (priv_key, pub_key) = make_test_keypair();
-        let encrypted_b64 = nova_encrypt(&pub_key, "s3cr3t");
-
-        let pem = priv_key
-            .to_pkcs8_encrypted_pem(&mut OsRng, b"letmein", Pkcs8LineEnding::LF)
-            .expect("encrypted pkcs8 pem");
-
-        let key = load_rsa_key_from_pem(&pem, &|| Ok("letmein".to_string())).expect("load key");
+        let key = load_rsa_key_from_pem(ENCRYPTED_PKCS8_PEM, &|| Ok("letmein".to_string()))
+            .expect("load key");
         let plaintext = key
             .decrypt(
                 Pkcs1v15Encrypt,
-                &BASE64.decode(&encrypted_b64).expect("base64"),
+                &BASE64.decode(ENCRYPTED_MESSAGE).expect("base64"),
             )
             .expect("decrypt");
         assert_eq!(plaintext, b"s3cr3t");
@@ -387,12 +406,7 @@ mod tests {
 
     #[test]
     fn test_encrypted_pkcs8_wrong_passphrase_returns_error() {
-        let (priv_key, _) = make_test_keypair();
-        let pem = priv_key
-            .to_pkcs8_encrypted_pem(&mut OsRng, b"letmein", Pkcs8LineEnding::LF)
-            .expect("encrypted pkcs8 pem");
-
-        let err = load_rsa_key_from_pem(&pem, &|| Ok("wrong".to_string()))
+        let err = load_rsa_key_from_pem(ENCRYPTED_PKCS8_PEM, &|| Ok("wrong".to_string()))
             .expect_err("should fail with wrong passphrase");
         assert!(
             matches!(err, OpenStackCliError::InputParameters(_)),

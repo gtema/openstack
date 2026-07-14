@@ -9,8 +9,8 @@ license.workspace = true
 clap = { workspace = true }
 openstack_cli = { path="../openstack_cli" }
 openstack_sdk_core = { workspace = true, features = ["json-schema"] }
-mdbook-core = { version = "^0.5.3" }
-mdbook-preprocessor = { version = "^0.5.3" }
+mdbook-core = { version = "^0.5.4" }
+mdbook-preprocessor = { version = "^0.5.4" }
 serde_json = { workspace = true }
 schemars = { workspace = true }
 semver = { version = "^1.0" }
