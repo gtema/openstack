@@ -33,7 +33,7 @@ use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::object::delete::Request;
-use openstack_sdk::api::{AsyncClient, RawQueryAsync};
+use openstack_sdk::api::{AsyncClient, QueryAsync, raw};
 use openstack_sdk::{
     AsyncOpenStack,
     types::{ApiVersion, ServiceType},
@@ -112,7 +112,7 @@ impl ObjectCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = raw(ep).query_async(client).await?;
         op.show_command_hint()?;
         Ok(())
     }

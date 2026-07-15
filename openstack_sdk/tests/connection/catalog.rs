@@ -23,7 +23,7 @@ use openstack_sdk::api::identity::v3::endpoint::create;
 use openstack_sdk::api::identity::v3::endpoint::delete;
 use openstack_sdk::api::identity::v3::service::create as service_create;
 use openstack_sdk::api::identity::v3::service::delete as service_delete;
-use openstack_sdk::api::{AsyncClient, Client, Query, QueryAsync, RawQuery, RawQueryAsync};
+use openstack_sdk::api::{AsyncClient, Client, Query, QueryAsync, raw};
 use openstack_sdk::types::ServiceType;
 use openstack_sdk::{AsyncOpenStack, OpenStack, config::ConfigFile};
 use std::borrow::Cow;
@@ -108,14 +108,14 @@ fn sync_catalog_refresh_with_new_service() -> Result<(), Box<dyn std::error::Err
     let _del_ep = delete::Request::builder()
         .id(endpoint_id)
         .build()
-        .expect("delete request builder")
-        .raw_query(&session)?;
+        .expect("delete request builder");
+    let _del_ep = raw(_del_ep).query(&session)?;
 
     let _del_svc = service_delete::Request::builder()
         .id(service_id)
         .build()
-        .expect("delete request builder")
-        .raw_query(&session)?;
+        .expect("delete request builder");
+    let _del_svc = raw(_del_svc).query(&session)?;
 
     Ok(())
 }
@@ -178,19 +178,17 @@ async fn async_catalog_refresh_with_new_service() -> Result<(), Box<dyn std::err
         .is_ok();
 
     // Cleanup
-    let _del_ep = delete::Request::builder()
+    let del_ep = delete::Request::builder()
         .id(endpoint_id)
         .build()
-        .expect("delete request builder")
-        .raw_query_async(&session)
-        .await?;
+        .expect("delete request builder");
+    let _del_ep = raw(del_ep).query_async(&session).await?;
 
-    let _del_svc = service_delete::Request::builder()
+    let del_svc = service_delete::Request::builder()
         .id(service_id)
         .build()
-        .expect("delete request builder")
-        .raw_query_async(&session)
-        .await?;
+        .expect("delete request builder");
+    let _del_svc = raw(del_svc).query_async(&session).await?;
 
     assert!(
         found,

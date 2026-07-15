@@ -16,13 +16,10 @@
 //! You do not need to check whether a container already exists before issuing
 //! a PUT operation because the operation is idempotent: It creates a container
 //! or updates an existing container, as appropriate.
-use std::collections::HashMap;
-
-use bytes::Bytes;
 use clap::Args;
 use eyre::{WrapErr, eyre};
-use http::Response;
 use regex::Regex;
+use std::collections::HashMap;
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -33,7 +30,7 @@ use openstack_sdk::api::object_store::v1::container::create::Request;
 use openstack_sdk::api::object_store::v1::container::head::Request as GetRequest;
 use openstack_sdk::{
     AsyncOpenStack,
-    api::{AsyncClient, RawQueryAsync},
+    api::{self, AsyncClient, QueryAsync},
     types::{ApiVersion, ServiceType},
 };
 
@@ -88,7 +85,7 @@ impl ContainerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp = api::raw(ep).query_async(client).await?;
 
         let mut ep_builder = GetRequest::builder();
         if let Some(account) = account {
@@ -100,7 +97,7 @@ impl ContainerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let rsp = api::raw(ep).query_async(client).await?;
 
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();

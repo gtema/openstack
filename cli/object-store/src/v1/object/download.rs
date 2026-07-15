@@ -26,7 +26,7 @@ use openstack_cli_core::common::download_file;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::object::get::Request;
-use openstack_sdk::api::{AsyncClient, RawQueryAsync};
+use openstack_sdk::api::{AsyncClient, QueryAsync, download};
 use openstack_sdk::{
     AsyncOpenStack,
     types::{ApiVersion, ServiceType},
@@ -146,7 +146,7 @@ impl ObjectCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let (headers, data) = ep.download_async(client).await?;
+        let (headers, data) = download(ep).query_async(client).await?;
 
         let size: u64 = headers
             .get("content-length")

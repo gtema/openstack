@@ -39,11 +39,10 @@ use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::common::build_upload_asyncread;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
-use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::object_store::v1::object::put::Request;
+use openstack_sdk::api::{AsyncClient, QueryAsync, raw_with_body};
 use openstack_sdk::{
     AsyncOpenStack,
-    api::AsyncClient,
     types::{ApiVersion, ServiceType},
 };
 use structable::{StructTable, StructTableOptions};
@@ -178,7 +177,7 @@ impl ObjectCommand {
         let dst = self.file.clone();
         let data = build_upload_asyncread(dst).await?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_read_body_async(client, data).await?;
+        let _rsp: Response<Bytes> = raw_with_body(ep, data).query_async(client).await?;
         // TODO: what if there is an interesting response
         op.show_command_hint()?;
         Ok(())

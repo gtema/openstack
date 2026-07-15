@@ -13,10 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Creates, updates, or deletes custom metadata for a container.
-use bytes::Bytes;
 use clap::Args;
 use eyre::{WrapErr, eyre};
-use http::Response;
 use http::{HeaderName, HeaderValue};
 use regex::Regex;
 use std::collections::HashMap;
@@ -29,7 +27,7 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::container::head::Request as GetRequest;
 use openstack_sdk::api::object_store::v1::container::set::Request;
-use openstack_sdk::api::{AsyncClient, RawQueryAsync};
+use openstack_sdk::api::{AsyncClient, QueryAsync, raw};
 use openstack_sdk::{
     AsyncOpenStack,
     types::{ApiVersion, ServiceType},
@@ -104,7 +102,7 @@ impl ContainerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp = raw(ep).query_async(client).await?;
 
         // Refetch the container with the actual data
         let mut ep_builder = GetRequest::builder();
@@ -115,7 +113,7 @@ impl ContainerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let rsp = raw(ep).query_async(client).await?;
 
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();

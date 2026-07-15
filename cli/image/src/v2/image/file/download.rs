@@ -29,7 +29,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::common::download_file;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::download;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;
@@ -128,7 +128,7 @@ impl FileCommand {
             .image_id(image_id)
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let (headers, data) = ep.download_async(client).await?;
+        let (headers, data) = download(ep).query_async(client).await?;
 
         let size: u64 = headers
             .get("content-length")

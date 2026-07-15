@@ -16,10 +16,8 @@
 //! bytes of all objects stored in the container.
 use std::collections::HashMap;
 
-use bytes::Bytes;
 use clap::Args;
 use eyre::{WrapErr, eyre};
-use http::Response;
 use regex::Regex;
 use tracing::info;
 
@@ -28,7 +26,7 @@ use openstack_cli_core::common::HashMapStringString;
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::container::head::Request;
-use openstack_sdk::api::{AsyncClient, RawQueryAsync};
+use openstack_sdk::api::{AsyncClient, QueryAsync, raw};
 use openstack_sdk::{
     AsyncOpenStack,
     types::{ApiVersion, ServiceType},
@@ -83,7 +81,7 @@ impl ContainerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let rsp = raw(ep).query_async(client).await?;
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 

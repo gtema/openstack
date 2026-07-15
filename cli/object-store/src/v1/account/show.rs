@@ -34,7 +34,7 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::api::object_store::v1::account::head::Request;
 use openstack_sdk::{
     AsyncOpenStack,
-    api::{AsyncClient, RawQueryAsync},
+    api::{AsyncClient, QueryAsync, raw},
     types::{ApiVersion, ServiceType},
 };
 
@@ -80,7 +80,7 @@ impl AccountCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let rsp: Response<Bytes> = raw(ep).query_async(client).await?;
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
