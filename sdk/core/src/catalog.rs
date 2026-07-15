@@ -225,7 +225,7 @@ impl Catalog {
             if let Some(ver) = api_version {
                 // Specific version requested, version discovery info available, but version is not
                 // present - error
-                return Err(CatalogError::VersionUnsupported { ver: ver.clone() });
+                return Err(CatalogError::VersionUnsupported { ver: *ver });
             }
         }
 

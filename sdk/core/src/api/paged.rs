@@ -27,7 +27,7 @@ use serde::de::DeserializeOwned;
 
 pub use self::pagination::{Pagination, PaginationError};
 
-use crate::api::rest_endpoint::set_latest_microversion;
+use crate::api::rest_endpoint::set_request_microversion_header;
 use crate::api::{ApiError, RestEndpoint, query};
 
 #[cfg(feature = "async")]
@@ -135,7 +135,7 @@ where
                 .method(self.endpoint.method())
                 .uri(query::url_to_http_uri(page_url.clone())?)
                 .header(header::ACCEPT, HeaderValue::from_static("application/json"));
-            set_latest_microversion(&mut req, &ep, &self.endpoint);
+            set_request_microversion_header::<C, E>(&mut req, &ep, &self.endpoint)?;
             // Set endpoint headers
             if let Some(request_headers) = self.endpoint.request_headers()
                 && let Some(headers) = req.headers_mut()

@@ -26,7 +26,7 @@ use serde::de::DeserializeOwned;
 use url::Url;
 
 use crate::api::paged::{Pageable, Paged, Pagination, next_page};
-use crate::api::rest_endpoint::set_latest_microversion;
+use crate::api::rest_endpoint::set_request_microversion_header;
 use crate::api::{ApiError, RestClient, RestEndpoint, query};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
@@ -369,7 +369,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
+        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint)?;
         let rsp = client.rest(req, data)?;
         self.process_response::<C, _>(rsp, url.clone())
     }
@@ -399,7 +399,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
+        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint)?;
         let rsp = client.rest_async(req, data).await?;
         self.process_response::<C, _>(rsp, url.clone())
     }
