@@ -15,10 +15,12 @@ repository.workspace = true
 default = [
   "async",
   "sync",
+  "interactive",
 ]
 sync = ["reqwest/blocking"]
 async = []
 json-schema = ["schemars"]
+interactive = ["openstack-sdk-auth-core/interactive"]
 
 [dependencies]
 arc-swap.workspace = true
@@ -28,13 +30,11 @@ bytes.workspace = true
 chrono.workspace = true
 config = { workspace = true, features = ["yaml"] }
 derive_builder.workspace = true
-dialoguer.workspace = true
 dirs.workspace = true
 dyn-clone = { version = "1.0" }
 futures.workspace = true
 futures-util.workspace = true
 http.workspace = true
-inventory.workspace = true
 itertools.workspace = true
 openstack-sdk-auth-core.workspace = true
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
@@ -48,8 +48,6 @@ serde_urlencoded = "^0.7"
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
-tokio.workspace = true
-tokio-util.workspace = true
 tracing.workspace = true
 url.workspace = true
 
