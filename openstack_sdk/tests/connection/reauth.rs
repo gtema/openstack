@@ -26,7 +26,7 @@ use std::env;
 use http::{HeaderName, HeaderValue, StatusCode};
 use openstack_sdk::api::compute::v2::server::list;
 use openstack_sdk::api::identity::v3::auth::token::delete;
-use openstack_sdk::api::{Pagination, Query, QueryAsync, RawQuery, RawQueryAsync, paged};
+use openstack_sdk::api::{Pagination, Query, QueryAsync, paged, raw};
 use openstack_sdk::config::ConfigFile;
 use openstack_sdk::types::ServiceType;
 use openstack_sdk::{AsyncOpenStack, OpenStack};
@@ -57,7 +57,10 @@ async fn async_reauth_after_token_revocation() -> Result<(), Box<dyn std::error:
         )
         .build()
         .unwrap();
-    let response = endpoint.raw_query_async_ll(&session, Some(false)).await?;
+    let response = raw(endpoint)
+        .skip_error_check(true)
+        .query_async(&session)
+        .await?;
     // 403 means the token was already revoked by a parallel test — same end result.
     assert!(
         response.status().is_success() || response.status() == StatusCode::FORBIDDEN,
@@ -102,7 +105,7 @@ fn sync_reauth_after_token_revocation() -> Result<(), Box<dyn std::error::Error>
         )
         .build()
         .unwrap();
-    let response = endpoint.raw_query(&session)?;
+    let response = raw(endpoint).query(&session)?;
     // 403 means the token was already revoked by a parallel test — same end result.
     assert!(
         response.status().is_success() || response.status() == StatusCode::FORBIDDEN,

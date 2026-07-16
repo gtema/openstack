@@ -50,10 +50,7 @@ use openstack_sdk_auth_token as token_auth;
 use crate::auth::authtoken::{AuthType, build_token_info_endpoint};
 use crate::session;
 
-use openstack_sdk_core::api::{
-    self, AsyncClient,
-    query::{self, RawQueryAsync},
-};
+use openstack_sdk_core::api::{self, AsyncClient, QueryAsync, query, raw};
 use openstack_sdk_core::auth::{
     AuthState,
     auth_helper::{AuthHelper, Dialoguer, Noop},
@@ -1302,7 +1299,7 @@ impl AsyncOpenStack {
         token: SecretString,
     ) -> Result<AuthResponse, OpenStackError> {
         let auth_ep = build_token_info_endpoint(token.expose_secret())?;
-        let rsp = auth_ep.raw_query_async(self).await?;
+        let rsp = raw(auth_ep).query_async(self).await?;
         let data: AuthResponse = serde_json::from_slice(rsp.body())?;
         Ok(data)
     }

@@ -56,17 +56,18 @@
 //!    # Ok(())
 //!    # }
 //! ```
-//! ## RawQuery/RawQueryAsync trait
+//! ## Raw response combinator
 //!
-//! It may be sometimes desired to get the raw API response for example to access headers. It is
-//! possible using [RawQuery]/[RawQueryAsync] trait on such endpoints.
+//! For cases where the raw HTTP response is needed (to inspect headers or
+//! handle non-JSON bodies), use the [`raw`](fn@raw) combinator. It implements
+//! the standard [Query]/[QueryAsync] trait and returns [http::Response<Bytes>].
 //!
 //! ```
-//!    use openstack_sdk_core::api::RawQueryAsync;
+//!    use openstack_sdk_core::api::{raw, QueryAsync};
 //!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
 //!    use std::borrow::Cow;
 //!    use openstack_sdk_core::{api::RestEndpoint, types::ServiceType};
-//!    use http::{Response};
+//!    use http::Response;
 //!    use bytes::Bytes;
 //!    async fn func() -> Result<(), OpenStackError> {
 //!    let cfg = ConfigFile::new().unwrap();
@@ -76,26 +77,50 @@
 //!    pub struct Request<'a> {
 //!        id: Cow<'a, str>,
 //!    }
-//!    
+//!
 //!    impl RestEndpoint for Request<'_> {
 //!        fn method(&self) -> http::Method {
 //!            http::Method::GET
 //!        }
-//!    
+//!
 //!        fn endpoint(&self) -> Cow<'static, str> {
 //!            format!("flavors/{id}", id = self.id.as_ref(),).into()
 //!        }
-//!    
+//!
 //!        fn service_type(&self) -> ServiceType {
 //!            ServiceType::Compute
 //!        }
-//!    
-//!        fn response_key(&self) -> Option<Cow<'static, str>> {
-//!            Some("flavor".into())
-//!        }
 //!    }
 //!    let ep = RequestBuilder::default().build().unwrap();
-//!    // let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
+//!    // let rsp: Response<Bytes> = raw(ep).query_async(&client).await?;
+//!    // let rsp: Response<Bytes> = raw(ep).skip_error_check(true).query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
+//! For streaming downloads use [`download`](fn@download):
+//!
+//! ```
+//!    use openstack_sdk_core::api::{download, QueryAsync};
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    let cfg = ConfigFile::new().unwrap();
+//!    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+//!    // let client = AsyncOpenStack::new(&profile).await?;
+//!    // let (headers, stream) = download(ep).query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
+//! For uploads with a streamed request body use [`raw_with_body`](fn@raw_with_body):
+//!
+//! ```
+//!    use openstack_sdk_core::api::{raw_with_body, QueryAsync};
+//!    use openstack_sdk_core::{config::ConfigFile, OpenStackError};
+//!    use openstack_sdk_core::types::BoxedAsyncRead;
+//!    async fn func() -> Result<(), OpenStackError> {
+//!    // let body: BoxedAsyncRead = /* ... */;
+//!    // let rsp = raw_with_body(ep, body).query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
@@ -426,10 +451,10 @@ pub mod common;
 mod error;
 mod find;
 mod ignore;
-#[allow(dead_code)]
 mod paged;
 mod params;
 pub mod query;
+mod raw;
 pub mod rest_endpoint;
 
 pub use self::error::ApiError;
@@ -469,3 +494,9 @@ pub use self::params::QueryParams;
 
 pub use self::ignore::Ignore;
 pub use self::ignore::ignore;
+
+pub use self::raw::Download;
+pub use self::raw::Raw;
+pub use self::raw::download;
+pub use self::raw::raw;
+pub use self::raw::raw_with_body;

@@ -63,7 +63,10 @@ where
 /// nothing about required authorization, which is handled by the client. It
 /// can be used for special cases where headers must be captured, response
 /// is not json, etc.
+///
+/// **Deprecated**: Use [`raw`](crate::api::raw) combinator instead.
 #[cfg(feature = "sync")]
+#[deprecated(since = "0.23.0", note = "Use `raw(endpoint).query(client)` instead")]
 pub trait RawQuery<C>
 where
     C: Client,
@@ -75,6 +78,10 @@ where
 /// A trait which represents an asynchronous query which may be made to a
 /// OpenStack service API client and return http response. It does know
 /// nothing about required authorization, which is handled by the client.
+#[deprecated(
+    since = "0.23.0",
+    note = "Use `raw(endpoint).query_async(client)` instead"
+)]
 #[cfg(feature = "async")]
 #[async_trait]
 pub trait RawQueryAsync<C>

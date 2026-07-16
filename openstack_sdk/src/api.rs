@@ -32,22 +32,24 @@
 //!    # Ok(())
 //!    # }
 //! ```
-//! ## RawQuery/RawQueryAsync trait
+//! ## Raw response combinator
 //!
-//! It may be sometimes desired to get the raw API response for example to access headers. It is
-//! possible using [RawQuery]/[RawQueryAsync] trait on such endpoints.
+//! For cases where the raw HTTP response is needed (to inspect headers or
+//! handle non-JSON bodies), use the [`raw`](fn@raw) combinator. It implements
+//! the standard [Query]/[QueryAsync] trait and returns [http::Response<Bytes>].
 //!
 //! ```
-//!    use openstack_sdk::api::RawQueryAsync;
+//!    use openstack_sdk::api::{raw, QueryAsync};
+//!    use http::Response;
+//!    use bytes::Bytes;
 //!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
-//!    # use http::{Response};
-//!    # use bytes::Bytes;
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
 //!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
-//!    let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
+//!    // let rsp: Response<Bytes> = raw(ep).query_async(&client).await?;
+//!    // let rsp: Response<Bytes> = raw(ep).skip_error_check(true).query_async(&client).await?;
 //!    # Ok(())
 //!    # }
 //! ```
