@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v3/volumes/summary` REST operations of block-storage
-pub mod get;
+pub mod get_312;

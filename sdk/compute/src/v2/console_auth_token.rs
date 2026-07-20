@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-console-auth-tokens/{id}` REST operations of compute
-pub mod get;
+pub mod get_21;

@@ -35,6 +35,12 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityProvider<'a> {
+    /// List of allowed redirect URIs for OIDC flows. When set, the redirect
+    /// URI passed at auth-init must match one of these values.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) allowed_redirect_uris: Option<Vec<Cow<'a, str>>>,
+
     /// The bound issuer that is verified when using the identity provider.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -45,7 +51,7 @@ pub struct IdentityProvider<'a> {
     /// exist.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) default_mapping_name: Option<Cow<'a, str>>,
+    pub(crate) default_mapping_name: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the domain this identity provider belongs to. Empty value
     /// identifies that the identity provider can be used by other domains as
@@ -102,6 +108,11 @@ pub struct IdentityProvider<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) oidc_response_types: Option<Vec<Cow<'a, str>>>,
+
+    /// List of OIDC scopes to request during the OIDC authorization flow.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) oidc_scopes: Option<Vec<Cow<'a, str>>>,
 
     /// Additional special provider specific configuration.
     #[serde(skip_serializing_if = "Option::is_none")]

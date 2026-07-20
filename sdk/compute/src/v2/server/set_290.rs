@@ -20,7 +20,7 @@
 //! Normal response codes: 200
 //!
 //! Error response codes: badRequest(400), unauthorized(401), forbidden(403),
-//! itemNotFound(404)
+//! itemNotFound(404), conflict(409)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

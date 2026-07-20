@@ -28,9 +28,8 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::common::build_upload_asyncread;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::image::v2::image::file::upload;
-use openstack_sdk::api::raw_with_body;
 
 /// Uploads binary image data. *(Since Image API v2.0)*
 ///
@@ -160,7 +159,7 @@ impl FileCommand {
         let dst = self.file.clone();
         let data = build_upload_asyncread(dst).await?;
 
-        let _rsp = raw_with_body(ep, data).query_async(client).await?;
+        let _rsp = ep.raw_query_read_body_async(client, data).await?;
         // TODO: what if there is an interesting response
         // Show command specific hints
         op.show_command_hint()?;

@@ -20,8 +20,8 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
-pub mod show;
+pub mod list_37;
+pub mod show_37;
 
 /// Clusters (clusters)
 ///
@@ -55,8 +55,10 @@ pub struct ClusterCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ClusterCommands {
-    List(Box<list::ClustersCommand>),
-    Show(Box<show::ClusterCommand>),
+    #[command(visible_alias = "list")]
+    List37(Box<list_37::ClustersCommand>),
+    #[command(visible_alias = "show")]
+    Show37(Box<show_37::ClusterCommand>),
 }
 
 impl ClusterCommand {
@@ -67,8 +69,8 @@ impl ClusterCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ClusterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ClusterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ClusterCommands::List37(cmd) => cmd.take_action(parsed_args, session).await,
+            ClusterCommands::Show37(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -18,11 +18,11 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod create;
-pub mod delete;
-pub mod list;
+pub mod create_12;
+pub mod delete_12;
+pub mod list_12;
 pub mod set_17;
-pub mod show;
+pub mod show_12;
 
 /// Resource Class
 ///
@@ -39,12 +39,16 @@ pub struct ResourceClassCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ResourceClassCommands {
-    Create(create::ResourceClassCommand),
-    Delete(delete::ResourceClassCommand),
-    List(list::ResourceClassesCommand),
+    #[command(visible_alias = "create")]
+    Create12(create_12::ResourceClassCommand),
+    #[command(visible_alias = "delete")]
+    Delete12(delete_12::ResourceClassCommand),
+    #[command(visible_alias = "list")]
+    List12(list_12::ResourceClassesCommand),
     #[command(visible_alias = "set")]
     Set17(set_17::ResourceClassCommand),
-    Show(show::ResourceClassCommand),
+    #[command(visible_alias = "show")]
+    Show12(show_12::ResourceClassCommand),
 }
 
 impl ResourceClassCommand {
@@ -55,11 +59,11 @@ impl ResourceClassCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ResourceClassCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            ResourceClassCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            ResourceClassCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Create12(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Delete12(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::List12(cmd) => cmd.take_action(parsed_args, session).await,
             ResourceClassCommands::Set17(cmd) => cmd.take_action(parsed_args, session).await,
-            ResourceClassCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Show12(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

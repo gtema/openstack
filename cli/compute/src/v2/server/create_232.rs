@@ -415,10 +415,6 @@ impl ServerCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_232::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("compute 2.32"),
-        );
 
         // Set body parameters
         // Set Request.os_scheduler_hints data

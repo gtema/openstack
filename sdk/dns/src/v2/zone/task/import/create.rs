@@ -17,6 +17,8 @@
 
 //! Import a zone.
 //!
+//! The API supports two content types for zone import:
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

@@ -342,14 +342,14 @@ pub struct ServerResponse {
     #[structable(optional, title = "OS-SRV-USG:terminated_at")]
     pub os_srv_usg_terminated_at: Option<String>,
 
-    /// This is the availability zone requested during server creation. Also
-    /// when cross_az_attach option is false and booting an instance from
-    /// volume, the instance can be pinned to AZ and in that case, instance
-    /// will be scheduled on host belonging to pinned AZ. Also when
-    /// default_schedule_zone config option set to specific AZ, in that case,
-    /// instance would be pinned to that specific AZ, and instance will be
-    /// scheduled on host belonging to pinned AZ. In case of no pinned
-    /// availability zone, this value is set to null.
+    /// This is the availability zone requested during server creation or later
+    /// via update request. Also when cross_az_attach option is false and
+    /// booting an instance from volume, the instance can be pinned to AZ and
+    /// in that case, instance will be scheduled on host belonging to pinned
+    /// AZ. Also when default_schedule_zone config option set to specific AZ,
+    /// in that case, instance would be pinned to that specific AZ, and
+    /// instance will be scheduled on host belonging to pinned AZ. In case of
+    /// no pinned availability zone, this value is set to null.
     ///
     /// **New in version 2.96**
     #[structable(optional)]

@@ -92,6 +92,14 @@ pub struct NodegroupResponse {
     pub node_count: Option<i32>,
 
     #[serde(default)]
+    #[structable(optional, serialize, wide)]
+    pub node_labels: Option<BTreeMap<String, String>>,
+
+    #[serde(default)]
+    #[structable(optional, serialize, wide)]
+    pub node_taints: Option<Vec<BTreeMap<String, String>>>,
+
+    #[serde(default)]
     #[structable(optional, wide)]
     pub project_id: Option<String>,
 

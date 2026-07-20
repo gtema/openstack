@@ -49,6 +49,9 @@ pub struct ClusterCommand {
     #[arg(help_heading = "Body parameters", long)]
     api_address: Option<String>,
 
+    #[arg(help_heading = "Body parameters", long)]
+    cluster_id: Option<String>,
+
     /// The UUID of the cluster template.
     #[arg(help_heading = "Body parameters", long)]
     cluster_template_id: String,
@@ -269,6 +272,11 @@ impl ClusterCommand {
         // Set Request.api_address data
         if let Some(arg) = &self.api_address {
             ep_builder.api_address(arg);
+        }
+
+        // Set Request.cluster_id data
+        if let Some(arg) = &self.cluster_id {
+            ep_builder.cluster_id(arg);
         }
 
         // Set Request.cluster_template_id data

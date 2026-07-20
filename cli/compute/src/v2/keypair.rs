@@ -27,9 +27,9 @@ pub mod create_21;
 pub mod create_210;
 pub mod create_22;
 pub mod create_292;
-pub mod delete;
-pub mod list;
-pub mod show;
+pub mod delete_20;
+pub mod list_20;
+pub mod show_20;
 
 /// Keypairs commands
 ///
@@ -51,9 +51,12 @@ pub enum KeypairCommands {
     Create22(create_22::KeypairCommand),
     Create21(create_21::KeypairCommand),
     Create20(create_20::KeypairCommand),
-    Delete(delete::KeypairCommand),
-    List(list::KeypairsCommand),
-    Show(show::KeypairCommand),
+    #[command(visible_alias = "delete")]
+    Delete20(delete_20::KeypairCommand),
+    #[command(visible_alias = "list")]
+    List20(list_20::KeypairsCommand),
+    #[command(visible_alias = "show")]
+    Show20(show_20::KeypairCommand),
 }
 
 impl KeypairCommand {
@@ -69,9 +72,9 @@ impl KeypairCommand {
             KeypairCommands::Create22(cmd) => cmd.take_action(parsed_args, session).await,
             KeypairCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
             KeypairCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
-            KeypairCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            KeypairCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            KeypairCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Delete20(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::List20(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Show20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

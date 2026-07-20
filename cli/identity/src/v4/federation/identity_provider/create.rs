@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers` with `POST` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -64,6 +64,13 @@ struct PathParameters {}
 /// IdentityProvider Body data
 #[derive(Args, Clone)]
 struct IdentityProvider {
+    /// List of allowed redirect URIs for OIDC flows. When set, the redirect
+    /// URI passed at auth-init must match one of these values.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    allowed_redirect_uris: Option<Vec<String>>,
+
     /// The bound issuer that is verified when using the identity provider.
     #[arg(help_heading = "Body parameters", long)]
     bound_issuer: Option<String>,
@@ -73,6 +80,10 @@ struct IdentityProvider {
     /// exist.
     #[arg(help_heading = "Body parameters", long)]
     default_mapping_name: Option<String>,
+
+    /// Set explicit NULL for the default_mapping_name
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "default_mapping_name")]
+    no_default_mapping_name: bool,
 
     /// The ID of the domain this identity provider belongs to. Empty value
     /// identifies that the identity provider can be used by other domains as
@@ -124,6 +135,12 @@ struct IdentityProvider {
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     oidc_response_types: Option<Vec<String>>,
 
+    /// List of OIDC scopes to request during the OIDC authorization flow.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    oidc_scopes: Option<Vec<String>>,
+
     /// Additional special provider specific configuration.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     provider_config: Option<Vec<(String, Value)>>,
@@ -151,12 +168,19 @@ impl IdentityProviderCommand {
         // Set Request.identity_provider data
         let args = &self.identity_provider;
         let mut identity_provider_builder = create::IdentityProviderBuilder::default();
+        if let Some(val) = &args.allowed_redirect_uris {
+            identity_provider_builder
+                .allowed_redirect_uris(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
         if let Some(val) = &args.bound_issuer {
             identity_provider_builder.bound_issuer(val);
         }
 
         if let Some(val) = &args.default_mapping_name {
-            identity_provider_builder.default_mapping_name(val);
+            identity_provider_builder.default_mapping_name(Some(val.into()));
+        } else if args.no_default_mapping_name {
+            identity_provider_builder.default_mapping_name(None);
         }
 
         if let Some(val) = &args.domain_id {
@@ -197,6 +221,10 @@ impl IdentityProviderCommand {
         if let Some(val) = &args.oidc_response_types {
             identity_provider_builder
                 .oidc_response_types(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.oidc_scopes {
+            identity_provider_builder.oidc_scopes(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.provider_config {

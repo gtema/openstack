@@ -85,10 +85,6 @@ impl TagCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = replace_226::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("compute 2.26"),
-        );
 
         ep_builder.server_id(&self.path.server_id);
 

@@ -23,6 +23,8 @@ use structable::{StructTable, StructTableOptions};
 /// Server response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
+    /// IPv4 address that should be used to access this server. May be
+    /// automatically set by the provider.
     #[serde(rename = "accessIPv4")]
     #[structable(title = "accessIPv4", wide)]
     pub access_ipv4: String,

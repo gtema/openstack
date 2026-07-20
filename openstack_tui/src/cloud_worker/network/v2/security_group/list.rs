@@ -56,6 +56,8 @@ pub struct NetworkSecurityGroupList {
     #[builder(default)]
     pub sort_key: Option<Vec<String>>,
     #[builder(default)]
+    pub stateful: Option<bool>,
+    #[builder(default)]
     pub tags: Option<Vec<String>>,
     #[builder(default)]
     pub tags_any: Option<Vec<String>>,
@@ -125,6 +127,9 @@ impl TryFrom<&NetworkSecurityGroupList> for RequestBuilder<'_> {
         }
         if let Some(val) = &value.shared {
             ep_builder.shared(*val);
+        }
+        if let Some(val) = &value.stateful {
+            ep_builder.stateful(*val);
         }
         if let Some(val) = &value.tags {
             ep_builder.tags(val.iter().cloned());

@@ -40,7 +40,7 @@ use openstack_types::compute::v2::server::response;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
-/// itemNotFound(404)
+/// itemNotFound(404), conflict(409)
 #[derive(Args)]
 #[command(about = "Update Server (microversion = 2.1)")]
 pub struct ServerCommand {
@@ -140,10 +140,6 @@ impl ServerCommand {
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         let mut ep_builder = set_21::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("compute 2.1"),
-        );
 
         let resource_id = find_data["id"]
             .as_str()

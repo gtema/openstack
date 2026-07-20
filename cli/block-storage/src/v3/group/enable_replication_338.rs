@@ -72,10 +72,6 @@ impl GroupCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = enable_replication_338::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.38"),
-        );
 
         // Set body parameters
         // Set Request.enable_replication data

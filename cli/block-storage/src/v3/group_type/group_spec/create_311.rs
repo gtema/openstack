@@ -83,10 +83,6 @@ impl GroupSpecCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_311::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.11"),
-        );
 
         ep_builder.group_type_id(&self.path.group_type_id);
 

@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/allocation_candidates` REST operations of placement
-pub mod list;
+pub mod list_110;

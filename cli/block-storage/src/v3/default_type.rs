@@ -19,10 +19,10 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod list;
+pub mod delete_362;
+pub mod list_362;
 pub mod set_362;
-pub mod show;
+pub mod show_362;
 
 /// Default Volume Types (default-types)
 ///
@@ -47,11 +47,14 @@ pub struct DefaultTypeCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DefaultTypeCommands {
-    Delete(Box<delete::DefaultTypeCommand>),
-    List(Box<list::DefaultTypesCommand>),
+    #[command(visible_alias = "delete")]
+    Delete362(Box<delete_362::DefaultTypeCommand>),
+    #[command(visible_alias = "list")]
+    List362(Box<list_362::DefaultTypesCommand>),
     #[command(visible_alias = "set")]
     Set362(Box<set_362::DefaultTypeCommand>),
-    Show(Box<show::DefaultTypeCommand>),
+    #[command(visible_alias = "show")]
+    Show362(Box<show_362::DefaultTypeCommand>),
 }
 
 impl DefaultTypeCommand {
@@ -62,10 +65,10 @@ impl DefaultTypeCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            DefaultTypeCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            DefaultTypeCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            DefaultTypeCommands::Delete362(cmd) => cmd.take_action(parsed_args, session).await,
+            DefaultTypeCommands::List362(cmd) => cmd.take_action(parsed_args, session).await,
             DefaultTypeCommands::Set362(cmd) => cmd.take_action(parsed_args, session).await,
-            DefaultTypeCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            DefaultTypeCommands::Show362(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

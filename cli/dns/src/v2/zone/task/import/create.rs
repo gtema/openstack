@@ -34,6 +34,8 @@ use openstack_sdk::api::dns::v2::zone::task::import::create;
 use serde_json::Value;
 
 /// Import a zone.
+///
+/// The API supports two content types for zone import:
 #[derive(Args)]
 #[command(about = "Create a Zone Import")]
 pub struct ImportCommand {

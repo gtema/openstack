@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 pub mod create;
 pub mod delete;
-pub mod delete_all;
+pub mod delete_all_15;
 pub mod list;
 pub mod replace;
 pub mod set;
@@ -43,7 +43,8 @@ pub struct InventoryCommand {
 pub enum InventoryCommands {
     Create(create::InventoryCommand),
     Delete(delete::InventoryCommand),
-    Purge(delete_all::InventoryCommand),
+    #[command(visible_alias = "purge")]
+    Purge15(delete_all_15::InventoryCommand),
     List(list::InventoriesCommand),
     Replace(replace::InventoryCommand),
     Set(set::InventoryCommand),
@@ -60,7 +61,7 @@ impl InventoryCommand {
         match &self.command {
             InventoryCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            InventoryCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
+            InventoryCommands::Purge15(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,

@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v2.0/ports/{port_id}` with `PUT` method
 
 use clap::Args;
-use eyre::{OptionExt, WrapErr};
+use eyre::WrapErr;
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -36,6 +36,7 @@ use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;
 use openstack_types::network::v2::port::response;
 use serde_json::Value;
+use std::collections::BTreeMap;
 
 /// Updates a port.
 ///
@@ -384,16 +385,22 @@ impl PortCommand {
         }
 
         if let Some(val) = &args.extra_dhcp_opts {
-            use std::collections::BTreeMap;
             port_builder.extra_dhcp_opts(
                 val.iter()
                     .map(|v| {
                         v.as_object()
-                            .ok_or_eyre("extra_dhcp_opts must be a valid json object")
-                            .map(|obj| {
+                            .ok_or_else(|| {
+                                eyre::eyre!("extra_dhcp_opts must be a valid json object")
+                            })
+                            .and_then(|obj| {
                                 obj.into_iter()
-                                    .map(|(k, v)| (k.into(), v.clone()))
-                                    .collect::<BTreeMap<_, Value>>()
+                                    .map(|(k, val)| -> eyre::Result<_> {
+                                        Ok((
+                                            k.into(),
+                                            serde_json::from_value::<Value>(val.clone())?,
+                                        ))
+                                    })
+                                    .collect::<Result<BTreeMap<_, _>, _>>()
                             })
                     })
                     .collect::<Result<Vec<_>, _>>()?,

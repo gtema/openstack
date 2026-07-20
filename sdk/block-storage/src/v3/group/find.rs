@@ -22,7 +22,7 @@ use openstack_sdk_core::api::rest_endpoint_prelude::*;
 use openstack_sdk_core::api::{ApiError, RestClient};
 use tracing::trace;
 
-use crate::v3::group::{get as Get, list_detailed as List};
+use crate::v3::group::{get_313 as Get, list_detailed_313 as List};
 
 /// Find for group by nameOrId.
 #[derive(Debug, Builder, Clone)]

@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
-pub mod show;
+pub mod list_21;
+pub mod show_21;
 
 /// Usage reports (os-simple-tenant-usage)
 ///
@@ -66,8 +66,10 @@ pub struct SimpleTenantUsageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SimpleTenantUsageCommands {
-    List(list::SimpleTenantUsagesCommand),
-    Show(show::SimpleTenantUsageCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::SimpleTenantUsagesCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::SimpleTenantUsageCommand),
 }
 
 impl SimpleTenantUsageCommand {
@@ -78,8 +80,8 @@ impl SimpleTenantUsageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            SimpleTenantUsageCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            SimpleTenantUsageCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            SimpleTenantUsageCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            SimpleTenantUsageCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

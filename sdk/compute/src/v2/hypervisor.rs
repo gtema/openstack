@@ -16,9 +16,9 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-hypervisors` REST operations of compute
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod get_21;
+pub mod list_21;
+pub mod list_detailed_21;
 pub mod search;
 pub mod server;
 pub mod statistic;

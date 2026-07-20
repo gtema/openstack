@@ -82,10 +82,6 @@ impl ResourceClassCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_17::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("placement 1.7"),
-        );
 
         ep_builder.name(&self.path.name);
 

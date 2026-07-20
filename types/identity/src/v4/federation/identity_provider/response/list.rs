@@ -24,6 +24,11 @@ use structable::{StructTable, StructTableOptions};
 /// IdentityProvider response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct IdentityProviderResponse {
+    /// List of allowed redirect URIs for OIDC flows.
+    #[serde(default)]
+    #[structable(optional, serialize, wide)]
+    pub allowed_redirect_uris: Option<Vec<String>>,
+
     /// The bound issuer that is verified when using the identity provider.
     #[serde(default)]
     #[structable(optional, wide)]
@@ -88,6 +93,11 @@ pub struct IdentityProviderResponse {
     #[serde(default)]
     #[structable(optional, serialize, wide)]
     pub oidc_response_types: Option<Vec<String>>,
+
+    /// List of OIDC scopes to request during the OIDC authorization flow.
+    #[serde(default)]
+    #[structable(optional, serialize, wide)]
+    pub oidc_scopes: Option<Vec<String>>,
 
     /// Additional provider configuration.
     #[serde(default)]

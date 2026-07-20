@@ -108,10 +108,6 @@ impl BackupCommand {
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         let mut ep_builder = set_39::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.9"),
-        );
 
         let resource_id = find_data["id"]
             .as_str()

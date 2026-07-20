@@ -18,7 +18,7 @@
 //! `/resource_providers/{uuid}/inventories` REST operations of placement
 pub mod create;
 pub mod delete;
-pub mod delete_all;
+pub mod delete_all_15;
 pub mod get;
 pub mod list;
 pub mod replace;

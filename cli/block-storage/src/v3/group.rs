@@ -25,11 +25,11 @@ pub mod delete_313;
 pub mod disable_replication_338;
 pub mod enable_replication_338;
 pub mod failover_replication_338;
-pub mod list;
+pub mod list_313;
 pub mod list_replication_targets_338;
 pub mod reset_status_320;
 pub mod set_313;
-pub mod show;
+pub mod show_313;
 
 /// Generic volume groups (groups)
 ///
@@ -65,13 +65,15 @@ pub enum GroupCommands {
     EnableReplication338(Box<enable_replication_338::GroupCommand>),
     #[command(visible_alias = "failover-replication")]
     FailoverReplication338(Box<failover_replication_338::GroupCommand>),
-    List(Box<list::GroupsCommand>),
+    #[command(visible_alias = "list")]
+    List313(Box<list_313::GroupsCommand>),
     #[command(visible_alias = "list-replication-targets")]
     ListReplicationTargets338(Box<list_replication_targets_338::GroupCommand>),
     #[command(visible_alias = "reset-status")]
     ResetStatus320(Box<reset_status_320::GroupCommand>),
     Set313(Box<set_313::GroupCommand>),
-    Show(Box<show::GroupCommand>),
+    #[command(visible_alias = "show")]
+    Show313(Box<show_313::GroupCommand>),
 }
 
 impl GroupCommand {
@@ -92,13 +94,13 @@ impl GroupCommand {
             GroupCommands::FailoverReplication338(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
-            GroupCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupCommands::List313(cmd) => cmd.take_action(parsed_args, session).await,
             GroupCommands::ListReplicationTargets338(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
             GroupCommands::ResetStatus320(cmd) => cmd.take_action(parsed_args, session).await,
             GroupCommands::Set313(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupCommands::Show313(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

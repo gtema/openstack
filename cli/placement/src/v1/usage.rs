@@ -18,7 +18,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
+pub mod list_19;
 
 /// Usages
 ///
@@ -33,7 +33,8 @@ pub struct UsageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum UsageCommands {
-    List(list::UsagesCommand),
+    #[command(visible_alias = "list")]
+    List19(list_19::UsagesCommand),
 }
 
 impl UsageCommand {
@@ -44,7 +45,7 @@ impl UsageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            UsageCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            UsageCommands::List19(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

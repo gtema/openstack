@@ -140,6 +140,9 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) api_address: Option<Cow<'a, str>>,
 
+    #[builder(default, setter(into))]
+    pub(crate) cluster_id: Option<Cow<'a, str>>,
+
     /// The UUID of the cluster template.
     #[builder(setter(into))]
     pub(crate) cluster_template_id: Cow<'a, str>,
@@ -435,6 +438,9 @@ impl RestEndpoint for Request<'_> {
 
         if let Some(val) = &self.api_address {
             params.push("api_address", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.cluster_id {
+            params.push("cluster_id", serde_json::to_value(val)?);
         }
         params.push(
             "cluster_template_id",

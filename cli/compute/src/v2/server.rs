@@ -109,7 +109,7 @@ pub mod suspend;
 pub mod tag;
 /// Server topology
 pub mod topology {
-    pub mod list;
+    pub mod list_278;
 }
 pub mod trigger_crash_dump_217;
 pub mod unlock_21;
@@ -245,7 +245,7 @@ pub enum ServerCommands {
     Stop(Box<os_stop::ServerCommand>),
     Suspend(Box<suspend::ServerCommand>),
     Tag(Box<tag::TagCommand>),
-    Topology(Box<topology::list::TopologiesCommand>),
+    Topology(Box<topology::list_278::TopologiesCommand>),
     #[command(visible_alias = "trigger-crash-dump")]
     TriggerCrashDump217(Box<trigger_crash_dump_217::ServerCommand>),
     #[command(visible_alias = "unlock")]

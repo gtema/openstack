@@ -104,6 +104,10 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
+    /// stateful query parameter for /v2.0/security-groups API
+    #[builder(default)]
+    stateful: Option<bool>,
+
     /// tags query parameter for /v2.0/security-groups API
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
@@ -255,6 +259,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
         params.push_opt("revision_number", self.revision_number.as_ref());
         params.push_opt("shared", self.shared);
+        params.push_opt("stateful", self.stateful);
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());
         params.push_opt("tenant_id", self.tenant_id.as_ref());
