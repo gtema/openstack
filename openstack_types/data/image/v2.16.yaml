@@ -36,6 +36,76 @@ paths:
       summary: Query cache status
       tags:
         - cache
+  /v2/cache/clean:
+    post:
+      description: |-
+        Cleans up invalid cache entries and stalled incomplete images.
+        *(Since Image API v2.18)*
+
+        Normal response codes: 200
+
+        Error response codes: 400, 401, 403
+      operationId: cache/clean:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CacheCleanClean_CacheRequest'
+      responses:
+        '201':
+          description: Ok
+      summary: Clean invalid cached images
+      tags:
+        - cache
+  /v2/cache/nodes/{image_id}:
+    get:
+      description: |-
+        GET /cache/nodes/<IMAGE_ID> - Get all nodes where image is cached
+
+        Returns a list of node URLs where the specified image is cached.
+
+        |  |  |
+        | --- | --- |
+        | param req: | The request object |
+        | param image_id: | The image ID to check for cached nodes |
+        | returns: | List of node URLs where the image is cached |
+        | raises HTTPConflict: | |
+        |  | If centralized caching is not enabled |
+        | raises HTTPNotFound: | |
+        |  | If the image does not exist |
+        | raises HTTPForbidden: | |
+        |  | If policy enforcement fails |
+      operationId: cache/nodes/image_id:get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - cache
+    parameters:
+      - $ref: '#/components/parameters/cache_nodes_image_id'
+  /v2/cache/prune:
+    post:
+      description: |-
+        Prunes cached images when the cache size exceeds the maximum
+        configured size. Removes least recently accessed images until
+        the cache size is within the limit.
+        *(Since Image API v2.18)*
+
+        Normal response codes: 200
+
+        Error response codes: 400, 401, 403
+      operationId: cache/prune:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CachePrunePrune_CacheRequest'
+      responses:
+        '201':
+          description: Ok
+      summary: Prune image cache directory
+      tags:
+        - cache
   /v2/cache/{image_id}:
     delete:
       description: |-
@@ -406,8 +476,23 @@ paths:
         Downloads binary image data.
         *(Since Image API v2.0)*
 
+        Starting with the 2026.1 (Gazpacho) release, a store preference feature
+        is introduced to allow services to suggest which stores to try when
+        downloading images. This enables services like Nova and Cinder to prefer
+        stores that are close to them or have better performance characteristics.
+
+        An optional `prefer` query parameter may be added to the request. When
+        present, it contains a comma-separated list of store identifiers
+        suggesting the ordering of stores to try when downloading the image.
+        Glance will try stores from the list in order. If the image is not found
+        in any of the specified stores, the system will fall back to the default
+        behavior (trying all stores).
+
         Example call: `curl -i -X GET -H "X-Auth-Token: $token"
         $image_url/v2/images/{image_id}/file`
+
+        Example call with store preference: `curl -i -X GET -H "X-Auth-Token: $token"
+        $image_url/v2/images/{image_id}/file?prefer=local-store,backup-store`
 
         The response body contains the raw binary data that represents the
         actual virtual disk. The `Content-Type` header contains the
@@ -422,6 +507,8 @@ paths:
         Normal response codes: 200, 204, 206
 
         Error response codes: 400, 403, 404, 416
+
+        **Error Responses**
       operationId: images/image_id/file:get
       parameters:
         - $ref: '#/components/parameters/range'
@@ -1748,6 +1835,13 @@ components:
       required: true
       schema:
         type: string
+    cache_nodes_image_id:
+      description: image_id parameter for /v2/cache/nodes/{image_id} API
+      in: path
+      name: image_id
+      required: true
+      schema:
+        type: string
     content-type:
       description: The media type descriptor of the body, namely 
         application/octet-stream
@@ -2118,6 +2212,12 @@ components:
       schema:
         type: string
   schemas:
+    CacheCleanClean_CacheRequest:
+      description: Request of the cache/clean:post operation
+      type: object
+    CachePrunePrune_CacheRequest:
+      description: Request of the cache/prune:post operation
+      type: object
     CacheQueue_Image_From_ApiRequest:
       description: Request of the cache/image_id:put operation
       type: object
