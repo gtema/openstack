@@ -20,9 +20,9 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod list;
-pub mod show;
+pub mod delete_33;
+pub mod list_33;
+pub mod show_33;
 
 /// Messages (messages)
 ///
@@ -39,9 +39,12 @@ pub struct MessageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MessageCommands {
-    Delete(Box<delete::MessageCommand>),
-    List(Box<list::MessagesCommand>),
-    Show(Box<show::MessageCommand>),
+    #[command(visible_alias = "delete")]
+    Delete33(Box<delete_33::MessageCommand>),
+    #[command(visible_alias = "list")]
+    List33(Box<list_33::MessagesCommand>),
+    #[command(visible_alias = "show")]
+    Show33(Box<show_33::MessageCommand>),
 }
 
 impl MessageCommand {
@@ -52,9 +55,9 @@ impl MessageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            MessageCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            MessageCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            MessageCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            MessageCommands::Delete33(cmd) => cmd.take_action(parsed_args, session).await,
+            MessageCommands::List33(cmd) => cmd.take_action(parsed_args, session).await,
+            MessageCommands::Show33(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

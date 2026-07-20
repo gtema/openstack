@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v1/clusters/nodegroups` with `POST` method
 
 use clap::Args;
+use eyre::OptionExt;
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -107,6 +108,13 @@ pub struct NodegroupCommand {
 
     #[arg(help_heading = "Body parameters", long)]
     node_count: Option<i32>,
+
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    node_labels: Option<Vec<(String, String)>>,
+
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=openstack_cli_core::common::parse_json)]
+    node_taints: Option<Vec<Value>>,
 
     #[arg(help_heading = "Body parameters", long)]
     project_id: Option<String>,
@@ -290,6 +298,34 @@ impl NodegroupCommand {
         // Set Request.node_count data
         if let Some(arg) = &self.node_count {
             ep_builder.node_count(*arg);
+        }
+
+        // Set Request.node_labels data
+        if let Some(arg) = &self.node_labels {
+            ep_builder.node_labels(arg.iter().cloned());
+        }
+
+        // Set Request.node_taints data
+        if let Some(arg) = &self.node_taints {
+            ep_builder.node_taints(
+                arg.iter()
+                    .map(|v| {
+                        v.as_object()
+                            .ok_or_eyre("node_taints must be a valid json object")
+                            .map(|obj| {
+                                obj.into_iter()
+                                    .map(|(k, val)| {
+                                        let v = match val {
+                                            serde_json::Value::String(s) => (s as &str).into(),
+                                            _ => val.to_string().into(),
+                                        };
+                                        (k.into(), v)
+                                    })
+                                    .collect()
+                            })
+                    })
+                    .collect::<Result<Vec<_>, _>>()?,
+            );
         }
 
         // Set Request.project_id data

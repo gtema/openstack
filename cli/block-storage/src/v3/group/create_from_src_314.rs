@@ -94,10 +94,6 @@ impl GroupCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_from_src_314::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.14"),
-        );
 
         // Set body parameters
         // Set Request.create_from_src data

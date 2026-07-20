@@ -22,7 +22,7 @@ use openstack_sdk_core::api::rest_endpoint_prelude::*;
 use openstack_sdk_core::api::{ApiError, RestClient};
 use tracing::trace;
 
-use crate::v3::volume_transfer::{get as Get, list_detailed as List};
+use crate::v3::volume_transfer::{get_355 as Get, list_detailed_355 as List};
 
 /// Find for volume_transfer by nameOrId.
 #[derive(Debug, Builder, Clone)]

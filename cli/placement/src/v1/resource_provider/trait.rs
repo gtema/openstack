@@ -18,9 +18,9 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod list;
-pub mod set;
+pub mod delete_16;
+pub mod list_16;
+pub mod set_16;
 
 /// Resource provider traits
 ///
@@ -35,9 +35,12 @@ pub struct TraitCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TraitCommands {
-    Delete(delete::TraitCommand),
-    List(list::TraitCommand),
-    Set(set::TraitCommand),
+    #[command(visible_alias = "delete")]
+    Delete16(delete_16::TraitCommand),
+    #[command(visible_alias = "list")]
+    List16(list_16::TraitCommand),
+    #[command(visible_alias = "set")]
+    Set16(set_16::TraitCommand),
 }
 
 impl TraitCommand {
@@ -48,9 +51,9 @@ impl TraitCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            TraitCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            TraitCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            TraitCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Delete16(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::List16(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Set16(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

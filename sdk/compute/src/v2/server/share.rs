@@ -17,6 +17,6 @@
 
 //! `/v2.1/servers/{server_id}/shares` REST operations of compute
 pub mod create_297;
-pub mod delete;
-pub mod get;
-pub mod list;
+pub mod delete_297;
+pub mod get_297;
+pub mod list_297;

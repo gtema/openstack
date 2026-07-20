@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers/{idp_id}` with `DELETE` method
 
 use clap::Args;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;

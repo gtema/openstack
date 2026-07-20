@@ -16,6 +16,6 @@
 // `openstack-codegenerator`.
 
 //! `/v3/messages/{id}` REST operations of block-storage
-pub mod delete;
-pub mod get;
-pub mod list;
+pub mod delete_33;
+pub mod get_33;
+pub mod list_33;

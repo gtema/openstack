@@ -89,10 +89,6 @@ impl AggregateCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = set_119::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("placement 1.19"),
-        );
 
         ep_builder.uuid(&self.path.uuid);
 

@@ -466,16 +466,6 @@ pub enum RedirectPoolProtocol {
     Udp,
 }
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum Type {
-    #[serde(rename = "APP_COOKIE")]
-    AppCookie,
-    #[serde(rename = "HTTP_COOKIE")]
-    HttpCookie,
-    #[serde(rename = "SOURCE_IP")]
-    SourceIp,
-}
-
 /// Defines mandatory and optional attributes of a POST request.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]

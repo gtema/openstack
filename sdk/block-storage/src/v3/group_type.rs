@@ -17,9 +17,9 @@
 
 //! `/v3/group_types` REST operations of block-storage
 pub mod create_311;
-pub mod delete;
+pub mod delete_311;
 pub mod find;
-pub mod get;
+pub mod get_311;
 pub mod group_spec;
-pub mod list;
+pub mod list_311;
 pub mod set_311;

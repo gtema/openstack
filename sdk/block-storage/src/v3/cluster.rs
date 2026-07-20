@@ -16,6 +16,6 @@
 // `openstack-codegenerator`.
 
 //! `/v3/clusters` REST operations of block-storage
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod get_37;
+pub mod list_37;
+pub mod list_detailed_37;

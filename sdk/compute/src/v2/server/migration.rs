@@ -16,7 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/servers/{server_id}/migrations/{id}` REST operations of compute
-pub mod delete;
+pub mod delete_224;
 pub mod force_complete_222;
-pub mod get;
-pub mod list;
+pub mod get_223;
+pub mod list_223;

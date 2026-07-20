@@ -27,6 +27,10 @@ pub struct ClusterResponse {
     #[structable(optional, wide)]
     pub api_address: Option<String>,
 
+    #[serde(default)]
+    #[structable(optional, wide)]
+    pub cluster_id: Option<String>,
+
     /// The UUID of the cluster template.
     #[structable(wide)]
     pub cluster_template_id: String,

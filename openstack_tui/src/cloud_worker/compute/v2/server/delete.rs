@@ -32,7 +32,6 @@ use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 #[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ComputeServerDelete {
-    // fields omitted for brevity
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,

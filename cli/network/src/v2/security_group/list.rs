@@ -131,6 +131,10 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
+    /// stateful query parameter for /v2.0/security-groups API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    stateful: Option<bool>,
+
     /// tags query parameter for /v2.0/security-groups API
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
@@ -193,6 +197,9 @@ impl SecurityGroupsCommand {
         }
         if let Some(val) = &self.query.shared {
             ep_builder.shared(*val);
+        }
+        if let Some(val) = &self.query.stateful {
+            ep_builder.stateful(*val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());

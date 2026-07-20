@@ -29,15 +29,30 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::common::download_file;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::download;
+use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;
 
 /// Downloads binary image data. *(Since Image API v2.0)*
 ///
+/// Starting with the 2026.1 (Gazpacho) release, a store preference feature is
+/// introduced to allow services to suggest which stores to try when
+/// downloading images. This enables services like Nova and Cinder to prefer
+/// stores that are close to them or have better performance characteristics.
+///
+/// An optional `prefer` query parameter may be added to the request. When
+/// present, it contains a comma-separated list of store identifiers suggesting
+/// the ordering of stores to try when downloading the image. Glance will try
+/// stores from the list in order. If the image is not found in any of the
+/// specified stores, the system will fall back to the default behavior (trying
+/// all stores).
+///
 /// Example call:
 /// `curl -i -X GET -H "X-Auth-Token: $token" $image_url/v2/images/{image_id}/file`
+///
+/// Example call with store preference:
+/// `curl -i -X GET -H "X-Auth-Token: $token" $image_url/v2/images/{image_id}/file?prefer=local-store,backup-store`
 ///
 /// The response body contains the raw binary data that represents the actual
 /// virtual disk. The `Content-Type` header contains the
@@ -52,6 +67,8 @@ use openstack_sdk::api::image::v2::image::find;
 /// Normal response codes: 200, 204, 206
 ///
 /// Error response codes: 400, 403, 404, 416
+///
+/// **Error Responses**
 #[derive(Args)]
 #[command(about = "Download binary image data")]
 pub struct FileCommand {
@@ -128,7 +145,7 @@ impl FileCommand {
             .image_id(image_id)
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let (headers, data) = download(ep).query_async(client).await?;
+        let (headers, data) = ep.download_async(client).await?;
 
         let size: u64 = headers
             .get("content-length")

@@ -22,11 +22,11 @@ use openstack_sdk::AsyncOpenStack;
 
 pub mod create_327;
 pub mod create_354;
-pub mod delete;
-pub mod list;
+pub mod delete_327;
+pub mod list_327;
 pub mod os_complete_344;
 pub mod set_327;
-pub mod show;
+pub mod show_327;
 
 /// Attachments (attachments)
 ///
@@ -67,11 +67,14 @@ pub enum AttachmentCommands {
     #[command(visible_alias = "create")]
     Create354(Box<create_354::AttachmentCommand>),
     Create327(Box<create_327::AttachmentCommand>),
-    Delete(Box<delete::AttachmentCommand>),
-    List(Box<list::AttachmentsCommand>),
+    #[command(visible_alias = "delete")]
+    Delete327(Box<delete_327::AttachmentCommand>),
+    #[command(visible_alias = "list")]
+    List327(Box<list_327::AttachmentsCommand>),
     #[command(visible_alias = "set")]
     Set327(Box<set_327::AttachmentCommand>),
-    Show(Box<show::AttachmentCommand>),
+    #[command(visible_alias = "show")]
+    Show327(Box<show_327::AttachmentCommand>),
 }
 
 impl AttachmentCommand {
@@ -85,10 +88,10 @@ impl AttachmentCommand {
             AttachmentCommands::Complete344(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Create354(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Create327(cmd) => cmd.take_action(parsed_args, session).await,
-            AttachmentCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            AttachmentCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AttachmentCommands::Delete327(cmd) => cmd.take_action(parsed_args, session).await,
+            AttachmentCommands::List327(cmd) => cmd.take_action(parsed_args, session).await,
             AttachmentCommands::Set327(cmd) => cmd.take_action(parsed_args, session).await,
-            AttachmentCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            AttachmentCommands::Show327(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

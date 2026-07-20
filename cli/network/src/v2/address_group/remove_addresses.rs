@@ -32,8 +32,14 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::address_group::remove_addresses;
 use openstack_types::network::v2::address_group::response;
 
-/// Command without description in OpenAPI
+/// Atomically removes a set of IP addresses from the address group’s already
+/// existing addresses.
+///
+/// Normal response codes: 200
+///
+/// Error response codes: 400, 401, 404, 412
 #[derive(Args)]
+#[command(about = "Remove IP addresses to address group")]
 pub struct AddressGroupCommand {
     /// Request Query parameters
     #[command(flatten)]

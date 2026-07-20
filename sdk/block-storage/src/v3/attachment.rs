@@ -18,9 +18,9 @@
 //! `/v3/attachments` REST operations of block-storage
 pub mod create_327;
 pub mod create_354;
-pub mod delete;
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod delete_327;
+pub mod get_327;
+pub mod list_327;
+pub mod list_detailed_327;
 pub mod os_complete_344;
 pub mod set_327;

@@ -17,9 +17,9 @@
 
 //! `/v3/group_snapshots` REST operations of block-storage
 pub mod create_314;
-pub mod delete;
+pub mod delete_314;
 pub mod find;
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod get_314;
+pub mod list_314;
+pub mod list_detailed_314;
 pub mod reset_status_319;

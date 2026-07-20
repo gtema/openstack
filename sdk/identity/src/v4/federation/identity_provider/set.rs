@@ -32,6 +32,11 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityProvider<'a> {
+    /// List of allowed redirect URIs for OIDC flows.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) allowed_redirect_uris: Option<Vec<Cow<'a, str>>>,
+
     /// The new bound issuer that is verified when using the identity provider.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -91,6 +96,11 @@ pub struct IdentityProvider<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) oidc_response_types: Option<Vec<Cow<'a, str>>>,
+
+    /// List of OIDC scopes to request during the OIDC authorization flow.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) oidc_scopes: Option<Vec<Cow<'a, str>>>,
 
     /// New additional provider configuration.
     #[serde()]

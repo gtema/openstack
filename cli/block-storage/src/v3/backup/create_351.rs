@@ -136,10 +136,6 @@ impl BackupCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_351::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.51"),
-        );
 
         // Set body parameters
         // Set Request.backup data

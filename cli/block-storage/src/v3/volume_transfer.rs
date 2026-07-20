@@ -20,11 +20,11 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod accept;
+pub mod accept_355;
 pub mod create_355;
-pub mod delete;
-pub mod list;
-pub mod show;
+pub mod delete_355;
+pub mod list_355;
+pub mod show_355;
 
 /// Volume transfers (volume-transfers) (3.55 or later)
 ///
@@ -41,12 +41,16 @@ pub struct VolumeTransferCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VolumeTransferCommands {
-    Accept(Box<accept::VolumeTransferCommand>),
+    #[command(visible_alias = "accept")]
+    Accept355(Box<accept_355::VolumeTransferCommand>),
     #[command(visible_alias = "create")]
     Create355(Box<create_355::VolumeTransferCommand>),
-    Delete(Box<delete::VolumeTransferCommand>),
-    List(Box<list::VolumeTransfersCommand>),
-    Show(Box<show::VolumeTransferCommand>),
+    #[command(visible_alias = "delete")]
+    Delete355(Box<delete_355::VolumeTransferCommand>),
+    #[command(visible_alias = "list")]
+    List355(Box<list_355::VolumeTransfersCommand>),
+    #[command(visible_alias = "show")]
+    Show355(Box<show_355::VolumeTransferCommand>),
 }
 
 impl VolumeTransferCommand {
@@ -57,11 +61,11 @@ impl VolumeTransferCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            VolumeTransferCommands::Accept(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeTransferCommands::Accept355(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeTransferCommands::Create355(cmd) => cmd.take_action(parsed_args, session).await,
-            VolumeTransferCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            VolumeTransferCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            VolumeTransferCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeTransferCommands::Delete355(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeTransferCommands::List355(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeTransferCommands::Show355(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

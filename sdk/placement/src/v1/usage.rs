@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/usages` REST operations of placement
-pub mod list;
+pub mod list_19;

@@ -16,9 +16,9 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/servers/{server_id}/tags/{id}` REST operations of compute
-pub mod delete;
-pub mod delete_all;
-pub mod get;
-pub mod list;
+pub mod delete_226;
+pub mod delete_all_226;
+pub mod get_226;
+pub mod list_226;
 pub mod replace_226;
-pub mod set;
+pub mod set_226;

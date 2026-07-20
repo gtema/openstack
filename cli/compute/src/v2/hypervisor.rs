@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
-pub mod show;
+pub mod list_21;
+pub mod show_21;
 
 /// Lists all hypervisors, shows summary statistics for all hypervisors over
 /// all compute nodes, shows details for a hypervisor, shows the uptime for a
@@ -40,8 +40,10 @@ pub struct HypervisorCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum HypervisorCommands {
-    List(list::HypervisorsCommand),
-    Show(show::HypervisorCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::HypervisorsCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::HypervisorCommand),
 }
 
 impl HypervisorCommand {
@@ -52,8 +54,8 @@ impl HypervisorCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            HypervisorCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            HypervisorCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            HypervisorCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            HypervisorCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

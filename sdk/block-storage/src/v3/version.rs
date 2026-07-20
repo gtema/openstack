@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v3/` REST operations of block-storage
-pub mod get;
+pub mod get_30;

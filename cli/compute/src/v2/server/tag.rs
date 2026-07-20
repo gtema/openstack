@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-mod delete;
-mod delete_all;
-mod list;
+mod delete_226;
+mod delete_all_226;
+mod list_226;
 mod replace_226;
-mod set;
-mod show;
+mod set_226;
+mod show_226;
 
 /// Lists tags, creates, replaces or deletes one or more tags for a
 /// server, checks the existence of a tag for a server.
@@ -57,11 +57,14 @@ pub struct TagCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TagCommands {
-    Add(set::TagCommand),
-    Check(show::TagCommand),
-    Delete(delete::TagCommand),
-    List(list::TagsCommand),
-    Purge(delete_all::TagCommand),
+    Add(set_226::TagCommand),
+    Check(show_226::TagCommand),
+    #[command(visible_alias = "delete")]
+    Delete226(delete_226::TagCommand),
+    #[command(visible_alias = "list")]
+    List226(list_226::TagsCommand),
+    #[command(visible_alias = "purge")]
+    Purge226(delete_all_226::TagCommand),
     #[command(visible_alias = "replace")]
     Replace226(replace_226::TagCommand),
 }
@@ -76,9 +79,9 @@ impl TagCommand {
         match &self.command {
             TagCommands::Add(cmd) => cmd.take_action(parsed_args, session).await,
             TagCommands::Check(cmd) => cmd.take_action(parsed_args, session).await,
-            TagCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            TagCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            TagCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Delete226(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::List226(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Purge226(cmd) => cmd.take_action(parsed_args, session).await,
             TagCommands::Replace226(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

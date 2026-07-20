@@ -188,6 +188,12 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) node_count: Option<i32>,
 
+    #[builder(default, private, setter(into, name = "_node_labels"))]
+    pub(crate) node_labels: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+
+    #[builder(default, setter(into))]
+    pub(crate) node_taints: Option<Vec<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
+
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
 
@@ -269,6 +275,19 @@ impl<'a> RequestBuilder<'a> {
         V: Into<LabelsSkipped<'a>>,
     {
         self.labels_skipped
+            .get_or_insert(None)
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
+    pub fn node_labels<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.node_labels
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
@@ -371,6 +390,12 @@ impl RestEndpoint for Request<'_> {
         }
         if let Some(val) = &self.node_count {
             params.push("node_count", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.node_labels {
+            params.push("node_labels", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.node_taints {
+            params.push("node_taints", serde_json::to_value(val)?);
         }
         if let Some(val) = &self.project_id {
             params.push("project_id", serde_json::to_value(val)?);

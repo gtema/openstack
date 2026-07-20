@@ -22,7 +22,7 @@ use openstack_sdk_core::api::rest_endpoint_prelude::*;
 use openstack_sdk_core::api::{ApiError, RestClient};
 use tracing::trace;
 
-use crate::v2::keypair::{get as Get, list as List};
+use crate::v2::keypair::{get_20 as Get, list_20 as List};
 
 /// Find for keypair by nameOrId.
 #[derive(Debug, Builder, Clone)]

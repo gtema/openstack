@@ -20,10 +20,10 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-mod delete;
+mod delete_224;
 mod force_complete_222;
-mod list;
-mod show;
+mod list_223;
+mod show_223;
 
 /// Server migrations (servers, migrations)
 ///
@@ -39,11 +39,14 @@ pub struct MigrationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MigrationCommands {
-    Delete(delete::MigrationCommand),
+    #[command(visible_alias = "delete")]
+    Delete224(delete_224::MigrationCommand),
     #[command(visible_alias = "force-complete")]
     ForceComplete222(force_complete_222::MigrationCommand),
-    List(list::MigrationsCommand),
-    Show(show::MigrationCommand),
+    #[command(visible_alias = "list")]
+    List223(list_223::MigrationsCommand),
+    #[command(visible_alias = "show")]
+    Show223(show_223::MigrationCommand),
 }
 
 impl MigrationCommand {
@@ -54,10 +57,10 @@ impl MigrationCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            MigrationCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::Delete224(cmd) => cmd.take_action(parsed_args, session).await,
             MigrationCommands::ForceComplete222(cmd) => cmd.take_action(parsed_args, session).await,
-            MigrationCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            MigrationCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::List223(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::Show223(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

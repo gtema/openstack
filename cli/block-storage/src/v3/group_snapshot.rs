@@ -20,10 +20,10 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
 pub mod create_314;
-pub mod delete;
-pub mod list;
+pub mod delete_314;
+pub mod list_314;
 pub mod reset_status_319;
-pub mod show;
+pub mod show_314;
 
 /// GroupSnapshot snapshots (group_snapshots)
 ///
@@ -41,11 +41,14 @@ pub struct GroupSnapshotCommand {
 pub enum GroupSnapshotCommands {
     #[command(visible_alias = "create")]
     Create314(Box<create_314::GroupSnapshotCommand>),
-    Delete(Box<delete::GroupSnapshotCommand>),
-    List(Box<list::GroupSnapshotsCommand>),
+    #[command(visible_alias = "delete")]
+    Delete314(Box<delete_314::GroupSnapshotCommand>),
+    #[command(visible_alias = "list")]
+    List314(Box<list_314::GroupSnapshotsCommand>),
     #[command(visible_alias = "reset-status")]
     ResetStatus319(Box<reset_status_319::GroupSnapshotCommand>),
-    Show(Box<show::GroupSnapshotCommand>),
+    #[command(visible_alias = "show")]
+    Show314(Box<show_314::GroupSnapshotCommand>),
 }
 
 impl GroupSnapshotCommand {
@@ -57,12 +60,12 @@ impl GroupSnapshotCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             GroupSnapshotCommands::Create314(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupSnapshotCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupSnapshotCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSnapshotCommands::Delete314(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSnapshotCommands::List314(cmd) => cmd.take_action(parsed_args, session).await,
             GroupSnapshotCommands::ResetStatus319(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
-            GroupSnapshotCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSnapshotCommands::Show314(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

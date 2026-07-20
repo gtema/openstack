@@ -226,10 +226,6 @@ impl ServerCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = rebuild_294::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("compute 2.94"),
-        );
 
         ep_builder.id(&self.path.id);
 

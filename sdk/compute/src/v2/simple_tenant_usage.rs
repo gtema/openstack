@@ -16,5 +16,5 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-simple-tenant-usage` REST operations of compute
-pub mod get;
-pub mod list;
+pub mod get_21;
+pub mod list_21;

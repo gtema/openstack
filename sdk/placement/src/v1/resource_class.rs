@@ -16,8 +16,8 @@
 // `openstack-codegenerator`.
 
 //! `/resource_classes` REST operations of placement
-pub mod create;
-pub mod delete;
-pub mod get;
-pub mod list;
+pub mod create_12;
+pub mod delete_12;
+pub mod get_12;
+pub mod list_12;
 pub mod set_17;

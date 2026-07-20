@@ -16,7 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-floating-ips` REST operations of compute
-pub mod create;
-pub mod delete;
-pub mod get;
-pub mod list;
+pub mod create_21;
+pub mod delete_21;
+pub mod get_21;
+pub mod list_21;

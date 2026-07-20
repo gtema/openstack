@@ -16,7 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v3/default-types/{id}` REST operations of block-storage
-pub mod delete;
-pub mod get;
-pub mod list;
+pub mod delete_362;
+pub mod get_362;
+pub mod list_362;
 pub mod set_362;

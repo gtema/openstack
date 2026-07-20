@@ -36,7 +36,6 @@ use serde_json::Value;
 
 /// Request of the ports/port_id/add_allowed_address_pairs:put operation
 #[derive(Args)]
-#[command(about = "Add allowed_address_pairs to port")]
 pub struct PortCommand {
     /// Request Query parameters
     #[command(flatten)]

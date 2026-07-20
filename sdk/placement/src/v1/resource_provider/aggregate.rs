@@ -16,6 +16,6 @@
 // `openstack-codegenerator`.
 
 //! `/resource_providers/{uuid}/aggregates` REST operations of placement
-pub mod list;
+pub mod list_11;
 pub mod set_11;
 pub mod set_119;

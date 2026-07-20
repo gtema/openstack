@@ -18,7 +18,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
+pub mod list_110;
 
 /// Allocation candidates
 #[derive(Parser)]
@@ -31,7 +31,8 @@ pub struct AllocationCandidateCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AllocationCandidateCommands {
-    List(list::AllocationCandidateCommand),
+    #[command(visible_alias = "list")]
+    List110(list_110::AllocationCandidateCommand),
 }
 
 impl AllocationCandidateCommand {
@@ -42,7 +43,9 @@ impl AllocationCandidateCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            AllocationCandidateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCandidateCommands::List110(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
         }
     }
 }

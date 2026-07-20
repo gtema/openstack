@@ -99,10 +99,6 @@ impl GroupTypeCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = create_311::Request::builder();
-        ep_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("volume 3.11"),
-        );
 
         // Set body parameters
         // Set Request.group_type data

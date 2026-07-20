@@ -20,7 +20,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
+pub mod list_333;
 
 /// Resource filters
 ///
@@ -36,7 +36,8 @@ pub struct ResourceFilterCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ResourceFilterCommands {
-    List(list::ResourceFiltersCommand),
+    #[command(visible_alias = "list")]
+    List333(list_333::ResourceFiltersCommand),
 }
 
 impl ResourceFilterCommand {
@@ -47,7 +48,7 @@ impl ResourceFilterCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ResourceFilterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceFilterCommands::List333(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

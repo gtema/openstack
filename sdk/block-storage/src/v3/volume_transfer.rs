@@ -16,11 +16,11 @@
 // `openstack-codegenerator`.
 
 //! `/v3/volume-transfers/{id}/accept` REST operations of block-storage
-pub mod accept;
+pub mod accept_355;
 pub mod create_30;
 pub mod create_355;
-pub mod delete;
+pub mod delete_355;
 pub mod find;
-pub mod get;
-pub mod list;
-pub mod list_detailed;
+pub mod get_355;
+pub mod list_355;
+pub mod list_detailed_355;

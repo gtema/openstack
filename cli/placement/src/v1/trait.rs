@@ -18,10 +18,10 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod list;
-pub mod set;
-pub mod show;
+pub mod delete_16;
+pub mod list_16;
+pub mod set_16;
+pub mod show_16;
 
 /// Traits
 ///
@@ -40,10 +40,13 @@ pub struct TraitCommand {
 #[derive(Subcommand)]
 pub enum TraitCommands {
     #[command(visible_alias = "set")]
-    Create(set::TraitCommand),
-    Delete(delete::TraitCommand),
-    List(list::TraitsCommand),
-    Show(show::TraitCommand),
+    Create(set_16::TraitCommand),
+    #[command(visible_alias = "delete")]
+    Delete16(delete_16::TraitCommand),
+    #[command(visible_alias = "list")]
+    List16(list_16::TraitsCommand),
+    #[command(visible_alias = "show")]
+    Show16(show_16::TraitCommand),
 }
 
 impl TraitCommand {
@@ -55,9 +58,9 @@ impl TraitCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             TraitCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            TraitCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            TraitCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            TraitCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Delete16(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::List16(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Show16(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

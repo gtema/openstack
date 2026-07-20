@@ -19,10 +19,10 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
 pub mod create_311;
-pub mod delete;
-pub mod list;
+pub mod delete_311;
+pub mod list_311;
 pub mod set_311;
-pub mod show;
+pub mod show_311;
 
 /// Group type specs (group_types, group_specs)
 #[derive(Parser)]
@@ -39,11 +39,14 @@ pub struct GroupSpecCommand {
 pub enum GroupSpecCommands {
     #[command(visible_alias = "create")]
     Create311(Box<create_311::GroupSpecCommand>),
-    Delete(Box<delete::GroupSpecCommand>),
-    List(Box<list::GroupSpecsCommand>),
+    #[command(visible_alias = "delete")]
+    Delete311(Box<delete_311::GroupSpecCommand>),
+    #[command(visible_alias = "list")]
+    List311(Box<list_311::GroupSpecsCommand>),
     #[command(visible_alias = "set")]
     Set311(Box<set_311::GroupSpecCommand>),
-    Show(Box<show::GroupSpecCommand>),
+    #[command(visible_alias = "show")]
+    Show311(Box<show_311::GroupSpecCommand>),
 }
 
 impl GroupSpecCommand {
@@ -55,10 +58,10 @@ impl GroupSpecCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             GroupSpecCommands::Create311(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupSpecCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupSpecCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSpecCommands::Delete311(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSpecCommands::List311(cmd) => cmd.take_action(parsed_args, session).await,
             GroupSpecCommands::Set311(cmd) => cmd.take_action(parsed_args, session).await,
-            GroupSpecCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupSpecCommands::Show311(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

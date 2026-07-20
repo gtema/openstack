@@ -46,8 +46,9 @@ pub struct SubnetpoolResponse {
     /// subnet pool for project subnets. Default is no quota is enforced on
     /// allocations from the subnet pool. For IPv4 subnet pools,
     /// `default_quota` is measured in units of /32. For IPv6 subnet pools,
-    /// `default_quota` is measured units of /64. All projects that use the
-    /// subnet pool have the same prefix quota applied.
+    /// `default_quota` is measured in units of /64. All projects that use the
+    /// subnet pool have the same prefix quota applied. If `default_quota` is
+    /// `0`, no quota will be enforced.
     #[serde(
         default,
         deserialize_with = "openstack_types_core::common::deser_num_str_opt"

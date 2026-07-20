@@ -16,6 +16,6 @@
 // `openstack-codegenerator`.
 
 //! `/resource_providers/{uuid}/traits` REST operations of placement
-pub mod delete;
-pub mod list;
-pub mod set;
+pub mod delete_16;
+pub mod list_16;
+pub mod set_16;

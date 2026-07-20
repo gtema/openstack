@@ -18,7 +18,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
+pub mod list_11;
 pub mod set_11;
 pub mod set_119;
 
@@ -73,7 +73,8 @@ pub struct AggregateCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AggregateCommands {
-    List(list::AggregateCommand),
+    #[command(visible_alias = "list")]
+    List11(list_11::AggregateCommand),
     #[command(visible_alias = "set")]
     Set119(set_119::AggregateCommand),
     Set11(set_11::AggregateCommand),
@@ -87,7 +88,7 @@ impl AggregateCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            AggregateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::List11(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Set119(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Set11(cmd) => cmd.take_action(parsed_args, session).await,
         }

@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v4/federation/identity_providers/{idp_id}` with `PUT` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -69,6 +69,12 @@ struct PathParameters {
 /// IdentityProvider Body data
 #[derive(Args, Clone)]
 struct IdentityProvider {
+    /// List of allowed redirect URIs for OIDC flows.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    allowed_redirect_uris: Option<Vec<String>>,
+
     /// The new bound issuer that is verified when using the identity provider.
     #[arg(help_heading = "Body parameters", long)]
     bound_issuer: Option<String>,
@@ -154,6 +160,12 @@ struct IdentityProvider {
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     oidc_response_types: Option<Vec<String>>,
 
+    /// List of OIDC scopes to request during the OIDC authorization flow.
+    ///
+    /// Parameter is an array, may be provided multiple times.
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    oidc_scopes: Option<Vec<String>>,
+
     /// New additional provider configuration.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     provider_config: Vec<(String, Value)>,
@@ -183,6 +195,11 @@ impl IdentityProviderCommand {
         // Set Request.identity_provider data
         let args = &self.identity_provider;
         let mut identity_provider_builder = set::IdentityProviderBuilder::default();
+        if let Some(val) = &args.allowed_redirect_uris {
+            identity_provider_builder
+                .allowed_redirect_uris(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
         if let Some(val) = &args.bound_issuer {
             identity_provider_builder.bound_issuer(Some(val.into()));
         } else if args.no_bound_issuer {
@@ -243,6 +260,10 @@ impl IdentityProviderCommand {
         if let Some(val) = &args.oidc_response_types {
             identity_provider_builder
                 .oidc_response_types(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.oidc_scopes {
+            identity_provider_builder.oidc_scopes(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         identity_provider_builder.provider_config(args.provider_config.iter().cloned());

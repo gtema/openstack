@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod defaults;
+pub mod defaults_20;
 pub mod delete;
 pub mod details;
 pub mod set_236;
@@ -42,7 +42,8 @@ pub struct QuotaSetCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum QuotaSetCommands {
-    Defaults(defaults::QuotaSetCommand),
+    #[command(visible_alias = "defaults")]
+    Defaults20(defaults_20::QuotaSetCommand),
     Delete(delete::QuotaSetCommand),
     Details(details::QuotaSetCommand),
     #[command(visible_alias = "set")]
@@ -59,7 +60,7 @@ impl QuotaSetCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            QuotaSetCommands::Defaults(cmd) => cmd.take_action(parsed_args, session).await,
+            QuotaSetCommands::Defaults20(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Details(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Set257(cmd) => cmd.take_action(parsed_args, session).await,
