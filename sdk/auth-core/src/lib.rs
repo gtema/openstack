@@ -419,6 +419,7 @@ use secrecy::SecretString;
 use thiserror::Error;
 use tracing::{Level, event, instrument};
 
+pub mod auth_helper;
 pub mod authtoken;
 pub mod authtoken_scope;
 pub mod types;

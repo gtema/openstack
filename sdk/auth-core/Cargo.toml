@@ -11,11 +11,15 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+interactive = ["dep:dialoguer"]
+
 [dependencies]
 async-trait.workspace = true
 bytes.workspace = true
 chrono.workspace = true
 derive_builder.workspace = true
+dialoguer = { workspace = true, optional = true }
 dyn-clone = { version = "1.0" }
 http.workspace = true
 inventory.workspace = true

@@ -226,11 +226,10 @@ where
     };
 
     if let Some(hdrs) = request.headers_mut()
-        && let Ok(val) =
-            HeaderValue::from_str(format!("{} {}", st, req_ver).as_str())
-        {
-            hdrs.insert("OpenStack-API-Version", val);
-        }
+        && let Ok(val) = HeaderValue::from_str(format!("{} {}", st, req_ver).as_str())
+    {
+        hdrs.insert("OpenStack-API-Version", val);
+    }
     Ok(())
 }
 
@@ -806,12 +805,11 @@ mod tests {
             }
         }
 
-        fn make_service_endpoint(
-            min: Option<&str>,
-            max: Option<&str>,
-        ) -> ServiceEndpoint {
-            let mut sep =
-                ServiceEndpoint::new(Url::parse("http://test.com/v2.1/").unwrap(), ApiVersion::new(2, 1));
+        fn make_service_endpoint(min: Option<&str>, max: Option<&str>) -> ServiceEndpoint {
+            let mut sep = ServiceEndpoint::new(
+                Url::parse("http://test.com/v2.1/").unwrap(),
+                ApiVersion::new(2, 1),
+            );
             if let Some(m) = min {
                 sep.set_min_version(Some(m));
             }
@@ -887,10 +885,7 @@ mod tests {
             let sep = make_service_endpoint(Some("1.0"), Some("1.20"));
             let mut req = http::Request::builder();
             set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
-            assert_eq!(
-                header(&req),
-                Some("placement 1.10".into())
-            );
+            assert_eq!(header(&req), Some("placement 1.10".into()));
         }
 
         #[test]
@@ -904,8 +899,10 @@ mod tests {
 
         #[test]
         fn other_service_type_skips_header() {
-            let ep =
-                make_ep(Some(ApiVersion::new(2, 30)), ServiceType::Other("custom-service".into()));
+            let ep = make_ep(
+                Some(ApiVersion::new(2, 30)),
+                ServiceType::Other("custom-service".into()),
+            );
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
             set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
@@ -936,10 +933,7 @@ mod tests {
             let err =
                 set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
                     .unwrap_err();
-            assert!(matches!(
-                err,
-                ApiError::MicroversionIncompatible { .. }
-            ));
+            assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
         #[test]
@@ -988,10 +982,7 @@ mod tests {
             let err =
                 set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
                     .unwrap_err();
-            assert!(matches!(
-                err,
-                ApiError::MicroversionIncompatible { .. }
-            ));
+            assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
         #[test]
@@ -1031,10 +1022,7 @@ mod tests {
             let err =
                 set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
                     .unwrap_err();
-            assert!(matches!(
-                err,
-                ApiError::MicroversionIncompatible { .. }
-            ));
+            assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
         // ── unversioned / zero-version endpoints ─────────────────────
@@ -1219,8 +1207,7 @@ mod tests {
         fn negotiate_clamps_up_to_cloud_min() {
             let ep = make_ep(Some(ApiVersion::new(2, 5)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.10"), Some("2.60"));
-            let negotiated =
-                negotiate_microversion::<FakeOpenStackClient, _>(&sep, &ep).unwrap();
+            let negotiated = negotiate_microversion::<FakeOpenStackClient, _>(&sep, &ep).unwrap();
             assert_eq!(negotiated, Some(ApiVersion::new(2, 10)));
         }
 
@@ -1240,8 +1227,7 @@ mod tests {
         fn negotiate_unversioned_returns_none() {
             let ep = make_ep(None, ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
-            let negotiated =
-                negotiate_microversion::<FakeOpenStackClient, _>(&sep, &ep).unwrap();
+            let negotiated = negotiate_microversion::<FakeOpenStackClient, _>(&sep, &ep).unwrap();
             assert_eq!(negotiated, None);
         }
     }

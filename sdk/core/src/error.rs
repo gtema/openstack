@@ -135,14 +135,6 @@ pub enum OpenStackError {
         source: ConfigError,
     },
 
-    /// Dialoguer error
-    #[error("error reading the user input: {}", source)]
-    Dialoguer {
-        /// The source of the error
-        #[from]
-        source: dialoguer::Error,
-    },
-
     /// Service version discovery error
     #[error(
         "`{}` endpoint version discovery error:\n\tUrl: {}\n\tMessage: {}",
