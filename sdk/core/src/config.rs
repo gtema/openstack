@@ -492,7 +492,14 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> String {
 
     let mut hasher = Sha256::new();
     hasher.update(canonical.as_bytes());
-    format!("{:x}", hasher.finalize())
+    hasher
+        .finalize()
+        .iter()
+        .fold(String::with_capacity(64), |mut s, b| {
+            use std::fmt::Write;
+            let _ = write!(s, "{:02x}", b);
+            s
+        })
 }
 
 /// CloudConfig struct implementation.
