@@ -70,7 +70,7 @@ impl From<&'static RegexError> for ApiVersionError {
 ///
 /// ApiVersion of the Endpoint as described in
 /// <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html>. It is a subset of a SemVer and only includes `major` and `minor` parts.
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ApiVersion {
     /// Major version.
     pub major: u8,

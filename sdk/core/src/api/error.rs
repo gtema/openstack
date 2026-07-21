@@ -191,6 +191,27 @@ where
         #[from]
         source: http::uri::InvalidUri,
     },
+
+    /// The endpoint requires a microversion outside the range supported by the cloud.
+    #[error(
+        "requested microversion {required_major}.{required_minor} is not supported by the cloud (range: {range})",
+        range = match (&cloud_min, &cloud_max) {
+            (Some(mn), Some(mx)) => format!("{mn}..={mx}"),
+            (Some(mn), None) => format!("{mn}..*"),
+            (None, Some(mx)) => format!("*..={mx}"),
+            (None, None) => "*..*".to_string(),
+        }
+    )]
+    MicroversionIncompatible {
+        /// The required microversion major.
+        required_major: u8,
+        /// The required microversion minor.
+        required_minor: u8,
+        /// Cloud's reported minimum microversion, if known.
+        cloud_min: Option<String>,
+        /// Cloud's reported maximum microversion, if known.
+        cloud_max: Option<String>,
+    },
 }
 
 impl<E> ApiError<E>
@@ -307,6 +328,21 @@ where
     pub fn endpoint_builder<EX: Error + Send>(error: EX) -> Self {
         ApiError::EndpointBuilder {
             message: error.to_string(),
+        }
+    }
+
+    /// Create a MicroversionIncompatible error.
+    pub fn microversion_incompatible(
+        required_major: u8,
+        required_minor: u8,
+        cloud_min: Option<String>,
+        cloud_max: Option<String>,
+    ) -> Self {
+        ApiError::MicroversionIncompatible {
+            required_major,
+            required_minor,
+            cloud_min,
+            cloud_max,
         }
     }
 }

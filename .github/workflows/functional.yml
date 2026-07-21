@@ -11,11 +11,12 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
       - '.github/workflows/functional.yml'
-      - 'auth-*/**'
-      - 'cli-*/**'
+      - 'cli/**'
       - 'openstack_cli/**'
       - 'openstack_sdk/**'
-      - 'sdk-*/**'
+      - 'openstack_types/**'
+      - 'sdk/**'
+      - 'types/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
