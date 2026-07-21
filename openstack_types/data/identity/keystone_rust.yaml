@@ -21,53 +21,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Versions'
-  /health:
-    get:
-      tags:
-      - health
-      summary: Health check endpoint.
-      description: |-
-        Perform diverse checks to identify the overall status of the system. It can
-        be `OK`, `SERVICE_UNAVAILABLE`. In difference to the `/ready` check this
-        does not return `SERVICE_UNAVAILABLE` when components are in the degraded
-        state to prevent from the restart. It is similar to the `/live` check.
-      operationId: health
-      responses:
-        '200':
-          description: Service is healthy
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthResponse'
-        '503':
-          description: Service is unhealthy
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthResponse'
-  /ready:
-    get:
-      tags:
-      - health
-      summary: Readiness health check endpoint.
-      description: |-
-        Perform relevant checks only returning `OK` when all of them are ok. Any
-        check in the degraded/warn state would result in `SERVICE_UNAVAILABLE`
-        response.
-      operationId: ready
-      responses:
-        '200':
-          description: Service is healthy
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthResponse'
-        '503':
-          description: Service is unhealthy
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthResponse'
   /v3:
     get:
       tags:
@@ -157,12 +110,6 @@ paths:
           type:
           - boolean
           - 'null'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthRequest'
-        required: true
       responses:
         '200':
           description: Token object
@@ -170,6 +117,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+        '429':
+          description: Rate limit exceeded
     delete:
       tags:
       - auth
@@ -184,6 +133,373 @@ paths:
       responses:
         '204':
           description: Token has been revoked.
+  /v3/credentials:
+    get:
+      tags:
+      - credentials
+      summary: List credentials.
+      description: List credentials
+      operationId: list
+      parameters:
+      - name: type
+        in: query
+        description: Filter by credential type.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: user_id
+        in: query
+        description: Filter by owning user ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - credentials
+      summary: Create a new credential.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Credential created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/credentials/{credential_id}:
+    get:
+      tags:
+      - credentials
+      summary: Get single credential.
+      description: Get credential by ID
+      operationId: show
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Credential object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialResponse'
+        '404':
+          description: Credential not found
+    delete:
+      tags:
+      - credentials
+      summary: Delete a credential.
+      description: Delete credential by ID
+      operationId: delete
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Credential deleted
+        '404':
+          description: Credential not found
+    patch:
+      tags:
+      - credentials
+      summary: Update an existing credential.
+      description: Update credential by ID
+      operationId: update
+      parameters:
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialResponse'
+        '404':
+          description: Credential not found
+  /v3/domains:
+    get:
+      tags:
+      - domains
+      summary: List domains
+      description: List domains
+      operationId: list
+      parameters:
+      - name: ids
+        in: query
+        description: Filter domains by the `id` attribute.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Filter domains by the `name` attribute.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of domains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - domains
+      summary: Create domain.
+      description: Creates a domain, which is a container for projects and users.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Domain created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/domains/{domain_id}:
+    get:
+      tags:
+      - domains
+      summary: Get single domain
+      operationId: show
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Single domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainResponse'
+        '404':
+          description: Domain not found
+    delete:
+      tags:
+      - domains
+      summary: Delete domain by ID.
+      operationId: remove
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Domain not found
+  /v3/ec2tokens:
+    post:
+      tags:
+      - ec2tokens
+      summary: |-
+        Validate the signed `credentials` object and issue a Keystone token
+        scoped to the referenced EC2 credential's project/user.
+      description: Validate an EC2 request signature and issue a token
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ec2TokenAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Token object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /v3/endpoints:
+    get:
+      tags:
+      - endpoints
+      summary: List endpoints
+      description: List endpoints
+      operationId: list
+      parameters:
+      - name: interface
+        in: query
+        description: Filters the response by an interface.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: service_id
+        in: query
+        description: Filters the response by a service ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: region_id
+        in: query
+        description: Filters the response by a region ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of endpoints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - endpoints
+      summary: Create a new Endpoint.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Endpoint created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointResponse'
+        '400':
+          description: Invalid input
+        '404':
+          description: Service not found
+        '500':
+          description: Internal error
+  /v3/endpoints/{endpoint_id}:
+    get:
+      tags:
+      - endpoints
+      summary: Get single endpoint
+      description: Get endpoint by ID
+      operationId: show
+      parameters:
+      - name: endpoint_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Endpoint object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointResponse'
+        '404':
+          description: Endpoint not found
+    delete:
+      tags:
+      - endpoints
+      summary: Delete an endpoint.
+      description: Delete endpoint by ID
+      operationId: delete
+      parameters:
+      - name: endpoint_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Endpoint deleted
+        '404':
+          description: Endpoint not found
+    patch:
+      tags:
+      - endpoints
+      summary: Update existing endpoint
+      description: Update endpoint by ID
+      operationId: update
+      parameters:
+      - name: endpoint_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointResponse'
+        '404':
+          description: Endpoint not found
   /v3/groups:
     get:
       tags:
@@ -272,6 +588,46 @@ paths:
         '404':
           description: group not found
   /v3/projects:
+    get:
+      tags:
+      - projects
+      summary: List projects
+      description: List projects
+      operationId: list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Filter projects by domain ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: ids
+        in: query
+        description: Filter projects by the `id` attribute.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Filter projects by name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectShortList'
+        '500':
+          description: Internal error
     post:
       tags:
       - projects
@@ -296,6 +652,26 @@ paths:
         '500':
           description: Internal error
   /v3/projects/{project_id}:
+    get:
+      tags:
+      - projects
+      summary: Get single project
+      operationId: show
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Single project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Project not found
     delete:
       tags:
       - projects
@@ -312,6 +688,32 @@ paths:
           description: Deleted
         '404':
           description: Project not found
+  /v3/projects/{project_id}/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on a project.
+      operationId: /project/user/role:list
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: User or project not found
+      security:
+      - x-auth: []
   /v3/projects/{project_id}/users/{user_id}/roles/{role_id}:
     put:
       tags:
@@ -491,6 +893,25 @@ paths:
                 $ref: '#/components/schemas/AssignmentList'
         '500':
           description: Internal error
+  /v3/role_inferences:
+    get:
+      tags:
+      - roles
+      summary: List all role inference rules.
+      operationId: /role_inferences:list
+      responses:
+        '200':
+          description: List of all role inference rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleInferencesList'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - x-auth: []
   /v3/roles:
     get:
       tags:
@@ -546,6 +967,157 @@ paths:
           description: Invalid input
         '500':
           description: Internal error
+  /v3/roles/{prior_role_id}/implies:
+    get:
+      tags:
+      - roles
+      summary: List role imply rules for a prior role.
+      operationId: /roles/prior_role/implies:list
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of role imply rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleInferenceRules'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - x-auth: []
+  /v3/roles/{prior_role_id}/implies/{implied_role_id}:
+    get:
+      tags:
+      - roles
+      summary: Get a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:get
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Role imply rule details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleImplyResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role imply rule not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - roles
+      summary: Create a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:put
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Role imply rule created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleImplyResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - roles
+      summary: Delete a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:delete
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role imply rule deleted.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - roles
+      summary: Check if a role imply rule exists.
+      operationId: /roles/prior_role/implies/implied_role:check
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role imply rule exists.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role imply rule not found
+      security:
+      - x-auth: []
   /v3/roles/{role_id}:
     get:
       tags:
@@ -568,6 +1140,247 @@ paths:
                 $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
+    delete:
+      tags:
+      - roles
+      summary: Delete a role.
+      description: Delete role by ID
+      operationId: delete
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role deleted
+        '404':
+          description: Role not found
+  /v3/services:
+    get:
+      tags:
+      - services
+      summary: List services
+      description: List services
+      operationId: list
+      parameters:
+      - name: name
+        in: query
+        description: Filters the response by a service name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: type
+        in: query
+        description: Filters the response by a service type.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of services
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - services
+      summary: Create a new Service.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Service created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/services/{service_id}:
+    get:
+      tags:
+      - services
+      summary: Get single service
+      description: Get service by ID
+      operationId: show
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Service object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceResponse'
+        '404':
+          description: Service not found
+    delete:
+      tags:
+      - services
+      summary: Delete a service.
+      description: Delete service by ID
+      operationId: delete
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Service deleted
+        '404':
+          description: Service not found
+    patch:
+      tags:
+      - services
+      summary: Update existing service
+      description: Update service by ID
+      operationId: update
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceResponse'
+        '404':
+          description: Service not found
+  /v3/system/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on the system.
+      operationId: /system/user/role:list
+      parameters:
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: User not found
+      security:
+      - x-auth: []
+  /v3/system/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on system
+      description: Assigns a role to a user on the system.
+      operationId: /system/user/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on system
+      description: Remove a role assignment for a user on the system.
+      operationId: /system/user/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on system.
+      description: Validates that a user has a role on the system.
+      operationId: /system/user/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v3/users:
     get:
       tags:
@@ -666,6 +1479,137 @@ paths:
           description: Deleted
         '404':
           description: User not found
+    patch:
+      tags:
+      - users
+      summary: Update existing user
+      description: Update user by ID
+      operationId: update
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+  /v3/users/{user_id}/credentials/OS-EC2:
+    get:
+      tags:
+      - OS-EC2
+      summary: List a user's EC2 credentials.
+      description: List a user's EC2 credentials (OS-EC2 legacy API)
+      operationId: list
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of EC2 credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ec2CredentialList'
+    post:
+      tags:
+      - OS-EC2
+      summary: |-
+        Create a new EC2 credential for a user. `access`/`secret` are
+        auto-generated (UUIDs) when omitted from the request (ADR 0019 §2,
+        "Automatic Creation").
+      description: Create an EC2 credential for a user (OS-EC2 legacy API)
+      operationId: create
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ec2CredentialCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: EC2 credential created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ec2CredentialResponse'
+        '400':
+          description: Invalid input
+  /v3/users/{user_id}/credentials/OS-EC2/{credential_id}:
+    get:
+      tags:
+      - OS-EC2
+      summary: |-
+        Get a single EC2 credential. The `credential_id` path segment is the
+        **plaintext access key** (ADR 0019 §2, "Plaintext ID Lookup"), hashed
+        (`SHA-256`) server-side to locate the record.
+      description: Get an EC2 credential by plaintext access key (OS-EC2 legacy API)
+      operationId: show
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: EC2 credential object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ec2CredentialResponse'
+        '404':
+          description: EC2 credential not found
+    delete:
+      tags:
+      - OS-EC2
+      summary: |-
+        Delete an EC2 credential. The `credential_id` path segment is the
+        **plaintext access key** (ADR 0019 §2, "Plaintext ID Lookup").
+      description: Delete an EC2 credential by plaintext access key (OS-EC2 legacy API)
+      operationId: delete
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: EC2 credential not found
   /v3/users/{user_id}/groups:
     get:
       tags:
@@ -688,6 +1632,38 @@ paths:
                 $ref: '#/components/schemas/GroupList'
         '500':
           description: Internal error
+  /v3/users/{user_id}/password:
+    post:
+      tags:
+      - users
+      summary: Set or change user password.
+      description: Set or change user password
+      operationId: change_password
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasswordRequest'
+        required: true
+      responses:
+        '204':
+          description: Password changed successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Original password is incorrect
+        '404':
+          description: User not found
+        '409':
+          description: Password change not supported for nonlocal user
+        '500':
+          description: Internal error
   /v4:
     get:
       tags:
@@ -702,6 +1678,183 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleVersion'
+  /v4/api-keys:
+    get:
+      tags:
+      - api_key
+      summary: List API Keys.
+      description: |-
+        `domain_id` is a mandatory filter (ADR 0021 §5.B): unlike mapping
+        rulesets, API Keys are always domain-owned, so there is no "global" or
+        "all visible domains" listing mode.
+      operationId: /api_key:list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Domain to list keys for.
+        required: true
+        schema:
+          type: string
+      - name: enabled
+        in: query
+        description: Restrict to enabled/disabled keys.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - name: provider_id
+        in: query
+        description: Restrict to keys bound to this `provider_id`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of API Keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyList'
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - api_key
+      summary: Create a new API Key.
+      operationId: /api_key:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiKeyCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: API Key object, including the one-time bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreateResponse'
+      security:
+      - x-auth: []
+  /v4/api-keys/simulate-access:
+    post:
+      tags:
+      - api_key
+      summary: |-
+        Perform a mock authentication pass for an API Key, returning its fully
+        resolved authorization topology without presenting a bearer token.
+      operationId: /api_key:simulate_access
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiKeySimulateAccessRequest'
+        required: true
+      responses:
+        '200':
+          description: Simulated authorization topology
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeySimulateAccessResponse'
+      security:
+      - x-auth: []
+  /v4/api-keys/{client_id}:
+    get:
+      tags:
+      - api_key
+      summary: Show an API Key by `client_id`.
+      operationId: /api_key:show
+      parameters:
+      - name: client_id
+        in: path
+        description: API Key client_id
+        required: true
+        schema:
+          type: string
+      - name: domain_id
+        in: query
+        description: Domain the key belongs to.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: API Key object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyResponse'
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - api_key
+      summary: Update an API Key's configuration.
+      operationId: /api_key:update
+      parameters:
+      - name: client_id
+        in: path
+        description: API Key client_id
+        required: true
+        schema:
+          type: string
+      - name: domain_id
+        in: query
+        description: Domain the key belongs to.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiKeyUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: API Key object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyResponse'
+      security:
+      - x-auth: []
+  /v4/api-keys/{client_id}/revoke:
+    post:
+      tags:
+      - api_key
+      summary: |-
+        Revoke an API Key: disables it and stamps the tombstone. Does not hard
+        delete the record (ADR 0021 §5.C) -- physical reclamation is the
+        janitor's job (§6.F).
+      operationId: /api_key:revoke
+      parameters:
+      - name: client_id
+        in: path
+        description: API Key client_id
+        required: true
+        schema:
+          type: string
+      - name: domain_id
+        in: query
+        description: Domain the key belongs to.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Revoked API Key object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyResponse'
+      security:
+      - x-auth: []
   /v4/auth/passkey/finish:
     post:
       tags:
@@ -719,7 +1872,7 @@ paths:
               $ref: '#/components/schemas/PasskeyAuthenticationFinishRequest'
         required: true
       responses:
-        '200':
+        '201':
           description: Authentication Token object
           headers:
             x-subject-token:
@@ -748,7 +1901,7 @@ paths:
               $ref: '#/components/schemas/PasskeyAuthenticationStartRequest'
         required: true
       responses:
-        '200':
+        '201':
           description: Challenge that must be signed with any of the user passkeys
           content:
             application/json:
@@ -815,12 +1968,6 @@ paths:
           type:
           - boolean
           - 'null'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthRequest'
-        required: true
       responses:
         '200':
           description: Token object
@@ -828,6 +1975,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+        '429':
+          description: Rate limit exceeded
     delete:
       tags:
       - auth
@@ -842,6 +1991,86 @@ paths:
       responses:
         '204':
           description: Token has been revoked.
+  /v4/auth_plugins/{plugin_name}/identity_links:
+    post:
+      tags:
+      - auth_plugin
+      summary: Create an admin-authorized `(plugin_name, external_id) -> user_id` link.
+      operationId: /auth_plugin/identity_link:create
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityLinkCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Identity link
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityLinkResponse'
+        '409':
+          description: external_id already linked
+      security:
+      - x-auth: []
+  /v4/auth_plugins/{plugin_name}/identity_links/{external_id}:
+    delete:
+      tags:
+      - auth_plugin
+      summary: Delete an admin-authorized identity link and revoke the user's tokens.
+      operationId: /auth_plugin/identity_link:delete
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      - name: external_id
+        in: path
+        description: External identity id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Identity link deleted
+        '404':
+          description: No such identity link
+      security:
+      - x-auth: []
+  /v4/auth_plugins/{plugin_name}/revoke_all:
+    post:
+      tags:
+      - auth_plugin
+      summary: Revoke all persistent state a `full_auth` plugin wrote.
+      operationId: /auth_plugin/revoke_all
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Revocation summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeAllResponse'
+        '404':
+          description: No such dynamic plugin
+      security:
+      - x-auth: []
   /v4/federation/identity_providers:
     get:
       tags:
@@ -1048,17 +2277,11 @@ paths:
     post:
       tags:
       - identity_providers
-      summary: Authentication using the JWT.
-      description: |-
-        This operation allows user to exchange the JWT issued by the trusted
-        identity provider for the regular Keystone session token. Request specifies
-        the necessary authentication mapping, which is also used to validate
-        expected claims.
       operationId: /federation/identity_provider/jwt:login
       parameters:
       - name: openstack-mapping
         in: header
-        description: Federated attribute mapping
+        description: Rule name hint for targeted rule matching
         required: true
         schema:
           type: string
@@ -1081,180 +2304,11 @@ paths:
                 $ref: '#/components/schemas/TokenResponse'
       security:
       - jwt: []
-  /v4/federation/mappings:
-    get:
-      tags:
-      - mappings
-      summary: List federation mappings.
-      description: |-
-        List available federation mappings.
-
-        Without `domain_id` specified global mappings are returned.
-
-        It is expected that listing mappings belonging to the other domain is only
-        allowed to the admin user.
-      operationId: /federation/mapping:list
-      parameters:
-      - name: domain_id
-        in: query
-        description: Filters the response by a domain ID.
-        required: false
-        schema:
-          type: string
-      - name: idp_id
-        in: query
-        description: Filters the response by a idp ID.
-        required: false
-        schema:
-          type: string
-      - name: name
-        in: query
-        description: Filters the response by IDP name.
-        required: false
-        schema:
-          type: string
-      - name: limit
-        in: query
-        description: Limit number of entries on the single response page (Maximal 100).
-        required: false
-        schema:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-      - name: marker
-        in: query
-        description: Page marker (id of the last entry on the previous page.
-        required: false
-        schema:
-          type:
-          - string
-          - 'null'
-      - name: type
-        in: query
-        description: Filters the response by a mapping type.
-        required: false
-        schema:
-          $ref: '#/components/schemas/MappingType'
-      responses:
-        '200':
-          description: List of mappings
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MappingList'
-        '500':
-          description: Internal error
-      security:
-      - x-auth: []
-    post:
-      tags:
-      - mappings
-      summary: Create attribute mapping.
-      operationId: /federation/mapping:create
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MappingCreateRequest'
-        required: true
-      responses:
-        '201':
-          description: mapping object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MappingResponse'
-      security:
-      - x-auth: []
-  /v4/federation/mappings/{id}:
-    get:
-      tags:
-      - mappings
-      summary: Get single mapping.
-      description: Show the attribute mapping attribute by the ID.
-      operationId: /federation/mapping:show
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the attribute mapping.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: mapping object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MappingResponse'
-        '404':
-          description: mapping not found
-      security:
-      - x-auth: []
-    put:
-      tags:
-      - mappings
-      summary: Update attribute mapping.
-      description: 'TODO: describe domain_id update rules'
-      operationId: /federation/mapping:update
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the attribute mapping.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MappingUpdateRequest'
-        required: true
-      responses:
-        '200':
-          description: mapping object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MappingResponse'
-        '404':
-          description: mapping not found
-      security:
-      - x-auth: []
-    delete:
-      tags:
-      - mappings
-      summary: Delete attribute mapping.
-      operationId: /federation/mapping:delete
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the attribute mapping
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          description: Mapping not found
-      security:
-      - x-auth: []
   /v4/federation/oidc/callback:
     post:
       tags:
       - identity_providers
-      summary: Authentication callback.
-      description: |-
-        This operation allows user to exchange the authorization code retrieved from
-        the identity provider after calling the
-        `/v4/federation/identity_providers/{idp_id}/auth` for the Keystone
-        token. When desired scope was passed in that auth initialization call the
-        scoped token is returned (assuming the user is having roles assigned on that
-        scope).
-      operationId: /federation/oidc:callback
+      operationId: federation/oidc/callback
       requestBody:
         content:
           application/json:
@@ -1504,10 +2558,8 @@ paths:
       - k8s_auth_instance
       summary: Authenticate using the JWT token of the Kubernetes service account.
       description: |-
-        This operation takes the JWT token of the Kubernetes service account, K8s
-        auth instance and role name and exchanges them to the Keystone token with
-        the user and scope information from the token restrictions bound with the
-        k8s auth role.
+        Validates the JWT via TokenReview, flattens claims, and delegates to the
+        unified mapping engine for identity resolution and authorization.
       operationId: /k8s_auth/auth:post
       parameters:
       - name: instance_id
@@ -1533,112 +2585,107 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
-  /v4/k8s_auth/instances/{instance_id}/roles:
+  /v4/mappings/rulesets:
     get:
       tags:
-      - k8s_auth_role
-      summary: List K8 auth roles.
-      description: List available K8s auth roles belonging to the auth instance.
-      operationId: /k8s_auth/instance/role:list
+      - mapping_ruleset
+      summary: List mapping rulesets.
+      operationId: /mapping_ruleset:list
       parameters:
-      - name: name
+      - name: domain_id
         in: query
-        description: Name.
+        description: Filter by domain ID.
         required: false
         schema:
           type:
           - string
           - 'null'
-      - name: instance_id
-        in: path
-        description: The ID of the k8s auth instance
-        required: true
+      - name: enabled
+        in: query
+        description: Filter by enabled/disabled state.
+        required: false
         schema:
-          type: string
+          type:
+          - boolean
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries per page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (ID of the last entry on the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       responses:
         '200':
-          description: List of roles
+          description: List of rulesets
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/K8sAuthRoleList'
-        '500':
-          description: Internal error
+                $ref: '#/components/schemas/MappingRuleSetList'
       security:
       - x-auth: []
     post:
       tags:
-      - k8s_auth_role
-      summary: Create K8s auth role.
-      operationId: /k8s_auth/instance/role:create
-      parameters:
-      - name: instance_id
-        in: path
-        description: The ID of the k8s auth instance
-        required: true
-        schema:
-          type: string
+      - mapping_ruleset
+      summary: Create a new mapping ruleset.
+      operationId: /mapping_ruleset:create
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/K8sAuthRoleCreateRequest'
+              $ref: '#/components/schemas/MappingRuleSetCreateRequest'
         required: true
       responses:
         '201':
-          description: role object
+          description: Ruleset object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/K8sAuthRoleResponse'
+                $ref: '#/components/schemas/MappingRuleSetResponse'
       security:
       - x-auth: []
-  /v4/k8s_auth/instances/{instance_id}/roles/{id}:
+  /v4/mappings/rulesets/{mapping_id}:
     get:
       tags:
-      - k8s_auth_role
-      summary: Get single K8s auth role of a instance.
-      description: Show the k8s auth role by the ID.
-      operationId: /k8s_auth/instance/role:show
+      - mapping_ruleset
+      summary: Show a mapping ruleset by ID.
+      operationId: /mapping_ruleset:show
       parameters:
-      - name: instance_id
+      - name: mapping_id
         in: path
-        description: The ID of the K8s auth instance.
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        description: The ID of the K8s auth role.
+        description: Mapping ruleset ID
         required: true
         schema:
           type: string
       responses:
         '200':
-          description: role object
+          description: Ruleset object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/K8sAuthRoleResponse'
-        '404':
-          description: role not found
+                $ref: '#/components/schemas/MappingRuleSetResponse'
       security:
       - x-auth: []
     put:
       tags:
-      - k8s_auth_role
-      summary: Update K8s auth role of an instance.
-      operationId: /k8s_auth/instance/role:update
+      - mapping_ruleset
+      summary: Update a mapping ruleset.
+      operationId: /mapping_ruleset:update
       parameters:
-      - name: instance_id
+      - name: mapping_id
         in: path
-        description: The ID of the K8s auth instance.
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        description: The ID of the K8s auth role.
+        description: Mapping ruleset ID
         required: true
         schema:
           type: string
@@ -1646,162 +2693,749 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/K8sAuthRoleUpdateRequest'
+              $ref: '#/components/schemas/MappingRuleSetUpdateRequest'
         required: true
       responses:
         '200':
-          description: role object
+          description: Ruleset object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/K8sAuthRoleResponse'
-        '404':
-          description: role not found
+                $ref: '#/components/schemas/MappingRuleSetResponse'
       security:
       - x-auth: []
     delete:
       tags:
-      - k8s_auth_role
-      summary: Delete k8s auth role of an instance.
-      operationId: /k8s_auth/instance/role:delete
+      - mapping_ruleset
+      summary: Delete a mapping ruleset by ID.
+      operationId: /mapping_ruleset:delete
       parameters:
-      - name: instance_id
+      - name: mapping_id
         in: path
-        description: The ID of the K8s auth instance.
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        description: The ID of the K8s auth role.
+        description: Mapping ruleset ID
         required: true
         schema:
           type: string
       responses:
         '204':
-          description: Deleted
-        '404':
-          description: Role not found
+          description: Mapping ruleset deleted successfully
       security:
       - x-auth: []
-  /v4/k8s_auth/roles:
+  /v4/mappings/rulesets/{mapping_id}/rules/mutate:
+    post:
+      tags:
+      - mapping_ruleset
+      summary: Mutate rules within a mapping ruleset imperatively.
+      description: |-
+        Allows insertion, update, and deletion of individual rules
+        at specific positions within the ruleset.
+      operationId: /mapping_ruleset:rules_mutate
+      parameters:
+      - name: mapping_id
+        in: path
+        description: Mapping ruleset ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleMutationsRequest'
+        required: true
+      responses:
+        '200':
+          description: Ruleset object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingRuleSetResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/.well-known/openid-configuration:
     get:
       tags:
-      - k8s_auth_role
-      summary: List K8 auth roles.
-      description: List available K8s auth roles.
-      operationId: /k8s_auth/role:list
+      - oauth2
+      summary: Publish the OIDC discovery document for a domain.
+      description: |-
+        Unauthenticated by design, same as `jwks` (ADR 0026 §3): relying parties
+        must be able to fetch it without a Keystone token. 404s if the domain has
+        no signing keys provisioned yet (reuses `jwks()`'s own existence check).
+      operationId: /oauth2:well_known
       parameters:
-      - name: auth_instance_id
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OIDC discovery document
+        '404':
+          description: No signing keys provisioned for this domain
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/authorize:
+    get:
+      tags:
+      - oauth2
+      summary: |-
+        `GET /v4/oauth2/{domain_id}/authorize` (RFC 6749 §4.1.1, ADR 0026 §10
+        Phase 4).
+      operationId: /oauth2:authorize
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: response_type
         in: query
-        description: K8s auth instance id.
         required: false
         schema:
           type:
           - string
           - 'null'
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: redirect_uri
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: scope
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: state
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: code_challenge
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: code_challenge_method
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: nonce
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Login form rendered
+          content:
+            text/html: {}
+        '303':
+          description: Redirect back to the client with a code or error
+        '400':
+          description: Malformed request or unregistered redirect_uri
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/authorize/consent:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/authorize/consent`.'
+      operationId: /oauth2:authorize_consent
+      parameters:
       - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ConsentForm'
+        required: true
+      responses:
+        '303':
+          description: Redirect back to the client with a code or error
+        '400':
+          description: Missing/expired session, not signed in, or invalid CSRF token
+  /v4/oauth2/{domain_id}/authorize/login:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/authorize/login`.'
+      operationId: /oauth2:authorize_login
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginForm'
+        required: true
+      responses:
+        '200':
+          description: Consent form rendered, or login form re-rendered on failure
+          content:
+            text/html: {}
+        '303':
+          description: 'Pre-authorized client: redirected straight to the RP with a code'
+        '400':
+          description: Missing/expired session or invalid CSRF token
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/clients:
+    get:
+      tags:
+      - oauth2_client
+      summary: List OAuth2 clients for a domain.
+      operationId: /oauth2/client:list
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: enabled
         in: query
         description: |-
-          Domain id.
-
-          Bu default only user with corresponding privileges is allowed to list
-          roles of the domain other than in the current scope.
+          Filter by enabled/disabled state. `domain_id` comes from the URL
+          path, not the query string.
         required: false
         schema:
           type:
-          - string
+          - boolean
           - 'null'
-      - name: name
+      responses:
+        '200':
+          description: List of OAuth2 clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuth2ClientList'
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - oauth2_client
+      summary: Register a new OAuth2 client (relying party).
+      operationId: /oauth2/client:create
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuth2ClientCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: OAuth2 client object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuth2ClientCreateResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/clients/{provider_id}:
+    get:
+      tags:
+      - oauth2_client
+      summary: |-
+        Show an OAuth2 client by its `(domain_id, provider_id)` coordinate.
+        Never includes `client_secret_hash`.
+      operationId: /oauth2/client:show
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Client provider_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OAuth2 client object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuth2ClientResponse'
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - oauth2_client
+      summary: Update an OAuth2 client's mutable configuration.
+      operationId: /oauth2/client:update
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Client provider_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuth2ClientUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OAuth2 client object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuth2ClientResponse'
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - oauth2_client
+      summary: Revoke (soft-delete) an OAuth2 client.
+      operationId: /oauth2/client:delete
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Client provider_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: OAuth2 client revoked
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/clients/{provider_id}/rotate-secret:
+    post:
+      tags:
+      - oauth2_client
+      summary: Generate and persist a fresh client secret, returned exactly once.
+      operationId: /oauth2/client:rotate_secret
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Client provider_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: One-time plaintext client secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuth2ClientRotateSecretResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/confirm-rotate-signing-key:
+    post:
+      tags:
+      - oauth2_key
+      operationId: /oauth2/key:confirm_rotate_signing_key
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmRotateSigningKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Confirmation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmRotateSigningKeyResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/device:
+    get:
+      tags:
+      - oauth2
+      summary: |-
+        `GET /v4/oauth2/{domain_id}/device` (RFC 8628 §3.3). Renders the
+        user_code entry form, pre-filled from `verification_uri_complete`'s
+        `user_code` query parameter if present.
+      operationId: /oauth2:device
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: user_code
         in: query
-        description: Name.
         required: false
         schema:
           type:
           - string
           - 'null'
+      responses:
+        '200':
+          description: Code-entry form rendered
+          content:
+            text/html: {}
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/device`: submit the `user_code`.'
+      operationId: /oauth2:device_submit_code
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceCodeForm'
+        required: true
+      responses:
+        '200':
+          description: Login form rendered, or code-entry form re-rendered on failure
+          content:
+            text/html: {}
+  /v4/oauth2/{domain_id}/device/consent:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/device/consent`.'
+      operationId: /oauth2:device_consent
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceConsentForm'
+        required: true
+      responses:
+        '200':
+          description: Final result page rendered
+          content:
+            text/html: {}
+        '400':
+          description: Missing/expired grant, not signed in, or invalid CSRF token
+  /v4/oauth2/{domain_id}/device/login:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/device/login`.'
+      operationId: /oauth2:device_login
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceLoginForm'
+        required: true
+      responses:
+        '200':
+          description: Consent form rendered, login re-rendered on failure, or the final result page for pre_authorized clients
+          content:
+            text/html: {}
+        '400':
+          description: Missing/expired grant or invalid CSRF token
+  /v4/oauth2/{domain_id}/device_authorization:
+    post:
+      tags:
+      - oauth2
+      operationId: /oauth2:device_authorization
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceAuthorizationForm'
+        required: true
+      responses:
+        '200':
+          description: Device authorization grant issued
+        '400':
+          description: Malformed request, unknown client, or invalid scope
+  /v4/oauth2/{domain_id}/ensure-signing-key:
+    post:
+      tags:
+      - oauth2_key
+      operationId: /oauth2/key:ensure_signing_key
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Signing key present
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnsureSigningKeyResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/jwks:
+    get:
+      tags:
+      - oauth2
+      summary: Publish a domain's active OAuth2 signing keys as a JWKS.
+      description: |-
+        Unauthenticated by design (ADR 0026 §3): relying parties and edge proxies
+        must be able to fetch and cache this without a Keystone token.
+        `Cache-Control: public, max-age=300` aligns with the 300-second cache
+        refresh window relied on by the Python middleware (§3, "Key Lifecycle &
+        The Cache Invalidation Window"). Publishes both `Primary` and `Previous`
+        (when a rotation happened recently) — the multi-generational publishing
+        pool that keeps outstanding tokens verifiable during a key's grace
+        window.
+      operationId: /oauth2:jwks
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: JSON Web Key Set
+        '404':
+          description: No signing keys provisioned for this domain
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/jwks/revocation:
+    get:
+      tags:
+      - oauth2
+      operationId: /oauth2:jwks_revocation
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: JTI revocation list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwksRevocationResponse'
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/local-emergency-candidates:
+    get:
+      tags:
+      - oauth2_key
+      operationId: /oauth2/key:list_local_emergency_candidates
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Local emergency candidates on this node
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLocalEmergencyCandidatesResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/reconcile-local-emergency-key:
+    post:
+      tags:
+      - oauth2_key
+      operationId: /oauth2/key:reconcile_local_emergency_key
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReconcileLocalEmergencyKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Reconciliation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconcileLocalEmergencyKeyResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/rotate-signing-key:
+    post:
+      tags:
+      - oauth2_key
+      operationId: /oauth2/key:rotate_signing_key
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateSigningKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Rotation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RotateSigningKeyResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/token:
+    post:
+      tags:
+      - oauth2
+      summary: '`client_credentials` machine-to-machine grant (ADR 0026 §5, §7.A).'
+      operationId: /oauth2:token
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenForm'
+        required: true
+      responses:
+        '200':
+          description: Access token issued
+        '400':
+          description: Malformed request, unsupported grant, or invalid scope
+        '401':
+          description: Invalid client credentials
+        '429':
+          description: Rate limit exceeded
+  /v4/role_assignments/projects/{project_id}/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on a project.
+      operationId: /project/user/role:list
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: List of roles
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/K8sAuthRoleList'
-        '500':
-          description: Internal error
-      security:
-      - x-auth: []
-  /v4/k8s_auth/roles/{id}:
-    get:
-      tags:
-      - k8s_auth_role
-      summary: Get single K8s auth role.
-      description: Show the k8s auth role by the ID.
-      operationId: /k8s_auth/role:show
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the k8s auth role.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: role object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/K8sAuthRoleResponse'
         '404':
-          description: role not found
-      security:
-      - x-auth: []
-    put:
-      tags:
-      - k8s_auth_role
-      summary: Update K8s auth role.
-      operationId: /k8s_auth/role:update
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the k8s auth role.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/K8sAuthRoleUpdateRequest'
-        required: true
-      responses:
-        '200':
-          description: role object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/K8sAuthRoleResponse'
-        '404':
-          description: role not found
-      security:
-      - x-auth: []
-    delete:
-      tags:
-      - k8s_auth_role
-      summary: Delete k8s auth role.
-      operationId: /k8s_auth/role:delete
-      parameters:
-      - name: id
-        in: path
-        description: The ID of the k8s auth role
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          description: Role not found
+          description: User or project not found
       security:
       - x-auth: []
   /v4/role_assignments/projects/{project_id}/users/{user_id}/roles/{role_id}:
@@ -1983,6 +3617,109 @@ paths:
                 $ref: '#/components/schemas/AssignmentList'
         '500':
           description: Internal error
+  /v4/role_assignments/system/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on the system.
+      operationId: /system/user/role:list
+      parameters:
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: User not found
+      security:
+      - x-auth: []
+  /v4/role_assignments/system/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on system
+      description: Assigns a role to a user on the system.
+      operationId: /system/user/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on system
+      description: Remove a role assignment for a user on the system.
+      operationId: /system/user/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on system.
+      description: Validates that a user has a role on the system.
+      operationId: /system/user/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v4/roles:
     get:
       tags:
@@ -2038,6 +3775,157 @@ paths:
           description: Invalid input
         '500':
           description: Internal error
+  /v4/roles/{prior_role_id}/implies:
+    get:
+      tags:
+      - roles
+      summary: List role imply rules for a prior role.
+      operationId: /roles/prior_role/implies:list
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of role imply rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleInferenceRules'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - x-auth: []
+  /v4/roles/{prior_role_id}/implies/{implied_role_id}:
+    get:
+      tags:
+      - roles
+      summary: Get a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:get
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Role imply rule details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleImplyResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role imply rule not found
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - roles
+      summary: Create a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:put
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Role imply rule created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleImplyResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - roles
+      summary: Delete a role imply rule.
+      operationId: /roles/prior_role/implies/implied_role:delete
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role imply rule deleted.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - roles
+      summary: Check if a role imply rule exists.
+      operationId: /roles/prior_role/implies/implied_role:check
+      parameters:
+      - name: prior_role_id
+        in: path
+        description: The prior role ID.
+        required: true
+        schema:
+          type: string
+      - name: implied_role_id
+        in: path
+        description: The implied role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role imply rule exists.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Role imply rule not found
+      security:
+      - x-auth: []
   /v4/roles/{role_id}:
     get:
       tags:
@@ -2060,6 +3948,172 @@ paths:
                 $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
+    delete:
+      tags:
+      - roles
+      summary: Delete a role.
+      description: Delete role by ID
+      operationId: delete
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role deleted
+        '404':
+          description: Role not found
+  /v4/scim_realms:
+    get:
+      tags:
+      - scim_realm
+      summary: List SCIM realms for a domain.
+      operationId: /scim_realm:list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Domain to list realms for.
+        required: true
+        schema:
+          type: string
+      - name: enabled
+        in: query
+        description: Filter by enabled/disabled state.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          description: List of SCIM realms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScimRealmList'
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - scim_realm
+      summary: Register a new SCIM realm.
+      operationId: /scim_realm:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScimRealmCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: SCIM realm object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScimRealmResponse'
+      security:
+      - x-auth: []
+  /v4/scim_realms/{domain_id}/{provider_id}:
+    get:
+      tags:
+      - scim_realm
+      summary: Show a SCIM realm by its `(domain_id, provider_id)` coordinate.
+      operationId: /scim_realm:show
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Realm provider_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SCIM realm object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScimRealmResponse'
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - scim_realm
+      summary: Update a SCIM realm (including enable/disable).
+      operationId: /scim_realm:update
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Realm provider_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScimRealmUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: SCIM realm object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScimRealmResponse'
+      security:
+      - x-auth: []
+  /v4/scim_realms/{domain_id}/{provider_id}/purge/{resource_type}/{keystone_id}:
+    delete:
+      tags:
+      - scim_realm
+      summary: |-
+        Immediately purge a single already-deprovisioned SCIM resource, ignoring
+        the configured retention window.
+      operationId: /scim_realm:purge
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: provider_id
+        in: path
+        description: Realm provider_id
+        required: true
+        schema:
+          type: string
+      - name: resource_type
+        in: path
+        description: '`user` or `group`'
+        required: true
+        schema:
+          type: string
+      - name: keystone_id
+        in: path
+        description: The resource's Keystone `User.id`/`Group.id`
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Resource purged
+      security:
+      - x-auth: []
   /v4/tokens/restrictions:
     get:
       tags:
@@ -2291,6 +4345,33 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '404':
           description: User not found
+    put:
+      tags:
+      - users
+      summary: Update existing user
+      description: Update user by ID
+      operationId: update
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
     delete:
       tags:
       - users
@@ -2328,6 +4409,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GroupList'
+        '404':
+          description: User not found
         '500':
           description: Internal error
   /v4/users/{user_id}/passkeys/register_finish:
@@ -2390,6 +4473,86 @@ paths:
                 $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
         '500':
           description: Internal error
+  v4auth_plugins/{plugin_name}/identity_links:
+    post:
+      tags:
+      - auth_plugin
+      summary: Create an admin-authorized `(plugin_name, external_id) -> user_id` link.
+      operationId: /auth_plugin/identity_link:create
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityLinkCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Identity link
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityLinkResponse'
+        '409':
+          description: external_id already linked
+      security:
+      - x-auth: []
+  v4auth_plugins/{plugin_name}/identity_links/{external_id}:
+    delete:
+      tags:
+      - auth_plugin
+      summary: Delete an admin-authorized identity link and revoke the user's tokens.
+      operationId: /auth_plugin/identity_link:delete
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      - name: external_id
+        in: path
+        description: External identity id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Identity link deleted
+        '404':
+          description: No such identity link
+      security:
+      - x-auth: []
+  v4auth_plugins/{plugin_name}/revoke_all:
+    post:
+      tags:
+      - auth_plugin
+      summary: Revoke all persistent state a `full_auth` plugin wrote.
+      operationId: /auth_plugin/revoke_all
+      parameters:
+      - name: plugin_name
+        in: path
+        description: Dynamic plugin name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Revocation summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeAllResponse'
+        '404':
+          description: No such dynamic plugin
+      security:
+      - x-auth: []
 components:
   schemas:
     AllowCredentials:
@@ -2412,6 +4575,253 @@ components:
         type_:
           type: string
           description: The type of credential.
+    ApiKey:
+      type: object
+      description: |-
+        A domain-owned machine identity credential used for stateless SCIM
+        ingress authentication. Never carries `secret_hash`/`lookup_hash` -- those
+        are internal to the authentication hot path and are not part of the admin
+        surface (ADR 0021 §2.B).
+      required:
+      - client_id
+      - created_at
+      - domain_id
+      - enabled
+      - expires_at
+      - provider_id
+      properties:
+        allowed_ips:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: |-
+            CIDR allowlist restricting the source IP of the request. `None` means
+            no restriction applies.
+        client_id:
+          type: string
+          description: Public UUID used for management API references.
+        created_at:
+          type: string
+          format: date-time
+          description: UTC timestamp the key was created.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Free-form administrative description.
+        domain_id:
+          type: string
+          description: Domain owning this machine identity.
+        enabled:
+          type: boolean
+          description: Whether the key currently authenticates.
+        expires_at:
+          type: string
+          format: date-time
+          description: Mandatory TTL.
+        last_used_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            UTC timestamp of the last successful authentication. Updated
+            asynchronously and may lag actual usage (ADR 0021 §6.F).
+        provider_id:
+          type: string
+          description: |-
+            The Unified Mapping Engine (ADR 0020) `provider_id` this key
+            authenticates against.
+        revoked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: UTC timestamp the key was revoked, if any.
+        revoked_by:
+          type:
+          - string
+          - 'null'
+          description: User ID of the operator who revoked the key, if any.
+    ApiKeyCreate:
+      type: object
+      description: API Key creation request payload.
+      required:
+      - domain_id
+      - expires_at
+      - provider_id
+      properties:
+        allowed_ips:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: CIDR allowlist restricting the source IP of the request.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Free-form administrative description.
+        domain_id:
+          type: string
+          description: Domain owning this machine identity.
+        expires_at:
+          type: string
+          format: date-time
+          description: Mandatory TTL.
+        provider_id:
+          type: string
+          description: |-
+            The Unified Mapping Engine (ADR 0020) `provider_id` this key
+            authenticates against.
+    ApiKeyCreateRequest:
+      type: object
+      description: API Key creation request wrapper.
+      required:
+      - api_key
+      properties:
+        api_key:
+          $ref: '#/components/schemas/ApiKeyCreate'
+          description: API Key creation payload.
+    ApiKeyCreateResponse:
+      type: object
+      description: |-
+        API Key creation response. `token` is the full opaque bearer value and is
+        returned exactly once -- it is never retrievable again after this
+        response (ADR 0021 §2.C).
+      required:
+      - api_key
+      - token
+      properties:
+        api_key:
+          $ref: '#/components/schemas/ApiKey'
+          description: The created API Key's metadata.
+        token:
+          type: string
+          description: The full `kscim_...` bearer token. Shown once; store it now.
+    ApiKeyList:
+      type: object
+      description: API Key list response.
+      required:
+      - api_keys
+      properties:
+        api_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKey'
+          description: Collection of API Keys.
+    ApiKeyResponse:
+      type: object
+      description: API Key response wrapper (show, update, revoke).
+      required:
+      - api_key
+      properties:
+        api_key:
+          $ref: '#/components/schemas/ApiKey'
+          description: API Key object.
+    ApiKeySimulateAccessRequest:
+      type: object
+      description: |-
+        Dry-run auditing request (`POST /v4/api-keys/simulate-access`). Shifted
+        to the body to prevent `client_id` leakage in proxy access logs (ADR 0021
+        §5.E).
+
+        ADR 0021 specifies the payload as `{"client_id": "<uuid>"}` only.
+        `domain_id` is added here because this implementation's storage partitions
+        `ApiClientResource` by domain (ADR 0021 §2.A), so a lookup by `client_id`
+        alone is not possible without it -- the same constraint applies to
+        show/update/revoke, which take `domain_id` as a query parameter.
+      required:
+      - client_id
+      - domain_id
+      properties:
+        client_id:
+          type: string
+          description: Public UUID of the key to simulate.
+        domain_id:
+          type: string
+          description: Domain the key belongs to.
+    ApiKeySimulateAccessResponse:
+      type: object
+      description: |-
+        Dry-run auditing response: the API Key's fully resolved authorization
+        topology, as it would be hydrated by a real SCIM ingress request right
+        now, without presenting the bearer token or performing cryptographic
+        verification (ADR 0021 §5.E).
+      required:
+      - client_id
+      - domain_id
+      - matched
+      - provider_id
+      - roles
+      properties:
+        client_id:
+          type: string
+          description: Public UUID of the simulated key.
+        domain_id:
+          type: string
+          description: Domain owning the key.
+        matched:
+          type: boolean
+          description: Whether the key would successfully authenticate.
+        provider_id:
+          type: string
+          description: The `provider_id` the key is bound to.
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Explains why `matched` is `false`. Absent when `matched` is `true`.
+        roles:
+          type: array
+          items:
+            type: string
+          description: |-
+            Effective role names, deduplicated and sorted. Empty when `matched`
+            is `false`.
+        scope:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SimulatedScope'
+            description: The scope the key would be granted. Absent when `matched` is `false`.
+    ApiKeyUpdate:
+      type: object
+      description: |-
+        API Key update request payload (`PUT /v4/api-keys/{client_id}`).
+
+        `allowed_ips` and `description` use nested `Option`s: the field being
+        absent from the JSON body means "leave unchanged", while an explicit
+        `null` clears it.
+      properties:
+        allowed_ips:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Absent = unchanged. `null` = clear. Present = set.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Absent = unchanged. `null` = clear. Present = set.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: Absent = unchanged.
+    ApiKeyUpdateRequest:
+      type: object
+      description: API Key update request wrapper.
+      required:
+      - api_key
+      properties:
+        api_key:
+          $ref: '#/components/schemas/ApiKeyUpdate'
+          description: API Key update payload.
     Assignment:
       type: object
       description: Assignment.
@@ -2482,39 +4892,6 @@ components:
         state:
           type: string
           description: Authentication state.
-    AuthRequest:
-      type: object
-      description: An authentication request.
-      required:
-      - auth
-      properties:
-        auth:
-          $ref: '#/components/schemas/AuthRequestInner'
-          description: An identity object.
-    AuthRequestInner:
-      type: object
-      description: An authentication request.
-      required:
-      - identity
-      properties:
-        identity:
-          $ref: '#/components/schemas/Identity'
-          description: An identity object.
-        scope:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Scope'
-            description: |-
-              The authorization scope, including the system (Since v3.10), a project,
-              or a domain (Since v3.4). If multiple scopes are specified in the
-              same request (e.g. project and domain or domain and system) an HTTP
-              400 Bad Request will be returned, as a token cannot be
-              simultaneously scoped to multiple authorization targets. An ID is
-              sufficient to uniquely identify a project but if a project is
-              specified by name, then the domain of the project must also be
-              specified in order to uniquely identify the project by name. A domain
-              scope may be specified by either the domain's ID or name with
-              equivalent results.
     AuthenticationExtensionsClientOutputs:
       type: object
       description: |-
@@ -2632,6 +5009,70 @@ components:
       - Test
       - Unknown
       - Usb
+    Authorization:
+      oneOf:
+      - type: object
+        description: Domain-level role assignment.
+        required:
+        - domain_id
+        - roles
+        - type
+        properties:
+          domain_id:
+            type: string
+            description: Domain ID to assign the roles on.
+          roles:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoleRef'
+            description: Roles to assign.
+          type:
+            type: string
+            enum:
+            - domain
+      - type: object
+        description: Project-level role assignment.
+        required:
+        - project_domain_id
+        - project_id
+        - roles
+        - type
+        properties:
+          project_domain_id:
+            type: string
+            description: Project domain ID.
+          project_id:
+            type: string
+            description: Project ID to assign the roles on.
+          roles:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoleRef'
+            description: Roles to assign.
+          type:
+            type: string
+            enum:
+            - project
+      - type: object
+        description: System-level role assignment.
+        required:
+        - roles
+        - system_id
+        - type
+        properties:
+          roles:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoleRef'
+            description: Roles to assign.
+          system_id:
+            type: string
+            description: System ID (typically `all` for global system scope).
+          type:
+            type: string
+            enum:
+            - system
+      description: Authorization assignment within a mapping rule.
     Catalog:
       type: array
       items:
@@ -2658,6 +5099,41 @@ components:
           type:
           - string
           - 'null'
+    ConfirmRotateSigningKeyRequest:
+      type: object
+      description: Request body for `POST /v4/oauth2/{domain_id}/confirm-rotate-signing-key`.
+      required:
+      - rotation_id
+      properties:
+        revoke_jtis:
+          type: array
+          items:
+            type: string
+          description: |-
+            JTIs known to have been issued by the compromised key during the
+            incident window, to add to the JTI revocation list (ADR 0026 §3).
+        rotation_id:
+          type: string
+          description: The `pending_rotation_id` returned by `rotate-signing-key`.
+    ConfirmRotateSigningKeyResponse:
+      type: object
+      description: Response body for `POST /v4/oauth2/{domain_id}/confirm-rotate-signing-key`.
+      required:
+      - kid
+      properties:
+        kid:
+          type: string
+          description: The newly active `Primary` key's `kid`.
+    ConsentForm:
+      type: object
+      required:
+      - csrf_token
+      - decision
+      properties:
+        csrf_token:
+          type: string
+        decision:
+          type: string
     CredProps:
       type: object
       description: <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>.
@@ -2691,6 +5167,91 @@ components:
             Whether it is better for the authenticator to fail to create a
             credential rather than ignore the protection policy If no value is
             provided, the client treats it as false.
+    Credential:
+      type: object
+      description: |-
+        The credential data, as returned to API clients. `blob` is the decrypted
+        secret serialised as a JSON-encoded string (ADR 0019 §2, "Wire format of
+        `blob`") — never a nested object. `encrypted_blob`/`key_hash` are never
+        exposed.
+      required:
+      - id
+      - blob
+      - type
+      - user_id
+      properties:
+        blob:
+          type: string
+          description: The decrypted secret blob, as a JSON-encoded string.
+        id:
+          type: string
+          description: |-
+            Credential ID. For `ec2` this is `SHA-256(blob['access'])`
+            hex-encoded; otherwise a random UUID.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: The project associated with the credential (mandatory for `ec2`).
+        type:
+          type: string
+          description: The credential type (`ec2`, `totp`, or an arbitrary custom string).
+        user_id:
+          type: string
+          description: The ID of the user who owns the credential.
+      additionalProperties: {}
+    CredentialCreate:
+      type: object
+      description: Credential create request body.
+      required:
+      - blob
+      - type
+      properties:
+        blob:
+          type: string
+          description: |-
+            The decrypted secret blob, as a JSON string. For `ec2` must contain an
+            `access` key.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The project to associate the credential with. Required if `type` is
+            `ec2`.
+        type:
+          type: string
+          description: The credential type.
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The user to own the credential. Defaults to the authenticated user
+            under user scope; must be supplied explicitly under system scope
+            (ADR 0019 §2).
+      additionalProperties:
+        description: Extra attributes for the credential.
+    CredentialCreateRequest:
+      type: object
+      description: New credential creation request.
+      required:
+      - credential
+      properties:
+        credential:
+          $ref: '#/components/schemas/CredentialCreate'
+          description: Credential object.
+    CredentialList:
+      type: object
+      description: Credentials list envelope.
+      required:
+      - credentials
+      properties:
+        credentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credential'
+          description: Collection of credential objects.
     CredentialProtectionPolicy:
       type: string
       description: Valid credential protection policies.
@@ -2698,20 +5259,81 @@ components:
       - Optional
       - OptionalWithCredentialIDList
       - Required
-    DatabaseStatus:
+    CredentialResponse:
       type: object
-      description: Health status of the database.
+      description: Single credential envelope.
       required:
-      - status
+      - credential
       properties:
-        message:
+        credential:
+          $ref: '#/components/schemas/Credential'
+          description: Credential object.
+    CredentialUpdate:
+      type: object
+      description: |-
+        Credential update request body. Only `blob`, `type`, and `project_id` are
+        updatable; `user_id` is immutable (CVE-2020-12691).
+      properties:
+        blob:
           type:
           - string
           - 'null'
-          description: The error message.
-        status:
-          $ref: '#/components/schemas/HealthStatus'
-          description: Status of database.
+          description: New decrypted secret blob (triggers re-encryption).
+        type:
+          type:
+          - string
+          - 'null'
+          description: New credential type.
+    CredentialUpdateRequest:
+      type: object
+      description: Credential update request.
+      required:
+      - credential
+      properties:
+        credential:
+          $ref: '#/components/schemas/CredentialUpdate'
+          description: Credential update patch.
+    DeviceAuthorizationForm:
+      type: object
+      properties:
+        client_id:
+          type:
+          - string
+          - 'null'
+        scope:
+          type:
+          - string
+          - 'null'
+    DeviceCodeForm:
+      type: object
+      required:
+      - user_code
+      properties:
+        user_code:
+          type: string
+    DeviceConsentForm:
+      type: object
+      required:
+      - csrf_token
+      - decision
+      properties:
+        csrf_token:
+          type: string
+        decision:
+          type: string
+    DeviceLoginForm:
+      type: object
+      required:
+      - csrf_token
+      - username
+      - password
+      properties:
+        csrf_token:
+          type: string
+        password:
+          type: string
+        username:
+          type: string
     Domain:
       type: object
       description: Domain information.
@@ -2726,6 +5348,237 @@ components:
           - string
           - 'null'
           description: Domain Name.
+    DomainCreate:
+      type: object
+      description: New domain data.
+      required:
+      - enabled
+      - name
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The description of the domain.
+        enabled:
+          type: boolean
+          description: If set to true, domain is enabled. If set to false, domain is disabled.
+        id:
+          type:
+          - string
+          - 'null'
+          description: The domain ID.
+        name:
+          type: string
+          description: The domain name.
+      additionalProperties:
+        description: Additional domain properties.
+    DomainCreateRequest:
+      type: object
+      description: New domain creation request.
+      required:
+      - domain
+      properties:
+        domain:
+          $ref: '#/components/schemas/DomainCreate'
+          description: Domain object.
+    DomainList:
+      type: object
+      description: List of domains.
+      required:
+      - domains
+      properties:
+        domains:
+          type: array
+          items:
+            $ref: '#/components/schemas/Domain'
+          description: Collection of domain objects.
+    DomainResolutionMode:
+      oneOf:
+      - type: object
+        description: Domain is resolved exclusively from claims.
+        required:
+        - allowed_domains
+        - type
+        properties:
+          allowed_domains:
+            type: array
+            items:
+              type: string
+            description: Allowed domain IDs that may be resolved from claims.
+          type:
+            type: string
+            enum:
+            - claims_only
+      - type: object
+        description: Domain is resolved from the mapping ruleset, falling back to claims.
+        required:
+        - allowed_domains
+        - type
+        properties:
+          allowed_domains:
+            type: array
+            items:
+              type: string
+            description: Allowed domain IDs that may be resolved from claims.
+          type:
+            type: string
+            enum:
+            - claims_or_mapping
+      - type: object
+        description: Domain is fixed to the `domain_id` set on the ruleset.
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - fixed
+      description: Domain resolution mode for the mapping ruleset.
+    DomainResponse:
+      type: object
+      description: Complete response with the domain data.
+      required:
+      - domain
+      properties:
+        domain:
+          $ref: '#/components/schemas/Domain'
+          description: Domain object.
+    Ec2Credential:
+      type: object
+      description: |-
+        An EC2 credential, as returned to API clients with `blob` flattened into
+        `access`/`secret`.
+      required:
+      - access
+      - secret
+      - user_id
+      - tenant_id
+      properties:
+        access:
+          type: string
+          description: |-
+            The plaintext EC2 access key. Also the value hashed
+            (`SHA-256`) to form the credential's storage ID.
+        secret:
+          type: string
+          description: The plaintext EC2 secret key.
+        tenant_id:
+          type: string
+          description: The project the credential is bound to.
+        trust_id:
+          type:
+          - string
+          - 'null'
+          description: The trust used to create the credential, if any.
+        user_id:
+          type: string
+          description: The ID of the user who owns the credential.
+    Ec2CredentialCreateRequest:
+      type: object
+      description: |-
+        `POST /v3/users/{user_id}/credentials/OS-EC2` request body. Unlike every
+        other Keystone v3 create request, this legacy body is **not** wrapped in
+        a resource key (a historical quirk carried over from the v2.0 EC2
+        credentials API).
+      required:
+      - tenant_id
+      properties:
+        access:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The access key. Auto-generated (UUID) when omitted (ADR 0019 §2,
+            "Automatic Creation").
+        secret:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The secret key. Auto-generated (UUID) when omitted (ADR 0019 §2,
+            "Automatic Creation").
+        tenant_id:
+          type: string
+          description: The project to bind the new EC2 credential to.
+    Ec2CredentialList:
+      type: object
+      description: EC2 credentials list envelope.
+      required:
+      - credentials
+      properties:
+        credentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ec2Credential'
+          description: Collection of EC2 credential objects.
+    Ec2CredentialResponse:
+      type: object
+      description: Single EC2 credential envelope.
+      required:
+      - credential
+      properties:
+        credential:
+          $ref: '#/components/schemas/Ec2Credential'
+          description: EC2 credential object.
+    Ec2SignatureCredentials:
+      type: object
+      description: |-
+        The `credentials` object: a signed AWS-style request description used to
+        authenticate the owner of the referenced EC2 access key.
+      required:
+      - access
+      properties:
+        access:
+          type: string
+          description: The EC2 access key identifying the credential record.
+        body_hash:
+          type:
+          - string
+          - 'null'
+          description: |-
+            SHA-256 hex digest of the request body (required for SigV4; use the
+            empty-string hash for requests with no body).
+        headers:
+          type: object
+          description: Headers included in the signed request (used for SigV4).
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        host:
+          type: string
+          description: The `Host` the request was signed against.
+        params:
+          type: object
+          description: Query parameters included in the signed request.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        path:
+          type: string
+          description: The HTTP path the request was signed against.
+        signature:
+          type:
+          - string
+          - 'null'
+          description: The client-computed signature to verify.
+        verb:
+          type: string
+          description: The HTTP verb the request was signed with (e.g. `GET`, `POST`).
+    Ec2TokenAuthRequest:
+      type: object
+      description: |-
+        `POST /v3/ec2tokens` request body. Python Keystone accepts the
+        `credentials` object under either the `credentials` key or the legacy
+        `ec2Credentials` key.
+      required:
+      - credentials
+      properties:
+        credentials:
+          $ref: '#/components/schemas/Ec2SignatureCredentials'
+          description: The signed request description.
     Endpoint:
       type: object
       description: A Catalog Endpoint.
@@ -2748,6 +5601,117 @@ components:
           - 'null'
         url:
           type: string
+    EndpointCreate:
+      type: object
+      description: Endpoint create request body.
+      required:
+      - interface
+      - service_id
+      - url
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: Defines whether the endpoint appears in the service catalog.
+        interface:
+          type: string
+          description: |-
+            The interface type, which describes the visibility of the endpoint
+            (`public`, `internal`, or `admin`).
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region that contains the service endpoint.
+        service_id:
+          type: string
+          description: The UUID of the service to which the endpoint belongs.
+        url:
+          type: string
+          description: The endpoint URL.
+      additionalProperties:
+        description: Extra attributes for the endpoint.
+    EndpointCreateRequest:
+      type: object
+      description: New endpoint creation request.
+      required:
+      - endpoint
+      properties:
+        endpoint:
+          $ref: '#/components/schemas/EndpointCreate'
+          description: Endpoint object.
+    EndpointList:
+      type: object
+      description: Endpoints.
+      required:
+      - endpoints
+      properties:
+        endpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          description: Collection of endpoint objects.
+    EndpointResponse:
+      type: object
+      required:
+      - endpoint
+      properties:
+        endpoint:
+          $ref: '#/components/schemas/Endpoint'
+          description: Endpoint object.
+    EndpointUpdate:
+      type: object
+      description: Update endpoint data.
+      properties:
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: Defines whether the endpoint appears in the service catalog.
+        interface:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The interface type, which describes the visibility of the endpoint
+            (`public`, `internal`, or `admin`).
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region that contains the service endpoint.
+        service_id:
+          type:
+          - string
+          - 'null'
+          description: The UUID of the service to which the endpoint belongs.
+        url:
+          type:
+          - string
+          - 'null'
+          description: The endpoint URL.
+      additionalProperties:
+        description: Extra attributes for the endpoint (replaces the existing extra).
+    EndpointUpdateRequest:
+      type: object
+      description: Endpoint update request.
+      required:
+      - endpoint
+      properties:
+        endpoint:
+          $ref: '#/components/schemas/EndpointUpdate'
+          description: Endpoint object.
+    EnsureSigningKeyResponse:
+      type: object
+      description: Response body for `POST /v4/oauth2/{domain_id}/ensure-signing-key`.
+      required:
+      - kid
+      properties:
+        kid:
+          type: string
+          description: |-
+            The domain's `Primary` key's `kid` -- pre-existing if one was
+            already provisioned, freshly generated otherwise.
     Federation:
       type: object
       description: User federation data.
@@ -2775,7 +5739,23 @@ components:
           description: Federation protocol ID.
         unique_id:
           type: string
-          description: Unique ID of the associated user.
+          description: |-
+            Unique ID of the associated user.
+
+            Unlike other `*_id` fields this is not a Keystone-generated ID, but an
+            arbitrary subject string supplied by the external IdP (e.g. a GitHub
+            Actions OIDC `sub` claim), which for merge-queue-triggered runs can
+            exceed 100 characters. The limit is kept below the backing column
+            width (`VARCHAR(255)`) rather than the usual 64-char ID convention.
+    GrantType:
+      type: string
+      description: OAuth2/OIDC grant type a client is authorized to use.
+      enum:
+      - authorization_code
+      - client_credentials
+      - device_code
+      - refresh_token
+      - urn:ietf:params:oauth:grant-type:token-exchange
     Group:
       type: object
       required:
@@ -2798,6 +5778,30 @@ components:
           type: string
           description: Group name.
       additionalProperties: {}
+    GroupAssignment:
+      type: object
+      description: Group assignment within a mapping rule.
+      required:
+      - group_name
+      properties:
+        group_domain_id:
+          type:
+          - string
+          - 'null'
+          description: Group domain ID.
+        group_id:
+          type:
+          - string
+          - 'null'
+          description: Group identifier.
+        group_name:
+          type: string
+          description: Group name.
+        strategy:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GroupStrategy'
+            description: Strategy for resolving the group. Defaults to `CreateOrGet`.
     GroupCreate:
       type: object
       required:
@@ -2843,44 +5847,12 @@ components:
         group:
           $ref: '#/components/schemas/Group'
           description: group object.
-    HealthComponents:
-      type: object
-      description: The health components of the system.
-      required:
-      - raft
-      - database
-      - policy
-      properties:
-        database:
-          $ref: '#/components/schemas/DatabaseStatus'
-          description: Status of the database.
-        policy:
-          $ref: '#/components/schemas/PolicyStatus'
-          description: Status of the policy enforcement engine.
-        raft:
-          $ref: '#/components/schemas/RaftStatus'
-          description: Status of the raft storage.
-    HealthResponse:
-      type: object
-      description: Health check response.
-      required:
-      - status
-      - components
-      properties:
-        components:
-          $ref: '#/components/schemas/HealthComponents'
-          description: Individual health checks.
-        status:
-          $ref: '#/components/schemas/HealthStatus'
-          description: Overall health status of the system.
-    HealthStatus:
+    GroupStrategy:
       type: string
-      description: The health status.
+      description: Group resolution strategy.
       enum:
-      - skipped
-      - ok
-      - warn
-      - error
+      - create_or_get
+      - get
     HmacGetSecretInput:
       type: object
       description: |-
@@ -2916,29 +5888,92 @@ components:
           format: binary
           description: Output of HMAC(Salt 2 || Client Secret).
           contentEncoding: base64
-    Identity:
+    IdentityBinding:
       type: object
-      description: An identity object.
+      description: |-
+        Identity binding that defines how the external identity maps to a
+        localized Keystone identity.
       required:
-      - methods
+      - user_name
       properties:
-        methods:
-          type: array
-          items:
-            type: string
-          description: |-
-            The authentication method. For password authentication, specify
-            password.
-        password:
+        identity_mode:
           oneOf:
           - type: 'null'
-          - $ref: '#/components/schemas/PasswordAuth'
-            description: The password object, contains the authentication information.
-        token:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/TokenAuth'
-            description: The token object, contains the authentication information.
+          - $ref: '#/components/schemas/IdentityMode'
+            description: |-
+              Identity mode for the resolved principal. When absent, defaults to
+              `Local` for `Federation` source and `Ephemeral` for others.
+        is_system:
+          type: boolean
+          description: Whether the resolved identity has system-level privileges.
+        user_domain_id:
+          type:
+          - string
+          - 'null'
+          description: User domain ID for the resolved identity.
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: User ID for the resolved identity.
+        user_name:
+          type: string
+          description: User name for the resolved identity.
+    IdentityLink:
+      type: object
+      description: |-
+        A single `(plugin_name, external_id) -> user_id` identity link, as
+        returned by the admin linking API. `plugin_name` comes from the request
+        path, not the body.
+      required:
+      - plugin_name
+      - external_id
+      - user_id
+      properties:
+        external_id:
+          type: string
+        plugin_name:
+          type: string
+        user_id:
+          type: string
+    IdentityLinkCreate:
+      type: object
+      description: |-
+        Body of a link-create request: pair an existing Keystone `user_id` with
+        the `external_id` a `full_auth` plugin's `find_user` will present (ADR
+        0025 §4). The plugin never populates this table itself for a pre-existing
+        user - an administrator does, out of band, gated by ordinary RBAC.
+      required:
+      - external_id
+      - user_id
+      properties:
+        external_id:
+          type: string
+        user_id:
+          type: string
+    IdentityLinkCreateRequest:
+      type: object
+      required:
+      - identity_link
+      properties:
+        identity_link:
+          $ref: '#/components/schemas/IdentityLinkCreate'
+    IdentityLinkResponse:
+      type: object
+      required:
+      - identity_link
+      properties:
+        identity_link:
+          $ref: '#/components/schemas/IdentityLink'
+    IdentityMode:
+      type: string
+      description: |-
+        Identity mode determines whether the matched identity should be resolved as
+        a real federated user row (`Local`) or a virtual shadow record
+        (`Ephemeral`).
+      enum:
+      - local
+      - ephemeral
     IdentityProvider:
       type: object
       description: Identity provider data.
@@ -2947,6 +5982,13 @@ components:
       - name
       - enabled
       properties:
+        allowed_redirect_uris:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of allowed redirect URIs for OIDC flows.
         bound_issuer:
           type:
           - string
@@ -3018,6 +6060,13 @@ components:
           items:
             type: string
           description: List of supported response types.
+        oidc_scopes:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of OIDC scopes to request during the OIDC authorization flow.
         provider_config:
           type: object
           description: Additional provider configuration.
@@ -3027,16 +6076,6 @@ components:
       required:
       - redirect_uri
       properties:
-        mapping_id:
-          type:
-          - string
-          - 'null'
-          description: IDP mapping id.
-        mapping_name:
-          type:
-          - string
-          - 'null'
-          description: IDP mapping name.
         redirect_uri:
           type: string
           description: Redirect URI to include in the auth request.
@@ -3060,11 +6099,20 @@ components:
       required:
       - name
       properties:
+        allowed_redirect_uris:
+          type: array
+          items:
+            type: string
+          description: |-
+            List of allowed redirect URIs for OIDC flows. When set, the redirect
+            URI passed at auth-init must match one of these values.
         bound_issuer:
           type: string
           description: The bound issuer that is verified when using the identity provider.
         default_mapping_name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: |-
             Default attribute mapping name which is automatically used when no
             mapping is explicitly requested. The referred attribute mapping must
@@ -3113,6 +6161,11 @@ components:
           items:
             type: string
           description: List of supported response types.
+        oidc_scopes:
+          type: array
+          items:
+            type: string
+          description: List of OIDC scopes to request during the OIDC authorization flow.
         provider_config:
           type: object
           description: Additional special provider specific configuration.
@@ -3158,6 +6211,13 @@ components:
       required:
       - provider_config
       properties:
+        allowed_redirect_uris:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of allowed redirect URIs for OIDC flows.
         bound_issuer:
           type:
           - string
@@ -3225,6 +6285,13 @@ components:
           items:
             type: string
           description: The new oidc response mode.
+        oidc_scopes:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: List of OIDC scopes to request during the OIDC authorization flow.
         provider_config:
           type: object
           description: New additional provider configuration.
@@ -3237,6 +6304,113 @@ components:
         identity_provider:
           $ref: '#/components/schemas/IdentityProviderUpdate'
           description: Identity provider object.
+    IdentitySource:
+      oneOf:
+      - type: object
+        description: Federation-based identity source.
+        required:
+        - idp_id
+        - type
+        properties:
+          idp_id:
+            type: string
+            description: ID of the IdP that supplies the tokens.
+          type:
+            type: string
+            enum:
+            - federation
+      - type: object
+        description: Kubernetes-based identity source.
+        required:
+        - cluster_id
+        - type
+        properties:
+          cluster_id:
+            type: string
+            description: Kubernetes cluster identifier.
+          type:
+            type: string
+            enum:
+            - k8s
+      - type: object
+        description: SPIFFE-based identity source.
+        required:
+        - trust_domain
+        - type
+        properties:
+          trust_domain:
+            type: string
+            description: SPIFFE trust domain identifier.
+          type:
+            type: string
+            enum:
+            - spiffe
+      - type: object
+        description: API Key (SCIM ingress) machine identity source (ADR 0021).
+        required:
+        - provider_id
+        - type
+        properties:
+          provider_id:
+            type: string
+            description: The API Key `provider_id` this ruleset is bound to.
+          type:
+            type: string
+            enum:
+            - api_client
+      - type: object
+        description: '`mapping`-mode dynamic auth plugin identity source (ADR 0025 §4).'
+        required:
+        - plugin_name
+        - type
+        properties:
+          plugin_name:
+            type: string
+            description: The dynamic plugin's configured name.
+          type:
+            type: string
+            enum:
+            - wasm_plugin
+      - type: object
+        description: OAuth2 `client_credentials` machine identity source (ADR 0026 §5).
+        required:
+        - provider_id
+        - type
+        properties:
+          provider_id:
+            type: string
+            description: The OAuth2 client's `provider_id` this ruleset is bound to.
+          type:
+            type: string
+            enum:
+            - o_auth2_client
+      description: Identity source type identifying the ingress provider.
+    ImplyGroup:
+      type: object
+      description: Grouped structure for listing implied roles of a specific prior role.
+      required:
+      - prior_role
+      - implies
+      properties:
+        implies:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleRef'
+          description: List of roles that are implied by the prior role.
+        prior_role:
+          $ref: '#/components/schemas/RoleRef'
+          description: The prior role.
+    JwksRevocationResponse:
+      type: object
+      description: Response body for `jwks/revocation`.
+      required:
+      - revoked_jtis
+      properties:
+        revoked_jtis:
+          type: array
+          items:
+            type: string
+          description: JTIs revoked by an emergency signing-key rotation, not yet expired.
     K8sAuthInstance:
       type: object
       description: K8s authentication instance.
@@ -3398,182 +6572,23 @@ components:
           description: K8s auth instance object.
     K8sAuthRequest:
       type: object
-      description: K8s authentication request.
+      description: |-
+        K8s authentication request.
+
+        Identity and authorization are resolved by the unified mapping engine.
       required:
       - jwt
-      - role_name
       properties:
         jwt:
           type: string
-        role_name:
-          type: string
-    K8sAuthRole:
-      type: object
-      description: K8s authentication role.
-      required:
-      - auth_instance_id
-      - bound_service_account_names
-      - bound_service_account_namespaces
-      - domain_id
-      - enabled
-      - id
-      - name
-      - token_restriction_id
-      properties:
-        auth_instance_id:
-          type: string
-          description: ID of the K8s auth instance this role belongs to.
-        bound_audience:
-          type:
-          - string
-          - 'null'
-          description: Optional Audience claim to verify in the JWT.
-        bound_service_account_names:
-          type: array
-          items:
-            type: string
-          description: List of service account names able to access this role.
-        bound_service_account_namespaces:
-          type: array
-          items:
-            type: string
-          description: List of namespaces allowed to access this role.
-        domain_id:
-          type: string
-          description: |-
-            Domain ID owning the K8s auth role configuration. It must always match
-            the `domain_id` of the referred configuration.
-        enabled:
-          type: boolean
-        id:
-          type: string
-        name:
-          type: string
-          description: K8s auth role name.
-        token_restriction_id:
-          type: string
-          description: |-
-            A token restriction ID that is used to bind the K8s token to the
-            Keystone Identity and Authorization mapping.
-    K8sAuthRoleCreate:
-      type: object
-      description: New K8s authentication role.
-      required:
-      - bound_service_account_names
-      - bound_service_account_namespaces
-      - enabled
-      - name
-      - token_restriction_id
-      properties:
-        bound_audience:
-          type:
-          - string
-          - 'null'
-          description: Optional Audience claim to verify in the JWT.
-        bound_service_account_names:
-          type: array
-          items:
-            type: string
-          description: List of service account names able to access this role.
-        bound_service_account_namespaces:
-          type: array
-          items:
-            type: string
-          description: List of namespaces allowed to access this role.
-        enabled:
-          type: boolean
-        name:
-          type: string
-          description: K8s auth role name.
-        token_restriction_id:
-          type: string
-          description: |-
-            A token restriction ID that is used to bind the K8s token to the
-            Keystone Identity and Authorization mapping.
-    K8sAuthRoleCreateRequest:
-      type: object
-      description: K8s auth role create request.
-      required:
-      - role
-      properties:
-        role:
-          $ref: '#/components/schemas/K8sAuthRoleCreate'
-          description: K8s auth role object.
-    K8sAuthRoleList:
-      type: object
-      description: List of K8s auth roles.
-      required:
-      - roles
-      properties:
-        links:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/Link'
-          description: Pagination links.
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/K8sAuthRole'
-          description: Collection of k8s auth role objects.
-    K8sAuthRoleResponse:
-      type: object
-      description: K8s auth role response.
-      required:
-      - role
-      properties:
-        role:
-          $ref: '#/components/schemas/K8sAuthRole'
-          description: K8s auth role object.
-    K8sAuthRoleUpdate:
-      type: object
-      description: Update K8s authentication role.
-      properties:
-        bound_audience:
-          type:
-          - string
-          - 'null'
-          description: Optional Audience claim to verify in the JWT.
-        bound_service_account_names:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of service account names able to access this role.
-        bound_service_account_namespaces:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of namespaces allowed to access this role.
-        enabled:
-          type:
-          - boolean
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-          description: K8s auth role name.
-        token_restriction_id:
+          description: JWT service account token.
+        rule_name:
           type:
           - string
           - 'null'
           description: |-
-            A token restriction ID that is used to bind the K8s token to the
-            Keystone Identity and Authorization mapping.
-    K8sAuthRoleUpdateRequest:
-      type: object
-      description: K8s auth role update request.
-      required:
-      - role
-      properties:
-        role:
-          $ref: '#/components/schemas/K8sAuthRoleUpdate'
-          description: K8s auth role object.
+            Optional rule name hint for the mapping-engine path. When set, the
+            mapping engine evaluates the named rule first.
     Link:
       type: object
       description: Link object.
@@ -3587,194 +6602,185 @@ components:
         rel:
           type: string
           description: Link rel attribute.
-    Mapping:
+    ListLocalEmergencyCandidatesResponse:
       type: object
-      description: OIDC/JWT mapping data.
+      description: |-
+        Response body for
+        `GET /v4/oauth2/{domain_id}/local-emergency-candidates`.
       required:
-      - id
+      - candidates
+      properties:
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocalEmergencyCandidateSummary'
+          description: |-
+            Every candidate on this node for the requested domain (including
+            revoked ones, for audit visibility).
+    LocalEmergencyCandidateSummary:
+      type: object
+      description: One node-local emergency rotation candidate (ADR 0028 §6).
+      required:
+      - rotation_id
+      - initiator
+      - justification
+      - created_at_unix
+      - conflicted
+      - revoked
+      properties:
+        conflicted:
+          type: boolean
+          description: |-
+            Set if gossip detected a different active candidate for this domain
+            on another node -- the operator must explicitly pick one side.
+        created_at_unix:
+          type: integer
+          format: int64
+          description: Unix epoch seconds the candidate was created.
+        initiator:
+          type: string
+          description: Identity of the operator who staged this candidate.
+        justification:
+          type: string
+          description: The operator-supplied justification recorded with the candidate.
+        origin_node_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: |-
+            `None` if staged on the node answering this request; `Some(node_id)`
+            if it arrived via gossip from another node (ADR 0028 §5).
+          minimum: 0
+        revoked:
+          type: boolean
+          description: Set once this candidate has lost reconciliation. Never reconcilable.
+        rotation_id:
+          type: string
+          description: Opaque identifier to pass to `reconcile-local-emergency-key`.
+    LoginForm:
+      type: object
+      required:
+      - csrf_token
+      - username
+      - password
+      properties:
+        csrf_token:
+          type: string
+        password:
+          type: string
+        username:
+          type: string
+    MappingRule:
+      type: object
+      description: A single rule within a `MappingRuleSet`.
+      required:
+      - authorizations
+      - groups
+      - identity
+      - match
       - name
-      - idp_id
-      - type
+      properties:
+        authorizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Authorization'
+          description: Role assignments granted when this rule matches.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Human-readable description of the rule purpose.
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupAssignment'
+          description: Group assignments granted when this rule matches.
+        identity:
+          $ref: '#/components/schemas/IdentityBinding'
+          description: Identity binding that defines the localized Keystone identity.
+        match:
+          description: Claim match criteria that determine when this rule applies.
+        name:
+          type: string
+          description: Unique rule name within the ruleset.
+    MappingRuleSet:
+      type: object
+      description: A complete mapping ruleset stored in the distributed store.
+      required:
+      - domain_resolution_mode
       - enabled
-      - user_id_claim
-      - user_name_claim
+      - mapping_id
+      - rules
+      - source
       properties:
-        allowed_redirect_uris:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of allowed redirect urls (only for `oidc` type).
-        bound_audiences:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of audiences that must be present in the token.
-        bound_claims:
-          type: object
-          description: Additional claims that must be present in the token.
-        bound_subject:
-          type:
-          - string
-          - 'null'
-          description: Token subject value that must be set in the token.
         domain_id:
           type:
           - string
           - 'null'
-          description: |-
-            `domain_id` owning the attribute mapping.
-
-            Unset `domain_id` means the attribute mapping is shared and can be used
-            by different domains. This requires `domain_id_claim` to be present.
-            Attribute mapping can be only shared when the referred identity
-            provider is also shared (does not set the `domain_id` attribute).
-        domain_id_claim:
-          type:
-          - string
-          - 'null'
-          description: '`domain_id` claim name.'
+          description: Owning domain boundary; `None` for global rulesets.
+        domain_resolution_mode:
+          $ref: '#/components/schemas/DomainResolutionMode'
+          description: Domain resolution mode.
         enabled:
           type: boolean
-          description: Mapping enabled property. Inactive mappings can not be used for login.
-        groups_claim:
-          type:
-          - string
-          - 'null'
-          description: '`groups` claim name.'
-        id:
+          description: Whether the ruleset is enabled.
+        mapping_id:
           type: string
-          description: Attribute mapping ID for federated logins.
-        idp_id:
-          type: string
-          description: |-
-            ID of the federated identity provider for which this attribute mapping
-            can be used.
-        name:
-          type: string
-          description: Attribute mapping name for federated logins.
-        oidc_scopes:
-          type:
-          - array
-          - 'null'
+          description: Unique ruleset identifier.
+        rules:
+          type: array
           items:
-            type: string
-          description: List of OIDC scopes.
-        token_project_id:
-          type:
-          - string
-          - 'null'
-          description: Fixed project_id for the token.
-        token_restriction_id:
-          type:
-          - string
-          - 'null'
-          description: Token restrictions to be applied to the granted token.
-        type:
-          $ref: '#/components/schemas/MappingType'
-          description: Attribute mapping type ([oidc, jwt]).
-        user_id_claim:
-          type: string
-          description: '`user_id` claim name.'
-        user_name_claim:
-          type: string
-          description: '`user_name` claim name.'
-    MappingCreate:
+            $ref: '#/components/schemas/MappingRule'
+          description: Ordered rules; array position defines execution priority.
+        source:
+          $ref: '#/components/schemas/IdentitySource'
+          description: Identifies the ingress provider instance.
+    MappingRuleSetCreate:
       type: object
-      description: OIDC/JWT attribute mapping create data.
+      description: Mapping ruleset creation request payload.
       required:
-      - name
-      - idp_id
-      - user_id_claim
-      - user_name_claim
+      - domain_resolution_mode
+      - enabled
+      - rules
+      - source
       properties:
-        allowed_redirect_uris:
-          type: array
-          items:
-            type: string
-          description: List of allowed redirect urls (only for `oidc` type).
-        bound_audiences:
-          type: array
-          items:
-            type: string
-          description: List of audiences that must be present in the token.
-        bound_claims:
-          type: object
-          description: Additional claims that must be present in the token.
-          additionalProperties: {}
-          propertyNames:
-            type: string
-        bound_subject:
-          type: string
-          description: Token subject value that must be set in the token.
         domain_id:
-          type: string
-          description: |-
-            `domain_id` owning the attribute mapping.
-
-            Unset `domain_id` means the attribute mapping is shared and can be used
-            by different domains. This requires `domain_id_claim` to be present.
-            Attribute mapping can be only shared when the referred identity
-            provider is also shared (does not set the `domain_id` attribute).
-        domain_id_claim:
-          type: string
-          description: '`domain_id` claim name.'
+          type:
+          - string
+          - 'null'
+          description: Owning domain boundary; `None` for global rulesets.
+        domain_resolution_mode:
+          $ref: '#/components/schemas/DomainResolutionMode'
+          description: Domain resolution mode.
         enabled:
           type: boolean
-          description: Mapping enabled property. Inactive mappings can not be used for login.
-        groups_claim:
-          type: string
-          description: '`groups` claim name.'
-        id:
+          description: Whether the ruleset is enabled.
+        mapping_id:
           type:
           - string
           - 'null'
-          description: Attribute mapping ID for federated logins.
-        idp_id:
-          type: string
-          description: |-
-            ID of the federated identity provider for which this attribute mapping
-            can be used.
-        name:
-          type: string
-          description: Attribute mapping name for federated logins.
-        oidc_scopes:
+          description: Optional ruleset identifier (auto-generated if `None`).
+        rules:
           type: array
           items:
-            type: string
-          description: List of OIDC scopes.
-        token_project_id:
-          type: string
-          description: Fixed project_id for the token.
-        token_restriction_id:
-          type:
-          - string
-          - 'null'
-          description: Token restrictions to be applied to the granted token.
-        type:
-          $ref: '#/components/schemas/MappingType'
-          description: Attribute mapping type ([oidc, jwt]).
-        user_id_claim:
-          type: string
-          description: '`user_id` claim name.'
-        user_name_claim:
-          type: string
-          description: '`user_name` claim name.'
-    MappingCreateRequest:
+            $ref: '#/components/schemas/MappingRule'
+          description: Ordered rules; array position defines execution priority.
+        source:
+          $ref: '#/components/schemas/IdentitySource'
+          description: Identifies the ingress provider instance.
+    MappingRuleSetCreateRequest:
       type: object
-      description: OIDC/JWT attribute mapping create request.
+      description: Mapping ruleset creation request wrapper.
       required:
       - mapping
       properties:
         mapping:
-          $ref: '#/components/schemas/MappingCreate'
-          description: Mapping object.
-    MappingList:
+          $ref: '#/components/schemas/MappingRuleSetCreate'
+          description: Mapping ruleset creation payload.
+    MappingRuleSetList:
       type: object
-      description: List of OIDC/JWT attribute mappings.
+      description: Mapping ruleset list response.
       required:
       - mappings
       properties:
@@ -3788,122 +6794,55 @@ components:
         mappings:
           type: array
           items:
-            $ref: '#/components/schemas/Mapping'
-          description: Collection of identity provider objects.
-    MappingResponse:
+            $ref: '#/components/schemas/MappingRuleSet'
+          description: Collection of mapping rulesets.
+    MappingRuleSetResponse:
       type: object
+      description: Mapping ruleset response.
       required:
       - mapping
       properties:
         mapping:
-          $ref: '#/components/schemas/Mapping'
-          description: Mapping object.
-    MappingType:
-      type: string
-      description: Attribute mapping type.
-      enum:
-      - oidc
-      - jwt
-    MappingUpdate:
+          $ref: '#/components/schemas/MappingRuleSet'
+          description: Mapping ruleset object.
+    MappingRuleSetUpdate:
       type: object
-      description: OIDC/JWT attribute mapping update data.
-      properties:
-        allowed_redirect_uris:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of allowed redirect urls (only for `oidc` type).
-        bound_audiences:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: List of audiences that must be present in the token.
-        bound_claims:
-          type: object
-          description: Additional claims that must be present in the token.
-        bound_subject:
-          type:
-          - string
-          - 'null'
-          description: Token subject value that must be set in the token.
-        domain_id:
-          type:
-          - string
-          - 'null'
-          description: |-
-            `domain_id` owning the attribute mapping.
+      description: |-
+        Mapping ruleset update request payload.
 
-            Unset `domain_id` means the attribute mapping is shared and can be used
-            by different domains. This requires `domain_id_claim` to be present.
-            Attribute mapping can be only shared when the referred identity
-            provider is also shared (does not set the `domain_id` attribute).
-        domain_id_claim:
-          type:
-          - string
-          - 'null'
-        enabled:
-          type: boolean
-          description: Mapping enabled property. Inactive mappings can not be used for login.
-        groups_claim:
-          type:
-          - string
-          - 'null'
-          description: '`groups` claim name.'
-        idp_id:
-          type:
-          - string
-          - 'null'
-          description: |-
-            ID of the federated identity provider for which this attribute mapping
-            can be used.
-        name:
-          type:
-          - string
-          - 'null'
-          description: Attribute mapping name for federated logins.
-        oidc_scopes:
+        Only mutable fields are included. `domain_id`, `source`, and
+        `domain_resolution_mode` are immutable after creation.
+      properties:
+        allowed_domains:
           type:
           - array
           - 'null'
           items:
             type: string
-          description: List of OIDC scopes.
-        token_project_id:
+          description: |-
+            Replace `allowed_domains` within the existing `DomainResolutionMode`
+            variant. The mode variant itself cannot change.
+        enabled:
           type:
-          - string
+          - boolean
           - 'null'
-          description: Fixed project_id for the token.
-        token_restriction_id:
+          description: Toggle ruleset enabled/disabled.
+        rules:
           type:
-          - string
+          - array
           - 'null'
-          description: Token restrictions to be applied to the granted token.
-        type:
-          $ref: '#/components/schemas/MappingType'
-          description: Attribute mapping type ([oidc, jwt]).
-        user_id_claim:
-          type:
-          - string
-          - 'null'
-          description: '`user_id` claim name.'
-        user_name_claim:
-          type:
-          - string
-          - 'null'
-          description: '`user_name` claim name.'
-    MappingUpdateRequest:
+          items:
+            $ref: '#/components/schemas/MappingRule'
+          description: Replace the entire rules vector.
+    MappingRuleSetUpdateRequest:
       type: object
-      description: OIDC/JWT attribute mapping update request.
+      description: Mapping ruleset update request wrapper.
       required:
       - mapping
       properties:
         mapping:
-          $ref: '#/components/schemas/MappingUpdate'
-          description: Mapping object.
+          $ref: '#/components/schemas/MappingRuleSetUpdate'
+          description: Mapping ruleset update payload.
     MediaType:
       type: object
       required:
@@ -3921,6 +6860,264 @@ components:
         in the UI, or not.
       enum:
       - Conditional
+    OAuth2Client:
+      type: object
+      description: |-
+        A registered OAuth2/OIDC relying party. Never carries `client_secret` or
+        its hash -- the plaintext secret is only ever returned once, by `create`
+        or `rotate-secret`.
+      required:
+      - allowed_scopes
+      - claims_template
+      - confidential
+      - client_id
+      - created_at
+      - domain_id
+      - enabled
+      - grant_types
+      - pre_authorized
+      - provider_id
+      - redirect_uris
+      - require_pkce
+      - token_endpoint_auth_method
+      - updated_at
+      properties:
+        allowed_scopes:
+          type: array
+          items:
+            type: string
+          description: Scopes this client may request.
+        claims_template:
+          type: object
+          description: Per-client output claim templates (ADR 0026 §4, "Claim Safety").
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        client_id:
+          type: string
+          description: Globally unique public client identifier (server-generated).
+        confidential:
+          type: boolean
+          description: Whether this is a confidential client (has a `client_secret`).
+        created_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds.
+        deleted_at:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: UTC epoch seconds of soft-delete, if revoked.
+        domain_id:
+          type: string
+          description: Domain owning this client registration.
+        enabled:
+          type: boolean
+          description: Whether the client is currently usable.
+        grant_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantType'
+          description: Grant types this client is authorized to use.
+        pre_authorized:
+          type: boolean
+          description: Whether consent is pre-authorized. SystemAdmin-only to set.
+        provider_id:
+          type: string
+          description: |-
+            The Unified Mapping Engine (ADR 0020) `provider_id` coordinate.
+            Unique within `domain_id`.
+        redirect_uris:
+          type: array
+          items:
+            type: string
+          description: Allowed redirect URIs for the `authorization_code` grant.
+        require_pkce:
+          type: boolean
+          description: Whether PKCE (RFC 7636) is mandatory for this client.
+        token_endpoint_auth_method:
+          type: string
+          description: Token endpoint authentication method. Immutable after creation.
+        updated_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds.
+    OAuth2ClientCreate:
+      type: object
+      description: OAuth2 client creation payload.
+      required:
+      - confidential
+      - provider_id
+      - token_endpoint_auth_method
+      properties:
+        allowed_scopes:
+          type: array
+          items:
+            type: string
+          description: Scopes this client may request.
+        claims_template:
+          type: object
+          description: Per-client output claim templates.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        confidential:
+          type: boolean
+          description: |-
+            Whether to register a confidential client (server generates and
+            returns a `client_secret` exactly once) or a public client (no
+            secret, PKCE mandatory).
+        grant_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantType'
+          description: Grant types this client is authorized to use.
+        pre_authorized:
+          type: boolean
+          description: Whether consent is pre-authorized. SystemAdmin-only to set.
+        provider_id:
+          type: string
+          description: |-
+            The `provider_id` coordinate this client registers under. `domain_id`
+            comes from the URL path, not the body.
+        redirect_uris:
+          type: array
+          items:
+            type: string
+          description: Allowed redirect URIs for the `authorization_code` grant.
+        require_pkce:
+          type: boolean
+          description: Whether PKCE is mandatory. Always `true` for public clients.
+        token_endpoint_auth_method:
+          type: string
+          description: |-
+            Token endpoint authentication method (e.g. `client_secret_basic`,
+            `none`).
+    OAuth2ClientCreateRequest:
+      type: object
+      description: OAuth2 client creation request wrapper.
+      required:
+      - oauth2_client
+      properties:
+        oauth2_client:
+          $ref: '#/components/schemas/OAuth2ClientCreate'
+          description: OAuth2 client creation payload.
+    OAuth2ClientCreateResponse:
+      type: object
+      description: |-
+        OAuth2 client creation response. `client_secret` is populated exactly
+        once for a confidential client, and never again on any subsequent read.
+      required:
+      - oauth2_client
+      properties:
+        client_secret:
+          type:
+          - string
+          - 'null'
+          description: One-time plaintext client secret. `None` for a public client.
+        oauth2_client:
+          $ref: '#/components/schemas/OAuth2Client'
+          description: The created OAuth2 client.
+    OAuth2ClientList:
+      type: object
+      description: OAuth2 client list response.
+      required:
+      - oauth2_clients
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        oauth2_clients:
+          type: array
+          items:
+            $ref: '#/components/schemas/OAuth2Client'
+          description: Collection of OAuth2 clients.
+    OAuth2ClientResponse:
+      type: object
+      description: OAuth2 client response.
+      required:
+      - oauth2_client
+      properties:
+        oauth2_client:
+          $ref: '#/components/schemas/OAuth2Client'
+          description: OAuth2 client object.
+    OAuth2ClientRotateSecretResponse:
+      type: object
+      description: Response to `POST .../{provider_id}/rotate-secret`.
+      required:
+      - client_secret
+      properties:
+        client_secret:
+          type: string
+          description: One-time plaintext client secret.
+    OAuth2ClientUpdate:
+      type: object
+      description: |-
+        OAuth2 client update payload. `None` fields are left unchanged.
+        `client_id`, `provider_id`, `domain_id`, and `token_endpoint_auth_method`
+        are immutable after creation.
+      properties:
+        allowed_scopes:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: New allowed scopes.
+        claims_template:
+          type:
+          - object
+          - 'null'
+          description: New claim templates.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: Enable/disable toggle.
+        grant_types:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GrantType'
+          description: New grant types.
+        pre_authorized:
+          type:
+          - boolean
+          - 'null'
+          description: New pre-authorized flag. SystemAdmin-only to set to `true`.
+        redirect_uris:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: New redirect URIs.
+        require_pkce:
+          type:
+          - boolean
+          - 'null'
+          description: New PKCE requirement.
+    OAuth2ClientUpdateRequest:
+      type: object
+      description: OAuth2 client update request wrapper.
+      required:
+      - oauth2_client
+      properties:
+        oauth2_client:
+          $ref: '#/components/schemas/OAuth2ClientUpdate'
+          description: OAuth2 client update payload.
     Passkey:
       type: object
       description: Passkey information.
@@ -4049,29 +7246,6 @@ components:
         user_id:
           type: string
           description: The ID of the user that is authenticating.
-    PasswordAuth:
-      type: object
-      description: The password object, contains the authentication information.
-      required:
-      - user
-      properties:
-        user:
-          $ref: '#/components/schemas/UserPassword'
-          description: A user object.
-    PolicyStatus:
-      type: object
-      description: Health status of the policy engine.
-      required:
-      - status
-      properties:
-        message:
-          type:
-          - string
-          - 'null'
-          description: The error message.
-        status:
-          $ref: '#/components/schemas/HealthStatus'
-          description: Status of Raft cluster.
     Project:
       type: object
       description: Project information.
@@ -4093,9 +7267,6 @@ components:
       type: object
       description: New project data.
       required:
-      - domain_id
-      - enabled
-      - is_domain
       - name
       properties:
         description:
@@ -4104,8 +7275,14 @@ components:
           - 'null'
           description: The description of the project.
         domain_id:
-          type: string
-          description: The ID of the domain for the project.
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the domain for the project.
+
+            If not specified, the domain is resolved from `parent_id`'s domain,
+            or falls back to the domain the caller's token is scoped to.
         enabled:
           type: boolean
           description: |-
@@ -4338,20 +7515,31 @@ components:
         user_verification:
           $ref: '#/components/schemas/UserVerificationPolicy'
           description: The verification policy the browser will request.
-    RaftStatus:
+    ReconcileLocalEmergencyKeyRequest:
       type: object
-      description: Health status of the Raft storage.
+      description: |-
+        Request body for
+        `POST /v4/oauth2/{domain_id}/reconcile-local-emergency-key`.
       required:
-      - status
+      - rotation_id
       properties:
-        message:
-          type:
-          - string
-          - 'null'
-          description: The error message.
-        status:
-          $ref: '#/components/schemas/HealthStatus'
-          description: Status of Raft cluster.
+        rotation_id:
+          type: string
+          description: |-
+            The `rotation_id` of the node-local candidate to promote, from
+            `GET .../local-emergency-candidates`. The operator's explicit choice
+            when multiple (possibly conflicting) candidates exist (ADR 0028 §6).
+    ReconcileLocalEmergencyKeyResponse:
+      type: object
+      description: |-
+        Response body for
+        `POST /v4/oauth2/{domain_id}/reconcile-local-emergency-key`.
+      required:
+      - kid
+      properties:
+        kid:
+          type: string
+          description: The newly active `Primary` key's `kid`.
     RegistrationExtensionsClientOutputs:
       type: object
       description: |-
@@ -4448,6 +7636,28 @@ components:
       - Discouraged
       - Preferred
       - Required
+    RevokeAllResponse:
+      type: object
+      required:
+      - revoke_all
+      properties:
+        revoke_all:
+          $ref: '#/components/schemas/RevokeAllSummary'
+    RevokeAllSummary:
+      type: object
+      description: |-
+        Per-category blast-radius counts returned by `revoke_all` (ADR 0025 §4
+        "Bulk Revocation on Plugin Compromise"). An empty run reports all zeros.
+      required:
+      - users_disabled
+      - links_deleted
+      properties:
+        links_deleted:
+          type: integer
+          minimum: 0
+        users_disabled:
+          type: integer
+          minimum: 0
     Role:
       type: object
       description: The role data.
@@ -4502,6 +7712,48 @@ components:
         role:
           $ref: '#/components/schemas/RoleCreate'
           description: Role object.
+    RoleImply:
+      type: object
+      description: The role imply data.
+      required:
+      - prior_role
+      - implies
+      properties:
+        implies:
+          $ref: '#/components/schemas/RoleRef'
+          description: The role that is implied by the prior role.
+        prior_role:
+          $ref: '#/components/schemas/RoleRef'
+          description: The prior role that implies another role.
+    RoleImplyResponse:
+      type: object
+      description: Response for a single role inference rule.
+      required:
+      - role_inference
+      properties:
+        role_inference:
+          $ref: '#/components/schemas/RoleImply'
+          description: The role inference rule.
+    RoleInferenceRules:
+      type: object
+      description: Response for listing implied roles by prior role.
+      required:
+      - role_inference
+      properties:
+        role_inference:
+          $ref: '#/components/schemas/ImplyGroup'
+          description: The role inference group.
+    RoleInferencesList:
+      type: object
+      description: Response for listing all role inference rules.
+      required:
+      - role_inferences
+      properties:
+        role_inferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImplyGroup'
+          description: Collection of role inference rules.
     RoleList:
       type: object
       description: Roles.
@@ -4539,42 +7791,300 @@ components:
         role:
           $ref: '#/components/schemas/Role'
           description: Role object.
+    RotateSigningKeyRequest:
+      type: object
+      description: Request body for `POST /v4/oauth2/{domain_id}/rotate-signing-key`.
+      properties:
+        emergency:
+          type: boolean
+          description: |-
+            Stage an emergency (dual-control) rotation instead of committing
+            immediately.
+        justification:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Required when `local_quorum_bypass` is set: the operator's reason
+            for invoking the bypass, recorded with the candidate for audit.
+        local_quorum_bypass:
+          type: boolean
+          description: |-
+            Stage a `--local-quorum-bypass` rotation (ADR 0028 §2): written only
+            to this node's local emergency store, bypassing Raft/quorum
+            entirely. Mutually exclusive with `emergency` (Raft-backed staging);
+            when set, `emergency` is ignored. Requires `justification` and a
+            node whose `[local_emergency]` guardrail currently permits it.
+    RotateSigningKeyResponse:
+      type: object
+      description: Response body for `POST /v4/oauth2/{domain_id}/rotate-signing-key`.
+      properties:
+        expires_at:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: |-
+            Set when `emergency` was `true`: Unix epoch seconds after which the
+            pending rotation auto-aborts.
+        kid:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Set when `emergency` was `false`: the newly active `Primary` key's
+            `kid`.
+        local_rotation_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Set when `local_quorum_bypass` was `true`: the candidate's
+            `rotation_id`, for later reconciliation once quorum returns.
+        pending_rotation_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Set when `emergency` was `true`: pass this to
+            `confirm-rotate-signing-key`.
+    RuleMutation:
+      oneOf:
+      - type: object
+        description: Delete a rule by name.
+        required:
+        - rule_name
+        - operation
+        properties:
+          operation:
+            type: string
+            enum:
+            - delete
+          rule_name:
+            type: string
+            description: Name of the rule to delete.
+      - type: object
+        description: Insert a new rule into the ruleset.
+        required:
+        - rule
+        - operation
+        properties:
+          operation:
+            type: string
+            enum:
+            - insert
+          position:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/RulePosition'
+              description: Optional position hint for the inserted rule.
+          rule:
+            $ref: '#/components/schemas/MappingRule'
+            description: Rule to insert.
+      - type: object
+        description: Update an existing rule by name.
+        required:
+        - rule_name
+        - rule
+        - operation
+        properties:
+          operation:
+            type: string
+            enum:
+            - update
+          rule:
+            $ref: '#/components/schemas/MappingRule'
+            description: Updated rule definition.
+          rule_name:
+            type: string
+            description: Name of the existing rule to update.
+      description: Rule mutation for imperative operations.
+    RuleMutationsRequest:
+      type: object
+      description: Rule mutations request wrapper.
+      required:
+      - mutations
+      properties:
+        mutations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleMutation'
+          description: List of mutations to apply.
+    RulePosition:
+      oneOf:
+      - type: object
+        description: Insert after the rule with the given name.
+        required:
+        - anchor
+        - type
+        properties:
+          anchor:
+            type: string
+            description: Name of the existing rule to anchor to.
+          type:
+            type: string
+            enum:
+            - after
+      - type: object
+        description: Insert before the rule with the given name.
+        required:
+        - anchor
+        - type
+        properties:
+          anchor:
+            type: string
+            description: Name of the existing rule to anchor to.
+          type:
+            type: string
+            enum:
+            - before
+      description: Rule position for insert operations.
+    ScimRealm:
+      type: object
+      description: A registered SCIM realm.
+      required:
+      - domain_id
+      - provider_id
+      - idp_id
+      - display_name
+      - enabled
+      - created_at
+      - updated_at
+      properties:
+        created_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds.
+        display_name:
+          type: string
+          description: Administrative display name for the realm.
+        domain_id:
+          type: string
+          description: Domain owning this realm.
+        enabled:
+          type: boolean
+          description: Whether the realm currently authorizes SCIM resource provisioning.
+        idp_id:
+          type: string
+          description: The federation `IdentityProvider.id` this realm provisions users for.
+        provider_id:
+          type: string
+          description: |-
+            The `provider_id` coordinate this realm authorizes for SCIM resource
+            provisioning.
+        updated_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds.
+    ScimRealmCreate:
+      type: object
+      description: SCIM realm creation payload.
+      required:
+      - domain_id
+      - provider_id
+      - idp_id
+      - display_name
+      properties:
+        display_name:
+          type: string
+          description: Administrative display name for the realm.
+        domain_id:
+          type: string
+          description: Domain owning this realm.
+        idp_id:
+          type: string
+          description: |-
+            The federation `IdentityProvider.id` this realm provisions users for.
+            Must resolve to an existing identity provider.
+        provider_id:
+          type: string
+          description: The `provider_id` coordinate this realm authorizes.
+    ScimRealmCreateRequest:
+      type: object
+      description: SCIM realm creation request wrapper.
+      required:
+      - scim_realm
+      properties:
+        scim_realm:
+          $ref: '#/components/schemas/ScimRealmCreate'
+          description: SCIM realm creation payload.
+    ScimRealmList:
+      type: object
+      description: SCIM realm list response.
+      required:
+      - scim_realms
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        scim_realms:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScimRealm'
+          description: Collection of SCIM realms.
+    ScimRealmResponse:
+      type: object
+      description: SCIM realm response.
+      required:
+      - scim_realm
+      properties:
+        scim_realm:
+          $ref: '#/components/schemas/ScimRealm'
+          description: SCIM realm object.
+    ScimRealmUpdate:
+      type: object
+      description: SCIM realm update payload. `None` fields are left unchanged.
+      properties:
+        display_name:
+          type:
+          - string
+          - 'null'
+          description: New display name.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: Enable/disable toggle (ADR 0024 §2.B, the Realm Activation Gate).
+        idp_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            New linked `IdentityProvider.id`. Must resolve to an existing
+            identity provider.
+    ScimRealmUpdateRequest:
+      type: object
+      description: SCIM realm update request wrapper.
+      required:
+      - scim_realm
+      properties:
+        scim_realm:
+          $ref: '#/components/schemas/ScimRealmUpdate'
+          description: SCIM realm update payload.
     Scope:
       oneOf:
       - type: object
-        description: Project scope.
         required:
         - project
         properties:
           project:
-            $ref: '#/components/schemas/ScopeProject'
-            description: Project scope.
+            $ref: '#/components/schemas/Project'
       - type: object
-        description: Domain scope.
         required:
         - domain
         properties:
           domain:
             $ref: '#/components/schemas/Domain'
-            description: Domain scope.
       - type: object
-        description: System scope.
         required:
         - system
         properties:
           system:
             $ref: '#/components/schemas/System'
-            description: System scope.
-      description: |-
-        The authorization scope, including the system, a project, or a domain.
-
-        If multiple scopes are specified in the same request (e.g. project and
-        domain or domain and system) an HTTP 400 Bad Request will be returned, as a
-        token cannot be simultaneously scoped to multiple authorization targets. An
-        ID is sufficient to uniquely identify a project but if a project is
-        specified by name, then the domain of the project must also be specified in
-        order to uniquely identify the project by name. A domain scope may be
-        specified by either the domain's ID or name with equivalent results.
     ScopeProject:
       type: object
       description: Project scope information.
@@ -4594,6 +8104,148 @@ components:
           - string
           - 'null'
           description: Project Name.
+    Service:
+      type: object
+      description: The service data.
+      required:
+      - id
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: |-
+            Defines whether the service and its endpoints appear in the service
+            catalog.
+        id:
+          type: string
+          description: Service ID.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The service name.
+        type:
+          type:
+          - string
+          - 'null'
+          description: The service type.
+      additionalProperties: {}
+    ServiceCreate:
+      type: object
+      description: Service create request body.
+      required:
+      - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: |-
+            Defines whether the service and its endpoints appear in the service
+            catalog.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The service name.
+        type:
+          type:
+          - string
+          - 'null'
+          description: The service type.
+      additionalProperties:
+        description: Extra attributes for the service.
+    ServiceCreateRequest:
+      type: object
+      description: New service creation request.
+      required:
+      - service
+      properties:
+        service:
+          $ref: '#/components/schemas/ServiceCreate'
+          description: Service object.
+    ServiceList:
+      type: object
+      description: Services.
+      required:
+      - services
+      properties:
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+          description: Collection of service objects.
+    ServiceResponse:
+      type: object
+      required:
+      - service
+      properties:
+        service:
+          $ref: '#/components/schemas/Service'
+          description: Service object.
+    ServiceUpdate:
+      type: object
+      description: Update service data.
+      properties:
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            Defines whether the service and its endpoints appear in the service
+            catalog.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The service name.
+        type:
+          type:
+          - string
+          - 'null'
+          description: The service type.
+      additionalProperties:
+        description: Extra attributes for the service (replaces the existing extra).
+    ServiceUpdateRequest:
+      type: object
+      description: Service update request.
+      required:
+      - service
+      properties:
+        service:
+          $ref: '#/components/schemas/ServiceUpdate'
+          description: Service object.
+    SimulatedScope:
+      oneOf:
+      - type: object
+        description: Domain-level scope.
+        required:
+        - domain_id
+        - type
+        properties:
+          domain_id:
+            type: string
+            description: Domain ID the key would be scoped to.
+          type:
+            type: string
+            enum:
+            - domain
+      - type: object
+        description: Project-level scope.
+        required:
+        - project_domain_id
+        - project_id
+        - type
+        properties:
+          project_domain_id:
+            type: string
+            description: Project domain ID.
+          project_id:
+            type: string
+            description: Project ID the key would be scoped to.
+          type:
+            type: string
+            enum:
+            - project
+      description: The scope an API Key would be granted, were it to authenticate right now.
     SingleVersion:
       type: object
       description: Single API version container.
@@ -4701,15 +8353,78 @@ components:
         user:
           $ref: '#/components/schemas/User'
           description: A user object.
-    TokenAuth:
+    TokenForm:
       type: object
-      description: The token object, contains the authentication information.
-      required:
-      - id
       properties:
-        id:
-          type: string
-          description: An authentication token.
+        client_id:
+          type:
+          - string
+          - 'null'
+        client_secret:
+          type:
+          - string
+          - 'null'
+        code:
+          type:
+          - string
+          - 'null'
+          description: '`authorization_code` grant only (RFC 6749 §4.1.3).'
+        code_verifier:
+          type:
+          - string
+          - 'null'
+          description: '`authorization_code` grant only: PKCE verifier (RFC 7636 §4.5).'
+        device_code:
+          type:
+          - string
+          - 'null'
+          description: |-
+            RFC 8628 `device_code` grant only (§3.4): the value returned by
+            `/device_authorization`.
+        grant_type:
+          type:
+          - string
+          - 'null'
+        redirect_uri:
+          type:
+          - string
+          - 'null'
+          description: |-
+            `authorization_code` grant only -- must exact-match the value
+            recorded at `/authorize`.
+        refresh_token:
+          type:
+          - string
+          - 'null'
+          description: '`refresh_token` grant only (RFC 6749 §6).'
+        requested_token_type:
+          type:
+          - string
+          - 'null'
+          description: |-
+            RFC 8693 Token Exchange grant only. Accepted but not branched on:
+            v1 always returns `urn:ietf:params:oauth:token-type:access_token`,
+            the only token type this grant mints.
+        scope:
+          type:
+          - string
+          - 'null'
+        subject_token:
+          type:
+          - string
+          - 'null'
+          description: |-
+            RFC 8693 Token Exchange grant only: the existing Keystone-native
+            token (Fernet or JWS) being exchanged.
+        subject_token_type:
+          type:
+          - string
+          - 'null'
+          description: |-
+            RFC 8693 Token Exchange grant only. Accepted but not branched on:
+            this repository's `TokenApi::validate_to_context` already decodes
+            either wire format transparently, so there is nothing for the value
+            to select between yet.
     TokenResponse:
       type: object
       required:
@@ -4981,7 +8696,6 @@ components:
       description: Create user data.
       required:
       - domain_id
-      - enabled
       - name
       properties:
         default_project_id:
@@ -5022,7 +8736,9 @@ components:
           type:
           - string
           - 'null'
-          description: The password for the user.
+          description: |-
+            The password for the user. Non-emptiness and regex policy are enforced
+            at the service layer via `security_compliance.validate_password`.
       additionalProperties:
         description: Additional user properties.
     UserCreateRequest:
@@ -5151,28 +8867,26 @@ components:
           description: The options.
     UserPassword:
       type: object
-      description: User password information.
+      description: Change user password data.
       required:
+      - original_password
       - password
       properties:
-        domain:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Domain'
-            description: User domain.
-        id:
-          type:
-          - string
-          - 'null'
-          description: User ID.
-        name:
-          type:
-          - string
-          - 'null'
-          description: User Name.
+        original_password:
+          type: string
+          description: The current password for the user.
         password:
           type: string
-          description: User password.
+          description: The new password for the user.
+    UserPasswordRequest:
+      type: object
+      description: Complete password change request.
+      required:
+      - user
+      properties:
+        user:
+          $ref: '#/components/schemas/UserPassword'
+          description: User object.
     UserResponse:
       type: object
       description: Complete response with the user data.
@@ -5181,6 +8895,61 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+          description: User object.
+    UserUpdate:
+      type: object
+      description: Update user data.
+      properties:
+        default_project_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the default project for the user. A user's default project
+            must not be a domain. Setting this attribute does not grant any actual
+            authorization on the project, and is merely provided for convenience.
+            Therefore, the referenced project does not need to exist within the user
+            domain. If the user does not have authorization to their default
+            project, the default project is ignored at token creation. Additionally,
+            if your default project is not valid, a token is issued without an
+            explicit scope of authorization.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            If the user is enabled, this value is true. If the user is disabled,
+            this value is false.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The user name. Must be unique within the owning domain.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/UserOptions'
+            description: |-
+              The resource options for the user. Available resource options are
+              ignore_change_password_upon_first_use, ignore_password_expiry,
+              ignore_lockout_failure_attempts, lock_password,
+              multi_factor_auth_enabled, and multi_factor_auth_rules
+              ignore_user_inactivity.
+        password:
+          type:
+          - string
+          - 'null'
+          description: The password for the user.
+      additionalProperties:
+        description: Additional user properties.
+    UserUpdateRequest:
+      type: object
+      description: Complete update user request.
+      required:
+      - user
+      properties:
+        user:
+          $ref: '#/components/schemas/UserUpdate'
           description: User object.
     UserVerificationPolicy:
       type: string
@@ -5374,6 +9143,8 @@ tags:
       ```
       GET /role_assignments?include_names
       ```
+- name: api_key
+  description: "API Key (SCIM ingress) admin API (ADR 0021).\n\nStateless, domain-owned machine-identity credentials for M2M SCIM provisioning\ningress. Management of these credentials requires the `manager` role\n(DomainManager) scoped to the key's own domain, or `admin` (SystemAdmin).\n        "
 - name: identity_providers
   description: |-
     Identity providers API.
@@ -5381,34 +9152,34 @@ tags:
     Identity provider resource allows to federate users from an external Identity Provider (i.e.
     Keycloak, Azure AD, etc.).
 
-    Using the Identity provider requires creation of the mapping, which describes how to map attributes
-    of the remote Idp to local users.
+    Using the Identity provider requires creation of the mapping ruleset (mapping engine), which
+    describes how to map attributes of the remote IdP to local users.
 
     Identity provider with an empty domain_id are considered globals and every domain may use it with
     appropriate mapping.
-- name: mappings
-  description: |-
-    Federation mappings API.
-
-    Mappings define how the user attributes on the remote IDP are mapped to the local user.
-
-    Mappings with an empty domain_id are considered globals and every domain may use it. Such mappings
-    require the `domain_id_claim` attribute to be set to identify the domain_id for the respective
-    user.
 - name: k8s_auth_instance
   description: |
     Kubernetes authentication instances (Kubernetes Clusters) API.
 
-    Authentication Instance represents a remote Kubernetes cluster that issues the JWT token for the service account which could be exchanged for the Keystone token using the corresponding auth_role.
-- name: k8s_auth_role
-  description: |
-    Kubernetes auth role API.
+    Authentication Instance represents a remote Kubernetes cluster that issues the JWT token for the service account which could be exchanged for the Keystone token using the unified mapping engine.
+- name: mapping
+  description: "Mapping engine API.\n\nThe unified mapping engine provides a centralized, protocol-blind rules engine for identity federation.\nRulesets map external claims to localized authorization contexts.\n        "
+- name: mapping_ruleset
+  description: "Mapping ruleset API.\n\nThe unified mapping engine provides a centralized, protocol-blind rules engine for identity federation.\nRulesets map external claims to localized authorization contexts.\n        "
+- name: oauth2
+  description: OAuth2/OIDC provider public API (ADR 0026). Unauthenticated by design.
+- name: scim_realm
+  description: |2
 
-    K8s auth roles define how the JWT token of the Kubernetes pod running as a service account should be mapped to the local user during the token exchange.
+    SCIM realm administration. A SCIM realm is the explicit administrative
+    activation of an `(domain_id, provider_id)` coordinate for SCIM Users/Groups
+    resource provisioning (ADR 0024).
 - name: token
   description: Token API
 - name: token_restriction
   description: "Token restrictions API.\n\nToken restrictions allow controlling multiple aspects of the authentication and authorization.\n\n- `allow_rescope` controls whether it is allowed to change the scope of the token. That is by default possible for normal (i.e. password) authentication, is forbidden for the application credentials and may need to be also forbidden for the JWT based authentication.\n\n- `allow_renew` controls whether it is possible to renew the token (get a new token from existing token). This is most likely undisired for the JWT auth.\n\n- `project_id` may control that this token can be only issued for the fixed project scope.\n\n- `user_id` may specify the fixed user_id that will be used when issuing the token independently of the authentication. This is useful for Service Accounts.\n\n- `roles` binds the roles of the issued token on the scope. Using this bypasses necessity to grant the roles explicitly to the user.\n\n        "
+- name: users
+  description: "User API.\n\nUser management endpoints for creating, retrieving, updating, and deleting users.\n        "
 - name: passkey
   description: Passkey API.
 
