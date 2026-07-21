@@ -48,9 +48,9 @@ homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 
 [workspace.dependencies]
-arc-swap = "1.7"
+arc-swap = "^1.9"
 async-trait = { version = "^0.1" }
-base64 = "0.22"
+base64 = "^0.22"
 bytes = "^1.12"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.6", features = ["cargo", "color", "derive", "env"] }
@@ -66,8 +66,8 @@ futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.4"
 http-body-util = "^0.1"
-httpmock = { version = "0.8" }
-hyper = { version = "^1.10" }
+httpmock = { version = "^0.8" }
+hyper = { version = "^1.11" }
 hyper-util = { version = "^0.1" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
@@ -100,7 +100,7 @@ ssh-key = { version = "^0.6", features = ["rsa", "encryption"] }
 reqwest = { version = "^0.13", default-features = false }
 reserve-port = "^2.5"
 schemars = { version = "^1.2" }
-secrecy = { version = "0.10", features = ["serde"] }
+secrecy = { version = "^0.10", features = ["serde"] }
 serde = { version="^1.0", features=["derive"] }
 serde_json = "^1.0"
 serde_bytes = "^0.11"
@@ -109,7 +109,7 @@ sha2 = { version = "^0.11", default-features = false }
 strip-ansi-escapes = "^0.2"
 structable = { version = "^0.3" }
 tempfile = "^3.27"
-tokio = { version = "^1.52", default-features = false, features = ["macros"]}
+tokio = { version = "^1.53", default-features = false, features = ["macros"]}
 tokio-util = { version="^0.7", features = ["io", "compat"]}
 thiserror = { version = "^2.0" }
 tracing = "^0.1"
@@ -117,9 +117,9 @@ tracing-error = { version = "^0.2" }
 tracing-subscriber = { version = "^0.3", features = ["env-filter", "serde"] }
 tracing-test = { version = "^0.2" }
 url = { version = "^2.5", features = ["serde"] }
-webauthn-authenticator-rs = { version = "0.5", features = ["ctap2", "mozilla", "ui-cli"]}
-webauthn-rs-proto = { version = "0.5" }
-uuid = { version = "1.23" }
+webauthn-authenticator-rs = { version = "^0.5", features = ["ctap2", "mozilla", "ui-cli"]}
+webauthn-rs-proto = { version = "^0.5" }
+uuid = { version = "^1.24" }
 zeroize = { version = "^1.9" }
 
 [profile.dev]
