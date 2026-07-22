@@ -17,4 +17,4 @@
 
 //! `/v2.1/os-assisted-volume-snapshots` REST operations of compute
 pub mod create;
-pub mod delete;
+pub mod delete_20;

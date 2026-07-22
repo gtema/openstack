@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
-pub mod list_detail;
+pub mod list_21;
+pub mod list_detail_21;
 
 /// Availability zones
 ///
@@ -41,8 +41,10 @@ pub struct AvailabilityZoneCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
-    List(list::AvailabilityZonesCommand),
-    ListDetail(list_detail::AvailabilityZonesCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::AvailabilityZonesCommand),
+    #[command(visible_alias = "list-detail")]
+    ListDetail21(list_detail_21::AvailabilityZonesCommand),
 }
 
 impl AvailabilityZoneCommand {
@@ -53,8 +55,8 @@ impl AvailabilityZoneCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            AvailabilityZoneCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            AvailabilityZoneCommands::ListDetail(cmd) => {
+            AvailabilityZoneCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            AvailabilityZoneCommands::ListDetail21(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
         }

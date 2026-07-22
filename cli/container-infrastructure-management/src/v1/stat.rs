@@ -34,7 +34,7 @@ pub struct StatCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum StatCommands {
-    #[command(alias = "get")]
+    #[command(visible_alias = "get")]
     Show(get::StatCommand),
 }
 

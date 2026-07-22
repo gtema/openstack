@@ -21,5 +21,5 @@ pub mod create_215;
 pub mod create_264;
 pub mod delete;
 pub mod find;
-pub mod get;
-pub mod list;
+pub mod get_21;
+pub mod list_20;

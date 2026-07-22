@@ -71,7 +71,8 @@ pub struct BindingResponse {
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port. The
     /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
-    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic`, `vdpa`,
+    /// `accelerator-direct`, `accelerator-direct-physical` and
     /// `remote-managed`. What type of vNIC is actually available depends on
     /// deployments.
     #[serde(default)]

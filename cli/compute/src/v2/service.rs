@@ -21,7 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod delete;
-pub mod list;
+pub mod list_20;
 pub mod set_20;
 pub mod set_211;
 pub mod set_253;
@@ -41,7 +41,8 @@ pub struct ServiceCommand {
 #[derive(Subcommand)]
 pub enum ServiceCommands {
     Delete(delete::ServiceCommand),
-    List(list::ServicesCommand),
+    #[command(visible_alias = "list")]
+    List20(list_20::ServicesCommand),
     #[command(visible_alias = "set")]
     Set253(set_253::ServiceCommand),
     Set211(set_211::ServiceCommand),
@@ -57,7 +58,7 @@ impl ServiceCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             ServiceCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            ServiceCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::List20(cmd) => cmd.take_action(parsed_args, session).await,
             ServiceCommands::Set253(cmd) => cmd.take_action(parsed_args, session).await,
             ServiceCommands::Set211(cmd) => cmd.take_action(parsed_args, session).await,
             ServiceCommands::Set20(cmd) => cmd.take_action(parsed_args, session).await,

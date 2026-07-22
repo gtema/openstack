@@ -21,11 +21,11 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod defaults_20;
-pub mod delete;
-pub mod details;
+pub mod delete_20;
+pub mod details_20;
 pub mod set_236;
 pub mod set_257;
-pub mod show;
+pub mod show_20;
 
 /// Quota sets (os-quota-sets)
 ///
@@ -44,12 +44,15 @@ pub struct QuotaSetCommand {
 pub enum QuotaSetCommands {
     #[command(visible_alias = "defaults")]
     Defaults20(defaults_20::QuotaSetCommand),
-    Delete(delete::QuotaSetCommand),
-    Details(details::QuotaSetCommand),
+    #[command(visible_alias = "delete")]
+    Delete20(delete_20::QuotaSetCommand),
+    #[command(visible_alias = "details")]
+    Details20(details_20::QuotaSetCommand),
     #[command(visible_alias = "set")]
     Set257(set_257::QuotaSetCommand),
     Set236(set_236::QuotaSetCommand),
-    Show(show::QuotaSetCommand),
+    #[command(visible_alias = "show")]
+    Show20(show_20::QuotaSetCommand),
 }
 
 impl QuotaSetCommand {
@@ -61,11 +64,11 @@ impl QuotaSetCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             QuotaSetCommands::Defaults20(cmd) => cmd.take_action(parsed_args, session).await,
-            QuotaSetCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            QuotaSetCommands::Details(cmd) => cmd.take_action(parsed_args, session).await,
+            QuotaSetCommands::Delete20(cmd) => cmd.take_action(parsed_args, session).await,
+            QuotaSetCommands::Details20(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Set257(cmd) => cmd.take_action(parsed_args, session).await,
             QuotaSetCommands::Set236(cmd) => cmd.take_action(parsed_args, session).await,
-            QuotaSetCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            QuotaSetCommands::Show20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -27,7 +27,7 @@
 //!    # let cfg = ConfigFile::new().unwrap();
 //!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::get_20::Request::builder().build().unwrap();
 //!    let data_raw: serde_json::Value = ep.query_async(&client).await?;
 //!    # Ok(())
 //!    # }
@@ -47,7 +47,7 @@
 //!    # let cfg = ConfigFile::new().unwrap();
 //!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::get_20::Request::builder().build().unwrap();
 //!    // let rsp: Response<Bytes> = raw(ep).query_async(&client).await?;
 //!    // let rsp: Response<Bytes> = raw(ep).skip_error_check(true).query_async(&client).await?;
 //!    # Ok(())
@@ -110,7 +110,7 @@
 //!    # let cfg = ConfigFile::new().unwrap();
 //!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
-//!    # let ep = openstack_sdk::api::compute::v2::flavor::list::Request::builder().build().unwrap();
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::list_20::Request::builder().build().unwrap();
 //!    let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(100))
 //!        .query_async(&client)
 //!        .await?;

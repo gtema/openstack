@@ -33,7 +33,7 @@ pub struct ProjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProjectCommands {
-    #[command(alias = "get")]
+    #[command(visible_alias = "get")]
     List(Box<get::ProjectCommand>),
 }
 

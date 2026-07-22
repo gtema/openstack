@@ -24,8 +24,8 @@ pub mod create_20;
 pub mod create_215;
 pub mod create_264;
 pub mod delete;
-pub mod list;
-pub mod show;
+pub mod list_20;
+pub mod show_21;
 
 /// Server groups (os-server-groups)
 ///
@@ -46,8 +46,10 @@ pub enum ServerGroupCommands {
     Create215(create_215::ServerGroupCommand),
     Create20(create_20::ServerGroupCommand),
     Delete(delete::ServerGroupCommand),
-    List(list::ServerGroupsCommand),
-    Show(show::ServerGroupCommand),
+    #[command(visible_alias = "list")]
+    List20(list_20::ServerGroupsCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::ServerGroupCommand),
 }
 
 impl ServerGroupCommand {
@@ -62,8 +64,8 @@ impl ServerGroupCommand {
             ServerGroupCommands::Create215(cmd) => cmd.take_action(parsed_args, session).await,
             ServerGroupCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
             ServerGroupCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerGroupCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerGroupCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerGroupCommands::List20(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerGroupCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

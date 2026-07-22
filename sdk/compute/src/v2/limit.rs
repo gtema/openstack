@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/limits` REST operations of compute
-pub mod list;
+pub mod list_21;

@@ -17,7 +17,7 @@
 
 //! `/v2.1/os-services/{id}` REST operations of compute
 pub mod delete;
-pub mod list;
+pub mod list_20;
 pub mod set_20;
 pub mod set_211;
 pub mod set_253;

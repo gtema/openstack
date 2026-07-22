@@ -21,10 +21,10 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod create;
 mod delete;
-mod list;
+mod list_21;
 mod replace;
 mod set;
-mod show;
+mod show_21;
 
 /// Lists metadata, creates or replaces one or more metadata items, and updates
 /// one or more metadata items for a server.
@@ -45,10 +45,12 @@ pub struct MetadataCommand {
 pub enum MetadataCommands {
     Create(Box<create::MetadataCommand>),
     Delete(Box<delete::MetadataCommand>),
-    List(Box<list::MetadatasCommand>),
+    #[command(visible_alias = "list")]
+    List21(Box<list_21::MetadatasCommand>),
     Replace(Box<replace::MetadataCommand>),
     Set(Box<set::MetadataCommand>),
-    Show(Box<show::MetadataCommand>),
+    #[command(visible_alias = "show")]
+    Show21(Box<show_21::MetadataCommand>),
 }
 
 impl MetadataCommand {
@@ -61,10 +63,10 @@ impl MetadataCommand {
         match &self.command {
             MetadataCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             MetadataCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            MetadataCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
             MetadataCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
             MetadataCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
-            MetadataCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

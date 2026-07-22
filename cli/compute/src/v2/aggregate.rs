@@ -22,7 +22,7 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 pub mod add_host;
 pub mod create_21;
 pub mod delete;
-pub mod list;
+pub mod list_21;
 /// Aggregate image
 pub mod image {
     pub mod cache_281;
@@ -30,7 +30,7 @@ pub mod image {
 pub mod remove_host;
 pub mod set_21;
 pub mod set_metadata;
-pub mod show;
+pub mod show_21;
 
 /// Creates and manages host aggregates. An aggregate assigns metadata to
 /// groups of compute nodes.
@@ -56,11 +56,13 @@ pub enum AggregateCommands {
     Create21(create_21::AggregateCommand),
     CacheImage(image::cache_281::ImageCommand),
     Delete(delete::AggregateCommand),
-    List(list::AggregatesCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::AggregatesCommand),
     /// Removes a host from an aggregate.
     #[command(about = "Remove Host")]
     RemoveHost(remove_host::AggregateCommand),
-    Show(show::AggregateCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::AggregateCommand),
     #[command(visible_alias = "set")]
     Set21(set_21::AggregateCommand),
     /// Creates or replaces metadata for an aggregate.
@@ -80,9 +82,9 @@ impl AggregateCommand {
             AggregateCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::CacheImage(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            AggregateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::RemoveHost(cmd) => cmd.take_action(parsed_args, session).await,
-            AggregateCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Set21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::SetMetadata(cmd) => cmd.take_action(parsed_args, session).await,
         }

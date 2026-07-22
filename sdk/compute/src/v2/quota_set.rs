@@ -17,9 +17,9 @@
 
 //! `/v2.1/os-quota-sets/{id}/defaults` REST operations of compute
 pub mod defaults_20;
-pub mod delete;
-pub mod details;
-pub mod get;
+pub mod delete_20;
+pub mod details_20;
+pub mod get_20;
 pub mod set_20;
 pub mod set_236;
 pub mod set_257;

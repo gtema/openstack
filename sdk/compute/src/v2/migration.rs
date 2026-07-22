@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-migrations` REST operations of compute
-pub mod get_21;
+pub mod get_20;

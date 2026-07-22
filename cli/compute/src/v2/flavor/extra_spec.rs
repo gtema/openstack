@@ -21,9 +21,9 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod create;
 mod delete;
-mod list;
+mod list_21;
 mod set;
-mod show;
+mod show_21;
 
 /// Flavor extra specs
 #[derive(Parser)]
@@ -44,11 +44,11 @@ pub enum ExtraSpecsCommands {
     #[command(about = "Delete An Extra Spec For A Flavor")]
     Delete(delete::ExtraSpecCommand),
     /// Lists all extra specs for a flavor, by ID.
-    #[command(about = "List Extra Specs For A Flavor")]
-    List(list::ExtraSpecsCommand),
+    #[command(about = "List Extra Specs For A Flavor", alias = "list")]
+    List21(list_21::ExtraSpecsCommand),
     /// Shows an extra spec, by key, for a flavor, by ID.
-    #[command(about = "Show An Extra Spec For A Flavor")]
-    Show(show::ExtraSpecCommand),
+    #[command(about = "Show An Extra Spec For A Flavor", alias = "show")]
+    Show21(show_21::ExtraSpecCommand),
     /// Updates an extra spec, by key, for a flavor, by ID.
     #[command(about = "Update An Extra Spec For A Flavor
 ")]
@@ -65,8 +65,8 @@ impl ExtraSpecsCommand {
         match &self.command {
             ExtraSpecsCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             ExtraSpecsCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            ExtraSpecsCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ExtraSpecsCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
             ExtraSpecsCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

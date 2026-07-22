@@ -33,7 +33,7 @@ pub struct EndpointGroupCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum EndpointGroupCommands {
-    #[command(alias = "get")]
+    #[command(visible_alias = "get")]
     List(Box<get::EndpointGroupCommand>),
 }
 

@@ -110,6 +110,11 @@ impl RestEndpoint for Request<'_> {
     fn api_version(&self) -> Option<ApiVersion> {
         Some(ApiVersion::new(1, 1))
     }
+
+    /// Returns minimum API version this variant requires
+    fn min_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(1, 1))
+    }
 }
 
 #[cfg(test)]

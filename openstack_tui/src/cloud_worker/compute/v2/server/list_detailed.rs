@@ -24,7 +24,7 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
-use openstack_sdk::api::compute::v2::server::list_detailed::RequestBuilder;
+use openstack_sdk::api::compute::v2::server::list_detailed_21::RequestBuilder;
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 

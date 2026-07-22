@@ -21,7 +21,7 @@ use openstack_sdk_core::api::Findable;
 use openstack_sdk_core::api::rest_endpoint_prelude::*;
 use openstack_sdk_core::api::{ApiError, RestClient};
 
-use crate::v2::server::{get as Get, list_detailed as List};
+use crate::v2::server::{get_20 as Get, list_detailed_21 as List};
 
 /// Find for server by nameOrId.
 #[derive(Debug, Builder, Clone)]

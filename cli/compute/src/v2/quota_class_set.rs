@@ -21,7 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod set_21;
-pub mod show;
+pub mod show_21;
 
 /// Quota class sets (os-quota-class-sets)
 ///
@@ -64,7 +64,8 @@ pub struct QuotaClassSetCommand {
 pub enum QuotaClassSetCommands {
     #[command(visible_alias = "set")]
     Set21(set_21::QuotaClassSetCommand),
-    Show(show::QuotaClassSetCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::QuotaClassSetCommand),
 }
 
 impl QuotaClassSetCommand {
@@ -76,7 +77,7 @@ impl QuotaClassSetCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             QuotaClassSetCommands::Set21(cmd) => cmd.take_action(parsed_args, session).await,
-            QuotaClassSetCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            QuotaClassSetCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

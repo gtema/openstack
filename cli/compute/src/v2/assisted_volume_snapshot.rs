@@ -21,7 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod create;
-pub mod delete;
+pub mod delete_20;
 
 /// Assisted volume snapshots (os-assisted-volume-snapshots)
 ///
@@ -48,7 +48,8 @@ pub struct AssistedVolumeSnapshotCommand {
 #[derive(Subcommand)]
 pub enum AssistedVolumeSnapshotCommands {
     Create(create::AssistedVolumeSnapshotCommand),
-    Delete(delete::AssistedVolumeSnapshotCommand),
+    #[command(visible_alias = "delete")]
+    Delete20(delete_20::AssistedVolumeSnapshotCommand),
 }
 
 impl AssistedVolumeSnapshotCommand {
@@ -62,7 +63,7 @@ impl AssistedVolumeSnapshotCommand {
             AssistedVolumeSnapshotCommands::Create(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
-            AssistedVolumeSnapshotCommands::Delete(cmd) => {
+            AssistedVolumeSnapshotCommands::Delete20(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
         }
