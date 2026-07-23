@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
+pub mod list_21;
 
 /// Limits (limits)
 ///
@@ -36,7 +36,8 @@ pub struct LimitCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LimitCommands {
-    List(list::LimitCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::LimitCommand),
 }
 
 impl LimitCommand {
@@ -47,7 +48,7 @@ impl LimitCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            LimitCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            LimitCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

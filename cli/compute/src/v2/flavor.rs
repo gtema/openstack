@@ -27,10 +27,10 @@ pub mod create_255;
 pub mod delete;
 pub mod extra_spec;
 pub mod flavor_access;
-pub mod list;
+pub mod list_20;
 pub mod remove_tenant_access;
 pub mod set_255;
-pub mod show;
+pub mod show_20;
 
 /// Flavor commands
 ///
@@ -55,10 +55,12 @@ pub enum FlavorCommands {
     Create20(Box<create_20::FlavorCommand>),
     Delete(Box<delete::FlavorCommand>),
     Extraspecs(Box<extra_spec::ExtraSpecsCommand>),
-    List(Box<list::FlavorsCommand>),
+    #[command(visible_alias = "list")]
+    List20(Box<list_20::FlavorsCommand>),
     #[command(visible_alias = "set")]
     Set255(Box<set_255::FlavorCommand>),
-    Show(Box<show::FlavorCommand>),
+    #[command(visible_alias = "show")]
+    Show20(Box<show_20::FlavorCommand>),
 }
 
 impl FlavorCommand {
@@ -75,9 +77,9 @@ impl FlavorCommand {
             FlavorCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::Extraspecs(cmd) => cmd.take_action(parsed_args, session).await,
-            FlavorCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::List20(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::Set255(cmd) => cmd.take_action(parsed_args, session).await,
-            FlavorCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Show20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -21,7 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod delete;
-mod get;
+mod get_21;
 mod show_plaintext;
 
 /// Servers password
@@ -41,7 +41,8 @@ pub struct PasswordCommand {
 #[derive(Subcommand)]
 pub enum PasswordCommands {
     Delete(delete::ServerPasswordCommand),
-    Show(get::ServerPasswordCommand),
+    #[command(visible_alias = "show")]
+    Show21(get_21::ServerPasswordCommand),
     ShowPlaintext(show_plaintext::ShowPlaintextCommand),
 }
 
@@ -54,7 +55,7 @@ impl PasswordCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             PasswordCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            PasswordCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            PasswordCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
             PasswordCommands::ShowPlaintext(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

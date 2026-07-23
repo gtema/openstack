@@ -28,7 +28,7 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::compute::v2::server::server_password::get;
+use openstack_sdk::api::compute::v2::server::server_password::get_21;
 use openstack_types::compute::v2::server::server_password::response;
 
 use rsa::pkcs1::DecodeRsaPrivateKey;
@@ -97,7 +97,7 @@ impl ShowPlaintextCommand {
         );
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = get::Request::builder();
+        let mut ep_builder = get_21::Request::builder();
         ep_builder.server_id(&self.path.server_id);
         let ep = ep_builder
             .build()

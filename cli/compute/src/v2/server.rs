@@ -44,7 +44,7 @@ pub mod create_image_21;
 pub mod delete;
 /// Server diagnostics
 pub mod diagnostic {
-    pub mod get;
+    pub mod get_21;
 }
 pub mod evacuate_214;
 pub mod evacuate_229;
@@ -55,7 +55,7 @@ pub mod inject_network_info;
 pub mod instance_action;
 pub mod interface;
 pub mod ip;
-pub mod list;
+pub mod list_21;
 pub mod lock_273;
 pub mod metadata;
 pub mod migrate_256;
@@ -94,7 +94,7 @@ pub mod resume;
 pub mod revert_resize;
 /// Server security group
 pub mod security_group {
-    pub mod list;
+    pub mod list_21;
 }
 pub mod server_password;
 // mod set_20;
@@ -104,7 +104,7 @@ pub mod set_290;
 pub mod set_294;
 pub mod shelve;
 pub mod shelve_offload;
-pub mod show;
+pub mod show_20;
 pub mod suspend;
 pub mod tag;
 /// Server topology
@@ -184,7 +184,7 @@ pub enum ServerCommands {
     #[command(visible_alias = "create-image")]
     CreateImage21(Box<create_image_21::ServerCommand>),
     Delete(Box<delete::ServerCommand>),
-    Diagnostic(Box<diagnostic::get::DiagnosticCommand>),
+    Diagnostic(Box<diagnostic::get_21::DiagnosticCommand>),
     Evacuate214(Box<evacuate_214::ServerCommand>),
     Evacuate229(Box<evacuate_229::ServerCommand>),
     Evacuate268(Box<evacuate_268::ServerCommand>),
@@ -196,7 +196,8 @@ pub enum ServerCommands {
     Interface(Box<interface::InterfaceCommand>),
     InjectNetworkInfo(Box<inject_network_info::ServerCommand>),
     Ip(Box<ip::IpCommand>),
-    List(Box<list::ServersCommand>),
+    #[command(visible_alias = "list")]
+    List21(Box<list_21::ServersCommand>),
     LiveMigrate20(Box<os_migrate_live_20::ServerCommand>),
     LiveMigrate225(Box<os_migrate_live_225::ServerCommand>),
     LiveMigrate230(Box<os_migrate_live_230::ServerCommand>),
@@ -232,7 +233,7 @@ pub enum ServerCommands {
     Restore(Box<restore::ServerCommand>),
     Resume(Box<resume::ServerCommand>),
     RevertResize(Box<revert_resize::ServerCommand>),
-    SecurityGroups(Box<security_group::list::SecurityGroupsCommand>),
+    SecurityGroups(Box<security_group::list_21::SecurityGroupsCommand>),
     Set21(Box<set_21::ServerCommand>),
     Set219(Box<set_219::ServerCommand>),
     Set290(Box<set_290::ServerCommand>),
@@ -240,7 +241,8 @@ pub enum ServerCommands {
     Set294(Box<set_294::ServerCommand>),
     Shelve(Box<shelve::ServerCommand>),
     ShelveOffload(Box<shelve_offload::ServerCommand>),
-    Show(Box<show::ServerCommand>),
+    #[command(visible_alias = "show")]
+    Show20(Box<show_20::ServerCommand>),
     Start(Box<os_start::ServerCommand>),
     Stop(Box<os_stop::ServerCommand>),
     Suspend(Box<suspend::ServerCommand>),
@@ -312,7 +314,7 @@ impl ServerCommand {
 
             ServerCommands::InjectNetworkInfo(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Ip(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::LiveMigrate20(cmd) => cmd.take_action(parsed_args, session).await,
 
@@ -382,7 +384,7 @@ impl ServerCommand {
 
             ServerCommands::ShelveOffload(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::Show20(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::Start(cmd) => cmd.take_action(parsed_args, session).await,
 

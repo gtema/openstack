@@ -830,7 +830,7 @@ impl<'a> ListenersBuilder<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum PoolsHealthmonitorType {
+pub enum Type {
     #[serde(rename = "HTTP")]
     Http,
     #[serde(rename = "HTTPS")]
@@ -897,7 +897,7 @@ pub struct PoolsHealthmonitor<'a> {
 
     #[serde(rename = "type")]
     #[builder()]
-    pub(crate) _type: PoolsHealthmonitorType,
+    pub(crate) _type: Type,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -905,7 +905,7 @@ pub struct PoolsHealthmonitor<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum PoolsProtocol {
+pub enum Protocol {
     #[serde(rename = "HTTP")]
     Http,
     #[serde(rename = "HTTPS")]
@@ -965,7 +965,7 @@ pub struct Pools<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) protocol: Option<PoolsProtocol>,
+    pub(crate) protocol: Option<Protocol>,
 
     /// Defines mandatory and optional attributes of a POST request.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1179,6 +1179,11 @@ impl RestEndpoint for Request<'_> {
 
     /// Returns required API version
     fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
+    }
+
+    /// Returns minimum API version this variant requires
+    fn min_version(&self) -> Option<ApiVersion> {
         Some(ApiVersion::new(2, 0))
     }
 }

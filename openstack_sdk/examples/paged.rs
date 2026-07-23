@@ -15,7 +15,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::paged;
 use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 
-use openstack_sdk::api::compute::v2::flavor::list_detailed;
+use openstack_sdk::api::compute::v2::flavor::list_detailed_20;
 
 #[derive(Deserialize, Debug, Clone)]
 struct Flavor {
@@ -41,7 +41,7 @@ async fn main() -> Result<(), OpenStackError> {
     let client = AsyncOpenStack::new(&profile).await?;
 
     // use the list_detailed endpoint
-    let mut ep_builder = list_detailed::Request::builder();
+    let mut ep_builder = list_detailed_20::Request::builder();
     if let Ok(min_ram) = env::var("FLAVOR_MIN_RAM") {
         // set query parameter
         ep_builder.min_ram(min_ram);

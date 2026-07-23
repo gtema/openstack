@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
-pub mod show;
+pub mod list_21;
+pub mod show_21;
 
 /// Extension commands
 #[derive(Parser)]
@@ -35,8 +35,10 @@ pub struct ExtensionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ExtensionCommands {
-    List(list::ExtensionsCommand),
-    Show(show::ExtensionCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::ExtensionsCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::ExtensionCommand),
 }
 
 impl ExtensionCommand {
@@ -47,8 +49,8 @@ impl ExtensionCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ExtensionCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ExtensionCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtensionCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtensionCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

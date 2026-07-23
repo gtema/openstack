@@ -32,7 +32,7 @@ pub struct VersionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VersionCommands {
-    #[command(alias = "get")]
+    #[command(visible_alias = "get")]
     Show(get::VersionCommand),
 }
 

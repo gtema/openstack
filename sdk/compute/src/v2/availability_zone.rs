@@ -16,5 +16,5 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-availability-zone` REST operations of compute
-pub mod list;
-pub mod list_detail;
+pub mod list_21;
+pub mod list_detail_21;

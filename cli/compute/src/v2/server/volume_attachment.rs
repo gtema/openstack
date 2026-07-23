@@ -24,10 +24,10 @@ mod create_20;
 mod create_249;
 mod create_279;
 mod delete;
-mod list;
+mod list_20;
 mod set_20;
 mod set_285;
-mod show;
+mod show_20;
 
 /// Servers with volume attachments
 ///
@@ -50,11 +50,13 @@ pub enum VolumeAttachmentCommands {
     #[command(visible_alias = "create")]
     Create279(create_279::VolumeAttachmentCommand),
     Delete(delete::VolumeAttachmentCommand),
-    List(list::VolumeAttachmentsCommand),
+    #[command(visible_alias = "list")]
+    List20(list_20::VolumeAttachmentsCommand),
     Set20(set_20::VolumeAttachmentCommand),
     #[command(visible_alias = "set")]
     Set285(set_285::VolumeAttachmentCommand),
-    Show(show::VolumeAttachmentCommand),
+    #[command(visible_alias = "show")]
+    Show20(show_20::VolumeAttachmentCommand),
 }
 
 impl VolumeAttachmentCommand {
@@ -69,10 +71,10 @@ impl VolumeAttachmentCommand {
             VolumeAttachmentCommands::Create249(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeAttachmentCommands::Create279(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeAttachmentCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            VolumeAttachmentCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::List20(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeAttachmentCommands::Set20(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeAttachmentCommands::Set285(cmd) => cmd.take_action(parsed_args, session).await,
-            VolumeAttachmentCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Show20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

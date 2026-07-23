@@ -22,8 +22,8 @@ use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod create_249;
 mod delete;
-mod list;
-mod show;
+mod list_21;
+mod show_21;
 
 /// Port interfaces (servers, os-interface)
 ///
@@ -44,8 +44,10 @@ pub enum InterfaceCommands {
     #[command(visible_alias = "create")]
     Create249(create_249::InterfaceCommand),
     Delete(delete::InterfaceCommand),
-    List(list::InterfacesCommand),
-    Show(show::InterfaceCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::InterfacesCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::InterfaceCommand),
 }
 
 impl InterfaceCommand {
@@ -58,8 +60,8 @@ impl InterfaceCommand {
         match &self.command {
             InterfaceCommands::Create249(cmd) => cmd.take_action(parsed_args, session).await,
             InterfaceCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            InterfaceCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            InterfaceCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

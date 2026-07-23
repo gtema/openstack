@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::compute::v2::server::list_detailed::Request;
+use openstack_sdk::api::compute::v2::server::list_detailed_21::Request;
 use openstack_types::compute::v2::server::response;
 
 use crate::get_client;

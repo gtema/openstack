@@ -24,7 +24,7 @@
 use std::env;
 
 use http::{HeaderName, HeaderValue, StatusCode};
-use openstack_sdk::api::compute::v2::server::list;
+use openstack_sdk::api::compute::v2::server::list_21;
 use openstack_sdk::api::identity::v3::auth::token::delete;
 use openstack_sdk::api::{Pagination, Query, QueryAsync, paged, raw};
 use openstack_sdk::config::ConfigFile;
@@ -69,7 +69,7 @@ async fn async_reauth_after_token_revocation() -> Result<(), Box<dyn std::error:
     );
 
     // Perform a REST call - it should automatically re-authenticate
-    let ep = list::Request::builder().build().unwrap();
+    let ep = list_21::Request::builder().build().unwrap();
     let _servers: Vec<serde_json::Value> = paged(ep, Pagination::Limit(10))
         .query_async(&session)
         .await?;
@@ -114,7 +114,7 @@ fn sync_reauth_after_token_revocation() -> Result<(), Box<dyn std::error::Error>
     );
 
     // Perform a REST call - it should automatically re-authenticate
-    let ep = list::Request::builder().build().unwrap();
+    let ep = list_21::Request::builder().build().unwrap();
     let _servers: Vec<serde_json::Value> = paged(ep, Pagination::Limit(10)).query(&session)?;
 
     assert!(

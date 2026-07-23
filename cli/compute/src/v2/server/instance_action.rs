@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 mod list_21;
-mod show;
+mod show_21;
 
 /// Servers actions
 ///
@@ -38,7 +38,8 @@ pub struct InstanceActionCommand {
 pub enum InstanceActionCommands {
     #[command(visible_alias = "list")]
     List21(Box<list_21::InstanceActionsCommand>),
-    Show(Box<show::InstanceActionCommand>),
+    #[command(visible_alias = "show")]
+    Show21(Box<show_21::InstanceActionCommand>),
 }
 
 impl InstanceActionCommand {
@@ -50,7 +51,7 @@ impl InstanceActionCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             InstanceActionCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
-            InstanceActionCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            InstanceActionCommands::Show21(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

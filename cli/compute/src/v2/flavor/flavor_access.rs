@@ -22,7 +22,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::v2::flavor::add_tenant_access;
 use crate::v2::flavor::remove_tenant_access;
 
-mod list;
+mod list_21;
 
 /// Flavor access command
 #[derive(Parser)]
@@ -39,8 +39,11 @@ pub enum FlavorAccessCommands {
     #[command(about = "Add Flavor Access To Tenant (addTenantAccess Action)")]
     Add(add_tenant_access::FlavorCommand),
     /// Lists flavor access information.
-    #[command(about = "List Flavor Access Information For Given Flavor")]
-    List(list::FlavorAccessesCommand),
+    #[command(
+        about = "List Flavor Access Information For Given Flavor",
+        alias = "list"
+    )]
+    List21(list_21::FlavorAccessesCommand),
     /// Removes flavor access from a tenant and flavor.
     #[command(about = "Remove Flavor Access From Tenant (removeTenantAccess Action)")]
     Remove(remove_tenant_access::FlavorCommand),
@@ -55,7 +58,7 @@ impl FlavorAccessCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             FlavorAccessCommands::Add(cmd) => cmd.take_action(parsed_args, session).await,
-            FlavorAccessCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorAccessCommands::List21(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorAccessCommands::Remove(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

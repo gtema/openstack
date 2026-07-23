@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod list;
-pub mod show;
+pub mod list_21;
+pub mod show_21;
 
 /// Server usage audit log (os-instance-usage-audit-log)
 ///
@@ -42,8 +42,10 @@ pub struct InstanceUsageAuditLogCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum InstanceUsageAuditLogCommands {
-    List(list::InstanceUsageAuditLogsCommand),
-    Show(show::InstanceUsageAuditLogCommand),
+    #[command(visible_alias = "list")]
+    List21(list_21::InstanceUsageAuditLogsCommand),
+    #[command(visible_alias = "show")]
+    Show21(show_21::InstanceUsageAuditLogCommand),
 }
 
 impl InstanceUsageAuditLogCommand {
@@ -54,8 +56,12 @@ impl InstanceUsageAuditLogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            InstanceUsageAuditLogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            InstanceUsageAuditLogCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            InstanceUsageAuditLogCommands::List21(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            InstanceUsageAuditLogCommands::Show21(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
         }
     }
 }

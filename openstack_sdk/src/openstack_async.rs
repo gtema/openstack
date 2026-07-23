@@ -70,11 +70,11 @@ use openstack_sdk_core::utils::expand_tilde;
 /// use openstack_sdk::api::{paged, Pagination, QueryAsync};
 /// use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
 /// use openstack_sdk::types::ServiceType;
-/// use openstack_sdk::api::compute::v2::flavor::list;
+/// use openstack_sdk::api::compute::v2::flavor::list_20;
 ///
 /// async fn list_flavors() -> Result<(), OpenStackError> {
 ///     // Get the builder for the listing Flavors Endpoint
-///     let mut ep_builder = list::Request::builder();
+///     let mut ep_builder = list_20::Request::builder();
 ///     // Set the `min_disk` query param
 ///     ep_builder.min_disk("15");
 ///     let ep = ep_builder.build().unwrap();

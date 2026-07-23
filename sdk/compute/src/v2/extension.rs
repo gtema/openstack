@@ -16,5 +16,5 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/extensions` REST operations of compute
-pub mod get;
-pub mod list;
+pub mod get_21;
+pub mod list_21;

@@ -10,7 +10,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::ignore;
 use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 
-use openstack_sdk::api::compute::v2::flavor::get;
+use openstack_sdk::api::compute::v2::flavor::get_20;
 
 #[tokio::main]
 async fn main() -> Result<(), OpenStackError> {
@@ -25,7 +25,7 @@ async fn main() -> Result<(), OpenStackError> {
     let client = AsyncOpenStack::new(&profile).await?;
 
     // Prepare the find combinator
-    let mut ep_builder = get::Request::builder();
+    let mut ep_builder = get_20::Request::builder();
 
     // Set the `id` which is NAME or ID to find
     ep_builder.id(env::var("FLAVOR_ID").expect("FLAVOR_ID variable must be set"));

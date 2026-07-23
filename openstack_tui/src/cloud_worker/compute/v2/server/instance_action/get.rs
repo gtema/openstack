@@ -24,7 +24,7 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
-use openstack_sdk::api::compute::v2::server::instance_action::get::RequestBuilder;
+use openstack_sdk::api::compute::v2::server::instance_action::get_21::RequestBuilder;
 use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
 #[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]

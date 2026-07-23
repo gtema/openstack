@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
-pub mod get_21;
+pub mod get_20;
 
 /// Migrations (os-migrations)
 ///
@@ -37,7 +37,7 @@ pub struct MigrationCommand {
 #[derive(Subcommand)]
 pub enum MigrationCommands {
     #[command(visible_alias = "get")]
-    Get21(get_21::MigrationCommand),
+    Get20(get_20::MigrationCommand),
 }
 
 impl MigrationCommand {
@@ -48,7 +48,7 @@ impl MigrationCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            MigrationCommands::Get21(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::Get20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

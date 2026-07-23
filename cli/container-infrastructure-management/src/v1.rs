@@ -44,7 +44,7 @@ pub enum ContainerInfrastructureCommands {
     Cluster(Box<cluster::ClusterCommand>),
     Clustertemplate(Box<clustertemplate::ClustertemplateCommand>),
     Federation(Box<federation::FederationCommand>),
-    #[command(alias = "mservice")]
+    #[command(visible_alias = "mservice")]
     Service(Box<mservice::ServiceCommand>),
     Quota(Box<quota::QuotaCommand>),
     Stat(Box<stat::StatCommand>),
