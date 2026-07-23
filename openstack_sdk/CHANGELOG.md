@@ -6,6 +6,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.7...openstack_sdk-v0.22.8) - 2026-07-23
+
+### Added
+
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- *(cli,sdk)* Diverse UX improvements ([#1861](https://github.com/gtema/openstack/pull/1861))
+- *(sdk)* Add background token auto-renewal ([#1859](https://github.com/gtema/openstack/pull/1859))
+- Add region switching support ([#1820](https://github.com/gtema/openstack/pull/1820))
+- Enable catalog refresh ([#1800](https://github.com/gtema/openstack/pull/1800))
+- Add OIDC client credentials authentication plugin ([#1798](https://github.com/gtema/openstack/pull/1798))
+- Introduce possibility to skip auth cache ([#1791](https://github.com/gtema/openstack/pull/1791))
+- *(state)* Add file locking to auth cache ([#1793](https://github.com/gtema/openstack/pull/1793))
+
+### Fixed
+
+- *(sdk)* Harden auth cache key, validity, and GC ([#1860](https://github.com/gtema/openstack/pull/1860))
+- *(sdk)* Replace RwLock poisoning with parking_lot ([#1858](https://github.com/gtema/openstack/pull/1858))
+- *(sdk)* Call anchor_plugins() unconditionally in new_impl ([#1856](https://github.com/gtema/openstack/pull/1856))
+- *(sdk)* Single-flight re-authentication on 401 ([#1849](https://github.com/gtema/openstack/pull/1849))
+- *(sdk)* Preserve request headers on 401 retry ([#1834](https://github.com/gtema/openstack/pull/1834))
+- Use weak deps for async/sync feature propagation ([#1812](https://github.com/gtema/openstack/pull/1812))
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+- *(sdk)* Fix microversion header negotiation ([#1863](https://github.com/gtema/openstack/pull/1863))
+- Fix sha2 0.11 LowerHex removal in config hash ([#1878](https://github.com/gtema/openstack/pull/1878))
+
+### Other
+
+- Replace RawQueryAsync trait with combinators ([#1864](https://github.com/gtema/openstack/pull/1864))
+- Apply clippy 1.97 ([#1847](https://github.com/gtema/openstack/pull/1847))
+- Unify sync client as thin facade over async ([#1835](https://github.com/gtema/openstack/pull/1835))
+- Improve auth plugins ([#1796](https://github.com/gtema/openstack/pull/1796))
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+- *(sdk)* Move Dialoguer AuthHelper to auth-core ([#1865](https://github.com/gtema/openstack/pull/1865))
+- Bump dependencies ([#1857](https://github.com/gtema/openstack/pull/1857))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.6...openstack_sdk-v0.22.7) - 2026-06-01
 
 ### Added

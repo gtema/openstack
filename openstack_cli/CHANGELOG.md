@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.7...openstack_cli-v0.13.8) - 2026-07-23
+
+### Added
+
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+- *(cli,sdk)* Diverse UX improvements ([#1861](https://github.com/gtema/openstack/pull/1861))
+- *(cli)* Add service command version dispatch ([#1848](https://github.com/gtema/openstack/pull/1848))
+
+### Other
+
+- Bump dependencies ([#1857](https://github.com/gtema/openstack/pull/1857))
+- Another missed place for disabling keystone-rs ([#1832](https://github.com/gtema/openstack/pull/1832))
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.13.7](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.6...openstack_cli-v0.13.7) - 2026-06-01
 
 ### Other

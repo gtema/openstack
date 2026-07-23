@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.7...openstack_sdk_core-v0.22.8) - 2026-07-23
+
+### Added
+
+- *(cli,sdk)* Diverse UX improvements ([#1861](https://github.com/gtema/openstack/pull/1861))
+- *(sdk)* Add background token auto-renewal ([#1859](https://github.com/gtema/openstack/pull/1859))
+- Add region switching support ([#1820](https://github.com/gtema/openstack/pull/1820))
+- Enable catalog refresh ([#1800](https://github.com/gtema/openstack/pull/1800))
+- Add OIDC client credentials authentication plugin ([#1798](https://github.com/gtema/openstack/pull/1798))
+- *(state)* Add file locking to auth cache ([#1793](https://github.com/gtema/openstack/pull/1793))
+- Introduce possibility to skip auth cache ([#1791](https://github.com/gtema/openstack/pull/1791))
+
+### Fixed
+
+- *(sdk)* Fix microversion header negotiation ([#1863](https://github.com/gtema/openstack/pull/1863))
+- Fix sha2 0.11 LowerHex removal in config hash ([#1878](https://github.com/gtema/openstack/pull/1878))
+- *(sdk)* Harden auth cache key, validity, and GC ([#1860](https://github.com/gtema/openstack/pull/1860))
+- *(sdk)* Replace RwLock poisoning with parking_lot ([#1858](https://github.com/gtema/openstack/pull/1858))
+- *(sdk)* Single-flight re-authentication on 401 ([#1849](https://github.com/gtema/openstack/pull/1849))
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- *(sdk)* Move Dialoguer AuthHelper to auth-core ([#1865](https://github.com/gtema/openstack/pull/1865))
+- Replace RawQueryAsync trait with combinators ([#1864](https://github.com/gtema/openstack/pull/1864))
+- Bump dependencies ([#1857](https://github.com/gtema/openstack/pull/1857))
+- Apply clippy 1.97 ([#1847](https://github.com/gtema/openstack/pull/1847))
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.6...openstack_sdk_core-v0.22.7) - 2026-06-01
 
 ### Added
