@@ -134,11 +134,6 @@ impl RestEndpoint for Request<'_> {
         self._headers.as_ref()
     }
 
-    /// Returns required API version
-    fn api_version(&self) -> Option<ApiVersion> {
-        Some(ApiVersion::new(3, 40))
-    }
-
     /// Returns minimum API version this variant requires
     fn min_version(&self) -> Option<ApiVersion> {
         Some(ApiVersion::new(3, 40))

@@ -81,10 +81,6 @@ impl ServerGroupCommand {
         let mut find_builder = find::Request::builder();
 
         find_builder.id(&self.path.id);
-        find_builder.header(
-            http::header::HeaderName::from_static("openstack-api-version"),
-            http::header::HeaderValue::from_static("compute 2.1"),
-        );
 
         let find_ep = find_builder
             .build()

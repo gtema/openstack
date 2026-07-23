@@ -347,6 +347,33 @@ paths:
           description: Deleted
         '404':
           description: Domain not found
+    patch:
+      tags:
+      - domains
+      summary: Update existing domain
+      description: Update domain by ID
+      operationId: update
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainResponse'
+        '404':
+          description: Domain not found
   /v3/ec2tokens:
     post:
       tags:
@@ -587,6 +614,33 @@ paths:
           description: Deleted
         '404':
           description: group not found
+    patch:
+      tags:
+      - groups
+      summary: Update existing group
+      description: Update group by ID
+      operationId: update
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '404':
+          description: Group not found
   /v3/projects:
     get:
       tags:
@@ -686,6 +740,33 @@ paths:
       responses:
         '204':
           description: Deleted
+        '404':
+          description: Project not found
+    patch:
+      tags:
+      - projects
+      summary: Update existing project
+      description: Update project by ID
+      operationId: update
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
         '404':
           description: Project not found
   /v3/projects/{project_id}/users/{user_id}/roles:
@@ -815,6 +896,119 @@ paths:
           description: Grant not found
       security:
       - x-auth: []
+  /v3/regions:
+    get:
+      tags:
+      - regions
+      summary: List regions
+      description: List regions
+      operationId: list
+      parameters:
+      - name: parent_region_id
+        in: query
+        description: Filters the response by a parent region ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of regions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - regions
+      summary: Create a new Region.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Region created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/regions/{region_id}:
+    get:
+      tags:
+      - regions
+      summary: Get single region
+      description: Get region by ID
+      operationId: show
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Region object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+        '404':
+          description: Region not found
+    delete:
+      tags:
+      - regions
+      summary: Delete a region.
+      description: Delete region by ID
+      operationId: delete
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Region deleted
+        '404':
+          description: Region not found
+    patch:
+      tags:
+      - regions
+      summary: Update existing region
+      description: Update region by ID
+      operationId: update
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated region
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+        '404':
+          description: Region not found
   /v3/role_assignments:
     get:
       tags:
@@ -1155,6 +1349,33 @@ paths:
       responses:
         '204':
           description: Role deleted
+        '404':
+          description: Role not found
+    patch:
+      tags:
+      - roles
+      summary: Update existing role
+      description: Update role by ID
+      operationId: update
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
   /v3/services:
@@ -2417,6 +2638,33 @@ paths:
           description: Deleted
         '404':
           description: group not found
+    patch:
+      tags:
+      - groups
+      summary: Update existing group
+      description: Update group by ID
+      operationId: update
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '404':
+          description: Group not found
   /v4/k8s_auth/instances:
     get:
       tags:
@@ -3965,6 +4213,33 @@ paths:
           description: Role deleted
         '404':
           description: Role not found
+    patch:
+      tags:
+      - roles
+      summary: Update existing role
+      description: Update role by ID
+      operationId: update
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '404':
+          description: Role not found
   /v4/scim_realms:
     get:
       tags:
@@ -5352,7 +5627,6 @@ components:
       type: object
       description: New domain data.
       required:
-      - enabled
       - name
       properties:
         description:
@@ -5443,6 +5717,36 @@ components:
       properties:
         domain:
           $ref: '#/components/schemas/Domain'
+          description: Domain object.
+    DomainUpdate:
+      type: object
+      description: Update domain data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The description of the domain.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: If set to true, domain is enabled. If set to false, domain is disabled.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The domain name.
+      additionalProperties:
+        description: Additional domain properties.
+    DomainUpdateRequest:
+      type: object
+      description: Domain update request.
+      required:
+      - domain
+      properties:
+        domain:
+          $ref: '#/components/schemas/DomainUpdate'
           description: Domain object.
     Ec2Credential:
       type: object
@@ -5853,6 +6157,29 @@ components:
       enum:
       - create_or_get
       - get
+    GroupUpdate:
+      type: object
+      description: Update group data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: Group description.
+        name:
+          type:
+          - string
+          - 'null'
+          description: Group name.
+      additionalProperties: {}
+    GroupUpdateRequest:
+      type: object
+      required:
+      - group
+      properties:
+        group:
+          $ref: '#/components/schemas/GroupUpdate'
+          description: Group object.
     HmacGetSecretInput:
       type: object
       description: |-
@@ -7373,6 +7700,38 @@ components:
           items:
             $ref: '#/components/schemas/ProjectShort'
           description: Collection of project objects.
+    ProjectUpdate:
+      type: object
+      description: Update project data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The description of the project.
+        enabled:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            If set to true, project is enabled. If set to false, project is
+            disabled.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The project name.
+      additionalProperties:
+        description: Additional project properties.
+    ProjectUpdateRequest:
+      type: object
+      description: Project update request.
+      required:
+      - project
+      properties:
+        project:
+          $ref: '#/components/schemas/ProjectUpdate'
+          description: Project object.
     PubKeyCredParams:
       type: object
       description: Public key cryptographic parameters.
@@ -7540,6 +7899,100 @@ components:
         kid:
           type: string
           description: The newly active `Primary` key's `kid`.
+    Region:
+      type: object
+      description: The region data.
+      required:
+      - id
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The region description.
+        id:
+          type: string
+          description: Region ID.
+        parent_region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the parent region.
+      additionalProperties: {}
+    RegionCreate:
+      type: object
+      description: Region create request body.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The region description.
+        id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region. A UUID is generated when omitted.
+        parent_region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the parent region.
+      additionalProperties:
+        description: Extra attributes for the region.
+    RegionCreateRequest:
+      type: object
+      description: New region creation request.
+      required:
+      - region
+      properties:
+        region:
+          $ref: '#/components/schemas/RegionCreate'
+          description: Region object.
+    RegionList:
+      type: object
+      description: Regions.
+      required:
+      - regions
+      properties:
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Region'
+          description: Collection of region objects.
+    RegionResponse:
+      type: object
+      required:
+      - region
+      properties:
+        region:
+          $ref: '#/components/schemas/Region'
+          description: Region object.
+    RegionUpdate:
+      type: object
+      description: Update region data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: New region description.
+        parent_region_id:
+          type:
+          - string
+          - 'null'
+          description: New parent region ID.
+      additionalProperties:
+        description: Extra attributes for the region (replaces the existing extra).
+    RegionUpdateRequest:
+      type: object
+      description: Region update request.
+      required:
+      - region
+      properties:
+        region:
+          $ref: '#/components/schemas/RegionUpdate'
+          description: Region object.
     RegistrationExtensionsClientOutputs:
       type: object
       description: |-
@@ -7790,6 +8243,31 @@ components:
       properties:
         role:
           $ref: '#/components/schemas/Role'
+          description: Role object.
+    RoleUpdate:
+      type: object
+      description: Update role data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The role description.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The role name.
+      additionalProperties:
+        description: Extra attributes for the role.
+    RoleUpdateRequest:
+      type: object
+      description: Role update request.
+      required:
+      - role
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleUpdate'
           description: Role object.
     RotateSigningKeyRequest:
       type: object
@@ -8133,8 +8611,6 @@ components:
     ServiceCreate:
       type: object
       description: Service create request body.
-      required:
-      - enabled
       properties:
         enabled:
           type: boolean
@@ -8695,7 +9171,6 @@ components:
       type: object
       description: Create user data.
       required:
-      - domain_id
       - name
       properties:
         default_project_id:
@@ -8712,8 +9187,12 @@ components:
             if your default project is not valid, a token is issued without an
             explicit scope of authorization.
         domain_id:
-          type: string
-          description: User domain ID.
+          type:
+          - string
+          - 'null'
+          description: |-
+            User domain ID. When omitted, defaults to the domain of the caller's
+            token scope.
         enabled:
           type: boolean
           description: |-

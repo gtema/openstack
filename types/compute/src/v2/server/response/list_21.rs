@@ -22,7 +22,6 @@ use structable::{StructTable, StructTableOptions};
 /// Server response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
-    /// The UUID of the server.
     #[structable()]
     pub id: String,
 
