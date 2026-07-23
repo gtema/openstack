@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-applicationcredential-v0.22.6...openstack-sdk-auth-applicationcredential-v0.22.7) - 2026-07-23
+
+### Fixed
+
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- Apply clippy 1.97 ([#1847](https://github.com/gtema/openstack/pull/1847))
+- Address clippy issues ([#1799](https://github.com/gtema/openstack/pull/1799))
+- Improve auth plugins ([#1796](https://github.com/gtema/openstack/pull/1796))
+
 ## [0.22.6](https://github.com/gtema/openstack/compare/openstack-sdk-auth-applicationcredential-v0.22.5...openstack-sdk-auth-applicationcredential-v0.22.6) - 2026-06-01
 
 ### Other

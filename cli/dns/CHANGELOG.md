@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-dns-v0.13.7...openstack-cli-dns-v0.13.8) - 2026-07-23
+
+### Added
+
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+- *(cli)* Add service command version dispatch ([#1848](https://github.com/gtema/openstack/pull/1848))
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack-cli-dns-v0.1.0) - 2026-05-14
 
 ### Other

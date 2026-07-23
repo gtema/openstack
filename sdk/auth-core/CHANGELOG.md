@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-core-v0.22.6...openstack-sdk-auth-core-v0.22.7) - 2026-07-23
+
+### Added
+
+- *(state)* Add file locking to auth cache ([#1793](https://github.com/gtema/openstack/pull/1793))
+
+### Fixed
+
+- *(sdk)* Call anchor_plugins() unconditionally in new_impl ([#1856](https://github.com/gtema/openstack/pull/1856))
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- *(sdk)* Move Dialoguer AuthHelper to auth-core ([#1865](https://github.com/gtema/openstack/pull/1865))
+- Improve auth plugins ([#1796](https://github.com/gtema/openstack/pull/1796))
+
 ## [0.22.6](https://github.com/gtema/openstack/compare/openstack-sdk-auth-core-v0.22.5...openstack-sdk-auth-core-v0.22.6) - 2026-06-01
 
 ### Other

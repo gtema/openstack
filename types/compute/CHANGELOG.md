@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack-types-compute-v0.22.7...openstack-types-compute-v0.22.8) - 2026-07-23
+
+### Added
+
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Changes from adapted codegenerator templates ([#1879](https://github.com/gtema/openstack/pull/1879))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-types-compute-v0.1.0...openstack-types-compute-v0.22.7) - 2026-06-01
 
 ### Other
