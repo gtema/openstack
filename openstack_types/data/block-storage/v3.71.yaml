@@ -269,7 +269,6 @@ paths:
       tags:
         - backups
     post:
-      deprecated: true
       description: |-
         Create a new backup.
       operationId: backups:post
@@ -288,7 +287,6 @@ paths:
       tags:
         - backups
       x-openstack:
-        max-ver: '3.42'
         min-ver: '3.0'
   /v3/backups/detail:
     get:
@@ -1533,7 +1531,6 @@ paths:
       tags:
         - manageable_volumes
     post:
-      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -1603,7 +1600,6 @@ paths:
       tags:
         - manageable_volumes
       x-openstack:
-        max-ver: '3.15'
         min-ver: '3.0'
   /v3/manageable_volumes/detail:
     get:
@@ -2109,7 +2105,6 @@ paths:
       tags:
         - os-volume-manage
     post:
-      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -2179,7 +2174,6 @@ paths:
       tags:
         - os-volume-manage
       x-openstack:
-        max-ver: '3.15'
         min-ver: '3.0'
   /v3/os-volume-manage/detail:
     get:
@@ -2981,7 +2975,6 @@ paths:
       x-openstack:
         min-ver: '3.55'
     post:
-      deprecated: true
       description: |-
         Create a new volume transfer.
       operationId: volume-transfers:post
@@ -3000,7 +2993,6 @@ paths:
       tags:
         - volume-transfers
       x-openstack:
-        max-ver: '3.54'
         min-ver: '3.0'
   /v3/volume-transfers/detail:
     get:
@@ -3106,7 +3098,6 @@ paths:
       tags:
         - volumes
     post:
-      deprecated: true
       description: |-
         Creates a new volume.
 
@@ -3133,7 +3124,6 @@ paths:
       tags:
         - volumes
       x-openstack:
-        max-ver: '3.12'
         min-ver: '3.0'
   /v3/volumes/detail:
     get:
@@ -3203,7 +3193,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volumes_id'
     put:
-      deprecated: true
       description: |-
         Update a volume.
       operationId: volumes/id:put
@@ -3222,7 +3211,6 @@ paths:
       tags:
         - volumes
       x-openstack:
-        max-ver: '3.52'
         min-ver: '3.0'
   /v3/volumes/{id}/action:
     parameters:
@@ -3807,7 +3795,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/backups_project_id'
     post:
-      deprecated: true
       description: |-
         Creates a Block Storage backup from a volume or snapshot.
 
@@ -3830,7 +3817,6 @@ paths:
       tags:
         - backups
       x-openstack:
-        max-ver: '3.42'
         min-ver: '3.0'
   /v3/{project_id}/backups/detail:
     get:
@@ -5160,7 +5146,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/manageable_volumes_project_id'
     post:
-      deprecated: true
       description: |-
         Creates a Block Storage volume by using existing storage rather than allocating
         new storage.
@@ -5196,7 +5181,6 @@ paths:
       tags:
         - manageable_volumes
       x-openstack:
-        max-ver: '3.15'
         min-ver: '3.0'
   /v3/{project_id}/manageable_volumes/detail:
     get:
@@ -5614,7 +5598,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/os_volume_manage_project_id'
     post:
-      deprecated: true
       description: |-
         Instruct Cinder to manage a storage object.
 
@@ -5684,7 +5667,6 @@ paths:
       tags:
         - os-volume-manage
       x-openstack:
-        max-ver: '3.15'
         min-ver: '3.0'
   /v3/{project_id}/os-volume-manage/detail:
     get:
@@ -6589,7 +6571,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volume_transfers_project_id'
     post:
-      deprecated: true
       description: |-
         Creates a volume transfer.
 
@@ -6611,7 +6592,6 @@ paths:
       tags:
         - volume-transfers
       x-openstack:
-        max-ver: '3.54'
         min-ver: '3.0'
   /v3/{project_id}/volume-transfers/detail:
     get:
@@ -6727,7 +6707,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/volumes_project_id'
     post:
-      deprecated: true
       description: |-
         Creates a volume.
 
@@ -6765,7 +6744,6 @@ paths:
       tags:
         - volumes
       x-openstack:
-        max-ver: '3.12'
         min-ver: '3.0'
   /v3/{project_id}/volumes/detail:
     get:
@@ -6847,7 +6825,6 @@ paths:
       - $ref: '#/components/parameters/volumes_id'
       - $ref: '#/components/parameters/volumes_project_id'
     put:
-      deprecated: true
       description: |-
         Update a volume.
       operationId: project_id/volumes/id:put
@@ -6866,7 +6843,6 @@ paths:
       tags:
         - volumes
       x-openstack:
-        max-ver: '3.52'
         min-ver: '3.0'
   /v3/{project_id}/volumes/{id}/action:
     parameters:

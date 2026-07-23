@@ -46,6 +46,8 @@ paths:
       summary: List Extensions
       tags:
         - extensions
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/extensions/{id}:
     get:
       description: |-
@@ -65,6 +67,8 @@ paths:
       summary: Show Extension Details
       tags:
         - extensions
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/extensions_id'
   /v2.1/flavors:
@@ -97,6 +101,8 @@ paths:
       summary: List Flavors
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.0'
     post:
       description: |-
         Creates a flavor.
@@ -133,6 +139,8 @@ paths:
       summary: Create Flavor
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/flavors/detail:
     get:
       description: |-
@@ -165,6 +173,8 @@ paths:
       summary: List Flavors With Details
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/flavors/{flavor_id}/os-extra_specs:
     get:
       description: |-
@@ -184,6 +194,8 @@ paths:
       summary: List Extra Specs For A Flavor
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/flavors_os_extra_specs_flavor_id'
     post:
@@ -249,6 +261,8 @@ paths:
       summary: Show An Extra Spec For A Flavor
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/flavors_os_extra_specs_flavor_id'
       - $ref: '#/components/parameters/flavors_os_extra_specs_id'
@@ -301,6 +315,8 @@ paths:
       summary: List Flavor Access Information For Given Flavor
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/flavors_os_flavor_access_flavor_id'
   /v2.1/flavors/{id}:
@@ -345,6 +361,8 @@ paths:
       summary: Show Flavor Details
       tags:
         - flavors
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/flavors_id'
     put:
@@ -743,6 +761,8 @@ paths:
       summary: Show Rate And Absolute Limits
       tags:
         - limits
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/os-agents:
     get:
       description: |-
@@ -827,6 +847,8 @@ paths:
       summary: List Aggregates
       tags:
         - os-aggregates
+      x-openstack:
+        min-ver: '2.1'
     post:
       description: |-
         Creates an aggregate. If specifying an option availability_zone, the aggregate is
@@ -857,6 +879,8 @@ paths:
       summary: Create Aggregate
       tags:
         - os-aggregates
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-aggregates/{id}:
     delete:
       description: |-
@@ -900,6 +924,8 @@ paths:
       summary: Show Aggregate Details
       tags:
         - os-aggregates
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_aggregates_id'
     put:
@@ -936,6 +962,8 @@ paths:
       summary: Update Aggregate
       tags:
         - os-aggregates
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-aggregates/{id}/action:
     parameters:
       - $ref: '#/components/parameters/os_aggregates_action_id'
@@ -1053,6 +1081,8 @@ paths:
       summary: Delete Assisted Volume Snapshot
       tags:
         - os-assisted-volume-snapshots
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/os_assisted_volume_snapshots_id'
   /v2.1/os-availability-zone:
@@ -1074,6 +1104,8 @@ paths:
       summary: Get Availability Zone Information
       tags:
         - os-availability-zone
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/os-availability-zone/detail:
     get:
       description: |-
@@ -1095,6 +1127,8 @@ paths:
       summary: Get Detailed Availability Zone Information
       tags:
         - os-availability-zone
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/os-baremetal-nodes:
     get:
       deprecated: true
@@ -1417,7 +1451,6 @@ paths:
         - os-cloudpipe
   /v2.1/os-console-auth-tokens/{id}:
     get:
-      deprecated: true
       description: |-
         Given the console authentication token for a server, shows the related
         connection information.
@@ -1450,7 +1483,6 @@ paths:
       tags:
         - server-consoles
       x-openstack:
-        max-ver: '2.30'
         min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_console_auth_tokens_id'
@@ -2034,7 +2066,6 @@ paths:
       - $ref: '#/components/parameters/os_hosts_startup_id'
   /v2.1/os-hypervisors:
     get:
-      deprecated: true
       description: |-
         Lists hypervisors.
 
@@ -2069,11 +2100,9 @@ paths:
       tags:
         - os-hypervisors
       x-openstack:
-        max-ver: '2.32'
         min-ver: '2.1'
   /v2.1/os-hypervisors/detail:
     get:
-      deprecated: true
       description: |-
         Lists hypervisors details.
 
@@ -2110,7 +2139,6 @@ paths:
       tags:
         - os-hypervisors
       x-openstack:
-        max-ver: '2.32'
         min-ver: '2.1'
   /v2.1/os-hypervisors/statistics:
     get:
@@ -2141,7 +2169,6 @@ paths:
         min-ver: '2.1'
   /v2.1/os-hypervisors/{id}:
     get:
-      deprecated: true
       description: |-
         Shows details for a given hypervisor.
 
@@ -2174,7 +2201,6 @@ paths:
       tags:
         - os-hypervisors
       x-openstack:
-        max-ver: '2.52'
         min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_hypervisors_id'
@@ -2294,6 +2320,8 @@ paths:
       summary: List Server Usage Audits
       tags:
         - os-instance_usage_audit_log
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/os-instance_usage_audit_log/{id}:
     get:
       description: |-
@@ -2313,11 +2341,12 @@ paths:
       summary: List Usage Audits Before Specified Time
       tags:
         - os-instance_usage_audit_log
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_instance_usage_audit_log_id'
   /v2.1/os-keypairs:
     get:
-      deprecated: true
       description: |-
         Lists keypairs that are associated with the account.
 
@@ -2343,7 +2372,6 @@ paths:
       tags:
         - os-keypairs
       x-openstack:
-        max-ver: '2.9'
         min-ver: '2.0'
     post:
       description: |-
@@ -2377,9 +2405,10 @@ paths:
       summary: Import (or create) Keypair
       tags:
         - os-keypairs
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-keypairs/{id}:
     delete:
-      deprecated: true
       description: |-
         Deletes a keypair.
 
@@ -2396,10 +2425,8 @@ paths:
       tags:
         - os-keypairs
       x-openstack:
-        max-ver: '2.9'
         min-ver: '2.0'
     get:
-      deprecated: true
       description: |-
         Shows details for a keypair that is associated with the account.
 
@@ -2422,13 +2449,11 @@ paths:
       tags:
         - os-keypairs
       x-openstack:
-        max-ver: '2.9'
         min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/os_keypairs_id'
   /v2.1/os-migrations:
     get:
-      deprecated: true
       description: |-
         Lists migrations.
 
@@ -2471,8 +2496,7 @@ paths:
       tags:
         - os-migrations
       x-openstack:
-        max-ver: '2.58'
-        min-ver: '2.1'
+        min-ver: '2.0'
   /v2.1/os-networks:
     get:
       deprecated: true
@@ -2628,6 +2652,8 @@ paths:
       summary: Show the quota for Quota Class
       tags:
         - quota-class-sets-os-quota-class-sets
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_quota_class_sets_id'
     put:
@@ -2660,6 +2686,8 @@ paths:
       summary: Create or Update Quotas for Quota Class
       tags:
         - quota-class-sets-os-quota-class-sets
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/os-quota-sets/{id}:
     delete:
       description: |-
@@ -2679,6 +2707,8 @@ paths:
       summary: Revert Quotas To Defaults
       tags:
         - quota-sets-os-quota-sets
+      x-openstack:
+        min-ver: '2.0'
     get:
       description: |-
         Show the quota for a project or a project and a user.
@@ -2702,6 +2732,8 @@ paths:
       summary: Show A Quota
       tags:
         - quota-sets-os-quota-sets
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/os_quota_sets_id'
     put:
@@ -2737,6 +2769,8 @@ paths:
       summary: Update Quotas
       tags:
         - quota-sets-os-quota-sets
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-quota-sets/{id}/defaults:
     get:
       description: |-
@@ -2789,6 +2823,8 @@ paths:
       summary: Show The Detail of Quota
       tags:
         - quota-sets-os-quota-sets
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/os_quota_sets_detail_id'
   /v2.1/os-security-group-default-rules:
@@ -3098,6 +3134,8 @@ paths:
       summary: Run Events
       tags:
         - os-server-external-events
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-server-groups:
     get:
       description: |-
@@ -3127,6 +3165,8 @@ paths:
       summary: List Server Groups
       tags:
         - os-server-groups
+      x-openstack:
+        min-ver: '2.0'
     post:
       description: |-
         Creates a server group.
@@ -3160,6 +3200,8 @@ paths:
       summary: Create Server Group
       tags:
         - os-server-groups
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-server-groups/{id}:
     delete:
       description: |-
@@ -3197,6 +3239,8 @@ paths:
       summary: Show Server Group Details
       tags:
         - os-server-groups
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_server_groups_id'
   /v2.1/os-services:
@@ -3227,6 +3271,8 @@ paths:
       summary: List Compute Services
       tags:
         - os-services
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-services/{id}:
     delete:
       description: |-
@@ -3297,9 +3343,10 @@ paths:
       summary: Update Compute Service
       tags:
         - os-services
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/os-simple-tenant-usage:
     get:
-      deprecated: true
       description: |-
         Lists usage statistics for all tenants.
 
@@ -3326,11 +3373,9 @@ paths:
       tags:
         - os-simple-tenant-usage
       x-openstack:
-        max-ver: '2.39'
         min-ver: '2.1'
   /v2.1/os-simple-tenant-usage/{id}:
     get:
-      deprecated: true
       description: |-
         Shows usage statistics for a tenant.
 
@@ -3356,7 +3401,6 @@ paths:
       tags:
         - os-simple-tenant-usage
       x-openstack:
-        max-ver: '2.39'
         min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/os_simple_tenant_usage_id'
@@ -3719,7 +3763,6 @@ paths:
       - $ref: '#/components/parameters/os_volumes_id'
   /v2.1/os-volumes_boot:
     get:
-      deprecated: true
       description: |-
         Returns a list of server names and ids for a given user.
       operationId: os-volumes_boot:get
@@ -3797,10 +3840,8 @@ paths:
       tags:
         - os-volumes_boot
       x-openstack:
-        max-ver: '2.102'
         min-ver: '2.1'
     post:
-      deprecated: true
       description: |-
         Creates a new server for a given user.
       operationId: os-volumes_boot:post
@@ -3825,11 +3866,9 @@ paths:
       tags:
         - os-volumes_boot
       x-openstack:
-        max-ver: '2.102'
-        min-ver: '2.1'
+        min-ver: '2.0'
   /v2.1/os-volumes_boot/detail:
     get:
-      deprecated: true
       description: |-
         Returns a list of server details for a given user.
       operationId: os-volumes_boot/detail:get
@@ -3919,7 +3958,6 @@ paths:
       tags:
         - os-volumes_boot
       x-openstack:
-        max-ver: '2.102'
         min-ver: '2.1'
   /v2.1/os-volumes_boot/{id}:
     delete:
@@ -3940,7 +3978,6 @@ paths:
         max-ver: '2.102'
         min-ver: '2.1'
     get:
-      deprecated: true
       description: |-
         Returns server details by server id.
       operationId: os-volumes_boot/id:get
@@ -3969,12 +4006,10 @@ paths:
       tags:
         - os-volumes_boot
       x-openstack:
-        max-ver: '2.102'
-        min-ver: '2.1'
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/os_volumes_boot_id'
     put:
-      deprecated: true
       description: |-
         Update server then pass on to version-specific controller.
       operationId: os-volumes_boot/id:put
@@ -4005,8 +4040,7 @@ paths:
       tags:
         - os-volumes_boot
       x-openstack:
-        max-ver: '2.102'
-        min-ver: '2.1'
+        min-ver: '2.0'
   /v2.1/os-volumes_boot/{id}/action:
     parameters:
       - $ref: '#/components/parameters/os_volumes_boot_action_id'
@@ -4157,6 +4191,8 @@ paths:
       summary: List Servers
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     post:
       description: |-
         Creates a server.
@@ -4217,6 +4253,8 @@ paths:
       summary: Create Server
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/servers/detail:
     get:
       description: |-
@@ -4322,6 +4360,8 @@ paths:
       summary: List Servers Detailed
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
   /v2.1/servers/{id}:
     delete:
       description: |-
@@ -4402,6 +4442,8 @@ paths:
       summary: Show Server Details
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/servers_id'
     put:
@@ -4444,6 +4486,8 @@ paths:
       summary: Update Server
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/servers/{id}/action:
     parameters:
       - $ref: '#/components/parameters/servers_action_id'
@@ -4651,6 +4695,8 @@ paths:
       summary: Show Server Diagnostics
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_diagnostics_server_id'
   /v2.1/servers/{server_id}/ips:
@@ -4676,6 +4722,8 @@ paths:
       summary: List Ips
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_ips_server_id'
   /v2.1/servers/{server_id}/ips/{id}:
@@ -4701,6 +4749,8 @@ paths:
       summary: Show Ip Details
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_ips_id'
       - $ref: '#/components/parameters/servers_ips_server_id'
@@ -4725,6 +4775,8 @@ paths:
       summary: List All Metadata
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_metadata_server_id'
     post:
@@ -4838,6 +4890,8 @@ paths:
       summary: Show Metadata Item Details
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_metadata_id'
       - $ref: '#/components/parameters/servers_metadata_server_id'
@@ -5018,7 +5072,6 @@ paths:
         - server-migrations
   /v2.1/servers/{server_id}/os-instance-actions:
     get:
-      deprecated: true
       description: |-
         Lists actions for a server.
 
@@ -5055,7 +5108,6 @@ paths:
       tags:
         - servers
       x-openstack:
-        max-ver: '2.57'
         min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_instance_actions_server_id'
@@ -5090,6 +5142,8 @@ paths:
       summary: Show Server Action Details
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_instance_actions_id'
       - $ref: '#/components/parameters/servers_os_instance_actions_server_id'
@@ -5119,6 +5173,8 @@ paths:
       summary: List Port Interfaces
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_interface_server_id'
     post:
@@ -5159,6 +5215,8 @@ paths:
       summary: Create Interface
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/servers/{server_id}/os-interface/{id}:
     delete:
       description: |-
@@ -5207,6 +5265,8 @@ paths:
       summary: Show Port Interface Details
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_interface_id'
       - $ref: '#/components/parameters/servers_os_interface_server_id'
@@ -5229,6 +5289,8 @@ paths:
       summary: List Security Groups By Server
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_security_groups_server_id'
   /v2.1/servers/{server_id}/os-server-password:
@@ -5282,6 +5344,8 @@ paths:
       summary: Show Server Password
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.1'
     parameters:
       - $ref: '#/components/parameters/servers_os_server_password_server_id'
   /v2.1/servers/{server_id}/os-virtual-interfaces:
@@ -5332,6 +5396,8 @@ paths:
       summary: List volume attachments for an instance
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/servers_os_volume_attachments_server_id'
     post:
@@ -5368,6 +5434,8 @@ paths:
       summary: Attach a volume to an instance
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/servers/{server_id}/os-volume_attachments/{id}:
     delete:
       description: |-
@@ -5413,6 +5481,8 @@ paths:
       summary: Show a detail of a volume attachment
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
     parameters:
       - $ref: '#/components/parameters/servers_os_volume_attachments_id'
       - $ref: '#/components/parameters/servers_os_volume_attachments_server_id'
@@ -5450,6 +5520,8 @@ paths:
       summary: Update a volume attachment
       tags:
         - servers
+      x-openstack:
+        min-ver: '2.0'
   /v2.1/servers/{server_id}/remote-consoles:
     parameters:
       - $ref: '#/components/parameters/servers_remote_consoles_server_id'
@@ -89208,9 +89280,6 @@ components:
                   - 'null'
                   - string
               accessIPv4:
-                description: |-
-                  IPv4 address that should be used to access this server. May be
-                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -89580,6 +89649,9 @@ components:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -90689,9 +90761,6 @@ components:
                   - 'null'
                   - string
               accessIPv4:
-                description: |-
-                  IPv4 address that should be used to access this server. May be
-                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -91943,9 +92012,6 @@ components:
                   - 'null'
                   - string
               accessIPv4:
-                description: |-
-                  IPv4 address that should be used to access this server. May be
-                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -93850,8 +93916,6 @@ components:
             additionalProperties: false
             properties:
               id:
-                description: |-
-                  The UUID of the server.
                 format: uuid
                 type: string
               links:
