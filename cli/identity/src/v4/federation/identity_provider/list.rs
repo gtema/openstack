@@ -69,13 +69,21 @@ struct QueryParameters {
     )]
     limit: Option<u32>,
 
-    /// Page marker (id of the last entry on the previous page.
+    /// Page marker (id of the last entry of the previous page).
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Filters the response by IDP name.
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
+
+    /// Fetch the page preceding `marker` instead of the page following it.
+    ///
+    /// v3 endpoints accept this field (unknown-to-python-keystone query params
+    /// are harmless) but never read or forward it; only v4 endpoints wire it
+    /// through.
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 }
 
 /// Path parameters
@@ -112,6 +120,9 @@ impl IdentityProvidersCommand {
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
 
         let ep = ep_builder

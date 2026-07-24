@@ -251,6 +251,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of credentials
@@ -372,6 +401,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of domains
@@ -522,6 +580,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of endpoints
@@ -644,6 +731,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of groups
@@ -767,6 +883,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of projects
@@ -1006,6 +1151,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of regions
@@ -1257,6 +1431,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of roles
@@ -1529,6 +1732,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of services
@@ -1761,6 +1993,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of users
@@ -2059,6 +2320,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of API Keys
@@ -2457,12 +2747,23 @@ paths:
           minimum: 0
       - name: marker
         in: query
-        description: Page marker (id of the last entry on the previous page.
+        description: Page marker (id of the last entry of the previous page).
         required: false
         schema:
           type:
           - string
           - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of identity providers
@@ -2701,6 +3002,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of groups
@@ -2815,6 +3145,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of instances
@@ -3310,6 +3669,35 @@ paths:
           type:
           - boolean
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of OAuth2 clients
@@ -4119,6 +4507,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of roles
@@ -4388,6 +4805,35 @@ paths:
           type:
           - boolean
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of SCIM realms
@@ -4551,6 +4997,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of token restrictions.
@@ -4698,6 +5173,35 @@ paths:
           type:
           - string
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of users
@@ -5115,6 +5619,13 @@ components:
           items:
             $ref: '#/components/schemas/ApiKey'
           description: Collection of API Keys.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     ApiKeyResponse:
       type: object
       description: API Key response wrapper (show, update, revoke).
@@ -5654,6 +6165,13 @@ components:
           items:
             $ref: '#/components/schemas/Credential'
           description: Collection of credential objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     CredentialProtectionPolicy:
       type: string
       description: Valid credential protection policies.
@@ -5794,6 +6312,13 @@ components:
           items:
             $ref: '#/components/schemas/Domain'
           description: Collection of domain objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     DomainResolutionMode:
       oneOf:
       - type: object
@@ -6082,6 +6607,13 @@ components:
           items:
             $ref: '#/components/schemas/Endpoint'
           description: Collection of endpoint objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     EndpointResponse:
       type: object
       required:
@@ -6270,6 +6802,13 @@ components:
           items:
             $ref: '#/components/schemas/Group'
           description: Collection of group objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
     GroupResponse:
       type: object
       required:
@@ -7822,6 +8361,13 @@ components:
       required:
       - projects
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         projects:
           type: array
           items:
@@ -8082,6 +8628,13 @@ components:
       required:
       - regions
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         regions:
           type: array
           items:
@@ -8340,6 +8893,13 @@ components:
       required:
       - roles
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         roles:
           type: array
           items:
@@ -8771,6 +9331,13 @@ components:
       required:
       - services
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         services:
           type: array
           items:
@@ -9121,6 +9688,13 @@ components:
       required:
       - restrictions
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         restrictions:
           type: array
           items:
@@ -9542,6 +10116,13 @@ components:
       required:
       - users
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         users:
           type: array
           items:

@@ -41,13 +41,21 @@ pub struct Request<'a> {
     #[builder(default)]
     limit: Option<u32>,
 
-    /// Page marker (id of the last entry on the previous page.
+    /// Page marker (id of the last entry of the previous page).
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     /// Filters the response by IDP name.
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
+
+    /// Fetch the page preceding `marker` instead of the page following it.
+    ///
+    /// v3 endpoints accept this field (unknown-to-python-keystone query params
+    /// are harmless) but never read or forward it; only v4 endpoints wire it
+    /// through.
+    #[builder(default)]
+    page_reverse: Option<bool>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -102,6 +110,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("domain_id", self.domain_id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
 
         params
     }
