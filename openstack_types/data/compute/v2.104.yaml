@@ -5949,6 +5949,7 @@ components:
           - memory_mb
           - name
           - root_gb
+          - rxtx_factor
           - swap
           - updated_at
           - vcpu_weight
@@ -6059,6 +6060,7 @@ components:
           - memory_mb
           - name
           - root_gb
+          - rxtx_factor
           - swap
           - updated_at
           - vcpu_weight
@@ -6518,8 +6520,7 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.32'
-        max_ver: '2.52'
+        max-ver: '2.52'
         min-ver: '2.33'
     os_hypervisors_detail_marker:
       in: query
@@ -6527,8 +6528,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.32'
-        max_ver: '2.52'
+        max-ver: '2.52'
         min-ver: '2.33'
     os_hypervisors_detail_with_servers:
       in: query
@@ -6592,8 +6592,7 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.32'
-        max_ver: '2.52'
+        max-ver: '2.52'
         min-ver: '2.33'
     os_hypervisors_marker:
       in: query
@@ -6601,8 +6600,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.32'
-        max_ver: '2.52'
+        max-ver: '2.52'
         min-ver: '2.33'
     os_hypervisors_search_id:
       description: id parameter for /v2.1/os-hypervisors/{id}/search API
@@ -6720,8 +6718,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.66'
     os_migrations_changes-since:
       in: query
@@ -6730,8 +6727,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.59'
     os_migrations_hidden:
       in: query
@@ -6739,8 +6735,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_host:
       in: query
@@ -6748,8 +6743,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_instance_uuid:
       in: query
@@ -6757,8 +6751,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_limit:
       in: query
@@ -6771,8 +6764,7 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.59'
     os_migrations_marker:
       in: query
@@ -6780,8 +6772,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.59'
     os_migrations_migration_type:
       in: query
@@ -6789,8 +6780,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_project_id:
       in: query
@@ -6807,8 +6797,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_status:
       in: query
@@ -6816,8 +6805,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.58'
-        max_ver: '2.79'
+        max-ver: '2.79'
         min-ver: '2.0'
     os_migrations_user_id:
       in: query
@@ -7006,16 +6994,14 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.39'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_simple_tenant_usage_end:
       in: query
       name: end
       schema:
         type: string
       x-openstack:
-        max-ver: '2.39'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_simple_tenant_usage_id:
       description: id parameter for /v2.1/os-simple-tenant-usage/{id} API
       in: path
@@ -7034,8 +7020,7 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.39'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.40'
     os_simple_tenant_usage_marker:
       in: query
@@ -7043,8 +7028,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.39'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.40'
     os_simple_tenant_usage_start:
       in: query
@@ -7052,8 +7036,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.39'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_snapshots_detail_limit:
       in: query
       name: limit
@@ -7123,8 +7106,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_access_ip_v6:
       in: query
       name: access_ip_v6
@@ -7132,8 +7114,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_action_id:
       description: id parameter for /v2.1/os-volumes_boot/{id}/action API
       in: path
@@ -7147,8 +7128,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_auto_disk_config:
       in: query
       name: auto_disk_config
@@ -7156,8 +7136,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_availability_zone:
       in: query
       name: availability_zone
@@ -7165,16 +7144,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_block_device_mapping:
       in: query
       name: block_device_mapping
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_changes-before:
       in: query
       name: changes-before
@@ -7182,8 +7159,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.66'
     os_volumes_boot_changes-since:
       in: query
@@ -7192,8 +7168,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_config_drive:
       in: query
       name: config_drive
@@ -7201,8 +7176,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_created_at:
       in: query
       name: created_at
@@ -7210,16 +7184,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_deleted:
       in: query
       name: deleted
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_description:
       in: query
       name: description
@@ -7227,8 +7199,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_access_ip_v4:
       in: query
       name: access_ip_v4
@@ -7236,8 +7207,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_access_ip_v6:
       in: query
       name: access_ip_v6
@@ -7245,16 +7215,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_all_tenants:
       in: query
       name: all_tenants
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_auto_disk_config:
       in: query
       name: auto_disk_config
@@ -7262,8 +7230,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_availability_zone:
       in: query
       name: availability_zone
@@ -7271,16 +7238,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_block_device_mapping:
       in: query
       name: block_device_mapping
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_changes-before:
       in: query
       name: changes-before
@@ -7288,8 +7253,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.66'
     os_volumes_boot_detail_changes-since:
       in: query
@@ -7298,8 +7262,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_config_drive:
       in: query
       name: config_drive
@@ -7307,8 +7270,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_created_at:
       in: query
       name: created_at
@@ -7316,16 +7278,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_deleted:
       in: query
       name: deleted
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_description:
       in: query
       name: description
@@ -7333,8 +7293,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_display_description:
       in: query
       name: display_description
@@ -7342,8 +7301,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_display_name:
       in: query
       name: display_name
@@ -7351,8 +7309,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_flavor:
       in: query
       name: flavor
@@ -7360,16 +7317,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_host:
       in: query
       name: host
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_hostname:
       in: query
       name: hostname
@@ -7377,32 +7332,28 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_image:
       in: query
       name: image
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_image_ref:
       in: query
       name: image_ref
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_info_cache:
       in: query
       name: info_cache
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_ip:
       in: query
       name: ip
@@ -7410,8 +7361,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_ip6:
       in: query
       name: ip6
@@ -7419,8 +7369,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_kernel_id:
       in: query
       name: kernel_id
@@ -7428,8 +7377,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_key_name:
       in: query
       name: key_name
@@ -7437,16 +7385,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_launch_index:
       in: query
       name: launch_index
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_launched_at:
       in: query
       name: launched_at
@@ -7454,8 +7400,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_limit:
       in: query
       name: limit
@@ -7467,16 +7412,14 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_locked:
       in: query
       name: locked
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.73'
     os_volumes_boot_detail_locked_by:
       in: query
@@ -7485,24 +7428,21 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_marker:
       in: query
       name: marker
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_metadata:
       in: query
       name: metadata
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_name:
       in: query
       name: name
@@ -7510,8 +7450,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_node:
       in: query
       name: node
@@ -7519,8 +7458,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_not-tags:
       in: query
       name: not-tags
@@ -7528,8 +7466,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_detail_not-tags-any:
       in: query
@@ -7538,8 +7475,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_detail_pci_devices:
       in: query
@@ -7547,8 +7483,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_power_state:
       in: query
       name: power_state
@@ -7556,8 +7491,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_progress:
       in: query
       name: progress
@@ -7565,16 +7499,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_project_id:
       in: query
       name: project_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         resource_link: identity/v3/project.id
     os_volumes_boot_detail_ramdisk_id:
       in: query
@@ -7583,8 +7515,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_reservation_id:
       in: query
       name: reservation_id
@@ -7592,8 +7523,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_root_device_name:
       in: query
       name: root_device_name
@@ -7601,40 +7531,35 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_security_groups:
       in: query
       name: security_groups
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_services:
       in: query
       name: services
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_soft_deleted:
       in: query
       name: soft_deleted
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_sort_dir:
       in: query
       name: sort_dir
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_sort_key:
       in: query
       name: sort_key
@@ -7642,54 +7567,72 @@ components:
         enum:
           - access_ip_v4
           - access_ip_v6
+          - architecture
           - auto_disk_config
           - availability_zone
+          - cell_name
+          - cleaned
           - config_drive
           - created_at
+          - default_ephemeral_device
+          - default_swap_device
+          - deleted
+          - deleted_at
+          - disable_terminate
           - display_description
           - display_name
+          - ephemeral_gb
+          - ephemeral_key_uuid
           - host
           - hostname
+          - id
           - image_ref
           - instance_type_id
           - kernel_id
+          - key_data
           - key_name
           - launch_index
           - launched_at
+          - launched_on
           - locked
           - locked_by
+          - memory_mb
           - node
+          - os_type
           - power_state
           - progress
           - project_id
           - ramdisk_id
+          - reservation_id
           - root_device_name
+          - root_gb
+          - shutdown_terminate
           - task_state
           - terminated_at
           - updated_at
+          - user_data
           - user_id
           - uuid
+          - vcpus
+          - vm_mode
           - vm_state
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_status:
       in: query
       name: status
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_system_metadata:
       in: query
       name: system_metadata
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_tags:
       in: query
       name: tags
@@ -7697,8 +7640,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_detail_tags-any:
       in: query
@@ -7707,8 +7649,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_detail_task_state:
       in: query
@@ -7716,16 +7657,14 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_tenant_id:
       in: query
       name: tenant_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_terminated_at:
       in: query
       name: terminated_at
@@ -7733,16 +7672,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_user_id:
       in: query
       name: user_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         resource_link: identity/v3/user.id
     os_volumes_boot_detail_uuid:
       in: query
@@ -7750,16 +7687,14 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_detail_vm_state:
       in: query
       name: vm_state
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_display_description:
       in: query
       name: display_description
@@ -7767,8 +7702,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_display_name:
       in: query
       name: display_name
@@ -7776,8 +7710,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_flavor:
       in: query
       name: flavor
@@ -7785,16 +7718,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_host:
       in: query
       name: host
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_hostname:
       in: query
       name: hostname
@@ -7802,8 +7733,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_id:
       description: id parameter for /v2.1/os-volumes_boot/{id} API
       in: path
@@ -7817,24 +7747,21 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_image_ref:
       in: query
       name: image_ref
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_info_cache:
       in: query
       name: info_cache
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_ip:
       in: query
       name: ip
@@ -7842,8 +7769,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_ip6:
       in: query
       name: ip6
@@ -7851,8 +7777,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_kernel_id:
       in: query
       name: kernel_id
@@ -7860,8 +7785,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_key_name:
       in: query
       name: key_name
@@ -7869,16 +7793,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_launch_index:
       in: query
       name: launch_index
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_launched_at:
       in: query
       name: launched_at
@@ -7886,8 +7808,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_limit:
       in: query
       name: limit
@@ -7899,16 +7820,14 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_locked:
       in: query
       name: locked
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.73'
     os_volumes_boot_locked_by:
       in: query
@@ -7917,24 +7836,21 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_marker:
       in: query
       name: marker
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_metadata:
       in: query
       name: metadata
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_name:
       in: query
       name: name
@@ -7942,8 +7858,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_node:
       in: query
       name: node
@@ -7951,8 +7866,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_not-tags:
       in: query
       name: not-tags
@@ -7960,8 +7874,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_not-tags-any:
       in: query
@@ -7970,8 +7883,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_pci_devices:
       in: query
@@ -7979,8 +7891,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_power_state:
       in: query
       name: power_state
@@ -7988,8 +7899,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_progress:
       in: query
       name: progress
@@ -7997,16 +7907,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_project_id:
       in: query
       name: project_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         resource_link: identity/v3/project.id
     os_volumes_boot_ramdisk_id:
       in: query
@@ -8015,8 +7923,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_reservation_id:
       in: query
       name: reservation_id
@@ -8024,8 +7931,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_root_device_name:
       in: query
       name: root_device_name
@@ -8033,40 +7939,35 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_security_groups:
       in: query
       name: security_groups
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_services:
       in: query
       name: services
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_soft_deleted:
       in: query
       name: soft_deleted
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_sort_dir:
       in: query
       name: sort_dir
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_sort_key:
       in: query
       name: sort_key
@@ -8074,54 +7975,72 @@ components:
         enum:
           - access_ip_v4
           - access_ip_v6
+          - architecture
           - auto_disk_config
           - availability_zone
+          - cell_name
+          - cleaned
           - config_drive
           - created_at
+          - default_ephemeral_device
+          - default_swap_device
+          - deleted
+          - deleted_at
+          - disable_terminate
           - display_description
           - display_name
+          - ephemeral_gb
+          - ephemeral_key_uuid
           - host
           - hostname
+          - id
           - image_ref
           - instance_type_id
           - kernel_id
+          - key_data
           - key_name
           - launch_index
           - launched_at
+          - launched_on
           - locked
           - locked_by
+          - memory_mb
           - node
+          - os_type
           - power_state
           - progress
           - project_id
           - ramdisk_id
+          - reservation_id
           - root_device_name
+          - root_gb
+          - shutdown_terminate
           - task_state
           - terminated_at
           - updated_at
+          - user_data
           - user_id
           - uuid
+          - vcpus
+          - vm_mode
           - vm_state
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_status:
       in: query
       name: status
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_system_metadata:
       in: query
       name: system_metadata
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_tags:
       in: query
       name: tags
@@ -8129,8 +8048,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_tags-any:
       in: query
@@ -8139,8 +8057,7 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         min-ver: '2.26'
     os_volumes_boot_task_state:
       in: query
@@ -8148,16 +8065,14 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_tenant_id:
       in: query
       name: tenant_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_terminated_at:
       in: query
       name: terminated_at
@@ -8165,16 +8080,14 @@ components:
         format: regex
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_user_id:
       in: query
       name: user_id
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
         resource_link: identity/v3/user.id
     os_volumes_boot_uuid:
       in: query
@@ -8182,16 +8095,14 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_boot_vm_state:
       in: query
       name: vm_state
       schema:
         type: string
       x-openstack:
-        max-ver: '2.102'
-        max_ver: '2.74'
+        max-ver: '2.74'
     os_volumes_detail_limit:
       in: query
       name: limit
@@ -8620,33 +8531,54 @@ components:
         enum:
           - access_ip_v4
           - access_ip_v6
+          - architecture
           - auto_disk_config
           - availability_zone
+          - cell_name
+          - cleaned
           - config_drive
           - created_at
+          - default_ephemeral_device
+          - default_swap_device
+          - deleted
+          - deleted_at
+          - disable_terminate
           - display_description
           - display_name
+          - ephemeral_gb
+          - ephemeral_key_uuid
           - host
           - hostname
+          - id
           - image_ref
           - instance_type_id
           - kernel_id
+          - key_data
           - key_name
           - launch_index
           - launched_at
+          - launched_on
           - locked
           - locked_by
+          - memory_mb
           - node
+          - os_type
           - power_state
           - progress
           - project_id
           - ramdisk_id
+          - reservation_id
           - root_device_name
+          - root_gb
+          - shutdown_terminate
           - task_state
           - terminated_at
           - updated_at
+          - user_data
           - user_id
           - uuid
+          - vcpus
+          - vm_mode
           - vm_state
         type: string
     servers_detail_status:
@@ -8941,8 +8873,7 @@ components:
         format: date-time
         type: string
       x-openstack:
-        max-ver: '2.57'
-        max_ver: '2.65'
+        max-ver: '2.65'
         min-ver: '2.58'
     servers_os_instance_actions_id:
       description: id parameter for 
@@ -8963,8 +8894,7 @@ components:
           - integer
           - string
       x-openstack:
-        max-ver: '2.57'
-        max_ver: '2.65'
+        max-ver: '2.65'
         min-ver: '2.58'
     servers_os_instance_actions_marker:
       in: query
@@ -8972,8 +8902,7 @@ components:
       schema:
         type: string
       x-openstack:
-        max-ver: '2.57'
-        max_ver: '2.65'
+        max-ver: '2.65'
         min-ver: '2.58'
     servers_os_instance_actions_server_id:
       description: server_id parameter for 
@@ -9155,33 +9084,54 @@ components:
         enum:
           - access_ip_v4
           - access_ip_v6
+          - architecture
           - auto_disk_config
           - availability_zone
+          - cell_name
+          - cleaned
           - config_drive
           - created_at
+          - default_ephemeral_device
+          - default_swap_device
+          - deleted
+          - deleted_at
+          - disable_terminate
           - display_description
           - display_name
+          - ephemeral_gb
+          - ephemeral_key_uuid
           - host
           - hostname
+          - id
           - image_ref
           - instance_type_id
           - kernel_id
+          - key_data
           - key_name
           - launch_index
           - launched_at
+          - launched_on
           - locked
           - locked_by
+          - memory_mb
           - node
+          - os_type
           - power_state
           - progress
           - project_id
           - ramdisk_id
+          - reservation_id
           - root_device_name
+          - root_gb
+          - shutdown_terminate
           - task_state
           - terminated_at
           - updated_at
+          - user_data
           - user_id
           - uuid
+          - vcpus
+          - vm_mode
           - vm_state
         type: string
     servers_status:
@@ -89649,9 +89599,6 @@ components:
                   - 'null'
                   - string
               accessIPv4:
-                description: |-
-                  IPv4 address that should be used to access this server. May be
-                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
@@ -93916,6 +93863,8 @@ components:
             additionalProperties: false
             properties:
               id:
+                description: |-
+                  The UUID of the server.
                 format: uuid
                 type: string
               links:
