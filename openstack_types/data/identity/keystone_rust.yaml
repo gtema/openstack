@@ -35,6 +35,100 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleVersion'
+  /v3/OS-TRUST/trusts:
+    get:
+      tags:
+      - OS-TRUST
+      summary: List trusts.
+      description: List trusts
+      operationId: list
+      parameters:
+      - name: include_deleted
+        in: query
+        description: Whether to include soft-deleted trusts.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          description: List of trusts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - OS-TRUST
+      summary: Create a new trust.
+      description: |-
+        Trust authorization is decided by `policy/trust/create.rego` off the
+        caller's identity (`credentials.user_id` must match the requested
+        `trustor_user_id`) rather than the resource's own role list -- the
+        trustor-holds-the-role invariant is enforced provider-side
+        (`TrustService::create_trust`), not by policy.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Trust created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustResponse'
+        '400':
+          description: Invalid input
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal error
+  /v3/OS-TRUST/trusts/{trust_id}:
+    get:
+      tags:
+      - OS-TRUST
+      summary: Get single trust.
+      description: Get trust by ID
+      operationId: show
+      parameters:
+      - name: trust_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Trust object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustResponse'
+        '404':
+          description: Trust not found
+    delete:
+      tags:
+      - OS-TRUST
+      summary: Delete a trust.
+      description: Delete trust by ID
+      operationId: delete
+      parameters:
+      - name: trust_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Trust deleted
+        '404':
+          description: Trust not found
   /v3/auth/projects:
     get:
       tags:
@@ -965,6 +1059,39 @@ paths:
                 $ref: '#/components/schemas/RegionResponse'
         '404':
           description: Region not found
+    put:
+      tags:
+      - regions
+      summary: Create (or update) a Region with a caller-supplied ID.
+      description: |-
+        `PUT /regions/{region_id}` is python keystone's idempotent upsert form
+        (api-ref "Create or update region"): create the region if `region_id`
+        doesn't exist yet, otherwise update it in place. Distinct from `POST
+        /regions`, which always generates a fresh id.
+      operationId: create_with_id
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Region created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
     delete:
       tags:
       - regions
@@ -9143,6 +9270,186 @@ components:
         id:
           type: string
           description: The ID of the user.
+    Trust:
+      type: object
+      description: The trust data.
+      required:
+      - id
+      - trustor_user_id
+      - trustee_user_id
+      - impersonation
+      properties:
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            Trust expiration time.
+
+            Always present (as `null` when unset) to match python keystone --
+            tempest indexes `trust['expires_at']` unconditionally.
+        extra:
+          description: Arbitrary additional attributes stored with the trust.
+        id:
+          type: string
+          description: Trust ID.
+        impersonation:
+          type: boolean
+          description: Allow the trustee to impersonate the trustor.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the project upon which the trustor is delegating
+            authorization.
+        redelegated_trust_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the redelegated trust, if this trust was created by
+            redelegation.
+        redelegation_count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Maximum remaining depth of the redelegated trust chain.
+          minimum: 0
+        remaining_uses:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Remaining number of times the trust can be used to obtain a token.
+          minimum: 0
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustRoleRef'
+          description: Roles delegated by this trust.
+        trustee_user_id:
+          type: string
+          description: The ID of the user who is capable of consuming the trust.
+        trustor_user_id:
+          type: string
+          description: |-
+            The ID of the user who created the trust, and who's authorization is
+            being delegated.
+    TrustCreate:
+      type: object
+      description: Trust create request body.
+      required:
+      - trustor_user_id
+      - trustee_user_id
+      properties:
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Trust expiration time.
+        extra:
+          description: Arbitrary additional attributes to store with the trust.
+        id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the trust. A UUID is generated when omitted.
+        impersonation:
+          type: boolean
+          description: Allow the trustee to impersonate the trustor.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            The ID of the project upon which the trustor is delegating
+            authorization. Must be set together with `roles`, or omitted together
+            with `roles`.
+        redelegated_trust_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the trust to redelegate from.
+        redelegation_count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Maximum remaining depth of the redelegated trust chain.
+          minimum: 0
+        remaining_uses:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Limit the number of times the trust can be used to obtain a token.
+          minimum: 0
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustRoleRef'
+          description: |-
+            Roles to delegate. Must be set together with `project_id`, or omitted
+            together with `project_id`.
+        trustee_user_id:
+          type: string
+          description: The ID of the user who is capable of consuming the trust.
+        trustor_user_id:
+          type: string
+          description: |-
+            The ID of the user who created the trust, and who's authorization is
+            being delegated.
+    TrustCreateRequest:
+      type: object
+      description: New trust creation request.
+      required:
+      - trust
+      properties:
+        trust:
+          $ref: '#/components/schemas/TrustCreate'
+          description: Trust object.
+    TrustList:
+      type: object
+      description: Trusts.
+      required:
+      - trusts
+      properties:
+        trusts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trust'
+          description: Collection of trust objects.
+    TrustResponse:
+      type: object
+      required:
+      - trust
+      properties:
+        trust:
+          $ref: '#/components/schemas/Trust'
+          description: Trust object.
+    TrustRoleRef:
+      type: object
+      description: A role reference as accepted/returned by the trust API.
+      properties:
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: Role domain ID.
+        id:
+          type:
+          - string
+          - 'null'
+          description: Role ID. May be omitted if `name` is given instead.
+        name:
+          type:
+          - string
+          - 'null'
+          description: Role name.
     User:
       type: object
       description: User information.

@@ -220,7 +220,7 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
-    #[arg(help_heading = "Query parameters", long, value_parser = ["access_ip_v4","access_ip_v6","auto_disk_config","availability_zone","config_drive","created_at","display_description","display_name","host","hostname","image_ref","instance_type_id","kernel_id","key_name","launch_index","launched_at","locked","locked_by","node","power_state","progress","project_id","ramdisk_id","root_device_name","task_state","terminated_at","updated_at","user_id","uuid","vm_state"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["access_ip_v4","access_ip_v6","architecture","auto_disk_config","availability_zone","cell_name","cleaned","config_drive","created_at","default_ephemeral_device","default_swap_device","deleted","deleted_at","disable_terminate","display_description","display_name","ephemeral_gb","ephemeral_key_uuid","host","hostname","id","image_ref","instance_type_id","kernel_id","key_data","key_name","launch_index","launched_at","launched_on","locked","locked_by","memory_mb","node","os_type","power_state","progress","project_id","ramdisk_id","reservation_id","root_device_name","root_gb","shutdown_terminate","task_state","terminated_at","updated_at","user_data","user_id","uuid","vcpus","vm_mode","vm_state"])]
     sort_key: Option<String>,
 
     #[arg(help_heading = "Query parameters", long)]
