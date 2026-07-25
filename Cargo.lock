@@ -397,6 +397,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
+name = "base64"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b25655df2c3cdd83c5e5b293b88acd880332b2ddadd7c30ac43144fdc0033da9"
+
+[[package]]
 name = "base64ct"
 version = "1.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2923,7 +2929,7 @@ dependencies = [
 name = "openstack-cli-compute"
 version = "0.13.7"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.0",
  "clap",
  "dialoguer",
  "eyre",
@@ -2960,7 +2966,7 @@ dependencies = [
 name = "openstack-cli-core"
 version = "0.13.7"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.0",
  "clap",
  "clap_complete",
  "comfy-table",
@@ -3007,7 +3013,7 @@ dependencies = [
 name = "openstack-cli-identity"
 version = "0.13.7"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.0",
  "clap",
  "dialoguer",
  "eyre",
@@ -3260,7 +3266,7 @@ name = "openstack-sdk-auth-passkey"
 version = "0.22.6"
 dependencies = [
  "async-trait",
- "base64 0.22.1",
+ "base64 0.23.0",
  "derive_builder",
  "inventory",
  "openstack-sdk-auth-core",
@@ -3777,7 +3783,7 @@ version = "0.22.7"
 dependencies = [
  "arc-swap",
  "async-trait",
- "base64 0.22.1",
+ "base64 0.23.0",
  "bytes",
  "chrono",
  "config",
