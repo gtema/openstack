@@ -11,17 +11,5 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//! Local client configuration file operations.
-//!
-//! This crate backs the `osc config` commands that read and edit
-//! `clouds.yaml`/`secure.yaml` in place. [`yaml_edit`] provides the
-//! comment- and anchor-preserving YAML editing primitives; [`clouds`]
-//! holds the command implementations built on top of them.
 
-use clap::{Parser, Subcommand};
-
-use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
-use openstack_sdk_core::config::CloudConfig;
-
-pub mod clouds;
-pub mod yaml_edit;
+mod clouds;

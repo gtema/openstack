@@ -11,17 +11,39 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//! Local client configuration file operations.
-//!
-//! This crate backs the `osc config` commands that read and edit
-//! `clouds.yaml`/`secure.yaml` in place. [`yaml_edit`] provides the
-//! comment- and anchor-preserving YAML editing primitives; [`clouds`]
-//! holds the command implementations built on top of them.
+
+//! Cloud entry operations on clouds.yaml/secure.yaml
 
 use clap::{Parser, Subcommand};
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use openstack_sdk_core::config::CloudConfig;
 
-pub mod clouds;
-pub mod yaml_edit;
+pub mod add;
+
+/// Manage cloud entries in clouds.yaml/secure.yaml
+#[derive(Parser)]
+pub struct CloudsCommand {
+    /// Cloud entry commands
+    #[command(subcommand)]
+    pub command: CloudsCommands,
+}
+
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum CloudsCommands {
+    Add(add::AddCommand),
+}
+
+impl CloudsCommand {
+    /// Perform command action
+    pub fn take_action<C: CliArgs>(
+        &self,
+        parsed_args: &C,
+        cloud_config: &CloudConfig,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            CloudsCommands::Add(cmd) => cmd.take_action(parsed_args, cloud_config),
+        }
+    }
+}

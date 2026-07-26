@@ -6,10 +6,11 @@ license.workspace = true
 edition.workspace = true
 authors.workspace = true
 # `yamlpatch`/`yamlpath` (see src/yaml_edit.rs) require a newer toolchain
-# than the rest of the workspace. Scoped to this crate only: nothing else
-# in the workspace depends on `openstack-cli-config`, so SDK-only consumers
-# never pull this requirement in. See CONTRIBUTING.md / the PR description
-# for context.
+# than the rest of the workspace. Scoped to this crate rather than raised
+# on the workspace: only `openstack_cli` (the `osc` binary) depends on
+# `openstack-cli-config`, so `openstack_sdk` and the `sdk/*` crates never
+# pull this requirement in and SDK-only consumers are unaffected. See
+# CONTRIBUTING.md / the PR description for context.
 # Keep in sync with .github/workflows/ci.yml's `rust_ver` — the workspace
 # default build includes this crate, so a mismatch breaks CI.
 rust-version = "1.97"
@@ -17,12 +18,23 @@ homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
+clap.workspace = true
+dirs.workspace = true
+eyre.workspace = true
 indexmap.workspace = true
+openstack-cli-core.workspace = true
+openstack_sdk_core.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
+tracing.workspace = true
 yaml_serde.workspace = true
 yamlpatch.workspace = true
 yamlpath.workspace = true
+zeroize = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+tempfile.workspace = true
 
 [lints]
 workspace = true
