@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::import::delete;
+use openstack_sdk::api::raw;
 
 /// This will just delete the record of the zone import, not the imported zone.
 ///

@@ -29,10 +29,12 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
 use eyre::eyre;
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::delete;
+use openstack_sdk::api::raw;
 use tracing::warn;
 
 /// Delete specific access token.
