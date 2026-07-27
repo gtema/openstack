@@ -56,7 +56,7 @@ impl ResourceBehaviour for BlockStorageVolumesBehaviour {
         "Volumes"
     }
     fn mode() -> Mode {
-        Mode::BlockStorageVolumes
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(BlockStorageVolumeApiRequest::ListDetailed(Box::new(
@@ -71,7 +71,12 @@ impl ResourceBehaviour for BlockStorageVolumesBehaviour {
         )
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::DeleteBlockStorageVolume = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = BlockStorageVolumeDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(BlockStorageVolumeApiRequest::Delete(
                 Box::new(del),
@@ -127,7 +132,7 @@ mod tests {
         assert_eq!(BlockStorageVolumesBehaviour::title(), "Volumes");
         assert_eq!(
             BlockStorageVolumesBehaviour::mode(),
-            Mode::BlockStorageVolumes
+            Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME)
         );
     }
 
@@ -163,7 +168,10 @@ mod tests {
     fn confirm_request_delete_with_selected() {
         let vol = make_volume("vol-1", "test-vol");
         let result = BlockStorageVolumesBehaviour::confirm_request(
-            &Action::DeleteBlockStorageVolume,
+            &Action::ResourceOp {
+                key: crate::mode::BLOCK_STORAGE_VOLUME,
+                op: crate::action::ResourceOp::Delete,
+            },
             Some(&vol),
         );
         assert!(result.is_some());
@@ -177,8 +185,13 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected() {
-        let result =
-            BlockStorageVolumesBehaviour::confirm_request(&Action::DeleteBlockStorageVolume, None);
+        let result = BlockStorageVolumesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::BLOCK_STORAGE_VOLUME,
+                op: crate::action::ResourceOp::Delete,
+            },
+            None,
+        );
         assert!(result.is_none());
     }
 
@@ -186,6 +199,19 @@ mod tests {
     fn confirm_request_returns_none_for_unrelated() {
         let vol = make_volume("vol-1", "test-vol");
         let result = BlockStorageVolumesBehaviour::confirm_request(&Action::Tick, Some(&vol));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let vol = make_volume("vol-1", "test-vol");
+        let result = BlockStorageVolumesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::BLOCK_STORAGE_SNAPSHOT,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&vol),
+        );
         assert!(result.is_none());
     }
 }

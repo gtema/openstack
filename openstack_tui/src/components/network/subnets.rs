@@ -22,11 +22,9 @@ use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
 use openstack_types::network::v2::subnet::response::list::SubnetResponse;
 
-const VIEW_CONFIG_KEY: &str = "network.subnet";
-
 impl crate::utils::ResourceKey for SubnetResponse {
     fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SUBNET
     }
 }
 
@@ -37,13 +35,13 @@ impl ResourceBehaviour for NetworkSubnetsBehaviour {
     type Filter = NetworkSubnetList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SUBNET
     }
     fn title() -> &'static str {
         "Subnets"
     }
     fn mode() -> Mode {
-        Mode::NetworkSubnets
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -82,7 +80,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(NetworkSubnetsBehaviour::view_key(), "network.subnet");
         assert_eq!(NetworkSubnetsBehaviour::title(), "Subnets");
-        assert_eq!(NetworkSubnetsBehaviour::mode(), Mode::NetworkSubnets);
+        assert_eq!(
+            NetworkSubnetsBehaviour::mode(),
+            Mode::Resource(crate::mode::NETWORK_SUBNET)
+        );
     }
 
     #[test]

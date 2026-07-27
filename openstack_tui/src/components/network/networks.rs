@@ -23,11 +23,9 @@ use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
 use openstack_types::network::v2::network::response::list::NetworkResponse;
 
-const VIEW_CONFIG_KEY: &str = "network.network";
-
 impl crate::utils::ResourceKey for NetworkResponse {
     fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_NETWORK
     }
 }
 
@@ -52,13 +50,13 @@ impl ResourceBehaviour for NetworkNetworksBehaviour {
     type Filter = NetworkNetworkList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_NETWORK
     }
     fn title() -> &'static str {
         "Networks"
     }
     fn mode() -> Mode {
-        Mode::NetworkNetworks
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -82,13 +80,14 @@ impl ResourceBehaviour for NetworkNetworksBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowNetworkSubnets = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::NETWORK_SUBNET
             && let Some(sel) = selected
             && let Ok(list) = NetworkSubnetList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::NetworkSubnets,
+                    mode: Mode::Resource(crate::mode::NETWORK_SUBNET),
                     stack: true,
                 },
                 Action::SetNetworkSubnetListFilters(list),
@@ -125,7 +124,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(NetworkNetworksBehaviour::view_key(), "network.network");
         assert_eq!(NetworkNetworksBehaviour::title(), "Networks");
-        assert_eq!(NetworkNetworksBehaviour::mode(), Mode::NetworkNetworks);
+        assert_eq!(
+            NetworkNetworksBehaviour::mode(),
+            Mode::Resource(crate::mode::NETWORK_NETWORK)
+        );
     }
 
     #[test]
@@ -174,7 +176,7 @@ mod tests {
     fn filter_carry_action_show_subnets_with_selected() {
         let net = make_network("net-1", "test-net");
         let actions = NetworkNetworksBehaviour::filter_carry_action(
-            &Action::ShowNetworkSubnets,
+            &Action::ShowResource(crate::mode::NETWORK_SUBNET),
             Some(&net),
             &NetworkNetworkList::default(),
         );
@@ -182,7 +184,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::NetworkSubnets,
+                mode: Mode::Resource(crate::mode::NETWORK_SUBNET),
                 stack: true
             }
         ));
@@ -192,8 +194,19 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = NetworkNetworksBehaviour::filter_carry_action(
-            &Action::ShowNetworkSubnets,
+            &Action::ShowResource(crate::mode::NETWORK_SUBNET),
             None,
+            &NetworkNetworkList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let net = make_network("net-1", "test-net");
+        let actions = NetworkNetworksBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::NETWORK_NETWORK),
+            Some(&net),
             &NetworkNetworkList::default(),
         );
         assert!(actions.is_empty());

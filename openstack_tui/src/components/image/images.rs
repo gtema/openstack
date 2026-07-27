@@ -59,7 +59,7 @@ impl ResourceBehaviour for ImageImagesBehaviour {
         "Images"
     }
     fn mode() -> Mode {
-        Mode::ImageImages
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(ImageImageApiRequest::List(Box::new(filter.clone())))
@@ -79,7 +79,12 @@ impl ResourceBehaviour for ImageImagesBehaviour {
         }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::DeleteImage = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = ImageImageDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(ImageImageApiRequest::Delete(Box::new(
                 del,
@@ -128,7 +133,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(ImageImagesBehaviour::view_key(), "image.image");
         assert_eq!(ImageImagesBehaviour::title(), "Images");
-        assert_eq!(ImageImagesBehaviour::mode(), Mode::ImageImages);
+        assert_eq!(
+            ImageImagesBehaviour::mode(),
+            Mode::Resource(crate::mode::IMAGE_IMAGE)
+        );
     }
 
     #[test]
@@ -176,7 +184,13 @@ mod tests {
     #[test]
     fn confirm_request_delete_with_selected() {
         let img = make_image("img-1", "test-image");
-        let result = ImageImagesBehaviour::confirm_request(&Action::DeleteImage, Some(&img));
+        let result = ImageImagesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::IMAGE_IMAGE,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&img),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -188,7 +202,26 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected() {
-        let result = ImageImagesBehaviour::confirm_request(&Action::DeleteImage, None);
+        let result = ImageImagesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::IMAGE_IMAGE,
+                op: crate::action::ResourceOp::Delete,
+            },
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let img = make_image("img-1", "test-image");
+        let result = ImageImagesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::COMPUTE_SERVER,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&img),
+        );
         assert!(result.is_none());
     }
 

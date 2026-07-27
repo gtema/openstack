@@ -63,7 +63,7 @@ impl ResourceBehaviour for DnsRecordsetsBehaviour {
         "DNS Recordsets"
     }
     fn mode() -> Mode {
-        Mode::DnsRecordsets
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         if filter.zone_id.is_some() {
@@ -114,7 +114,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(DnsRecordsetsBehaviour::view_key(), "dns.recordset");
         assert_eq!(DnsRecordsetsBehaviour::title(), "DNS Recordsets");
-        assert_eq!(DnsRecordsetsBehaviour::mode(), Mode::DnsRecordsets);
+        assert_eq!(
+            DnsRecordsetsBehaviour::mode(),
+            Mode::Resource(crate::mode::DNS_RECORDSET)
+        );
     }
 
     #[test]

@@ -44,7 +44,7 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
         "ServerInstanceAction Actions"
     }
     fn mode() -> Mode {
-        Mode::ComputeServerInstanceActions
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(ComputeServerInstanceActionApiRequest::List(Box::new(
@@ -72,7 +72,8 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
         selected: Option<&Self::Item>,
         filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowComputeServerInstanceActionEvents = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT
             && let Some(sel) = selected
         {
             let mut req = ComputeServerInstanceActionShowBuilder::default();
@@ -84,7 +85,7 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
             if let Ok(list) = req.build() {
                 return vec![
                     Action::Mode {
-                        mode: Mode::ComputeServerInstanceActionEvents,
+                        mode: Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
                         stack: true,
                     },
                     Action::SetComputeServerInstanceActionShowFilters(Box::new(list)),
@@ -141,7 +142,7 @@ mod tests {
         );
         assert_eq!(
             ComputeServerInstanceActionsBehaviour::mode(),
-            Mode::ComputeServerInstanceActions
+            Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION)
         );
     }
 
@@ -198,7 +199,7 @@ mod tests {
         let action_item = make_instance_action();
         let filter = make_filter();
         let actions = ComputeServerInstanceActionsBehaviour::filter_carry_action(
-            &Action::ShowComputeServerInstanceActionEvents,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
             Some(&action_item),
             &filter,
         );
@@ -206,7 +207,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::ComputeServerInstanceActionEvents,
+                mode: Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
                 stack: true
             }
         ));
@@ -219,9 +220,21 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = ComputeServerInstanceActionsBehaviour::filter_carry_action(
-            &Action::ShowComputeServerInstanceActionEvents,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
             None,
             &make_filter(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let action_item = make_instance_action();
+        let filter = make_filter();
+        let actions = ComputeServerInstanceActionsBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
+            Some(&action_item),
+            &filter,
         );
         assert!(actions.is_empty());
     }

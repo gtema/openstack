@@ -44,7 +44,7 @@ impl ResourceBehaviour for IdentityApplicationCredentialsBehaviour {
         "Application Credentials"
     }
     fn mode() -> Mode {
-        Mode::IdentityApplicationCredentials
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(IdentityUserApplicationCredentialApiRequest::List(Box::new(
@@ -89,7 +89,7 @@ mod tests {
         );
         assert_eq!(
             IdentityApplicationCredentialsBehaviour::mode(),
-            Mode::IdentityApplicationCredentials
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL)
         );
     }
 

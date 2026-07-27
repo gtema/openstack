@@ -35,7 +35,7 @@ impl ResourceBehaviour for BlockStorageSnapshotsBehaviour {
         "Snapshots"
     }
     fn mode() -> Mode {
-        Mode::BlockStorageSnapshots
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(BlockStorageSnapshotApiRequest::ListDetailed(Box::new(
@@ -68,7 +68,7 @@ mod tests {
         assert_eq!(BlockStorageSnapshotsBehaviour::title(), "Snapshots");
         assert_eq!(
             BlockStorageSnapshotsBehaviour::mode(),
-            Mode::BlockStorageSnapshots
+            Mode::Resource(crate::mode::BLOCK_STORAGE_SNAPSHOT)
         );
     }
 

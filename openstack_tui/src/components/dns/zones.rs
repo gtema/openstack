@@ -72,7 +72,7 @@ impl ResourceBehaviour for DnsZonesBehaviour {
         "DNS Zones"
     }
     fn mode() -> Mode {
-        Mode::DnsZones
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(DnsZoneApiRequest::List(Box::new(filter.clone())))
@@ -92,7 +92,12 @@ impl ResourceBehaviour for DnsZonesBehaviour {
         }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::DeleteDnsZone = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = DnsZoneDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(DnsZoneApiRequest::Delete(Box::new(del))))
         } else {
@@ -104,13 +109,14 @@ impl ResourceBehaviour for DnsZonesBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowDnsZoneRecordsets = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::DNS_RECORDSET
             && let Some(sel) = selected
             && let Ok(list) = DnsRecordsetList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::DnsRecordsets,
+                    mode: Mode::Resource(crate::mode::DNS_RECORDSET),
                     stack: true,
                 },
                 Action::SetDnsRecordsetListFilters(list),
@@ -153,7 +159,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(DnsZonesBehaviour::view_key(), "dns.zone");
         assert_eq!(DnsZonesBehaviour::title(), "DNS Zones");
-        assert_eq!(DnsZonesBehaviour::mode(), Mode::DnsZones);
+        assert_eq!(
+            DnsZonesBehaviour::mode(),
+            Mode::Resource(crate::mode::DNS_ZONE)
+        );
     }
 
     #[test]
@@ -199,7 +208,13 @@ mod tests {
     #[test]
     fn confirm_request_delete_with_selected() {
         let zone = make_zone("zone-1", "example.com");
-        let result = DnsZonesBehaviour::confirm_request(&Action::DeleteDnsZone, Some(&zone));
+        let result = DnsZonesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::DNS_ZONE,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&zone),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -211,7 +226,13 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected() {
-        let result = DnsZonesBehaviour::confirm_request(&Action::DeleteDnsZone, None);
+        let result = DnsZonesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::DNS_ZONE,
+                op: crate::action::ResourceOp::Delete,
+            },
+            None,
+        );
         assert!(result.is_none());
     }
 
@@ -223,10 +244,23 @@ mod tests {
     }
 
     #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let zone = make_zone("zone-1", "example.com");
+        let result = DnsZonesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::DNS_RECORDSET,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&zone),
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
     fn filter_carry_action_show_recordsets_with_selected() {
         let zone = make_zone("zone-1", "example.com");
         let actions = DnsZonesBehaviour::filter_carry_action(
-            &Action::ShowDnsZoneRecordsets,
+            &Action::ShowResource(crate::mode::DNS_RECORDSET),
             Some(&zone),
             &DnsZoneList::default(),
         );
@@ -234,7 +268,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::DnsRecordsets,
+                mode: Mode::Resource(crate::mode::DNS_RECORDSET),
                 stack: true
             }
         ));
@@ -244,7 +278,7 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = DnsZonesBehaviour::filter_carry_action(
-            &Action::ShowDnsZoneRecordsets,
+            &Action::ShowResource(crate::mode::DNS_RECORDSET),
             None,
             &DnsZoneList::default(),
         );
@@ -256,6 +290,17 @@ mod tests {
         let zone = make_zone("zone-1", "example.com");
         let actions = DnsZonesBehaviour::filter_carry_action(
             &Action::Tick,
+            Some(&zone),
+            &DnsZoneList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let zone = make_zone("zone-1", "example.com");
+        let actions = DnsZonesBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::DNS_ZONE),
             Some(&zone),
             &DnsZoneList::default(),
         );

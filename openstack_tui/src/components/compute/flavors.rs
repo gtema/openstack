@@ -50,7 +50,7 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
     }
 
     fn mode() -> Mode {
-        Mode::ComputeFlavors
+        Mode::Resource(Self::view_key())
     }
 
     fn normalise_filter(filter: Self::Filter) -> Self::Filter {
@@ -81,7 +81,8 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowComputeServersWithFlavor = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::COMPUTE_SERVER
             && let Some(sel) = selected
             && let Ok(server_list) = ComputeServerListBuilder::default()
                 .flavor(sel.id.clone())
@@ -89,7 +90,7 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::ComputeServers,
+                    mode: Mode::Resource(crate::mode::COMPUTE_SERVER),
                     stack: true,
                 },
                 Action::SetComputeServerListFilters(Box::new(server_list)),
@@ -153,7 +154,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(ComputeFlavorsBehaviour::view_key(), "compute.flavor");
         assert_eq!(ComputeFlavorsBehaviour::title(), "Compute Flavors");
-        assert_eq!(ComputeFlavorsBehaviour::mode(), Mode::ComputeFlavors);
+        assert_eq!(
+            ComputeFlavorsBehaviour::mode(),
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR)
+        );
     }
 
     #[test]
@@ -189,14 +193,17 @@ mod tests {
     fn filter_carry_action_show_servers_with_flavor() {
         let flavor = make_flavor("flavor-123");
         let actions = ComputeFlavorsBehaviour::filter_carry_action(
-            &Action::ShowComputeServersWithFlavor,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER),
             Some(&flavor),
             &ComputeFlavorList::default(),
         );
         assert_eq!(actions.len(), 2);
         match &actions[0] {
             Action::Mode { mode, stack } => {
-                assert_eq!(*mode, crate::mode::Mode::ComputeServers);
+                assert_eq!(
+                    *mode,
+                    crate::mode::Mode::Resource(crate::mode::COMPUTE_SERVER)
+                );
                 assert!(*stack);
             }
             _ => panic!("Expected Mode switch, got {:?}", actions[0]),
@@ -212,8 +219,19 @@ mod tests {
     #[test]
     fn filter_carry_action_no_selected() {
         let actions = ComputeFlavorsBehaviour::filter_carry_action(
-            &Action::ShowComputeServersWithFlavor,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER),
             None,
+            &ComputeFlavorList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let flavor = make_flavor("flavor-123");
+        let actions = ComputeFlavorsBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::COMPUTE_FLAVOR),
+            Some(&flavor),
             &ComputeFlavorList::default(),
         );
         assert!(actions.is_empty());

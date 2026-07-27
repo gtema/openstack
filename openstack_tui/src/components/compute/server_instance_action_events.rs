@@ -81,7 +81,7 @@ impl ResourceBehaviour for ComputeServerInstanceActionEventsBehaviour {
         "InstanceAction Events"
     }
     fn mode() -> Mode {
-        Mode::ComputeServerInstanceActionEvents
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(ComputeServerInstanceActionApiRequest::Get(Box::new(
@@ -151,7 +151,7 @@ mod tests {
         );
         assert_eq!(
             ComputeServerInstanceActionEventsBehaviour::mode(),
-            Mode::ComputeServerInstanceActionEvents
+            Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT)
         );
     }
 

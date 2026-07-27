@@ -43,7 +43,7 @@ impl ResourceBehaviour for LoadBalancerHealthMonitorsBehaviour {
         "LB HealthMonitors"
     }
     fn mode() -> Mode {
-        Mode::LoadBalancerHealthMonitors
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(LoadBalancerHealthmonitorApiRequest::List(Box::new(
@@ -86,7 +86,7 @@ mod tests {
         );
         assert_eq!(
             LoadBalancerHealthMonitorsBehaviour::mode(),
-            Mode::LoadBalancerHealthMonitors
+            Mode::Resource(crate::mode::LB_HEALTHMONITOR)
         );
     }
 

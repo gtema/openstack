@@ -37,7 +37,7 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         "Compute Servers"
     }
     fn mode() -> Mode {
-        Mode::ComputeServers
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -66,7 +66,12 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::DeleteComputeServer = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let sel = selected?;
             let mut del_builder = ComputeServerDeleteBuilder::default();
             del_builder.id(sel.id.clone());
@@ -133,7 +138,8 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowComputeServerInstanceActions = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::COMPUTE_SERVER_INSTANCE_ACTION
             && let Some(sel) = selected
         {
             let mut list_builder = ComputeServerInstanceActionListBuilder::default();
@@ -144,7 +150,7 @@ impl ResourceBehaviour for ComputeServersBehaviour {
             if let Ok(list) = list_builder.build() {
                 return vec![
                     Action::Mode {
-                        mode: Mode::ComputeServerInstanceActions,
+                        mode: Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
                         stack: true,
                     },
                     Action::SetComputeServerInstanceActionListFilters(Box::new(list)),
@@ -216,7 +222,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(ComputeServersBehaviour::view_key(), "compute.server");
         assert_eq!(ComputeServersBehaviour::title(), "Compute Servers");
-        assert_eq!(ComputeServersBehaviour::mode(), Mode::ComputeServers);
+        assert_eq!(
+            ComputeServersBehaviour::mode(),
+            Mode::Resource(crate::mode::COMPUTE_SERVER)
+        );
     }
 
     #[test]
@@ -270,8 +279,13 @@ mod tests {
     #[test]
     fn confirm_request_delete_with_selected_server() {
         let server = make_server("server-1", "test-server");
-        let result =
-            ComputeServersBehaviour::confirm_request(&Action::DeleteComputeServer, Some(&server));
+        let result = ComputeServersBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::COMPUTE_SERVER,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&server),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -283,7 +297,26 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected_server() {
-        let result = ComputeServersBehaviour::confirm_request(&Action::DeleteComputeServer, None);
+        let result = ComputeServersBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::COMPUTE_SERVER,
+                op: crate::action::ResourceOp::Delete,
+            },
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::COMPUTE_AGGREGATE,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&server),
+        );
         assert!(result.is_none());
     }
 
@@ -383,7 +416,7 @@ mod tests {
     fn filter_carry_action_instance_actions_with_server() {
         let server = make_server("server-1", "test-server");
         let result = ComputeServersBehaviour::filter_carry_action(
-            &Action::ShowComputeServerInstanceActions,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
             Some(&server),
             &ComputeServerList::default(),
         );
@@ -391,7 +424,7 @@ mod tests {
         assert!(matches!(
             result[0],
             Action::Mode {
-                mode: Mode::ComputeServerInstanceActions,
+                mode: Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
                 stack: true
             }
         ));
@@ -404,8 +437,19 @@ mod tests {
     #[test]
     fn filter_carry_action_instance_actions_without_server() {
         let result = ComputeServersBehaviour::filter_carry_action(
-            &Action::ShowComputeServerInstanceActions,
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
             None,
+            &ComputeServerList::default(),
+        );
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let server = make_server("server-1", "test-server");
+        let result = ComputeServersBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::COMPUTE_SERVER),
+            Some(&server),
             &ComputeServerList::default(),
         );
         assert!(result.is_empty());

@@ -1,33 +1,36 @@
 ---
 # Mode keybindings in the following form
-#  <Mode>:
+#  <Mode> or "Resource(<service>.<resource>)" for migrated resource views:
 #    <shortcut>:
 #       action: <ACTION TO PERFORM>
 #       description: <DESCRIPTION USED IN TUI>
 mode_keybindings:
   Home: {}
   # Block Storage views
-  BlockStorageBackups:
+  "Resource(block_storage.backup)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  BlockStorageSnapshots:
+  "Resource(block_storage.snapshot)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  BlockStorageVolumes:
+  "Resource(block_storage.volume)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "ctrl-d":
-      action: DeleteBlockStorageVolume
+      action:
+        ResourceOp:
+          key: "block_storage.volume"
+          op: Delete
       description: Delete
   # Compute views
-  ComputeAggregates:
+  "Resource(compute.aggregate)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  ComputeServers:
+  "Resource(compute.server)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -42,34 +45,40 @@ mode_keybindings:
       description: All tenants (admin)
       type: Filter
     "ctrl-d":
-      action: DeleteComputeServer
+      action:
+        ResourceOp:
+          key: "compute.server"
+          op: Delete
       description: Delete
     "c":
       action: ShowServerConsoleOutput
       description: Console output
     "a":
-      action: ShowComputeServerInstanceActions
+      action:
+        ShowResource: "compute.server/instance_action"
       description: Instance actions
-  ComputeServerInstanceActions:
+  "Resource(compute.server/instance_action)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "e":
-      action: ShowComputeServerInstanceActionEvents
+      action:
+        ShowResource: "compute.server/instance_action/event"
       description: Events
-  ComputeFlavors:
+  "Resource(compute.flavor)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "s":
-      action: ShowComputeServersWithFlavor
+      action:
+        ShowResource: "compute.server"
       description: Servers
-  ComputeHypervisors:
+  "Resource(compute.hypervisor)":
     "y":
       action: DescribeApiResponse
       description: YAML
   # DNS views
-  DnsRecordsets:
+  "Resource(dns.recordset)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -78,35 +87,43 @@ mode_keybindings:
         SetDnsRecordsetListFilters: {}
       description: Default filters
       type: Filter
-  DnsZones:
+  "Resource(dns.zone)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "<enter>":
-      action: ShowDnsZoneRecordsets
+      action:
+        ShowResource: "dns.recordset"
       description: Recordsets
     "ctrl-d":
-      action: DeleteDnsZone
+      action:
+        ResourceOp:
+          key: "dns.zone"
+          op: Delete
       description: Delete
   # Identity views
-  IdentityApplicationCredentials:
+  "Resource(identity.user/application_credential)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  IdentityGroups:
+  "Resource(identity.group)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "u":
-      action: ShowIdentityGroupUsers
+      action:
+        ShowResource: "identity.group_user"
       description: Group users
     "d":
-      action: IdentityGroupDelete
-      description: Delete (todo!)
+      action:
+        ResourceOp:
+          key: "identity.group"
+          op: Delete
+      description: Delete
     "a":
       action: IdentityGroupCreate
       description: Create new group (todo!)
-  IdentityGroupUsers:
+  "Resource(identity.group_user)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -116,22 +133,28 @@ mode_keybindings:
     "r":
       action: IdentityGroupUserRemove
       description: Remove user from group (todo!)
-  IdentityProjects:
+  "Resource(identity.project)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "s":
       action: SwitchToProject
       description: Switch to project
-  IdentityUsers:
+  "Resource(identity.user)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "ctrl-d":
-      action: IdentityUserDelete
+      action:
+        IdentityUserOp:
+          key: "identity.user"
+          op: Delete
       description: Delete
     "e":
-      action: IdentityUserFlipEnable
+      action:
+        IdentityUserOp:
+          key: "identity.user"
+          op: FlipEnable
       description: Enable/Disable user
     "a":
       action: IdentityUserCreate
@@ -140,10 +163,11 @@ mode_keybindings:
       action: IdentityUserSetPassword
       description: Set user password (todo!)
     "c":
-      action: ShowIdentityUserApplicationCredentials
+      action:
+        ShowResource: "identity.user/application_credential"
       description: Application credentials
   # Image views
-  ImageImages:
+  "Resource(image.image)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -168,54 +192,62 @@ mode_keybindings:
       description: private
       type: Filter
     "ctrl-d":
-      action: DeleteImage
+      action:
+        ResourceOp:
+          key: "image.image"
+          op: Delete
       description: Delete
   # LoadBalancer views
-  LoadBalancers:
+  "Resource(load-balancer.loadbalancer)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "l":
-      action: ShowLoadBalancerListeners
+      action:
+        ShowResource: "load-balancer.listener"
       description: Listeners
     "p":
-      action: ShowLoadBalancerPools
+      action:
+        ShowResource: "load-balancer.pool"
       description: Pools
-  LoadBalancerListeners:
+  "Resource(load-balancer.listener)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  LoadBalancerPools:
+  "Resource(load-balancer.pool)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "<enter>":
-      action: ShowLoadBalancerPoolMembers
+      action:
+        ShowResource: "load-balancer.pool/member"
       description: Members
     "h":
-      action: ShowLoadBalancerPoolHealthMonitors
+      action:
+        ShowResource: "load-balancer.healthmonitor"
       description: HealthMonitors
-  LoadBalancerPoolMembers:
+  "Resource(load-balancer.pool/member)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  LoadBalancerHealthMonitors:
+  "Resource(load-balancer.healthmonitor)":
     "y":
       action: DescribeApiResponse
       description: YAML
   # Network views
-  NetworkNetworks:
+  "Resource(network.network)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "<enter>":
-      action: ShowNetworkSubnets
+      action:
+        ShowResource: "network.subnet"
       description: Subnets
-  NetworkRouters:
+  "Resource(network.router)":
     "y":
       action: DescribeApiResponse
       description: YAML
-  NetworkSubnets:
+  "Resource(network.subnet)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -224,14 +256,15 @@ mode_keybindings:
         SetNetworkSubnetListFilters: {}
       description: All
       type: Filter
-  NetworkSecurityGroups:
+  "Resource(network.security_group)":
     "y":
       action: DescribeApiResponse
       description: YAML
     "<enter>":
-      action: ShowNetworkSecurityGroupRules
+      action:
+        ShowResource: "network.security_group_rule"
       description: Rules
-  NetworkSecurityGroupRules:
+  "Resource(network.security_group_rule)":
     "y":
       action: DescribeApiResponse
       description: YAML
@@ -241,10 +274,16 @@ mode_keybindings:
       description: All
       type: Filter
     "ctrl-n":
-      action: CreateNetworkSecurityGroupRule
+      action:
+        ResourceOp:
+          key: "network.security_group_rule"
+          op: Create
       description: Create
     "ctrl-d":
-      action: DeleteNetworkSecurityGroupRule
+      action:
+        ResourceOp:
+          key: "network.security_group_rule"
+          op: Delete
       description: Delete
 # Global keybindings
 # <KEYBINDING>:
@@ -284,37 +323,37 @@ global_keybindings:
 # Mode aliases
 # <ALIAS>: <MODE>
 mode_aliases:
-  "aggregates (compute)": "ComputeAggregates"
-  "application credentials (identity)": "IdentityApplicationCredentials"
-  "backups": "BlockStorageBackups"
-  "flavors": "ComputeFlavors"
-  "groups (identity)": "IdentityGroups"
-  "host-aggregates (compute)": "ComputeAggregates"
-  "hypervisors (compute)": "ComputeHypervisors"
-  "images": "ImageImages"
-  "loadbalancers": "LoadBalancers"
-  "lb (loadbalancers)": "LoadBalancers"
-  "listeners (loadbalancer)": "LoadBalancerListeners"
-  "lbl (loadbalancer listeners)": "LoadBalancerListeners"
-  "pool (loadbalancer)": "LoadBalancerPools"
-  "lbp (loadbalancer pools)": "LoadBalancerPools"
-  "healthmonitors (loadbalancer)": "LoadBalancerHealthMonitors"
-  "lbhm (loadbalancer health monitors)": "LoadBalancerHealthMonitors"
-  "nets": "NetworkNetworks"
-  "networks": "NetworkNetworks"
-  "projects": "IdentityProjects"
-  "recordsets (dns)": "DnsRecordsets"
-  "routers": "NetworkRouters"
-  "security groups (network)": "NetworkSecurityGroups"
-  "security group rules (network)": "NetworkSecurityGroupRules"
-  "servers": "ComputeServers"
-  "sg": "NetworkSecurityGroups"
-  "sgr": "NetworkSecurityGroupRules"
-  "snapshots": "BlockStorageSnapshots"
-  "subnets (network)": "NetworkSubnets"
-  "volumes": "BlockStorageVolumes"
-  "users": "IdentityUsers"
-  "zones (dns)": "DnsZones"
+  "aggregates (compute)": "Resource(compute.aggregate)"
+  "application credentials (identity)": "Resource(identity.user/application_credential)"
+  "backups": "Resource(block_storage.backup)"
+  "flavors": "Resource(compute.flavor)"
+  "groups (identity)": "Resource(identity.group)"
+  "host-aggregates (compute)": "Resource(compute.aggregate)"
+  "hypervisors (compute)": "Resource(compute.hypervisor)"
+  "images": "Resource(image.image)"
+  "loadbalancers": "Resource(load-balancer.loadbalancer)"
+  "lb (loadbalancers)": "Resource(load-balancer.loadbalancer)"
+  "listeners (loadbalancer)": "Resource(load-balancer.listener)"
+  "lbl (loadbalancer listeners)": "Resource(load-balancer.listener)"
+  "pool (loadbalancer)": "Resource(load-balancer.pool)"
+  "lbp (loadbalancer pools)": "Resource(load-balancer.pool)"
+  "healthmonitors (loadbalancer)": "Resource(load-balancer.healthmonitor)"
+  "lbhm (loadbalancer health monitors)": "Resource(load-balancer.healthmonitor)"
+  "nets": "Resource(network.network)"
+  "networks": "Resource(network.network)"
+  "projects": "Resource(identity.project)"
+  "recordsets (dns)": "Resource(dns.recordset)"
+  "routers": "Resource(network.router)"
+  "security groups (network)": "Resource(network.security_group)"
+  "security group rules (network)": "Resource(network.security_group_rule)"
+  "servers": "Resource(compute.server)"
+  "sg": "Resource(network.security_group)"
+  "sgr": "Resource(network.security_group_rule)"
+  "snapshots": "Resource(block_storage.snapshot)"
+  "subnets (network)": "Resource(network.subnet)"
+  "volumes": "Resource(block_storage.volume)"
+  "users": "Resource(identity.user)"
+  "zones (dns)": "Resource(dns.zone)"
 # View output
 # <RESOURCE_KEY>:
 #   fields: <ARRAY OF COLUMNS TO SHOW>

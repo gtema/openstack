@@ -43,7 +43,12 @@ impl ResourceBehaviour for IdentityGroupUsersBehaviour {
         "Identity Group Users"
     }
     fn mode() -> Mode {
-        Mode::IdentityGroupUsers
+        // NOTE: intentionally NOT `Mode::Resource(Self::view_key())` — `view_key()` returns
+        // "identity.user" (shared with `IdentityUsersBehaviour`, both render `UserResponse`-shaped
+        // rows via the same `views: identity.user:` config). Using it here would collide with
+        // `IdentityUsers`' own `Mode::Resource("identity.user")` key in the `app.rs` component
+        // registry, so this resource uses the synthetic `IDENTITY_GROUP_USER` key instead.
+        Mode::Resource(crate::mode::IDENTITY_GROUP_USER)
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(IdentityGroupUserApiRequest::List(Box::new(filter.clone())))
@@ -79,7 +84,7 @@ mod tests {
         assert_eq!(IdentityGroupUsersBehaviour::title(), "Identity Group Users");
         assert_eq!(
             IdentityGroupUsersBehaviour::mode(),
-            Mode::IdentityGroupUsers
+            Mode::Resource(crate::mode::IDENTITY_GROUP_USER)
         );
     }
 
