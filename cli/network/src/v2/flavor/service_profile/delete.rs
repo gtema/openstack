@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::flavor::service_profile::delete;
+use openstack_sdk::api::raw;
 
 /// Disassociate a flavor from a service profile.
 ///

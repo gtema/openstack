@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::floating_ip::delete_21;
+use openstack_sdk::api::raw;
 
 /// Deletes, or deallocates, a floating IP address from the current project and
 /// returns it to the pool from which it was allocated.

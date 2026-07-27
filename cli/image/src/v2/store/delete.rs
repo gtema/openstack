@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::store::delete;
+use openstack_sdk::api::raw;
 
 /// This API allows you to delete a copy of the image from a specific store.
 /// *(Since Image API v2.10)*

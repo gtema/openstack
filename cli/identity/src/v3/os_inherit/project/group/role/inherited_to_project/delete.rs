@@ -29,10 +29,12 @@ use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
 use eyre::eyre;
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_inherit::project::group::role::inherited_to_project::delete;
 use openstack_sdk::api::identity::v3::project::find as find_project;
+use openstack_sdk::api::raw;
 use tracing::warn;
 
 /// Relationship:

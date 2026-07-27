@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::task::delete;
+use openstack_sdk::api::raw;
 
 /// Command without description in OpenAPI
 #[derive(Args)]

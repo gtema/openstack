@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::endpoint::delete;
+use openstack_sdk::api::raw;
 
 /// DELETE operation on
 /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}

@@ -28,8 +28,10 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use http::Response;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::image::v2::cache::delete_all;
+use openstack_sdk::api::raw;
 
 /// Clears the cache and its queue. *(Since Image API v2.14)*
 ///

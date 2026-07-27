@@ -109,7 +109,7 @@ mod tests {
     use http::{HeaderName, HeaderValue};
     use httpmock::MockServer;
     #[cfg(feature = "sync")]
-    use openstack_sdk_core::api::RawQuery;
+    use openstack_sdk_core::api::{Query, raw};
     use openstack_sdk_core::test::client::FakeOpenStackClient;
     use openstack_sdk_core::types::ServiceType;
 
@@ -139,7 +139,7 @@ mod tests {
         });
 
         let endpoint = Request::builder().user_id("user_id").build().unwrap();
-        let _ = endpoint.raw_query(&client).unwrap();
+        let _ = raw(endpoint).query(&client).unwrap();
         mock.assert();
     }
 
@@ -171,7 +171,7 @@ mod tests {
             )
             .build()
             .unwrap();
-        let _ = endpoint.raw_query(&client).unwrap();
+        let _ = raw(endpoint).query(&client).unwrap();
         mock.assert();
     }
 }
