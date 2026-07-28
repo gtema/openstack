@@ -62,6 +62,10 @@ impl ConfirmPopup {
 }
 
 impl Component for ConfirmPopup {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())

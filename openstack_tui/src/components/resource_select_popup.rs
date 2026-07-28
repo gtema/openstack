@@ -47,6 +47,10 @@ impl ApiRequestSelect {
 }
 
 impl Component for ApiRequestSelect {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn register_action_handler(&mut self, _tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         Ok(())
     }

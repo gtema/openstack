@@ -570,9 +570,8 @@ impl App {
                     self.active_popup = Some(Popup::Confirm);
                     if let Some(popup) = self.popups.get_mut(&Popup::Confirm) {
                         // ConfirmPopup already exists, reuse by downcasting
-                        unsafe {
-                            let ptr = popup as *mut Box<dyn Component> as *mut ConfirmPopup;
-                            (*ptr).update_request(request);
+                        if let Some(confirm_popup) = popup.as_any_mut().downcast_mut::<ConfirmPopup>() {
+                            confirm_popup.update_request(request);
                         }
                     } else {
                         let mut confirm_popup = ConfirmPopup::new(request);

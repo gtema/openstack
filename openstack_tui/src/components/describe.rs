@@ -246,6 +246,10 @@ impl Describe {
 }
 
 impl Component for Describe {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         if key.kind == KeyEventKind::Press {
             match key.code {

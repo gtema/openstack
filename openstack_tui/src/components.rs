@@ -54,6 +54,10 @@ pub use crate::widgets::popup::Popup;
 /// update state, and be rendered on the screen.
 #[async_trait]
 pub trait Component {
+    /// Return `self` as `&mut dyn Any` so callers can safely downcast to a concrete
+    /// component type (e.g. to reuse an existing popup instance).
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
+
     /// Register an action handler that can send actions for processing if necessary.
     ///
     /// # Arguments

@@ -65,10 +65,15 @@ where
 
 impl<'a, B> Component for GenericResourceView<'a, B>
 where
-    B: ResourceBehaviour,
+    'a: 'static,
+    B: ResourceBehaviour + 'static,
     B::Item: StructTable,
     for<'b> &'b B::Item: StructTable,
 {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.base.set_config(config)
     }
