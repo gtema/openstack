@@ -73,7 +73,7 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
         "LB Pools"
     }
     fn mode() -> Mode {
-        Mode::LoadBalancerPools
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(LoadBalancerPoolApiRequest::List(Box::new(filter.clone())))
@@ -97,25 +97,27 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowLoadBalancerPoolMembers = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::LB_POOL_MEMBER
             && let Some(sel) = selected
             && let Ok(list) = LoadBalancerPoolMemberList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::LoadBalancerPoolMembers,
+                    mode: Mode::Resource(crate::mode::LB_POOL_MEMBER),
                     stack: true,
                 },
                 Action::SetLoadBalancerPoolMemberListFilters(list),
             ];
         }
-        if let Action::ShowLoadBalancerPoolHealthMonitors = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::LB_HEALTHMONITOR
             && let Some(sel) = selected
             && let Ok(list) = LoadBalancerHealthmonitorList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::LoadBalancerHealthMonitors,
+                    mode: Mode::Resource(crate::mode::LB_HEALTHMONITOR),
                     stack: true,
                 },
                 Action::SetLoadBalancerHealthMonitorListFilters(list),
@@ -160,7 +162,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(LoadBalancerPoolsBehaviour::view_key(), "load-balancer.pool");
         assert_eq!(LoadBalancerPoolsBehaviour::title(), "LB Pools");
-        assert_eq!(LoadBalancerPoolsBehaviour::mode(), Mode::LoadBalancerPools);
+        assert_eq!(
+            LoadBalancerPoolsBehaviour::mode(),
+            Mode::Resource(crate::mode::LB_POOL)
+        );
     }
 
     #[test]
@@ -209,7 +214,7 @@ mod tests {
     fn filter_carry_action_show_members_with_selected() {
         let pool = make_pool("pool-1", "test-pool");
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerPoolMembers,
+            &Action::ShowResource(crate::mode::LB_POOL_MEMBER),
             Some(&pool),
             &LoadBalancerPoolList::default(),
         );
@@ -217,7 +222,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::LoadBalancerPoolMembers,
+                mode: Mode::Resource(crate::mode::LB_POOL_MEMBER),
                 stack: true
             }
         ));
@@ -231,7 +236,7 @@ mod tests {
     fn filter_carry_action_show_health_monitors_with_selected() {
         let pool = make_pool("pool-1", "test-pool");
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerPoolHealthMonitors,
+            &Action::ShowResource(crate::mode::LB_HEALTHMONITOR),
             Some(&pool),
             &LoadBalancerPoolList::default(),
         );
@@ -239,7 +244,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::LoadBalancerHealthMonitors,
+                mode: Mode::Resource(crate::mode::LB_HEALTHMONITOR),
                 stack: true
             }
         ));
@@ -252,8 +257,19 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerPoolMembers,
+            &Action::ShowResource(crate::mode::LB_POOL_MEMBER),
             None,
+            &LoadBalancerPoolList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let pool = make_pool("pool-1", "test-pool");
+        let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::LB_POOL),
+            Some(&pool),
             &LoadBalancerPoolList::default(),
         );
         assert!(actions.is_empty());

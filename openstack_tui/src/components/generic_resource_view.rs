@@ -272,7 +272,7 @@ mod tests {
     #[test]
     fn tick_returns_none() {
         let mut comp: ComputeServers = GenericResourceView::new();
-        let result = comp.update(Action::Tick, Mode::ComputeServers);
+        let result = comp.update(Action::Tick, Mode::Resource(crate::mode::COMPUTE_SERVER));
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
     }
@@ -280,7 +280,7 @@ mod tests {
     #[test]
     fn render_returns_none() {
         let mut comp: ComputeServers = GenericResourceView::new();
-        let result = comp.update(Action::Render, Mode::ComputeServers);
+        let result = comp.update(Action::Render, Mode::Resource(crate::mode::COMPUTE_SERVER));
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
     }
@@ -288,7 +288,7 @@ mod tests {
     #[test]
     fn refresh_returns_perform_api_request() {
         let mut comp: ComputeServers = GenericResourceView::new();
-        let result = comp.update(Action::Refresh, Mode::ComputeServers);
+        let result = comp.update(Action::Refresh, Mode::Resource(crate::mode::COMPUTE_SERVER));
         assert!(result.is_ok());
         assert!(matches!(
             result.unwrap(),
@@ -301,10 +301,10 @@ mod tests {
         let mut comp: ComputeServers = GenericResourceView::new();
         let result = comp.update(
             Action::Mode {
-                mode: Mode::ComputeServers,
+                mode: Mode::Resource(crate::mode::COMPUTE_SERVER),
                 stack: false,
             },
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -315,10 +315,10 @@ mod tests {
         let mut comp: ComputeServers = GenericResourceView::new();
         let result = comp.update(
             Action::Mode {
-                mode: Mode::ComputeFlavors,
+                mode: Mode::Resource(crate::mode::COMPUTE_FLAVOR),
                 stack: false,
             },
-            Mode::ComputeFlavors,
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -332,7 +332,7 @@ mod tests {
             ..Default::default()
         };
         let action = Action::SetComputeServerListFilters(Box::new(filter));
-        let result = comp.update(action, Mode::ComputeServers);
+        let result = comp.update(action, Mode::Resource(crate::mode::COMPUTE_SERVER));
         assert!(result.is_ok());
         assert!(matches!(
             result.unwrap(),
@@ -350,7 +350,7 @@ mod tests {
         let data: Vec<Value> = Vec::new();
         let result = comp.update(
             Action::ApiResponsesData { request, data },
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -370,7 +370,7 @@ mod tests {
         let data: Vec<Value> = Vec::new();
         let result = comp.update(
             Action::ApiResponsesData { request, data },
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -382,7 +382,7 @@ mod tests {
         let scope = openstack_sdk::auth::authtoken::AuthTokenScope::Unscoped;
         let result = comp.update(
             Action::CloudChangeScope(Box::new(scope)),
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -394,7 +394,7 @@ mod tests {
         let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
         let result = comp.update(
             Action::ConnectedToCloud(Box::new(token_info)),
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert!(matches!(
@@ -409,7 +409,7 @@ mod tests {
         let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
         let result = comp.update(
             Action::ConnectedToCloud(Box::new(token_info)),
-            Mode::ComputeFlavors,
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR),
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
@@ -449,7 +449,7 @@ mod tests {
         )));
         comp.update(
             Action::ApiResponsesData { request, data },
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         )
         .unwrap();
         comp.handle_key_events(KeyEvent::new(KeyCode::Down, KeyModifiers::empty()))
@@ -476,7 +476,7 @@ mod tests {
         let data = vec![console_data];
         let result = comp.update(
             Action::ApiResponsesData { request, data },
-            Mode::ComputeServers,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
         assert!(matches!(
@@ -488,7 +488,13 @@ mod tests {
     #[test]
     fn confirm_request_dispatches_confirm_action() {
         let mut comp = setup_comp_with_selected_server();
-        let result = comp.update(Action::DeleteComputeServer, Mode::ComputeServers);
+        let result = comp.update(
+            Action::ResourceOp {
+                key: crate::mode::COMPUTE_SERVER,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
+        );
         assert!(result.is_ok());
         assert!(matches!(result.unwrap(), Some(Action::Confirm(_))));
     }
@@ -533,12 +539,18 @@ mod tests {
                 request,
                 data: vec![volume_json],
             },
-            Mode::BlockStorageVolumes,
+            Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME),
         )
         .unwrap();
         comp.handle_key_events(KeyEvent::new(KeyCode::Down, KeyModifiers::empty()))
             .unwrap();
-        let result = comp.update(Action::DeleteBlockStorageVolume, Mode::BlockStorageVolumes);
+        let result = comp.update(
+            Action::ResourceOp {
+                key: crate::mode::BLOCK_STORAGE_VOLUME,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME),
+        );
         assert!(result.is_ok());
         assert!(matches!(result.unwrap(), Some(Action::Confirm(_))));
     }
@@ -546,7 +558,10 @@ mod tests {
     #[test]
     fn action_to_singular_request_dispatches_via_tx_and_returns_perform() {
         let mut comp = setup_comp_with_selected_server();
-        let result = comp.update(Action::ShowServerConsoleOutput, Mode::ComputeServers);
+        let result = comp.update(
+            Action::ShowServerConsoleOutput,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
+        );
         assert!(result.is_ok());
         assert!(matches!(
             result.unwrap(),
@@ -581,12 +596,15 @@ mod tests {
                 request,
                 data: vec![flavor_json],
             },
-            Mode::ComputeFlavors,
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR),
         )
         .unwrap();
         comp.handle_key_events(KeyEvent::new(KeyCode::Down, KeyModifiers::empty()))
             .unwrap();
-        let result = comp.update(Action::ShowComputeServersWithFlavor, Mode::ComputeFlavors);
+        let result = comp.update(
+            Action::ShowResource(crate::mode::COMPUTE_SERVER),
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR),
+        );
         assert!(result.is_ok());
         assert!(matches!(
             result.unwrap(),

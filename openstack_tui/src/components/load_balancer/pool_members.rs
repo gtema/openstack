@@ -44,7 +44,7 @@ impl ResourceBehaviour for LoadBalancerPoolMembersBehaviour {
         "LB Pool Members"
     }
     fn mode() -> Mode {
-        Mode::LoadBalancerPoolMembers
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(LoadBalancerPoolMemberApiRequest::List(Box::new(
@@ -85,7 +85,7 @@ mod tests {
         assert_eq!(LoadBalancerPoolMembersBehaviour::title(), "LB Pool Members");
         assert_eq!(
             LoadBalancerPoolMembersBehaviour::mode(),
-            Mode::LoadBalancerPoolMembers
+            Mode::Resource(crate::mode::LB_POOL_MEMBER)
         );
     }
 

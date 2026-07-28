@@ -43,7 +43,7 @@ impl ResourceBehaviour for IdentityProjectsBehaviour {
         "Identity Projects"
     }
     fn mode() -> Mode {
-        Mode::IdentityProjects
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(IdentityProjectApiRequest::List(Box::new(filter.clone())))
@@ -102,7 +102,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(IdentityProjectsBehaviour::view_key(), "identity.project");
         assert_eq!(IdentityProjectsBehaviour::title(), "Identity Projects");
-        assert_eq!(IdentityProjectsBehaviour::mode(), Mode::IdentityProjects);
+        assert_eq!(
+            IdentityProjectsBehaviour::mode(),
+            Mode::Resource(crate::mode::IDENTITY_PROJECT)
+        );
     }
 
     #[test]

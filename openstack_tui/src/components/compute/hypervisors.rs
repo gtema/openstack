@@ -35,7 +35,7 @@ impl ResourceBehaviour for ComputeHypervisorsBehaviour {
         "Compute Hypervisors"
     }
     fn mode() -> Mode {
-        Mode::ComputeHypervisors
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(ComputeHypervisorApiRequest::ListDetailed(Box::new(
@@ -68,7 +68,7 @@ mod tests {
         assert_eq!(ComputeHypervisorsBehaviour::title(), "Compute Hypervisors");
         assert_eq!(
             ComputeHypervisorsBehaviour::mode(),
-            Mode::ComputeHypervisors
+            Mode::Resource(crate::mode::COMPUTE_HYPERVISOR)
         );
     }
 

@@ -72,7 +72,7 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
         "Identity Groups"
     }
     fn mode() -> Mode {
-        Mode::IdentityGroups
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(IdentityGroupApiRequest::List(Box::new(filter.clone())))
@@ -85,7 +85,12 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
         )
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::IdentityGroupDelete = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = IdentityGroupDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(IdentityGroupApiRequest::Delete(Box::new(
                 del,
@@ -99,13 +104,14 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowIdentityGroupUsers = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::IDENTITY_GROUP_USER
             && let Some(sel) = selected
             && let Ok(list) = IdentityGroupUserList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::IdentityGroupUsers,
+                    mode: Mode::Resource(crate::mode::IDENTITY_GROUP_USER),
                     stack: true,
                 },
                 Action::SetIdentityGroupUserListFilters(list),
@@ -137,7 +143,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(IdentityGroupsBehaviour::view_key(), "identity.group");
         assert_eq!(IdentityGroupsBehaviour::title(), "Identity Groups");
-        assert_eq!(IdentityGroupsBehaviour::mode(), Mode::IdentityGroups);
+        assert_eq!(
+            IdentityGroupsBehaviour::mode(),
+            Mode::Resource(crate::mode::IDENTITY_GROUP)
+        );
     }
 
     #[test]
@@ -171,8 +180,13 @@ mod tests {
     #[test]
     fn confirm_request_delete_with_selected() {
         let group = make_group("group-1", "test-group");
-        let result =
-            IdentityGroupsBehaviour::confirm_request(&Action::IdentityGroupDelete, Some(&group));
+        let result = IdentityGroupsBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::IDENTITY_GROUP,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&group),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -184,7 +198,26 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected() {
-        let result = IdentityGroupsBehaviour::confirm_request(&Action::IdentityGroupDelete, None);
+        let result = IdentityGroupsBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::IDENTITY_GROUP,
+                op: crate::action::ResourceOp::Delete,
+            },
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let group = make_group("group-1", "test-group");
+        let result = IdentityGroupsBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::IDENTITY_PROJECT,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&group),
+        );
         assert!(result.is_none());
     }
 
@@ -199,7 +232,7 @@ mod tests {
     fn filter_carry_action_show_group_users_with_selected() {
         let group = make_group("group-1", "test-group");
         let actions = IdentityGroupsBehaviour::filter_carry_action(
-            &Action::ShowIdentityGroupUsers,
+            &Action::ShowResource(crate::mode::IDENTITY_GROUP_USER),
             Some(&group),
             &IdentityGroupList::default(),
         );
@@ -207,7 +240,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::IdentityGroupUsers,
+                mode: Mode::Resource(crate::mode::IDENTITY_GROUP_USER),
                 stack: true
             }
         ));
@@ -220,8 +253,19 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = IdentityGroupsBehaviour::filter_carry_action(
-            &Action::ShowIdentityGroupUsers,
+            &Action::ShowResource(crate::mode::IDENTITY_GROUP_USER),
             None,
+            &IdentityGroupList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let group = make_group("group-1", "test-group");
+        let actions = IdentityGroupsBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::IDENTITY_GROUP),
+            Some(&group),
             &IdentityGroupList::default(),
         );
         assert!(actions.is_empty());

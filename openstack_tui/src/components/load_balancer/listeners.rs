@@ -43,7 +43,7 @@ impl ResourceBehaviour for LoadBalancerListenersBehaviour {
         "LB Listeners"
     }
     fn mode() -> Mode {
-        Mode::LoadBalancerListeners
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(LoadBalancerListenerApiRequest::List(Box::new(
@@ -82,7 +82,7 @@ mod tests {
         assert_eq!(LoadBalancerListenersBehaviour::title(), "LB Listeners");
         assert_eq!(
             LoadBalancerListenersBehaviour::mode(),
-            Mode::LoadBalancerListeners
+            Mode::Resource(crate::mode::LB_LISTENER)
         );
     }
 

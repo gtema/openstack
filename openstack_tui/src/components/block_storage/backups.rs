@@ -35,7 +35,7 @@ impl ResourceBehaviour for BlockStorageBackupsBehaviour {
         "Backups"
     }
     fn mode() -> Mode {
-        Mode::BlockStorageBackups
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(BlockStorageBackupApiRequest::ListDetailed(Box::new(
@@ -68,7 +68,7 @@ mod tests {
         assert_eq!(BlockStorageBackupsBehaviour::title(), "Backups");
         assert_eq!(
             BlockStorageBackupsBehaviour::mode(),
-            Mode::BlockStorageBackups
+            Mode::Resource(crate::mode::BLOCK_STORAGE_BACKUP)
         );
     }
 

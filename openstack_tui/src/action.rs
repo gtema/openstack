@@ -17,6 +17,36 @@ use strum::Display;
 
 use crate::cloud_worker::types as cloud_types;
 
+/// Deserialize a `ViewKey` field from an owned string, resolving it to the
+/// canonical `'static` constant. Needed because `#[derive(Deserialize)]`
+/// cannot produce a `&'static str` directly (see `crate::mode::resolve_view_key`).
+fn deserialize_view_key<'de, D>(deserializer: D) -> Result<crate::mode::ViewKey, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    crate::mode::resolve_view_key(&s)
+        .ok_or_else(|| serde::de::Error::custom(format!("unknown resource view key: {s}")))
+}
+
+/// Identity-only operation on a resource, addressed by `ViewKey`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ResourceOp {
+    Create,
+    Delete,
+}
+
+/// Operations on Identity Users, addressed by `ViewKey`.
+/// Kept separate from `ResourceOp` because:
+/// 1. `FlipEnable` is a toggle with no Create/Delete analogue.
+/// 2. `FlipEnable` dispatches via `action_to_request` (immediate, no confirmation),
+///    while `Delete` dispatches via `confirm_request` (requires confirmation).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum IdentityUserOp {
+    Delete,
+    FlipEnable,
+}
+
 /// TUI action
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
 pub enum Action {
@@ -110,44 +140,24 @@ pub enum Action {
         original_action: Box<Action>,
     },
 
-    // Block Storage (Cinder)
-    /// Delete volume
-    DeleteBlockStorageVolume,
-
     // Compute (Nova)
     SetComputeServerListFilters(Box<cloud_types::ComputeServerList>),
     SetComputeServerInstanceActionListFilters(Box<cloud_types::ComputeServerInstanceActionList>),
     SetComputeServerInstanceActionShowFilters(Box<cloud_types::ComputeServerInstanceActionShow>),
-    /// Show servers provisioned with selected flavor
-    ShowComputeServersWithFlavor,
-    /// Delete selected server
-    DeleteComputeServer,
     /// Show console output of the selected entry
     ShowServerConsoleOutput,
-    /// Show selected server instance actions
-    ShowComputeServerInstanceActions,
-    /// Show selected server instance action events
-    ShowComputeServerInstanceActionEvents,
 
     // DNS (Designate)
     /// Set DNS Zone filters
     SetDnsZoneListFilters(cloud_types::DnsZoneList),
-    /// Delete DNS zone
-    DeleteDnsZone,
     /// Set DNS Recordset filters
     SetDnsRecordsetListFilters(cloud_types::DnsRecordsetList),
-    /// Zone recordsets
-    ShowDnsZoneRecordsets,
 
     // Identity (keystone)
     //  Groups
     /// Create new identity group
     IdentityGroupCreate,
-    /// Delete identity group
-    IdentityGroupDelete,
     //  Group users
-    /// Action user invokes to switch mode for selected entity
-    ShowIdentityGroupUsers,
     /// Set GroupUser filters
     SetIdentityGroupUserListFilters(cloud_types::IdentityGroupUserList),
     /// Add user into the group
@@ -156,12 +166,7 @@ pub enum Action {
     IdentityGroupUserRemove,
     //  Users
     // Set ApplicationCredentials filters
-    ShowIdentityUserApplicationCredentials,
     SetIdentityApplicationCredentialListFilters(cloud_types::IdentityUserApplicationCredentialList),
-    /// Toggle user enabled property
-    IdentityUserFlipEnable,
-    /// Remove user
-    IdentityUserDelete,
     /// Create new user
     IdentityUserCreate,
     /// Update user password
@@ -171,46 +176,101 @@ pub enum Action {
 
     // Image (glance)
     SetImageListFilters(cloud_types::ImageImageList),
-    /// Delete image
-    DeleteImage,
 
     // LB
     /// Set LB filters
     SetLoadBalancerListFilters(cloud_types::LoadBalancerLoadbalancerList),
     /// Set LB Listener filters
     SetLoadBalancerListenerListFilters(cloud_types::LoadBalancerListenerList),
-    /// Show LB Listeners
-    ShowLoadBalancerListeners,
-    /// Show LB Pools
-    ShowLoadBalancerPools,
     /// Set LB Pool filters
     SetLoadBalancerPoolListFilters(cloud_types::LoadBalancerPoolList),
     /// Show LB Listener Pools
     ShowLoadBalancerListenerPools,
     /// Set LB Member filters
     SetLoadBalancerPoolMemberListFilters(cloud_types::LoadBalancerPoolMemberList),
-    /// Show LB Pool members
-    ShowLoadBalancerPoolMembers,
     /// Set LB Healthmonitor filters
     SetLoadBalancerHealthMonitorListFilters(cloud_types::LoadBalancerHealthmonitorList),
-    /// Show LB Listener Pools
-    ShowLoadBalancerPoolHealthMonitors,
 
     // Network (neutron)
     /// Set Security group filters
     SetNetworkSecurityGroupListFilters(cloud_types::NetworkSecurityGroupList),
-    /// Switch to NetworkSecurityGroupRules
-    ShowNetworkSecurityGroupRules,
-    /// Create the security group rule.
-    CreateNetworkSecurityGroupRule,
-    //CreateNetworkSecurityGroupRuleData(serde_json::Value),
-    /// Delete the security group rule.
-    DeleteNetworkSecurityGroupRule,
+    /// Show a resource view, addressed by `ViewKey`.
+    ShowResource(#[serde(deserialize_with = "deserialize_view_key")] crate::mode::ViewKey),
+    /// Create/Delete a resource, addressed by `ViewKey`.
+    ResourceOp {
+        #[serde(deserialize_with = "deserialize_view_key")]
+        key: crate::mode::ViewKey,
+        op: ResourceOp,
+    },
+    /// Identity-user-specific operation, addressed by `ViewKey`.
+    IdentityUserOp {
+        #[serde(deserialize_with = "deserialize_view_key")]
+        key: crate::mode::ViewKey,
+        op: IdentityUserOp,
+    },
     /// Switch to routers view
     ShowNetworkRouters,
     /// Set Security group rule filters
     SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
     SetNetworkSubnetListFilters(cloud_types::NetworkSubnetList),
-    /// Show Subnetworks of a network
-    ShowNetworkSubnets,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::mode::NETWORK_SECURITY_GROUP_RULE;
+
+    /// serde_yaml 0.9 serializes/deserializes non-unit enum variants using a
+    /// YAML tag (`!VariantName`) by default, not the `{VariantName: ...}`
+    /// mapping form that `serde_json`/`toml` use for externally tagged
+    /// enums. Parsing that mapping form (which is what our config files and
+    /// these tests use) requires opting into `serde_yaml`'s
+    /// `singleton_map_recursive` adapter, which walks the whole value tree
+    /// applying the "single-key map" convention to every nested enum too
+    /// (`Action`'s content contains further enums like `ResourceOp`). See
+    /// https://docs.rs/serde_yaml/latest/serde_yaml/with/singleton_map_recursive/index.html.
+    fn action_from_yaml_str(yaml: &str) -> Result<Action, serde_yaml::Error> {
+        let deserializer = serde_yaml::Deserializer::from_str(yaml);
+        serde_yaml::with::singleton_map_recursive::deserialize(deserializer)
+    }
+
+    #[test]
+    fn show_resource_round_trips_through_yaml() {
+        let yaml = "ShowResource: \"network.security_group_rule\"";
+        let action: Action = action_from_yaml_str(yaml).unwrap();
+        assert_eq!(action, Action::ShowResource(NETWORK_SECURITY_GROUP_RULE));
+    }
+
+    #[test]
+    fn resource_op_round_trips_through_yaml() {
+        let yaml = "ResourceOp:\n  key: \"network.security_group_rule\"\n  op: Delete";
+        let action: Action = action_from_yaml_str(yaml).unwrap();
+        assert_eq!(
+            action,
+            Action::ResourceOp {
+                key: NETWORK_SECURITY_GROUP_RULE,
+                op: ResourceOp::Delete,
+            }
+        );
+    }
+
+    #[test]
+    fn resource_op_variants_are_distinct() {
+        assert_ne!(
+            Action::ResourceOp {
+                key: NETWORK_SECURITY_GROUP_RULE,
+                op: ResourceOp::Create,
+            },
+            Action::ResourceOp {
+                key: NETWORK_SECURITY_GROUP_RULE,
+                op: ResourceOp::Delete,
+            }
+        );
+    }
+
+    #[test]
+    fn unit_variant_action_deserializes_from_bare_string() {
+        let action: Action = serde_yaml::from_str("Quit").unwrap();
+        assert_eq!(action, Action::Quit);
+    }
 }

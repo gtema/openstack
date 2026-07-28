@@ -20,11 +20,9 @@ use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
 use openstack_types::network::v2::router::response::list::RouterResponse;
 
-const VIEW_CONFIG_KEY: &str = "network.router";
-
 impl crate::utils::ResourceKey for RouterResponse {
     fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_ROUTER
     }
 }
 
@@ -35,13 +33,13 @@ impl ResourceBehaviour for NetworkRoutersBehaviour {
     type Filter = NetworkRouterList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_ROUTER
     }
     fn title() -> &'static str {
         "Routers"
     }
     fn mode() -> Mode {
-        Mode::NetworkRouters
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -73,7 +71,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(NetworkRoutersBehaviour::view_key(), "network.router");
         assert_eq!(NetworkRoutersBehaviour::title(), "Routers");
-        assert_eq!(NetworkRoutersBehaviour::mode(), Mode::NetworkRouters);
+        assert_eq!(
+            NetworkRoutersBehaviour::mode(),
+            Mode::Resource(crate::mode::NETWORK_ROUTER)
+        );
     }
 
     #[test]

@@ -735,4 +735,307 @@ mod tests {
             KeyEvent::new(KeyCode::Enter, KeyModifiers::ALT)
         );
     }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_security_group_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let rule_mode = Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE);
+        let bindings = config
+            .mode_keybindings
+            .get(&rule_mode)
+            .expect("Resource(network.security_group_rule) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp {
+                    key,
+                    op: crate::action::ResourceOp::Delete,
+                } if key == crate::mode::NETWORK_SECURITY_GROUP_RULE
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the security group rule view"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_network_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let network_mode = Mode::Resource(crate::mode::NETWORK_NETWORK);
+        let bindings = config
+            .mode_keybindings
+            .get(&network_mode)
+            .expect("Resource(network.network) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::NETWORK_SUBNET
+            )),
+            "expected a ShowResource(network.subnet) binding for the network view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::NETWORK_ROUTER)),
+            "Resource(network.router) keybindings must be present"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::NETWORK_SUBNET)),
+            "Resource(network.subnet) keybindings must be present"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_block_storage_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let volume_mode = Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME);
+        let bindings = config
+            .mode_keybindings
+            .get(&volume_mode)
+            .expect("Resource(block_storage.volume) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp { key, op: crate::action::ResourceOp::Delete }
+                if key == crate::mode::BLOCK_STORAGE_VOLUME
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the block_storage.volume view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::BLOCK_STORAGE_BACKUP)),
+            "Resource(block_storage.backup) keybindings must be present"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::BLOCK_STORAGE_SNAPSHOT)),
+            "Resource(block_storage.snapshot) keybindings must be present"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_dns_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let zone_mode = Mode::Resource(crate::mode::DNS_ZONE);
+        let bindings = config
+            .mode_keybindings
+            .get(&zone_mode)
+            .expect("Resource(dns.zone) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp { key, op: crate::action::ResourceOp::Delete }
+                if key == crate::mode::DNS_ZONE
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the dns.zone view"
+        );
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::DNS_RECORDSET
+            )),
+            "expected a ShowResource(dns.recordset) binding for the dns.zone view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::DNS_RECORDSET)),
+            "Resource(dns.recordset) keybindings must be present"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_image_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let image_mode = Mode::Resource(crate::mode::IMAGE_IMAGE);
+        let bindings = config
+            .mode_keybindings
+            .get(&image_mode)
+            .expect("Resource(image.image) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp { key, op: crate::action::ResourceOp::Delete }
+                if key == crate::mode::IMAGE_IMAGE
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the image.image view"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_compute_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let server_mode = Mode::Resource(crate::mode::COMPUTE_SERVER);
+        let bindings = config
+            .mode_keybindings
+            .get(&server_mode)
+            .expect("Resource(compute.server) keybindings must be present");
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp { key, op: crate::action::ResourceOp::Delete }
+                if key == crate::mode::COMPUTE_SERVER
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the compute.server view"
+        );
+        assert!(
+            bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::COMPUTE_SERVER_INSTANCE_ACTION
+            )),
+            "expected a ShowResource(compute.server/instance_action) binding for the compute.server view"
+        );
+        let flavor_mode = Mode::Resource(crate::mode::COMPUTE_FLAVOR);
+        let flavor_bindings = config
+            .mode_keybindings
+            .get(&flavor_mode)
+            .expect("Resource(compute.flavor) keybindings must be present");
+        assert!(
+            flavor_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::COMPUTE_SERVER
+            )),
+            "expected a ShowResource(compute.server) binding for the compute.flavor view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION)),
+            "Resource(compute.server/instance_action) keybindings must be present"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_identity_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let group_mode = Mode::Resource(crate::mode::IDENTITY_GROUP);
+        let group_bindings = config
+            .mode_keybindings
+            .get(&group_mode)
+            .expect("Resource(identity.group) keybindings must be present");
+        assert!(
+            group_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ResourceOp { key, op: crate::action::ResourceOp::Delete }
+                if key == crate::mode::IDENTITY_GROUP
+            )),
+            "expected a ResourceOp{{key, op: Delete}} binding for the identity.group view"
+        );
+        assert!(
+            group_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::IDENTITY_GROUP_USER
+            )),
+            "expected a ShowResource(identity.group_user) binding for the identity.group view"
+        );
+        let user_mode = Mode::Resource(crate::mode::IDENTITY_USER);
+        let user_bindings = config
+            .mode_keybindings
+            .get(&user_mode)
+            .expect("Resource(identity.user) keybindings must be present");
+        assert!(
+            user_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::IdentityUserOp { key, op: crate::action::IdentityUserOp::Delete }
+                if key == crate::mode::IDENTITY_USER
+            )),
+            "expected an IdentityUserOp{{key, op: Delete}} binding for the identity.user view"
+        );
+        assert!(
+            user_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::IdentityUserOp { key, op: crate::action::IdentityUserOp::FlipEnable }
+                if key == crate::mode::IDENTITY_USER
+            )),
+            "expected an IdentityUserOp{{key, op: FlipEnable}} binding for the identity.user view"
+        );
+        assert!(
+            user_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::IDENTITY_APPLICATION_CREDENTIAL
+            )),
+            "expected a ShowResource(identity.user/application_credential) binding for the identity.user view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::IDENTITY_GROUP_USER)),
+            "Resource(identity.group_user) keybindings must be present"
+        );
+        assert!(
+            config.mode_keybindings.contains_key(&Mode::Resource(
+                crate::mode::IDENTITY_APPLICATION_CREDENTIAL
+            )),
+            "Resource(identity.user/application_credential) keybindings must be present"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::IDENTITY_PROJECT)),
+            "Resource(identity.project) keybindings must be present"
+        );
+    }
+
+    #[test]
+    fn default_config_yaml_loads_and_has_migrated_loadbalancer_keybindings() {
+        let config = Config::new().expect("default config.yaml must load");
+        let lb_mode = Mode::Resource(crate::mode::LB_LOADBALANCER);
+        let lb_bindings = config
+            .mode_keybindings
+            .get(&lb_mode)
+            .expect("Resource(load-balancer.loadbalancer) keybindings must be present");
+        assert!(
+            lb_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::LB_LISTENER
+            )),
+            "expected a ShowResource(load-balancer.listener) binding for the loadbalancer view"
+        );
+        assert!(
+            lb_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::LB_POOL
+            )),
+            "expected a ShowResource(load-balancer.pool) binding for the loadbalancer view"
+        );
+        let pool_mode = Mode::Resource(crate::mode::LB_POOL);
+        let pool_bindings = config
+            .mode_keybindings
+            .get(&pool_mode)
+            .expect("Resource(load-balancer.pool) keybindings must be present");
+        assert!(
+            pool_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::LB_POOL_MEMBER
+            )),
+            "expected a ShowResource(load-balancer.pool/member) binding for the pool view"
+        );
+        assert!(
+            pool_bindings.0.values().any(|cmd| matches!(
+                cmd.action,
+                Action::ShowResource(key) if key == crate::mode::LB_HEALTHMONITOR
+            )),
+            "expected a ShowResource(load-balancer.healthmonitor) binding for the pool view"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::LB_LISTENER)),
+            "Resource(load-balancer.listener) keybindings must be present"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::LB_POOL_MEMBER)),
+            "Resource(load-balancer.pool/member) keybindings must be present"
+        );
+        assert!(
+            config
+                .mode_keybindings
+                .contains_key(&Mode::Resource(crate::mode::LB_HEALTHMONITOR)),
+            "Resource(load-balancer.healthmonitor) keybindings must be present"
+        );
+    }
 }

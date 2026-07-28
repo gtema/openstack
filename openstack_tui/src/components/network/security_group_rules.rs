@@ -24,11 +24,9 @@ use crate::mode::Mode;
 use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
 use serde_json::Value;
 
-const VIEW_CONFIG_KEY: &str = "network.security_group_rule";
-
 impl crate::utils::ResourceKey for SecurityGroupRuleResponse {
     fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SECURITY_GROUP_RULE
     }
 }
 
@@ -50,13 +48,13 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
     type Filter = NetworkSecurityGroupRuleList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SECURITY_GROUP_RULE
     }
     fn title() -> &'static str {
         "SecurityGroupRules"
     }
     fn mode() -> Mode {
-        Mode::NetworkSecurityGroupRules
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -90,7 +88,12 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
         }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::DeleteNetworkSecurityGroupRule = action {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = NetworkSecurityGroupRuleDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(
                 NetworkSecurityGroupRuleApiRequest::Delete(Box::new(del)),
@@ -144,7 +147,7 @@ mod tests {
         );
         assert_eq!(
             NetworkSecurityGroupRulesBehaviour::mode(),
-            Mode::NetworkSecurityGroupRules
+            Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE)
         );
     }
 
@@ -225,7 +228,10 @@ mod tests {
     fn confirm_request_delete_with_selected() {
         let rule = make_rule("rule-1");
         let result = NetworkSecurityGroupRulesBehaviour::confirm_request(
-            &Action::DeleteNetworkSecurityGroupRule,
+            &Action::ResourceOp {
+                key: crate::mode::NETWORK_SECURITY_GROUP_RULE,
+                op: crate::action::ResourceOp::Delete,
+            },
             Some(&rule),
         );
         assert!(result.is_some());
@@ -240,8 +246,24 @@ mod tests {
     #[test]
     fn confirm_request_delete_without_selected() {
         let result = NetworkSecurityGroupRulesBehaviour::confirm_request(
-            &Action::DeleteNetworkSecurityGroupRule,
+            &Action::ResourceOp {
+                key: crate::mode::NETWORK_SECURITY_GROUP_RULE,
+                op: crate::action::ResourceOp::Delete,
+            },
             None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let rule = make_rule("rule-1");
+        let result = NetworkSecurityGroupRulesBehaviour::confirm_request(
+            &Action::ResourceOp {
+                key: crate::mode::NETWORK_SECURITY_GROUP,
+                op: crate::action::ResourceOp::Delete,
+            },
+            Some(&rule),
         );
         assert!(result.is_none());
     }

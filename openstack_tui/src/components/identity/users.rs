@@ -67,7 +67,7 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         "Identity Users"
     }
     fn mode() -> Mode {
-        Mode::IdentityUsers
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(IdentityUserApiRequest::List(Box::new(filter.clone())))
@@ -80,7 +80,12 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         )
     }
     fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::IdentityUserFlipEnable = action {
+        if let Action::IdentityUserOp {
+            key,
+            op: crate::action::IdentityUserOp::FlipEnable,
+        } = action
+            && *key == Self::view_key()
+        {
             let sel = selected?;
             let req: crate::cloud_worker::identity::v3::user::set::User =
                 crate::cloud_worker::identity::v3::user::set::UserBuilder::default()
@@ -100,7 +105,12 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
-        if let Action::IdentityUserDelete = action {
+        if let Action::IdentityUserOp {
+            key,
+            op: crate::action::IdentityUserOp::Delete,
+        } = action
+            && *key == Self::view_key()
+        {
             let del = IdentityUserDelete::try_from(selected?).ok()?;
             Some(ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(
                 del,
@@ -114,13 +124,14 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowIdentityUserApplicationCredentials = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::IDENTITY_APPLICATION_CREDENTIAL
             && let Some(sel) = selected
             && let Ok(list) = IdentityUserApplicationCredentialList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::IdentityApplicationCredentials,
+                    mode: Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
                     stack: true,
                 },
                 Action::SetIdentityApplicationCredentialListFilters(list),
@@ -165,7 +176,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(IdentityUsersBehaviour::view_key(), "identity.user");
         assert_eq!(IdentityUsersBehaviour::title(), "Identity Users");
-        assert_eq!(IdentityUsersBehaviour::mode(), Mode::IdentityUsers);
+        assert_eq!(
+            IdentityUsersBehaviour::mode(),
+            Mode::Resource(crate::mode::IDENTITY_USER)
+        );
     }
 
     #[test]
@@ -213,8 +227,13 @@ mod tests {
     #[test]
     fn action_to_request_flip_enable_with_selected() {
         let user = make_user("user-1", "test-user", true);
-        let result =
-            IdentityUsersBehaviour::action_to_request(&Action::IdentityUserFlipEnable, Some(&user));
+        let result = IdentityUsersBehaviour::action_to_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_USER,
+                op: crate::action::IdentityUserOp::FlipEnable,
+            },
+            Some(&user),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -226,8 +245,26 @@ mod tests {
 
     #[test]
     fn action_to_request_flip_enable_without_selected() {
-        let result =
-            IdentityUsersBehaviour::action_to_request(&Action::IdentityUserFlipEnable, None);
+        let result = IdentityUsersBehaviour::action_to_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_USER,
+                op: crate::action::IdentityUserOp::FlipEnable,
+            },
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn action_to_request_ignores_flip_enable_for_other_resource() {
+        let user = make_user("user-1", "test-user", true);
+        let result = IdentityUsersBehaviour::action_to_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_GROUP,
+                op: crate::action::IdentityUserOp::FlipEnable,
+            },
+            Some(&user),
+        );
         assert!(result.is_none());
     }
 
@@ -241,8 +278,13 @@ mod tests {
     #[test]
     fn confirm_request_delete_with_selected() {
         let user = make_user("user-1", "test-user", true);
-        let result =
-            IdentityUsersBehaviour::confirm_request(&Action::IdentityUserDelete, Some(&user));
+        let result = IdentityUsersBehaviour::confirm_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_USER,
+                op: crate::action::IdentityUserOp::Delete,
+            },
+            Some(&user),
+        );
         assert!(result.is_some());
         let request = result.unwrap();
         assert!(matches!(
@@ -254,7 +296,26 @@ mod tests {
 
     #[test]
     fn confirm_request_delete_without_selected() {
-        let result = IdentityUsersBehaviour::confirm_request(&Action::IdentityUserDelete, None);
+        let result = IdentityUsersBehaviour::confirm_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_USER,
+                op: crate::action::IdentityUserOp::Delete,
+            },
+            None,
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn confirm_request_ignores_delete_for_other_resource() {
+        let user = make_user("user-1", "test-user", true);
+        let result = IdentityUsersBehaviour::confirm_request(
+            &Action::IdentityUserOp {
+                key: crate::mode::IDENTITY_GROUP,
+                op: crate::action::IdentityUserOp::Delete,
+            },
+            Some(&user),
+        );
         assert!(result.is_none());
     }
 
@@ -269,7 +330,7 @@ mod tests {
     fn filter_carry_action_show_credentials_with_selected() {
         let user = make_user("user-1", "test-user", true);
         let actions = IdentityUsersBehaviour::filter_carry_action(
-            &Action::ShowIdentityUserApplicationCredentials,
+            &Action::ShowResource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
             Some(&user),
             &IdentityUserList::default(),
         );
@@ -277,7 +338,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::IdentityApplicationCredentials,
+                mode: Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
                 stack: true
             }
         ));
@@ -290,8 +351,19 @@ mod tests {
     #[test]
     fn filter_carry_action_show_credentials_without_selected() {
         let actions = IdentityUsersBehaviour::filter_carry_action(
-            &Action::ShowIdentityUserApplicationCredentials,
+            &Action::ShowResource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
             None,
+            &IdentityUserList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let user = make_user("user-1", "test-user", true);
+        let actions = IdentityUsersBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::IDENTITY_USER),
+            Some(&user),
             &IdentityUserList::default(),
         );
         assert!(actions.is_empty());

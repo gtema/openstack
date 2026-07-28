@@ -35,7 +35,7 @@ impl ResourceBehaviour for ComputeAggregatesBehaviour {
         "Compute Aggregates"
     }
     fn mode() -> Mode {
-        Mode::ComputeAggregates
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(ComputeAggregateApiRequest::List(Box::new(filter.clone())))
@@ -61,7 +61,10 @@ mod tests {
     fn view_key_and_title() {
         assert_eq!(ComputeAggregatesBehaviour::view_key(), "compute.aggregate");
         assert_eq!(ComputeAggregatesBehaviour::title(), "Compute Aggregates");
-        assert_eq!(ComputeAggregatesBehaviour::mode(), Mode::ComputeAggregates);
+        assert_eq!(
+            ComputeAggregatesBehaviour::mode(),
+            Mode::Resource(crate::mode::COMPUTE_AGGREGATE)
+        );
     }
 
     #[test]

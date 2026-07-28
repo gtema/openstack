@@ -73,7 +73,7 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
         "LoadBalancers"
     }
     fn mode() -> Mode {
-        Mode::LoadBalancers
+        Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         ApiRequest::from(LoadBalancerLoadbalancerApiRequest::List(Box::new(
@@ -99,25 +99,27 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowLoadBalancerListeners = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::LB_LISTENER
             && let Some(sel) = selected
             && let Ok(list) = LoadBalancerListenerList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::LoadBalancerListeners,
+                    mode: Mode::Resource(crate::mode::LB_LISTENER),
                     stack: true,
                 },
                 Action::SetLoadBalancerListenerListFilters(list),
             ];
         }
-        if let Action::ShowLoadBalancerPools = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::LB_POOL
             && let Some(sel) = selected
             && let Ok(list) = LoadBalancerPoolList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::LoadBalancerPools,
+                    mode: Mode::Resource(crate::mode::LB_POOL),
                     stack: true,
                 },
                 Action::SetLoadBalancerPoolListFilters(list),
@@ -164,7 +166,10 @@ mod tests {
             "load-balancer.loadbalancer"
         );
         assert_eq!(LoadBalancersBehaviour::title(), "LoadBalancers");
-        assert_eq!(LoadBalancersBehaviour::mode(), Mode::LoadBalancers);
+        assert_eq!(
+            LoadBalancersBehaviour::mode(),
+            Mode::Resource(crate::mode::LB_LOADBALANCER)
+        );
     }
 
     #[test]
@@ -213,7 +218,7 @@ mod tests {
     fn filter_carry_action_show_listeners_with_selected() {
         let lb = make_lb("lb-1", "test-lb");
         let actions = LoadBalancersBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerListeners,
+            &Action::ShowResource(crate::mode::LB_LISTENER),
             Some(&lb),
             &LoadBalancerLoadbalancerList::default(),
         );
@@ -221,7 +226,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::LoadBalancerListeners,
+                mode: Mode::Resource(crate::mode::LB_LISTENER),
                 stack: true
             }
         ));
@@ -235,7 +240,7 @@ mod tests {
     fn filter_carry_action_show_pools_with_selected() {
         let lb = make_lb("lb-1", "test-lb");
         let actions = LoadBalancersBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerPools,
+            &Action::ShowResource(crate::mode::LB_POOL),
             Some(&lb),
             &LoadBalancerLoadbalancerList::default(),
         );
@@ -243,7 +248,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::LoadBalancerPools,
+                mode: Mode::Resource(crate::mode::LB_POOL),
                 stack: true
             }
         ));
@@ -256,8 +261,19 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = LoadBalancersBehaviour::filter_carry_action(
-            &Action::ShowLoadBalancerListeners,
+            &Action::ShowResource(crate::mode::LB_LISTENER),
             None,
+            &LoadBalancerLoadbalancerList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let lb = make_lb("lb-1", "test-lb");
+        let actions = LoadBalancersBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::LB_LOADBALANCER),
+            Some(&lb),
             &LoadBalancerLoadbalancerList::default(),
         );
         assert!(actions.is_empty());

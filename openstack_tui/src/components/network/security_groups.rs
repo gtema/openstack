@@ -23,11 +23,9 @@ use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
 use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
-const VIEW_CONFIG_KEY: &str = "network.security_group";
-
 impl crate::utils::ResourceKey for SecurityGroupResponse {
     fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SECURITY_GROUP
     }
 }
 
@@ -52,13 +50,13 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
     type Filter = NetworkSecurityGroupList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        crate::mode::NETWORK_SECURITY_GROUP
     }
     fn title() -> &'static str {
         "SecurityGroups"
     }
     fn mode() -> Mode {
-        Mode::NetworkSecurityGroups
+        Mode::Resource(Self::view_key())
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -84,13 +82,14 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
         selected: Option<&Self::Item>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
-        if let Action::ShowNetworkSecurityGroupRules = action
+        if let Action::ShowResource(key) = action
+            && *key == crate::mode::NETWORK_SECURITY_GROUP_RULE
             && let Some(sel) = selected
             && let Ok(list) = NetworkSecurityGroupRuleList::try_from(sel)
         {
             return vec![
                 Action::Mode {
-                    mode: Mode::NetworkSecurityGroupRules,
+                    mode: Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
                     stack: true,
                 },
                 Action::SetNetworkSecurityGroupRuleListFilters(list),
@@ -130,7 +129,7 @@ mod tests {
         assert_eq!(NetworkSecurityGroupsBehaviour::title(), "SecurityGroups");
         assert_eq!(
             NetworkSecurityGroupsBehaviour::mode(),
-            Mode::NetworkSecurityGroups
+            Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP)
         );
     }
 
@@ -180,7 +179,7 @@ mod tests {
     fn filter_carry_action_show_rules_with_selected() {
         let sg = make_sg("sg-1", "test-sg");
         let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
-            &Action::ShowNetworkSecurityGroupRules,
+            &Action::ShowResource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
             Some(&sg),
             &NetworkSecurityGroupList::default(),
         );
@@ -188,7 +187,7 @@ mod tests {
         assert!(matches!(
             actions[0],
             Action::Mode {
-                mode: Mode::NetworkSecurityGroupRules,
+                mode: Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
                 stack: true
             }
         ));
@@ -201,8 +200,19 @@ mod tests {
     #[test]
     fn filter_carry_action_without_selected() {
         let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
-            &Action::ShowNetworkSecurityGroupRules,
+            &Action::ShowResource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
             None,
+            &NetworkSecurityGroupList::default(),
+        );
+        assert!(actions.is_empty());
+    }
+
+    #[test]
+    fn filter_carry_action_ignores_show_resource_for_other_key() {
+        let sg = make_sg("sg-1", "test-sg");
+        let actions = NetworkSecurityGroupsBehaviour::filter_carry_action(
+            &Action::ShowResource(crate::mode::NETWORK_SECURITY_GROUP),
+            Some(&sg),
             &NetworkSecurityGroupList::default(),
         );
         assert!(actions.is_empty());

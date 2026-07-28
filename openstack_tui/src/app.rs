@@ -81,7 +81,6 @@ enum Popup {
     SwitchCloud,
     SwitchProject,
     SwitchRegion,
-    //CreateNetworkSecurityGroupRule,
     Confirm,
 }
 
@@ -125,77 +124,119 @@ impl App {
         components.insert(Mode::Describe, Box::new(Describe::new()));
 
         components.insert(
-            Mode::BlockStorageBackups,
+            Mode::Resource(crate::mode::BLOCK_STORAGE_BACKUP),
             Box::new(BlockStorageBackups::new()),
         );
         components.insert(
-            Mode::BlockStorageSnapshots,
+            Mode::Resource(crate::mode::BLOCK_STORAGE_SNAPSHOT),
             Box::new(BlockStorageSnapshots::new()),
         );
         components.insert(
-            Mode::BlockStorageVolumes,
+            Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME),
             Box::new(BlockStorageVolumes::new()),
         );
 
-        components.insert(Mode::ComputeServers, Box::new(ComputeServers::new()));
         components.insert(
-            Mode::ComputeServerInstanceActions,
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
+            Box::new(ComputeServers::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
             Box::new(ComputeServerInstanceActions::new()),
         );
         components.insert(
-            Mode::ComputeServerInstanceActionEvents,
+            Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
             Box::new(ComputeServerInstanceActionEvents::new()),
         );
-        components.insert(Mode::ComputeFlavors, Box::new(ComputeFlavors::new()));
-        components.insert(Mode::ComputeAggregates, Box::new(ComputeAggregates::new()));
         components.insert(
-            Mode::ComputeHypervisors,
+            Mode::Resource(crate::mode::COMPUTE_FLAVOR),
+            Box::new(ComputeFlavors::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::COMPUTE_AGGREGATE),
+            Box::new(ComputeAggregates::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::COMPUTE_HYPERVISOR),
             Box::new(ComputeHypervisors::new()),
         );
 
-        components.insert(Mode::DnsRecordsets, Box::new(DnsRecordsets::new()));
-        components.insert(Mode::DnsZones, Box::new(DnsZones::new()));
+        components.insert(
+            Mode::Resource(crate::mode::DNS_RECORDSET),
+            Box::new(DnsRecordsets::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::DNS_ZONE),
+            Box::new(DnsZones::new()),
+        );
 
         components.insert(
-            Mode::IdentityApplicationCredentials,
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
             Box::new(IdentityApplicationCredentials::new()),
         );
-        components.insert(Mode::IdentityGroups, Box::new(IdentityGroups::new()));
         components.insert(
-            Mode::IdentityGroupUsers,
+            Mode::Resource(crate::mode::IDENTITY_GROUP),
+            Box::new(IdentityGroups::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::IDENTITY_GROUP_USER),
             Box::new(IdentityGroupUsers::new()),
         );
-        components.insert(Mode::IdentityProjects, Box::new(IdentityProjects::new()));
-        components.insert(Mode::IdentityUsers, Box::new(IdentityUsers::new()));
-
-        components.insert(Mode::ImageImages, Box::new(Images::new()));
-
-        components.insert(Mode::LoadBalancers, Box::new(LoadBalancers::new()));
         components.insert(
-            Mode::LoadBalancerListeners,
+            Mode::Resource(crate::mode::IDENTITY_PROJECT),
+            Box::new(IdentityProjects::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::IDENTITY_USER),
+            Box::new(IdentityUsers::new()),
+        );
+
+        components.insert(
+            Mode::Resource(crate::mode::IMAGE_IMAGE),
+            Box::new(Images::new()),
+        );
+
+        components.insert(
+            Mode::Resource(crate::mode::LB_LOADBALANCER),
+            Box::new(LoadBalancers::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::LB_LISTENER),
             Box::new(LoadBalancerListeners::new()),
         );
-        components.insert(Mode::LoadBalancerPools, Box::new(LoadBalancerPools::new()));
         components.insert(
-            Mode::LoadBalancerPoolMembers,
+            Mode::Resource(crate::mode::LB_POOL),
+            Box::new(LoadBalancerPools::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::LB_POOL_MEMBER),
             Box::new(LoadBalancerPoolMembers::new()),
         );
         components.insert(
-            Mode::LoadBalancerHealthMonitors,
+            Mode::Resource(crate::mode::LB_HEALTHMONITOR),
             Box::new(LoadBalancerHealthMonitors::new()),
         );
 
-        components.insert(Mode::NetworkNetworks, Box::new(NetworkNetworks::new()));
-        components.insert(Mode::NetworkRouters, Box::new(NetworkRouters::new()));
         components.insert(
-            Mode::NetworkSecurityGroups,
+            Mode::Resource(crate::mode::NETWORK_NETWORK),
+            Box::new(NetworkNetworks::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::NETWORK_ROUTER),
+            Box::new(NetworkRouters::new()),
+        );
+        components.insert(
+            Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP),
             Box::new(NetworkSecurityGroups::new()),
         );
         components.insert(
-            Mode::NetworkSecurityGroupRules,
+            Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
             Box::new(NetworkSecurityGroupRules::new()),
         );
-        components.insert(Mode::NetworkSubnets, Box::new(NetworkSubnets::new()));
+        components.insert(
+            Mode::Resource(crate::mode::NETWORK_SUBNET),
+            Box::new(NetworkSubnets::new()),
+        );
 
         let (auth_helper_control_channel_tx, auth_helper_control_channel_rx) =
             mpsc::channel::<oneshot::Sender<AuthAction>>(10);
