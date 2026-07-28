@@ -46,6 +46,49 @@ pub const LB_POOL: ViewKey = "load-balancer.pool";
 pub const LB_POOL_MEMBER: ViewKey = "load-balancer.pool/member";
 pub const LB_HEALTHMONITOR: ViewKey = "load-balancer.healthmonitor";
 
+/// Every `ViewKey` migrated to `Mode::Resource`, paired with its const name. Single source
+/// of truth used both by the `resolve_view_key` round-trip test and by coverage tests that
+/// check `app.rs` and `.config/config.yaml` stay in sync with this list — add a new
+/// resource's `(name, const)` pair here too.
+pub(crate) const ALL_VIEW_KEYS: &[(&str, ViewKey)] = &[
+    ("NETWORK_SECURITY_GROUP", NETWORK_SECURITY_GROUP),
+    ("NETWORK_SECURITY_GROUP_RULE", NETWORK_SECURITY_GROUP_RULE),
+    ("NETWORK_NETWORK", NETWORK_NETWORK),
+    ("NETWORK_ROUTER", NETWORK_ROUTER),
+    ("NETWORK_SUBNET", NETWORK_SUBNET),
+    ("BLOCK_STORAGE_BACKUP", BLOCK_STORAGE_BACKUP),
+    ("BLOCK_STORAGE_SNAPSHOT", BLOCK_STORAGE_SNAPSHOT),
+    ("BLOCK_STORAGE_VOLUME", BLOCK_STORAGE_VOLUME),
+    ("DNS_ZONE", DNS_ZONE),
+    ("DNS_RECORDSET", DNS_RECORDSET),
+    ("IMAGE_IMAGE", IMAGE_IMAGE),
+    ("COMPUTE_AGGREGATE", COMPUTE_AGGREGATE),
+    ("COMPUTE_FLAVOR", COMPUTE_FLAVOR),
+    ("COMPUTE_HYPERVISOR", COMPUTE_HYPERVISOR),
+    ("COMPUTE_SERVER", COMPUTE_SERVER),
+    (
+        "COMPUTE_SERVER_INSTANCE_ACTION",
+        COMPUTE_SERVER_INSTANCE_ACTION,
+    ),
+    (
+        "COMPUTE_SERVER_INSTANCE_ACTION_EVENT",
+        COMPUTE_SERVER_INSTANCE_ACTION_EVENT,
+    ),
+    (
+        "IDENTITY_APPLICATION_CREDENTIAL",
+        IDENTITY_APPLICATION_CREDENTIAL,
+    ),
+    ("IDENTITY_GROUP", IDENTITY_GROUP),
+    ("IDENTITY_GROUP_USER", IDENTITY_GROUP_USER),
+    ("IDENTITY_PROJECT", IDENTITY_PROJECT),
+    ("IDENTITY_USER", IDENTITY_USER),
+    ("LB_LOADBALANCER", LB_LOADBALANCER),
+    ("LB_LISTENER", LB_LISTENER),
+    ("LB_POOL", LB_POOL),
+    ("LB_POOL_MEMBER", LB_POOL_MEMBER),
+    ("LB_HEALTHMONITOR", LB_HEALTHMONITOR),
+];
+
 /// Resolve a config-supplied view-key string to the canonical `'static` `ViewKey`.
 /// Add an arm here when migrating another resource to `Mode::Resource`.
 pub(crate) fn resolve_view_key(s: &str) -> Option<ViewKey> {
@@ -200,39 +243,69 @@ mod tests {
 
     #[test]
     fn every_view_key_roundtrips_through_resolve() {
-        for &key in &[
-            NETWORK_SECURITY_GROUP,
-            NETWORK_SECURITY_GROUP_RULE,
-            NETWORK_NETWORK,
-            NETWORK_ROUTER,
-            NETWORK_SUBNET,
-            BLOCK_STORAGE_BACKUP,
-            BLOCK_STORAGE_SNAPSHOT,
-            BLOCK_STORAGE_VOLUME,
-            DNS_ZONE,
-            DNS_RECORDSET,
-            IMAGE_IMAGE,
-            COMPUTE_AGGREGATE,
-            COMPUTE_FLAVOR,
-            COMPUTE_HYPERVISOR,
-            COMPUTE_SERVER,
-            COMPUTE_SERVER_INSTANCE_ACTION,
-            COMPUTE_SERVER_INSTANCE_ACTION_EVENT,
-            IDENTITY_APPLICATION_CREDENTIAL,
-            IDENTITY_GROUP,
-            IDENTITY_GROUP_USER,
-            IDENTITY_PROJECT,
-            IDENTITY_USER,
-            LB_LOADBALANCER,
-            LB_LISTENER,
-            LB_POOL,
-            LB_POOL_MEMBER,
-            LB_HEALTHMONITOR,
-        ] {
+        for &(_, key) in ALL_VIEW_KEYS {
             assert_eq!(
                 resolve_view_key(key),
                 Some(key),
                 "{key:?} missing from resolve_view_key"
+            );
+        }
+    }
+
+    /// View keys reachable only by drilling down from a parent row (e.g. selecting an
+    /// instance action to see its events), so they have no `mode_keybindings` block of
+    /// their own — the parent's `ShowResource` action is the only way in.
+    const SKIP_KEYBINDING_CHECK: &[ViewKey] = &[COMPUTE_SERVER_INSTANCE_ACTION_EVENT];
+
+    /// Guards against the "silent gap" failure mode: a resource migrated to
+    /// `Mode::Resource` (added to `ALL_VIEW_KEYS`) but forgotten in `.config/config.yaml`,
+    /// or a keybinding block left over for a view key that no longer resolves.
+    #[test]
+    fn config_yaml_mode_keybindings_match_all_view_keys() {
+        let config_yaml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/.config/config.yaml"));
+        let doc: serde_yaml::Value = serde_yaml::from_str(config_yaml).unwrap();
+        let keybindings = doc
+            .get("mode_keybindings")
+            .and_then(|v| v.as_mapping())
+            .expect("mode_keybindings map present in config.yaml");
+
+        let mut configured_keys = Vec::new();
+        for key in keybindings.keys() {
+            let key = key.as_str().expect("mode_keybindings key is a string");
+            if let Some(inner) = key
+                .strip_prefix("Resource(")
+                .and_then(|s| s.strip_suffix(')'))
+            {
+                assert!(
+                    resolve_view_key(inner).is_some(),
+                    "config.yaml has a keybinding block for unknown view key {inner:?}"
+                );
+                configured_keys.push(inner);
+            }
+        }
+
+        for &(_, view_key) in ALL_VIEW_KEYS {
+            if SKIP_KEYBINDING_CHECK.contains(&view_key) {
+                continue;
+            }
+            assert!(
+                configured_keys.contains(&view_key),
+                "view key {view_key:?} is in ALL_VIEW_KEYS but has no \
+                 \"Resource({view_key})\" keybinding block in config.yaml"
+            );
+        }
+    }
+
+    /// Guards against forgetting to register a resource's component in `App::new()`
+    /// (`openstack_tui/src/app.rs`) after adding its view key to `ALL_VIEW_KEYS`.
+    #[test]
+    fn app_rs_registers_every_view_key() {
+        let app_rs = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/app.rs"));
+        for &(const_name, view_key) in ALL_VIEW_KEYS {
+            let needle = format!("crate::mode::{const_name}");
+            assert!(
+                app_rs.contains(&needle),
+                "app.rs has no `{needle}` component registration for view key {view_key:?}"
             );
         }
     }
