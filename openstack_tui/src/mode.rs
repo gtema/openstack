@@ -18,8 +18,13 @@ use serde::{Deserialize, Serialize};
 /// `ResourceBehaviour::view_key()` (e.g. `"network.security_group_rule"`).
 pub type ViewKey = &'static str;
 
+// BEGIN GENERATED rust-tui-view mode-const network.security_group
 pub const NETWORK_SECURITY_GROUP: ViewKey = "network.security_group";
+// END GENERATED rust-tui-view mode-const network.security_group
+// BEGIN GENERATED rust-tui-view mode-const network.security_group_rule
 pub const NETWORK_SECURITY_GROUP_RULE: ViewKey = "network.security_group_rule";
+// END GENERATED rust-tui-view mode-const network.security_group_rule
+// GENERATED-ANCHOR: view-key consts
 pub const NETWORK_NETWORK: ViewKey = "network.network";
 pub const NETWORK_ROUTER: ViewKey = "network.router";
 pub const NETWORK_SUBNET: ViewKey = "network.subnet";
@@ -51,8 +56,13 @@ pub const LB_HEALTHMONITOR: ViewKey = "load-balancer.healthmonitor";
 /// check `app.rs` and `.config/config.yaml` stay in sync with this list — add a new
 /// resource's `(name, const)` pair here too.
 pub(crate) const ALL_VIEW_KEYS: &[(&str, ViewKey)] = &[
+    // BEGIN GENERATED rust-tui-view mode-all_view_keys network.security_group
     ("NETWORK_SECURITY_GROUP", NETWORK_SECURITY_GROUP),
+    // END GENERATED rust-tui-view mode-all_view_keys network.security_group
+    // BEGIN GENERATED rust-tui-view mode-all_view_keys network.security_group_rule
     ("NETWORK_SECURITY_GROUP_RULE", NETWORK_SECURITY_GROUP_RULE),
+    // END GENERATED rust-tui-view mode-all_view_keys network.security_group_rule
+    // GENERATED-ANCHOR: ALL_VIEW_KEYS entries
     ("NETWORK_NETWORK", NETWORK_NETWORK),
     ("NETWORK_ROUTER", NETWORK_ROUTER),
     ("NETWORK_SUBNET", NETWORK_SUBNET),
@@ -93,8 +103,13 @@ pub(crate) const ALL_VIEW_KEYS: &[(&str, ViewKey)] = &[
 /// Add an arm here when migrating another resource to `Mode::Resource`.
 pub(crate) fn resolve_view_key(s: &str) -> Option<ViewKey> {
     match s {
+        // BEGIN GENERATED rust-tui-view mode-resolve network.security_group
         "network.security_group" => Some(NETWORK_SECURITY_GROUP),
+        // END GENERATED rust-tui-view mode-resolve network.security_group
+        // BEGIN GENERATED rust-tui-view mode-resolve network.security_group_rule
         "network.security_group_rule" => Some(NETWORK_SECURITY_GROUP_RULE),
+        // END GENERATED rust-tui-view mode-resolve network.security_group_rule
+        // GENERATED-ANCHOR: resolve_view_key arms
         "network.network" => Some(NETWORK_NETWORK),
         "network.router" => Some(NETWORK_ROUTER),
         "network.subnet" => Some(NETWORK_SUBNET),

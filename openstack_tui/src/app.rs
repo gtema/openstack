@@ -54,14 +54,7 @@ use crate::{
             loadbalancers::LoadBalancers, pool_members::LoadBalancerPoolMembers,
             pools::LoadBalancerPools,
         },
-        network::{
-            networks::NetworkNetworks,
-            routers::NetworkRouters,
-            //security_group_rule_create::CreateSecurityGroupRuleComponent,
-            security_group_rules::NetworkSecurityGroupRules,
-            security_groups::NetworkSecurityGroups,
-            subnets::NetworkSubnets,
-        },
+        network::{networks::NetworkNetworks, routers::NetworkRouters, subnets::NetworkSubnets},
         project_select_popup::ProjectSelect,
         region_select_popup::RegionSelect,
         resource_select_popup::ApiRequestSelect,
@@ -225,14 +218,21 @@ impl App {
             Mode::Resource(crate::mode::NETWORK_ROUTER),
             Box::new(NetworkRouters::new()),
         );
+        // BEGIN GENERATED rust-tui-view app-insert network.security_group
         components.insert(
             Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP),
-            Box::new(NetworkSecurityGroups::new()),
+            Box::new(crate::components::network::security_groups::NetworkSecurityGroups::new()),
         );
+        // END GENERATED rust-tui-view app-insert network.security_group
+        // BEGIN GENERATED rust-tui-view app-insert network.security_group_rule
         components.insert(
             Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP_RULE),
-            Box::new(NetworkSecurityGroupRules::new()),
+            Box::new(
+                crate::components::network::security_group_rules::NetworkSecurityGroupRules::new(),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert network.security_group_rule
+        // GENERATED-ANCHOR: component insert
         components.insert(
             Mode::Resource(crate::mode::NETWORK_SUBNET),
             Box::new(NetworkSubnets::new()),
