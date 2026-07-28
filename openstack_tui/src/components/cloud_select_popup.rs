@@ -52,6 +52,10 @@ impl CloudSelect {
 }
 
 impl Component for CloudSelect {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         self.action_tx = Some(tx);
         Ok(())

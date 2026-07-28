@@ -74,8 +74,12 @@ where
 
 impl<C> Component for Popup<C>
 where
-    C: Widget + Clone,
+    C: Widget + Clone + 'static,
 {
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+
     fn register_config_handler(&mut self, config: Config) -> Result<(), crate::error::TuiError> {
         self.config = config;
         Ok(())
