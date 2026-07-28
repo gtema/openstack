@@ -141,32 +141,49 @@ pub enum Action {
     },
 
     // Compute (Nova)
+    // BEGIN GENERATED rust-tui-view action compute.server
+    /// Set compute.server filters
     SetComputeServerListFilters(Box<cloud_types::ComputeServerList>),
+    // END GENERATED rust-tui-view action compute.server
+    // BEGIN GENERATED rust-tui-view action compute.server/instance_action
+    /// Set compute.server/instance_action filters
     SetComputeServerInstanceActionListFilters(Box<cloud_types::ComputeServerInstanceActionList>),
+    // END GENERATED rust-tui-view action compute.server/instance_action
+    // BEGIN GENERATED rust-tui-view action compute.server/instance_action/event
+    /// Set compute.server/instance_action/event filters
     SetComputeServerInstanceActionShowFilters(Box<cloud_types::ComputeServerInstanceActionShow>),
+    // END GENERATED rust-tui-view action compute.server/instance_action/event
     /// Show console output of the selected entry
     ShowServerConsoleOutput,
 
     // DNS (Designate)
-    /// Set DNS Zone filters
+    // BEGIN GENERATED rust-tui-view action dns.zone
+    /// Set dns.zone filters
     SetDnsZoneListFilters(cloud_types::DnsZoneList),
-    /// Set DNS Recordset filters
+    // END GENERATED rust-tui-view action dns.zone
+    // BEGIN GENERATED rust-tui-view action dns.recordset
+    /// Set dns.recordset filters
     SetDnsRecordsetListFilters(cloud_types::DnsRecordsetList),
+    // END GENERATED rust-tui-view action dns.recordset
 
     // Identity (keystone)
     //  Groups
     /// Create new identity group
     IdentityGroupCreate,
     //  Group users
-    /// Set GroupUser filters
+    // BEGIN GENERATED rust-tui-view action identity.group_user
+    /// Set identity.group_user filters
     SetIdentityGroupUserListFilters(cloud_types::IdentityGroupUserList),
+    // END GENERATED rust-tui-view action identity.group_user
     /// Add user into the group
     IdentityGroupUserAdd,
     /// Remove user from the group
     IdentityGroupUserRemove,
     //  Users
-    // Set ApplicationCredentials filters
+    // BEGIN GENERATED rust-tui-view action identity.user/application_credential
+    /// Set identity.user/application_credential filters
     SetIdentityApplicationCredentialListFilters(cloud_types::IdentityUserApplicationCredentialList),
+    // END GENERATED rust-tui-view action identity.user/application_credential
     /// Create new user
     IdentityUserCreate,
     /// Update user password
@@ -175,21 +192,34 @@ pub enum Action {
     SwitchToProject,
 
     // Image (glance)
+    // BEGIN GENERATED rust-tui-view action image.image
+    /// Set image.image filters
     SetImageListFilters(cloud_types::ImageImageList),
+    // END GENERATED rust-tui-view action image.image
 
     // LB
-    /// Set LB filters
+    // BEGIN GENERATED rust-tui-view action load-balancer.loadbalancer
+    /// Set load-balancer.loadbalancer filters
     SetLoadBalancerListFilters(cloud_types::LoadBalancerLoadbalancerList),
-    /// Set LB Listener filters
+    // END GENERATED rust-tui-view action load-balancer.loadbalancer
+    // BEGIN GENERATED rust-tui-view action load-balancer.listener
+    /// Set load-balancer.listener filters
     SetLoadBalancerListenerListFilters(cloud_types::LoadBalancerListenerList),
-    /// Set LB Pool filters
+    // END GENERATED rust-tui-view action load-balancer.listener
+    // BEGIN GENERATED rust-tui-view action load-balancer.pool
+    /// Set load-balancer.pool filters
     SetLoadBalancerPoolListFilters(cloud_types::LoadBalancerPoolList),
+    // END GENERATED rust-tui-view action load-balancer.pool
     /// Show LB Listener Pools
     ShowLoadBalancerListenerPools,
-    /// Set LB Member filters
+    // BEGIN GENERATED rust-tui-view action load-balancer.pool/member
+    /// Set load-balancer.pool/member filters
     SetLoadBalancerPoolMemberListFilters(cloud_types::LoadBalancerPoolMemberList),
-    /// Set LB Healthmonitor filters
+    // END GENERATED rust-tui-view action load-balancer.pool/member
+    // BEGIN GENERATED rust-tui-view action load-balancer.healthmonitor
+    /// Set load-balancer.healthmonitor filters
     SetLoadBalancerHealthMonitorListFilters(cloud_types::LoadBalancerHealthmonitorList),
+    // END GENERATED rust-tui-view action load-balancer.healthmonitor
 
     // Network (neutron)
     // BEGIN GENERATED rust-tui-view action network.security_group
@@ -217,7 +247,10 @@ pub enum Action {
     SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
     // END GENERATED rust-tui-view action network.security_group_rule
     // GENERATED-ANCHOR: action variants
+    // BEGIN GENERATED rust-tui-view action network.subnet
+    /// Set network.subnet filters
     SetNetworkSubnetListFilters(cloud_types::NetworkSubnetList),
+    // END GENERATED rust-tui-view action network.subnet
 }
 
 #[cfg(test)]

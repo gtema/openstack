@@ -24,39 +24,9 @@ use crate::{
     action::Action,
     cloud_worker::{AuthAction, Cloud},
     components::{
-        Component,
-        auth_helper::AuthHelper,
-        block_storage::{
-            backups::BlockStorageBackups, snapshots::BlockStorageSnapshots,
-            volumes::BlockStorageVolumes,
-        },
-        cloud_select_popup::CloudSelect,
-        compute::{
-            aggregates::ComputeAggregates, flavors::ComputeFlavors,
-            hypervisors::ComputeHypervisors,
-            server_instance_action_events::ComputeServerInstanceActionEvents,
-            server_instance_actions::ComputeServerInstanceActions, servers::ComputeServers,
-        },
-        confirm_popup::ConfirmPopup,
-        describe::Describe,
-        dns::{recordsets::DnsRecordsets, zones::DnsZones},
-        error_popup::ErrorPopup,
-        header::Header,
-        home::Home,
-        identity::{
-            application_credentials::IdentityApplicationCredentials,
-            group_users::IdentityGroupUsers, groups::IdentityGroups, projects::IdentityProjects,
-            users::IdentityUsers,
-        },
-        image::images::Images,
-        load_balancer::{
-            health_monitors::LoadBalancerHealthMonitors, listeners::LoadBalancerListeners,
-            loadbalancers::LoadBalancers, pool_members::LoadBalancerPoolMembers,
-            pools::LoadBalancerPools,
-        },
-        network::{networks::NetworkNetworks, routers::NetworkRouters, subnets::NetworkSubnets},
-        project_select_popup::ProjectSelect,
-        region_select_popup::RegionSelect,
+        Component, auth_helper::AuthHelper, cloud_select_popup::CloudSelect,
+        confirm_popup::ConfirmPopup, describe::Describe, error_popup::ErrorPopup, header::Header,
+        home::Home, project_select_popup::ProjectSelect, region_select_popup::RegionSelect,
         resource_select_popup::ApiRequestSelect,
     },
     config::Config,
@@ -116,108 +86,167 @@ impl App {
         components.insert(Mode::Home, Box::new(Home::new()));
         components.insert(Mode::Describe, Box::new(Describe::new()));
 
+        // BEGIN GENERATED rust-tui-view app-insert block_storage.backup
         components.insert(
             Mode::Resource(crate::mode::BLOCK_STORAGE_BACKUP),
-            Box::new(BlockStorageBackups::new()),
+            Box::new(crate::components::block_storage::backups::BlockStorageBackups::new()),
         );
+        // END GENERATED rust-tui-view app-insert block_storage.backup
+        // BEGIN GENERATED rust-tui-view app-insert block_storage.snapshot
         components.insert(
             Mode::Resource(crate::mode::BLOCK_STORAGE_SNAPSHOT),
-            Box::new(BlockStorageSnapshots::new()),
+            Box::new(crate::components::block_storage::snapshots::BlockStorageSnapshots::new()),
         );
+        // END GENERATED rust-tui-view app-insert block_storage.snapshot
+        // BEGIN GENERATED rust-tui-view app-insert block_storage.volume
         components.insert(
             Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME),
-            Box::new(BlockStorageVolumes::new()),
+            Box::new(crate::components::block_storage::volumes::BlockStorageVolumes::new()),
         );
+        // END GENERATED rust-tui-view app-insert block_storage.volume
 
+        // BEGIN GENERATED rust-tui-view app-insert compute.server
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_SERVER),
-            Box::new(ComputeServers::new()),
+            Box::new(crate::components::compute::servers::ComputeServers::new()),
         );
+        // END GENERATED rust-tui-view app-insert compute.server
+        // BEGIN GENERATED rust-tui-view app-insert compute.server/instance_action
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
-            Box::new(ComputeServerInstanceActions::new()),
+            Box::new(
+                crate::components::compute::server_instance_actions::ComputeServerInstanceActions::new(),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert compute.server/instance_action
+        // BEGIN GENERATED rust-tui-view app-insert compute.server/instance_action/event
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION_EVENT),
-            Box::new(ComputeServerInstanceActionEvents::new()),
+            Box::new(
+                crate::components::compute::server_instance_action_events::ComputeServerInstanceActionEvents::new(),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert compute.server/instance_action/event
+        // BEGIN GENERATED rust-tui-view app-insert compute.flavor
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_FLAVOR),
-            Box::new(ComputeFlavors::new()),
+            Box::new(crate::components::compute::flavors::ComputeFlavors::new()),
         );
+        // END GENERATED rust-tui-view app-insert compute.flavor
+        // BEGIN GENERATED rust-tui-view app-insert compute.aggregate
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_AGGREGATE),
-            Box::new(ComputeAggregates::new()),
+            Box::new(crate::components::compute::aggregates::ComputeAggregates::new()),
         );
+        // END GENERATED rust-tui-view app-insert compute.aggregate
+        // BEGIN GENERATED rust-tui-view app-insert compute.hypervisor
         components.insert(
             Mode::Resource(crate::mode::COMPUTE_HYPERVISOR),
-            Box::new(ComputeHypervisors::new()),
+            Box::new(crate::components::compute::hypervisors::ComputeHypervisors::new()),
         );
+        // END GENERATED rust-tui-view app-insert compute.hypervisor
 
+        // BEGIN GENERATED rust-tui-view app-insert dns.recordset
         components.insert(
             Mode::Resource(crate::mode::DNS_RECORDSET),
-            Box::new(DnsRecordsets::new()),
+            Box::new(crate::components::dns::recordsets::DnsRecordsets::new()),
         );
+        // END GENERATED rust-tui-view app-insert dns.recordset
+        // BEGIN GENERATED rust-tui-view app-insert dns.zone
         components.insert(
             Mode::Resource(crate::mode::DNS_ZONE),
-            Box::new(DnsZones::new()),
+            Box::new(crate::components::dns::zones::DnsZones::new()),
         );
+        // END GENERATED rust-tui-view app-insert dns.zone
 
+        // BEGIN GENERATED rust-tui-view app-insert identity.user/application_credential
         components.insert(
             Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
-            Box::new(IdentityApplicationCredentials::new()),
+            Box::new(
+                crate::components::identity::application_credentials::IdentityApplicationCredentials::new(),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert identity.user/application_credential
+        // BEGIN GENERATED rust-tui-view app-insert identity.group
         components.insert(
             Mode::Resource(crate::mode::IDENTITY_GROUP),
-            Box::new(IdentityGroups::new()),
+            Box::new(crate::components::identity::groups::IdentityGroups::new()),
         );
+        // END GENERATED rust-tui-view app-insert identity.group
+        // BEGIN GENERATED rust-tui-view app-insert identity.group_user
         components.insert(
             Mode::Resource(crate::mode::IDENTITY_GROUP_USER),
-            Box::new(IdentityGroupUsers::new()),
+            Box::new(crate::components::identity::group_users::IdentityGroupUsers::new()),
         );
+        // END GENERATED rust-tui-view app-insert identity.group_user
+        // BEGIN GENERATED rust-tui-view app-insert identity.project
         components.insert(
             Mode::Resource(crate::mode::IDENTITY_PROJECT),
-            Box::new(IdentityProjects::new()),
+            Box::new(crate::components::identity::projects::IdentityProjects::new()),
         );
+        // END GENERATED rust-tui-view app-insert identity.project
+        // BEGIN GENERATED rust-tui-view app-insert identity.user
         components.insert(
             Mode::Resource(crate::mode::IDENTITY_USER),
-            Box::new(IdentityUsers::new()),
+            Box::new(crate::components::identity::users::IdentityUsers::new()),
         );
+        // END GENERATED rust-tui-view app-insert identity.user
 
+        // BEGIN GENERATED rust-tui-view app-insert image.image
         components.insert(
             Mode::Resource(crate::mode::IMAGE_IMAGE),
-            Box::new(Images::new()),
+            Box::new(crate::components::image::images::Images::new()),
         );
+        // END GENERATED rust-tui-view app-insert image.image
 
+        // BEGIN GENERATED rust-tui-view app-insert load-balancer.loadbalancer
         components.insert(
             Mode::Resource(crate::mode::LB_LOADBALANCER),
-            Box::new(LoadBalancers::new()),
+            Box::new(crate::components::load_balancer::loadbalancers::LoadBalancers::new()),
         );
+        // END GENERATED rust-tui-view app-insert load-balancer.loadbalancer
+        // BEGIN GENERATED rust-tui-view app-insert load-balancer.listener
         components.insert(
             Mode::Resource(crate::mode::LB_LISTENER),
-            Box::new(LoadBalancerListeners::new()),
+            Box::new(crate::components::load_balancer::listeners::LoadBalancerListeners::new()),
         );
+        // END GENERATED rust-tui-view app-insert load-balancer.listener
+        // BEGIN GENERATED rust-tui-view app-insert load-balancer.pool
         components.insert(
             Mode::Resource(crate::mode::LB_POOL),
-            Box::new(LoadBalancerPools::new()),
+            Box::new(crate::components::load_balancer::pools::LoadBalancerPools::new()),
         );
+        // END GENERATED rust-tui-view app-insert load-balancer.pool
+        // BEGIN GENERATED rust-tui-view app-insert load-balancer.pool/member
         components.insert(
             Mode::Resource(crate::mode::LB_POOL_MEMBER),
-            Box::new(LoadBalancerPoolMembers::new()),
+            Box::new(
+                crate::components::load_balancer::pool_members::LoadBalancerPoolMembers::new(),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert load-balancer.pool/member
+        // BEGIN GENERATED rust-tui-view app-insert load-balancer.healthmonitor
         components.insert(
             Mode::Resource(crate::mode::LB_HEALTHMONITOR),
-            Box::new(LoadBalancerHealthMonitors::new()),
+            Box::new(
+                crate::components::load_balancer::health_monitors::LoadBalancerHealthMonitors::new(
+                ),
+            ),
         );
+        // END GENERATED rust-tui-view app-insert load-balancer.healthmonitor
 
+        // BEGIN GENERATED rust-tui-view app-insert network.network
         components.insert(
             Mode::Resource(crate::mode::NETWORK_NETWORK),
-            Box::new(NetworkNetworks::new()),
+            Box::new(crate::components::network::networks::NetworkNetworks::new()),
         );
+        // END GENERATED rust-tui-view app-insert network.network
+        // BEGIN GENERATED rust-tui-view app-insert network.router
         components.insert(
             Mode::Resource(crate::mode::NETWORK_ROUTER),
-            Box::new(NetworkRouters::new()),
+            Box::new(crate::components::network::routers::NetworkRouters::new()),
         );
+        // END GENERATED rust-tui-view app-insert network.router
         // BEGIN GENERATED rust-tui-view app-insert network.security_group
         components.insert(
             Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP),
@@ -233,10 +262,12 @@ impl App {
         );
         // END GENERATED rust-tui-view app-insert network.security_group_rule
         // GENERATED-ANCHOR: component insert
+        // BEGIN GENERATED rust-tui-view app-insert network.subnet
         components.insert(
             Mode::Resource(crate::mode::NETWORK_SUBNET),
-            Box::new(NetworkSubnets::new()),
+            Box::new(crate::components::network::subnets::NetworkSubnets::new()),
         );
+        // END GENERATED rust-tui-view app-insert network.subnet
 
         let (auth_helper_control_channel_tx, auth_helper_control_channel_rx) =
             mpsc::channel::<oneshot::Sender<AuthAction>>(10);
