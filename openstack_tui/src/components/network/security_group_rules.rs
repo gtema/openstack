@@ -19,7 +19,7 @@ use crate::cloud_worker::network::v2::{
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, Mutation, ResourceBehaviour};
 use crate::mode::Mode;
 use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
 use serde_json::Value;
@@ -48,13 +48,22 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
     type Filter = NetworkSecurityGroupRuleList;
 
     fn view_key() -> &'static str {
-        crate::mode::NETWORK_SECURITY_GROUP_RULE
+        super::generated::security_group_rule::Generated::view_key()
     }
     fn title() -> &'static str {
-        "SecurityGroupRules"
+        super::generated::security_group_rule::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::security_group_rule::Generated::mode()
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        super::generated::security_group_rule::Generated::request_from_filter(filter)
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        super::generated::security_group_rule::Generated::matches_request(request)
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        super::generated::security_group_rule::Generated::handle_set_filter_action(action)
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -67,25 +76,6 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
             filter.sort_dir = Some(vec!["asc".into(), "asc".into(), "asc".into(), "asc".into()]);
         }
         filter
-    }
-    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(NetworkSecurityGroupRuleApiRequest::List(Box::new(
-            filter.clone(),
-        )))
-    }
-    fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(boxreq))
-            if matches!(**boxreq, NetworkSecurityGroupRuleApiRequest::List(_))
-        )
-    }
-    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetNetworkSecurityGroupRuleListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
     }
     fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
         if let Action::ResourceOp {
@@ -143,7 +133,7 @@ mod tests {
         );
         assert_eq!(
             NetworkSecurityGroupRulesBehaviour::title(),
-            "SecurityGroupRules"
+            "Security Group Rules"
         );
         assert_eq!(
             NetworkSecurityGroupRulesBehaviour::mode(),

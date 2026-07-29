@@ -11,10 +11,10 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// Hand-authored for now: mirrors the shape a planned `RustResourceBehaviourGenerator`
+// (openstack-codegenerator, Track 2) is expected to emit. Replace with generated output once
+// that generator lands.
 
-pub(crate) mod generated;
-pub mod networks;
-pub mod routers;
-pub mod security_group_rules;
-pub mod security_groups;
-pub mod subnets;
+pub(crate) mod security_group;
+pub(crate) mod security_group_rule;
