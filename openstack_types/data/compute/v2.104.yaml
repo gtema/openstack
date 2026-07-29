@@ -93863,8 +93863,6 @@ components:
             additionalProperties: false
             properties:
               id:
-                description: |-
-                  The UUID of the server.
                 format: uuid
                 type: string
               links:

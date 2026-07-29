@@ -1379,6 +1379,35 @@ paths:
           type:
           - boolean
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of role assignments
@@ -3344,7 +3373,7 @@ paths:
           - 'null'
       - name: limit
         in: query
-        description: Limit number of entries per page.
+        description: Limit number of entries on the single response page.
         required: false
         schema:
           type:
@@ -3354,12 +3383,23 @@ paths:
           minimum: 0
       - name: marker
         in: query
-        description: Page marker (ID of the last entry on the previous page).
+        description: Page marker (id of the last entry of the previous page).
         required: false
         schema:
           type:
           - string
           - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of rulesets
@@ -4371,6 +4411,35 @@ paths:
           type:
           - boolean
           - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           description: List of role assignments
@@ -5764,6 +5833,13 @@ components:
       required:
       - role_assignments
       properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
         role_assignments:
           type: array
           items:
@@ -6290,6 +6366,14 @@ components:
         name:
           type: string
           description: The domain name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProjectOptions'
+            description: |-
+              The resource options for the domain. A domain is a project with
+              `is_domain = true` and shares its resource options, hence the shared
+              `ProjectOptions` type.
       additionalProperties:
         description: Additional domain properties.
     DomainCreateRequest:
@@ -6389,6 +6473,14 @@ components:
           - string
           - 'null'
           description: The domain name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProjectOptions'
+            description: |-
+              The resource options for the domain. A domain is a project with
+              `is_domain = true` and shares its resource options, hence the shared
+              `ProjectOptions` type.
       additionalProperties:
         description: Additional domain properties.
     DomainUpdateRequest:
@@ -8295,6 +8387,13 @@ components:
           description: |-
             The name of the project, which must be unique within the owning domain.
             A project can have the same name as its domain.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProjectOptions'
+            description: |-
+              The resource options for the project. Available resource options are
+              documented in `ProjectOptions`.
         parent_id:
           type:
           - string
@@ -8323,6 +8422,18 @@ components:
         project:
           $ref: '#/components/schemas/ProjectCreate'
           description: Project object.
+    ProjectOptions:
+      type: object
+      description: Project resource options.
+      properties:
+        immutable:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            When `true`, the project cannot be updated or deleted until an
+            administrator explicitly sets this back to `false`. Also used for
+            domains, which persist through the same underlying project.
     ProjectResponse:
       type: object
       description: Complete response with the project data.
@@ -8394,6 +8505,13 @@ components:
           - string
           - 'null'
           description: The project name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ProjectOptions'
+            description: |-
+              The resource options for the project. Available resource options are
+              documented in `ProjectOptions`.
       additionalProperties:
         description: Additional project properties.
     ProjectUpdateRequest:
@@ -8814,6 +8932,13 @@ components:
         name:
           type: string
           description: Role name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RoleOptions'
+            description: |-
+              The resource options for the role. Available resource options are
+              documented in `RoleOptions`.
       additionalProperties: {}
     RoleCreate:
       type: object
@@ -8834,6 +8959,13 @@ components:
         name:
           type: string
           description: The role name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RoleOptions'
+            description: |-
+              The resource options for the role. Available resource options are
+              documented in `RoleOptions`.
       additionalProperties:
         description: Extra attributes for the role.
     RoleCreateRequest:
@@ -8905,6 +9037,17 @@ components:
           items:
             $ref: '#/components/schemas/Role'
           description: Collection of role objects.
+    RoleOptions:
+      type: object
+      description: Role resource options.
+      properties:
+        immutable:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            When `true`, the role cannot be updated or deleted until an
+            administrator explicitly sets this back to `false`.
     RoleRef:
       type: object
       description: The role reference data.
@@ -8945,6 +9088,13 @@ components:
           - string
           - 'null'
           description: The role name.
+        options:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RoleOptions'
+            description: |-
+              The resource options for the role. Available resource options are
+              documented in `RoleOptions`.
       additionalProperties:
         description: Extra attributes for the role.
     RoleUpdateRequest:
