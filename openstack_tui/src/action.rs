@@ -192,8 +192,10 @@ pub enum Action {
     SetLoadBalancerHealthMonitorListFilters(cloud_types::LoadBalancerHealthmonitorList),
 
     // Network (neutron)
-    /// Set Security group filters
+    // BEGIN GENERATED rust-tui-view action network.security_group
+    /// Set network.security_group filters
     SetNetworkSecurityGroupListFilters(cloud_types::NetworkSecurityGroupList),
+    // END GENERATED rust-tui-view action network.security_group
     /// Show a resource view, addressed by `ViewKey`.
     ShowResource(#[serde(deserialize_with = "deserialize_view_key")] crate::mode::ViewKey),
     /// Create/Delete a resource, addressed by `ViewKey`.
@@ -210,8 +212,11 @@ pub enum Action {
     },
     /// Switch to routers view
     ShowNetworkRouters,
-    /// Set Security group rule filters
+    // BEGIN GENERATED rust-tui-view action network.security_group_rule
+    /// Set network.security_group_rule filters
     SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
+    // END GENERATED rust-tui-view action network.security_group_rule
+    // GENERATED-ANCHOR: action variants
     SetNetworkSubnetListFilters(cloud_types::NetworkSubnetList),
 }
 
