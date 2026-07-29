@@ -20,8 +20,40 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::fmt::Display;
 
+/// The mechanical subset of `ResourceBehaviour`: methods fully derivable from a resource's
+/// metadata (view key, request/filter types, mode). Intended to be implemented by a generated
+/// `Generated` companion type per resource; `ResourceBehaviour`'s defaults delegate to it.
+pub trait GeneratedResourceBehaviour {
+    type Item: ResourceKey + DeserializeOwned;
+    type Filter: Default + Display + Clone;
+
+    /// The view configuration key used for persisting column/field settings.
+    fn view_key() -> &'static str;
+    /// Human readable title for the view.
+    fn title() -> &'static str;
+    /// The Mode that corresponds to this component (when shown, data should be loaded).
+    fn mode() -> Mode;
+    /// Build the ApiRequest to list resources, given the current (normalised) filters.
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest;
+    /// Check whether the given ApiRequest is the list-detailed request this component handles.
+    fn matches_request(request: &ApiRequest) -> bool;
+    /// Return the filter from a Set*Filters action. Return None if the action does not apply.
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        let _ = action;
+        None
+    }
+}
+
 /// Behaviour specifics for a particular OpenStack resource.
 /// Implementors provide the concrete item type, filter type and any custom actions.
+///
+/// The `view_key`/`title`/`mode`/`request_from_filter`/`matches_request`/`handle_set_filter_action`
+/// methods below are the "mechanical" tier also described by `GeneratedResourceBehaviour`: for
+/// resources that have a generated companion module, implementors should give each of these a
+/// one-line body that forwards to it (e.g. `fn view_key() -> &'static str {
+/// generated::security_group::Generated::view_key() }`) rather than duplicating the logic here.
+/// They stay required, non-default methods on this trait itself so that resources without a
+/// generated companion module yet are unaffected.
 pub trait ResourceBehaviour {
     type Item: ResourceKey + DeserializeOwned;
     type Filter: Default + Display + Clone;
