@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+pub(crate) mod generated;
 pub mod networks;
 pub mod routers;
 pub mod security_group_rules;

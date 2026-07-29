@@ -14,12 +14,11 @@
 
 use crate::action::Action;
 use crate::cloud_worker::network::v2::{
-    NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
-    NetworkSecurityGroupRuleList, NetworkSecurityGroupRuleListBuilder,
+    NetworkSecurityGroupList, NetworkSecurityGroupRuleList, NetworkSecurityGroupRuleListBuilder,
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
@@ -50,13 +49,19 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
     type Filter = NetworkSecurityGroupList;
 
     fn view_key() -> &'static str {
-        crate::mode::NETWORK_SECURITY_GROUP
+        super::generated::security_group::Generated::view_key()
     }
     fn title() -> &'static str {
-        "SecurityGroups"
+        super::generated::security_group::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::security_group::Generated::mode()
+    }
+    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
+        super::generated::security_group::Generated::request_from_filter(filter)
+    }
+    fn matches_request(request: &ApiRequest) -> bool {
+        super::generated::security_group::Generated::matches_request(request)
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -64,18 +69,6 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
             filter.sort_dir = Some(Vec::from(["asc".into()]));
         }
         filter
-    }
-    fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(NetworkSecurityGroupApiRequest::List(Box::new(
-            filter.clone(),
-        )))
-    }
-    fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Network(NetworkApiRequest::SecurityGroup(boxreq))
-            if matches!(**boxreq, NetworkSecurityGroupApiRequest::List(_))
-        )
     }
     fn filter_carry_action(
         action: &Action,
@@ -104,6 +97,7 @@ pub type NetworkSecurityGroups = GenericResourceView<'static, NetworkSecurityGro
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cloud_worker::network::v2::{NetworkApiRequest, NetworkSecurityGroupApiRequest};
     use crate::components::resource_behaviour::ResourceBehaviour;
     use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
@@ -126,7 +120,7 @@ mod tests {
             NetworkSecurityGroupsBehaviour::view_key(),
             "network.security_group"
         );
-        assert_eq!(NetworkSecurityGroupsBehaviour::title(), "SecurityGroups");
+        assert_eq!(NetworkSecurityGroupsBehaviour::title(), "Security Groups");
         assert_eq!(
             NetworkSecurityGroupsBehaviour::mode(),
             Mode::Resource(crate::mode::NETWORK_SECURITY_GROUP)
