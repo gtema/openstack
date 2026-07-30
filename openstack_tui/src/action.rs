@@ -247,6 +247,14 @@ pub enum Action {
     SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
     // END GENERATED rust-tui-view action network.security_group_rule
     // GENERATED-ANCHOR: action variants
+    // BEGIN GENERATED rust-tui-view action network.router
+    /// Set network.router filters
+    SetNetworkRouterListFilters(cloud_types::NetworkRouterList),
+    // END GENERATED rust-tui-view action network.router
+    // BEGIN GENERATED rust-tui-view action network.network
+    /// Set network.network filters
+    SetNetworkNetworkListFilters(cloud_types::NetworkNetworkList),
+    // END GENERATED rust-tui-view action network.network
     // BEGIN GENERATED rust-tui-view action network.subnet
     /// Set network.subnet filters
     SetNetworkSubnetListFilters(cloud_types::NetworkSubnetList),
