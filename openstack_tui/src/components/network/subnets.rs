@@ -13,12 +13,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::network::v2::{
-    NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 use openstack_types::network::v2::subnet::response::list::SubnetResponse;
 
@@ -32,16 +29,16 @@ pub struct NetworkSubnetsBehaviour;
 
 impl ResourceBehaviour for NetworkSubnetsBehaviour {
     type Item = SubnetResponse;
-    type Filter = NetworkSubnetList;
+    type Filter = cloud_types::NetworkSubnetList;
 
     fn view_key() -> &'static str {
-        crate::mode::NETWORK_SUBNET
+        super::generated::subnet::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Subnets"
+        super::generated::subnet::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::subnet::Generated::mode()
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -51,21 +48,13 @@ impl ResourceBehaviour for NetworkSubnetsBehaviour {
         filter
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(NetworkSubnetApiRequest::List(Box::new(filter.clone())))
+        super::generated::subnet::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Network(NetworkApiRequest::Subnet(boxreq))
-            if matches!(**boxreq, NetworkSubnetApiRequest::List(_))
-        )
+        super::generated::subnet::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetNetworkSubnetListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::subnet::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -88,7 +77,7 @@ mod tests {
 
     #[test]
     fn normalise_filter_sets_defaults() {
-        let filter = NetworkSubnetList::default();
+        let filter = cloud_types::NetworkSubnetList::default();
         let norm = NetworkSubnetsBehaviour::normalise_filter(filter);
         assert_eq!(norm.sort_key, Some(Vec::from(["name".into()])));
         assert_eq!(norm.sort_dir, Some(Vec::from(["asc".into()])));
@@ -96,7 +85,7 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing() {
-        let mut f = NetworkSubnetList::default();
+        let mut f = cloud_types::NetworkSubnetList::default();
         f.sort_key = Some(Vec::from(["id".into()]));
         let norm = NetworkSubnetsBehaviour::normalise_filter(f);
         assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
@@ -104,25 +93,25 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = NetworkSubnetList::default();
+        let filter = cloud_types::NetworkSubnetList::default();
         let request = NetworkSubnetsBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::Network(NetworkApiRequest::Subnet(boxreq))
-            if matches!(*boxreq, NetworkSubnetApiRequest::List(_))
+            ApiRequest::Network(cloud_types::NetworkApiRequest::Subnet(boxreq))
+            if matches!(*boxreq, cloud_types::NetworkSubnetApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = NetworkSubnetList::default();
+        let filter = cloud_types::NetworkSubnetList::default();
         let request = NetworkSubnetsBehaviour::request_from_filter(&filter);
         assert!(NetworkSubnetsBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::Network(NetworkApiRequest::Network(Box::new(
+        let req = ApiRequest::Network(cloud_types::NetworkApiRequest::Network(Box::new(
             crate::cloud_worker::types::NetworkNetworkApiRequest::List(Box::default()),
         )));
         assert!(!NetworkSubnetsBehaviour::matches_request(&req));
@@ -130,7 +119,7 @@ mod tests {
 
     #[test]
     fn handle_set_filter_action_returns_filter() {
-        let filter = NetworkSubnetList::default();
+        let filter = cloud_types::NetworkSubnetList::default();
         let action = Action::SetNetworkSubnetListFilters(filter);
         let result = NetworkSubnetsBehaviour::handle_set_filter_action(&action);
         assert!(result.is_some());
