@@ -322,8 +322,19 @@ where
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         if data != self.raw_items {
             let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))?;
+            return self.set_data_items(items, data);
+        }
+        self.set_loading(false);
+        Ok(())
+    }
+
+    /// Like `set_data`, but accepts already-deserialized items alongside the raw payload, for
+    /// callers that need to pick the deserialization function themselves (e.g. based on a
+    /// negotiated microversion) rather than deserializing into a single fixed type here.
+    pub fn set_data_items(&mut self, items: Vec<T>, raw_data: Vec<Value>) -> Result<(), TuiError> {
+        if raw_data != self.raw_items {
             self.items = items;
-            self.raw_items = data;
+            self.raw_items = raw_data;
             self.state.select_first();
             self.scroll_state =
                 ScrollbarState::new(self.items.len().saturating_sub(1) * ITEM_HEIGHT);

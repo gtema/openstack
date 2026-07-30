@@ -152,9 +152,15 @@ where
         }
 
         // --- ApiResponsesData: only accept if request matches ---
-        if let Action::ApiResponsesData { request, data, .. } = &action {
+        if let Action::ApiResponsesData {
+            request,
+            data,
+            negotiated_version,
+        } = &action
+        {
             if B::matches_request(request) {
-                self.base.set_data(data.clone())?;
+                let items = B::deserialize_items(data, *negotiated_version)?;
+                self.base.set_data_items(items, data.clone())?;
                 return Ok(None);
             }
             // --- Singular API response: delegate to behaviour ---

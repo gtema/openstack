@@ -16,6 +16,7 @@ use crate::action::Action;
 use crate::cloud_worker::types::ApiRequest;
 use crate::mode::Mode;
 use crate::utils::ResourceKey;
+use openstack_sdk::types::ApiVersion;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::fmt::Display;
@@ -158,6 +159,20 @@ pub trait ResourceBehaviour {
     fn clear_data_on_filter_change() -> bool {
         false
     }
+
+    /// Deserialize a list response batch into `Self::Item`, given the microversion actually
+    /// negotiated for the request that produced it (`None` for unversioned resources, or when the
+    /// worker didn't resolve it). The default ignores `negotiated_version` and deserializes as-is,
+    /// which is correct for every resource whose response schema does not vary by microversion.
+    /// Resources with real microversion-variant response schemas override this to pick the
+    /// variant matching `negotiated_version` before upcasting into the canonical `Self::Item`.
+    fn deserialize_items(
+        data: &[Value],
+        negotiated_version: Option<ApiVersion>,
+    ) -> serde_json::Result<Vec<Self::Item>> {
+        let _ = negotiated_version;
+        serde_json::from_value(Value::Array(data.to_vec()))
+    }
 }
 
 /// Result of handling a mutation API response.
@@ -170,4 +185,134 @@ pub enum Mutation {
     AppendRow(Value),
     /// Refresh the entire list.
     Refresh,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::Deserialize;
+
+    #[derive(Debug, Deserialize, Default, Clone, PartialEq)]
+    struct Item {
+        id: String,
+        #[serde(default)]
+        extra: Option<String>,
+    }
+    impl ResourceKey for Item {
+        fn get_key() -> &'static str {
+            "test.item"
+        }
+    }
+
+    #[derive(Debug, Default, Clone)]
+    struct Filter;
+    impl Display for Filter {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "")
+        }
+    }
+
+    struct DefaultBehaviour;
+    impl ResourceBehaviour for DefaultBehaviour {
+        type Item = Item;
+        type Filter = Filter;
+        fn view_key() -> &'static str {
+            "test.item"
+        }
+        fn title() -> &'static str {
+            "Items"
+        }
+        fn mode() -> Mode {
+            Mode::Resource(Self::view_key())
+        }
+        fn request_from_filter(_filter: &Self::Filter) -> ApiRequest {
+            unimplemented!()
+        }
+        fn matches_request(_request: &ApiRequest) -> bool {
+            false
+        }
+    }
+
+    struct VersionedBehaviour;
+    impl ResourceBehaviour for VersionedBehaviour {
+        type Item = Item;
+        type Filter = Filter;
+        fn view_key() -> &'static str {
+            "test.item"
+        }
+        fn title() -> &'static str {
+            "Items"
+        }
+        fn mode() -> Mode {
+            Mode::Resource(Self::view_key())
+        }
+        fn request_from_filter(_filter: &Self::Filter) -> ApiRequest {
+            unimplemented!()
+        }
+        fn matches_request(_request: &ApiRequest) -> bool {
+            false
+        }
+        fn deserialize_items(
+            data: &[Value],
+            negotiated_version: Option<ApiVersion>,
+        ) -> serde_json::Result<Vec<Self::Item>> {
+            let mut items: Vec<Item> = serde_json::from_value(Value::Array(data.to_vec()))?;
+            if negotiated_version
+                .is_some_and(|v| v >= ApiVersion::from_apiver_str("2.5", false).unwrap())
+            {
+                for item in &mut items {
+                    item.extra = Some("present-since-2.5".into());
+                }
+            }
+            Ok(items)
+        }
+    }
+
+    #[test]
+    fn default_deserialize_items_ignores_negotiated_version() {
+        let data = vec![serde_json::json!({"id": "a"})];
+        let items = DefaultBehaviour::deserialize_items(&data, None).unwrap();
+        assert_eq!(
+            items,
+            vec![Item {
+                id: "a".into(),
+                extra: None
+            }]
+        );
+
+        let items = DefaultBehaviour::deserialize_items(
+            &data,
+            Some(ApiVersion::from_apiver_str("2.99", false).unwrap()),
+        )
+        .unwrap();
+        assert_eq!(
+            items,
+            vec![Item {
+                id: "a".into(),
+                extra: None
+            }]
+        );
+    }
+
+    #[test]
+    fn overridden_deserialize_items_dispatches_on_negotiated_version() {
+        let data = vec![serde_json::json!({"id": "a"})];
+
+        let items = VersionedBehaviour::deserialize_items(&data, None).unwrap();
+        assert_eq!(items[0].extra, None);
+
+        let items = VersionedBehaviour::deserialize_items(
+            &data,
+            Some(ApiVersion::from_apiver_str("2.1", false).unwrap()),
+        )
+        .unwrap();
+        assert_eq!(items[0].extra, None);
+
+        let items = VersionedBehaviour::deserialize_items(
+            &data,
+            Some(ApiVersion::from_apiver_str("2.5", false).unwrap()),
+        )
+        .unwrap();
+        assert_eq!(items[0].extra, Some("present-since-2.5".into()));
+    }
 }
