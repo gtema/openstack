@@ -431,6 +431,7 @@ mod paged;
 mod params;
 pub mod query;
 pub mod rest_endpoint;
+mod wait;
 
 pub use self::error::ApiError;
 pub use self::error::BodyError;
@@ -469,3 +470,7 @@ pub use self::params::QueryParams;
 
 pub use self::ignore::Ignore;
 pub use self::ignore::ignore;
+
+pub use self::wait::{
+    Backoff, Observation, Wait, WaitDecision, WaitOutcome, wait, wait_deleted, wait_for_status,
+};

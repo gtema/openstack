@@ -665,8 +665,8 @@ volume, image, load balancer, stack, cluster).
 | # | Item | Area | Effort |
 |---|------|------|--------|
 | 15 | `TypedEndpoint` (request→response linkage) in templates + `send()` | codegen/core | M |
-| 16 | `wait`/`wait_deleted` combinator + error variants | core | M |
-| 17 | `HasStatus` trait + generated impls, `wait_for_status` | codegen/core | S (after 15/16) |
+| 16 | ~~`wait`/`wait_deleted` combinator + error variants~~ | core | **Done**, see §16.5 |
+| 17 | ~~`HasStatus` trait~~ — superseded, see §16: pointer-based, not typed | codegen/core | Superseded by item 36 |
 | 18 | `Unknown(String)` catch-all on generated status enums | codegen | S |
 | 19 | Move `dialoguer` helper out of core; feature-gate tokio/config | core | S |
 | 20 | Stream-based pagination | core | M |
@@ -1100,6 +1100,36 @@ prerequisite beyond emitting the `STATUS_POINTER` const**, which is a strictly
 smaller, more mechanical template change than `TypedEndpoint` ever was. Layer
 2 can now ship before, and independently of, `TypedEndpoint`.
 
+### 16.5 Implementation status
+
+Landed in `sdk/core/src/api/wait.rs` (module wired up in `api.rs`, exported as
+`api::{wait, wait_deleted, wait_for_status, Wait, WaitOutcome, Observation,
+WaitDecision, Backoff}`), matching §16.1–§16.3 with one simplification made
+during implementation: `wait_for_status`/`wait_deleted` take the JSON Pointer
+and target/failure lists as plain arguments rather than through a
+`HasStatusPointer` trait — the trait is deferred until codegen actually emits
+`STATUS_POINTER` per operation (§18 item 35/37); until then, callers pass the
+pointer explicitly, which is exactly what the trait would resolve to anyway,
+so nothing here needs revisiting once codegen catches up, it only gets an
+extra generated call-site convenience layered on top. Both `sync` (`Query`)
+and `async` (`QueryAsync`) impls exist, gated by the existing feature flags,
+consistent with `Find`/`Paged`. `ApiError` gained `WaitTimeout`, `WaitFailed`,
+`WaitResourceVanished` (non-breaking, the enum is `#[non_exhaustive]`) plus
+`is_not_found()`/`is_transient()` helpers used by the poll loop and reusable
+elsewhere (e.g. `Find`'s NOT_FOUND/BAD_REQUEST fallback matching in
+`find.rs` could be rewritten against `is_not_found()` as a follow-up). 9 unit
+tests cover: reaching target status, failing on a listed failure status,
+`wait_deleted` succeeding on 404, disappearance being treated as failure for
+a non-deletion wait, timeout, and a custom typed predicate (`Observation<&T>`
+for an arbitrary `T: DeserializeOwned`, not just `Value`) — this last one is
+what layer 1 was designed to support directly, ahead of any codegen work.
+`sdk/core`'s `tokio` dependency picked up the `time` feature it previously
+lacked (needed for `tokio::time::sleep`); no other crate's dependencies
+changed. Item 15/17 (`TypedEndpoint`) and the codegen side of items 35/37
+(emitting `STATUS_POINTER`, the per-resource `wait` metadata overlay, and the
+`--wait` CLI flags themselves) remain open — they live in the separate
+`openstack-codegenerator` repository and are out of scope for this repo.
+
 ## 17. `--wait` on `create`/`delete` CLI commands
 
 With §16 in place, the CLI-visible flag is thin plumbing over
@@ -1202,7 +1232,7 @@ Design points:
 |---|------|------|--------|
 | 34 | Capture negotiated `Openstack-API-Version` response header; dispatch response struct by version bracket instead of `.or_else` trial parse | codegen/cli | M |
 | 35 | Emit `STATUS_POINTER` version→JSON-pointer table per operation | codegen | S |
-| 36 | `HasStatusPointer` trait + revised `wait_for_status` (string-based, no `TypedEndpoint` dependency) | core | S (after 16/35) |
+| 36 | ~~`HasStatusPointer` trait~~ + revised `wait_for_status` (string-based, no `TypedEndpoint` dependency) | core | **Done** — `sdk/core/src/api/wait.rs`; pointer passed explicitly for now, `HasStatusPointer` trait deferred to land alongside item 35 |
 | 37 | Per-resource `wait: {ready, failed}` metadata overlay (unblocks 36 without waiting on `TypedEndpoint`) | codegen | S |
 | 38 | `--wait`/`--wait-timeout` flags on create/delete, gated by `STATUS_POINTER` presence | codegen/cli | M (after 35–37) |
 | 39 | Distinguish `WaitTimeout`/`WaitFailed`/`WaitResourceVanished` at the CLI error surface | cli | S |
