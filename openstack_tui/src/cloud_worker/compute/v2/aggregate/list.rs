@@ -60,6 +60,7 @@ impl ExecuteApiRequest for ComputeAggregateList {
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
             data: ep.query_async(session).await?,
+            negotiated_version: None,
         })?;
         Ok(())
     }
