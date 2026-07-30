@@ -37,7 +37,7 @@ use openstack_sdk_core::error::{OpenStackResult, RestError};
 use openstack_sdk_core::types::ServiceType;
 use secrecy::SecretString;
 
-use crate::{AsyncOpenStack, types::ApiVersion};
+use crate::{AsyncOpenStack, AsyncOpenStackBuilder, types::ApiVersion};
 
 type Runtime = Arc<tokio::runtime::Runtime>;
 
@@ -56,6 +56,23 @@ type Runtime = Arc<tokio::runtime::Runtime>;
 ///     let profile = cfg.get_cloud_config("devstack")?.unwrap();
 ///     let session = openstack_sdk::OpenStack::new(&profile)?;
 ///     session.discover_service_endpoint(&ServiceType::Compute)?;
+///     Ok(())
+/// }
+/// ```
+///
+/// Use [`OpenStack::builder`] instead of [`OpenStack::new`] when
+/// connection-time options are needed, e.g. disabling the on-disk auth
+/// cache:
+/// ```rust
+/// use openstack_sdk::config::ConfigFile;
+///
+/// fn connect_without_cache() -> Result<(), openstack_sdk::OpenStackError> {
+///     let cfg = ConfigFile::new()?;
+///     let profile = cfg.get_cloud_config("devstack")?.unwrap();
+///     let session = openstack_sdk::OpenStack::builder(&profile)
+///         .disable_auth_cache(true)
+///         .build()?;
+///     println!("{:?}", session.get_auth_token());
 ///     Ok(())
 /// }
 /// ```
@@ -119,6 +136,100 @@ impl Client for OpenStack {
     }
 }
 
+/// Builder for connection-time options on [`OpenStack`], obtained via
+/// [`OpenStack::builder`]. Blocking counterpart of [`AsyncOpenStackBuilder`].
+pub struct OpenStackBuilder {
+    inner: AsyncOpenStackBuilder,
+}
+
+impl OpenStackBuilder {
+    /// Disable authentication caching for the session being built. See
+    /// [`AsyncOpenStackBuilder::disable_auth_cache`].
+    pub fn disable_auth_cache(mut self, disable: bool) -> Self {
+        self.inner = self.inner.disable_auth_cache(disable);
+        self
+    }
+
+    /// Set the auth helper used for the initial authorization and for later
+    /// 401 re-authentication.
+    pub fn auth_helper<A>(mut self, auth_helper: A) -> Self
+    where
+        A: AuthHelper + Sync + Send + 'static,
+    {
+        self.inner = self.inner.auth_helper(auth_helper);
+        self
+    }
+
+    /// Force renewal of authorization even if a cached token is available.
+    pub fn renew_auth(mut self, renew_auth: bool) -> Self {
+        self.inner = self.inner.renew_auth(renew_auth);
+        self
+    }
+
+    /// Set the maximum number of retries on 401 responses.
+    pub fn max_auth_retries(mut self, n: u32) -> Self {
+        self.inner = self.inner.max_auth_retries(n);
+        self
+    }
+
+    /// Override the request timeout (default: `CloudConfig.options.api_timeout`, or 30s).
+    pub fn http_timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.inner = self.inner.http_timeout(timeout);
+        self
+    }
+
+    /// Override the connect timeout (default: 5s).
+    pub fn http_connect_timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.inner = self.inner.http_connect_timeout(timeout);
+        self
+    }
+
+    /// Override the TCP keepalive interval (default: 60s).
+    pub fn http_tcp_keepalive(mut self, interval: std::time::Duration) -> Self {
+        self.inner = self.inner.http_tcp_keepalive(interval);
+        self
+    }
+
+    /// Enable/disable gzip response decompression (default: enabled).
+    pub fn http_gzip(mut self, enable: bool) -> Self {
+        self.inner = self.inner.http_gzip(enable);
+        self
+    }
+
+    /// Enable/disable deflate response decompression (default: enabled).
+    pub fn http_deflate(mut self, enable: bool) -> Self {
+        self.inner = self.inner.http_deflate(enable);
+        self
+    }
+
+    /// Override the maximum idle connections per host (default: 10).
+    pub fn http_pool_max_idle_per_host(mut self, max: usize) -> Self {
+        self.inner = self.inner.http_pool_max_idle_per_host(max);
+        self
+    }
+
+    /// Override the idle connection pool timeout (default: 30s).
+    pub fn http_pool_idle_timeout(mut self, timeout: std::time::Duration) -> Self {
+        self.inner = self.inner.http_pool_idle_timeout(timeout);
+        self
+    }
+
+    /// Establish the session, blocking on a freshly created Tokio runtime
+    /// that is then reused by the resulting [`OpenStack`].
+    pub fn build(self) -> OpenStackResult<OpenStack> {
+        let rt: Runtime = Arc::new(
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .unwrap_or_else(|e| panic!("failed to create tokio runtime: {e}")),
+        );
+        let inner = rt.block_on(self.inner.connect())?;
+        let runtime = Arc::new(OnceLock::new());
+        let _ = runtime.set(rt);
+        Ok(OpenStack { inner, runtime })
+    }
+}
+
 impl OpenStack {
     /// Create a new authenticated session from [`CloudConfig`].
     ///
@@ -157,6 +268,14 @@ impl OpenStack {
             inner,
             runtime: Arc::new(OnceLock::new()),
         })
+    }
+
+    /// Start building a session with connection options (auth cache, auth
+    /// helper, retries, ...). See [`OpenStackBuilder`].
+    pub fn builder(config: &CloudConfig) -> OpenStackBuilder {
+        OpenStackBuilder {
+            inner: AsyncOpenStack::builder(config),
+        }
     }
 
     /// Lazily initialise the shared tokio runtime.

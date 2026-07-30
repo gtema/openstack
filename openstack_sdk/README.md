@@ -66,6 +66,29 @@ async fn list_flavors() -> Result<(), OpenStackError> {
 }
 ```
 
+## Connection options
+
+`AsyncOpenStack::new`/`OpenStack::new` cover the default case. For
+connection-time options (e.g. disabling the on-disk auth cache) use the
+builder instead, via `AsyncOpenStack::builder`/`OpenStack::builder`:
+
+```rust
+use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+
+async fn connect_without_cache() -> Result<(), OpenStackError> {
+    let cfg = ConfigFile::new().unwrap();
+    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+
+    let session = AsyncOpenStack::builder(&profile)
+        .disable_auth_cache(true)
+        .connect()
+        .await?;
+
+    println!("{:?}", session.get_auth_token());
+    Ok(())
+}
+```
+
 ## Documentation
 
 Current crate documentation is known to be very poor. It will be addressed in

@@ -290,6 +290,89 @@ mod tests {
         );
     }
 
+    /// Wiring test: a too-short `http_timeout` must make the connect fail
+    /// with a client-side timeout, proving the builder's HTTP overrides
+    /// actually reach the `reqwest::ClientBuilder`.
+    #[cfg(all(feature = "sync", feature = "async"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_builder_http_timeout_applies() {
+        let server = MockServer::start_async().await;
+        let base_url = server.base_url();
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/");
+            then.status(StatusCode::OK)
+                .delay(std::time::Duration::from_millis(200))
+                .json_body(serde_json::json!({
+                    "versions": [{
+                        "id": "v3", "status": "SUPPORTED",
+                        "links": [{ "rel": "self", "href": format!("{base_url}/v3/") }]
+                    }]
+                }));
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+
+        let result = AsyncOpenStack::builder(&config)
+            .http_timeout(std::time::Duration::from_millis(10))
+            .connect()
+            .await;
+
+        assert!(
+            result.is_err(),
+            "connect should fail once the request timeout is shorter than the mocked delay"
+        );
+    }
+
+    /// `AsyncOpenStackBuilder::disable_auth_cache` must take effect before
+    /// `SessionContext::new` resolves the on-disk cache, not just stop future
+    /// writes like the post-connect `disable_auth_cache()` setter does.
+    #[cfg(all(feature = "sync", feature = "async"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_builder_disable_auth_cache_async() {
+        let server = MockServer::start_async().await;
+
+        helpers::mock_identity_catalog(&server);
+
+        let config = helpers::create_test_cloud_config(&server);
+
+        let client = AsyncOpenStack::builder(&config)
+            .disable_auth_cache(true)
+            .connect()
+            .await
+            .expect("AsyncOpenStack client creation failed");
+
+        assert!(
+            client.get_auth_cache_file().is_none(),
+            "on-disk auth cache should be disabled when requested via the builder"
+        );
+        assert_eq!(
+            client.get_auth_token().unwrap().expose_secret(),
+            "test-token-from-catalog"
+        );
+    }
+
+    /// Sync facade counterpart of `test_builder_disable_auth_cache_async`.
+    #[cfg(all(feature = "sync", feature = "async"))]
+    #[test]
+    fn test_builder_disable_auth_cache_sync() {
+        let server = MockServer::start();
+
+        helpers::mock_identity_catalog(&server);
+
+        let config = helpers::create_test_cloud_config(&server);
+
+        let client = OpenStack::builder(&config)
+            .disable_auth_cache(true)
+            .build()
+            .expect("OpenStack client creation failed");
+
+        assert_eq!(
+            client.get_auth_token().unwrap().expose_secret(),
+            "test-token-from-catalog"
+        );
+    }
+
     /// Regression test for a bug where a scoped login (project requested by
     /// `project_id` only) triggered a *second*, redundant `POST
     /// /v3/auth/tokens` rescope call immediately after the first successful

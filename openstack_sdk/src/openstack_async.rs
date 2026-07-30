@@ -97,6 +97,30 @@ use openstack_sdk_core::utils::expand_tilde;
 ///     Ok(())
 /// }
 /// ```
+///
+/// Use [`AsyncOpenStack::builder`] instead of [`AsyncOpenStack::new`] when
+/// connection-time options are needed, e.g. disabling the on-disk auth
+/// cache:
+/// ```rust
+/// use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+///
+/// async fn connect_without_cache() -> Result<(), OpenStackError> {
+///     let cfg = ConfigFile::new().unwrap();
+///     let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
+///
+///     let session = AsyncOpenStack::builder(&profile)
+///         .disable_auth_cache(true)
+///         .connect()
+///         .await?;
+///
+///     println!("{:?}", session.get_auth_token());
+///     Ok(())
+/// }
+/// ```
+/// Default value for `max_auth_retries` when not overridden via
+/// [`AsyncOpenStackBuilder::max_auth_retries`]/[`AsyncOpenStack::set_max_auth_retries`].
+const DEFAULT_MAX_AUTH_RETRIES: u32 = 1;
+
 pub struct AsyncOpenStack {
     /// The client to use for API calls.
     client: reqwest::Client,
@@ -336,6 +360,149 @@ impl Drop for RenewHandle {
     }
 }
 
+/// Overrides for the underlying `reqwest::ClientBuilder`. `None` fields keep
+/// [`AsyncOpenStack::new_impl_with_options`]'s existing defaults.
+#[derive(Default, Clone)]
+struct HttpClientOptions {
+    timeout: Option<Duration>,
+    connect_timeout: Option<Duration>,
+    tcp_keepalive: Option<Duration>,
+    gzip: Option<bool>,
+    deflate: Option<bool>,
+    pool_max_idle_per_host: Option<usize>,
+    pool_idle_timeout: Option<Duration>,
+}
+
+/// Builder for connection-time options on [`AsyncOpenStack`], obtained via
+/// [`AsyncOpenStack::builder`].
+pub struct AsyncOpenStackBuilder {
+    config: CloudConfig,
+    disable_auth_cache: bool,
+    auth_helper: Option<Arc<dyn AuthHelper>>,
+    renew_auth: bool,
+    max_auth_retries: u32,
+    http_options: HttpClientOptions,
+}
+
+impl AsyncOpenStackBuilder {
+    fn new(config: &CloudConfig) -> Self {
+        Self {
+            config: config.clone(),
+            disable_auth_cache: false,
+            auth_helper: None,
+            renew_auth: false,
+            max_auth_retries: DEFAULT_MAX_AUTH_RETRIES,
+            http_options: HttpClientOptions::default(),
+        }
+    }
+
+    /// Disable authentication caching for the session being built. Unlike
+    /// calling [`AsyncOpenStack::disable_auth_cache`] after connecting, this
+    /// takes effect *before* the session reads any pre-existing on-disk
+    /// cached token.
+    pub fn disable_auth_cache(mut self, disable: bool) -> Self {
+        self.disable_auth_cache = disable;
+        self
+    }
+
+    /// Set the auth helper used for the initial authorization and for later
+    /// 401 re-authentication.
+    pub fn auth_helper<A>(mut self, auth_helper: A) -> Self
+    where
+        A: AuthHelper + Sync + Send + 'static,
+    {
+        self.auth_helper = Some(Arc::new(auth_helper));
+        self
+    }
+
+    /// Force renewal of authorization even if a cached token is available.
+    pub fn renew_auth(mut self, renew_auth: bool) -> Self {
+        self.renew_auth = renew_auth;
+        self
+    }
+
+    /// Set the maximum number of retries on 401 responses.
+    pub fn max_auth_retries(mut self, n: u32) -> Self {
+        self.max_auth_retries = n;
+        self
+    }
+
+    /// Override the request timeout (default: `CloudConfig.options.api_timeout`, or 30s).
+    pub fn http_timeout(mut self, timeout: Duration) -> Self {
+        self.http_options.timeout = Some(timeout);
+        self
+    }
+
+    /// Override the connect timeout (default: 5s).
+    pub fn http_connect_timeout(mut self, timeout: Duration) -> Self {
+        self.http_options.connect_timeout = Some(timeout);
+        self
+    }
+
+    /// Override the TCP keepalive interval (default: 60s).
+    pub fn http_tcp_keepalive(mut self, interval: Duration) -> Self {
+        self.http_options.tcp_keepalive = Some(interval);
+        self
+    }
+
+    /// Enable/disable gzip response decompression (default: enabled).
+    pub fn http_gzip(mut self, enable: bool) -> Self {
+        self.http_options.gzip = Some(enable);
+        self
+    }
+
+    /// Enable/disable deflate response decompression (default: enabled).
+    pub fn http_deflate(mut self, enable: bool) -> Self {
+        self.http_options.deflate = Some(enable);
+        self
+    }
+
+    /// Override the maximum idle connections per host (default: 10).
+    pub fn http_pool_max_idle_per_host(mut self, max: usize) -> Self {
+        self.http_options.pool_max_idle_per_host = Some(max);
+        self
+    }
+
+    /// Override the idle connection pool timeout (default: 30s).
+    pub fn http_pool_idle_timeout(mut self, timeout: Duration) -> Self {
+        self.http_options.pool_idle_timeout = Some(timeout);
+        self
+    }
+
+    /// Establish the session: resolves the Identity endpoint via version
+    /// discovery, then authorizes using the configured auth helper (or
+    /// [`Noop`] if none was set).
+    pub async fn connect(self) -> OpenStackResult<AsyncOpenStack> {
+        let cache_override = self.disable_auth_cache.then_some(false);
+        let mut session = AsyncOpenStack::new_impl_with_options(
+            &self.config,
+            Auth::None,
+            cache_override,
+            &self.http_options,
+        )?;
+        session.max_auth_retries = self.max_auth_retries;
+
+        session
+            .discover_service_endpoint(&ServiceType::Identity)
+            .await?;
+
+        if let Some(auth_helper) = &self.auth_helper {
+            session
+                .authorize_with_auth_helper(None, auth_helper, self.renew_auth)
+                .await?;
+            session.auth_helper = Some(Arc::clone(auth_helper));
+        } else {
+            session.authorize(None, false, self.renew_auth).await?;
+        }
+
+        if self.disable_auth_cache {
+            session.disable_auth_cache();
+        }
+
+        Ok(session)
+    }
+}
+
 impl AsyncOpenStack {
     /// Lock the session for reading. `location` is kept as a parameter for
     /// call-site self-documentation (parking_lot never poisons, so it no
@@ -360,6 +527,22 @@ impl AsyncOpenStack {
 
     /// Basic constructor — visible to the sync facade.
     pub fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
+        Self::new_impl_with_options(config, auth, None, &HttpClientOptions::default())
+    }
+
+    /// Basic constructor with an explicit auth-cache override and HTTP
+    /// client overrides. `auth_cache_override` bypasses
+    /// `CloudConfig.auth_cache`/global config resolution when `Some`. Used by
+    /// [`AsyncOpenStackBuilder::connect`] so `disable_auth_cache()` can take
+    /// effect *before* `SessionContext::new` reads any pre-existing on-disk
+    /// cached token, rather than only stopping future writes, and so the
+    /// `reqwest::ClientBuilder` overrides below take effect at construction.
+    fn new_impl_with_options(
+        config: &CloudConfig,
+        auth: Auth,
+        auth_cache_override: Option<bool>,
+        http_options: &HttpClientOptions,
+    ) -> OpenStackResult<Self> {
         // Ensure auth plugin registries are populated even if the linker
         // would otherwise strip crates with no other references.
         openstack_sdk_auth_core::anchor_plugins();
@@ -388,22 +571,39 @@ impl AsyncOpenStack {
             );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
-        client_builder = client_builder.pool_max_idle_per_host(10);
-        client_builder = client_builder.pool_idle_timeout(Duration::from_secs(30));
-        client_builder = client_builder.timeout(Duration::from_secs(
-            config
-                .options
-                .get("api_timeout")
-                .and_then(|val| val.clone().into_uint().ok())
-                .unwrap_or(30),
-        ));
-        client_builder = client_builder.connect_timeout(Duration::from_secs(5));
-        client_builder = client_builder.tcp_keepalive(Duration::from_secs(60));
-        client_builder = client_builder.gzip(true);
-        client_builder = client_builder.deflate(true);
+        client_builder = client_builder
+            .pool_max_idle_per_host(http_options.pool_max_idle_per_host.unwrap_or(10));
+        client_builder = client_builder.pool_idle_timeout(
+            http_options
+                .pool_idle_timeout
+                .unwrap_or(Duration::from_secs(30)),
+        );
+        client_builder = client_builder.timeout(http_options.timeout.unwrap_or_else(|| {
+            Duration::from_secs(
+                config
+                    .options
+                    .get("api_timeout")
+                    .and_then(|val| val.clone().into_uint().ok())
+                    .unwrap_or(30),
+            )
+        }));
+        client_builder = client_builder.connect_timeout(
+            http_options
+                .connect_timeout
+                .unwrap_or(Duration::from_secs(5)),
+        );
+        client_builder = client_builder.tcp_keepalive(
+            http_options
+                .tcp_keepalive
+                .unwrap_or(Duration::from_secs(60)),
+        );
+        client_builder = client_builder.gzip(http_options.gzip.unwrap_or(true));
+        client_builder = client_builder.deflate(http_options.deflate.unwrap_or(true));
 
-        // Pass CloudConfig.auth_cache as override; SessionContext resolves priority chain.
-        let session_ctx = session::SessionContext::new(config, auth, config.auth_cache)?;
+        // Pass the explicit override (if any) or fall back to CloudConfig.auth_cache;
+        // SessionContext resolves the remaining priority chain.
+        let session_ctx =
+            session::SessionContext::new(config, auth, auth_cache_override.or(config.auth_cache))?;
         let auth_snapshot = Arc::new(ArcSwap::new(Arc::new(AuthSnapshot::from(&session_ctx))));
 
         Ok(AsyncOpenStack {
@@ -412,7 +612,7 @@ impl AsyncOpenStack {
             session: Arc::new(RwLock::new(session_ctx)),
             auth_snapshot,
             auth_helper: None,
-            max_auth_retries: 1,
+            max_auth_retries: DEFAULT_MAX_AUTH_RETRIES,
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
         })
     }
@@ -420,16 +620,7 @@ impl AsyncOpenStack {
     /// Create a new OpenStack API session from CloudConfig
     #[instrument(name = "connect", level = "trace", skip(config))]
     pub async fn new(config: &CloudConfig) -> OpenStackResult<Self> {
-        let session = Self::new_impl(config, Auth::None)?;
-
-        // Ensure we resolve identity endpoint using version discovery
-        session
-            .discover_service_endpoint(&ServiceType::Identity)
-            .await?;
-
-        session.authorize(None, false, false).await?;
-
-        Ok(session)
+        Self::builder(config).connect().await
     }
 
     /// Create a new OpenStack API session from CloudConfig
@@ -442,20 +633,18 @@ impl AsyncOpenStack {
     where
         A: AuthHelper + Sync + Send + 'static,
     {
-        let mut session = Self::new_impl(config, Auth::None)?;
+        Self::builder(config)
+            .auth_helper(auth_helper)
+            .renew_auth(renew_auth)
+            .connect()
+            .await
+    }
 
-        // Ensure we resolve identity endpoint using version discovery
-        session
-            .discover_service_endpoint(&ServiceType::Identity)
-            .await?;
-
-        session
-            .authorize_with_auth_helper(None, &auth_helper, renew_auth)
-            .await?;
-
-        session.auth_helper = Some(Arc::new(auth_helper));
-
-        Ok(session)
+    /// Start building a session with connection options (auth cache, auth
+    /// helper, retries, ...) beyond what the plain constructors expose. See
+    /// [`AsyncOpenStackBuilder`].
+    pub fn builder(config: &CloudConfig) -> AsyncOpenStackBuilder {
+        AsyncOpenStackBuilder::new(config)
     }
 
     /// Create a new OpenStack API session from `CloudConfig`, loading any

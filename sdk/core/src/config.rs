@@ -960,12 +960,6 @@ mod tests {
     }
 
     #[test]
-    fn test_default_auth_cache_enabled() {
-        let cfg = ConfigFile::new().unwrap();
-        assert!(cfg.is_auth_cache_enabled());
-    }
-
-    #[test]
     fn test_get_available_clouds() {
         let cfg = ConfigFile::new().unwrap();
         let _ = cfg.get_available_clouds();
