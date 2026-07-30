@@ -113,11 +113,9 @@ impl App {
         // END GENERATED rust-tui-view app-insert compute.server
         // BEGIN GENERATED rust-tui-view app-insert compute.server/instance_action
         components.insert(
-            Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
-            Box::new(
-                crate::components::compute::server_instance_actions::ComputeServerInstanceActions::new(),
-            ),
-        );
+    Mode::Resource(crate::mode::COMPUTE_SERVER_INSTANCE_ACTION),
+    Box::new(crate::components::compute::server_instance_actions::ComputeServerInstanceActions::new()),
+);
         // END GENERATED rust-tui-view app-insert compute.server/instance_action
         // BEGIN GENERATED rust-tui-view app-insert compute.server/instance_action/event
         components.insert(
@@ -161,11 +159,9 @@ impl App {
 
         // BEGIN GENERATED rust-tui-view app-insert identity.user/application_credential
         components.insert(
-            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
-            Box::new(
-                crate::components::identity::application_credentials::IdentityApplicationCredentials::new(),
-            ),
-        );
+    Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+    Box::new(crate::components::identity::application_credentials::IdentityApplicationCredentials::new()),
+);
         // END GENERATED rust-tui-view app-insert identity.user/application_credential
         // BEGIN GENERATED rust-tui-view app-insert identity.group
         components.insert(

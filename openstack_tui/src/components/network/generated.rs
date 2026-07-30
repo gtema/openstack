@@ -17,6 +17,9 @@
 // once per service, as the anchor new resources' lines get inserted after.
 
 // GENERATED-ANCHOR: resource mods
+// BEGIN GENERATED rust-resource-behaviour mod subnet
+pub(crate) mod subnet;
+// END GENERATED rust-resource-behaviour mod subnet
 // BEGIN GENERATED rust-resource-behaviour mod security_group
 pub(crate) mod security_group;
 // END GENERATED rust-resource-behaviour mod security_group

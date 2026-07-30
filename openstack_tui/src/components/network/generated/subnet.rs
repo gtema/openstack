@@ -19,37 +19,37 @@ use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
+use openstack_types::network::v2::subnet::response::list::SubnetResponse;
 
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Item = SecurityGroupRuleResponse;
-    type Filter = cloud_types::NetworkSecurityGroupRuleList;
+    type Item = SubnetResponse;
+    type Filter = cloud_types::NetworkSubnetList;
 
     fn view_key() -> &'static str {
-        crate::mode::NETWORK_SECURITY_GROUP_RULE
+        crate::mode::NETWORK_SUBNET
     }
     fn title() -> &'static str {
-        "Security Group Rules"
+        "Subnets"
     }
     fn mode() -> Mode {
         Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(cloud_types::NetworkSecurityGroupRuleApiRequest::List(
-            Box::new(filter.clone()),
-        ))
+        ApiRequest::from(cloud_types::NetworkSubnetApiRequest::List(Box::new(
+            filter.clone(),
+        )))
     }
     fn matches_request(request: &ApiRequest) -> bool {
         matches!(
             request,
-            ApiRequest::Network(cloud_types::NetworkApiRequest::SecurityGroupRule(boxreq))
-            if matches!(**boxreq, cloud_types::NetworkSecurityGroupRuleApiRequest::List(_))
+            ApiRequest::Network(cloud_types::NetworkApiRequest::Subnet(boxreq))
+            if matches!(**boxreq, cloud_types::NetworkSubnetApiRequest::List(_))
         )
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetNetworkSecurityGroupRuleListFilters(f) = action {
+        if let Action::SetNetworkSubnetListFilters(f) = action {
             Some(f.clone())
         } else {
             None
