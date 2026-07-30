@@ -115,6 +115,7 @@ impl ResourceBehaviour for ComputeServerInstanceActionEventsBehaviour {
                 return Some(Action::ApiResponsesData {
                     request: request.clone(),
                     data: ar.to_vec(),
+                    negotiated_version: None,
                 });
             }
         }

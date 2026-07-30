@@ -152,7 +152,7 @@ where
         }
 
         // --- ApiResponsesData: only accept if request matches ---
-        if let Action::ApiResponsesData { request, data } = &action {
+        if let Action::ApiResponsesData { request, data, .. } = &action {
             if B::matches_request(request) {
                 self.base.set_data(data.clone())?;
                 return Ok(None);
@@ -354,7 +354,11 @@ mod tests {
         )));
         let data: Vec<Value> = Vec::new();
         let result = comp.update(
-            Action::ApiResponsesData { request, data },
+            Action::ApiResponsesData {
+                request,
+                data,
+                negotiated_version: None,
+            },
             Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
@@ -374,7 +378,11 @@ mod tests {
         )));
         let data: Vec<Value> = Vec::new();
         let result = comp.update(
-            Action::ApiResponsesData { request, data },
+            Action::ApiResponsesData {
+                request,
+                data,
+                negotiated_version: None,
+            },
             Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
@@ -453,7 +461,11 @@ mod tests {
             ComputeServerApiRequest::ListDetailed(Box::default()),
         )));
         comp.update(
-            Action::ApiResponsesData { request, data },
+            Action::ApiResponsesData {
+                request,
+                data,
+                negotiated_version: None,
+            },
             Mode::Resource(crate::mode::COMPUTE_SERVER),
         )
         .unwrap();
@@ -480,7 +492,11 @@ mod tests {
         let (console_data, request) = setup_comp_with_matching_singular_request_and_data();
         let data = vec![console_data];
         let result = comp.update(
-            Action::ApiResponsesData { request, data },
+            Action::ApiResponsesData {
+                request,
+                data,
+                negotiated_version: None,
+            },
             Mode::Resource(crate::mode::COMPUTE_SERVER),
         );
         assert!(result.is_ok());
@@ -543,6 +559,7 @@ mod tests {
             Action::ApiResponsesData {
                 request,
                 data: vec![volume_json],
+                negotiated_version: None,
             },
             Mode::Resource(crate::mode::BLOCK_STORAGE_VOLUME),
         )
@@ -600,6 +617,7 @@ mod tests {
             Action::ApiResponsesData {
                 request,
                 data: vec![flavor_json],
+                negotiated_version: None,
             },
             Mode::Resource(crate::mode::COMPUTE_FLAVOR),
         )

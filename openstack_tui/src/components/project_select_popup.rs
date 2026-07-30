@@ -129,6 +129,7 @@ impl Component for ProjectSelect {
             Action::ApiResponsesData {
                 data,
                 request: ApiRequest::Identity(IdentityApiRequest::Auth(_req)),
+                ..
             } => self.on_data(data.clone())?,
             _ => {}
         }

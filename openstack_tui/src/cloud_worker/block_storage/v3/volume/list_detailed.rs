@@ -123,12 +123,14 @@ impl ExecuteApiRequest for BlockStorageVolumeList {
                 app_tx.send(Action::ApiResponsesData {
                     request: request.clone(),
                     data: items.clone(),
+                    negotiated_version: None,
                 })?;
             }
         }
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
             data: items,
+            negotiated_version: None,
         })?;
         Ok(())
     }

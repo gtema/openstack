@@ -86,6 +86,10 @@ pub enum Action {
     ApiResponsesData {
         request: cloud_types::ApiRequest,
         data: Vec<serde_json::Value>,
+        /// The microversion actually negotiated for the request that produced `data`, when the
+        /// resource's response schema varies by microversion. `None` for unversioned resources,
+        /// or when the worker didn't need to resolve it.
+        negotiated_version: Option<openstack_sdk::types::ApiVersion>,
     },
     /// Open resource(mode) select popup
     ApiRequestSelect,
