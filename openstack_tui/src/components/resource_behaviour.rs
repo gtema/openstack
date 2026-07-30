@@ -43,6 +43,19 @@ pub trait GeneratedResourceBehaviour {
         let _ = action;
         None
     }
+
+    /// Deserialize a list response batch into `Self::Item`, given the negotiated microversion.
+    /// The default ignores `negotiated_version`, correct for resources whose response schema
+    /// does not vary by microversion. Resources with additive microversion-variant response
+    /// schemas get this overridden with generated per-variant dispatch (see
+    /// `codegenerator/rust_response_dispatch.py`).
+    fn deserialize_items(
+        data: &[Value],
+        negotiated_version: Option<ApiVersion>,
+    ) -> serde_json::Result<Vec<Self::Item>> {
+        let _ = negotiated_version;
+        serde_json::from_value(Value::Array(data.to_vec()))
+    }
 }
 
 /// Behaviour specifics for a particular OpenStack resource.
