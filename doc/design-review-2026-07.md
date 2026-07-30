@@ -889,3 +889,322 @@ putting the schema, not the template, into the generated code.
 | 31 | Parameterize `Action`/`Mode` by `ResourceKey`; generated registry | tui | M/L |
 | 32 | Update-flow: writable-field template from update schema + minimal diff body | codegen/tui | M |
 | 33 | Replace `unsafe` popup downcast with `Any` | tui | S |
+
+---
+
+# Part 4: negotiated-version response handling, and a revised `Waitable`/`--wait` design
+
+## 15. Status: response-schema-by-negotiated-version work in progress
+
+Confirmed in the current tree (`cli/compute/src/v2/server/show.rs`): a `find`
+call fetches `serde_json::Value`, and the generated CLI command tries every
+per-microversion `ServerResponse` struct in turn —
+
+```rust
+op.output_single::<response::get_20::ServerResponse>(find_data.clone())
+    .or_else(|_| op.output_single::<response::get_2100_a::ServerResponse>(find_data.clone()))
+    .or_else(|_| op.output_single::<response::get_2100_b::ServerResponse>(find_data.clone()))
+    // ... 17 more variants ...
+    .or_else(|_| op.output_single::<response::get_298_b::ServerResponse>(find_data.clone()))?;
+```
+
+This is a real correctness gap, not just style, for two reasons:
+
+1. **The list order is generation order, not version order or negotiated-version
+   order**, and every field in every generated `*Response` struct is `Option<T>`
+   (spec fields are rarely all-required), so an *earlier, more permissive*
+   struct routinely parses successfully against a *later* microversion's
+   response body. `.or_else` stops at the first success — meaning the CLI can
+   silently pick `get_20::ServerResponse` (fields from 2013) to render a
+   response that is actually shaped like 2.98, dropping every field introduced
+   since. There is no signal to the user that this happened.
+2. **The information needed to pick correctly already exists and is discarded.**
+   `set_latest_microversion` (`sdk/core/src/api/rest_endpoint.rs:98`) sends the
+   client's desired `Openstack-API-Version` *request* header, but the server's
+   response carries back the version it actually used, and nothing captures
+   it — `RestEndpoint::response_headers()` exists precisely for pulling
+   response headers into the deserialized value and is already used elsewhere
+   in the generated code (`sdk/core/src/api/rest_endpoint.rs:76`), it is simply
+   not wired up for the microversion header on operations with versioned
+   response variants.
+
+The direction that fixes both: have codegen emit, per operation, the
+`[min_version, max_version)` bracket each generated `*Response` struct
+actually covers (it already knows this — it's how the module names
+`get_2100_a`/`get_216`/... are chosen), capture the response's negotiated
+`Openstack-API-Version` header via the existing `response_headers()` hook, and
+dispatch by a direct bracket lookup instead of trial-and-error:
+
+```rust
+// generated alongside the response modules
+pub const RESPONSE_VERSIONS: &[(ApiVersion, ApiVersion, fn(Value) -> Result<Box<dyn StructTable>, _>)] = &[
+    (ApiVersion(2, 0),  ApiVersion(2, 10), |v| output::<response::get_20::ServerResponse>(v)),
+    (ApiVersion(2, 10), ApiVersion(2, 16), |v| output::<response::get_2100_a::ServerResponse>(v)),
+    // ...
+];
+
+let negotiated = find_data.get("__openstack_api_version").and_then(ApiVersion::parse);
+let render = RESPONSE_VERSIONS.iter()
+    .find(|(lo, hi, _)| negotiated.map(|v| v >= *lo && v < *hi).unwrap_or(false))
+    .map(|(_, _, f)| f)
+    .unwrap_or_else(|| RESPONSE_VERSIONS.last().unwrap().2); // fall back to newest known
+render(find_data)?;
+```
+
+Falling back to "newest known struct" (rather than "first that happens to
+parse") is also strictly better for the case where a cloud responds with a
+version newer than this SDK build knows about — closer to forward-compat than
+silently regressing to 2013-era output.
+
+This isn't blocking §16/§17 below — the wait mechanism designed there
+deliberately avoids depending on picking the right typed `*Response` struct at
+all, for reasons that follow directly from this finding.
+
+## 16. `Waitable`, revised: no typed `Response` in the loop
+
+Part 2 (§10.2) proposed layering `wait_for_status` on top of a `TypedEndpoint`
+trait with a single `E::Response` associated type. §15 shows why that
+foundation doesn't hold for any operation with more than one response variant:
+there is no single Rust type to associate — which struct is "the" response is
+resolved at *runtime*, from a header, against a set the codegenerator produced
+at *build* time. `TypedEndpoint` (§8.1) is still worth doing for the
+request-shape-in/response-shape-out ergonomics it buys elsewhere, but it
+cannot be the mechanism `wait_for_status` hangs off of.
+
+The fix is to stop needing a typed response for waiting at all. Waiting only
+ever needs one scalar out of the body — the status — and that is something
+codegen can already answer unambiguously, because it has the full versioned
+schema and, per the user's framing, can compute the **JSON Pointer to the
+status attribute in the response schema of any version** the same way it
+already computes the response brackets in §15.
+
+### 16.1 Codegen output: a version→pointer table, not a type
+
+For each operation whose response schema has a `status`-shaped field
+(spec-detectable: property named `status`, or metadata-overlay-declared for
+resources that name it differently — e.g. `vm_state`), emit a small constant
+next to the `Request`/`find` module, keyed by the same version brackets as
+§15:
+
+```rust
+// sdk/compute/src/v2/server/get.rs (generated)
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(ApiVersion, ApiVersion, &str)] = &[
+    (ApiVersion(0, 0), ApiVersion(0, 0), "/server/status"),
+];
+```
+
+In the overwhelming majority of real specs this table collapses to exactly
+one entry — `status` essentially never moves once introduced — so most
+resources pay zero runtime cost: a single pointer, no branching. The table
+shape only earns its keep for the rare resource where the field genuinely
+relocates or gets renamed across the spec's history; codegen detects that at
+generation time by simply comparing pointers across the version-bracketed
+schemas it already has in hand for §15, no new spec analysis required.
+
+Delete/disappearance doesn't need a pointer at all (§10.1's `Observation::Gone`
+already covers it structurally, from the transport layer, independent of body
+shape).
+
+### 16.2 `HasStatusPointer` — a trait over the *endpoint*, not the response
+
+```rust
+pub trait HasStatusPointer {
+    /// Resolve the JSON Pointer to use for the (optionally known) negotiated
+    /// version. Endpoints with a single-entry table ignore the argument.
+    fn status_pointer(negotiated: Option<ApiVersion>) -> &'static str;
+}
+```
+
+implemented once per generated `Request`/`find` endpoint from the
+`STATUS_POINTER` const in §16.1 — trivial boilerplate, no associated type, no
+dependency on which concrete `*Response` struct would have been picked. This
+directly answers "how to implement trait for waiting... considering
+impossibility to attach a response schema to the request type": don't attach
+a schema-shaped *type*; attach a *coordinate into the response the endpoint
+already fetches as `Value`*, which is exactly the representation `wait`
+already operates on in the layer-1 design (§10.1).
+
+### 16.3 `wait_for_status`, revised
+
+```rust
+pub fn wait_for_status<E>(
+    endpoint: E,
+    target: impl IntoIterator<Item = &'static str>,   // e.g. ["ACTIVE"]
+    failures: impl IntoIterator<Item = &'static str>,  // e.g. ["ERROR"]
+) -> Wait<E, impl FnMut(Observation<&Value>) -> WaitDecision>
+where
+    E: RestEndpoint + HasStatusPointer + Clone,
+{
+    let target: Vec<&str> = target.into_iter().collect();
+    let failures: Vec<&str> = failures.into_iter().collect();
+    let negotiated = None; // filled in from §15's captured response header once available per-poll
+    let pointer = E::status_pointer(negotiated);
+    wait(endpoint, move |obs| match obs {
+        Observation::Present(body) => {
+            let status = body.pointer(pointer).and_then(Value::as_str);
+            match status {
+                Some(s) if target.contains(&s) => WaitDecision::Done,
+                Some(s) if failures.contains(&s) => WaitDecision::Fail(s.to_string()),
+                _ => WaitDecision::Continue,
+            }
+        }
+        Observation::Gone => WaitDecision::Fail("resource disappeared".into()),
+    })
+}
+```
+
+usage is unchanged from the Part 2 sketch:
+
+```rust
+wait_for_status(server::get::Request::builder().id(id).build()?, ["ACTIVE"], ["ERROR"])
+    .timeout(Duration::from_secs(600))
+    .query_async(&session)
+    .await?;
+```
+
+Consequences of the revision:
+
+- **No prerequisite on `TypedEndpoint`.** This layer can ship directly on top
+  of layer 1 (§10.1), using the same raw-`Value` fetch path `find`/`get`
+  already use today (§15's own `find_data: serde_json::Value`). Item 15 in the
+  Part 2 table ("§17 after 15/16") is no longer a real dependency —
+  `HasStatusPointer` supersedes the `HasStatus`/typed route for waiting
+  specifically; `TypedEndpoint` remains independently useful for §8.1's
+  original ergonomic argument (typed request building, typed non-waiting
+  consumption) but is now decoupled from this feature.
+- **String targets, not a generated `Status` enum**, deliberately: comparing
+  against `&["ACTIVE"]` sidesteps needing the *correctly-versioned* `Status`
+  enum in the first place (§15's own problem) and sidesteps the
+  non-`#[non_exhaustive]` unknown-variant deserialization failure noted in
+  §10.2/item 18 — a status the SDK doesn't yet know about still compares fine
+  as a string, it just won't match `target`/`failures` and the wait continues
+  or times out rather than erroring. The ergonomic sugar (`server::Status::Active`
+  instead of `"ACTIVE"`) can still be layered back on as a `Display`-based
+  convenience without reintroducing the coupling — `target: impl IntoIterator<Item = impl AsRef<str>>`
+  accepts both a string slice and `Status::Active.as_ref()`.
+- **Negotiated-version-aware pointer selection is opportunistic, not
+  required.** Until §15's response-header capture lands, `status_pointer(None)`
+  degrading to "the endpoint's single/default pointer entry" is correct for
+  the near-totality of resources; once §15 lands, the same call site can pass
+  the actual negotiated version through without changing the trait shape.
+- `failure_detail` (§10.2, e.g. `fault.message`) becomes a second, independent
+  pointer on the same trait (`fn failure_detail_pointer() -> Option<&'static str>`),
+  same reasoning, same mechanism.
+
+### 16.4 Sequencing update
+
+Supersedes §10.4/item 15/17 ordering: `wait`/`wait_deleted` (layer 1) and
+`wait_for_status` via `HasStatusPointer` (revised layer 2) have **no codegen
+prerequisite beyond emitting the `STATUS_POINTER` const**, which is a strictly
+smaller, more mechanical template change than `TypedEndpoint` ever was. Layer
+2 can now ship before, and independently of, `TypedEndpoint`.
+
+## 17. `--wait` on `create`/`delete` CLI commands
+
+With §16 in place, the CLI-visible flag is thin plumbing over
+`wait_for_status`/`wait_deleted`, gated by codegen only emitting it where
+`STATUS_POINTER` metadata exists for the resource:
+
+```rust
+#[derive(Args)]
+struct WaitParameters {
+    /// Wait for the resource to reach its target status (or, for delete, to
+    /// disappear) before returning. Uses server-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait. Only meaningful with `--wait`.
+    #[arg(long, value_parser = humantime::parse_duration, default_value = "10m")]
+    wait_timeout: Duration,
+}
+```
+
+Wiring, `create`:
+
+```rust
+let created: Value = ep.query_async(client).await?;
+op.output_single::<...>(created.clone())?;  // unchanged existing behavior
+if self.wait.wait {
+    let id = created.pointer("/server/id").and_then(Value::as_str)
+        .ok_or(OpenStackCliError::MissingIdForWait)?;
+    let get_ep = server::get::Request::builder().id(id).build()?;
+    wait_for_status(get_ep, target_states_for_this_resource(), failure_states_for_this_resource())
+        .timeout(self.wait.wait_timeout)
+        .progress(|elapsed, status| op.wait_tick(elapsed, status))  // spinner under Human, silent under json/yaml
+        .query_async(client)
+        .await
+        .map_err(OpenStackCliError::Wait)?;
+    // re-fetch and re-render so `--wait` output reflects the final state, not the 202-ish create response
+    let final_state: Value = get_ep.query_async(client).await?;
+    op.output_single::<...>(final_state)?;
+}
+```
+
+Wiring, `delete`:
+
+```rust
+ep.query_async(client).await?;
+if self.wait.wait {
+    wait_deleted(server::get::Request::builder().id(&self.path.id).build()?)
+        .timeout(self.wait.wait_timeout)
+        .query_async(client)
+        .await
+        .map_err(OpenStackCliError::Wait)?;
+}
+```
+
+Design points:
+
+- **Target/failure state lists are per-resource metadata**, not hardcoded —
+  the same overlay mechanism proposed for §10.3/§13.3 prefill
+  (`wait: { ready: [ACTIVE], failed: [ERROR] }` in the codegen metadata for
+  `server`, similarly for `volume: {ready: [available], failed: [error]}`,
+  etc.). This is exactly Part 2's layer 3 (§10.3), now unblocked earlier since
+  it only needs to feed §16's string-based `wait_for_status`, not a typed
+  `HasStatus` impl.
+- **Timeout vs. failure-status are distinguishable errors** on purpose
+  (`OpenStackCliError::Wait` wraps `ApiError::WaitTimeout` / `WaitFailed`
+  distinctly) so scripts and CI can tell "still building, try longer" apart
+  from "actually went to ERROR, don't retry" apart from "vanished
+  unexpectedly on a create wait" — collapsing these to one generic error is
+  the single most common complaint about `--wait` flags in other OpenStack
+  clients.
+- **Re-render after waiting, not just after the initial mutation response.**
+  Create responses are frequently 202-shaped/partial (`server.status` often
+  isn't even `ACTIVE` yet in the create response body by definition); with
+  `--wait`, the useful output is the post-wait `GET`, so the command does one
+  extra fetch when the flag is set. Without `--wait`, behavior is byte-for-byte
+  unchanged from today.
+- **Machine output formats suppress progress**, matching existing
+  `OutputProcessor` conventions (`show_command_hint`, table vs. `output_machine`
+  already branch on `self.target`); only `OutputFor::Human` gets a spinner via
+  the existing tracing/stats plumbing (`RequestTracingCollector`, §CLI timing
+  table) rather than new callback machinery — reuses the `tracing`-event
+  approach from §10.1's "Progress" bullet.
+- **TUI reuse**: the same `wait_for_status`/`wait_deleted` calls are directly
+  usable from `cloud_worker`'s `ExecuteApiRequest` impls for create/delete
+  actions, replacing a manual poll loop the TUI would otherwise have to grow
+  on its own — an optional `Action::CreateAndWait`/progress-in-status-bar
+  variant rather than a blocking flag, since the TUI must stay responsive
+  during the wait (§10.1's "cancellation is free" — dropping the future when
+  the user navigates away applies directly here too).
+- **Scope**: framed for create/delete per the ask; the same flag generalizes
+  to any operation codegen metadata marks as triggering an async transition
+  (`resize`, `reboot`, `migrate`, `shelve`, ...) without new design — it is the
+  same `wait_for_status` call against a different target/failure list, wired
+  from the same per-operation metadata rather than per-resource. Left for a
+  later pass; create/delete cover the two most-asked-for cases (script
+  "provision and use immediately" / "delete and free the quota now").
+
+## 18. Prioritized actions (part 4)
+
+| # | Item | Area | Effort |
+|---|------|------|--------|
+| 34 | Capture negotiated `Openstack-API-Version` response header; dispatch response struct by version bracket instead of `.or_else` trial parse | codegen/cli | M |
+| 35 | Emit `STATUS_POINTER` version→JSON-pointer table per operation | codegen | S |
+| 36 | `HasStatusPointer` trait + revised `wait_for_status` (string-based, no `TypedEndpoint` dependency) | core | S (after 16/35) |
+| 37 | Per-resource `wait: {ready, failed}` metadata overlay (unblocks 36 without waiting on `TypedEndpoint`) | codegen | S |
+| 38 | `--wait`/`--wait-timeout` flags on create/delete, gated by `STATUS_POINTER` presence | codegen/cli | M (after 35–37) |
+| 39 | Distinguish `WaitTimeout`/`WaitFailed`/`WaitResourceVanished` at the CLI error surface | cli | S |
+| 40 | TUI: non-blocking wait usage from `cloud_worker` create/delete handlers, cancel-on-navigate | tui | M |
+| 41 | Re-scope `TypedEndpoint` (§8.1/item 15) as independent of waiting; keep for request/response ergonomics only | codegen/core | — (doc/scope only) |
