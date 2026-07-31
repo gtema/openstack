@@ -212,6 +212,27 @@ where
         /// Cloud's reported maximum microversion, if known.
         cloud_max: Option<String>,
     },
+
+    /// Waiting for a resource to reach a target state timed out.
+    #[error(
+        "timed out after {:?} waiting for the resource to reach the desired state",
+        elapsed
+    )]
+    WaitTimeout {
+        /// How long the wait ran for before timing out.
+        elapsed: std::time::Duration,
+    },
+
+    /// The resource entered a state the caller flagged as a failure while waiting.
+    #[error("resource entered a failure state while waiting: {}", reason)]
+    WaitFailed {
+        /// The reason reported by the caller-supplied predicate.
+        reason: String,
+    },
+
+    /// The resource disappeared (404) while waiting for it to reach a state other than deletion.
+    #[error("resource disappeared while waiting for it to reach the desired state")]
+    WaitResourceVanished,
 }
 
 impl<E> ApiError<E>
@@ -344,6 +365,40 @@ where
             cloud_min,
             cloud_max,
         }
+    }
+
+    /// Whether this error means the resource was not found (HTTP 404, or an already-resolved
+    /// `ResourceNotFound`). Used by [`crate::api::wait`] to treat "disappeared" as a distinct
+    /// outcome rather than a hard error.
+    pub fn is_not_found(&self) -> bool {
+        matches!(
+            self,
+            ApiError::ResourceNotFound
+                | ApiError::OpenStack {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | ApiError::OpenStackService {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | ApiError::OpenStackUnrecognized {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+        )
+    }
+
+    /// Whether this error looks transient (a server-side 5xx) and is worth tolerating a bounded
+    /// number of times mid-wait rather than aborting a long-running poll immediately.
+    pub fn is_transient(&self) -> bool {
+        matches!(
+            self,
+            ApiError::OpenStack { status, .. }
+                | ApiError::OpenStackService { status, .. }
+                | ApiError::OpenStackUnrecognized { status, .. }
+                if status.is_server_error()
+        )
     }
 }
 
