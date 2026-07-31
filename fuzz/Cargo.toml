@@ -13,13 +13,30 @@ autobenches = false
 cargo-fuzz = true
 
 [features]
-fuzzing = ["dep:libfuzzer-sys"]
+fuzzing = [
+  "dep:libfuzzer-sys",
+  "dep:arbitrary",
+  "dep:tempfile",
+  "dep:openstack_sdk_core",
+  "dep:openstack-sdk-auth-core",
+  "openstack_sdk/fuzzing",
+  "openstack_sdk_core/fuzzing",
+  "openstack-sdk-auth-core/fuzzing",
+]
 
 [package.metadata.dist]
 dist = false
 
 [dependencies]
+arbitrary = { version = "1", features = ["derive"], optional = true }
+bytes.workspace = true
+http.workspace = true
 libfuzzer-sys = { version = "0.4", optional = true }
+openstack-sdk-auth-core = { workspace = true, optional = true }
+openstack_sdk_core = { workspace = true, optional = true }
+serde_json.workspace = true
+tempfile = { workspace = true, optional = true }
+url.workspace = true
 
 [dependencies.openstack_sdk]
 path = "../openstack_sdk"
@@ -27,6 +44,86 @@ path = "../openstack_sdk"
 [[bin]]
 name = "fuzz_openstack_sdk_config"
 path = "fuzz_targets/fuzz_openstack_sdk_config.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_openstack_sdk_config_yaml"
+path = "fuzz_targets/fuzz_openstack_sdk_config_yaml.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_link_header"
+path = "fuzz_targets/fuzz_link_header.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_next_page_from_body"
+path = "fuzz_targets/fuzz_next_page_from_body.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_expand_link"
+path = "fuzz_targets/fuzz_expand_link.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_discovery_endpoints"
+path = "fuzz_targets/fuzz_discovery_endpoints.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_api_version"
+path = "fuzz_targets/fuzz_api_version.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_api_error_from_openstack"
+path = "fuzz_targets/fuzz_api_error_from_openstack.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_auth_error_response"
+path = "fuzz_targets/fuzz_auth_error_response.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_build_request_url"
+path = "fuzz_targets/fuzz_build_request_url.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_state_cache"
+path = "fuzz_targets/fuzz_state_cache.rs"
 required-features = ["fuzzing"]
 test = false
 doc = false

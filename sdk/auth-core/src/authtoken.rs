@@ -226,40 +226,9 @@ impl AuthToken {
     pub async fn from_reqwest_response(response: Response) -> Result<Self, AuthError> {
         if !response.status().is_success() {
             let status = response.status();
-            if let StatusCode::UNAUTHORIZED = status
-                && let Some(receipt_header) = response.headers().get("openstack-auth-receipt")
-            {
-                let receipt_token = receipt_header
-                    .to_str()
-                    .map_err(|_| AuthError::AuthReceiptNotString)?
-                    .into();
-
-                let body_text = response.text().await?;
-                if let Ok(mut receipt) = serde_json::from_str::<AuthReceiptResponse>(&body_text) {
-                    receipt.token = Some(receipt_token);
-                    return Err(AuthError::AuthReceipt(Box::new(receipt)));
-                }
-
-                if let Ok(data) = serde_json::from_str::<AuthErrorResponse>(&body_text) {
-                    return Err(AuthError::Identity(data.error));
-                } else {
-                    return Err(AuthError::UnknownAuth {
-                        code: status.into(),
-                        message: Some(body_text),
-                    });
-                }
-            }
-
-            let body = response.text().await?;
-
-            if let Ok(data) = serde_json::from_str::<AuthErrorResponse>(&body) {
-                return Err(AuthError::Identity(data.error));
-            } else {
-                return Err(AuthError::UnknownAuth {
-                    code: status.into(),
-                    message: Some(body),
-                });
-            }
+            let headers = response.headers().clone();
+            let body_text = response.text().await?;
+            return Err(parse_error_response(status, &headers, &body_text));
         }
 
         let token = response
@@ -281,6 +250,58 @@ impl AuthToken {
             auth_info: Some(token_info),
         })
     }
+}
+
+/// Build the [`AuthError`] for a non-success Keystone auth response, given its status,
+/// headers, and already-read body text.
+///
+/// Handles Keystone's several error-response shapes: a multi-factor auth receipt (401 with
+/// an `openstack-auth-receipt` header), a structured identity error body, or an opaque
+/// fallback carrying the raw body text.
+fn parse_error_response(status: StatusCode, headers: &HeaderMap, body_text: &str) -> AuthError {
+    if let StatusCode::UNAUTHORIZED = status
+        && let Some(receipt_header) = headers.get("openstack-auth-receipt")
+    {
+        let receipt_token = match receipt_header.to_str() {
+            Ok(v) => v.into(),
+            Err(_) => return AuthError::AuthReceiptNotString,
+        };
+
+        if let Ok(mut receipt) = serde_json::from_str::<AuthReceiptResponse>(body_text) {
+            receipt.token = Some(receipt_token);
+            return AuthError::AuthReceipt(Box::new(receipt));
+        }
+
+        return if let Ok(data) = serde_json::from_str::<AuthErrorResponse>(body_text) {
+            AuthError::Identity(data.error)
+        } else {
+            AuthError::UnknownAuth {
+                code: status.into(),
+                message: Some(body_text.to_string()),
+            }
+        };
+    }
+
+    if let Ok(data) = serde_json::from_str::<AuthErrorResponse>(body_text) {
+        AuthError::Identity(data.error)
+    } else {
+        AuthError::UnknownAuth {
+            code: status.into(),
+            message: Some(body_text.to_string()),
+        }
+    }
+}
+
+/// Fuzz target entry point for the otherwise private [`parse_error_response`].
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_parse_error_response(
+    status: StatusCode,
+    headers: &HeaderMap,
+    body_text: &str,
+) -> AuthError {
+    parse_error_response(status, headers, body_text)
 }
 
 impl TryFrom<http::Response<bytes::Bytes>> for AuthToken {

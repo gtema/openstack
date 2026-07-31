@@ -427,6 +427,14 @@ impl State {
         }
     }
 
+    /// Fuzz target entry point for the otherwise private [`read_discovery_state_from_file`](Self::read_discovery_state_from_file).
+    ///
+    /// Only compiled with the `fuzzing` feature; not part of the stable public API.
+    #[cfg(feature = "fuzzing")]
+    pub fn fuzz_read_discovery_state_from_file(&self, file: &mut File, path: &PathBuf) {
+        let _ = self.read_discovery_state_from_file(file, path);
+    }
+
     /// Loads the discovery cache with a shared lock (mirrors [`State::load_auth_state`]).
     fn load_discovery_state(&self) -> Option<DiscoveryEntries> {
         let fname = self.get_discovery_state_filename();
@@ -656,6 +664,14 @@ impl State {
                 None
             }
         }
+    }
+
+    /// Fuzz target entry point for the otherwise private [`read_auth_state_from_file`](Self::read_auth_state_from_file).
+    ///
+    /// Only compiled with the `fuzzing` feature; not part of the stable public API.
+    #[cfg(feature = "fuzzing")]
+    pub fn fuzz_read_auth_state_from_file(&self, file: &mut File, path: &PathBuf) {
+        let _ = self.read_auth_state_from_file(file, path);
     }
 
     /// Loads auth state from the cache file with a shared lock.
