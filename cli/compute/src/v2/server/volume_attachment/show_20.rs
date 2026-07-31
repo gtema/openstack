@@ -27,8 +27,12 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::server::volume_attachment::get_20;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::server::volume_attachment::response;
 
 /// Show a detail of a volume attachment.
@@ -99,9 +103,23 @@ impl VolumeAttachmentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
+        let service_endpoint = client
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+
         let data: serde_json::Value = ep.query_async(client).await?;
 
-        op.output_single::<response::get_20::VolumeAttachmentResponse>(data.clone())?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 89)) {
+            op.output_single::<response::get_289::VolumeAttachmentResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 79)) {
+            op.output_single::<response::get_279::VolumeAttachmentResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 70)) {
+            op.output_single::<response::get_270::VolumeAttachmentResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::get_20::VolumeAttachmentResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

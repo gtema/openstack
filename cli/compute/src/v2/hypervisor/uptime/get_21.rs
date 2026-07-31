@@ -28,8 +28,12 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::hypervisor::uptime::get_21;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::hypervisor::uptime::response;
 
 /// Shows the uptime for a given hypervisor.
@@ -91,9 +95,19 @@ impl UptimeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
+        let service_endpoint = client
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+
         let data: serde_json::Value = ep.query_async(client).await?;
 
-        op.output_single::<response::get_21::UptimeResponse>(data.clone())?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 53)) {
+            op.output_single::<response::get_253::UptimeResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::get_21::UptimeResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

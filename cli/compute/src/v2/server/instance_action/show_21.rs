@@ -27,8 +27,12 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::server::instance_action::get_21;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::server::instance_action::response;
 
 /// Shows details for a server action.
@@ -105,9 +109,25 @@ impl InstanceActionCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
+        let service_endpoint = client
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+
         let data: serde_json::Value = ep.query_async(client).await?;
 
-        op.output_single::<response::get_21::InstanceActionResponse>(data.clone())?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 84)) {
+            op.output_single::<response::get_284::InstanceActionResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 62)) {
+            op.output_single::<response::get_262::InstanceActionResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 58)) {
+            op.output_single::<response::get_258::InstanceActionResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 51)) {
+            op.output_single::<response::get_251::InstanceActionResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::get_21::InstanceActionResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

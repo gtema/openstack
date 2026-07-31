@@ -28,10 +28,14 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::quota_set::get_20;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::quota_set::response;
 use tracing::warn;
 
@@ -151,9 +155,21 @@ impl QuotaSetCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
+        let service_endpoint = client
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+
         let data: serde_json::Value = ep.query_async(client).await?;
 
-        op.output_single::<response::get_20::QuotaSetResponse>(data.clone())?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 57)) {
+            op.output_single::<response::get_257::QuotaSetResponse>(data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 36)) {
+            op.output_single::<response::get_236::QuotaSetResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::get_20::QuotaSetResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
