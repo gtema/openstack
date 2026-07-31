@@ -27,6 +27,9 @@ use serde::de::DeserializeOwned;
 
 pub use self::pagination::{Pagination, PaginationError};
 
+#[cfg(feature = "fuzzing")]
+pub use self::next_page::{fuzz_next_page_from_body, fuzz_parse_link_header};
+
 use crate::api::rest_endpoint::set_request_microversion_header;
 use crate::api::{ApiError, RestEndpoint, query};
 

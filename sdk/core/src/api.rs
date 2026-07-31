@@ -487,6 +487,9 @@ pub use self::paged::Pagination;
 pub use self::paged::PaginationError;
 pub use self::paged::paged;
 
+#[cfg(feature = "fuzzing")]
+pub use self::paged::{fuzz_next_page_from_body, fuzz_parse_link_header};
+
 pub use self::find::{Findable, find, find_by_name};
 
 pub use self::params::JsonBodyParams;

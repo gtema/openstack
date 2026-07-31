@@ -21,6 +21,10 @@ sync = ["reqwest/blocking"]
 async = []
 json-schema = ["schemars"]
 interactive = ["openstack-sdk-auth-core/interactive"]
+# Exposes otherwise crate-private parsers as public functions so they can be
+# exercised by fuzz targets in the top-level `fuzz` crate. Not part of the
+# stable public API.
+fuzzing = []
 
 [dependencies]
 arc-swap.workspace = true

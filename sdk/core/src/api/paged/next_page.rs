@@ -53,7 +53,7 @@ impl<'a> LinkHeader<'a> {
                     .next()
                     .ok_or_else(|| LinkHeaderParseError::MalformedLink(part.to_string()))?;
                 let value = if let Some(value) = halves.next() {
-                    if value.starts_with('"') && value.ends_with('"') {
+                    if value.len() >= 2 && value.starts_with('"') && value.ends_with('"') {
                         &value[1..value.len() - 1]
                     } else {
                         value
@@ -236,6 +236,26 @@ pub(crate) fn next_page_from_body(
     Ok(None)
 }
 
+/// Fuzz target entry point for the otherwise private [`LinkHeader::parse`].
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_parse_link_header(s: &str) -> Result<(), LinkHeaderParseError> {
+    LinkHeader::parse(s).map(|_| ())
+}
+
+/// Fuzz target entry point for [`next_page_from_body`].
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_next_page_from_body(
+    content: &Value,
+    response_key: &Option<Cow<'_, str>>,
+    base_endpoint: Url,
+) -> Result<Option<Url>, PaginationError> {
+    next_page_from_body(content, response_key, base_endpoint)
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::json;
@@ -327,6 +347,17 @@ mod tests {
         let link = LinkHeader::parse("<url>").unwrap();
         assert_eq!(link.url, "url");
         assert_eq!(link.params.len(), 0);
+    }
+
+    #[test]
+    fn test_link_header_single_quote_char_param_value() {
+        // Regression test: a value consisting of a single '"' character used
+        // to panic on slice index `value[1..value.len() - 1]` since it
+        // trivially satisfies both `starts_with('"')` and `ends_with('"')`
+        // while being too short to strip a leading and trailing quote from.
+        // Found by the `fuzz_link_header` fuzz target.
+        let link = LinkHeader::parse("<url>; param=\"").unwrap();
+        assert_eq!(link.params[0].1, "\"");
     }
 
     #[test]

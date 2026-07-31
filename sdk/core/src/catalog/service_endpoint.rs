@@ -205,14 +205,14 @@ impl ServiceEndpoint {
                 if work_endpoint == pid_suffix {
                     work_endpoint = ""
                 } else {
-                    work_endpoint =
-                        work_endpoint
-                            .get(pid_suffix.len() + 1..)
-                            .unwrap_or_else(|| {
-                                panic!(
-                                    "project_id suffix '{pid_suffix}' can be stripped from the endpoint '{work_endpoint}'"
-                                )
-                            });
+                    // Strip the pid_suffix prefix and the separating '/' char-wise (rather than
+                    // by byte offset) so this can never panic on a multi-byte UTF-8 boundary. If
+                    // the byte after the prefix is not '/' (unexpected shape), leave the endpoint
+                    // untouched instead of guessing.
+                    work_endpoint = work_endpoint
+                        .strip_prefix(pid_suffix)
+                        .and_then(|rest| rest.strip_prefix('/'))
+                        .unwrap_or(work_endpoint);
                 }
             }
 
@@ -811,5 +811,21 @@ mod tests {
                 "ServiceEndpoint: {service_url} with URL: {endpoint} results in {expected}"
             );
         }
+    }
+
+    #[test]
+    fn test_construct_request_pid_suffix_multibyte_boundary() {
+        // Regression test: when `endpoint` starts with `pid_suffix` but isn't followed by
+        // a '/' (e.g. it's immediately followed by a multi-byte UTF-8 character), the old
+        // byte-offset slice `work_endpoint[pid_suffix.len() + 1..]` could land mid-codepoint
+        // and panic. It must not strip anything in that case.
+        let result = ServiceEndpoint::new(
+            Url::parse("http://foo.bar/v1/a").unwrap(),
+            ApiVersion::new(1, 0),
+        )
+        .set_last_segment_with_project_id(Some("a".to_string()))
+        .build_request_url("aé")
+        .unwrap();
+        assert_eq!("http://foo.bar/v1/a/a%C3%A9", result.as_str());
     }
 }

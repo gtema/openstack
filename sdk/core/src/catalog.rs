@@ -35,6 +35,12 @@ use openstack_sdk_auth_core::types::ServiceEndpoints as ApiServiceEndpoints;
 
 pub use crate::catalog::error::CatalogError;
 pub use crate::catalog::service_endpoint::ServiceEndpoint;
+
+/// Exposed only under the `fuzzing` feature as fuzz target entry points into the otherwise
+/// crate-private version-discovery parsers. Not part of the stable public API.
+#[cfg(feature = "fuzzing")]
+pub use crate::catalog::discovery::{expand_link, extract_discovery_endpoints};
+
 use crate::catalog::{service_authority::ServiceAuthority, service_endpoint::ServiceEndpoints};
 use crate::config::CloudConfig;
 use crate::types::{ServiceType, api_version::ApiVersion};

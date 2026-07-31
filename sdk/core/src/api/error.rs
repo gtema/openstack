@@ -332,6 +332,18 @@ where
         }
     }
 
+    /// Fuzz target entry point for the otherwise crate-private [`from_openstack`](Self::from_openstack).
+    ///
+    /// Only compiled with the `fuzzing` feature; not part of the stable public API.
+    #[cfg(feature = "fuzzing")]
+    pub fn fuzz_from_openstack(
+        uri: Option<Uri>,
+        rsp: &Response<Bytes>,
+        value: serde_json::Value,
+    ) -> Self {
+        Self::from_openstack(uri, rsp, value)
+    }
+
     pub(crate) fn data_type<T>(source: serde_json::Error) -> Self {
         ApiError::DataType {
             source,

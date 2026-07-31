@@ -19,6 +19,8 @@ pub mod auth;
 pub mod config;
 pub mod catalog {
     pub use openstack_sdk_core::catalog::CatalogError;
+    #[cfg(feature = "fuzzing")]
+    pub use openstack_sdk_core::catalog::{expand_link, extract_discovery_endpoints};
 }
 pub mod types;
 
