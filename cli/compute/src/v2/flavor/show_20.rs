@@ -27,9 +27,14 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
+use openstack_sdk::api::Findable;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::flavor::find;
 use openstack_sdk::api::find;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::flavor::response;
 
 /// Shows details for a flavor.
@@ -84,9 +89,29 @@ impl FlavorCommand {
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let find_ep_versioned = find_ep.get_ep::<AsyncOpenStack>()?;
+
+        let service_endpoint = client
+            .get_service_endpoint(
+                &find_ep_versioned.service_type(),
+                find_ep_versioned.api_version().as_ref(),
+            )
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &find_ep_versioned)?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<response::get_20::FlavorResponse>(find_data.clone())?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 102)) {
+            op.output_single::<response::get_2102::FlavorResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 75)) {
+            op.output_single::<response::get_275::FlavorResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 61)) {
+            op.output_single::<response::get_261::FlavorResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 55)) {
+            op.output_single::<response::get_255::FlavorResponse>(find_data.clone())?;
+        } else {
+            op.output_single::<response::get_20::FlavorResponse>(find_data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

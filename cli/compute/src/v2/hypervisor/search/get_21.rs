@@ -30,6 +30,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::hypervisor::search::get_21;
+use openstack_types::compute::v2::hypervisor::search::response;
 
 /// Search hypervisor by a given hypervisor host name or portion of it.
 ///
@@ -88,7 +89,10 @@ impl SearchCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        openstack_sdk::api::ignore(ep).query_async(client).await?;
+
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<response::get_21::SearchResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -129,6 +129,12 @@ impl SimpleTenantUsageCommand {
         op.output_single::<response::get_21_a::SimpleTenantUsageResponse>(data.clone())
             .or_else(|_| {
                 op.output_single::<response::get_21_b::SimpleTenantUsageResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_240_a::SimpleTenantUsageResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_single::<response::get_240_b::SimpleTenantUsageResponse>(data.clone())
             })?;
         // Show command specific hints
         op.show_command_hint()?;

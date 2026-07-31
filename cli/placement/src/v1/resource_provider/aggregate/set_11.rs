@@ -90,6 +90,7 @@ impl AggregateCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
         op.output_list::<response::set::AggregateResponse>(data.clone())?;
         // Show command specific hints
         op.show_command_hint()?;

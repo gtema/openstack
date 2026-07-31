@@ -564,7 +564,60 @@ impl ServersCommand {
             .query_async(client)
             .await?;
 
-        op.output_list::<response::list_detailed_21::ServerResponse>(data.clone())?;
+        op.output_list::<response::list_detailed_21::ServerResponse>(data.clone())
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_2100_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_2100_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_216::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_219::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_226::ServerResponse>(data.clone())
+            })
+            .or_else(|_| op.output_list::<response::list_detailed_23::ServerResponse>(data.clone()))
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_247::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_263::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_269_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_269_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_273_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_273_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| op.output_list::<response::list_detailed_29::ServerResponse>(data.clone()))
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_290_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_290_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_296_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_296_b::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_298_a::ServerResponse>(data.clone())
+            })
+            .or_else(|_| {
+                op.output_list::<response::list_detailed_298_b::ServerResponse>(data.clone())
+            })?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
