@@ -456,6 +456,7 @@ mod params;
 pub mod query;
 mod raw;
 pub mod rest_endpoint;
+mod wait;
 
 pub use self::error::ApiError;
 pub use self::error::BodyError;
@@ -500,3 +501,6 @@ pub use self::raw::Raw;
 pub use self::raw::download;
 pub use self::raw::raw;
 pub use self::raw::raw_with_body;
+pub use self::wait::{
+    Backoff, Observation, Wait, WaitDecision, WaitOutcome, wait, wait_deleted, wait_for_status,
+};
