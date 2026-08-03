@@ -93,7 +93,7 @@ openstack_sdk_core = { version = "0.22.7", path = "sdk/core" }
 openstack_sdk = { version = "0.22.7", path = "openstack_sdk" }
 openstack_types = { version = "0.22.7", path = "openstack_types" }
 openstack-types-core = { version = "0.22", path = "types/core" }
-pem = { version = "^3.0" }
+pem = { version = "^4.0.0" }
 regex = { version = "^1.13" }
 rsa = { version = "^0.9", features = ["getrandom", "pkcs5"] }
 ssh-key = { version = "^0.6", features = ["rsa", "encryption"] }
