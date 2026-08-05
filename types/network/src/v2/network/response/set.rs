@@ -62,11 +62,15 @@ pub struct NetworkResponse {
     pub id: Option<String>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
+    /// This value is `null` if the network is not associated with any IPv4
+    /// address scope.
     #[serde(default)]
     #[structable(optional)]
     pub ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
+    /// This value is `null` if the network is not associated with any IPv6
+    /// address scope.
     #[serde(default)]
     #[structable(optional)]
     pub ipv6_address_scope: Option<String>,

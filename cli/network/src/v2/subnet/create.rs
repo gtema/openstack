@@ -174,13 +174,13 @@ struct Subnet {
     ip_version: i32,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
+    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     #[arg(help_heading = "Body parameters", long)]
     ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
-    /// `dhcpv6-stateful`, `dhcpv6-stateless`.
+    /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     #[arg(help_heading = "Body parameters", long)]
     ipv6_ra_mode: Option<Ipv6RaMode>,
 

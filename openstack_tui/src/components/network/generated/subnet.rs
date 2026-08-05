@@ -17,14 +17,49 @@
 use crate::action::Action;
 use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
+use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::network::v2::subnet::response::list::SubnetResponse;
+
+static COLUMNS: &[ColumnSpec] = &[
+    ColumnSpec {
+        title: "id",
+        pointer: "/id",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "name",
+        pointer: "/name",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "cidr",
+        pointer: "/cidr",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "description",
+        pointer: "/description",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "created_at",
+        pointer: "/created_at",
+        wide: false,
+        status: false,
+    },
+];
+
+impl_dynamic_item!(SubnetItem, crate::mode::NETWORK_SUBNET, COLUMNS);
 
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Item = SubnetResponse;
+    type Item = SubnetItem;
     type Filter = cloud_types::NetworkSubnetList;
 
     fn view_key() -> &'static str {

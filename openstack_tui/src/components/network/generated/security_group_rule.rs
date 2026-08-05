@@ -17,14 +17,65 @@
 use crate::action::Action;
 use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
+use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
+
+static COLUMNS: &[ColumnSpec] = &[
+    ColumnSpec {
+        title: "id",
+        pointer: "/id",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "ethertype",
+        pointer: "/ethertype",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "direction",
+        pointer: "/direction",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "protocol",
+        pointer: "/protocol",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "port_range_min",
+        pointer: "/port_range_min",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "port_range_max",
+        pointer: "/port_range_max",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "description",
+        pointer: "/description",
+        wide: false,
+        status: false,
+    },
+];
+
+impl_dynamic_item!(
+    SecurityGroupRuleItem,
+    crate::mode::NETWORK_SECURITY_GROUP_RULE,
+    COLUMNS
+);
 
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Item = SecurityGroupRuleResponse;
+    type Item = SecurityGroupRuleItem;
     type Filter = cloud_types::NetworkSecurityGroupRuleList;
 
     fn view_key() -> &'static str {
