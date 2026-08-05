@@ -481,8 +481,7 @@ mod tests {
     }
 
     fn setup_comp_with_matching_singular_request_and_data() -> (Value, ApiRequest) {
-        let server: openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse =
-            serde_json::from_value(make_server_json()).unwrap();
+        let server = crate::components::compute::servers::ServerItem(make_server_json());
         let (_display_actions, request) =
             crate::components::compute::servers::ComputeServersBehaviour::action_to_singular_request(
                 &Action::ShowServerConsoleOutput,

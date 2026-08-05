@@ -18,20 +18,67 @@ use crate::cloud_worker::compute::v2::{
     ComputeServerInstanceActionListBuilder, ComputeServerList,
 };
 use crate::cloud_worker::types::{ApiRequest, ComputeApiRequest};
+use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse;
+
+const VIEW_CONFIG_KEY: &str = "compute.server";
+
+// Server's `OS-EXT-SRV-ATTR:hostname` field changed from absent/`Option<String>` to a required
+// `String` at microversion 2.90 (bucket `_a`) -- no single `openstack_types` struct correctly
+// represents every microversion, so `Item` reads columns out of the raw response by JSON pointer
+// instead of deserializing into a versioned struct.
+static SERVER_COLUMNS: &[ColumnSpec] = &[
+    ColumnSpec {
+        title: "ID",
+        pointer: "/id",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Name",
+        pointer: "/name",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Status",
+        pointer: "/status",
+        wide: false,
+        status: true,
+    },
+    ColumnSpec {
+        title: "Task State",
+        pointer: "/OS-EXT-STS:task_state",
+        wide: true,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Power State",
+        pointer: "/OS-EXT-STS:power_state",
+        wide: true,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Availability Zone",
+        pointer: "/OS-EXT-AZ:availability_zone",
+        wide: true,
+        status: false,
+    },
+];
+
+impl_dynamic_item!(ServerItem, VIEW_CONFIG_KEY, SERVER_COLUMNS);
 
 /// Behaviour implementation for ComputeServers.
 pub struct ComputeServersBehaviour;
 
 impl ResourceBehaviour for ComputeServersBehaviour {
-    type Item = ServerResponse;
+    type Item = ServerItem;
     type Filter = ComputeServerList;
 
     fn view_key() -> &'static str {
-        "compute.server"
+        VIEW_CONFIG_KEY
     }
     fn title() -> &'static str {
         "Compute Servers"
@@ -74,9 +121,9 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         {
             let sel = selected?;
             let mut del_builder = ComputeServerDeleteBuilder::default();
-            del_builder.id(sel.id.clone());
-            if let Some(name) = &sel.name {
-                del_builder.name(name.clone());
+            del_builder.id(sel.get_str("/id")?);
+            if let Some(name) = sel.get_str("/name") {
+                del_builder.name(name);
             }
             let del = del_builder.build().ok()?;
             Some(ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
@@ -91,7 +138,7 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         selected: Option<&Self::Item>,
     ) -> Option<(Vec<Action>, ApiRequest)> {
         if let Action::ShowServerConsoleOutput = action {
-            let server_id = selected?.id.clone();
+            let server_id = selected?.get_str("/id")?;
             let req = ComputeServerApiRequest::GetConsoleOutput(Box::new(
                 ComputeServerGetConsoleOutputBuilder::default()
                     .id(server_id)
@@ -141,11 +188,12 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::COMPUTE_SERVER_INSTANCE_ACTION
             && let Some(sel) = selected
+            && let Some(server_id) = sel.get_str("/id")
         {
             let mut list_builder = ComputeServerInstanceActionListBuilder::default();
-            list_builder.server_id(sel.id.clone());
-            if let Some(name) = &sel.name {
-                list_builder.server_name(name.clone());
+            list_builder.server_id(server_id);
+            if let Some(name) = sel.get_str("/name") {
+                list_builder.server_name(name);
             }
             if let Ok(list) = list_builder.build() {
                 return vec![
@@ -169,10 +217,9 @@ mod tests {
     use super::*;
     use crate::cloud_worker::compute::v2::ComputeServerDelete;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::compute::v2::server::response::list_detailed_21::ServerResponse;
 
-    fn make_server(id: &str, name: &str) -> ServerResponse {
-        serde_json::from_value(serde_json::json!({
+    fn make_server(id: &str, name: &str) -> ServerItem {
+        ServerItem(serde_json::json!({
             "id": id,
             "name": name,
             "status": "ACTIVE",
@@ -195,7 +242,6 @@ mod tests {
             "key_name": null,
             "security_groups": []
         }))
-        .unwrap()
     }
 
     #[test]

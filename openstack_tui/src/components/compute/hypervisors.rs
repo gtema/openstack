@@ -16,20 +16,72 @@ use crate::cloud_worker::compute::v2::{
     ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
 };
 use crate::cloud_worker::types::ApiRequest;
+use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::compute::v2::hypervisor::response::list_detailed_253::HypervisorResponse;
+
+const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
+
+// Hypervisor's `id` field changed type (i32 -> String) at microversion 2.53 -- no single
+// `openstack_types` struct correctly represents every microversion, so `Item` reads columns out
+// of the raw response by JSON pointer instead of deserializing into a versioned struct.
+static HYPERVISOR_COLUMNS: &[ColumnSpec] = &[
+    ColumnSpec {
+        title: "ID",
+        pointer: "/id",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Hostname",
+        pointer: "/hypervisor_hostname",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Type",
+        pointer: "/hypervisor_type",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "State",
+        pointer: "/state",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Status",
+        pointer: "/status",
+        wide: false,
+        status: true,
+    },
+    ColumnSpec {
+        title: "VCPUs",
+        pointer: "/vcpus",
+        wide: true,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Memory MB",
+        pointer: "/memory_mb",
+        wide: true,
+        status: false,
+    },
+];
+
+impl_dynamic_item!(HypervisorItem, VIEW_CONFIG_KEY, HYPERVISOR_COLUMNS);
 
 /// Behaviour implementation for ComputeHypervisors.
 pub struct ComputeHypervisorsBehaviour;
 
 impl ResourceBehaviour for ComputeHypervisorsBehaviour {
-    type Item = HypervisorResponse;
+    type Item = HypervisorItem;
     type Filter = ComputeHypervisorList;
 
     fn view_key() -> &'static str {
-        "compute.hypervisor"
+        VIEW_CONFIG_KEY
     }
     fn title() -> &'static str {
         "Compute Hypervisors"
