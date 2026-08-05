@@ -194,6 +194,12 @@ pub struct ViewConfig {
     /// Limit fields (their titles) to be returned
     #[serde(default)]
     pub default_fields: Vec<String>,
+    /// Extra fields (their titles) only shown in wide mode, on top of `default_fields`
+    #[serde(default)]
+    pub wide_fields: Vec<String>,
+    /// Field (its title) backing row-status coloring, if any
+    #[serde(default)]
+    pub status_field: Option<String>,
     /// Fields configurations
     #[serde(default)]
     pub fields: Vec<FieldConfig>,
@@ -281,10 +287,18 @@ impl StructTableOptions for ViewConfig {
         true
     }
 
-    fn should_return_field<S: AsRef<str>>(&self, field: S, _is_wide_field: bool) -> bool {
-        self.default_fields
+    fn should_return_field<S: AsRef<str>>(&self, field: S, is_wide_field: bool) -> bool {
+        let field = field.as_ref().to_lowercase();
+        if self
+            .default_fields
             .iter()
-            .any(|x| x.to_lowercase() == field.as_ref().to_lowercase())
+            .any(|x| x.to_lowercase() == field)
+        {
+            return true;
+        }
+        is_wide_field
+            && self.wide_mode()
+            && self.wide_fields.iter().any(|x| x.to_lowercase() == field)
     }
 
     fn field_data_json_pointer<S: AsRef<str>>(&self, field: S) -> Option<String> {
@@ -1037,5 +1051,60 @@ mod tests {
                 .contains_key(&Mode::Resource(crate::mode::LB_HEALTHMONITOR)),
             "Resource(load-balancer.healthmonitor) keybindings must be present"
         );
+    }
+
+    #[test]
+    fn should_return_field_default_field_always_shown() {
+        let view = ViewConfig {
+            default_fields: vec!["id".into()],
+            ..Default::default()
+        };
+        assert!(view.should_return_field("id", false));
+        assert!(view.should_return_field("ID", false));
+    }
+
+    #[test]
+    fn should_return_field_wide_field_hidden_without_wide_mode() {
+        let view = ViewConfig {
+            default_fields: vec!["id".into()],
+            wide_fields: vec!["swap".into()],
+            wide: Some(false),
+            ..Default::default()
+        };
+        assert!(!view.should_return_field("swap", true));
+    }
+
+    #[test]
+    fn should_return_field_wide_field_shown_in_wide_mode() {
+        let view = ViewConfig {
+            default_fields: vec!["id".into()],
+            wide_fields: vec!["swap".into()],
+            wide: Some(true),
+            ..Default::default()
+        };
+        assert!(view.should_return_field("swap", true));
+    }
+
+    #[test]
+    fn should_return_field_unlisted_field_never_shown() {
+        let view = ViewConfig {
+            default_fields: vec!["id".into()],
+            wide: Some(true),
+            ..Default::default()
+        };
+        assert!(!view.should_return_field("unknown", false));
+        assert!(!view.should_return_field("unknown", true));
+    }
+
+    #[test]
+    fn should_return_field_no_wide_fields_configured_no_regression() {
+        // Resources with no `wide_fields` entry keep today's behavior: a compile-time
+        // `#[structable(wide)]` field is never shown via this options impl, wide mode or not.
+        let view = ViewConfig {
+            default_fields: vec!["id".into()],
+            wide: Some(true),
+            ..Default::default()
+        };
+        assert!(!view.should_return_field("some_wide_struct_field", true));
     }
 }

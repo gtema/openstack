@@ -30,6 +30,7 @@ pub mod compute;
 pub mod confirm_popup;
 pub mod describe;
 pub mod dns;
+pub mod dynamic_item;
 pub mod error_popup;
 pub mod generic_resource_view;
 pub mod header;

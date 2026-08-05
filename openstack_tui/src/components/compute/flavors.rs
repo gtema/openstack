@@ -12,33 +12,69 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use openstack_types::compute::v2::flavor::response::list_detailed_255::FlavorResponse;
-
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
         ComputeApiRequest, ComputeFlavorApiRequest, ComputeFlavorList, ComputeServerListBuilder,
     },
     cloud_worker::types::ApiRequest,
+    components::dynamic_item::{ColumnSpec, impl_dynamic_item},
     components::generic_resource_view::GenericResourceView,
     components::resource_behaviour::{Mutation, ResourceBehaviour},
     mode::Mode,
-    utils::ResourceKey,
 };
 
 const TITLE: &str = "Compute Flavors";
 const VIEW_CONFIG_KEY: &str = "compute.flavor";
 
-impl ResourceKey for FlavorResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
+// Flavor's `swap` field changed type (i64 -> i32) at microversion 2.102 -- no single
+// `openstack_types` struct correctly represents every microversion, so `Item` reads columns out
+// of the raw response by JSON pointer instead of deserializing into a versioned struct.
+static FLAVOR_COLUMNS: &[ColumnSpec] = &[
+    ColumnSpec {
+        title: "ID",
+        pointer: "/id",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Name",
+        pointer: "/name",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "RAM",
+        pointer: "/ram",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "VCPUs",
+        pointer: "/vcpus",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Disk",
+        pointer: "/disk",
+        wide: false,
+        status: false,
+    },
+    ColumnSpec {
+        title: "Swap",
+        pointer: "/swap",
+        wide: true,
+        status: false,
+    },
+];
+
+impl_dynamic_item!(FlavorItem, VIEW_CONFIG_KEY, FLAVOR_COLUMNS);
 
 pub struct ComputeFlavorsBehaviour;
 
 impl ResourceBehaviour for ComputeFlavorsBehaviour {
-    type Item = FlavorResponse;
+    type Item = FlavorItem;
     type Filter = ComputeFlavorList;
 
     fn view_key() -> &'static str {
@@ -84,8 +120,9 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::COMPUTE_SERVER
             && let Some(sel) = selected
+            && let Some(flavor_id) = sel.get_str("/id")
             && let Ok(server_list) = ComputeServerListBuilder::default()
-                .flavor(sel.id.clone())
+                .flavor(flavor_id)
                 .build()
         {
             return vec![
@@ -115,9 +152,8 @@ mod tests {
     use super::*;
     use crate::cloud_worker::compute::v2::ComputeServerApiRequest;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::compute::v2::flavor::response::list_detailed_255::FlavorResponse;
 
-    fn make_flavor(id: &str) -> FlavorResponse {
+    fn make_flavor(id: &str) -> FlavorItem {
         let json = serde_json::json!({
             "id": id,
             "name": "test",
@@ -131,7 +167,7 @@ mod tests {
             "metadata": {},
             "os-flavor-access:is_public": true,
         });
-        serde_json::from_value(json).unwrap()
+        FlavorItem(json)
     }
 
     #[test]

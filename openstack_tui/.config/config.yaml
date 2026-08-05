@@ -371,14 +371,19 @@ views:
     default_fields: [name, uuid, az, updated_at]
   compute.flavor:
     default_fields: [id, name, vcpus, ram, disk, swap]
+    wide_fields: [swap]
   compute.hypervisor:
     default_fields: [ip, hostname, status, state]
+    wide_fields: [vcpus, "memory mb"]
+    status_field: status
   compute.server/instance_action/event:
     default_fields: [event, result, start_time, finish_time, host]
   compute.server/instance_action:
     default_fields: [id, action, message, start_time, user_id]
   compute.server:
     default_fields: [id, name, flavor, status, created, updated]
+    wide_fields: ["task state", "power state", "availability zone"]
+    status_field: status
     fields:
       - name: flavor
         json_pointer: "/original_name"
@@ -399,6 +404,8 @@ views:
   # image
   image.image:
     default_fields: [id, name, distro, version, visibility, min_disk, min_ram]
+    wide_fields: ["disk format", "container format"]
+    status_field: status
   # load balancer
   load-balancer.healthmonitor:
     default_fields: [id, name, status, type]
