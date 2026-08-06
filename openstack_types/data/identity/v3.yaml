@@ -7112,6 +7112,32 @@ paths:
         - users
     parameters:
       - $ref: '#/components/parameters/users_projects_user_id'
+  /v3/users/{user_id}/tokens:
+    delete:
+      description: |-
+        Revoke all tokens for a user.
+
+        DELETE /v3/users/{user_id}/tokens
+
+        Revokes every token issued for the given user by creating a
+        revocation event scoped to user_id. This is the self-service
+        remedy for users who cannot change their password (LDAP,
+        federated, OIDC) and need to invalidate all active sessions.
+
+        Users may revoke their own tokens. Admins may revoke tokens for
+        any user.
+      operationId: users/user_id/tokens:delete
+      responses:
+        '204':
+          description: Ok
+        '403':
+          description: Error
+        '404':
+          description: Error
+      tags:
+        - users
+    parameters:
+      - $ref: '#/components/parameters/users_tokens_user_id'
 components:
   headers:
     Openstack-Auth-Receipt:
@@ -8766,6 +8792,16 @@ components:
       schema:
         description: Sorts resources by attribute.
         type: string
+    users_tokens_user_id:
+      description: |-
+        user_id parameter for /v3/users/{user_id}/tokens API
+      in: path
+      name: user_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/user.id
     users_unique_id:
       description: Filters the response by a unique ID.
       in: query

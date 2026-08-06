@@ -238,7 +238,8 @@ pub struct PortResponse {
     /// (generated from the `vnic_type` and the `physnet`) required by the
     /// port, and a `resources` key contains a mapping of requested resource
     /// class name and requested amount from the QoS policy. `same_subtree` key
-    /// contains a list of `id` values from every resource group.
+    /// contains a list of `id` values from every resource group. This value is
+    /// `null` if the port does not request any Placement resources.
     #[serde(default)]
     #[structable(optional, wide)]
     pub resource_request: Option<String>,

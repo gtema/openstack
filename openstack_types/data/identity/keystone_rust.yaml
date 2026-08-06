@@ -851,6 +851,155 @@ paths:
                 $ref: '#/components/schemas/GroupResponse'
         '404':
           description: Group not found
+  /v3/policies:
+    get:
+      tags:
+      - policies
+      summary: List policies.
+      description: List policies
+      operationId: list
+      parameters:
+      - name: type
+        in: query
+        description: |-
+          Filters the response by a MIME media type for the serialized policy
+          blob. For example, `application/json`. Exact match.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - policies
+      summary: Create a new policy.
+      description: |-
+        Any caller-supplied `id` in the body is discarded and a fresh UUID
+        assigned, matching python keystone's `_assign_unique_id`.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Policy created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyResponse'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal error
+  /v3/policies/{policy_id}:
+    get:
+      tags:
+      - policies
+      summary: Get a single policy.
+      description: Get policy by ID
+      operationId: show
+      parameters:
+      - name: policy_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Policy object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyResponse'
+        '404':
+          description: Policy not found
+    delete:
+      tags:
+      - policies
+      summary: Delete a policy.
+      description: Delete policy by ID
+      operationId: delete
+      parameters:
+      - name: policy_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Policy deleted
+        '404':
+          description: Policy not found
+    patch:
+      tags:
+      - policies
+      summary: Update an existing policy.
+      description: Update policy by ID
+      operationId: update
+      parameters:
+      - name: policy_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Updated policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyResponse'
+        '400':
+          description: Invalid input
+        '404':
+          description: Policy not found
   /v3/projects:
     get:
       tags:
@@ -2144,6 +2293,107 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '404':
           description: User not found
+  /v3/users/{user_id}/application_credentials:
+    get:
+      tags:
+      - application_credentials
+      operationId: list
+      parameters:
+      - name: name
+        in: query
+        description: |-
+          Optional name filter. When set, only application credentials whose
+          name matches this value are returned.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of application credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationCredentialList'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+    post:
+      tags:
+      - application_credentials
+      summary: Create application credential.
+      description: POST /v3/users/{user_id}/application_credentials
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCredentialCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Application credential created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationCredentialCreateResponse'
+        '400':
+          description: Bad request — validation error or role not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+        '409':
+          description: Conflict — application credential already exists
+  /v3/users/{user_id}/application_credentials/{application_credential_id}:
+    get:
+      tags:
+      - application_credentials
+      operationId: show
+      parameters:
+      - name: application_credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Single application credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationCredentialResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Application credential or user not found
+    delete:
+      tags:
+      - application_credentials
+      operationId: delete
+      parameters:
+      - name: application_credential_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Application credential deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Application credential or user not found
   /v3/users/{user_id}/credentials/OS-EC2:
     get:
       tags:
@@ -5242,6 +5492,14 @@ paths:
           type:
           - string
           - 'null'
+      - name: type
+        in: query
+        description: Filter users by type (`local`, `federated`, `nonlocal`, `all`).
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/UserType'
       - name: limit
         in: query
         description: Limit number of entries on the single response page.
@@ -5530,6 +5788,90 @@ paths:
       - x-auth: []
 components:
   schemas:
+    AccessRule:
+      type: object
+      description: |-
+        Short access rule representation.
+
+        Access rules are fine-grained permissions attached to application
+        credentials. Each rule constrains the credential to a specific service
+        type, HTTP method, and API path. Once created, an access rule can be
+        viewed and deleted independently of the application credential.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: |-
+            Unique identifier of the access rule. This ID can be used to reuse an
+            existing access rule when creating a new application credential.
+        method:
+          type:
+          - string
+          - 'null'
+          description: |-
+            HTTP method that this access rule permits (e.g., `GET`, `POST`, `PUT`,
+            `DELETE`, `PATCH`).
+        path:
+          type:
+          - string
+          - 'null'
+          description: |-
+            API path pattern that this access rule permits. Supports wildcard
+            syntax: `*` matches a single path segment, `**` matches any number
+            of segments recursively, and `{variable}` matches a named path
+            parameter. For example, `/v2.1/servers/*/ips` or `/v2.1/**`.
+        service:
+          type:
+          - string
+          - 'null'
+          description: |-
+            OpenStack service type that this access rule applies to
+            (e.g., `compute`, `monitoring`, `identity`). Matched against the
+            service catalog.
+    AccessRuleCreate:
+      type: object
+      description: |-
+        Access rule for creation (id is optional).
+
+        When creating an application credential, access rules can either be
+        defined inline (with `method`, `path`, and `service`) or reference an
+        existing rule by its `id`. All fields are optional so that both creation
+        patterns are supported.
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Optional identifier of an existing access rule to reuse. When
+            provided, the other fields (`method`, `path`, `service`) are ignored
+            and the referenced rule is attached to the new application credential.
+        method:
+          type:
+          - string
+          - 'null'
+          description: |-
+            HTTP method that this access rule permits (e.g., `GET`, `POST`, `PUT`,
+            `DELETE`, `PATCH`). Required when creating a new rule inline (i.e.,
+            without specifying `id`).
+        path:
+          type:
+          - string
+          - 'null'
+          description: |-
+            API path pattern that this access rule permits. Supports wildcard
+            syntax: `*` matches a single path segment, `**` matches any number
+            of segments recursively, and `{variable}` matches a named path
+            parameter. Required when creating a new rule inline.
+        service:
+          type:
+          - string
+          - 'null'
+          description: |-
+            OpenStack service type that this access rule applies to
+            (e.g., `compute`, `monitoring`, `identity`). Matched against the
+            service catalog. Required when creating a new rule inline.
     AllowCredentials:
       type: object
       description: A descriptor of a credential that can be used.
@@ -5804,6 +6146,219 @@ components:
         api_key:
           $ref: '#/components/schemas/ApiKeyUpdate'
           description: API Key update payload.
+    ApplicationCredential:
+      type: object
+      description: Full application credential representation.
+      required:
+      - id
+      - name
+      - project_id
+      - roles
+      - unrestricted
+      properties:
+        access_rules:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          description: |-
+            Optional list of access rules that restrict which API requests this
+            credential is permitted to make. Each rule specifies a service, HTTP
+            method, and URL path.
+        description:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Optional human-readable description of the application credential's
+            purpose.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            Optional expiration date and time for the application credential. After
+            this timestamp the credential is no longer valid. When `None`, the
+            credential does not expire.
+        id:
+          type: string
+          description: Unique identifier of the application credential.
+        name:
+          type: string
+          description: |-
+            User-provided name of the application credential. Must be unique within
+            the owning user's set of application credentials.
+        project_id:
+          type: string
+          description: Identifier of the project that the application credential is scoped to.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleRef'
+          description: |-
+            List of roles delegated to this application credential. These must be a
+            subset of the roles the owning user holds on the target project.
+        unrestricted:
+          type: boolean
+          description: |-
+            Whether this application credential has unrestricted access. When
+            `false` (the default), the credential cannot be used to create
+            additional application credentials or trusts.
+    ApplicationCredentialCreate:
+      type: object
+      description: Data for creating an application credential.
+      required:
+      - name
+      - roles
+      properties:
+        access_rules:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AccessRuleCreate'
+          description: |-
+            Optional list of access rules to restrict which API requests the new
+            credential is allowed to make.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Optional human-readable description of the application credential.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            Optional expiration date and time. When `None`, the credential does not
+            expire.
+        name:
+          type: string
+          description: |-
+            Name of the application credential. Must be unique among the owning
+            user's application credentials.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleRef'
+          description: |-
+            Roles to delegate to the new credential. Must be a subset of the
+            user's roles on the project. Defaults to all of the user's roles on the
+            project when empty.
+        secret:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Optional secret to use for the new credential. If not provided, a
+            random secret will be generated.
+        unrestricted:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            Whether to allow unrestricted access. When `true`, the credential can
+            create additional application credentials or trusts, which is
+            potentially dangerous. Defaults to `false`.
+    ApplicationCredentialCreateRequest:
+      type: object
+      description: Wrapper for a create request body.
+      required:
+      - application_credential
+      properties:
+        application_credential:
+          $ref: '#/components/schemas/ApplicationCredentialCreate'
+          description: The application credential creation payload.
+    ApplicationCredentialCreateResponse:
+      type: object
+      description: Wrapper for create response body.
+      required:
+      - application_credential
+      properties:
+        application_credential:
+          $ref: '#/components/schemas/ApplicationCredentialCreated'
+          description: |-
+            The newly created application credential, including the one-time
+            secret.
+    ApplicationCredentialCreated:
+      type: object
+      description: |-
+        Application credential as returned by create — includes secret (shown once
+        only).
+      required:
+      - id
+      - name
+      - project_id
+      - roles
+      - secret
+      - unrestricted
+      properties:
+        access_rules:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          description: Optional list of access rules associated with the credential.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Optional human-readable description of the application credential.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: |-
+            Optional expiration date and time. `None` means the credential does not
+            expire.
+        id:
+          type: string
+          description: Unique identifier of the newly created application credential.
+        name:
+          type: string
+          description: Name of the application credential.
+        project_id:
+          type: string
+          description: Identifier of the project the credential is scoped to.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleRef'
+          description: List of roles delegated to this application credential.
+        secret:
+          type: string
+          description: |-
+            The secret used for authentication. The secret is hashed before storage,
+            so this is the only time it is returned in plaintext. If lost, a new
+            application credential must be created.
+        unrestricted:
+          type: boolean
+          description: Whether this credential has unrestricted access.
+    ApplicationCredentialList:
+      type: object
+      description: List of application credentials.
+      required:
+      - application_credentials
+      properties:
+        application_credentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationCredential'
+          description: Collection of application credentials belonging to the user.
+    ApplicationCredentialResponse:
+      type: object
+      description: Wrapper for a single application credential response.
+      required:
+      - application_credential
+      properties:
+        application_credential:
+          $ref: '#/components/schemas/ApplicationCredential'
+          description: The application credential object.
     Assignment:
       type: object
       description: Assignment.
@@ -8331,6 +8886,140 @@ components:
         user_id:
           type: string
           description: The ID of the user that is authenticating.
+    Policy:
+      type: object
+      description: The policy data.
+      required:
+      - id
+      - type
+      - blob
+      properties:
+        blob:
+          description: |-
+            The policy rule set itself, as a serialized blob.
+
+            Any JSON value: normally the string the caller supplied on create, but
+            an object for rows written by older python keystone releases. No
+            `value_type` override here on purpose — `serde_json::Value`'s native
+            utoipa mapping is an unconstrained `AnyValue`, whereas `Object` would
+            document `type: object` and make a generated client reject the ordinary
+            string case.
+        id:
+          type: string
+          description: Policy ID.
+        type:
+          type: string
+          description: The MIME media type of the serialized policy blob.
+      additionalProperties: {}
+    PolicyCreate:
+      type: object
+      description: Policy create request body.
+      required:
+      - type
+      - blob
+      properties:
+        blob:
+          type: string
+          description: |-
+            The policy rule set itself, as a serialized blob. Required, and a
+            string only — see the module docs.
+        id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Ignored: a caller-supplied `id` on create is discarded and a fresh
+            UUID assigned, matching python keystone's `_assign_unique_id`.
+
+            Declared explicitly (rather than left to `extra`'s `#[serde(flatten)]`)
+            so it is *consumed* here instead of being silently persisted as an
+            extra property.
+
+            Typed as an arbitrary `Value`, not `String`: upstream never validates
+            it — `id` is not in `_policy_properties`, so it arrives as an
+            unconstrained `additionalProperties` entry and is then overwritten. A
+            `{"id": 123}` body is therefore a 201 upstream, and must not be a 400
+            here.
+        type:
+          type: string
+          description: |-
+            The MIME media type of the serialized policy blob.
+
+            Required, but only length-capped: python keystone's schema is
+            `{'type': 'string', 'maxLength': 255}`, so the empty string is valid.
+      additionalProperties:
+        description: Extra attributes for the policy.
+    PolicyCreateRequest:
+      type: object
+      description: New policy creation request.
+      required:
+      - policy
+      properties:
+        policy:
+          $ref: '#/components/schemas/PolicyCreate'
+          description: Policy object.
+    PolicyList:
+      type: object
+      description: Policies.
+      required:
+      - policies
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+          description: Collection of policy objects.
+    PolicyResponse:
+      type: object
+      required:
+      - policy
+      properties:
+        policy:
+          $ref: '#/components/schemas/Policy'
+          description: Policy object.
+    PolicyUpdate:
+      type: object
+      description: Update policy data.
+      properties:
+        blob:
+          type:
+          - string
+          - 'null'
+          description: New policy blob. String only — see the module docs.
+        id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Only accepted when equal to the `{policy_id}` path segment; a
+            different value is a 400 ("Cannot change policy ID"), matching python
+            keystone's `Manager.update_policy`. Never persisted.
+
+            Declared explicitly so it is consumed here rather than landing in
+            `extra`.
+        type:
+          type:
+          - string
+          - 'null'
+          description: New MIME media type of the serialized policy blob.
+      additionalProperties:
+        description: Extra attributes for the policy, merged into the stored properties.
+    PolicyUpdateRequest:
+      type: object
+      description: Policy update request.
+      required:
+      - policy
+      properties:
+        policy:
+          $ref: '#/components/schemas/PolicyUpdate'
+          description: Policy object.
     Project:
       type: object
       description: Project information.
@@ -10413,6 +11102,14 @@ components:
         user:
           $ref: '#/components/schemas/User'
           description: User object.
+    UserType:
+      type: string
+      description: User type filter for listing users.
+      enum:
+      - all
+      - federated
+      - local
+      - nonlocal
     UserUpdate:
       type: object
       description: Update user data.
