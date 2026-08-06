@@ -50,7 +50,7 @@ use openstack_sdk_auth_token as token_auth;
 use crate::auth::authtoken::{AuthType, build_token_info_endpoint};
 use crate::session;
 
-use openstack_sdk_core::api::{self, AsyncClient, QueryAsync, query, raw};
+use openstack_sdk_core::api::{self, AsyncClient, MicroVersionStrategy, QueryAsync, query, raw};
 use openstack_sdk_core::auth::{
     AuthState,
     auth_helper::{AuthHelper, Dialoguer, Noop},
@@ -140,6 +140,8 @@ pub struct AsyncOpenStack {
     /// on one re-auth instead of each running their own. Also intended to be
     /// shared with any future proactive token-renewal task.
     reauth_lock: Arc<tokio::sync::Mutex<()>>,
+    /// Strategy for picking the microversion sent in the request header.
+    microversion_strategy: MicroVersionStrategy,
 }
 
 impl Clone for AsyncOpenStack {
@@ -152,6 +154,7 @@ impl Clone for AsyncOpenStack {
             auth_helper: self.auth_helper.clone(),
             max_auth_retries: self.max_auth_retries,
             reauth_lock: Arc::clone(&self.reauth_lock),
+            microversion_strategy: self.microversion_strategy,
         }
     }
 }
@@ -174,6 +177,10 @@ impl api::RestClient for AsyncOpenStack {
             return token.auth_info.clone().and_then(|x| x.token.project);
         }
         None
+    }
+
+    fn microversion_strategy(&self) -> MicroVersionStrategy {
+        self.microversion_strategy
     }
 }
 
@@ -382,6 +389,7 @@ pub struct AsyncOpenStackBuilder {
     renew_auth: bool,
     max_auth_retries: u32,
     http_options: HttpClientOptions,
+    microversion_strategy: MicroVersionStrategy,
 }
 
 impl AsyncOpenStackBuilder {
@@ -393,6 +401,7 @@ impl AsyncOpenStackBuilder {
             renew_auth: false,
             max_auth_retries: DEFAULT_MAX_AUTH_RETRIES,
             http_options: HttpClientOptions::default(),
+            microversion_strategy: MicroVersionStrategy::default(),
         }
     }
 
@@ -469,6 +478,16 @@ impl AsyncOpenStackBuilder {
         self
     }
 
+    /// Set the microversion negotiation strategy (default: `Floor`).
+    ///
+    /// [`MicroVersionStrategy::Floor`] sends the lowest compatible
+    /// microversion (backwards-compatible). [`MicroVersionStrategy::Ceiling`]
+    /// sends the highest compatible microversion.
+    pub fn microversion_strategy(mut self, strategy: MicroVersionStrategy) -> Self {
+        self.microversion_strategy = strategy;
+        self
+    }
+
     /// Establish the session: resolves the Identity endpoint via version
     /// discovery, then authorizes using the configured auth helper (or
     /// [`Noop`] if none was set).
@@ -481,6 +500,7 @@ impl AsyncOpenStackBuilder {
             &self.http_options,
         )?;
         session.max_auth_retries = self.max_auth_retries;
+        session.microversion_strategy = self.microversion_strategy;
 
         session
             .discover_service_endpoint(&ServiceType::Identity)
@@ -614,6 +634,7 @@ impl AsyncOpenStack {
             auth_helper: None,
             max_auth_retries: DEFAULT_MAX_AUTH_RETRIES,
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
+            microversion_strategy: MicroVersionStrategy::default(),
         })
     }
 
@@ -839,6 +860,7 @@ impl AsyncOpenStack {
         let auth_helper = self.auth_helper.clone();
         let max_auth_retries = self.max_auth_retries;
         let reauth_lock = Arc::clone(&self.reauth_lock);
+        let microversion_strategy = self.microversion_strategy;
 
         let join = tokio::spawn(async move {
             // Rebuilds a client around the currently-live `session` Arc, or
@@ -852,6 +874,7 @@ impl AsyncOpenStack {
                     auth_helper: auth_helper.clone(),
                     max_auth_retries,
                     reauth_lock: Arc::clone(&reauth_lock),
+                    microversion_strategy,
                 })
             };
 
@@ -1718,6 +1741,7 @@ mod tests {
             auth_helper,
             max_auth_retries: max_retries,
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
+            microversion_strategy: MicroVersionStrategy::default(),
         }
     }
 

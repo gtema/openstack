@@ -31,7 +31,7 @@ use serde::de::DeserializeOwned;
 
 use serde_json::json;
 
-use crate::api::{ApiError, BodyError, QueryParams, RestClient, query};
+use crate::api::{ApiError, BodyError, MicroVersionStrategy, QueryParams, RestClient, query};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
 #[cfg(feature = "sync")]
@@ -198,7 +198,14 @@ where
 /// Validate the endpoint's microversion against the cloud's discovered
 /// range and set the `OpenStack-API-Version` header.
 ///
-/// See [`negotiate_microversion`] for how the sent version is picked.
+/// The requested version is picked according to
+/// [`RestClient::microversion_strategy`]. When the strategy is
+/// [`MicroVersionStrategy::Floor`] the lowest compatible microversion is
+/// sent (floor semantics — backwards compatible with pre-existing behaviour).
+/// When the strategy is [`MicroVersionStrategy::Ceiling`] the highest
+/// compatible microversion is sent.
+///
+/// See [`negotiate_microversion`] for how bounds checking works.
 /// Returns `Ok(())` when the header was set (or skipped for unversioned
 /// endpoints, or an unrecognized service type). Returns `Err` when no
 /// version can satisfy both the endpoint's and the cloud's constraints.
@@ -206,14 +213,34 @@ pub fn set_request_microversion_header<C, E>(
     request: &mut Builder,
     service_endpoint: &ServiceEndpoint,
     endpoint: &E,
+    client: &C,
 ) -> Result<(), ApiError<C::Error>>
 where
     C: RestClient,
     E: RestEndpoint,
 {
-    let Some(req_ver) = negotiate_microversion::<C, E>(service_endpoint, endpoint)? else {
+    let Some(mut req_ver) = negotiate_microversion::<C, E>(service_endpoint, endpoint)? else {
         return Ok(());
     };
+
+    // Ceiling strategy: pick the highest compatible microversion instead
+    // of the lowest.  Negotiate above already validated that a compatible
+    // range exists, so we only need to compute the upper bound.
+    if client.microversion_strategy() == MicroVersionStrategy::Ceiling {
+        let ep_max = endpoint.max_version();
+        let cloud_max: Option<ApiVersion> = service_endpoint
+            .max_version()
+            .as_deref()
+            .and_then(|s| ApiVersion::from_apiver_str(s, false).ok());
+        if let Some(ceil) = match (ep_max, cloud_max) {
+            (Some(em), Some(cm)) => Some(em.min(cm)),
+            (Some(em), None) => Some(em), // no cloud max → use endpoint max
+            (None, Some(cm)) => Some(cm), // no endpoint max → use cloud max
+            (None, None) => None,         // no ceiling info → fall back to floor
+        } {
+            req_ver = ceil;
+        }
+    }
 
     let Some(st) = (match endpoint.service_type() {
         ServiceType::BlockStorage => Some("volume"),
@@ -237,6 +264,7 @@ pub fn prepare_request<C, E>(
     service_endpoint: &ServiceEndpoint,
     mut url: Url,
     endpoint: &E,
+    client: &C,
 ) -> Result<(Builder, Vec<u8>), ApiError<C::Error>>
 where
     E: RestEndpoint,
@@ -247,7 +275,7 @@ where
         .method(endpoint.method())
         .uri(query::url_to_http_uri(url)?)
         .header(header::ACCEPT, HeaderValue::from_static("application/json"));
-    set_request_microversion_header::<C, E>(&mut req, service_endpoint, endpoint)?;
+    set_request_microversion_header::<C, E>(&mut req, service_endpoint, endpoint, client)?;
     if let Some(request_headers) = endpoint.request_headers()
         && let Some(headers) = req.headers_mut()
     {
@@ -312,7 +340,7 @@ where
     fn query(&self, client: &C) -> Result<T, ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
         let url = ep.build_request_url(&self.endpoint())?;
-        let (req, data) = prepare_request::<C, E>(&ep, url, self)?;
+        let (req, data) = prepare_request::<C, E>(&ep, url, self, client)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest(req, data)?;
@@ -365,7 +393,7 @@ where
             .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
             .await?;
         let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
@@ -415,7 +443,7 @@ where
     fn raw_query(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
         let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -441,7 +469,7 @@ where
             .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
             .await?;
         let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
 
         let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
@@ -470,7 +498,7 @@ where
         let mut req = Request::builder()
             .method(self.method())
             .uri(query::url_to_http_uri(url)?);
-        set_request_microversion_header::<C, E>(&mut req, &ep, self)?;
+        set_request_microversion_header::<C, E>(&mut req, &ep, self, client)?;
         if let Some(request_headers) = self.request_headers()
             && let Some(headers) = req.headers_mut()
         {
@@ -495,7 +523,7 @@ where
             .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
             .await?;
         let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self)?;
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
 
         let rsp = client.download_async(req, data).await?;
 
@@ -776,10 +804,39 @@ mod tests {
 
     mod microversion {
         use super::*;
+        use crate::RestError;
         use crate::api::rest_endpoint::{negotiate_microversion, set_request_microversion_header};
+        use crate::api::{MicroVersionStrategy, RestClient};
         use crate::catalog::ServiceEndpoint;
         use crate::test::client::FakeOpenStackClient;
+        use openstack_sdk_auth_core::types::Project;
         use url::Url;
+
+        /// Default test client — uses the `Floor` strategy.
+        fn floor_client() -> FakeOpenStackClient {
+            FakeOpenStackClient::new("http://test/")
+        }
+
+        /// Test client that uses the `Ceiling` strategy.
+        fn ceiling_client() -> StrategyClient {
+            StrategyClient {
+                strategy: MicroVersionStrategy::Ceiling,
+            }
+        }
+
+        /// Test client with a configurable microversion strategy.
+        struct StrategyClient {
+            strategy: MicroVersionStrategy,
+        }
+        impl RestClient for StrategyClient {
+            type Error = RestError;
+            fn get_current_project(&self) -> Option<Project> {
+                None
+            }
+            fn microversion_strategy(&self) -> MicroVersionStrategy {
+                self.strategy
+            }
+        }
 
         struct VersionedEndpoint {
             version: Option<ApiVersion>,
@@ -852,7 +909,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.50".into()));
         }
 
@@ -863,7 +926,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(3, 50)), ServiceType::BlockStorage);
             let sep = make_service_endpoint(Some("3.0"), Some("3.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("volume 3.50".into()));
         }
 
@@ -875,7 +944,13 @@ mod tests {
             );
             let sep = make_service_endpoint(Some("1.0"), Some("1.20"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("container-infra 1.15".into()));
         }
 
@@ -884,7 +959,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(1, 10)), ServiceType::Placement);
             let sep = make_service_endpoint(Some("1.0"), Some("1.20"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("placement 1.10".into()));
         }
 
@@ -893,7 +974,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 30)), ServiceType::Network);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert!(header(&req).is_none());
         }
 
@@ -905,7 +992,13 @@ mod tests {
             );
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert!(header(&req).is_none());
         }
 
@@ -921,7 +1014,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 5)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.10"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.10".into()));
         }
 
@@ -930,9 +1029,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
@@ -941,7 +1044,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 10)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.10"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.10".into()));
         }
 
@@ -950,7 +1059,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 60)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.60".into()));
         }
 
@@ -961,7 +1076,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 5)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.10"), None);
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.10".into()));
         }
 
@@ -970,7 +1091,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.10"), None);
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.99".into()));
         }
 
@@ -979,9 +1106,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(None, Some("2.60"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
@@ -990,7 +1121,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 5)), ServiceType::Compute);
             let sep = make_service_endpoint(None, Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.5".into()));
         }
 
@@ -999,7 +1136,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(None, None);
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.99".into()));
         }
 
@@ -1010,7 +1153,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(1, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.1".into()));
         }
 
@@ -1019,9 +1168,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(3, 0)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
@@ -1032,7 +1185,13 @@ mod tests {
             let ep = make_ep(None, ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert!(header(&req).is_none());
         }
 
@@ -1041,7 +1200,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(0, 0)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert!(header(&req).is_none());
         }
 
@@ -1050,7 +1215,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 0)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("1.0"), Some("2.60"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.0".into()));
         }
 
@@ -1061,7 +1232,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2"), Some("3"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.50".into()));
         }
 
@@ -1070,7 +1247,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("abc"), Some("def"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.50".into()));
         }
 
@@ -1079,7 +1262,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("bad"), Some("2.99"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.50".into()));
         }
 
@@ -1090,9 +1279,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             match err {
                 ApiError::MicroversionIncompatible {
                     required_major,
@@ -1114,9 +1307,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 99)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             let msg = err.to_string();
             assert!(
                 msg.contains("2.99"),
@@ -1140,7 +1337,13 @@ mod tests {
             );
             let sep = make_service_endpoint(Some("2.30"), Some("2.90"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.30".into()));
         }
 
@@ -1155,9 +1358,13 @@ mod tests {
             );
             let sep = make_service_endpoint(Some("2.80"), Some("2.90"));
             let mut req = http::Request::builder();
-            let err =
-                set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep)
-                    .unwrap_err();
+            let err = set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap_err();
             assert!(matches!(err, ApiError::MicroversionIncompatible { .. }));
         }
 
@@ -1171,7 +1378,13 @@ mod tests {
             );
             let sep = make_service_endpoint(Some("2.75"), Some("2.90"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.75".into()));
         }
 
@@ -1186,7 +1399,13 @@ mod tests {
             );
             let sep = make_service_endpoint(None, Some("2.90"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.0".into()));
         }
 
@@ -1197,7 +1416,13 @@ mod tests {
             let ep = make_ep(Some(ApiVersion::new(2, 0)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.95"), Some("2.99"));
             let mut req = http::Request::builder();
-            set_request_microversion_header::<FakeOpenStackClient, _>(&mut req, &sep, &ep).unwrap();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
             assert_eq!(header(&req), Some("compute 2.95".into()));
         }
 
@@ -1229,6 +1454,113 @@ mod tests {
             let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
             let negotiated = negotiate_microversion::<FakeOpenStackClient, _>(&sep, &ep).unwrap();
             assert_eq!(negotiated, None);
+        }
+
+        // ── ceiling strategy ─────────────────────────────────────────
+
+        #[test]
+        fn ceiling_sends_highest_available() {
+            let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
+            let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.60".into()));
+        }
+
+        #[test]
+        fn ceiling_respects_endpoint_max_version() {
+            let ep = make_ep_bounded(
+                Some(ApiVersion::new(2, 0)),
+                Some(ApiVersion::new(2, 45)),
+                ServiceType::Compute,
+            );
+            let sep = make_service_endpoint(Some("2.1"), Some("2.90"));
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.45".into()));
+        }
+
+        #[test]
+        fn ceiling_clamps_to_cloud_max() {
+            let ep = make_ep_bounded(
+                Some(ApiVersion::new(2, 0)),
+                Some(ApiVersion::new(2, 90)),
+                ServiceType::Compute,
+            );
+            let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.60".into()));
+        }
+
+        #[test]
+        fn ceiling_no_cloud_max_uses_endpoint_max() {
+            let ep = make_ep_bounded(
+                Some(ApiVersion::new(2, 0)),
+                Some(ApiVersion::new(2, 75)),
+                ServiceType::Compute,
+            );
+            let sep = make_service_endpoint(Some("2.1"), None);
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.75".into()));
+        }
+
+        #[test]
+        fn ceiling_no_bounded_falls_back_to_floor() {
+            // Neither endpoint nor cloud has a max version — ceiling falls
+            // back to floor semantics (the only known bound).
+            let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
+            let sep = make_service_endpoint(Some("2.1"), None);
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.50".into()));
+        }
+
+        #[test]
+        fn ceiling_clamped_by_cloud_min() {
+            // Floor is clamped to 2.80 (cloud_min), ceiling is 2.90.
+            let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
+            let sep = make_service_endpoint(Some("2.80"), Some("2.90"));
+            let mut req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            assert_eq!(header(&req), Some("compute 2.90".into()));
         }
     }
 }

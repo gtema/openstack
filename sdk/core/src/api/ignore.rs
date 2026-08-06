@@ -56,6 +56,7 @@ where
             &ep,
             ep.build_request_url(&self.endpoint.endpoint())?,
             &self.endpoint,
+            client,
         )?;
 
         let query_uri = req.uri_ref().cloned();
@@ -93,6 +94,7 @@ where
             &ep,
             ep.build_request_url(&self.endpoint.endpoint())?,
             &self.endpoint,
+            client,
         )?;
 
         let query_uri = req.uri_ref().cloned();

@@ -20,7 +20,7 @@ use async_trait::async_trait;
 use chrono::TimeDelta;
 use eyre::{Result, eyre};
 use openstack_sdk::{
-    AsyncOpenStack, RenewHandle,
+    AsyncOpenStack, MicroVersionStrategy, RenewHandle,
     auth::auth_helper::{AuthHelper, AuthHelperError},
     config::ConfigFile,
 };
@@ -107,12 +107,12 @@ impl Cloud {
             .cloud_configs
             .get_cloud_config(cloud.clone())?
             .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
-        let session = AsyncOpenStack::new_with_authentication_helper(
-            &profile,
-            self.auth_helper.clone(),
-            false,
-        )
-        .await?;
+        let session = AsyncOpenStack::builder(&profile)
+            .auth_helper(self.auth_helper.clone())
+            .renew_auth(false)
+            .microversion_strategy(MicroVersionStrategy::Ceiling)
+            .connect()
+            .await?;
 
         Self::discover_services(&session, &TUI_SERVICES).await?;
 
