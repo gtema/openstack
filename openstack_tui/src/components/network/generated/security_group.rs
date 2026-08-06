@@ -17,53 +17,12 @@
 use crate::action::Action;
 use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
-use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
-
-static COLUMNS: &[ColumnSpec] = &[
-    ColumnSpec {
-        title: "id",
-        pointer: "/id",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "name",
-        pointer: "/name",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "description",
-        pointer: "/description",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "created_at",
-        pointer: "/created_at",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "updated_at",
-        pointer: "/updated_at",
-        wide: false,
-        status: false,
-    },
-];
-
-impl_dynamic_item!(
-    SecurityGroupItem,
-    crate::mode::NETWORK_SECURITY_GROUP,
-    COLUMNS
-);
 
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Item = SecurityGroupItem;
     type Filter = cloud_types::NetworkSecurityGroupList;
 
     fn view_key() -> &'static str {

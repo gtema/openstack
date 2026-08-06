@@ -22,34 +22,35 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
 use crate::mode::Mode;
-use openstack_types::identity::v3::user::response::list::UserResponse;
 use serde_json::Value;
 
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-impl crate::utils::ResourceKey for UserResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&UserResponse> for IdentityUserDelete {
+impl TryFrom<&serde_json::Value> for IdentityUserDelete {
     type Error = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilderError;
-    fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserDeleteBuilder::default();
-        builder.id(value.id.clone());
-        builder.name(value.name.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
+        }
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.name(val.to_string());
+        }
         builder.build()
     }
 }
 
-impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
+impl TryFrom<&serde_json::Value> for IdentityUserApplicationCredentialList {
     type Error =
         crate::cloud_worker::identity::v3::IdentityUserApplicationCredentialListBuilderError;
-    fn try_from(value: &UserResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = IdentityUserApplicationCredentialListBuilder::default();
-        builder.user_id(value.id.clone());
-        builder.user_name(value.name.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.user_id(val.to_string());
+        }
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.user_name(val.to_string());
+        }
         builder.build()
     }
 }
@@ -57,7 +58,6 @@ impl TryFrom<&UserResponse> for IdentityUserApplicationCredentialList {
 pub struct IdentityUsersBehaviour;
 
 impl ResourceBehaviour for IdentityUsersBehaviour {
-    type Item = UserResponse;
     type Filter = IdentityUserList;
 
     fn view_key() -> &'static str {
@@ -79,7 +79,10 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
             if matches!(**boxreq, IdentityUserApiRequest::List(_))
         )
     }
-    fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn action_to_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::IdentityUserOp {
             key,
             op: crate::action::IdentityUserOp::FlipEnable,
@@ -87,13 +90,15 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
             && *key == Self::view_key()
         {
             let sel = selected?;
+            let enabled = crate::components::view_render::get(sel, "/enabled")?.as_bool()?;
+            let id = crate::components::view_render::get_str(sel, "/id")?;
             let req: crate::cloud_worker::identity::v3::user::set::User =
                 crate::cloud_worker::identity::v3::user::set::UserBuilder::default()
-                    .enabled(!sel.enabled)
+                    .enabled(!enabled)
                     .build()
                     .ok()?;
             let set_req = IdentityUserSetBuilder::default()
-                .id(sel.id.clone())
+                .id(id.to_string())
                 .user(req)
                 .build()
                 .ok()?;
@@ -104,7 +109,10 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
             None
         }
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::IdentityUserOp {
             key,
             op: crate::action::IdentityUserOp::Delete,
@@ -121,7 +129,7 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -160,16 +168,14 @@ pub type IdentityUsers = GenericResourceView<'static, IdentityUsersBehaviour>;
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::identity::v3::user::response::list::UserResponse;
 
-    fn make_user(id: &str, name: &str, enabled: bool) -> UserResponse {
-        let json = serde_json::json!({
+    fn make_user(id: &str, name: &str, enabled: bool) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "enabled": enabled,
             "domain_id": "default"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

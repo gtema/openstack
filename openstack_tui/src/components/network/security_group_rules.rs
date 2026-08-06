@@ -23,21 +23,14 @@ use crate::components::resource_behaviour::{
     GeneratedResourceBehaviour, Mutation, ResourceBehaviour,
 };
 use crate::mode::Mode;
-use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
 use serde_json::Value;
 
-impl crate::utils::ResourceKey for SecurityGroupRuleResponse {
-    fn get_key() -> &'static str {
-        crate::mode::NETWORK_SECURITY_GROUP_RULE
-    }
-}
-
-impl TryFrom<&SecurityGroupRuleResponse> for NetworkSecurityGroupRuleDelete {
+impl TryFrom<&Value> for NetworkSecurityGroupRuleDelete {
     type Error = crate::cloud_worker::network::v2::NetworkSecurityGroupRuleDeleteBuilderError;
-    fn try_from(value: &SecurityGroupRuleResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &Value) -> Result<Self, Self::Error> {
         let mut builder = NetworkSecurityGroupRuleDeleteBuilder::default();
-        if let Some(val) = &value.id {
-            builder.id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
         }
         builder.build()
     }
@@ -46,7 +39,6 @@ impl TryFrom<&SecurityGroupRuleResponse> for NetworkSecurityGroupRuleDelete {
 pub struct NetworkSecurityGroupRulesBehaviour;
 
 impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
-    type Item = SecurityGroupRuleResponse;
     type Filter = NetworkSecurityGroupRuleList;
 
     fn view_key() -> &'static str {
@@ -79,7 +71,7 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
         }
         filter
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(action: &Action, selected: Option<&Value>) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -120,11 +112,9 @@ pub type NetworkSecurityGroupRules =
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::network::v2::security_group_rule::response::list::SecurityGroupRuleResponse;
 
-    fn make_rule(id: &str) -> SecurityGroupRuleResponse {
-        let json = serde_json::json!({ "id": id });
-        serde_json::from_value(json).unwrap()
+    fn make_rule(id: &str) -> serde_json::Value {
+        serde_json::json!({ "id": id })
     }
 
     #[test]

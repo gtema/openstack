@@ -19,12 +19,10 @@ use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::network::v2::router::response::list::RouterResponse;
 
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Item = RouterResponse;
     type Filter = cloud_types::NetworkRouterList;
 
     fn view_key() -> &'static str {

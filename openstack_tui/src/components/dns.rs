@@ -12,5 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+pub(crate) mod generated;
 pub mod recordsets;
 pub mod zones;

@@ -30,7 +30,6 @@ pub mod compute;
 pub mod confirm_popup;
 pub mod describe;
 pub mod dns;
-pub mod dynamic_item;
 pub mod error_popup;
 pub mod generic_resource_view;
 pub mod header;
@@ -42,10 +41,10 @@ pub mod network;
 pub mod project_select_popup;
 pub mod region_select_popup;
 pub mod resource_behaviour;
-mod resource_key_impls; // bring ResourceKey impls into scope
 pub mod resource_select_popup;
 pub mod resource_table;
 pub mod table_view;
+pub mod view_render;
 // pub mod modal; // removed – replaced by generic Popup widget
 pub use crate::widgets::fuzzy_select::{FuzzySelect, FuzzySelectState};
 pub use crate::widgets::popup::Popup;

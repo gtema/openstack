@@ -21,20 +21,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::compute::v2::server::instance_action::response::list_21::InstanceActionResponse;
 
 const VIEW_CONFIG_KEY: &str = "compute.server/instance_action";
-
-impl crate::utils::ResourceKey for InstanceActionResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct ComputeServerInstanceActionsBehaviour;
 
 impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
-    type Item = InstanceActionResponse;
     type Filter = ComputeServerInstanceActionList;
 
     fn view_key() -> &'static str {
@@ -69,7 +61,7 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -77,8 +69,14 @@ impl ResourceBehaviour for ComputeServerInstanceActionsBehaviour {
             && let Some(sel) = selected
         {
             let mut req = ComputeServerInstanceActionShowBuilder::default();
-            req.id(sel.request_id.clone());
-            req.server_id(sel.instance_uuid.clone());
+            req.id(crate::components::view_render::get_str(sel, "/request_id")
+                .unwrap_or_default()
+                .to_string());
+            req.server_id(
+                crate::components::view_render::get_str(sel, "/instance_uuid")
+                    .unwrap_or_default()
+                    .to_string(),
+            );
             if let Some(name) = &filter.server_name {
                 req.server_name(name.clone());
             }
@@ -103,10 +101,9 @@ pub type ComputeServerInstanceActions =
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::compute::v2::server::instance_action::response::list_21::InstanceActionResponse;
 
-    fn make_instance_action() -> InstanceActionResponse {
-        let json = serde_json::json!({
+    fn make_instance_action() -> serde_json::Value {
+        serde_json::json!({
             "request_id": "req-1",
             "instance_uuid": "server-1",
             "server_name": "test-server",
@@ -120,8 +117,7 @@ mod tests {
             "action": "boot_server",
             "start_time": "2024-01-01T00:00:00",
             "end_time": "2024-01-01T00:00:01"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     fn make_filter() -> ComputeServerInstanceActionList {

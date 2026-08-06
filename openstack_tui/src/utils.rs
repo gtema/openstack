@@ -22,11 +22,6 @@ use tracing_subscriber::{
 };
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
-pub trait ResourceKey {
-    fn get_key() -> &'static str {
-        ""
-    }
-}
 
 lazy_static! {
     pub static ref PROJECT_NAME: String = env!("CARGO_CRATE_NAME").to_uppercase().clone();

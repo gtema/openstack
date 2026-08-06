@@ -357,12 +357,11 @@ mode_aliases:
 # View output
 # <RESOURCE_KEY>:
 #   fields: <ARRAY OF COLUMNS TO SHOW>
-#   wide: true
 views:
   # Block Storage
   block_storage.backup:
     default_fields: [id, name, az, size, status, created_at]
-  block_storage.snapshots:
+  block_storage.snapshot:
     default_fields: [id, name, status, created_at]
   block_storage.volume:
     default_fields: [id, name, az, size, status, updated_at]
@@ -371,10 +370,8 @@ views:
     default_fields: [name, uuid, az, updated_at]
   compute.flavor:
     default_fields: [id, name, vcpus, ram, disk, swap]
-    wide_fields: [swap]
   compute.hypervisor:
     default_fields: [ip, hostname, status, state]
-    wide_fields: [vcpus, "memory mb"]
     status_field: status
   compute.server/instance_action/event:
     default_fields: [event, result, start_time, finish_time, host]
@@ -382,7 +379,6 @@ views:
     default_fields: [id, action, message, start_time, user_id]
   compute.server:
     default_fields: [id, name, flavor, status, created, updated]
-    wide_fields: ["task state", "power state", "availability zone"]
     status_field: status
     fields:
       - name: flavor
@@ -404,19 +400,23 @@ views:
   # image
   image.image:
     default_fields: [id, name, distro, version, visibility, min_disk, min_ram]
-    wide_fields: ["disk format", "container format"]
     status_field: status
   # load balancer
   load-balancer.healthmonitor:
     default_fields: [id, name, status, type]
+    status_field: operating_status
   load-balancer.listener:
     default_fields: [id, name, status, protocol, port]
+    status_field: operating_status
   load-balancer.loadbalancer:
     default_fields: [id, name, status, address]
+    status_field: operating_status
   load-balancer.pool/member:
     default_fields: [id, name, status, port]
+    status_field: operating_status
   load-balancer.pool:
     default_fields: [id, name, status, protocol]
+    status_field: operating_status
   # network
   network.network:
     default_fields: [id, name, status, description, created_at, updated_at]
@@ -427,4 +427,4 @@ views:
   network.security_group_rule:
     default_fields: [id, ethertype, direction, protocol, port_range_min, port_range_max, description]
   network.security_group:
-    default_fields: [id, name, description, created_at, updated_at, description]
+    default_fields: [id, name, description, created_at, updated_at]

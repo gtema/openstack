@@ -18,63 +18,16 @@ use crate::cloud_worker::compute::v2::{
     ComputeServerInstanceActionListBuilder, ComputeServerList,
 };
 use crate::cloud_worker::types::{ApiRequest, ComputeApiRequest};
-use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
 
 const VIEW_CONFIG_KEY: &str = "compute.server";
 
-// Server's `OS-EXT-SRV-ATTR:hostname` field changed from absent/`Option<String>` to a required
-// `String` at microversion 2.90 (bucket `_a`) -- no single `openstack_types` struct correctly
-// represents every microversion, so `Item` reads columns out of the raw response by JSON pointer
-// instead of deserializing into a versioned struct.
-static SERVER_COLUMNS: &[ColumnSpec] = &[
-    ColumnSpec {
-        title: "ID",
-        pointer: "/id",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Name",
-        pointer: "/name",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Status",
-        pointer: "/status",
-        wide: false,
-        status: true,
-    },
-    ColumnSpec {
-        title: "Task State",
-        pointer: "/OS-EXT-STS:task_state",
-        wide: true,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Power State",
-        pointer: "/OS-EXT-STS:power_state",
-        wide: true,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Availability Zone",
-        pointer: "/OS-EXT-AZ:availability_zone",
-        wide: true,
-        status: false,
-    },
-];
-
-impl_dynamic_item!(ServerItem, VIEW_CONFIG_KEY, SERVER_COLUMNS);
-
 /// Behaviour implementation for ComputeServers.
 pub struct ComputeServersBehaviour;
 
 impl ResourceBehaviour for ComputeServersBehaviour {
-    type Item = ServerItem;
     type Filter = ComputeServerList;
 
     fn view_key() -> &'static str {
@@ -112,7 +65,10 @@ impl ResourceBehaviour for ComputeServersBehaviour {
             None
         }
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -121,9 +77,9 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         {
             let sel = selected?;
             let mut del_builder = ComputeServerDeleteBuilder::default();
-            del_builder.id(sel.get_str("/id")?);
-            if let Some(name) = sel.get_str("/name") {
-                del_builder.name(name);
+            del_builder.id(crate::components::view_render::get_str(sel, "/id")?.to_string());
+            if let Some(name) = crate::components::view_render::get_str(sel, "/name") {
+                del_builder.name(name.to_string());
             }
             let del = del_builder.build().ok()?;
             Some(ApiRequest::from(ComputeServerApiRequest::Delete(Box::new(
@@ -135,13 +91,13 @@ impl ResourceBehaviour for ComputeServersBehaviour {
     }
     fn action_to_singular_request(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
     ) -> Option<(Vec<Action>, ApiRequest)> {
         if let Action::ShowServerConsoleOutput = action {
-            let server_id = selected?.get_str("/id")?;
+            let server_id = crate::components::view_render::get_str(selected?, "/id")?;
             let req = ComputeServerApiRequest::GetConsoleOutput(Box::new(
                 ComputeServerGetConsoleOutputBuilder::default()
-                    .id(server_id)
+                    .id(server_id.to_string())
                     .os_get_console_output(
                         crate::cloud_worker::compute::v2::server::get_console_output::OsGetConsoleOutputBuilder::default()
                             .build()
@@ -182,18 +138,18 @@ impl ResourceBehaviour for ComputeServersBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::COMPUTE_SERVER_INSTANCE_ACTION
             && let Some(sel) = selected
-            && let Some(server_id) = sel.get_str("/id")
+            && let Some(server_id) = crate::components::view_render::get_str(sel, "/id")
         {
             let mut list_builder = ComputeServerInstanceActionListBuilder::default();
-            list_builder.server_id(server_id);
-            if let Some(name) = sel.get_str("/name") {
-                list_builder.server_name(name);
+            list_builder.server_id(server_id.to_string());
+            if let Some(name) = crate::components::view_render::get_str(sel, "/name") {
+                list_builder.server_name(name.to_string());
             }
             if let Ok(list) = list_builder.build() {
                 return vec![
@@ -218,8 +174,8 @@ mod tests {
     use crate::cloud_worker::compute::v2::ComputeServerDelete;
     use crate::components::resource_behaviour::ResourceBehaviour;
 
-    fn make_server(id: &str, name: &str) -> ServerItem {
-        ServerItem(serde_json::json!({
+    fn make_server(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "status": "ACTIVE",
@@ -241,7 +197,7 @@ mod tests {
             "hostId": "host1",
             "key_name": null,
             "security_groups": []
-        }))
+        })
     }
 
     #[test]

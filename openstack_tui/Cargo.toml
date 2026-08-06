@@ -35,7 +35,6 @@ itertools = { workspace = true }
 lazy_static = "^1.5"
 open.workspace = true
 openstack_sdk = { path = "../openstack_sdk", version = "^0.22", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
-openstack_types = { path = "../openstack_types", version = "^0.22" }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.30", features = ["serde", "macros", "crossterm"] }
 secrecy = "0.10.3"

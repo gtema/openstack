@@ -11,10 +11,9 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// WARNING: Individual `pub(crate) mod <resource>;` lines below are automatically generated
+// from OpenAPI schema using `openstack-codegenerator`. This scaffold line itself is hand-added,
+// once per service, as the anchor new resources' lines get inserted after.
 
-pub(crate) mod generated;
-pub mod health_monitors;
-pub mod listeners;
-pub mod loadbalancers;
-pub mod pool_members;
-pub mod pools;
+// GENERATED-ANCHOR: resource mods

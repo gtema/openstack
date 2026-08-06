@@ -19,13 +19,11 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::compute::v2::aggregate::response::list_241::AggregateResponse;
 
 /// Behaviour implementation for ComputeAggregates.
 pub struct ComputeAggregatesBehaviour;
 
 impl ResourceBehaviour for ComputeAggregatesBehaviour {
-    type Item = AggregateResponse;
     type Filter = ComputeAggregateList;
 
     fn view_key() -> &'static str {

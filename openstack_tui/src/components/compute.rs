@@ -14,6 +14,7 @@
 
 pub mod aggregates;
 pub mod flavors;
+pub(crate) mod generated;
 pub mod hypervisors;
 pub mod server_instance_action_events;
 pub mod server_instance_actions;

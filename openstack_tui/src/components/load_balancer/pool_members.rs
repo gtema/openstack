@@ -21,20 +21,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::load_balancer::v2::pool::member::response::list::MemberResponse;
 
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool/member";
-
-impl crate::utils::ResourceKey for MemberResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct LoadBalancerPoolMembersBehaviour;
 
 impl ResourceBehaviour for LoadBalancerPoolMembersBehaviour {
-    type Item = MemberResponse;
     type Filter = LoadBalancerPoolMemberList;
 
     fn view_key() -> &'static str {

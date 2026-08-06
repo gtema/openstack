@@ -25,7 +25,6 @@ use std::{
     collections::{BTreeMap, HashMap},
     path::{Path, PathBuf},
 };
-use structable::StructTableOptions;
 use thiserror::Error;
 use tracing::error;
 
@@ -194,18 +193,16 @@ pub struct ViewConfig {
     /// Limit fields (their titles) to be returned
     #[serde(default)]
     pub default_fields: Vec<String>,
-    /// Extra fields (their titles) only shown in wide mode, on top of `default_fields`
-    #[serde(default)]
-    pub wide_fields: Vec<String>,
     /// Field (its title) backing row-status coloring, if any
     #[serde(default)]
     pub status_field: Option<String>,
+    /// JSON pointer (or "id"/"uuid" fallback if unset) identifying each row, used for
+    /// select/delete/describe by id.
+    #[serde(default)]
+    pub id_field: Option<String>,
     /// Fields configurations
     #[serde(default)]
     pub fields: Vec<FieldConfig>,
-    /// Defaults to wide mode
-    #[serde(default)]
-    pub wide: Option<bool>,
 }
 
 /// Field output configuration
@@ -278,30 +275,12 @@ impl Config {
     }
 }
 
-impl StructTableOptions for ViewConfig {
-    fn wide_mode(&self) -> bool {
-        self.wide.unwrap_or_default()
-    }
-
-    fn pretty_mode(&self) -> bool {
+impl ViewConfig {
+    pub fn pretty_mode(&self) -> bool {
         true
     }
 
-    fn should_return_field<S: AsRef<str>>(&self, field: S, is_wide_field: bool) -> bool {
-        let field = field.as_ref().to_lowercase();
-        if self
-            .default_fields
-            .iter()
-            .any(|x| x.to_lowercase() == field)
-        {
-            return true;
-        }
-        is_wide_field
-            && self.wide_mode()
-            && self.wide_fields.iter().any(|x| x.to_lowercase() == field)
-    }
-
-    fn field_data_json_pointer<S: AsRef<str>>(&self, field: S) -> Option<String> {
+    pub fn field_data_json_pointer<S: AsRef<str>>(&self, field: S) -> Option<String> {
         self.fields
             .iter()
             .find(|x| x.name.to_lowercase() == field.as_ref().to_lowercase())
@@ -1054,57 +1033,37 @@ mod tests {
     }
 
     #[test]
-    fn should_return_field_default_field_always_shown() {
-        let view = ViewConfig {
+    fn view_config_has_no_wide_fields_or_wide() {
+        let cfg = ViewConfig {
             default_fields: vec!["id".into()],
-            ..Default::default()
+            status_field: None,
+            id_field: Some("uuid".into()),
+            fields: vec![],
         };
-        assert!(view.should_return_field("id", false));
-        assert!(view.should_return_field("ID", false));
+        assert_eq!(cfg.default_fields, vec!["id".to_string()]);
+        assert_eq!(cfg.id_field, Some("uuid".to_string()));
     }
 
     #[test]
-    fn should_return_field_wide_field_hidden_without_wide_mode() {
-        let view = ViewConfig {
-            default_fields: vec!["id".into()],
-            wide_fields: vec!["swap".into()],
-            wide: Some(false),
-            ..Default::default()
-        };
-        assert!(!view.should_return_field("swap", true));
+    fn pretty_mode_is_always_true() {
+        let cfg = ViewConfig::default();
+        assert!(cfg.pretty_mode());
     }
 
     #[test]
-    fn should_return_field_wide_field_shown_in_wide_mode() {
-        let view = ViewConfig {
-            default_fields: vec!["id".into()],
-            wide_fields: vec!["swap".into()],
-            wide: Some(true),
+    fn field_data_json_pointer_returns_configured_override() {
+        let cfg = ViewConfig {
+            fields: vec![FieldConfig {
+                name: "flavor".into(),
+                json_pointer: Some("/original_name".into()),
+                ..Default::default()
+            }],
             ..Default::default()
         };
-        assert!(view.should_return_field("swap", true));
-    }
-
-    #[test]
-    fn should_return_field_unlisted_field_never_shown() {
-        let view = ViewConfig {
-            default_fields: vec!["id".into()],
-            wide: Some(true),
-            ..Default::default()
-        };
-        assert!(!view.should_return_field("unknown", false));
-        assert!(!view.should_return_field("unknown", true));
-    }
-
-    #[test]
-    fn should_return_field_no_wide_fields_configured_no_regression() {
-        // Resources with no `wide_fields` entry keep today's behavior: a compile-time
-        // `#[structable(wide)]` field is never shown via this options impl, wide mode or not.
-        let view = ViewConfig {
-            default_fields: vec!["id".into()],
-            wide: Some(true),
-            ..Default::default()
-        };
-        assert!(!view.should_return_field("some_wide_struct_field", true));
+        assert_eq!(
+            cfg.field_data_json_pointer("Flavor"),
+            Some("/original_name".to_string())
+        );
+        assert_eq!(cfg.field_data_json_pointer("missing"), None);
     }
 }

@@ -15,9 +15,6 @@
 use crate::action::Action;
 use crate::cloud_worker::types::ApiRequest;
 use crate::mode::Mode;
-use crate::utils::ResourceKey;
-use openstack_sdk::types::ApiVersion;
-use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::fmt::Display;
 
@@ -25,7 +22,6 @@ use std::fmt::Display;
 /// metadata (view key, request/filter types, mode). Intended to be implemented by a generated
 /// `Generated` companion type per resource; `ResourceBehaviour`'s defaults delegate to it.
 pub trait GeneratedResourceBehaviour {
-    type Item: ResourceKey + DeserializeOwned;
     type Filter: Default + Display + Clone;
 
     /// The view configuration key used for persisting column/field settings.
@@ -56,7 +52,6 @@ pub trait GeneratedResourceBehaviour {
 /// They stay required, non-default methods on this trait itself so that resources without a
 /// generated companion module yet are unaffected.
 pub trait ResourceBehaviour {
-    type Item: ResourceKey + DeserializeOwned;
     type Filter: Default + Display + Clone;
 
     /// The view configuration key used for persisting column/field settings.
@@ -85,7 +80,7 @@ pub trait ResourceBehaviour {
 
     /// Translate an incoming Action (that is not a generic UI action) into an optional ApiRequest.
     /// Return `None` if the action is not handled specially for this resource.
-    fn action_to_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn action_to_request(action: &Action, selected: Option<&Value>) -> Option<ApiRequest> {
         let _ = (action, selected);
         None
     }
@@ -94,7 +89,7 @@ pub trait ResourceBehaviour {
     /// The `filter` parameter provides access to the current filter state for sub-view drill actions.
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&Value>,
         filter: &Self::Filter,
     ) -> Vec<Action> {
         let _ = (action, selected, filter);
@@ -102,7 +97,7 @@ pub trait ResourceBehaviour {
     }
 
     /// Return custom Actions (deprecated, use filter_carry_action instead for filter access).
-    fn custom_action(action: &Action, selected: Option<&Self::Item>) -> Vec<Action> {
+    fn custom_action(action: &Action, selected: Option<&Value>) -> Vec<Action> {
         let _ = (action, selected);
         Vec::new()
     }
@@ -121,7 +116,7 @@ pub trait ResourceBehaviour {
     /// returning the (display actions, api request) tuple. Default returns None.
     fn action_to_singular_request(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&Value>,
     ) -> Option<(Vec<Action>, ApiRequest)> {
         let _ = (action, selected);
         None
@@ -142,7 +137,7 @@ pub trait ResourceBehaviour {
 
     /// Translate an Action into a confirmable ApiRequest (e.g., delete). Return Some(ApiRequest)
     /// to send via Action::Confirm instead of Action::PerformApiRequest.
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(action: &Action, selected: Option<&Value>) -> Option<ApiRequest> {
         let _ = (action, selected);
         None
     }
@@ -158,20 +153,6 @@ pub trait ResourceBehaviour {
     /// be handled by ApiResponsesData. Default is false.
     fn clear_data_on_filter_change() -> bool {
         false
-    }
-
-    /// Deserialize a list response batch into `Self::Item`, given the microversion actually
-    /// negotiated for the request that produced it (`None` for unversioned resources, or when the
-    /// worker didn't resolve it). The default ignores `negotiated_version` and deserializes as-is,
-    /// which is correct for every resource whose response schema does not vary by microversion.
-    /// Resources with real microversion-variant response schemas override this to pick the
-    /// variant matching `negotiated_version` before upcasting into the canonical `Self::Item`.
-    fn deserialize_items(
-        data: &[Value],
-        negotiated_version: Option<ApiVersion>,
-    ) -> serde_json::Result<Vec<Self::Item>> {
-        let _ = negotiated_version;
-        serde_json::from_value(Value::Array(data.to_vec()))
     }
 }
 
@@ -190,19 +171,6 @@ pub enum Mutation {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde::Deserialize;
-
-    #[derive(Debug, Deserialize, Default, Clone, PartialEq)]
-    struct Item {
-        id: String,
-        #[serde(default)]
-        extra: Option<String>,
-    }
-    impl ResourceKey for Item {
-        fn get_key() -> &'static str {
-            "test.item"
-        }
-    }
 
     #[derive(Debug, Default, Clone)]
     struct Filter;
@@ -214,7 +182,6 @@ mod tests {
 
     struct DefaultBehaviour;
     impl ResourceBehaviour for DefaultBehaviour {
-        type Item = Item;
         type Filter = Filter;
         fn view_key() -> &'static str {
             "test.item"
@@ -233,86 +200,24 @@ mod tests {
         }
     }
 
-    struct VersionedBehaviour;
-    impl ResourceBehaviour for VersionedBehaviour {
-        type Item = Item;
-        type Filter = Filter;
-        fn view_key() -> &'static str {
-            "test.item"
-        }
-        fn title() -> &'static str {
-            "Items"
-        }
-        fn mode() -> Mode {
-            Mode::Resource(Self::view_key())
-        }
-        fn request_from_filter(_filter: &Self::Filter) -> ApiRequest {
-            unimplemented!()
-        }
-        fn matches_request(_request: &ApiRequest) -> bool {
-            false
-        }
-        fn deserialize_items(
-            data: &[Value],
-            negotiated_version: Option<ApiVersion>,
-        ) -> serde_json::Result<Vec<Self::Item>> {
-            let mut items: Vec<Item> = serde_json::from_value(Value::Array(data.to_vec()))?;
-            if negotiated_version
-                .is_some_and(|v| v >= ApiVersion::from_apiver_str("2.5", false).unwrap())
-            {
-                for item in &mut items {
-                    item.extra = Some("present-since-2.5".into());
-                }
-            }
-            Ok(items)
-        }
+    #[test]
+    fn view_key_and_title() {
+        assert_eq!(DefaultBehaviour::view_key(), "test.item");
+        assert_eq!(DefaultBehaviour::title(), "Items");
+        assert_eq!(DefaultBehaviour::mode(), Mode::Resource("test.item"));
     }
 
     #[test]
-    fn default_deserialize_items_ignores_negotiated_version() {
-        let data = vec![serde_json::json!({"id": "a"})];
-        let items = DefaultBehaviour::deserialize_items(&data, None).unwrap();
-        assert_eq!(
-            items,
-            vec![Item {
-                id: "a".into(),
-                extra: None
-            }]
-        );
-
-        let items = DefaultBehaviour::deserialize_items(
-            &data,
-            Some(ApiVersion::from_apiver_str("2.99", false).unwrap()),
-        )
-        .unwrap();
-        assert_eq!(
-            items,
-            vec![Item {
-                id: "a".into(),
-                extra: None
-            }]
-        );
+    fn action_to_request_default_is_none() {
+        let value = serde_json::json!({"id": "a"});
+        assert!(DefaultBehaviour::action_to_request(&Action::Tick, Some(&value)).is_none());
     }
 
     #[test]
-    fn overridden_deserialize_items_dispatches_on_negotiated_version() {
-        let data = vec![serde_json::json!({"id": "a"})];
-
-        let items = VersionedBehaviour::deserialize_items(&data, None).unwrap();
-        assert_eq!(items[0].extra, None);
-
-        let items = VersionedBehaviour::deserialize_items(
-            &data,
-            Some(ApiVersion::from_apiver_str("2.1", false).unwrap()),
-        )
-        .unwrap();
-        assert_eq!(items[0].extra, None);
-
-        let items = VersionedBehaviour::deserialize_items(
-            &data,
-            Some(ApiVersion::from_apiver_str("2.5", false).unwrap()),
-        )
-        .unwrap();
-        assert_eq!(items[0].extra, Some("present-since-2.5".into()));
+    fn filter_carry_action_default_is_empty() {
+        let value = serde_json::json!({"id": "a"});
+        assert!(
+            DefaultBehaviour::filter_carry_action(&Action::Tick, Some(&value), &Filter).is_empty()
+        );
     }
 }

@@ -20,20 +20,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::load_balancer::v2::healthmonitor::response::list::HealthmonitorResponse;
 
 const VIEW_CONFIG_KEY: &str = "load-balancer.healthmonitor";
-
-impl crate::utils::ResourceKey for HealthmonitorResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct LoadBalancerHealthMonitorsBehaviour;
 
 impl ResourceBehaviour for LoadBalancerHealthMonitorsBehaviour {
-    type Item = HealthmonitorResponse;
     type Filter = LoadBalancerHealthmonitorList;
 
     fn view_key() -> &'static str {

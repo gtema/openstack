@@ -17,18 +17,10 @@ use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-use openstack_types::network::v2::subnet::response::list::SubnetResponse;
-
-impl crate::utils::ResourceKey for SubnetResponse {
-    fn get_key() -> &'static str {
-        crate::mode::NETWORK_SUBNET
-    }
-}
 
 pub struct NetworkSubnetsBehaviour;
 
 impl ResourceBehaviour for NetworkSubnetsBehaviour {
-    type Item = SubnetResponse;
     type Filter = cloud_types::NetworkSubnetList;
 
     fn view_key() -> &'static str {

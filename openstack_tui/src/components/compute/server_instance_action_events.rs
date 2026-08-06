@@ -21,57 +21,13 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use serde::Deserialize;
 use serde_json::Value;
-use structable::{StructTable, StructTableOptions};
 
 const VIEW_CONFIG_KEY: &str = "compute.server/instance_action/event";
-
-/// Event type
-#[derive(Clone, Debug, Deserialize, StructTable)]
-pub struct ServerInstanceActionEventData {
-    /// Even details
-    #[structable(optional)]
-    pub details: Option<String>,
-
-    /// Event summary
-    pub event: String,
-
-    /// Finish time of the event
-    #[structable(optional)]
-    pub finish_time: Option<String>,
-
-    /// Hostname
-    #[structable(optional)]
-    pub host: Option<String>,
-
-    /// Host ID
-    #[structable(optional)]
-    pub host_id: Option<String>,
-
-    /// Result
-    #[structable(optional)]
-    pub result: Option<String>,
-
-    /// Event start time
-    #[structable(optional)]
-    pub start_time: Option<String>,
-
-    /// Traceback
-    #[structable(optional)]
-    pub traceback: Option<String>,
-}
-
-impl crate::utils::ResourceKey for ServerInstanceActionEventData {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct ComputeServerInstanceActionEventsBehaviour;
 
 impl ResourceBehaviour for ComputeServerInstanceActionEventsBehaviour {
-    type Item = ServerInstanceActionEventData;
     type Filter = ComputeServerInstanceActionShow;
 
     fn view_key() -> &'static str {
