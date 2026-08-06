@@ -18,7 +18,6 @@ use crate::cloud_worker::image::v2::{
     ImageImageList,
 };
 use crate::cloud_worker::types::ApiRequest;
-use crate::components::dynamic_item::{ColumnSpec, impl_dynamic_item};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
 use crate::mode::Mode;
@@ -26,59 +25,15 @@ use serde_json::Value;
 
 const VIEW_CONFIG_KEY: &str = "image.image";
 
-// image.image has no microversion schema drift today (single unversioned `response::list`) --
-// converted to the dynamic-item pattern here purely to verify the design generalizes to a
-// resource that isn't a genuine breaking-change case.
-static IMAGE_COLUMNS: &[ColumnSpec] = &[
-    ColumnSpec {
-        title: "ID",
-        pointer: "/id",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Name",
-        pointer: "/name",
-        wide: false,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Status",
-        pointer: "/status",
-        wide: false,
-        status: true,
-    },
-    ColumnSpec {
-        title: "Visibility",
-        pointer: "/visibility",
-        wide: true,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Disk Format",
-        pointer: "/disk_format",
-        wide: true,
-        status: false,
-    },
-    ColumnSpec {
-        title: "Container Format",
-        pointer: "/container_format",
-        wide: true,
-        status: false,
-    },
-];
-
-impl_dynamic_item!(ImageItem, VIEW_CONFIG_KEY, IMAGE_COLUMNS);
-
-impl TryFrom<&ImageItem> for ImageImageDelete {
+impl TryFrom<&Value> for ImageImageDelete {
     type Error = crate::cloud_worker::image::v2::ImageImageDeleteBuilderError;
-    fn try_from(value: &ImageItem) -> Result<Self, Self::Error> {
+    fn try_from(value: &Value) -> Result<Self, Self::Error> {
         let mut builder = ImageImageDeleteBuilder::default();
-        if let Some(val) = value.get_str("/id") {
-            builder.id(val);
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
         }
-        if let Some(val) = value.get_str("/name") {
-            builder.name(val);
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.name(val.to_string());
         }
         builder.build()
     }
@@ -87,7 +42,6 @@ impl TryFrom<&ImageItem> for ImageImageDelete {
 pub struct ImageImagesBehaviour;
 
 impl ResourceBehaviour for ImageImagesBehaviour {
-    type Item = ImageItem;
     type Filter = ImageImageList;
 
     fn view_key() -> &'static str {
@@ -116,7 +70,7 @@ impl ResourceBehaviour for ImageImagesBehaviour {
             None
         }
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(action: &Action, selected: Option<&Value>) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -148,8 +102,8 @@ mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
 
-    fn make_image(id: &str, name: &str) -> ImageItem {
-        ImageItem(serde_json::json!({
+    fn make_image(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "status": "active",
@@ -162,7 +116,7 @@ mod tests {
             "visibility": "public",
             "created_at": "2024-01-01T00:00:00Z",
             "updated_at": "2024-01-01T00:00:00Z"
-        }))
+        })
     }
 
     #[test]

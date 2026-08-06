@@ -21,23 +21,18 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::block_storage::v3::volume::response::list_detailed::VolumeResponse;
 
 const VIEW_CONFIG_KEY: &str = "block_storage.volume";
 
-impl crate::utils::ResourceKey for VolumeResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&VolumeResponse> for BlockStorageVolumeDelete {
+impl TryFrom<&serde_json::Value> for BlockStorageVolumeDelete {
     type Error = crate::cloud_worker::block_storage::v3::BlockStorageVolumeDeleteBuilderError;
-    fn try_from(value: &VolumeResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = BlockStorageVolumeDeleteBuilder::default();
-        builder.id(value.id.clone());
-        if let Some(val) = &value.name {
-            builder.name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
+        }
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.name(val.to_string());
         }
         builder.build()
     }
@@ -46,7 +41,6 @@ impl TryFrom<&VolumeResponse> for BlockStorageVolumeDelete {
 pub struct BlockStorageVolumesBehaviour;
 
 impl ResourceBehaviour for BlockStorageVolumesBehaviour {
-    type Item = VolumeResponse;
     type Filter = BlockStorageVolumeList;
 
     fn view_key() -> &'static str {
@@ -70,7 +64,10 @@ impl ResourceBehaviour for BlockStorageVolumesBehaviour {
             if matches!(**boxreq, BlockStorageVolumeApiRequest::ListDetailed(_))
         )
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -93,10 +90,9 @@ pub type BlockStorageVolumes = GenericResourceView<'static, BlockStorageVolumesB
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::block_storage::v3::volume::response::list_detailed::VolumeResponse;
 
-    fn make_volume(id: &str, name: &str) -> VolumeResponse {
-        let json = serde_json::json!({
+    fn make_volume(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "status": "available",
@@ -119,8 +115,7 @@ mod tests {
             "os-vol-mig-status.migration_status": null,
             "os-vol-host-attr:host": null,
             "os-vol-tenant-attr:tenant_id": "tenant-1"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

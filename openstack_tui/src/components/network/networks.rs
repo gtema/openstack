@@ -18,23 +18,16 @@ use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-use openstack_types::network::v2::network::response::list::NetworkResponse;
 
-impl crate::utils::ResourceKey for NetworkResponse {
-    fn get_key() -> &'static str {
-        crate::mode::NETWORK_NETWORK
-    }
-}
-
-impl TryFrom<&NetworkResponse> for NetworkSubnetList {
+impl TryFrom<&serde_json::Value> for NetworkSubnetList {
     type Error = crate::cloud_worker::network::v2::NetworkSubnetListBuilderError;
-    fn try_from(value: &NetworkResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = NetworkSubnetListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.network_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.network_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.network_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.network_name(val.to_string());
         }
         builder.build()
     }
@@ -43,7 +36,6 @@ impl TryFrom<&NetworkResponse> for NetworkSubnetList {
 pub struct NetworkNetworksBehaviour;
 
 impl ResourceBehaviour for NetworkNetworksBehaviour {
-    type Item = NetworkResponse;
     type Filter = cloud_types::NetworkNetworkList;
 
     fn view_key() -> &'static str {
@@ -73,7 +65,7 @@ impl ResourceBehaviour for NetworkNetworksBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -99,10 +91,9 @@ pub type NetworkNetworks = GenericResourceView<'static, NetworkNetworksBehaviour
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::network::v2::network::response::list::NetworkResponse;
 
-    fn make_network(id: &str, name: &str) -> NetworkResponse {
-        let json = serde_json::json!({
+    fn make_network(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "tenant_id": "tenant1",
@@ -112,8 +103,7 @@ mod tests {
             "status": "ACTIVE",
             "admin_state_up": true,
             "shared": false
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

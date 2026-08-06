@@ -21,15 +21,8 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::dns::v2::recordset::response::list::RecordsetResponse;
 
 const VIEW_CONFIG_KEY: &str = "dns.recordset";
-
-impl crate::utils::ResourceKey for RecordsetResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 impl From<DnsRecordsetList> for DnsZoneRecordsetList {
     fn from(value: DnsRecordsetList) -> Self {
@@ -53,7 +46,6 @@ impl From<DnsRecordsetList> for DnsZoneRecordsetList {
 pub struct DnsRecordsetsBehaviour;
 
 impl ResourceBehaviour for DnsRecordsetsBehaviour {
-    type Item = RecordsetResponse;
     type Filter = DnsRecordsetList;
 
     fn view_key() -> &'static str {

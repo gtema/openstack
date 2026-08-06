@@ -20,7 +20,6 @@ use crate::mode::Mode;
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use structable::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use super::resource_behaviour::ResourceBehaviour;
@@ -31,22 +30,18 @@ use super::resource_behaviour::ResourceBehaviour;
 pub struct GenericResourceView<'a, B>
 where
     B: ResourceBehaviour,
-    B::Item: StructTable + 'static,
-    for<'b> &'b B::Item: StructTable,
 {
-    base: super::table_view::TableViewComponentBase<'a, B::Item, B::Filter>,
+    base: super::table_view::TableViewComponentBase<'a, B::Filter>,
     behaviour: std::marker::PhantomData<B>,
 }
 
 impl<'a, B> GenericResourceView<'a, B>
 where
     B: ResourceBehaviour,
-    B::Item: StructTable + 'static,
-    for<'b> &'b B::Item: StructTable,
 {
     pub fn new() -> Self {
         Self {
-            base: super::table_view::TableViewComponentBase::new(),
+            base: super::table_view::TableViewComponentBase::new(B::view_key()),
             behaviour: std::marker::PhantomData,
         }
     }
@@ -55,8 +50,6 @@ where
 impl<'a, B> Default for GenericResourceView<'a, B>
 where
     B: ResourceBehaviour,
-    B::Item: StructTable + 'static,
-    for<'b> &'b B::Item: StructTable,
 {
     fn default() -> Self {
         Self::new()
@@ -67,8 +60,6 @@ impl<'a, B> Component for GenericResourceView<'a, B>
 where
     'a: 'static,
     B: ResourceBehaviour + 'static,
-    B::Item: StructTable,
-    for<'b> &'b B::Item: StructTable,
 {
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
         self
@@ -155,12 +146,11 @@ where
         if let Action::ApiResponsesData {
             request,
             data,
-            negotiated_version,
+            negotiated_version: _,
         } = &action
         {
             if B::matches_request(request) {
-                let items = B::deserialize_items(data, *negotiated_version)?;
-                self.base.set_data_items(items, data.clone())?;
+                self.base.set_data(data.clone())?;
                 return Ok(None);
             }
             // --- Singular API response: delegate to behaviour ---
@@ -481,11 +471,10 @@ mod tests {
     }
 
     fn setup_comp_with_matching_singular_request_and_data() -> (Value, ApiRequest) {
-        let server = crate::components::compute::servers::ServerItem(make_server_json());
         let (_display_actions, request) =
             crate::components::compute::servers::ComputeServersBehaviour::action_to_singular_request(
                 &Action::ShowServerConsoleOutput,
-                Some(&server),
+                Some(&make_server_json()),
             )
             .unwrap();
         (serde_json::json!({ "output": "test console" }), request)

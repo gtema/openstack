@@ -21,39 +21,32 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::dns::v2::zone::response::list::ZoneResponse;
 
 const VIEW_CONFIG_KEY: &str = "dns.zone";
 
-impl crate::utils::ResourceKey for ZoneResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&ZoneResponse> for DnsZoneDelete {
+impl TryFrom<&serde_json::Value> for DnsZoneDelete {
     type Error = crate::cloud_worker::dns::v2::DnsZoneDeleteBuilderError;
-    fn try_from(value: &ZoneResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = DnsZoneDeleteBuilder::default();
-        if let Some(val) = &value.id {
-            builder.id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.name(val.to_string());
         }
         builder.build()
     }
 }
 
-impl TryFrom<&ZoneResponse> for DnsRecordsetList {
+impl TryFrom<&serde_json::Value> for DnsRecordsetList {
     type Error = crate::cloud_worker::dns::v2::DnsRecordsetListBuilderError;
-    fn try_from(value: &ZoneResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = DnsRecordsetListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.zone_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.zone_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.zone_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.zone_name(val.to_string());
         }
         builder.build()
     }
@@ -62,7 +55,6 @@ impl TryFrom<&ZoneResponse> for DnsRecordsetList {
 pub struct DnsZonesBehaviour;
 
 impl ResourceBehaviour for DnsZonesBehaviour {
-    type Item = ZoneResponse;
     type Filter = DnsZoneList;
 
     fn view_key() -> &'static str {
@@ -91,7 +83,10 @@ impl ResourceBehaviour for DnsZonesBehaviour {
             None
         }
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -106,7 +101,7 @@ impl ResourceBehaviour for DnsZonesBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -132,10 +127,9 @@ pub type DnsZones = GenericResourceView<'static, DnsZonesBehaviour>;
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::dns::v2::zone::response::list::ZoneResponse;
 
-    fn make_zone(id: &str, name: &str) -> ZoneResponse {
-        let json = serde_json::json!({
+    fn make_zone(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "email": "admin@example.com",
@@ -151,8 +145,7 @@ mod tests {
             "created_at": "2024-01-01T00:00:00",
             "updated_at": "2024-01-01T00:00:00",
             "attributes": {}
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

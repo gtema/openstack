@@ -20,23 +20,16 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
-impl crate::utils::ResourceKey for SecurityGroupResponse {
-    fn get_key() -> &'static str {
-        crate::mode::NETWORK_SECURITY_GROUP
-    }
-}
-
-impl TryFrom<&SecurityGroupResponse> for NetworkSecurityGroupRuleList {
+impl TryFrom<&serde_json::Value> for NetworkSecurityGroupRuleList {
     type Error = crate::cloud_worker::network::v2::NetworkSecurityGroupRuleListBuilderError;
-    fn try_from(value: &SecurityGroupResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = NetworkSecurityGroupRuleListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.security_group_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.security_group_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.security_group_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.security_group_name(val.to_string());
         }
         builder.build()
     }
@@ -45,7 +38,6 @@ impl TryFrom<&SecurityGroupResponse> for NetworkSecurityGroupRuleList {
 pub struct NetworkSecurityGroupsBehaviour;
 
 impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
-    type Item = SecurityGroupResponse;
     type Filter = NetworkSecurityGroupList;
 
     fn view_key() -> &'static str {
@@ -72,7 +64,7 @@ impl ResourceBehaviour for NetworkSecurityGroupsBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -99,10 +91,9 @@ mod tests {
     use super::*;
     use crate::cloud_worker::network::v2::{NetworkApiRequest, NetworkSecurityGroupApiRequest};
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::network::v2::security_group::response::list::SecurityGroupResponse;
 
-    fn make_sg(id: &str, name: &str) -> SecurityGroupResponse {
-        let json = serde_json::json!({
+    fn make_sg(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "description": "test sg",
@@ -110,8 +101,7 @@ mod tests {
             "security_group_rules": [],
             "created_at": "2024-01-01T00:00:00",
             "updated_at": "2024-01-01T00:00:00"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

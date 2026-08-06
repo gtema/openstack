@@ -20,20 +20,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::identity::v3::project::response::list::ProjectResponse;
 
 const VIEW_CONFIG_KEY: &str = "identity.project";
-
-impl crate::utils::ResourceKey for ProjectResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct IdentityProjectsBehaviour;
 
 impl ResourceBehaviour for IdentityProjectsBehaviour {
-    type Item = ProjectResponse;
     type Filter = IdentityProjectList;
 
     fn view_key() -> &'static str {
@@ -57,17 +49,18 @@ impl ResourceBehaviour for IdentityProjectsBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::SwitchToProject = action
             && let Some(sel) = selected
         {
             let scope = openstack_sdk::types::identity::v3::Project {
-                id: sel.id.clone(),
-                name: sel.name.clone(),
+                id: crate::components::view_render::get_str(sel, "/id").map(|s| s.to_string()),
+                name: crate::components::view_render::get_str(sel, "/name").map(|s| s.to_string()),
                 domain: Some(openstack_sdk::types::identity::v3::Domain {
-                    id: sel.domain_id.clone(),
+                    id: crate::components::view_render::get_str(sel, "/domain_id")
+                        .map(|s| s.to_string()),
                     name: None,
                 }),
             };
@@ -85,17 +78,15 @@ pub type IdentityProjects = GenericResourceView<'static, IdentityProjectsBehavio
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::identity::v3::project::response::list::ProjectResponse;
 
-    fn make_project(id: &str, name: &str, domain_id: &str) -> ProjectResponse {
-        let json = serde_json::json!({
+    fn make_project(id: &str, name: &str, domain_id: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "domain_id": domain_id,
             "enabled": true,
             "description": "test project"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

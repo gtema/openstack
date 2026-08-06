@@ -22,39 +22,32 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::load_balancer::v2::loadbalancer::response::list::LoadbalancerResponse;
 
 const VIEW_CONFIG_KEY: &str = "load-balancer.loadbalancer";
 
-impl crate::utils::ResourceKey for LoadbalancerResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&LoadbalancerResponse> for LoadBalancerListenerList {
+impl TryFrom<&serde_json::Value> for LoadBalancerListenerList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerListenerListBuilderError;
-    fn try_from(value: &LoadbalancerResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerListenerListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.load_balancer_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.load_balancer_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.load_balancer_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.load_balancer_name(val.to_string());
         }
         builder.build()
     }
 }
 
-impl TryFrom<&LoadbalancerResponse> for LoadBalancerPoolList {
+impl TryFrom<&serde_json::Value> for LoadBalancerPoolList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerPoolListBuilderError;
-    fn try_from(value: &LoadbalancerResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerPoolListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.loadbalancer_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.loadbalancer_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.loadbalancer_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.loadbalancer_name(val.to_string());
         }
         builder.build()
     }
@@ -63,7 +56,6 @@ impl TryFrom<&LoadbalancerResponse> for LoadBalancerPoolList {
 pub struct LoadBalancersBehaviour;
 
 impl ResourceBehaviour for LoadBalancersBehaviour {
-    type Item = LoadbalancerResponse;
     type Filter = LoadBalancerLoadbalancerList;
 
     fn view_key() -> &'static str {
@@ -96,7 +88,7 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -135,10 +127,9 @@ pub type LoadBalancers = GenericResourceView<'static, LoadBalancersBehaviour>;
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::load_balancer::v2::loadbalancer::response::list::LoadbalancerResponse;
 
-    fn make_lb(id: &str, name: &str) -> LoadbalancerResponse {
-        let json = serde_json::json!({
+    fn make_lb(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "provisioning_status": "ACTIVE",
@@ -155,8 +146,7 @@ mod tests {
             "project_id": "tenant-1",
             "flavor_id": null,
             "tags": []
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

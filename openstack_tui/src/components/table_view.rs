@@ -17,10 +17,8 @@ use eyre::Result;
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
 use ratatui::{prelude::*, style::palette::tailwind, widgets::*};
-use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
-use structable::{StructTable, build_list_table};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::{debug, instrument};
 
@@ -30,7 +28,6 @@ use crate::{
     config::{Config, ViewConfig},
     error::TuiError,
     mode::Mode,
-    utils::ResourceKey,
 };
 
 const ITEM_HEIGHT: usize = 1;
@@ -43,20 +40,17 @@ enum Focus {
     Describe,
 }
 
-pub struct TableViewComponentBase<'a, T, F>
+pub struct TableViewComponentBase<'a, F>
 where
-    T: StructTable,
-    T: DeserializeOwned,
-    T: ResourceKey,
     F: Default + Display,
 {
     command_tx: Option<UnboundedSender<Action>>,
     pub config: Config,
+    view_key: &'static str,
 
     state: TableState,
     scroll_state: ScrollbarState,
 
-    items: Vec<T>,
     raw_items: Vec<Value>,
     filter: F,
 
@@ -72,33 +66,16 @@ where
     focus: Focus,
 }
 
-impl<T, F> Default for TableViewComponentBase<'_, T, F>
+impl<F> TableViewComponentBase<'_, F>
 where
-    T: StructTable,
-    for<'a> &'a T: StructTable,
-    T: DeserializeOwned,
-    T: ResourceKey,
     F: Default + Display,
 {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<T, F> TableViewComponentBase<'_, T, F>
-where
-    T: StructTable,
-    for<'a> &'a T: StructTable,
-    T: DeserializeOwned,
-    T: ResourceKey,
-    F: Default + Display,
-{
-    pub fn new() -> Self {
+    pub fn new(view_key: &'static str) -> Self {
         Self {
             command_tx: None,
             config: Config::default(),
+            view_key,
             state: TableState::default().with_selected(0),
-            items: Vec::new(),
             raw_items: Vec::new(),
             filter: F::default(),
             scroll_state: ScrollbarState::new(0),
@@ -128,7 +105,7 @@ where
     }
 
     pub fn get_output_config(&mut self) -> &mut ViewConfig {
-        self.config.views.entry(T::get_key().into()).or_default()
+        self.config.views.entry(self.view_key.into()).or_default()
     }
 
     pub fn set_command_tx(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
@@ -165,7 +142,8 @@ where
     pub fn cursor_last(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
-                self.state.select(Some(self.items.len().saturating_sub(1)));
+                self.state
+                    .select(Some(self.raw_items.len().saturating_sub(1)));
                 self.scroll_state.last();
                 self.set_describe_content()?;
             }
@@ -181,7 +159,7 @@ where
             Focus::Table => {
                 let i = match self.state.selected() {
                     Some(i) => {
-                        if i < self.items.len() - 1 {
+                        if i < self.raw_items.len() - 1 {
                             i + 1
                         } else {
                             i
@@ -224,7 +202,7 @@ where
                 let i = match self.state.selected() {
                     Some(i) => cmp::min(
                         i.saturating_add(self.content_size.height as usize),
-                        self.items.len() - 1,
+                        self.raw_items.len() - 1,
                     ),
                     None => 0,
                 };
@@ -321,23 +299,10 @@ where
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         if data != self.raw_items {
-            let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))?;
-            return self.set_data_items(items, data);
-        }
-        self.set_loading(false);
-        Ok(())
-    }
-
-    /// Like `set_data`, but accepts already-deserialized items alongside the raw payload, for
-    /// callers that need to pick the deserialization function themselves (e.g. based on a
-    /// negotiated microversion) rather than deserializing into a single fixed type here.
-    pub fn set_data_items(&mut self, items: Vec<T>, raw_data: Vec<Value>) -> Result<(), TuiError> {
-        if raw_data != self.raw_items {
-            self.items = items;
-            self.raw_items = raw_data;
+            self.raw_items = data;
             self.state.select_first();
             self.scroll_state =
-                ScrollbarState::new(self.items.len().saturating_sub(1) * ITEM_HEIGHT);
+                ScrollbarState::new(self.raw_items.len().saturating_sub(1) * ITEM_HEIGHT);
             self.sync_table_data()?;
         }
         self.set_loading(false);
@@ -411,16 +376,26 @@ where
         (headers, rows, column_constrains)
     }
 
-    /// Synchronize table data from internal vector of typed entries
+    /// Synchronize table data from internal vector of raw entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
         let view_config = self.get_output_config().clone();
-        let data = build_list_table(self.items.iter(), &view_config);
-        let (table_headers, table_rows, _table_constraints) = self.prepare_table(data.0, data.1);
-        let mut statuses: Vec<Option<String>> = self
-            .items
+        let headers = crate::components::view_render::headers(&view_config);
+        let rows: Vec<Vec<String>> = self
+            .raw_items
             .iter()
-            .map(structable::StructTable::status)
+            .map(|item| {
+                crate::components::view_render::row(item, &view_config)
+                    .into_iter()
+                    .map(|cell| cell.unwrap_or_default())
+                    .collect()
+            })
             .collect();
+        let mut statuses: Vec<Option<String>> = self
+            .raw_items
+            .iter()
+            .map(|item| crate::components::view_render::status(item, &view_config))
+            .collect();
+        let (table_headers, table_rows, _table_constraints) = self.prepare_table(headers, rows);
 
         // Ensure we have as many statuses as rows to zip them properly
         statuses.resize_with(table_rows.len(), Default::default);
@@ -473,21 +448,17 @@ where
 
     /// Update single record with the new data
     pub fn update_row_data(&mut self, data: Value) -> Result<(), TuiError> {
-        let updated_item: T = serde_json::from_value(data.clone())?;
         let updated_entry_id = data
             .get("id")
             .or(data.get("uuid"))
             .ok_or_else(|| TuiError::EntryIdNotPresent(data.clone()))?;
-        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
+        for raw_item in self.raw_items.iter_mut() {
             if let Some(row_id) = raw_item.get("id").or(raw_item.get("uuid"))
                 && row_id == updated_entry_id
             {
                 *raw_item = data.clone();
-                if let Some(typed_row) = self.items.get_mut(idx) {
-                    *typed_row = updated_item;
-                    self.sync_table_data()?;
-                    break;
-                }
+                self.sync_table_data()?;
+                break;
             }
         }
         self.set_loading(false);
@@ -557,7 +528,7 @@ where
 
         f.render_stateful_widget(t, area, &mut self.state);
 
-        if usize::from(self.content_size.height) < self.items.len() {
+        if usize::from(self.content_size.height) < self.raw_items.len() {
             self.render_scrollbar(f, area)?;
         }
         Ok(())
@@ -611,7 +582,7 @@ where
             ));
         } else {
             title.push(Span::styled(
-                format!(" ({}) ", self.items.len()),
+                format!(" ({}) ", self.raw_items.len()),
                 self.config.styles.title_details_fg,
             ));
         }
@@ -648,50 +619,40 @@ where
         Ok(())
     }
 
-    pub fn get_selected(&self) -> Option<&T> {
-        self.state.selected().and_then(|idx| self.items.get(idx))
-    }
-
-    /// Get mutable reference to the row with the typed data matching resource id
-    #[instrument(level = "debug", skip(self))]
-    pub fn get_item_row_by_res_id_mut(&mut self, search_id: &String) -> Option<&mut T> {
-        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
-            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid"))
-                && row_item_id == search_id
-            {
-                return self.items.get_mut(idx);
-            }
-        }
-        None
-    }
-
-    /// delete the row with the typed data matching resource id
-    #[instrument(level = "debug", skip(self))]
-    pub fn delete_item_row_by_res_id_mut(&mut self, search_id: &String) -> Result<Option<usize>> {
-        let mut item_idx: Option<usize> = None;
-        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
-            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid"))
-                && row_item_id == search_id
-            {
-                item_idx = Some(idx);
-                break;
-            }
-        }
-        if let Some(idx) = item_idx {
-            self.raw_items.remove(idx);
-            self.items.remove(idx);
-        }
-        Ok(item_idx)
-    }
-
-    pub fn get_selected_raw(&self) -> Option<&Value> {
+    pub fn get_selected(&self) -> Option<&Value> {
         self.state
             .selected()
             .and_then(|idx| self.raw_items.get(idx))
     }
 
+    /// Get mutable reference to the row matching resource id
+    #[instrument(level = "debug", skip(self))]
+    pub fn get_item_row_by_res_id_mut(&mut self, search_id: &String) -> Option<&mut Value> {
+        self.raw_items.iter_mut().find(|raw_item| {
+            raw_item
+                .get("id")
+                .or(raw_item.get("uuid"))
+                .is_some_and(|row_id| row_id == search_id)
+        })
+    }
+
+    /// delete the row matching resource id
+    #[instrument(level = "debug", skip(self))]
+    pub fn delete_item_row_by_res_id_mut(&mut self, search_id: &String) -> Result<Option<usize>> {
+        let item_idx = self.raw_items.iter().position(|raw_item| {
+            raw_item
+                .get("id")
+                .or(raw_item.get("uuid"))
+                .is_some_and(|row_id| row_id == search_id)
+        });
+        if let Some(idx) = item_idx {
+            self.raw_items.remove(idx);
+        }
+        Ok(item_idx)
+    }
+
     pub fn get_selected_resource_id(&self) -> Result<Option<String>, TuiError> {
-        self.get_selected_raw()
+        self.get_selected()
             .map(|entry| {
                 entry
                     .get("id")
@@ -704,7 +665,7 @@ where
     pub fn describe_selected_entry(&self) -> Result<(), TuiError> {
         if let Some(command_tx) = self.get_command_tx() {
             // and have a selected entry
-            if let Some(raw_value) = self.get_selected_raw() {
+            if let Some(raw_value) = self.get_selected() {
                 command_tx.send(Action::Mode {
                     mode: Mode::Describe,
                     stack: true,
@@ -722,9 +683,7 @@ where
     /// append new row.
     #[instrument(level = "debug", skip(self))]
     pub fn append_new_row(&mut self, data: Value) -> Result<(), TuiError> {
-        let item = serde_json::from_value::<T>(data.clone())?;
-        self.items.push(item);
-        self.raw_items.push(data.clone());
+        self.raw_items.push(data);
         self.sync_table_data()?;
         self.set_loading(false);
         Ok(())

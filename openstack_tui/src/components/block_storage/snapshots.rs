@@ -19,13 +19,11 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::block_storage::v3::snapshot::response::list_detailed::SnapshotResponse;
 
 /// Behaviour implementation for BlockStorageSnapshots.
 pub struct BlockStorageSnapshotsBehaviour;
 
 impl ResourceBehaviour for BlockStorageSnapshotsBehaviour {
-    type Item = SnapshotResponse;
     type Filter = BlockStorageSnapshotList;
 
     fn view_key() -> &'static str {

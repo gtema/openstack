@@ -22,39 +22,32 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::load_balancer::v2::pool::response::list::PoolResponse;
 
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
 
-impl crate::utils::ResourceKey for PoolResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&PoolResponse> for LoadBalancerPoolMemberList {
+impl TryFrom<&serde_json::Value> for LoadBalancerPoolMemberList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerPoolMemberListBuilderError;
-    fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerPoolMemberListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.pool_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.pool_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.pool_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.pool_name(val.to_string());
         }
         builder.build()
     }
 }
 
-impl TryFrom<&PoolResponse> for LoadBalancerHealthmonitorList {
+impl TryFrom<&serde_json::Value> for LoadBalancerHealthmonitorList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerHealthmonitorListBuilderError;
-    fn try_from(value: &PoolResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerHealthmonitorListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.pool_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.pool_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.pool_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.pool_name(val.to_string());
         }
         builder.build()
     }
@@ -63,7 +56,6 @@ impl TryFrom<&PoolResponse> for LoadBalancerHealthmonitorList {
 pub struct LoadBalancerPoolsBehaviour;
 
 impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
-    type Item = PoolResponse;
     type Filter = LoadBalancerPoolList;
 
     fn view_key() -> &'static str {
@@ -94,7 +86,7 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -133,10 +125,9 @@ pub type LoadBalancerPools = GenericResourceView<'static, LoadBalancerPoolsBehav
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::load_balancer::v2::pool::response::list::PoolResponse;
 
-    fn make_pool(id: &str, name: &str) -> PoolResponse {
-        let json = serde_json::json!({
+    fn make_pool(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "description": "test pool",
@@ -154,8 +145,7 @@ mod tests {
             "session_persistence": null,
             "monitor_ports": [],
             "tags": []
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

@@ -21,20 +21,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::identity::v3::user::application_credential::response::list::ApplicationCredentialResponse;
 
 const VIEW_CONFIG_KEY: &str = "identity.user/application_credential";
-
-impl crate::utils::ResourceKey for ApplicationCredentialResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct IdentityApplicationCredentialsBehaviour;
 
 impl ResourceBehaviour for IdentityApplicationCredentialsBehaviour {
-    type Item = ApplicationCredentialResponse;
     type Filter = IdentityUserApplicationCredentialList;
 
     fn view_key() -> &'static str {

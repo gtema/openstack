@@ -13,36 +13,12 @@
 // SPDX-License-Identifier: Apache-2.0
 use thiserror::Error;
 
-use openstack_sdk::AsyncOpenStack;
-use openstack_sdk::api::{AsyncClient, RestEndpoint, rest_endpoint::negotiate_microversion};
-use openstack_sdk::types::ApiVersion;
-
 use crate::action;
 
 pub trait ConfirmableRequest {
     fn get_confirm_message(&self) -> Option<String> {
         None
     }
-}
-
-/// Learn the microversion that will actually be negotiated for `endpoint` against the cloud
-/// behind `session`, without sending any request.
-///
-/// Reuses `openstack_sdk`'s own `negotiate_microversion` (the same bounds-check logic that picks
-/// the version sent in the `OpenStack-API-Version` header) so callers that need to choose a
-/// version-appropriate response schema can learn the answer up front, rather than guessing which
-/// microversion-specific struct will match the JSON that comes back.
-pub(crate) async fn negotiated_version<E: RestEndpoint>(
-    session: &AsyncOpenStack,
-    endpoint: &E,
-) -> Result<Option<ApiVersion>, CloudWorkerError> {
-    let service_endpoint = session
-        .get_service_endpoint(&endpoint.service_type(), endpoint.api_version().as_ref())
-        .await?;
-    Ok(negotiate_microversion::<AsyncOpenStack, E>(
-        &service_endpoint,
-        endpoint,
-    )?)
 }
 
 #[derive(Error, Debug)]

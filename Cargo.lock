@@ -3856,7 +3856,6 @@ dependencies = [
  "lazy_static",
  "open",
  "openstack_sdk",
- "openstack_types",
  "pretty_assertions",
  "ratatui",
  "secrecy",

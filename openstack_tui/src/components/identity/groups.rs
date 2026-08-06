@@ -21,39 +21,32 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::identity::v3::group::response::list::GroupResponse;
 
 const VIEW_CONFIG_KEY: &str = "identity.group";
 
-impl crate::utils::ResourceKey for GroupResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
-
-impl TryFrom<&GroupResponse> for IdentityGroupUserList {
+impl TryFrom<&serde_json::Value> for IdentityGroupUserList {
     type Error = crate::cloud_worker::identity::v3::IdentityGroupUserListBuilderError;
-    fn try_from(value: &GroupResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = IdentityGroupUserListBuilder::default();
-        if let Some(val) = &value.id {
-            builder.group_id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.group_id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.group_name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.group_name(val.to_string());
         }
         builder.build()
     }
 }
 
-impl TryFrom<&GroupResponse> for IdentityGroupDelete {
+impl TryFrom<&serde_json::Value> for IdentityGroupDelete {
     type Error = crate::cloud_worker::identity::v3::IdentityGroupDeleteBuilderError;
-    fn try_from(value: &GroupResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
         let mut builder = IdentityGroupDeleteBuilder::default();
-        if let Some(val) = &value.id {
-            builder.id(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/id") {
+            builder.id(val.to_string());
         }
-        if let Some(val) = &value.name {
-            builder.name(val.clone());
+        if let Some(val) = crate::components::view_render::get_str(value, "/name") {
+            builder.name(val.to_string());
         }
         builder.build()
     }
@@ -62,7 +55,6 @@ impl TryFrom<&GroupResponse> for IdentityGroupDelete {
 pub struct IdentityGroupsBehaviour;
 
 impl ResourceBehaviour for IdentityGroupsBehaviour {
-    type Item = GroupResponse;
     type Filter = IdentityGroupList;
 
     fn view_key() -> &'static str {
@@ -84,7 +76,10 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
             if matches!(**boxreq, IdentityGroupApiRequest::List(_))
         )
     }
-    fn confirm_request(action: &Action, selected: Option<&Self::Item>) -> Option<ApiRequest> {
+    fn confirm_request(
+        action: &Action,
+        selected: Option<&serde_json::Value>,
+    ) -> Option<ApiRequest> {
         if let Action::ResourceOp {
             key,
             op: crate::action::ResourceOp::Delete,
@@ -101,7 +96,7 @@ impl ResourceBehaviour for IdentityGroupsBehaviour {
     }
     fn filter_carry_action(
         action: &Action,
-        selected: Option<&Self::Item>,
+        selected: Option<&serde_json::Value>,
         _filter: &Self::Filter,
     ) -> Vec<Action> {
         if let Action::ShowResource(key) = action
@@ -127,16 +122,14 @@ pub type IdentityGroups = GenericResourceView<'static, IdentityGroupsBehaviour>;
 mod tests {
     use super::*;
     use crate::components::resource_behaviour::ResourceBehaviour;
-    use openstack_types::identity::v3::group::response::list::GroupResponse;
 
-    fn make_group(id: &str, name: &str) -> GroupResponse {
-        let json = serde_json::json!({
+    fn make_group(id: &str, name: &str) -> serde_json::Value {
+        serde_json::json!({
             "id": id,
             "name": name,
             "domain_id": "default",
             "description": "test group"
-        });
-        serde_json::from_value(json).unwrap()
+        })
     }
 
     #[test]

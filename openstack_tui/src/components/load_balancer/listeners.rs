@@ -20,20 +20,12 @@ use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
 use crate::components::resource_behaviour::ResourceBehaviour;
 use crate::mode::Mode;
-use openstack_types::load_balancer::v2::listener::response::list::ListenerResponse;
 
 const VIEW_CONFIG_KEY: &str = "load-balancer.listener";
-
-impl crate::utils::ResourceKey for ListenerResponse {
-    fn get_key() -> &'static str {
-        VIEW_CONFIG_KEY
-    }
-}
 
 pub struct LoadBalancerListenersBehaviour;
 
 impl ResourceBehaviour for LoadBalancerListenersBehaviour {
-    type Item = ListenerResponse;
     type Filter = LoadBalancerListenerList;
 
     fn view_key() -> &'static str {

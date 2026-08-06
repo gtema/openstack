@@ -13,5 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 pub mod backups;
+pub(crate) mod generated;
 pub mod snapshots;
 pub mod volumes;
