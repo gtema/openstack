@@ -120,6 +120,7 @@ pub enum TopLevelCommands {
     BlockStorage(openstack_cli_block_storage::BlockStorageCommand),
     Catalog(openstack_cli_catalog::CatalogCommand),
     Compute(openstack_cli_compute::ComputeCommand),
+    Config(openstack_cli_config::ConfigCommand),
     #[command(aliases = ["container-infrastructure-management", "container"])]
     ContainerInfrastructure(
         openstack_cli_container_infrastructure_management::ContainerInfrastructureCommand,
@@ -152,6 +153,9 @@ impl Cli {
             TopLevelCommands::BlockStorage(args) => args.take_action(self, client).await,
             TopLevelCommands::Catalog(args) => args.take_action(self, client).await,
             TopLevelCommands::Compute(args) => args.take_action(self, client).await,
+            // `osc config` edits local files without authentication and is
+            // dispatched in `entry_point` before the session is established.
+            TopLevelCommands::Config(_) => unimplemented!(),
             TopLevelCommands::ContainerInfrastructure(args) => args.take_action(self, client).await,
             TopLevelCommands::Dns(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,

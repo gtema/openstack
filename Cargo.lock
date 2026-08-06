@@ -2962,6 +2962,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-cli-config"
+version = "0.13.7"
+dependencies = [
+ "clap",
+ "dirs",
+ "eyre",
+ "openstack-cli-core",
+ "openstack_sdk_core",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "tracing",
+ "zeroize",
+]
+
+[[package]]
 name = "openstack-cli-container-infrastructure-management"
 version = "0.13.7"
 dependencies = [
@@ -3713,6 +3730,7 @@ dependencies = [
  "openstack-cli-block-storage",
  "openstack-cli-catalog",
  "openstack-cli-compute",
+ "openstack-cli-config",
  "openstack-cli-container-infrastructure-management",
  "openstack-cli-core",
  "openstack-cli-dns",
@@ -3726,6 +3744,7 @@ dependencies = [
  "rand 0.10.2",
  "reqwest",
  "serde_json",
+ "serde_yaml",
  "strip-ansi-escapes",
  "tempfile",
  "tokio",
@@ -6881,6 +6900,20 @@ name = "zeroize"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13c156562582aa81c60cb29407084cdb54c4164760106ab78e6c5b0858cf64e"
+dependencies = [
+ "zeroize_derive",
+]
+
+[[package]]
+name = "zeroize_derive"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c50655cbb0fe3fc43170059e702f1ce5e19b84cec58dc87b037a09935c2f328"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
 
 [[package]]
 name = "zerotrie"
