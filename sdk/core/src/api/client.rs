@@ -26,6 +26,25 @@ use crate::api::ApiError;
 use crate::catalog::ServiceEndpoint;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 
+/// Strategy used to pick the microversion sent in the request header.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum MicroVersionStrategy {
+    /// Send `max(endpoint.min_version, cloud.min_version)` — the lowest
+    /// compatible microversion (conservative, what the generated code was
+    /// written against).
+    #[default]
+    Floor,
+    /// Send `min(endpoint.max_version, cloud.max_version)`.
+    ///
+    /// When `endpoint.max_version()` is `None` falls back to
+    /// `cloud.max_version`, or to floor semantics when the latter is also
+    /// `None`.
+    ///
+    /// Useful when the response side already handles unknown extra fields
+    /// (e.g. `serde_json::Value` parsing).
+    Ceiling,
+}
+
 /// A trait representing a client which can communicate with a OpenStack service API via REST API.
 pub trait RestClient {
     /// The errors which may occur for this client.
@@ -33,6 +52,11 @@ pub trait RestClient {
 
     /// Get current token project information
     fn get_current_project(&self) -> Option<Project>;
+
+    /// Returns the default microversion negotiation strategy (floor).
+    fn microversion_strategy(&self) -> MicroVersionStrategy {
+        MicroVersionStrategy::Floor
+    }
 }
 
 /// A trait representing a client which can communicate with a OpenStack cloud APIs.

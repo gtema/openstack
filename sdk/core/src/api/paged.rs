@@ -138,7 +138,7 @@ where
                 .method(self.endpoint.method())
                 .uri(query::url_to_http_uri(page_url.clone())?)
                 .header(header::ACCEPT, HeaderValue::from_static("application/json"));
-            set_request_microversion_header::<C, E>(&mut req, &ep, &self.endpoint)?;
+            set_request_microversion_header::<C, E>(&mut req, &ep, &self.endpoint, client)?;
             // Set endpoint headers
             if let Some(request_headers) = self.endpoint.request_headers()
                 && let Some(headers) = req.headers_mut()

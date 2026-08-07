@@ -30,7 +30,7 @@ use openstack_sdk_auth_core::{
     authtoken_scope::AuthTokenScope,
     types::{AuthResponse, Project},
 };
-use openstack_sdk_core::api::{self, Client, RestClient};
+use openstack_sdk_core::api::{self, Client, MicroVersionStrategy, RestClient};
 use openstack_sdk_core::auth::{AuthState, auth_helper::AuthHelper};
 use openstack_sdk_core::config::CloudConfig;
 use openstack_sdk_core::error::{OpenStackResult, RestError};
@@ -109,6 +109,10 @@ impl RestClient for OpenStack {
 
     fn get_current_project(&self) -> Option<Project> {
         self.inner.get_current_project()
+    }
+
+    fn microversion_strategy(&self) -> MicroVersionStrategy {
+        self.inner.microversion_strategy()
     }
 }
 
@@ -211,6 +215,12 @@ impl OpenStackBuilder {
     /// Override the idle connection pool timeout (default: 30s).
     pub fn http_pool_idle_timeout(mut self, timeout: std::time::Duration) -> Self {
         self.inner = self.inner.http_pool_idle_timeout(timeout);
+        self
+    }
+
+    /// Set the microversion negotiation strategy (default: `Floor`).
+    pub fn microversion_strategy(mut self, strategy: MicroVersionStrategy) -> Self {
+        self.inner = self.inner.microversion_strategy(strategy);
         self
     }
 

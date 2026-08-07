@@ -369,7 +369,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint)?;
+        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint, client)?;
         let rsp = client.rest(req, data)?;
         self.process_response::<C, _>(rsp, url.clone())
     }
@@ -399,7 +399,7 @@ where
             return Ok(Vec::new());
         };
         let (mut req, data) = self.build_request::<C>(url.clone())?;
-        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint)?;
+        set_request_microversion_header::<C, E>(&mut req, &ep, &self.paged.endpoint, client)?;
         let rsp = client.rest_async(req, data).await?;
         self.process_response::<C, _>(rsp, url.clone())
     }

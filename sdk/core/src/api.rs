@@ -461,6 +461,7 @@ mod wait;
 pub use self::error::ApiError;
 pub use self::error::BodyError;
 
+pub use self::client::MicroVersionStrategy;
 pub use self::client::RestClient;
 
 pub use self::rest_endpoint::RestEndpoint;

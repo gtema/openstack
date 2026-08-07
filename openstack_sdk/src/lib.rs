@@ -34,6 +34,7 @@ pub use openstack_async::{AsyncOpenStack, AsyncOpenStackBuilder, RenewHandle};
 mod openstack;
 #[cfg(all(feature = "sync", feature = "async"))]
 pub use openstack::OpenStack;
+pub use openstack_sdk_core::api::MicroVersionStrategy;
 pub use openstack_sdk_core::auth::AuthError;
 pub use openstack_sdk_core::{BuilderError, OpenStackError, RestError};
 
