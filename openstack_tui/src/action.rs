@@ -251,6 +251,18 @@ pub enum Action {
     SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
     // END GENERATED rust-tui-view action network.security_group_rule
     // GENERATED-ANCHOR: action variants
+    // BEGIN GENERATED rust-tui-view action compute.hypervisor
+    /// Set compute.hypervisor filters
+    SetComputeHypervisorListFilters(cloud_types::ComputeHypervisorList),
+    // END GENERATED rust-tui-view action compute.hypervisor
+    // BEGIN GENERATED rust-tui-view action compute.flavor
+    /// Set compute.flavor filters
+    SetComputeFlavorListFilters(cloud_types::ComputeFlavorList),
+    // END GENERATED rust-tui-view action compute.flavor
+    // BEGIN GENERATED rust-tui-view action compute.aggregate
+    /// Set compute.aggregate filters
+    SetComputeAggregateListFilters(cloud_types::ComputeAggregateList),
+    // END GENERATED rust-tui-view action compute.aggregate
     // BEGIN GENERATED rust-tui-view action network.router
     /// Set network.router filters
     SetNetworkRouterListFilters(cloud_types::NetworkRouterList),
