@@ -22,7 +22,7 @@ use eyre::{Result, eyre};
 use openstack_sdk::{
     AsyncOpenStack, MicroVersionStrategy, RenewHandle,
     auth::auth_helper::{AuthHelper, AuthHelperError},
-    config::ConfigFile,
+    config::{CloudConfig, ConfigFile},
 };
 use secrecy::SecretString;
 use std::path::PathBuf;
@@ -68,6 +68,10 @@ const AUTO_RENEW_MARGIN: TimeDelta = TimeDelta::seconds(59 * 60);
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     pub(crate) cloud: Option<AsyncOpenStack>,
+    /// Pre-loaded cloud config from environment variables. When set, the
+    /// TUI operates in single-cloud mode similar to `--cloud-config-from-env`
+    /// in the CLI.
+    env_cloud_config: Option<openstack_sdk::config::CloudConfig>,
     auth_helper: TuiAuthHelper,
     /// Handle to the background token-renewal task for `cloud`. Dropped
     /// (stopping the task) when replaced by a new connection/scope change,
@@ -87,15 +91,29 @@ impl Cloud {
         client_config_config_file: Option<PathBuf>,
         client_secure_config_file: Option<PathBuf>,
         auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
+        env_cloud_config: Option<CloudConfig>,
     ) -> Result<Self, TuiError> {
-        let cfg = ConfigFile::new_with_user_specified_configs(
-            client_config_config_file.as_deref(),
-            client_secure_config_file.as_deref(),
-        )?;
+        // When running with env-based config the config file is not needed
+        // and parsing it may fail for unrelated reasons. Skip the parse in
+        // that case so that a broken or missing `clouds.yaml` does not block
+        // `--cloud-config-from-env` operation.
+        let cfg = if env_cloud_config.is_some() {
+            ConfigFile {
+                cache: None,
+                clouds: None,
+                public_clouds: None,
+            }
+        } else {
+            ConfigFile::new_with_user_specified_configs(
+                client_config_config_file.as_deref(),
+                client_secure_config_file.as_deref(),
+            )?
+        };
 
         Ok(Self {
             cloud_configs: cfg,
             cloud: None,
+            env_cloud_config,
             auth_helper: TuiAuthHelper::new(auth_helper_control_tx),
             _renew_handle: None,
         })
@@ -103,10 +121,13 @@ impl Cloud {
 
     pub async fn connect_to_cloud(&mut self, cloud: String) -> Result<()> {
         debug!("Connecting to cloud {}", cloud);
-        let profile = self
-            .cloud_configs
-            .get_cloud_config(cloud.clone())?
-            .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
+        let profile = if let Some(ref env_config) = self.env_cloud_config {
+            env_config.clone()
+        } else {
+            self.cloud_configs
+                .get_cloud_config(cloud.clone())?
+                .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?
+        };
         let session = AsyncOpenStack::builder(&profile)
             .auth_helper(self.auth_helper.clone())
             .renew_auth(false)
@@ -264,7 +285,15 @@ impl Cloud {
                     }
                 }
                 Action::ListClouds => {
-                    app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
+                    if let Some(ref env_config) = self.env_cloud_config {
+                        let cloud_name = env_config
+                            .name
+                            .clone()
+                            .unwrap_or_else(|| String::from("envvars"));
+                        app_tx.send(Action::Clouds(vec![cloud_name]))?;
+                    } else {
+                        app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
+                    }
                 }
                 Action::CloudChangeScope(ref scope) => {
                     let _ = self.switch_auth_scope(scope, &app_tx, &action).await;
