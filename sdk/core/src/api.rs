@@ -507,4 +507,5 @@ pub use self::raw::raw;
 pub use self::raw::raw_with_body;
 pub use self::wait::{
     Backoff, Observation, Wait, WaitDecision, WaitOutcome, wait, wait_deleted, wait_for_status,
+    HasStatusPointer, wait_for_status_typed,
 };
