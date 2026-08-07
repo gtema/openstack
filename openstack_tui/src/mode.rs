@@ -105,6 +105,7 @@ pub const LB_HEALTHMONITOR: ViewKey = "load-balancer.healthmonitor";
 /// of truth used both by the `resolve_view_key` round-trip test and by coverage tests that
 /// check `app.rs` and `.config/config.yaml` stay in sync with this list — add a new
 /// resource's `(name, const)` pair here too.
+#[cfg(test)]
 pub(crate) const ALL_VIEW_KEYS: &[(&str, ViewKey)] = &[
     // BEGIN GENERATED rust-tui-view mode-all_view_keys network.security_group
     ("NETWORK_SECURITY_GROUP", NETWORK_SECURITY_GROUP),

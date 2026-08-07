@@ -45,6 +45,11 @@ where
             behaviour: std::marker::PhantomData,
         }
     }
+
+    #[cfg(test)]
+    pub(crate) fn filters_for_test(&self) -> &B::Filter {
+        self.base.get_filters()
+    }
 }
 
 impl<'a, B> Default for GenericResourceView<'a, B>
@@ -89,28 +94,50 @@ where
                 return Ok(None);
             }
             Action::DescribeApiResponse => {
-                self.base.describe_selected_entry()?;
+                // Only the view the user is currently looking at should populate the
+                // describe pane -- under broadcast dispatch every populated resource
+                // component would otherwise race to fill it, and HashMap iteration
+                // order over `components` is non-deterministic.
+                if current_mode == B::mode() {
+                    self.base.describe_selected_entry()?;
+                }
                 return Ok(None);
             }
             _ => {}
         }
 
-        // --- Connect / re-scope / region switch: clear stale data ---
-        if let Action::ConnectToCloud(_) | Action::CloudChangeScope(_) | Action::SwitchToRegion(_) =
-            &action
-        {
+        // --- Connect to a (possibly different) cloud: clear stale data and any filter value
+        // that's only valid for the previous cloud's identity (e.g. a seeded/selected user_id) ---
+        if let Action::ConnectToCloud(_) = &action {
+            self.base.set_loading(true);
+            self.base.set_data(Vec::new())?;
+            let filter = B::reset_filter_on_cloud_switch(self.base.get_filters().clone());
+            self.base.set_filters(filter);
+            return Ok(None);
+        }
+
+        // --- Re-scope or region switch: same authenticated user, just clear stale data ---
+        if let Action::CloudChangeScope(_) | Action::SwitchToRegion(_) = &action {
             self.base.set_loading(true);
             self.base.set_data(Vec::new())?;
             return Ok(None);
         }
 
-        // --- Connected to cloud: only request data if we are the current mode ---
-        if let Action::ConnectedToCloud(_) = &action {
+        // --- Connected to cloud: seed the filter from the current user regardless of
+        // whether we're the active view, but only request data if we are the current mode ---
+        if let Action::ConnectedToCloud(token_info) = &action {
             self.base.set_loading(true);
             self.base.set_data(Vec::new())?;
+            let filter =
+                B::seed_filter_from_current_user(self.base.get_filters().clone(), token_info);
+            self.base.set_filters(filter);
             if B::mode() == current_mode {
                 let filter = B::normalise_filter(self.base.get_filters().clone());
                 self.base.set_filters(filter);
+                if !B::is_filter_ready(self.base.get_filters()) {
+                    self.base.set_loading(false);
+                    return Ok(None);
+                }
                 return Ok(Some(Action::PerformApiRequest(B::request_from_filter(
                     self.base.get_filters(),
                 ))));
@@ -118,8 +145,17 @@ where
             return Ok(None);
         }
 
-        // --- Refresh or mode switch to us: request data ---
+        // --- Refresh: only the active view should re-fetch. Refresh is sent on every
+        // mode switch and every login; under broadcast every registered resource
+        // component sees it, so without this gate all ~26 of them would fire a list
+        // request simultaneously. ---
         if let Action::Refresh = &action {
+            if B::mode() != current_mode {
+                return Ok(None);
+            }
+            if !B::is_filter_ready(self.base.get_filters()) {
+                return Ok(None);
+            }
             self.base.set_loading(true);
             return Ok(Some(Action::PerformApiRequest(B::request_from_filter(
                 self.base.get_filters(),
@@ -134,9 +170,12 @@ where
 
         // --- Filter change actions ---
         if let Some(new_filter) = B::handle_set_filter_action(&action) {
-            self.base.set_loading(true);
             let filter = B::normalise_filter(new_filter);
             self.base.set_filters(filter);
+            if !B::is_filter_ready(self.base.get_filters()) {
+                return Ok(None);
+            }
+            self.base.set_loading(true);
             return Ok(Some(Action::PerformApiRequest(B::request_from_filter(
                 self.base.get_filters(),
             ))));
@@ -175,6 +214,9 @@ where
                             self.base.append_new_row(row_data)?;
                         }
                         super::resource_behaviour::Mutation::Refresh => {
+                            if !B::is_filter_ready(self.base.get_filters()) {
+                                return Ok(None);
+                            }
                             return Ok(Some(Action::PerformApiRequest(B::request_from_filter(
                                 self.base.get_filters(),
                             ))));
@@ -190,6 +232,13 @@ where
             {
                 return Ok(Some(ret_action));
             }
+            return Ok(None);
+        }
+
+        // --- Everything below here is selection/interaction-derived and only makes sense
+        // for the view the user is currently looking at (it reads self.base.get_selected(),
+        // which for an inactive view may be stale or unrelated to what's on screen). ---
+        if B::mode() != current_mode {
             return Ok(None);
         }
 
@@ -422,6 +471,123 @@ mod tests {
         );
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
+    }
+
+    #[test]
+    fn connected_to_cloud_seeds_filter_even_when_mode_does_not_match() {
+        use crate::components::identity::application_credentials::{
+            IdentityApplicationCredentials, IdentityApplicationCredentialsBehaviour,
+        };
+        use crate::components::resource_behaviour::ResourceBehaviour;
+
+        let mut comp: IdentityApplicationCredentials = GenericResourceView::new();
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "user-42".to_string();
+
+        let result = comp.update(
+            Action::ConnectedToCloud(Box::new(token_info)),
+            Mode::Resource(crate::mode::COMPUTE_SERVER),
+        );
+
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), None);
+        assert_eq!(comp.base.get_filters().user_id, "user-42");
+        let _ = IdentityApplicationCredentialsBehaviour::view_key();
+    }
+
+    #[test]
+    fn connect_to_cloud_then_connected_replaces_stale_user_id_from_previous_cloud() {
+        use crate::components::identity::application_credentials::IdentityApplicationCredentials;
+
+        let mut comp: IdentityApplicationCredentials = GenericResourceView::new();
+
+        // Simulate having been seeded/scoped to cloud A's user already.
+        let mut filter = comp.base.get_filters().clone();
+        filter.user_id = "cloud-a-user".to_string();
+        comp.base.set_filters(filter);
+
+        // User switches clouds: ConnectToCloud fires first...
+        comp.update(Action::ConnectToCloud("cloud-b".to_string()), Mode::Home)
+            .unwrap();
+        assert_eq!(
+            comp.base.get_filters().user_id,
+            "",
+            "ConnectToCloud must clear the previous cloud's user_id"
+        );
+
+        // ...then ConnectedToCloud arrives with the new cloud's token.
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "cloud-b-user".to_string();
+        comp.update(Action::ConnectedToCloud(Box::new(token_info)), Mode::Home)
+            .unwrap();
+
+        assert_eq!(
+            comp.base.get_filters().user_id,
+            "cloud-b-user",
+            "filter must pick up the new cloud's user, not stay stuck on cloud A's"
+        );
+    }
+
+    #[test]
+    fn connected_to_cloud_does_not_fetch_when_user_id_still_empty() {
+        use crate::components::identity::application_credentials::{
+            IdentityApplicationCredentials, IdentityApplicationCredentialsBehaviour,
+        };
+        use crate::components::resource_behaviour::ResourceBehaviour;
+
+        let mut comp: IdentityApplicationCredentials = GenericResourceView::new();
+        // A token with no user id (e.g. not actually authenticated) leaves user_id empty
+        // even after seeding -- must not fire a request with it unset.
+        let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        let mode = IdentityApplicationCredentialsBehaviour::mode();
+
+        let result = comp.update(Action::ConnectedToCloud(Box::new(token_info)), mode);
+
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), None);
+        assert_eq!(comp.base.get_filters().user_id, "");
+    }
+
+    #[test]
+    fn refresh_does_not_fetch_when_user_id_empty() {
+        use crate::components::identity::application_credentials::{
+            IdentityApplicationCredentials, IdentityApplicationCredentialsBehaviour,
+        };
+        use crate::components::resource_behaviour::ResourceBehaviour;
+
+        let mut comp: IdentityApplicationCredentials = GenericResourceView::new();
+        let mode = IdentityApplicationCredentialsBehaviour::mode();
+
+        let result = comp.update(Action::Refresh, mode);
+
+        assert!(result.is_ok());
+        assert_eq!(
+            result.unwrap(),
+            None,
+            "Refresh must not fire a list request while user_id is unset"
+        );
+    }
+
+    #[test]
+    fn refresh_fetches_once_user_id_is_set() {
+        use crate::components::identity::application_credentials::{
+            IdentityApplicationCredentials, IdentityApplicationCredentialsBehaviour,
+        };
+        use crate::components::resource_behaviour::ResourceBehaviour;
+
+        let mut comp: IdentityApplicationCredentials = GenericResourceView::new();
+        let mode = IdentityApplicationCredentialsBehaviour::mode();
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "user-42".to_string();
+        comp.update(Action::ConnectedToCloud(Box::new(token_info)), mode)
+            .unwrap();
+
+        let result = comp.update(Action::Refresh, mode);
+
+        assert!(matches!(
+            result.unwrap(),
+            Some(Action::PerformApiRequest(_))
+        ));
     }
 
     fn make_server_json() -> Value {

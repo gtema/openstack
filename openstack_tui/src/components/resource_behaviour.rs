@@ -61,9 +61,48 @@ pub trait ResourceBehaviour {
     /// The Mode that corresponds to this component (when shown, data should be loaded).
     fn mode() -> Mode;
 
+    /// Seed a freshly-authenticated user's identity into the filter, if this resource cares.
+    /// Called on every `ConnectedToCloud`, regardless of whether this resource's view is
+    /// currently active, so the filter is already correct by the time the user navigates here.
+    /// Default is a no-op; override where a resource needs to default-scope to the current user.
+    ///
+    /// This only *seeds*, it never clobbers: it's also called after `CloudChangeScope`/
+    /// `SwitchToRegion` reconnects (same user, different project/region), where a value
+    /// already in the filter (e.g. a user explicitly drilled down to) must survive. Values
+    /// that must NOT survive a genuine cloud switch belong in `reset_filter_on_cloud_switch`
+    /// instead, which runs only for `ConnectToCloud`.
+    fn seed_filter_from_current_user(
+        filter: Self::Filter,
+        _token: &openstack_sdk::types::identity::v3::TokenInfo,
+    ) -> Self::Filter {
+        filter
+    }
+
+    /// Clear any cloud-scoped value from the filter before a genuine cloud switch
+    /// (`Action::ConnectToCloud`, as opposed to `CloudChangeScope`/`SwitchToRegion`, which
+    /// keep the same authenticated user). Called before the new cloud's `ConnectedToCloud`
+    /// arrives, so `seed_filter_from_current_user`'s "don't clobber an existing value" guard
+    /// doesn't mistake a stale value from the *previous* cloud for a deliberate selection made
+    /// on this one. Default is a no-op; override where a resource seeds from the current user's
+    /// identity (which is only ever valid within one cloud).
+    fn reset_filter_on_cloud_switch(filter: Self::Filter) -> Self::Filter {
+        filter
+    }
+
     /// Normalise the filter before sending to the API. The default returns the filter unchanged.
     fn normalise_filter(filter: Self::Filter) -> Self::Filter {
         filter
+    }
+
+    /// Whether the (normalised) filter has everything it needs to issue a list request.
+    /// Checked before every fetch this view would otherwise trigger (login, refresh, mode
+    /// switch, filter change, post-mutation reload). Default is always ready. Override for a
+    /// resource whose filter can be transiently incomplete -- e.g. a required id that's only
+    /// empty before `ConnectedToCloud` seeds it or right after `ConnectToCloud` clears it on a
+    /// cloud switch -- so a request is never sent with a value the API would reject.
+    fn is_filter_ready(filter: &Self::Filter) -> bool {
+        let _ = filter;
+        true
     }
 
     /// Build the ApiRequest to list resources, given the current (normalised) filters.
@@ -219,5 +258,23 @@ mod tests {
         assert!(
             DefaultBehaviour::filter_carry_action(&Action::Tick, Some(&value), &Filter).is_empty()
         );
+    }
+
+    #[test]
+    fn seed_filter_from_current_user_default_is_noop() {
+        let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        let result = DefaultBehaviour::seed_filter_from_current_user(Filter, &token_info);
+        assert_eq!(format!("{result}"), "");
+    }
+
+    #[test]
+    fn reset_filter_on_cloud_switch_default_is_noop() {
+        let result = DefaultBehaviour::reset_filter_on_cloud_switch(Filter);
+        assert_eq!(format!("{result}"), "");
+    }
+
+    #[test]
+    fn is_filter_ready_default_is_always_ready() {
+        assert!(DefaultBehaviour::is_filter_ready(&Filter));
     }
 }

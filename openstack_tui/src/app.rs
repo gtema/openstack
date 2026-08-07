@@ -508,10 +508,6 @@ impl App {
                         // Hide popup
                         self.active_popup = None;
                     }
-                    // Broadcast to all popups so they can clear stale data
-                    for popup in self.popups.values_mut() {
-                        let _ = popup.update(action.clone(), self.mode);
-                    }
                     self.render(tui)?;
                     self.cloud_worker_tx
                         .send(Action::CloudChangeScope(scope.clone()))?;
@@ -522,10 +518,6 @@ impl App {
                     {
                         // Hide popup
                         self.active_popup = None;
-                    }
-                    // Broadcast to all popups so they can clear stale data
-                    for popup in self.popups.values_mut() {
-                        let _ = popup.update(action.clone(), self.mode);
                     }
                     self.render(tui)?;
                     self.cloud_worker_tx
@@ -599,12 +591,12 @@ impl App {
                         .send(Action::ConnectToCloud(cloud.clone()))?;
                     self.active_popup = None;
                     self.cloud_connected = false;
-                    // Broadcast to all popups so they can clear stale data
-                    for popup in self.popups.values_mut() {
-                        let _ = popup.update(action.clone(), self.mode);
-                    }
-                    // Let the active mode component know to refresh
-                    self.action_tx.send(Action::Refresh)?;
+                    // Do NOT send Action::Refresh here: the reconnect is async and hasn't
+                    // completed yet, so the active view's filter may still be mid-reset
+                    // (see GenericResourceView::reset_filter_on_cloud_switch) -- refreshing
+                    // now can fire a request with a stale/cleared filter. ConnectedToCloud,
+                    // sent once the reconnect actually completes and filters are reseeded,
+                    // already triggers the equivalent fetch for the active view.
                     self.render(tui)?;
                 }
                 Action::Confirm(ref request) => {
@@ -649,18 +641,33 @@ impl App {
                 self.action_tx.send(action)?
             };
 
-            // Only the active popup receives actions
-            if let Some(popup_type) = self.active_popup.as_ref()
-                && let Some(popup) = self.popups.get_mut(popup_type)
-                && let Some(action) = popup.update(action.clone(), self.mode)?
-            {
-                self.action_tx.send(action)?;
+            // Broadcast to every popup, not just the active one, so a popup that isn't
+            // currently shown still sees state-changing actions (e.g. ConnectedToCloud).
+            // Invariant: a popup's update() must never unconditionally return an action it
+            // (or a peer) will react to the same way again -- this loop's Ok(Some(action))
+            // re-enters the action_rx drain below and gets rebroadcast, so a stable echo
+            // spins forever. (Hit and fixed once already, in a test stub -- see the
+            // RecordingComponent comment in this file's test module.)
+            for popup in self.popups.values_mut() {
+                match popup.update(action.clone(), self.mode) {
+                    Ok(Some(returned_action)) => self.action_tx.send(returned_action)?,
+                    Err(err @ TuiError::JsonError { .. }) => {
+                        self.action_tx.send(Action::Error {
+                            msg: err.to_string(),
+                            action: Some(Box::new(action.clone())),
+                        })?
+                    }
+                    _ => {}
+                }
             }
 
-            // Only the active mode component receives the action
-            if let Some(component) = self.components.get_mut(&self.mode) {
+            // Broadcast to every mode component, not just the active one, so an inactive
+            // view's stored filter/state can stay correct (e.g. ConnectedToCloud seeding
+            // a resource's filter before the user ever navigates there).
+            // Same re-echo/livelock invariant as the popup loop above applies here too.
+            for component in self.components.values_mut() {
                 match component.update(action.clone(), self.mode) {
-                    Ok(Some(action)) => self.action_tx.send(action)?,
+                    Ok(Some(returned_action)) => self.action_tx.send(returned_action)?,
                     Err(err @ TuiError::JsonError { .. }) => {
                         self.action_tx.send(Action::Error {
                             msg: err.to_string(),
@@ -727,5 +734,289 @@ impl App {
             }
         })?;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui::Frame;
+    use std::sync::{Arc, Mutex};
+
+    /// Records every action it was updated with, and optionally echoes one action back.
+    struct RecordingComponent {
+        received: Arc<Mutex<Vec<Action>>>,
+        echo: Option<Action>,
+    }
+
+    impl RecordingComponent {
+        fn new(received: Arc<Mutex<Vec<Action>>>) -> Self {
+            Self {
+                received,
+                echo: None,
+            }
+        }
+
+        fn with_echo(received: Arc<Mutex<Vec<Action>>>, echo: Action) -> Self {
+            Self {
+                received,
+                echo: Some(echo),
+            }
+        }
+    }
+
+    #[async_trait::async_trait]
+    impl Component for RecordingComponent {
+        fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+            self
+        }
+
+        fn update(
+            &mut self,
+            action: Action,
+            _current_mode: Mode,
+        ) -> Result<Option<Action>, TuiError> {
+            self.received.lock().unwrap().push(action);
+            // `.take()`, not `.clone()`: `handle_actions` drains `action_rx` in a `while
+            // let Ok(action) = self.action_rx.try_recv()` loop, so a broadcast component
+            // that echoed the same action on every call would have its own echo re-enter
+            // the queue and be reprocessed forever. Firing the echo exactly once still
+            // proves forwarding works, without hanging the test.
+            Ok(self.echo.take())
+        }
+
+        fn draw(&mut self, _f: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
+            Ok(())
+        }
+    }
+
+    fn make_test_app() -> App {
+        let (action_tx, action_rx) = mpsc::unbounded_channel();
+        let (cloud_worker_tx, _cloud_worker_rx) = mpsc::unbounded_channel();
+        App {
+            config: Config::default(),
+            tick_rate: 4.0,
+            frame_rate: 30.0,
+            components: HashMap::new(),
+            header: Box::new(crate::components::header::Header::new()),
+            should_quit: false,
+            should_suspend: false,
+            mode: Mode::Home,
+            mode_switch_stack: Vec::new(),
+            action_tx,
+            action_rx,
+            cloud_worker_tx,
+            last_tick_key_events: Vec::new(),
+            cloud_name: None,
+            cloud_connected: false,
+            active_popup: None,
+            popups: HashMap::new(),
+        }
+    }
+
+    /// Like `make_test_app`, but also returns the cloud-worker receiver so a test can
+    /// inspect exactly which `Action`s (e.g. `PerformApiRequest`) were sent to the cloud
+    /// worker during `handle_actions`.
+    fn make_test_app_with_cloud_worker_rx() -> (App, mpsc::UnboundedReceiver<Action>) {
+        let (action_tx, action_rx) = mpsc::unbounded_channel();
+        let (cloud_worker_tx, cloud_worker_rx) = mpsc::unbounded_channel();
+        let app = App {
+            config: Config::default(),
+            tick_rate: 4.0,
+            frame_rate: 30.0,
+            components: HashMap::new(),
+            header: Box::new(crate::components::header::Header::new()),
+            should_quit: false,
+            should_suspend: false,
+            mode: Mode::Home,
+            mode_switch_stack: Vec::new(),
+            action_tx,
+            action_rx,
+            cloud_worker_tx,
+            last_tick_key_events: Vec::new(),
+            cloud_name: None,
+            cloud_connected: false,
+            active_popup: None,
+            popups: HashMap::new(),
+        };
+        (app, cloud_worker_rx)
+    }
+
+    // `Tui::new()` calls `tokio::spawn(async {})` internally, so any test that
+    // constructs one needs an active Tokio runtime — use `#[tokio::test]`, not `#[test]`.
+    // `openstack_tui`'s dev-dependencies already enable tokio's `rt` + `macros` features
+    // (see `openstack_tui/Cargo.toml`), so `#[tokio::test]` is available without changes.
+
+    #[tokio::test]
+    async fn broadcast_reaches_inactive_mode_component() {
+        let mut app = make_test_app();
+        let received = Arc::new(Mutex::new(Vec::new()));
+        app.components.insert(
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+            Box::new(RecordingComponent::new(received.clone())),
+        );
+        // Active mode is Home, not the resource the stub is registered under.
+        app.mode = Mode::Home;
+
+        let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        app.action_tx
+            .send(Action::ConnectedToCloud(Box::new(token_info)))
+            .unwrap();
+
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
+        app.handle_actions(&mut tui).unwrap();
+
+        let received = received.lock().unwrap();
+        assert!(
+            received
+                .iter()
+                .any(|a| matches!(a, Action::ConnectedToCloud(_))),
+            "inactive mode component should still see ConnectedToCloud"
+        );
+    }
+
+    #[tokio::test]
+    async fn broadcast_reaches_inactive_popup() {
+        let mut app = make_test_app();
+        let received = Arc::new(Mutex::new(Vec::new()));
+        app.popups.insert(
+            Popup::SwitchRegion,
+            Box::new(RecordingComponent::new(received.clone())),
+        );
+        // No popup is active.
+        app.active_popup = None;
+
+        let token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        app.action_tx
+            .send(Action::ConnectedToCloud(Box::new(token_info)))
+            .unwrap();
+
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
+        app.handle_actions(&mut tui).unwrap();
+
+        let received = received.lock().unwrap();
+        assert!(
+            received
+                .iter()
+                .any(|a| matches!(a, Action::ConnectedToCloud(_))),
+            "inactive popup should still see ConnectedToCloud"
+        );
+    }
+
+    #[tokio::test]
+    async fn returned_action_from_broadcast_component_is_forwarded() {
+        let mut app = make_test_app();
+        let received = Arc::new(Mutex::new(Vec::new()));
+        app.components.insert(
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+            Box::new(RecordingComponent::with_echo(
+                received.clone(),
+                Action::Refresh,
+            )),
+        );
+        app.mode = Mode::Home;
+
+        app.action_tx.send(Action::Tick).unwrap();
+
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
+        app.handle_actions(&mut tui).unwrap();
+
+        // The echoed Action::Refresh should have been forwarded back onto the channel
+        // and processed in the same handle_actions call (drains until empty), reaching
+        // the same stub component a second time.
+        let received = received.lock().unwrap();
+        assert!(
+            received.iter().any(|a| matches!(a, Action::Refresh)),
+            "action returned from update() should be forwarded via action_tx"
+        );
+    }
+
+    #[tokio::test]
+    async fn connected_to_cloud_seeds_application_credentials_filter_when_inactive() {
+        use crate::components::identity::application_credentials::IdentityApplicationCredentials;
+
+        let mut app = make_test_app();
+        app.components.insert(
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+            Box::new(IdentityApplicationCredentials::new()),
+        );
+        // Active mode is Home -- the application-credentials view is not on screen.
+        app.mode = Mode::Home;
+
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "user-42".to_string();
+        app.action_tx
+            .send(Action::ConnectedToCloud(Box::new(token_info)))
+            .unwrap();
+
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
+        app.handle_actions(&mut tui).unwrap();
+
+        let component = app
+            .components
+            .get_mut(&Mode::Resource(
+                crate::mode::IDENTITY_APPLICATION_CREDENTIAL,
+            ))
+            .unwrap();
+        let concrete = component
+            .as_any_mut()
+            .downcast_mut::<IdentityApplicationCredentials>()
+            .unwrap();
+        assert_eq!(concrete.filters_for_test().user_id, "user-42");
+    }
+
+    #[tokio::test]
+    async fn connect_to_cloud_does_not_prematurely_refresh_active_view() {
+        // Regression test: ConnectToCloud used to unconditionally send Action::Refresh
+        // immediately, before the (async) reconnect completes and before the active
+        // view's filter is reseeded by ConnectedToCloud. For a view whose filter gets
+        // reset on cloud switch (e.g. application-credentials' user_id), that premature
+        // Refresh fired a request with an already-cleared/invalid filter -- e.g. a list
+        // request with an empty user_id, which the API rejects with 403.
+        use crate::cloud_worker::identity::v3::{
+            IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
+        };
+        use crate::cloud_worker::types::ApiRequest;
+        use crate::components::identity::application_credentials::IdentityApplicationCredentials;
+
+        let (mut app, mut cloud_worker_rx) = make_test_app_with_cloud_worker_rx();
+        let mut component = IdentityApplicationCredentials::new();
+        // Simulate an already-scoped, properly-populated view (user_id set, data shown).
+        let concrete_filter =
+            crate::cloud_worker::identity::v3::IdentityUserApplicationCredentialList {
+                user_id: "user-42".to_string(),
+                ..Default::default()
+            };
+        let _ = component.update(
+            Action::SetIdentityApplicationCredentialListFilters(concrete_filter),
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+        );
+        app.components.insert(
+            Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
+            Box::new(component),
+        );
+        app.mode = Mode::Resource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL);
+
+        app.action_tx
+            .send(Action::ConnectToCloud("some-cloud".to_string()))
+            .unwrap();
+
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
+        app.handle_actions(&mut tui).unwrap();
+
+        // Nothing should have reached the cloud worker with an empty user_id.
+        while let Ok(sent) = cloud_worker_rx.try_recv() {
+            if let Action::PerformApiRequest(ApiRequest::Identity(IdentityApiRequest::User(boxreq))) =
+                &sent
+                && let IdentityUserApiRequest::ApplicationCredential(inner) = &**boxreq
+                && let IdentityUserApplicationCredentialApiRequest::List(list) = &**inner
+            {
+                assert!(
+                    !list.user_id.is_empty(),
+                    "ConnectToCloud must not trigger a premature list request with an \
+                     empty/cleared user_id"
+                );
+            }
+        }
     }
 }
