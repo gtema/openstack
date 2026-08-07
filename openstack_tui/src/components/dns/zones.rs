@@ -14,15 +14,13 @@
 
 use crate::action::Action;
 use crate::cloud_worker::dns::v2::{
-    DnsApiRequest, DnsRecordsetList, DnsRecordsetListBuilder, DnsZoneApiRequest, DnsZoneDelete,
+    DnsRecordsetList, DnsRecordsetListBuilder, DnsZoneApiRequest, DnsZoneDelete,
     DnsZoneDeleteBuilder, DnsZoneList,
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "dns.zone";
 
 impl TryFrom<&serde_json::Value> for DnsZoneDelete {
     type Error = crate::cloud_worker::dns::v2::DnsZoneDeleteBuilderError;
@@ -58,30 +56,22 @@ impl ResourceBehaviour for DnsZonesBehaviour {
     type Filter = DnsZoneList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::zone::Generated::view_key()
     }
     fn title() -> &'static str {
-        "DNS Zones"
+        super::generated::zone::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::zone::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(DnsZoneApiRequest::List(Box::new(filter.clone())))
+        super::generated::zone::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Dns(DnsApiRequest::Zone(boxreq))
-            if matches!(**boxreq, DnsZoneApiRequest::List(_))
-        )
+        super::generated::zone::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetDnsZoneListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::zone::Generated::handle_set_filter_action(action)
     }
     fn confirm_request(
         action: &Action,
@@ -126,6 +116,7 @@ pub type DnsZones = GenericResourceView<'static, DnsZonesBehaviour>;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cloud_worker::dns::v2::DnsApiRequest;
     use crate::components::resource_behaviour::ResourceBehaviour;
 
     fn make_zone(id: &str, name: &str) -> serde_json::Value {
@@ -151,7 +142,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(DnsZonesBehaviour::view_key(), "dns.zone");
-        assert_eq!(DnsZonesBehaviour::title(), "DNS Zones");
+        assert_eq!(DnsZonesBehaviour::title(), "Zones");
         assert_eq!(
             DnsZonesBehaviour::mode(),
             Mode::Resource(crate::mode::DNS_ZONE)

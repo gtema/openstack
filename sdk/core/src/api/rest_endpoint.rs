@@ -227,16 +227,21 @@ where
     // of the lowest.  Negotiate above already validated that a compatible
     // range exists, so we only need to compute the upper bound.
     if client.microversion_strategy() == MicroVersionStrategy::Ceiling {
+        tracing::info!("strategy is ceiling");
         let ep_max = endpoint.max_version();
         let cloud_max: Option<ApiVersion> = service_endpoint
             .max_version()
             .as_deref()
             .and_then(|s| ApiVersion::from_apiver_str(s, false).ok());
+        tracing::info!("strategy is cloud_max={:?}", cloud_max);
         if let Some(ceil) = match (ep_max, cloud_max) {
             (Some(em), Some(cm)) => Some(em.min(cm)),
             (Some(em), None) => Some(em), // no cloud max → use endpoint max
             (None, Some(cm)) => Some(cm), // no endpoint max → use cloud max
-            (None, None) => None,         // no ceiling info → fall back to floor
+            (None, None) => {
+                let current = *service_endpoint.version();
+                Some(if current > req_ver { current } else { req_ver })
+            }
         } {
             req_ver = ceil;
         }
@@ -1531,9 +1536,9 @@ mod tests {
         }
 
         #[test]
-        fn ceiling_no_bounded_falls_back_to_floor() {
-            // Neither endpoint nor cloud has a max version — ceiling falls
-            // back to floor semantics (the only known bound).
+        fn ceiling_no_bounded_falls_back_to_current() {
+            // Neither endpoint nor cloud has a max version — ceiling uses
+            // current cloud version, but not below the negotiated floor.
             let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
             let sep = make_service_endpoint(Some("2.1"), None);
             let mut req = http::Request::builder();

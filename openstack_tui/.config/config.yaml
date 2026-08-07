@@ -382,7 +382,7 @@ views:
     status_field: status
     fields:
       - name: flavor
-        json_pointer: "/original_name"
+        json_pointer: "/flavor/original_name"
   # dns
   dns.recordset:
     default_fields: [name, status, type, created, updated]
