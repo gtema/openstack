@@ -863,7 +863,7 @@ mod tests {
             .send(Action::ConnectedToCloud(Box::new(token_info)))
             .unwrap();
 
-        let mut tui = crate::tui::Tui::new().unwrap();
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
         app.handle_actions(&mut tui).unwrap();
 
         let received = received.lock().unwrap();
@@ -891,7 +891,7 @@ mod tests {
             .send(Action::ConnectedToCloud(Box::new(token_info)))
             .unwrap();
 
-        let mut tui = crate::tui::Tui::new().unwrap();
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
         app.handle_actions(&mut tui).unwrap();
 
         let received = received.lock().unwrap();
@@ -918,7 +918,7 @@ mod tests {
 
         app.action_tx.send(Action::Tick).unwrap();
 
-        let mut tui = crate::tui::Tui::new().unwrap();
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
         app.handle_actions(&mut tui).unwrap();
 
         // The echoed Action::Refresh should have been forwarded back onto the channel
@@ -949,7 +949,7 @@ mod tests {
             .send(Action::ConnectedToCloud(Box::new(token_info)))
             .unwrap();
 
-        let mut tui = crate::tui::Tui::new().unwrap();
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
         app.handle_actions(&mut tui).unwrap();
 
         let component = app
@@ -1001,7 +1001,7 @@ mod tests {
             .send(Action::ConnectToCloud("some-cloud".to_string()))
             .unwrap();
 
-        let mut tui = crate::tui::Tui::new().unwrap();
+        let mut tui = crate::tui::Tui::new_for_test().unwrap();
         app.handle_actions(&mut tui).unwrap();
 
         // Nothing should have reached the cloud worker with an empty user_id.

@@ -84,6 +84,33 @@ impl Tui {
         })
     }
 
+    /// Test-only constructor. `Terminal::new` (used by the real `new()` above) always builds
+    /// a `Viewport::Fullscreen` terminal, which queries the real terminal size via
+    /// `backend.size()` -- an ioctl on stdout that fails in headless/CI environments where
+    /// stdout isn't a real tty. `Viewport::Fixed` skips that query entirely (confirmed against
+    /// `ratatui-core`'s `Terminal::with_options`: the `Fixed` branch never calls
+    /// `backend.size()`), so this is safe to construct anywhere, including CI.
+    #[cfg(test)]
+    pub(crate) fn new_for_test() -> Result<Self> {
+        let (event_tx, event_rx) = mpsc::unbounded_channel();
+        Ok(Self {
+            terminal: ratatui::Terminal::with_options(
+                Backend::new(stdout()),
+                ratatui::TerminalOptions {
+                    viewport: ratatui::Viewport::Fixed(ratatui::layout::Rect::new(0, 0, 80, 24)),
+                },
+            )?,
+            task: tokio::spawn(async {}),
+            cancellation_token: CancellationToken::new(),
+            event_rx,
+            event_tx,
+            frame_rate: 60.0,
+            tick_rate: 1.0,
+            mouse: false,
+            paste: false,
+        })
+    }
+
     pub fn tick_rate(mut self, tick_rate: f64) -> Self {
         self.tick_rate = tick_rate;
         self
