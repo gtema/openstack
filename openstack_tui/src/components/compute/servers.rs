@@ -19,10 +19,8 @@ use crate::cloud_worker::compute::v2::{
 };
 use crate::cloud_worker::types::{ApiRequest, ComputeApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "compute.server";
 
 /// Behaviour implementation for ComputeServers.
 pub struct ComputeServersBehaviour;
@@ -31,13 +29,13 @@ impl ResourceBehaviour for ComputeServersBehaviour {
     type Filter = ComputeServerList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::server::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Compute Servers"
+        super::generated::server::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::server::Generated::mode()
     }
     fn normalise_filter(mut filter: Self::Filter) -> Self::Filter {
         if filter.sort_key.is_none() {
@@ -47,23 +45,15 @@ impl ResourceBehaviour for ComputeServersBehaviour {
         filter
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::Compute(ComputeApiRequest::Server(Box::new(
-            ComputeServerApiRequest::ListDetailed(Box::new(filter.clone())),
-        )))
+        // `Generated::Filter` is boxed (matches `Action::SetComputeServerListFilters`'s boxed
+        // payload); this behaviour's `Filter` stays unboxed, so adapt at the boundary.
+        super::generated::server::Generated::request_from_filter(&Box::new(filter.clone()))
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Compute(ComputeApiRequest::Server(boxreq))
-            if matches!(**boxreq, ComputeServerApiRequest::ListDetailed(_))
-        )
+        super::generated::server::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetComputeServerListFilters(f) = action {
-            Some((**f).clone())
-        } else {
-            None
-        }
+        super::generated::server::Generated::handle_set_filter_action(action).map(|f| *f)
     }
     fn confirm_request(
         action: &Action,
@@ -223,7 +213,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(ComputeServersBehaviour::view_key(), "compute.server");
-        assert_eq!(ComputeServersBehaviour::title(), "Compute Servers");
+        assert_eq!(ComputeServersBehaviour::title(), "Servers");
         assert_eq!(
             ComputeServersBehaviour::mode(),
             Mode::Resource(crate::mode::COMPUTE_SERVER)

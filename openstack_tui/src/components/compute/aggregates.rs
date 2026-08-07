@@ -12,12 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::compute::v2::{
-    ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
-};
+use crate::action::Action;
+use crate::cloud_worker::compute::v2::ComputeAggregateList;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 
 /// Behaviour implementation for ComputeAggregates.
@@ -27,23 +26,22 @@ impl ResourceBehaviour for ComputeAggregatesBehaviour {
     type Filter = ComputeAggregateList;
 
     fn view_key() -> &'static str {
-        "compute.aggregate"
+        super::generated::aggregate::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Compute Aggregates"
+        super::generated::aggregate::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::aggregate::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(ComputeAggregateApiRequest::List(Box::new(filter.clone())))
+        super::generated::aggregate::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Compute(ComputeApiRequest::Aggregate(boxreq))
-            if matches!(**boxreq, ComputeAggregateApiRequest::List(_))
-        )
+        super::generated::aggregate::Generated::matches_request(request)
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        super::generated::aggregate::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -53,12 +51,13 @@ pub type ComputeAggregates = GenericResourceView<'static, ComputeAggregatesBehav
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cloud_worker::compute::v2::{ComputeAggregateApiRequest, ComputeApiRequest};
     use crate::components::resource_behaviour::ResourceBehaviour;
 
     #[test]
     fn view_key_and_title() {
         assert_eq!(ComputeAggregatesBehaviour::view_key(), "compute.aggregate");
-        assert_eq!(ComputeAggregatesBehaviour::title(), "Compute Aggregates");
+        assert_eq!(ComputeAggregatesBehaviour::title(), "Aggregates");
         assert_eq!(
             ComputeAggregatesBehaviour::mode(),
             Mode::Resource(crate::mode::COMPUTE_AGGREGATE)
@@ -89,5 +88,19 @@ mod tests {
             crate::cloud_worker::types::ComputeHypervisorApiRequest::ListDetailed(Box::default()),
         )));
         assert!(!ComputeAggregatesBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = ComputeAggregateList::default();
+        let action = Action::SetComputeAggregateListFilters(filter);
+        let result = ComputeAggregatesBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = ComputeAggregatesBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

@@ -19,11 +19,11 @@ use crate::cloud_worker::image::v2::{
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::components::resource_behaviour::{
+    GeneratedResourceBehaviour, Mutation, ResourceBehaviour,
+};
 use crate::mode::Mode;
 use serde_json::Value;
-
-const VIEW_CONFIG_KEY: &str = "image.image";
 
 impl TryFrom<&Value> for ImageImageDelete {
     type Error = crate::cloud_worker::image::v2::ImageImageDeleteBuilderError;
@@ -45,30 +45,25 @@ impl ResourceBehaviour for ImageImagesBehaviour {
     type Filter = ImageImageList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::image::Generated::view_key()
     }
     fn title() -> &'static str {
+        // NOTE: `super::generated::image::Generated::title()` currently returns the wrong
+        // value ("s") due to a codegenerator title-stripping bug for the "image.image"
+        // resource - kept hand-written here until that's fixed upstream.
         "Images"
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::image::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(ImageImageApiRequest::List(Box::new(filter.clone())))
+        super::generated::image::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Image(ImageApiRequest::Image(boxreq))
-            if matches!(**boxreq, ImageImageApiRequest::List(_))
-        )
+        super::generated::image::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetImageListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::image::Generated::handle_set_filter_action(action)
     }
     fn confirm_request(action: &Action, selected: Option<&Value>) -> Option<ApiRequest> {
         if let Action::ResourceOp {

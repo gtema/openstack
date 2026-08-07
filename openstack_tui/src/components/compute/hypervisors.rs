@@ -12,15 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::compute::v2::{
-    ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
-};
+use crate::action::Action;
+use crate::cloud_worker::compute::v2::ComputeHypervisorList;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
 
 /// Behaviour implementation for ComputeHypervisors.
 pub struct ComputeHypervisorsBehaviour;
@@ -29,25 +26,22 @@ impl ResourceBehaviour for ComputeHypervisorsBehaviour {
     type Filter = ComputeHypervisorList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::hypervisor::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Compute Hypervisors"
+        super::generated::hypervisor::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::hypervisor::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(ComputeHypervisorApiRequest::ListDetailed(Box::new(
-            filter.clone(),
-        )))
+        super::generated::hypervisor::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Compute(ComputeApiRequest::Hypervisor(boxreq))
-            if matches!(**boxreq, ComputeHypervisorApiRequest::ListDetailed(_))
-        )
+        super::generated::hypervisor::Generated::matches_request(request)
+    }
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        super::generated::hypervisor::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -57,6 +51,7 @@ pub type ComputeHypervisors = GenericResourceView<'static, ComputeHypervisorsBeh
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cloud_worker::compute::v2::{ComputeApiRequest, ComputeHypervisorApiRequest};
     use crate::components::resource_behaviour::ResourceBehaviour;
 
     #[test]
@@ -65,7 +60,7 @@ mod tests {
             ComputeHypervisorsBehaviour::view_key(),
             "compute.hypervisor"
         );
-        assert_eq!(ComputeHypervisorsBehaviour::title(), "Compute Hypervisors");
+        assert_eq!(ComputeHypervisorsBehaviour::title(), "Hypervisors");
         assert_eq!(
             ComputeHypervisorsBehaviour::mode(),
             Mode::Resource(crate::mode::COMPUTE_HYPERVISOR)
@@ -96,5 +91,19 @@ mod tests {
             crate::cloud_worker::compute::v2::ComputeFlavorApiRequest::ListDetailed(Box::default()),
         )));
         assert!(!ComputeHypervisorsBehaviour::matches_request(&req));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = ComputeHypervisorList::default();
+        let action = Action::SetComputeHypervisorListFilters(filter);
+        let result = ComputeHypervisorsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = ComputeHypervisorsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 }

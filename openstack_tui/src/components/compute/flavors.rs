@@ -14,17 +14,12 @@
 
 use crate::{
     action::Action,
-    cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeFlavorApiRequest, ComputeFlavorList, ComputeServerListBuilder,
-    },
+    cloud_worker::compute::v2::{ComputeFlavorList, ComputeServerListBuilder},
     cloud_worker::types::ApiRequest,
     components::generic_resource_view::GenericResourceView,
-    components::resource_behaviour::{Mutation, ResourceBehaviour},
+    components::resource_behaviour::{GeneratedResourceBehaviour, Mutation, ResourceBehaviour},
     mode::Mode,
 };
-
-const TITLE: &str = "Compute Flavors";
-const VIEW_CONFIG_KEY: &str = "compute.flavor";
 
 pub struct ComputeFlavorsBehaviour;
 
@@ -32,15 +27,15 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
     type Filter = ComputeFlavorList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::flavor::Generated::view_key()
     }
 
     fn title() -> &'static str {
-        TITLE
+        super::generated::flavor::Generated::title()
     }
 
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::flavor::Generated::mode()
     }
 
     fn normalise_filter(filter: Self::Filter) -> Self::Filter {
@@ -53,17 +48,15 @@ impl ResourceBehaviour for ComputeFlavorsBehaviour {
     }
 
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(ComputeFlavorApiRequest::ListDetailed(Box::new(
-            filter.clone(),
-        )))
+        super::generated::flavor::Generated::request_from_filter(filter)
     }
 
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Compute(ComputeApiRequest::Flavor(inner))
-                if matches!(&**inner, ComputeFlavorApiRequest::ListDetailed(_))
-        )
+        super::generated::flavor::Generated::matches_request(request)
+    }
+
+    fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
+        super::generated::flavor::Generated::handle_set_filter_action(action)
     }
 
     fn filter_carry_action(
@@ -104,7 +97,9 @@ pub type ComputeFlavors = GenericResourceView<'static, ComputeFlavorsBehaviour>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cloud_worker::compute::v2::ComputeServerApiRequest;
+    use crate::cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeFlavorApiRequest, ComputeServerApiRequest,
+    };
     use crate::components::resource_behaviour::ResourceBehaviour;
 
     fn make_flavor(id: &str) -> serde_json::Value {
@@ -142,7 +137,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(ComputeFlavorsBehaviour::view_key(), "compute.flavor");
-        assert_eq!(ComputeFlavorsBehaviour::title(), "Compute Flavors");
+        assert_eq!(ComputeFlavorsBehaviour::title(), "Flavors");
         assert_eq!(
             ComputeFlavorsBehaviour::mode(),
             Mode::Resource(crate::mode::COMPUTE_FLAVOR)
@@ -176,6 +171,20 @@ mod tests {
                 ComputeServerApiRequest::ListDetailed(Box::default())
             )))
         ));
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_filter() {
+        let filter = ComputeFlavorList::default();
+        let action = Action::SetComputeFlavorListFilters(filter);
+        let result = ComputeFlavorsBehaviour::handle_set_filter_action(&action);
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn handle_set_filter_action_returns_none_for_unrelated() {
+        let result = ComputeFlavorsBehaviour::handle_set_filter_action(&Action::Tick);
+        assert!(result.is_none());
     }
 
     #[test]

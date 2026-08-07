@@ -19,10 +19,8 @@ use crate::cloud_worker::dns::v2::{
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "dns.recordset";
 
 impl From<DnsRecordsetList> for DnsZoneRecordsetList {
     fn from(value: DnsRecordsetList) -> Self {
@@ -49,13 +47,13 @@ impl ResourceBehaviour for DnsRecordsetsBehaviour {
     type Filter = DnsRecordsetList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::recordset::Generated::view_key()
     }
     fn title() -> &'static str {
-        "DNS Recordsets"
+        super::generated::recordset::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::recordset::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
         if filter.zone_id.is_some() {
@@ -76,11 +74,7 @@ impl ResourceBehaviour for DnsRecordsetsBehaviour {
         }
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetDnsRecordsetListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::recordset::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -105,7 +99,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(DnsRecordsetsBehaviour::view_key(), "dns.recordset");
-        assert_eq!(DnsRecordsetsBehaviour::title(), "DNS Recordsets");
+        assert_eq!(DnsRecordsetsBehaviour::title(), "Recordsets");
         assert_eq!(
             DnsRecordsetsBehaviour::mode(),
             Mode::Resource(crate::mode::DNS_RECORDSET)
