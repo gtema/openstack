@@ -8704,7 +8704,8 @@ components:
             status:
               description: "The snapshot status, which can be ``available``,\n``error``,
                 ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
-                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+                ``unmanage_starting``, ``unmanage_error``,\n``error_deleting``, ``migrating``,
+                ``migrating_to`` or\n``restoring``.\n"
               type: string
           required:
             - created_at
@@ -8796,7 +8797,8 @@ components:
             status:
               description: "The snapshot status, which can be ``available``,\n``error``,
                 ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
-                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+                ``unmanage_starting``, ``unmanage_error``,\n``error_deleting``, ``migrating``,
+                ``migrating_to`` or\n``restoring``.\n"
               type: string
           required:
             - created_at
@@ -8891,7 +8893,8 @@ components:
             status:
               description: "The snapshot status, which can be ``available``,\n``error``,
                 ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
-                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+                ``unmanage_starting``, ``unmanage_error``,\n``error_deleting``, ``migrating``,
+                ``migrating_to`` or\n``restoring``.\n"
               type: string
             user_id:
               description: "ID of the user that the snapshot was created by.\n"
@@ -8997,7 +9000,8 @@ components:
             status:
               description: "The snapshot status, which can be ``available``,\n``error``,
                 ``creating``, ``deleting``, ``manage_starting``,\n``manage_error``,
-                ``unmanage_starting``, ``unmanage_error`` or\n``error_deleting``.\n"
+                ``unmanage_starting``, ``unmanage_error``,\n``error_deleting``, ``migrating``,
+                ``migrating_to`` or\n``restoring``.\n"
               type: string
             user_id:
               description: "ID of the user that the snapshot was created by.\n"

@@ -17,9 +17,12 @@
 
 use derive_builder::Builder;
 use eyre::{Report, Result, WrapErr};
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::{AsyncClient, RestEndpoint};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::warn;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
@@ -138,6 +141,17 @@ impl ExecuteApiRequest for IdentityProjectList {
         let ep = TryInto::<RequestBuilder>::try_into(self)?
             .build()
             .wrap_err("Cannot prepare request")?;
+        let service_endpoint = session
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            match negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep) {
+                Ok(v) => v,
+                Err(e) => {
+                    warn!("Microversion negotiation failed: {}", e);
+                    None
+                }
+            };
         let mut items: Vec<serde_json::Value> = Vec::new();
         let paged_ep = paged(ep, Pagination::All);
         let mut stream = std::pin::pin!(paged_ep.iter_async(session));
@@ -147,14 +161,14 @@ impl ExecuteApiRequest for IdentityProjectList {
                 app_tx.send(Action::ApiResponsesData {
                     request: request.clone(),
                     data: items.clone(),
-                    negotiated_version: None,
+                    negotiated_version,
                 })?;
             }
         }
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
             data: items,
-            negotiated_version: None,
+            negotiated_version,
         })?;
         Ok(())
     }
