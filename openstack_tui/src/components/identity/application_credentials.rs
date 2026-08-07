@@ -59,6 +59,25 @@ impl ResourceBehaviour for IdentityApplicationCredentialsBehaviour {
             None
         }
     }
+
+    fn seed_filter_from_current_user(
+        mut filter: Self::Filter,
+        token: &openstack_sdk::types::identity::v3::TokenInfo,
+    ) -> Self::Filter {
+        if filter.user_id.is_empty() {
+            filter.user_id = token.user.id.clone();
+        }
+        filter
+    }
+
+    fn reset_filter_on_cloud_switch(mut filter: Self::Filter) -> Self::Filter {
+        filter.user_id = String::new();
+        filter
+    }
+
+    fn is_filter_ready(filter: &Self::Filter) -> bool {
+        !filter.user_id.is_empty()
+    }
 }
 
 pub type IdentityApplicationCredentials =
@@ -130,5 +149,91 @@ mod tests {
         let result =
             IdentityApplicationCredentialsBehaviour::handle_set_filter_action(&Action::Tick);
         assert!(result.is_none());
+    }
+
+    #[test]
+    fn seed_filter_from_current_user_sets_empty_user_id() {
+        let filter = IdentityUserApplicationCredentialList::default();
+        assert_eq!(filter.user_id, "");
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "current-user-id".to_string();
+
+        let result = IdentityApplicationCredentialsBehaviour::seed_filter_from_current_user(
+            filter,
+            &token_info,
+        );
+
+        assert_eq!(result.user_id, "current-user-id");
+    }
+
+    #[test]
+    fn seed_filter_from_current_user_does_not_override_existing_user_id() {
+        let filter = IdentityUserApplicationCredentialList {
+            user_id: "explicitly-selected-user".to_string(),
+            ..Default::default()
+        };
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "current-user-id".to_string();
+
+        let result = IdentityApplicationCredentialsBehaviour::seed_filter_from_current_user(
+            filter,
+            &token_info,
+        );
+
+        assert_eq!(result.user_id, "explicitly-selected-user");
+    }
+
+    #[test]
+    fn reset_filter_on_cloud_switch_clears_user_id() {
+        let filter = IdentityUserApplicationCredentialList {
+            user_id: "stale-user-from-previous-cloud".to_string(),
+            ..Default::default()
+        };
+
+        let result = IdentityApplicationCredentialsBehaviour::reset_filter_on_cloud_switch(filter);
+
+        assert_eq!(result.user_id, "");
+    }
+
+    #[test]
+    fn reset_then_reseed_picks_up_new_cloud_user() {
+        // Regression test: switching clouds must not leave the previous cloud's user_id
+        // stuck in the filter forever (seed_filter_from_current_user's "don't clobber an
+        // explicit selection" guard would otherwise treat it as already-scoped).
+        let filter = IdentityUserApplicationCredentialList {
+            user_id: "cloud-a-user".to_string(),
+            ..Default::default()
+        };
+
+        let filter = IdentityApplicationCredentialsBehaviour::reset_filter_on_cloud_switch(filter);
+
+        let mut token_info = openstack_sdk::types::identity::v3::TokenInfo::default();
+        token_info.user.id = "cloud-b-user".to_string();
+        let result = IdentityApplicationCredentialsBehaviour::seed_filter_from_current_user(
+            filter,
+            &token_info,
+        );
+
+        assert_eq!(result.user_id, "cloud-b-user");
+    }
+
+    #[test]
+    fn is_filter_ready_false_when_user_id_empty() {
+        let filter = IdentityUserApplicationCredentialList::default();
+        assert_eq!(filter.user_id, "");
+        assert!(!IdentityApplicationCredentialsBehaviour::is_filter_ready(
+            &filter
+        ));
+    }
+
+    #[test]
+    fn is_filter_ready_true_when_user_id_set() {
+        let filter = IdentityUserApplicationCredentialList {
+            user_id: "user-42".to_string(),
+            ..Default::default()
+        };
+        assert!(IdentityApplicationCredentialsBehaviour::is_filter_ready(
+            &filter
+        ));
     }
 }
