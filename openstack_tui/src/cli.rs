@@ -31,8 +31,23 @@ pub struct Cli {
     pub frame_rate: f64,
 
     /// Cloud name to connect to after the start
-    #[arg(long, env = "OS_CLOUD")]
+    ///
+    /// Conflicts with the `--cloud-config-from-env` option.
+    #[arg(long, env = "OS_CLOUD", conflicts_with = "cloud_config_from_env")]
     pub os_cloud: Option<String>,
+
+    /// Get the cloud config from environment variables.
+    ///
+    /// Conflicts with the `--os-cloud` option. No merging of environment variables with the
+    /// options from the `clouds.yaml` file done. This effectively limits the TUI to a single
+    /// cloud connection.
+    #[arg(long)]
+    pub cloud_config_from_env: bool,
+
+    /// Cloud name used when configuration is retrieved from environment variables. When not
+    /// specified the `envvars` would be used as a default.
+    #[arg(long, env = "OS_CLOUD_NAME")]
+    pub os_cloud_name: Option<String>,
 
     /// Custom path to the `clouds.yaml` config file
     #[arg(long, env = "OS_CLIENT_CONFIG_FILE", value_hint = ValueHint::FilePath)]
