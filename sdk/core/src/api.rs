@@ -506,5 +506,6 @@ pub use self::raw::download;
 pub use self::raw::raw;
 pub use self::raw::raw_with_body;
 pub use self::wait::{
-    Backoff, Observation, Wait, WaitDecision, WaitOutcome, wait, wait_deleted, wait_for_status,
+    Backoff, HasStatusPointer, Observation, Wait, WaitDecision, WaitOutcome, wait, wait_deleted,
+    wait_for_status, wait_for_status_typed,
 };
