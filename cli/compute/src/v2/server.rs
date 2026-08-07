@@ -118,6 +118,7 @@ pub mod unrescue;
 pub mod unshelve_277;
 pub mod unshelve_291;
 pub mod volume_attachment;
+mod wait_flag;
 
 /// **Servers (servers)**
 ///
