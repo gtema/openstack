@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack_types-v0.22.7...openstack_types-v0.22.8) - 2026-08-08
+
+### Added
+
+- *(tui)* Remove dynamic_item from generated code ([#1919](https://github.com/gtema/openstack/pull/1919))
+- Source ColumnSpec from config.yaml ([#1915](https://github.com/gtema/openstack/pull/1915))
+- Dispatch response schema per negotiated microversion ([#1907](https://github.com/gtema/openstack/pull/1907))
+- Generate mode/action/app wiring per resource ([#1897](https://github.com/gtema/openstack/pull/1897))
+- Stream paginated list responses via iter_async ([#1885](https://github.com/gtema/openstack/pull/1885))
+- Start populating max_version for sdk ([#1883](https://github.com/gtema/openstack/pull/1883))
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Changes from adapted codegenerator templates ([#1879](https://github.com/gtema/openstack/pull/1879))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+
+### Fixed
+
+- Codegenerator fixes ([#1884](https://github.com/gtema/openstack/pull/1884))
+
 ## [0.22.6](https://github.com/gtema/openstack/compare/openstack_types-v0.22.5...openstack_types-v0.22.6) - 2026-05-14
 
 ### Added

@@ -2882,7 +2882,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-api"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -2895,7 +2895,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-auth"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "chrono",
  "clap",
@@ -2912,7 +2912,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-block-storage"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -2927,7 +2927,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-catalog"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "openstack-cli-core",
@@ -2941,7 +2941,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-compute"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "base64 0.23.0",
  "clap",
@@ -2963,7 +2963,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-container-infrastructure-management"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -2978,7 +2978,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-core"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "base64 0.23.0",
  "clap",
@@ -3010,7 +3010,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-dns"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -3025,7 +3025,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-identity"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "base64 0.23.0",
  "clap",
@@ -3044,7 +3044,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-image"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -3060,7 +3060,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-load-balancer"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -3075,7 +3075,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-network"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -3090,7 +3090,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-object-store"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "bytes",
  "clap",
@@ -3109,7 +3109,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-cli-placement"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "clap",
  "eyre",
@@ -3124,7 +3124,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-applicationcredential"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3144,7 +3144,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-core"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3166,7 +3166,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-federation"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3199,7 +3199,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-jwt"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "derive_builder",
@@ -3217,7 +3217,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-multifactor"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3240,7 +3240,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-oidcaccesstoken"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "httpmock",
@@ -3259,7 +3259,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-oidcclientcredentials"
-version = "0.1.0"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "httpmock",
@@ -3277,7 +3277,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-passkey"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "base64 0.23.0",
@@ -3296,7 +3296,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-password"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3317,7 +3317,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-receipt"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3341,7 +3341,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-token"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3361,7 +3361,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-totp"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3381,7 +3381,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-auth-websso"
-version = "0.22.6"
+version = "0.22.7"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3414,7 +3414,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-block-storage"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3430,7 +3430,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-compute"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3446,7 +3446,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-container-infrastructure-management"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3462,7 +3462,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-dns"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3478,7 +3478,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-identity"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3495,7 +3495,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-image"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3512,7 +3512,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-load-balancer"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3528,7 +3528,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-network"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3544,7 +3544,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-object-store"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3562,7 +3562,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-sdk-placement"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "bytes",
  "derive_builder",
@@ -3578,7 +3578,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-block-storage"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3589,7 +3589,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-compute"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3600,7 +3600,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-container-infrastructure-management"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3611,7 +3611,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-core"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "serde",
@@ -3620,7 +3620,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-dns"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3631,7 +3631,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-identity"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3642,7 +3642,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-image"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3653,7 +3653,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-load-balancer"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3664,7 +3664,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-network"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3675,7 +3675,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-object-store"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3686,7 +3686,7 @@ dependencies = [
 
 [[package]]
 name = "openstack-types-placement"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-core",
@@ -3697,7 +3697,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_cli"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "assert_cmd",
  "clap",
@@ -3735,7 +3735,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "arc-swap",
  "async-trait",
@@ -3801,7 +3801,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk_core"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "arc-swap",
  "async-trait",
@@ -3838,7 +3838,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_tui"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3877,7 +3877,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_types"
-version = "0.22.7"
+version = "0.22.8"
 dependencies = [
  "chrono",
  "openstack-types-block-storage",

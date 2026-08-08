@@ -6,6 +6,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.7...openstack_tui-v0.13.8) - 2026-08-08
+
+### Added
+
+- *(tui)* Broadcast actions to all components ([#1922](https://github.com/gtema/openstack/pull/1922))
+- *(tui)* Add --cloud-config-from-env flag ([#1921](https://github.com/gtema/openstack/pull/1921))
+- Add microversion negotiation strategy to RestClient ([#1918](https://github.com/gtema/openstack/pull/1918))
+- *(tui)* Remove dynamic_item from generated code ([#1919](https://github.com/gtema/openstack/pull/1919))
+- Source ColumnSpec from config.yaml ([#1915](https://github.com/gtema/openstack/pull/1915))
+- *(tui)* Dynamic Value+ColumnSpec items ([#1914](https://github.com/gtema/openstack/pull/1914))
+- *(tui)* Dispatch item deser per negotiated version ([#1903](https://github.com/gtema/openstack/pull/1903))
+- Surface negotiated microversion end to end ([#1902](https://github.com/gtema/openstack/pull/1902))
+- *(tui)* Complete ResourceBehaviour tier for network ([#1901](https://github.com/gtema/openstack/pull/1901))
+- *(tui)* Generate ResourceBehaviour mechanical tier ([#1900](https://github.com/gtema/openstack/pull/1900))
+- *(tui)* Replace per-resource Mode variants ([#1892](https://github.com/gtema/openstack/pull/1892))
+- Stream paginated list responses via iter_async ([#1885](https://github.com/gtema/openstack/pull/1885))
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+- *(sdk)* Add background token auto-renewal ([#1859](https://github.com/gtema/openstack/pull/1859))
+- Add region switching support ([#1820](https://github.com/gtema/openstack/pull/1820))
+
+### Fixed
+
+- Use current MV when max is not set ([#1920](https://github.com/gtema/openstack/pull/1920))
+- *(tui)* Remove unsafe pointer cast in confirm popup ([#1893](https://github.com/gtema/openstack/pull/1893))
+- *(tui)* Error handling, data cleanup, concurrency ([#1862](https://github.com/gtema/openstack/pull/1862))
+- *(tui)* Restore functionality ([#1830](https://github.com/gtema/openstack/pull/1830))
+- *(tui)* Fix cloud and project select popups ([#1819](https://github.com/gtema/openstack/pull/1819))
+- *(auth-core)* Improve auth-core quality ([#1794](https://github.com/gtema/openstack/pull/1794))
+
+### Other
+
+- *(tui)* Replace StructTable with Value rendering ([#1917](https://github.com/gtema/openstack/pull/1917))
+- *(tui)* Extract mechanical ResourceBehaviour tier ([#1898](https://github.com/gtema/openstack/pull/1898))
+- *(tui)* Wrap remaining resources' wiring ([#1896](https://github.com/gtema/openstack/pull/1896))
+- *(tui)* Wrap security_group(_rule) wiring ([#1895](https://github.com/gtema/openstack/pull/1895))
+- *(tui)* Cross-check view keys ([#1894](https://github.com/gtema/openstack/pull/1894))
+- Apply clippy 1.97 ([#1847](https://github.com/gtema/openstack/pull/1847))
+- Migrate to GenericResourceView pattern ([#1818](https://github.com/gtema/openstack/pull/1818))
+- *(tui)* Extract GenericResourceView ([#1814](https://github.com/gtema/openstack/pull/1814))
+- *(tui)* Implement FuzzySelect and Popup widget ([#1813](https://github.com/gtema/openstack/pull/1813))
+- Address clippy issues ([#1799](https://github.com/gtema/openstack/pull/1799))
+- Consolidate auth/catalog/state into SessionContext ([#1789](https://github.com/gtema/openstack/pull/1789))
+
 ## [0.13.7](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.6...openstack_tui-v0.13.7) - 2026-06-01
 
 ### Other

@@ -1,7 +1,7 @@
 [package]
 name = "openstack-sdk-identity"
 description = "OpenStack SDK Identity service bindings"
-version = "0.22.7"
+version = "0.22.8"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
