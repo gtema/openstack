@@ -554,14 +554,38 @@ impl App {
                     ref original_action,
                 } => {
                     tui.exit()?;
-                    let edited = edit::edit(template)?;
-                    tracing::debug!("after editing: '{}'", edited);
+                    let mut buffer = template.clone();
+                    // Retry until the buffer parses as valid YAML, or the user abandons the
+                    // edit by clearing the buffer (only comments/whitespace left).
+                    let parsed = loop {
+                        let edited = edit::edit(&buffer)?;
+                        tracing::debug!("after editing: '{}'", edited);
+
+                        let abandoned = edited.lines().all(|line| {
+                            let trimmed = line.trim();
+                            trimmed.is_empty() || trimmed.starts_with('#')
+                        });
+                        if abandoned {
+                            break None;
+                        }
+
+                        match serde_yaml::from_str::<serde_json::Value>(&edited) {
+                            Ok(value) => break Some(value),
+                            Err(err) => {
+                                buffer = format!(
+                                    "# Error parsing YAML: {err}\n# Fix the error below and save to retry, or clear the buffer entirely to abort.\n{edited}"
+                                );
+                            }
+                        }
+                    };
                     tui.enter()?;
                     tui.terminal.clear()?;
-                    self.action_tx.send(Action::EditResult {
-                        result: serde_json::from_value(serde_yaml::from_str(&edited)?)?,
-                        original_action: original_action.clone(),
-                    })?;
+                    if let Some(result) = parsed {
+                        self.action_tx.send(Action::EditResult {
+                            result,
+                            original_action: original_action.clone(),
+                        })?;
+                    }
                     self.render(tui)?;
                 }
                 Action::AuthHelperCompleted => {
