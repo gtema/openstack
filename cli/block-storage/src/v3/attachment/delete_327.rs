@@ -29,6 +29,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::attachment::delete_327;
+use openstack_sdk::api::block_storage::v3::attachment::get_327 as get;
+use openstack_sdk::api::wait_deleted;
 
 /// Delete an attachment.
 ///
@@ -45,6 +47,14 @@ pub struct AttachmentCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Wait for the resource to reach its target status (or, for delete, to disappear) before
+    /// returning. Uses client-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait, in seconds. Only meaningful with `--wait`.
+    #[arg(long, default_value_t = 600)]
+    wait_timeout: u64,
 }
 
 /// Query parameters
@@ -87,6 +97,18 @@ impl AttachmentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         openstack_sdk::api::ignore(ep).query_async(client).await?;
+        if self.wait {
+            let mut wait_ep_builder = get::Request::builder();
+
+            wait_ep_builder.id(&self.path.id);
+            let wait_ep = wait_ep_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            wait_deleted(wait_ep)
+                .timeout(std::time::Duration::from_secs(self.wait_timeout))
+                .query_async(client)
+                .await?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

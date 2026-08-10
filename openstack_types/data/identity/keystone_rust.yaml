@@ -4465,7 +4465,7 @@ paths:
           description: Invalid client credentials
         '429':
           description: Rate limit exceeded
-  /v4/role_assignments/projects/{project_id}/users/{user_id}/roles:
+  /v4/projects/{project_id}/users/{user_id}/roles:
     get:
       tags:
       - role_assignments
@@ -4491,7 +4491,7 @@ paths:
           description: User or project not found
       security:
       - x-auth: []
-  /v4/role_assignments/projects/{project_id}/users/{user_id}/roles/{role_id}:
+  /v4/projects/{project_id}/users/{user_id}/roles/{role_id}:
     put:
       tags:
       - role_assignments
@@ -4592,7 +4592,7 @@ paths:
           description: Grant not found
       security:
       - x-auth: []
-  /v4/role_assignments/role_assignments:
+  /v4/role_assignments:
     get:
       tags:
       - role_assignments
@@ -4699,109 +4699,6 @@ paths:
                 $ref: '#/components/schemas/AssignmentList'
         '500':
           description: Internal error
-  /v4/role_assignments/system/users/{user_id}/roles:
-    get:
-      tags:
-      - role_assignments
-      summary: List the roles that a user has on the system.
-      operationId: /system/user/role:list
-      parameters:
-      - name: user_id
-        in: path
-        description: The user ID.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: List of roles
-        '404':
-          description: User not found
-      security:
-      - x-auth: []
-  /v4/role_assignments/system/users/{user_id}/roles/{role_id}:
-    put:
-      tags:
-      - role_assignments
-      summary: Assign role to user on system
-      description: Assigns a role to a user on the system.
-      operationId: /system/user/role:put
-      parameters:
-      - name: role_id
-        in: path
-        description: The role ID.
-        required: true
-        schema:
-          type: string
-      - name: user_id
-        in: path
-        description: The user ID.
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Grant is created.
-        '404':
-          description: Grant not found
-      security:
-      - x-auth: []
-    delete:
-      tags:
-      - role_assignments
-      summary: Revoke role from user on system
-      description: Remove a role assignment for a user on the system.
-      operationId: /system/user/role:delete
-      parameters:
-      - name: role_id
-        in: path
-        description: The role ID.
-        required: true
-        schema:
-          type: string
-      - name: user_id
-        in: path
-        description: The user ID.
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Role revoked successfully
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Grant not found
-      security:
-      - X-Auth-Token: []
-    head:
-      tags:
-      - role_assignments
-      summary: Check whether user has role assignment on system.
-      description: Validates that a user has a role on the system.
-      operationId: /system/user/role:check
-      parameters:
-      - name: role_id
-        in: path
-        description: The role ID.
-        required: true
-        schema:
-          type: string
-      - name: user_id
-        in: path
-        description: The user ID.
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Grant is present.
-        '404':
-          description: Grant not found
-      security:
-      - x-auth: []
   /v4/roles:
     get:
       tags:
@@ -5279,6 +5176,109 @@ paths:
       responses:
         '204':
           description: Resource purged
+      security:
+      - x-auth: []
+  /v4/system/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on the system.
+      operationId: /system/user/role:list
+      parameters:
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: User not found
+      security:
+      - x-auth: []
+  /v4/system/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on system
+      description: Assigns a role to a user on the system.
+      operationId: /system/user/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on system
+      description: Remove a role assignment for a user on the system.
+      operationId: /system/user/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on system.
+      description: Validates that a user has a role on the system.
+      operationId: /system/user/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
       security:
       - x-auth: []
   /v4/tokens/restrictions:

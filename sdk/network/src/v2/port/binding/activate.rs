@@ -124,6 +124,23 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/binding/status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

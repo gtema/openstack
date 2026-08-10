@@ -17,16 +17,19 @@
 
 use derive_builder::Builder;
 use eyre::{Report, Result, WrapErr};
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::{AsyncClient, RestEndpoint};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::warn;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use openstack_sdk::AsyncOpenStack;
 use openstack_sdk::api::identity::v3::group::user::list::RequestBuilder;
-use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
 #[derive(Builder, Clone, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
 #[builder(setter(strip_option))]
@@ -71,10 +74,21 @@ impl ExecuteApiRequest for IdentityGroupUserList {
         let ep = TryInto::<RequestBuilder>::try_into(self)?
             .build()
             .wrap_err("Cannot prepare request")?;
+        let service_endpoint = session
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            match negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep) {
+                Ok(v) => v,
+                Err(e) => {
+                    warn!("Microversion negotiation failed: {}", e);
+                    None
+                }
+            };
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
-            data: ep.query_async(session).await?,
-            negotiated_version: None,
+            data: openstack_sdk::api::QueryAsync::query_async(&ep, session).await?,
+            negotiated_version,
         })?;
         Ok(())
     }
