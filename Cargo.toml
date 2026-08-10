@@ -64,7 +64,7 @@ eyre = { version = "^0.6" }
 form_urlencoded = "^1.2"
 futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
-http = "^1.4"
+http = "^1.5"
 http-body-util = "^0.1"
 httpmock = { version = "^0.8" }
 hyper = { version = "^1.11" }
