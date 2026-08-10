@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v3/volumes` with `POST` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -31,6 +31,8 @@ use openstack_sdk::AsyncOpenStack;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::volume::create_347;
+use openstack_sdk::api::block_storage::v3::volume::get;
+use openstack_sdk::api::wait_for_status_typed;
 use openstack_types::block_storage::v3::volume::response;
 use serde_json::Value;
 
@@ -56,6 +58,14 @@ pub struct VolumeCommand {
     /// A `volume` object.
     #[command(flatten)]
     volume: Volume,
+
+    /// Wait for the resource to reach its target status (or, for delete, to disappear) before
+    /// returning. Uses client-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait, in seconds. Only meaningful with `--wait`.
+    #[arg(long, default_value_t = 600)]
+    wait_timeout: u64,
 }
 
 /// Query parameters
@@ -325,8 +335,28 @@ impl VolumeCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
+        if self.wait {
+            let wait_id = data
+                .pointer("/volume/id")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_eyre("create response is missing /volume/id, cannot wait")?
+                .to_string();
+            let wait_ep = get::Request::builder()
+                .id(&wait_id)
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let wait_outcome = wait_for_status_typed(wait_ep, &["ACTIVE"], &["ERROR"])
+                .timeout(std::time::Duration::from_secs(self.wait_timeout))
+                .query_async(client)
+                .await?;
+            let data: serde_json::Value = wait_outcome
+                .into_present()
+                .unwrap_or(serde_json::Value::Null);
 
-        op.output_single::<response::create::VolumeResponse>(data.clone())?;
+            op.output_single::<response::create::VolumeResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::create::VolumeResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
