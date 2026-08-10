@@ -183,6 +183,28 @@ pub fn wait_for_status<E>(
     )
 }
 
+/// Resolves the JSON Pointer to an endpoint's status field, keyed by negotiated microversion
+/// where the field's location has moved across a spec's history (rare — most resources ignore
+/// the argument and return a single fixed pointer). Implemented by hand, one per generated
+/// Request/find endpoint, until codegen emits it directly from the versioned response schema.
+pub trait HasStatusPointer {
+    /// Resolve the pointer to use for the (optionally known) negotiated version.
+    fn status_pointer(negotiated: Option<crate::types::ApiVersion>) -> &'static str;
+}
+
+/// Like [`wait_for_status`], but resolves the JSON Pointer from `E`'s [`HasStatusPointer`] impl
+/// instead of taking it as an explicit argument.
+pub fn wait_for_status_typed<E>(
+    endpoint: E,
+    target: &'static [&'static str],
+    failures: &'static [&'static str],
+) -> Wait<E, impl Fn(Observation<&serde_json::Value>) -> WaitDecision>
+where
+    E: RestEndpoint + HasStatusPointer,
+{
+    wait_for_status(endpoint, E::status_pointer(None), target, failures)
+}
+
 impl<E, F> Wait<E, F> {
     /// Overall wait timeout. `None` disables it (wait forever, or until a `Fail`/hard error).
     pub fn timeout(mut self, timeout: Duration) -> Self {
@@ -227,7 +249,9 @@ where
                 Ok(body) => match (self.check)(Observation::Present(&body)) {
                     WaitDecision::Done => return Ok(WaitOutcome::Present(body)),
                     WaitDecision::Fail(reason) => return Err(ApiError::WaitFailed { reason }),
-                    WaitDecision::Continue => {}
+                    WaitDecision::Continue => {
+                        transient_errors = 0;
+                    }
                 },
                 Err(e) if e.is_not_found() => match (self.check)(Observation::Gone) {
                     WaitDecision::Done => return Ok(WaitOutcome::Gone),
@@ -272,7 +296,9 @@ where
                 Ok(body) => match (self.check)(Observation::Present(&body)) {
                     WaitDecision::Done => return Ok(WaitOutcome::Present(body)),
                     WaitDecision::Fail(reason) => return Err(ApiError::WaitFailed { reason }),
-                    WaitDecision::Continue => {}
+                    WaitDecision::Continue => {
+                        transient_errors = 0;
+                    }
                 },
                 Err(e) if e.is_not_found() => match (self.check)(Observation::Gone) {
                     WaitDecision::Done => return Ok(WaitOutcome::Gone),
@@ -311,7 +337,8 @@ mod tests {
     use crate::api::QueryAsync;
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::wait::{
-        Backoff, Observation, WaitDecision, WaitOutcome, wait_deleted, wait_for_status,
+        Backoff, HasStatusPointer, Observation, WaitDecision, WaitOutcome, wait_deleted,
+        wait_for_status, wait_for_status_typed,
     };
     use crate::test::client::FakeOpenStackClient;
 
@@ -352,6 +379,48 @@ mod tests {
 
         let w =
             wait_for_status(GetDummy, "/status", &["ACTIVE"], &["ERROR"]).backoff(fast_backoff());
+        let res: WaitOutcome<serde_json::Value> = Query::query(&w, &client).unwrap();
+        match res {
+            WaitOutcome::Present(r) => assert_eq!(r["status"], "ACTIVE"),
+            WaitOutcome::Gone => panic!("expected Present"),
+        }
+        mock.assert();
+    }
+
+    struct StatusPointerDummy;
+
+    impl RestEndpoint for StatusPointerDummy {
+        fn method(&self) -> http::Method {
+            http::Method::GET
+        }
+        fn endpoint(&self) -> Cow<'static, str> {
+            "dummies/abc".into()
+        }
+        fn service_type(&self) -> ServiceType {
+            ServiceType::from("dummy")
+        }
+    }
+
+    impl HasStatusPointer for StatusPointerDummy {
+        fn status_pointer(_negotiated: Option<crate::types::ApiVersion>) -> &'static str {
+            "/status"
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn wait_for_status_typed_reaches_target() {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummies/abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({"status": "ACTIVE"}));
+        });
+
+        let w = wait_for_status_typed(StatusPointerDummy, &["ACTIVE"], &["ERROR"])
+            .backoff(fast_backoff());
         let res: WaitOutcome<serde_json::Value> = Query::query(&w, &client).unwrap();
         match res {
             WaitOutcome::Present(r) => assert_eq!(r["status"], "ACTIVE"),
@@ -481,6 +550,81 @@ mod tests {
             other => panic!("expected WaitFailed, got {other:?}"),
         }
         mock.assert();
+    }
+
+    /// Endpoint that reports which poll attempt it is via a query param, so a test can script a
+    /// per-attempt response sequence (httpmock has no built-in call-sequencing).
+    struct FlakyDummy {
+        attempt: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+    }
+
+    impl RestEndpoint for FlakyDummy {
+        fn method(&self) -> http::Method {
+            http::Method::GET
+        }
+        fn endpoint(&self) -> Cow<'static, str> {
+            "dummies/abc".into()
+        }
+        fn service_type(&self) -> ServiceType {
+            ServiceType::from("dummy")
+        }
+        fn parameters(&self) -> QueryParams<'_> {
+            let n = self
+                .attempt
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst)
+                + 1;
+            let mut params = QueryParams::default();
+            params.push("attempt", n.to_string());
+            params
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn wait_tolerates_non_consecutive_transient_errors() {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        // Alternate transient 500 / recoverable BUILD four times, then succeed. None of the
+        // four 500s are consecutive, so a wait with max_transient_errors(3) must still finish.
+        for (attempt, status, body) in [
+            (1, 500, None),
+            (2, 200, Some(json!({"status": "BUILD"}))),
+            (3, 500, None),
+            (4, 200, Some(json!({"status": "BUILD"}))),
+            (5, 500, None),
+            (6, 200, Some(json!({"status": "BUILD"}))),
+            (7, 500, None),
+            (8, 200, Some(json!({"status": "ACTIVE"}))),
+        ] {
+            server.mock(|when, then| {
+                when.method(httpmock::Method::GET)
+                    .path("/dummies/abc")
+                    .query_param("attempt", attempt.to_string());
+                let then = then.status(status);
+                match &body {
+                    Some(b) => then
+                        .header("content-type", "application/json")
+                        .json_body(b.clone()),
+                    None => then,
+                };
+            });
+        }
+
+        let w = wait_for_status(
+            FlakyDummy {
+                attempt: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+            },
+            "/status",
+            &["ACTIVE"],
+            &["ERROR"],
+        )
+        .backoff(fast_backoff())
+        .max_transient_errors(3);
+        let res: WaitOutcome<serde_json::Value> = Query::query(&w, &client).unwrap();
+        match res {
+            WaitOutcome::Present(r) => assert_eq!(r["status"], "ACTIVE"),
+            WaitOutcome::Gone => panic!("expected Present"),
+        }
     }
 
     #[cfg(feature = "sync")]
