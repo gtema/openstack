@@ -117,6 +117,35 @@ pub trait RestEndpoint {
     }
 }
 
+/// Whether a `[min, max]` range (endpoint or schema-variant bounds) overlaps
+/// a `[cloud_min, cloud_max]` range, using the same two rules
+/// [`negotiate_microversion`] and [`crate::api::schema_variant::select_schema`]
+/// both need:
+///
+/// - the range's floor must not be newer than anything the other side will
+///   ever support (`min <= other_max`, when `other_max` is known);
+/// - the range's ceiling, when bounded, must not be older than the other
+///   side's floor (`max >= other_min`, when both are known).
+pub(crate) fn version_range_compatible(
+    min: ApiVersion,
+    max: Option<ApiVersion>,
+    other_min: Option<ApiVersion>,
+    other_max: Option<ApiVersion>,
+) -> bool {
+    if let Some(other_max) = other_max
+        && min > other_max
+    {
+        return false;
+    }
+    if let Some(max) = max
+        && let Some(other_min) = other_min
+        && max < other_min
+    {
+        return false;
+    }
+    true
+}
+
 /// Compute the microversion to send for this endpoint against a cloud's
 /// discovered range, without touching any request.
 ///
@@ -168,21 +197,14 @@ where
         )
     };
 
-    // The endpoint's floor is newer than anything this cloud will ever
-    // support.
-    if let Some(cmax) = cloud_max
-        && ep_min > cmax
-    {
-        return Err(incompatible(ep_min));
-    }
-
-    // The variant's ceiling is older than what this cloud's floor requires
-    // — it's been superseded by a newer variant on this cloud.
-    if let Some(emax) = ep_max
-        && let Some(cmin) = cloud_min
-        && emax < cmin
-    {
-        return Err(incompatible(emax));
+    if !version_range_compatible(ep_min, ep_max, cloud_min, cloud_max) {
+        // Attribute the failure to whichever bound is actually the
+        // culprit, matching the pre-existing error-reporting order.
+        let culprit = match cloud_max {
+            Some(cmax) if ep_min > cmax => ep_min,
+            _ => ep_max.unwrap_or(ep_min),
+        };
+        return Err(incompatible(culprit));
     }
 
     // Send the highest version both sides agree is valid: raise the
