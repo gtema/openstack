@@ -252,6 +252,7 @@ where
         {
             return Ok(Some(Action::Edit {
                 template,
+                schema: B::editor_schema(&action).map(String::from),
                 original_action: Box::new(Action::PerformApiRequest(api_request)),
             }));
         }

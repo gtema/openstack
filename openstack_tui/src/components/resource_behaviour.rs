@@ -39,6 +39,25 @@ pub trait GeneratedResourceBehaviour {
         let _ = action;
         None
     }
+
+    /// Return a YAML editor template for a create action. Mirrors
+    /// `ResourceBehaviour::editor_template`; resources that need to prefill a field from the
+    /// filter should call this, then post-process the returned template string, rather than
+    /// duplicating the field list/comments here.
+    fn editor_template(_action: &Action, _filter: &Self::Filter) -> Option<(String, ApiRequest)> {
+        None
+    }
+
+    /// Deserialize the edited YAML back into an ApiRequest. Mirrors
+    /// `ResourceBehaviour::deserialize_edit_result`.
+    fn deserialize_edit_result(_data: &Value) -> Option<ApiRequest> {
+        None
+    }
+
+    /// JSON Schema backing `editor_template`'s template. Mirrors `ResourceBehaviour::editor_schema`.
+    fn editor_schema(_action: &Action) -> Option<&'static str> {
+        None
+    }
 }
 
 /// Behaviour specifics for a particular OpenStack resource.
@@ -151,6 +170,16 @@ pub trait ResourceBehaviour {
         None
     }
 
+    /// JSON Schema of the request body backing `editor_template`'s
+    /// template, if this resource has one. When present, the edited buffer
+    /// is validated against it (required fields, enums, ranges, ...) before
+    /// being sent back for `deserialize_edit_result`, catching mistakes
+    /// plain YAML parsing can't. Default is no schema (parse-only
+    /// validation, the pre-existing behaviour).
+    fn editor_schema(_action: &Action) -> Option<&'static str> {
+        None
+    }
+
     /// Map an action to a singular API request that should populate the describe pane,
     /// returning the (display actions, api request) tuple. Default returns None.
     fn action_to_singular_request(
@@ -244,6 +273,11 @@ mod tests {
         assert_eq!(DefaultBehaviour::view_key(), "test.item");
         assert_eq!(DefaultBehaviour::title(), "Items");
         assert_eq!(DefaultBehaviour::mode(), Mode::Resource("test.item"));
+    }
+
+    #[test]
+    fn editor_schema_default_is_none() {
+        assert!(DefaultBehaviour::editor_schema(&Action::Tick).is_none());
     }
 
     #[test]

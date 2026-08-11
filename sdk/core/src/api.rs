@@ -456,6 +456,7 @@ mod params;
 pub mod query;
 mod raw;
 pub mod rest_endpoint;
+pub mod schema_variant;
 mod wait;
 
 pub use self::error::ApiError;
@@ -466,6 +467,9 @@ pub use self::client::RestClient;
 
 pub use self::rest_endpoint::RestEndpoint;
 pub use self::rest_endpoint::check_response_error;
+
+pub use self::schema_variant::SchemaVariant;
+pub use self::schema_variant::select_schema;
 
 #[cfg(feature = "async")]
 pub use self::client::AsyncClient;

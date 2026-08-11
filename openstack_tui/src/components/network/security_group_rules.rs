@@ -127,6 +127,17 @@ security_group_rule:
             NetworkSecurityGroupRuleApiRequest::Create(Box::new(create)),
         ))
     }
+    fn editor_schema(action: &Action) -> Option<&'static str> {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Create,
+        } = action
+            && *key == Self::view_key()
+        {
+            return Some(NetworkSecurityGroupRuleCreate::BODY_SCHEMA);
+        }
+        None
+    }
     fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
         if let ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)) = request {
             if let NetworkSecurityGroupRuleApiRequest::Delete(del) = &**req {
@@ -327,6 +338,21 @@ mod tests {
     #[test]
     fn clear_data_on_filter_change() {
         assert!(NetworkSecurityGroupRulesBehaviour::clear_data_on_filter_change());
+    }
+
+    #[test]
+    fn editor_schema_returns_body_schema_for_create() {
+        let schema = NetworkSecurityGroupRulesBehaviour::editor_schema(&Action::ResourceOp {
+            key: crate::mode::NETWORK_SECURITY_GROUP_RULE,
+            op: crate::action::ResourceOp::Create,
+        });
+        assert_eq!(schema, Some(NetworkSecurityGroupRuleCreate::BODY_SCHEMA));
+        assert!(schema.unwrap().contains("\"IPv4\""));
+    }
+
+    #[test]
+    fn editor_schema_ignores_other_actions() {
+        assert!(NetworkSecurityGroupRulesBehaviour::editor_schema(&Action::Tick).is_none());
     }
 
     #[test]
