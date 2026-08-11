@@ -121,4 +121,40 @@ pub enum WasmPluginError {
     /// The in-process plugin registry could not be accessed or updated.
     #[error("plugin registry error: {0}")]
     Registry(String),
+
+    /// The plugin lockfile at `path` could not be parsed or serialized.
+    #[error("malformed plugin lockfile at {}: {}", path.display(), source)]
+    LockfileFormat {
+        /// Path of the lockfile.
+        path: PathBuf,
+        /// The underlying JSON error.
+        #[source]
+        source: serde_json::Error,
+    },
+
+    /// The installed file's content no longer matches the hash recorded in
+    /// the lockfile when it was installed.
+    #[error(
+        "plugin {name}@{version} failed integrity verification: expected sha256 {expected}, found {actual}"
+    )]
+    HashMismatch {
+        /// Plugin name.
+        name: String,
+        /// Plugin version.
+        version: String,
+        /// The hash recorded in the lockfile at install time.
+        expected: String,
+        /// The hash computed from the file currently on disk.
+        actual: String,
+    },
+
+    /// The requested `name`/`version` is not present in the lockfile.
+    #[error("no installed plugin matches {name}{}", version.as_ref().map(|v| format!("@{v}")).unwrap_or_default())]
+    NotInstalled {
+        /// Plugin name.
+        name: String,
+        /// Specific version requested, if any; `None` means "any/all
+        /// versions of `name`".
+        version: Option<String>,
+    },
 }

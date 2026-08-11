@@ -12,63 +12,47 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! List installed wasm auth plugins
+//! Remove an installed wasm auth plugin
 
 use clap::Parser;
-use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use openstack_cli_core::output::OutputProcessor;
+use openstack_cli_core::output::{OutputFor, OutputProcessor};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
-use structable::{StructTable, StructTableOptions};
 
-/// A single installed `name@version` entry, as recorded in the plugin
-/// lockfile. Listed regardless of whether it's the active version.
-#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize, StructTable)]
-pub struct PluginListEntry {
-    /// Plugin name.
-    #[structable()]
+use crate::list::PluginListEntry;
+
+/// Remove an installed wasm auth plugin.
+///
+/// Removes every installed version of `name` unless `--version` narrows it
+/// to a single one. If the removed set included the active version and
+/// other versions of `name` remain, the most recently installed of those
+/// becomes active.
+#[derive(Debug, Parser)]
+pub struct RemoveCommand {
+    /// Plugin name to remove.
     pub name: String,
 
-    /// Installed version.
-    #[structable()]
-    pub version: String,
-
-    /// Whether this is the version currently used for auth-method
-    /// resolution.
-    #[structable()]
-    pub active: bool,
-
-    /// The path this version was originally installed from.
-    #[structable()]
-    pub source: String,
-
-    /// Lowercase hex-encoded SHA-256 recorded at install time.
-    #[structable()]
-    pub sha256: String,
-
-    /// When this version was installed.
-    #[structable()]
-    pub installed_at: String,
+    /// Remove only this specific version, leaving other installed versions
+    /// (if any) in place.
+    #[arg(long)]
+    pub version: Option<String>,
 }
 
-/// List installed wasm auth plugins.
-#[derive(Debug, Parser)]
-pub struct ListCommand {}
-
-impl ListCommand {
+impl RemoveCommand {
     /// Perform command action
     pub async fn take_action<C: CliArgs>(&self, parsed_args: &C) -> Result<(), OpenStackCliError> {
-        info!("List installed wasm auth plugins");
+        info!("Remove wasm auth plugin {}", self.name);
 
-        let op = OutputProcessor::from_args(parsed_args, Some("plugin"), Some("list"));
+        let op = OutputProcessor::from_args(parsed_args, Some("plugin"), Some("remove"));
+
+        openstack_sdk_plugin_wasm::registry::remove(&self.name, self.version.as_deref())
+            .map_err(eyre::Report::from)?;
 
         let lockfile =
             openstack_sdk_plugin_wasm::registry::installed().map_err(eyre::Report::from)?;
-
-        let data: Vec<serde_json::Value> = lockfile
-            .plugins
-            .values()
+        let remaining: Vec<serde_json::Value> = lockfile
+            .versions_of(&self.name)
             .map(|entry| {
                 let active = lockfile
                     .active
@@ -86,6 +70,15 @@ impl ListCommand {
             })
             .collect::<Result<_, _>>()?;
 
-        op.output_list::<PluginListEntry>(data)
+        if remaining.is_empty() {
+            if let OutputFor::Human = op.target {
+                println!("Removed all installed versions of `{}`.", self.name);
+            } else {
+                op.output_machine(serde_json::Value::Array(Vec::new()))?;
+            }
+            return Ok(());
+        }
+
+        op.output_list::<PluginListEntry>(remaining)
     }
 }

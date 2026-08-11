@@ -13,6 +13,7 @@ repository.workspace = true
 
 [dependencies]
 async-trait.workspace = true
+chrono.workspace = true
 dirs.workspace = true
 extism.workspace = true
 openstack-sdk-auth-core.workspace = true
