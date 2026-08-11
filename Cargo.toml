@@ -35,6 +35,7 @@ default-members = [
   "sdk/network",
   "sdk/object-store",
   "sdk/placement",
+  "sdk/plugin-wasm",
   "types/*",
   "openstack_*"
 ]
@@ -43,7 +44,7 @@ default-members = [
 license = "Apache-2.0"
 edition = "2024"
 authors = ["Artem Goncharov (gtema)"]
-rust-version = "1.89"  # MSRV
+rust-version = "1.91"  # MSRV
 homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 
@@ -60,6 +61,7 @@ config = { version = "^0.15", default-features = false }
 derive_builder = { version = "^0.20" }
 dialoguer = "^0.12.0"
 dirs = "^6.0"
+extism = { version = "^1.30" }
 eyre = { version = "^0.6" }
 form_urlencoded = "^1.2"
 futures = "^0.3"
@@ -88,7 +90,9 @@ openstack-cli-load-balancer = { path="cli/load-balancer/", version = "0.13.7" }
 openstack-cli-network = { path="cli/network/", version = "0.13.7" }
 openstack-cli-object-store = { path="cli/object-store/", version = "0.13.7" }
 openstack-cli-placement = { path="cli/placement/", version = "^0.13" }
+openstack-cli-plugin = { path="cli/plugin/", version = "0.13.7" }
 openstack-sdk-auth-core = { version = "0.22.6", path = "sdk/auth-core" }
+openstack-sdk-plugin-wasm = { version = "0.1.0", path = "sdk/plugin-wasm" }
 openstack_sdk_core = { version = "0.22.7", path = "sdk/core" }
 openstack_sdk = { version = "0.22.7", path = "openstack_sdk" }
 openstack_types = { version = "0.22.7", path = "openstack_types" }

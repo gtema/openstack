@@ -1,0 +1,23 @@
+[package]
+name = "openstack-cli-plugin"
+description = "OpenStack CLI wasm auth plugin management commands"
+version = "0.13.7"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap.workspace = true
+eyre.workspace = true
+openstack-cli-core.workspace = true
+openstack-sdk-plugin-wasm.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+structable = { workspace = true }
+tracing.workspace = true
+
+[lints]
+workspace = true

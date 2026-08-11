@@ -65,6 +65,11 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         return Ok(());
     }
 
+    if let TopLevelCommands::Plugin(args) = &cli.command {
+        // Plugin management never needs a cloud connection.
+        return args.take_action(&cli).await;
+    }
+
     // Initialize tracing layers
     // fmt for console logging
     let log_layer = tracing_subscriber::fmt::layer()

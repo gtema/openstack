@@ -566,6 +566,10 @@ impl AsyncOpenStack {
         // Ensure auth plugin registries are populated even if the linker
         // would otherwise strip crates with no other references.
         openstack_sdk_auth_core::anchor_plugins();
+        #[cfg(feature = "wasm_plugins")]
+        if let Err(e) = openstack_sdk_plugin_wasm::registry::ensure_loaded() {
+            warn!("Failed to load wasm auth plugins: {e}");
+        }
 
         let mut client_builder = reqwest::Client::builder();
 
@@ -1036,11 +1040,33 @@ impl AsyncOpenStack {
                 trace!("No Auth already available. Proceeding with new login");
 
                 let auth_type = auth_type.as_str();
-                // Find authenticator supporting the auth_type
-                if let Some(authenticator) = inventory::iter::<AuthPluginRegistration>
+                // Find authenticator supporting the auth_type: a compiled-in
+                // plugin first, then (if enabled) a loaded wasm plugin as a
+                // fallback.
+                let compiled_authenticator = inventory::iter::<AuthPluginRegistration>
                     .into_iter()
                     .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
-                    .map(|x| x.method)
+                    .map(|x| x.method);
+                #[cfg(feature = "wasm_plugins")]
+                let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> =
+                    if compiled_authenticator.is_none() {
+                        match openstack_sdk_plugin_wasm::registry::lookup(auth_type) {
+                            Ok(Some(p)) => Some(p as Arc<dyn OpenStackAuthType>),
+                            Ok(None) => None,
+                            Err(e) => {
+                                warn!("Failed to look up wasm auth plugin for `{auth_type}`: {e}");
+                                None
+                            }
+                        }
+                    } else {
+                        None
+                    };
+                #[cfg(not(feature = "wasm_plugins"))]
+                let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> = None;
+
+                if let Some(authenticator) = compiled_authenticator
+                    .map(|a| a as &dyn OpenStackAuthType)
+                    .or(wasm_authenticator.as_deref())
                 {
                     // authenticate
                     let auth_hints = self
