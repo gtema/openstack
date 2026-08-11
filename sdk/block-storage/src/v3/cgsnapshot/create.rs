@@ -168,6 +168,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": true, \"properties\": {\"cgsnapshot\": {\"additionalProperties\": true, \"description\": \"A consistency group snapshot object.\", \"properties\": {\"consistencygroup_id\": {\"description\": \"The UUID of the consistency group.\", \"type\": \"string\"}, \"description\": {\"description\": \"The consistency group snapshot description.\", \"type\": \"string\"}, \"name\": {\"description\": \"The name of the snapshot. Default is `None`.\", \"type\": \"string\"}}, \"required\": [\"consistencygroup_id\"], \"type\": \"object\"}}, \"required\": [\"cgsnapshot\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

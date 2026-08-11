@@ -132,6 +132,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the rbac-policies/id:put operation\", \"properties\": {\"rbac_policy\": {\"properties\": {\"target_tenant\": {\"description\": \"The ID of the tenant to which the RBAC policy will be enforced. Please note\\nthat Neutron does not perform any type of validation that the value provided is\\nactually the ID of the existing project. If, for example, the name of the project\\nis provided here, it will be accepted by the Neutron API, but the RBAC rule\\ncreated will not work as expected.\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

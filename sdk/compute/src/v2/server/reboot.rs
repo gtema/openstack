@@ -144,6 +144,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Reboots a server.\\n\\nSpecify the `reboot` action in the request body.\\n\\n**Preconditions**\\n\\nThe preconditions for rebooting a server depend on the type of reboot.\\n\\nYou can only *SOFT* reboot a server when its status is `ACTIVE`.\\n\\nYou can only *HARD* reboot a server when its status is one of:\\n\\nIf the server is locked, you must have administrator privileges\\nto reboot the server.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully reboot a server, its status changes to `ACTIVE`.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409)\", \"properties\": {\"reboot\": {\"additionalProperties\": false, \"description\": \"The action to reboot a server.\", \"properties\": {\"type\": {\"description\": \"The type of the reboot action. The valid values are `HARD` and `SOFT`.\\nA `SOFT` reboot attempts a graceful shutdown and restart of the server.\\nA `HARD` reboot attempts a forced shutdown and restart of the server.\\nThe `HARD` reboot corresponds to the power cycles of the server.\", \"enum\": [\"HARD\", \"Hard\", \"SOFT\", \"Soft\", \"hard\", \"soft\"], \"type\": \"string\"}}, \"required\": [\"type\"], \"type\": \"object\"}}, \"required\": [\"reboot\"], \"summary\": \"Reboot Server (reboot Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"reboot\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

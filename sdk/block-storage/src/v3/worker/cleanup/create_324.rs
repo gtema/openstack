@@ -162,6 +162,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"binary\": {\"enum\": [\"cinder-scheduler\", \"cinder-volume\"]}, \"cluster_name\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._#@:/+]*$\", \"type\": [\"null\", \"string\"]}, \"disabled\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}, \"host\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._#@:/+]*$\", \"type\": [\"null\", \"string\"]}, \"is_up\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}, \"resource_id\": {\"oneOf\": [{\"type\": \"null\"}, {\"format\": \"uuid\", \"type\": \"string\"}]}, \"resource_type\": {\"maxLength\": 40, \"minLength\": 0, \"type\": [\"null\", \"string\"]}, \"service_id\": {\"maxLength\": 11, \"pattern\": \"^[0-9]*$\", \"type\": [\"integer\", \"null\", \"string\"]}}, \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"3.24\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

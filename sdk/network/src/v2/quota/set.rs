@@ -183,6 +183,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the quotas/id:put operation\", \"properties\": {\"quota\": {\"description\": \"A `quota` object.\", \"properties\": {\"floatingip\": {\"description\": \"The number of floating IP addresses allowed for\\neach project. A value of `-1` means no limit.\", \"type\": \"integer\"}, \"network\": {\"description\": \"The number of networks allowed for each project.\\nA value of `-1` means no limit.\", \"type\": \"integer\"}, \"port\": {\"description\": \"The number of ports allowed for each project.\\nA value of `-1` means no limit.\", \"type\": \"integer\"}, \"project_id\": {\"description\": \"The ID of the project.\", \"format\": \"uuid\", \"type\": \"string\"}, \"rbac_policy\": {\"description\": \"The number of role-based access control (RBAC)\\npolicies for each project. A value of `-1` means\\nno limit.\", \"type\": \"integer\"}, \"router\": {\"description\": \"The number of routers allowed for each project.\\nA value of `-1` means no limit.\", \"type\": \"integer\"}, \"security_group\": {\"description\": \"The number of security groups allowed for each\\nproject. A value of `-1` means no limit.\", \"type\": \"integer\"}, \"security_group_rule\": {\"description\": \"The number of security group rules allowed for\\neach project. A value of `-1` means no limit.\", \"type\": \"integer\"}, \"subnet\": {\"description\": \"The number of subnets allowed for each project.\\nA value of `-1` means no limit.\", \"type\": \"integer\"}, \"subnetpool\": {\"description\": \"The number of subnet pools allowed for each\\nproject. A value of `-1` means no limit.\", \"type\": \"integer\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

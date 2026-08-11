@@ -162,6 +162,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"project\": {\"description\": \"A `project` object\", \"properties\": {\"description\": {\"description\": \"The description of the project.\", \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"If set to `true`, project is enabled. If set to\\n`false`, project is disabled.\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"name\": {\"description\": \"The name of the project, which must be unique within the\\nowning domain. A project can have the same name as its domain.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"options\": {\"additionalProperties\": false, \"description\": \"The resource options for the project. Available resource options are\\n`immutable`.\", \"properties\": {\"immutable\": {\"enum\": [null, false, true], \"type\": [\"boolean\", \"null\"]}}, \"type\": \"object\"}, \"tags\": {\"description\": \"A list of simple strings assigned to a project.\\nTags can be used to classify projects into groups.\", \"items\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"maxItems\": 80, \"required\": [], \"type\": \"array\", \"uniqueItems\": true}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -169,6 +169,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"interfaceAttachment\": {\"additionalProperties\": false, \"description\": \"Specify the `interfaceAttachment` action in the request body.\", \"properties\": {\"fixed_ips\": {\"description\": \"Fixed IP addresses. If you request a specific fixed IP address without\\na `net_id`, the request returns a `Bad Request (400)` response code.\", \"items\": {\"additionalProperties\": false, \"properties\": {\"ip_address\": {\"description\": \"The IP address. It is required when `fixed_ips` is specified.\", \"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}}, \"required\": [\"ip_address\"], \"type\": \"object\"}, \"maxItems\": 1, \"minItems\": 1, \"type\": \"array\"}, \"net_id\": {\"description\": \"The ID of the network for which you want to create a port interface. The `net_id`\\nand `port_id` parameters are mutually exclusive. If you do not specify the\\n`net_id` parameter, the OpenStack Networking API v2.0 uses the network information\\ncache that is associated with the instance.\", \"format\": \"uuid\", \"type\": \"string\"}, \"port_id\": {\"description\": \"The ID of the port for which you want to create an interface. The `net_id`\\nand `port_id` parameters are mutually exclusive. If you do not specify the\\n`port_id` parameter, the OpenStack Networking API v2.0 allocates a port and\\ncreates an interface for it on the network.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.48\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -126,6 +126,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Adds flavor access to a tenant and flavor.\\n\\nSpecify the `addTenantAccess` action and the `tenant` in the request body.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409)\", \"properties\": {\"addTenantAccess\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"tenant\": {\"description\": \"The UUID of the tenant in a multi-tenancy cloud.\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"tenant\"], \"type\": \"object\"}}, \"required\": [\"addTenantAccess\"], \"summary\": \"Add Flavor Access To Tenant (addTenantAccess Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"addTenantAccess\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -187,6 +187,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"properties\": {\"metadata\": {\"type\": \"object\"}, \"url\": {\"description\": \"The URL of the new location to be added in the image.\", \"maxLength\": 255, \"type\": \"string\"}, \"validation_data\": {\"additionalProperties\": false, \"description\": \"An image metadata in key:value pairs containing values of\\n`os_hash_value` and `os_hash_algo` to be added to the image.\\nIf `do_secure_hash` is not passed then it is the responsibility of\\nthe consumer of location add API to provide the correct values in\\n`validation_data`’\", \"properties\": {\"checksum\": {\"maxLength\": 32, \"minLength\": 32, \"type\": \"string\"}, \"os_hash_algo\": {\"maxLength\": 64, \"type\": \"string\"}, \"os_hash_value\": {\"maxLength\": 128, \"type\": \"string\"}}, \"required\": [\"os_hash_algo\", \"os_hash_value\"], \"type\": \"object\", \"writeOnly\": true}}, \"required\": [\"url\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

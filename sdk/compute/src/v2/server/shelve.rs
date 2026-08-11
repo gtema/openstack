@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Shelves a server.\\n\\nSpecify the `shelve` action in the request body.\\n\\nAll associated data and resources are kept but anything still in memory is not retained. To restore a shelved instance, use the `unshelve` action. To remove a shelved instance, use the `shelveOffload` action.\\n\\nPolicy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.yaml` file.\\n\\n**Preconditions**\\n\\nThe server status must be `ACTIVE`, `SHUTOFF`, `PAUSED`, or `SUSPENDED`.\\n\\nIf the server is locked, you must have administrator privileges to shelve the server.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully shelve a server, its status changes to `SHELVED` and the image status is `ACTIVE`. The server instance data appears on the compute node that the Compute service manages.\\n\\nIf you boot the server from volumes or set the `shelved_offload_time` option to 0, the Compute service automatically deletes the instance on compute nodes and changes the server status to `SHELVED_OFFLOADED`.\\n\\n**Troubleshooting**\\n\\nIf the server status does not change to `SHELVED` or `SHELVED_OFFLOADED`, the shelve operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)\", \"properties\": {\"shelve\": {}}, \"required\": [\"shelve\"], \"summary\": \"Shelve Server (shelve Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"shelve\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

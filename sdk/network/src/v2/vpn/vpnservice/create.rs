@@ -168,6 +168,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the vpn/vpnservices:post operation\", \"properties\": {\"vpnservice\": {\"description\": \"A `vpnservice` object.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`).\", \"type\": [\"boolean\", \"string\"]}, \"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"flavor_id\": {\"description\": \"The ID of the flavor.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"router_id\": {\"format\": \"uuid\", \"type\": \"string\"}, \"subnet_id\": {\"description\": \"If you specify only a subnet UUID, OpenStack\\nNetworking allocates an available IP from that subnet to the port.\\nIf you specify both a subnet UUID and an IP address, OpenStack\\nNetworking tries to allocate the address to the port.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"tenant_id\": {\"description\": \"The ID of the project.\", \"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

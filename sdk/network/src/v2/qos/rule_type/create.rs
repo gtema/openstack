@@ -119,6 +119,12 @@ impl RestEndpoint for Request {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the qos/rule-types:post operation\", \"properties\": {\"rule_type\": {\"properties\": {\"all_rules\": {\"type\": [\"boolean\", \"null\", \"string\"]}, \"all_supported\": {\"type\": [\"boolean\", \"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

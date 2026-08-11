@@ -188,6 +188,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"remote_console\": {\"additionalProperties\": false, \"description\": \"The remote console object.\", \"properties\": {\"protocol\": {\"description\": \"The protocol of remote console. The valid values are `vnc`, `spice`,\\n`rdp`, `serial` and `mks`. The protocol `mks` is added since\\nMicroversion `2.8`. The protocol `rdp` requires the Hyper-V driver\\nwhich was removed in the 29.0.0 (Caracal) release.\", \"enum\": [\"mks\", \"rdp\", \"serial\", \"spice\", \"vnc\"], \"type\": \"string\"}, \"type\": {\"description\": \"The type of remote console. The valid values are `novnc`,\\n`rdp-html5`, `spice-html5`, `spice-direct`, `serial`, and\\n`webmks`. The type `webmks` was added in Microversion `2.8` and the\\ntype `spice-direct` was added in Microversion `2.99`. The type\\n`rdp-html5` requires the Hyper-V driver which was removed in the 29.0.0\\n(Caracal) release.\", \"enum\": [\"novnc\", \"rdp-html5\", \"serial\", \"spice-html5\", \"webmks\", \"xvpvnc\"], \"type\": \"string\"}}, \"required\": [\"protocol\", \"type\"], \"type\": \"object\"}}, \"required\": [\"remote_console\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.98\", \"min-ver\": \"2.8\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

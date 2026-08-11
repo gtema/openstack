@@ -158,6 +158,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"keypair\": {\"additionalProperties\": false, \"description\": \"Keypair object\", \"properties\": {\"name\": {\"allOf\": [{\"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[_\\\\- a-zA-Z0-9]+$\", \"type\": \"string\"}], \"description\": \"A name for the keypair which will be used to reference it later.\\n\\nNote\\n\\nSince microversion 2.92, allowed characters are ASCII letters\\n`[a-zA-Z]`, digits `[0-9]` and the following special\\ncharacters: `[@._- ]`.\"}, \"public_key\": {\"description\": \"The public ssh key to import.\\nWas optional before microversion 2.92 : if you were omitting this value, a\\nkeypair was generated for you.\", \"type\": \"string\"}, \"type\": {\"description\": \"The type of the keypair. Allowed values are `ssh` or `x509`.\\n\\n**New in version 2.2**\", \"enum\": [\"ssh\", \"x509\"], \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"keypair\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.9\", \"min-ver\": \"2.2\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

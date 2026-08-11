@@ -187,6 +187,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"server_group\": {\"additionalProperties\": false, \"description\": \"The server group object.\", \"properties\": {\"name\": {\"description\": \"The name of the server group.\", \"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"policy\": {\"description\": \"The `policy` field represents the name of the policy. The current\\nvalid policy names are:\\n\\n* `anti-affinity` - servers in this group must be scheduled to\\n  different hosts.\\n* `affinity` - servers in this group must be scheduled to the same host.\\n* `soft-anti-affinity` - servers in this group should be scheduled to\\n  different hosts if possible, but if not possible then they should still\\n  be scheduled instead of resulting in a build failure.\\n* `soft-affinity` - servers in this group should be scheduled to the same\\n  host if possible, but if not possible then they should still be scheduled\\n  instead of resulting in a build failure.\\n\\n**New in version 2.64**\", \"enum\": [\"affinity\", \"anti-affinity\", \"soft-affinity\", \"soft-anti-affinity\"], \"type\": \"string\"}, \"rules\": {\"additionalProperties\": false, \"description\": \"The `rules` field, which is a dict, can be applied to the policy.\\nCurrently, only the `max_server_per_host` rule is supported for the\\n`anti-affinity` policy. The `max_server_per_host` rule allows\\nspecifying how many members of the anti-affinity group can reside on the\\nsame compute host. If not specified, only one member from the same\\nanti-affinity group can reside on a given host. Requesting policy rules\\nwith any other policy than `anti-affinity` will be 400.\\n\\n**New in version 2.64**\", \"properties\": {\"max_server_per_host\": {\"minLength\": 1, \"minimum\": 1, \"pattern\": \"^[0-9]*$\", \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"name\", \"policy\"], \"type\": \"object\"}}, \"required\": [\"server_group\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.64\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

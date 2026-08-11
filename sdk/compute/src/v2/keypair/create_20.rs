@@ -143,6 +143,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"keypair\": {\"additionalProperties\": false, \"description\": \"Keypair object\", \"properties\": {\"name\": {\"description\": \"A name for the keypair which will be used to reference it later.\\n\\nNote\\n\\nSince microversion 2.92, allowed characters are ASCII letters\\n`[a-zA-Z]`, digits `[0-9]` and the following special\\ncharacters: `[@._- ]`.\", \"format\": \"name_with_leading_trailing_spaces\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"public_key\": {\"description\": \"The public ssh key to import.\\nWas optional before microversion 2.92 : if you were omitting this value, a\\nkeypair was generated for you.\", \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"keypair\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.0\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

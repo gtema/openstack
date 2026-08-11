@@ -258,6 +258,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"created_at\": {\"description\": \"Datetime when this resource was created\", \"type\": \"string\"}, \"expires_at\": {\"description\": \"Datetime when this resource would be subject to removal\", \"type\": [\"null\", \"string\"]}, \"id\": {\"description\": \"An identifier for the task\", \"pattern\": \"^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$\", \"type\": \"string\"}, \"image_id\": {\"description\": \"Image associated with the task\", \"type\": \"string\"}, \"input\": {\"description\": \"A JSON object specifying the input parameters to the task. Consult your\\ncloud provider’s documentation for details.\", \"type\": [\"null\", \"object\"]}, \"message\": {\"description\": \"Human-readable informative message only included when appropriate (usually on failure)\", \"type\": \"string\"}, \"owner\": {\"description\": \"An identifier for the owner of this task\", \"type\": \"string\"}, \"request_id\": {\"description\": \"Human-readable informative request-id\", \"type\": \"string\"}, \"result\": {\"description\": \"The result of current task, JSON blob\", \"type\": [\"null\", \"object\"]}, \"schema\": {\"readOnly\": true, \"type\": \"string\"}, \"self\": {\"readOnly\": true, \"type\": \"string\"}, \"status\": {\"description\": \"The current status of this task\", \"enum\": [\"failure\", \"pending\", \"processing\", \"success\"], \"type\": \"string\"}, \"type\": {\"description\": \"The type of task represented by this content.\", \"enum\": [\"api_image_import\", \"import\", \"location_import\"], \"type\": \"string\"}, \"updated_at\": {\"description\": \"Datetime when this resource was updated\", \"type\": \"string\"}, \"user_id\": {\"description\": \"User associated with the task\", \"type\": \"string\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -176,6 +176,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"API representation of a certificate.\\n\\nThis class enforces type checking and value constraints, and converts\\nbetween the internal object model and the API representation of a\\ncertificate.\", \"properties\": {\"ca_cert_type\": {\"type\": \"string\"}, \"cluster_uuid\": {\"type\": \"string\"}, \"created_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"csr\": {\"minLength\": 1, \"type\": \"string\"}, \"links\": {\"items\": {\"description\": \"A link representation.\", \"properties\": {\"created_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"href\": {\"type\": \"string\"}, \"rel\": {\"type\": \"string\"}, \"type\": {\"type\": \"string\"}, \"updated_at\": {\"format\": \"date-time\", \"type\": \"string\"}}, \"type\": \"object\"}, \"type\": \"array\"}, \"pem\": {\"type\": \"string\"}, \"updated_at\": {\"format\": \"date-time\", \"type\": \"string\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

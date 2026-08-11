@@ -130,6 +130,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"DNS Zone\", \"properties\": {\"description\": {\"description\": \"Description for this zone\", \"type\": \"string\"}, \"email\": {\"description\": \"e-mail for the zone. Used in SOA records for the zone.\\nForbidden for SECONDARY zones.\", \"format\": \"uuid\", \"type\": \"string\"}, \"ttl\": {\"description\": \"TTL (Time to Live) for the zone.\", \"type\": \"integer\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

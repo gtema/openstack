@@ -134,6 +134,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the agents/id:put operation\", \"properties\": {\"agent\": {\"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`).\\nDefault is `true`.\", \"type\": [\"boolean\", \"string\"]}, \"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

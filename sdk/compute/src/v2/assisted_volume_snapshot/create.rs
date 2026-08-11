@@ -163,6 +163,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"snapshot\": {\"additionalProperties\": false, \"description\": \"A partial representation of a snapshot that is used to create a snapshot.\", \"properties\": {\"create_info\": {\"additionalProperties\": false, \"description\": \"Information for snapshot creation.\", \"properties\": {\"id\": {\"description\": \"Its an arbitrary string that gets passed back to the user.\", \"minLength\": 1, \"type\": \"string\"}, \"new_file\": {\"description\": \"The name of the qcow2 file that Block Storage creates, which becomes the active\\nimage for the VM.\", \"minLength\": 1, \"type\": \"string\"}, \"snapshot_id\": {\"description\": \"The UUID for a snapshot.\", \"minLength\": 1, \"type\": \"string\"}, \"type\": {\"description\": \"The snapshot type. A valid value is `qcow2`.\", \"enum\": [\"qcow2\"], \"type\": \"string\"}}, \"required\": [\"new_file\", \"snapshot_id\", \"type\"], \"type\": \"object\"}, \"volume_id\": {\"description\": \"The source volume ID.\", \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"create_info\", \"volume_id\"], \"type\": \"object\"}}, \"required\": [\"snapshot\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -138,6 +138,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"transfer\": {\"additionalProperties\": false, \"description\": \"The volume transfer object.\", \"properties\": {\"name\": {\"description\": \"The name of the object.\", \"oneOf\": [{\"type\": \"null\"}, {\"format\": \"name_skip_leading_trailing_spaces\", \"type\": \"string\"}]}, \"no_snapshots\": {\"description\": \"Transfer volume without snapshots. Defaults to False if not specified.\\n\\n**New in version 3.55**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}, \"volume_id\": {\"description\": \"The UUID of the volume.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"volume_id\"], \"type\": \"object\"}}, \"required\": [\"transfer\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"3.54\", \"min-ver\": \"3.55\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

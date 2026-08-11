@@ -126,6 +126,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Changes the administrative password for a server.\\n\\nSpecify the `changePassword` action in the request body.\\n\\nPolicy defaults enable only users with the administrative role or\\nthe owner of the server to perform this operation. Cloud providers can\\nchange these permissions through the `policy.yaml` file.\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409), notImplemented(501)\", \"properties\": {\"changePassword\": {\"additionalProperties\": false, \"description\": \"The action to change an administrative password of the server.\", \"properties\": {\"adminPass\": {\"description\": \"The administrative password for the server.\", \"type\": \"string\"}}, \"required\": [\"adminPass\"], \"type\": \"object\"}}, \"required\": [\"changePassword\"], \"summary\": \"Change Administrative Password (changePassword Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"changePassword\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

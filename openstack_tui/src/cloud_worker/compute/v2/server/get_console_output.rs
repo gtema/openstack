@@ -38,6 +38,14 @@ pub struct ComputeServerGetConsoleOutput {
     /// The action to get console output of the server.
     os_get_console_output: OsGetConsoleOutput,
 }
+
+impl ComputeServerGetConsoleOutput {
+    /// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+    /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+    /// constraints, `enum`, ranges and descriptions that the generated
+    /// struct's `Option<T>` fields alone do not express).
+    pub const BODY_SCHEMA: &'static str = "{\"additionalProperties\": false, \"description\": \"Shows console output for a server.\\n\\nThis API returns the text of the console since boot.\\nThe content returned may be large. Limit the lines of console\\ntext, beginning at the tail of the content, by setting\\nthe optional `length` parameter in the request body.\\n\\nThe server to get console log from should set\\n`export LC_ALL=en_US.UTF-8` in order to avoid incorrect unicode error.\\n\\nNormal response codes: 200\\n\\nError response codes: unauthorized(401), forbidden(403),\\nnotFound(404), conflict(409), methodNotImplemented(501)\", \"properties\": {\"os-getConsoleOutput\": {\"additionalProperties\": false, \"description\": \"The action to get console output of the server.\", \"properties\": {\"length\": {\"description\": \"The number of lines to fetch from the end of console log. All\\nlines will be returned if this is not specified.\\n\\nNote\\n\\nThis parameter can be specified as not only ‘integer’ but also ‘string’.\", \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"null\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"os-getConsoleOutput\"], \"summary\": \"Show Console Output (os-getConsoleOutput Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-getConsoleOutput\"}}";
+}
 /// OsGetConsoleOutput data
 #[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]

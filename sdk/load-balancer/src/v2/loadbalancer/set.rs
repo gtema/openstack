@@ -161,6 +161,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"loadbalancer\": {\"description\": \"A load balancer object.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`).\", \"type\": \"boolean\"}, \"description\": {\"description\": \"A human-readable description for the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"tags\": {\"description\": \"A list of simple strings assigned to the resource.\\n\\n**New in version 2.5**\", \"items\": {\"maxLength\": 255, \"type\": \"string\"}, \"type\": \"array\"}, \"vip_qos_policy_id\": {\"description\": \"The ID of the QoS Policy which will apply to the Virtual IP (VIP).\", \"format\": \"uuid\", \"type\": \"string\"}, \"vip_sg_ids\": {\"items\": {\"format\": \"uuid\", \"type\": \"string\"}, \"type\": \"array\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

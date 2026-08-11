@@ -120,6 +120,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-detach\": {\"additionalProperties\": false, \"properties\": {\"attachment_id\": {\"oneOf\": [{\"type\": \"null\"}, {\"format\": \"uuid\", \"type\": \"string\"}]}}, \"type\": [\"null\", \"object\"]}}, \"required\": [\"os-detach\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-detach\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

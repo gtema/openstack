@@ -166,6 +166,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the routers/router_id/conntrack_helpers/id:put operation\", \"properties\": {\"conntrack_helper\": {\"properties\": {\"helper\": {\"description\": \"The netfilter conntrack helper module.\", \"maxLength\": 64, \"type\": \"string\"}, \"port\": {\"description\": \"The network port for the netfilter conntrack target rule.\", \"maximum\": 65535, \"minimum\": 1, \"type\": [\"integer\", \"string\"]}, \"protocol\": {\"description\": \"The network protocol for the netfilter conntrack target rule.\", \"enum\": [\"dccp\", \"icmp\", \"ipv6-icmp\", \"sctp\", \"tcp\", \"udp\"], \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -162,6 +162,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request body\", \"properties\": {\"router\": {\"properties\": {\"routes\": {\"description\": \"The extra routes configuration for L3 router.\\nA list of dictionaries with `destination` and `nexthop` parameters.\\nIt is available when `extraroute` extension is enabled.\", \"items\": {\"properties\": {\"destination\": {\"type\": \"string\"}, \"nexthop\": {\"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}}, \"type\": \"object\"}, \"type\": \"array\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

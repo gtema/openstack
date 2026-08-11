@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Stops a running server and changes its status to `SHUTOFF`.\\n\\nSpecify the `os-stop` action in the request body.\\n\\n**Preconditions**\\n\\nThe server status must be `ACTIVE` or `ERROR`.\\n\\nIf the server is locked, you must have administrator privileges\\nto stop the server.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully stop a server, its status changes to `SHUTOFF`.\\nThis API operation does not delete the server instance data and the data\\nwill be available again after `os-start` action.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409)\", \"properties\": {\"os-stop\": {}}, \"required\": [\"os-stop\"], \"summary\": \"Stop Server (os-stop Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-stop\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -166,6 +166,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"domain\": {\"description\": \"A `domain` object\", \"minProperties\": 1, \"properties\": {\"description\": {\"description\": \"The new description of the domain.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"If set to `true`, domain is enabled. If set to\\n`false`, domain is disabled. The default is `true`.\\n\\nUsers can only authorize against an enabled domain (and any of its\\nprojects). In addition, users can only authenticate if the domain that owns\\nthem is also enabled. Disabling a domain prevents both of these things.\\nWhen you disable a domain, all tokens that are authorized for that domain\\nbecome invalid. However, if you reenable the domain, these tokens become\\nvalid again, providing that they haven’t expired.\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"name\": {\"description\": \"The new name of the domain.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"options\": {\"additionalProperties\": false, \"description\": \"The resource options for the domain. Available resource options are\\n`immutable`.\", \"properties\": {\"immutable\": {\"enum\": [null, false, true], \"type\": [\"boolean\", \"null\"]}}, \"type\": \"object\"}, \"tags\": {\"items\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"maxItems\": 80, \"required\": [], \"type\": \"array\", \"uniqueItems\": true}}, \"type\": \"object\"}}, \"required\": [\"domain\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

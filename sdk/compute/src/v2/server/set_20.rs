@@ -173,6 +173,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"server\": {\"additionalProperties\": false, \"description\": \"A `server` object.\", \"properties\": {\"OS-DCF:diskConfig\": {\"description\": \"Controls how the API partitions the disk when you create, rebuild, or resize servers.\\nA server inherits the `OS-DCF:diskConfig` value from the image from which it\\nwas created, and an image inherits the `OS-DCF:diskConfig` value from the server\\nfrom which it was created. To override the inherited setting, you can include\\nthis attribute in the request body of a server create, rebuild, or resize request. If\\nthe `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create\\na server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.\\nA valid value is:\\n\\n* `AUTO`. The API builds the server with a single partition the size of the\\n  target flavor disk. The API automatically adjusts the file system to fit the\\n  entire partition.\\n* `MANUAL`. The API builds the server by using whatever partition scheme and\\n  file system is in the source image. If the target flavor disk is larger, the API\\n  does not partition the remaining disk space.\", \"enum\": [\"AUTO\", \"MANUAL\"], \"type\": \"string\"}, \"accessIPv4\": {\"description\": \"IPv4 address that should be used to access this server.\", \"format\": \"ipv4\", \"type\": \"string\"}, \"accessIPv6\": {\"description\": \"IPv6 address that should be used to access this server.\", \"format\": \"ipv6\", \"type\": \"string\"}, \"name\": {\"description\": \"The server name.\", \"format\": \"name_with_leading_trailing_spaces\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"server\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.0\", \"min-ver\": \"2.0\"}}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

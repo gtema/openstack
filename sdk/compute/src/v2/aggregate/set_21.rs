@@ -146,6 +146,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"aggregate\": {\"additionalProperties\": false, \"anyOf\": [{\"required\": [\"availability_zone\"]}, {\"required\": [\"name\"]}], \"description\": \"The host aggregate object.\", \"properties\": {\"availability_zone\": {\"description\": \"The availability zone of the host aggregate. You should use a custom\\navailability zone rather than the default returned by the\\nos-availability-zone API. The availability zone must not include ‘:’\\nin its name.\\n\\nWarning\\n\\nYou should not change or unset the availability zone of an\\naggregate when that aggregate has hosts which contain servers in it\\nsince that may impact the ability for those servers to move to another\\nhost.\", \"oneOf\": [{\"type\": \"null\"}, {\"format\": \"az_name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}]}, \"name\": {\"description\": \"The name of the host aggregate.\", \"format\": \"name_with_leading_trailing_spaces\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"aggregate\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

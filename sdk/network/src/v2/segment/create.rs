@@ -158,6 +158,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the segments:post operation\", \"properties\": {\"segment\": {\"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the segment.\", \"type\": \"string\"}, \"network_id\": {\"description\": \"The ID of the attached network.\", \"format\": \"uuid\", \"type\": \"string\"}, \"network_type\": {\"description\": \"The type of physical network that maps to this\\nnetwork resource. For example, `flat`, `vlan`, `vxlan`, or\\n`gre`.\", \"maxLength\": 32, \"type\": \"string\"}, \"physical_network\": {\"description\": \"The physical network where this network/segment is implemented.\", \"maxLength\": 64, \"type\": \"string\"}, \"segmentation_id\": {\"description\": \"The ID of the isolated segment on the physical network.\\nThe `network_type` attribute defines the segmentation model.\\nFor example, if the `network_type` value is vlan, this ID is a vlan\\nidentifier. If the `network_type` value is gre, this ID is a gre key.\\n`Note` that only the segmentation-id of VLAN type networks can be\\nchanged!\", \"type\": [\"integer\", \"string\"]}, \"tenant_id\": {\"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

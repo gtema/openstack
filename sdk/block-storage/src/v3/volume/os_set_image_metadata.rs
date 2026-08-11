@@ -138,6 +138,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-set_image_metadata\": {\"additionalProperties\": false, \"properties\": {\"metadata\": {\"additionalProperties\": false, \"patternProperties\": {\"^[a-zA-Z0-9-_:. /]{1,255}$\": {\"format\": \"mysql_text\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"metadata\"], \"type\": \"object\"}}, \"required\": [\"os-set_image_metadata\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-set_image_metadata\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

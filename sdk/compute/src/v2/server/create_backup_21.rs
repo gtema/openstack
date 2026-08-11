@@ -158,6 +158,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"createBackup\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"backup_type\": {\"description\": \"The type of the backup, for example, `daily`.\", \"type\": \"string\"}, \"metadata\": {\"additionalProperties\": false, \"description\": \"Metadata key and value pairs. The maximum size of the metadata key and value is\\n255 bytes each.\", \"patternProperties\": {\"^[a-zA-Z0-9-_:. ]{1,255}$\": {\"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}, \"name\": {\"description\": \"The name of the image to be backed up.\", \"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"rotation\": {\"description\": \"The rotation of the back up image, the oldest image will be removed when image count\\nexceed the rotation count.\", \"minLength\": 1, \"minimum\": 0, \"pattern\": \"^[0-9]*$\", \"type\": [\"integer\", \"string\"]}}, \"required\": [\"backup_type\", \"name\", \"rotation\"], \"type\": \"object\"}}, \"required\": [\"createBackup\"], \"summary\": \"Create Server Back Up (createBackup Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"createBackup\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -185,6 +185,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the log/logs:post operation\", \"properties\": {\"log\": {\"description\": \"A `log` object.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"enabled\": {\"description\": \"Indicates whether this log object is enabled or disabled.\\nDefault is true.\", \"type\": [\"boolean\", \"string\"]}, \"event\": {\"description\": \"Type of security events to log.\\n`ACCEPT`, `DROP`, or `ALL`.\\nDefault is `ALL`.\", \"enum\": [\"ACCEPT\", \"ALL\", \"DROP\"], \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"project_id\": {\"description\": \"The ID of the project that owns the resource.\\nOnly administrative and users with advsvc role can specify\\na project ID other than their own.\\nYou cannot change this value through authorization policies.\", \"maxLength\": 255, \"type\": \"string\"}, \"resource_id\": {\"description\": \"The ID of resource log (e.g security group ID).\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"resource_type\": {\"description\": \"The resource log type such as ‘security_group’.\", \"maxLength\": 255, \"type\": \"string\"}, \"target_id\": {\"description\": \"The ID of resource target log such as port ID.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

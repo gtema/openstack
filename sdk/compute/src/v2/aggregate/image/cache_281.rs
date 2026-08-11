@@ -131,6 +131,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"cache\": {\"description\": \"A list of image objects to cache.\", \"items\": {\"additionalProperties\": false, \"properties\": {\"id\": {\"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"id\"], \"type\": \"object\"}, \"minItems\": 1, \"type\": [\"array\"]}}, \"required\": [\"cache\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.81\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

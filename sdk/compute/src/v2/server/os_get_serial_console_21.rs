@@ -137,6 +137,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Gets a serial console for a server.\\n\\nSpecify the `os-getSerialConsole` action in the request body.\\n\\nThe only supported connection type is `serial`. The `type` parameter\\nshould be set as `serial`.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"os-getSerialConsole\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"type\": {\"description\": \"The type of serial console. The only valid value is `serial`.\", \"enum\": [\"serial\"], \"type\": \"string\"}}, \"required\": [\"type\"], \"type\": \"object\"}}, \"required\": [\"os-getSerialConsole\"], \"summary\": \"Get Serial Console (os-getSerialConsole Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-getSerialConsole\", \"max-ver\": \"2.5\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

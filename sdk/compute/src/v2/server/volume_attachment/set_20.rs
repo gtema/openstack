@@ -158,6 +158,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"volumeAttachment\": {\"additionalProperties\": false, \"description\": \"A dictionary representation of a volume attachment containing the field\\n`volumeId` which is the UUID of the replacement volume, and other fields\\nto update in the attachment.\", \"properties\": {\"volumeId\": {\"description\": \"The UUID of the attached volume.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"volumeId\"], \"type\": \"object\"}}, \"required\": [\"volumeAttachment\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.84\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

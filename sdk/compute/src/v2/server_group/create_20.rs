@@ -160,6 +160,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"server_group\": {\"additionalProperties\": false, \"description\": \"The server group object.\", \"properties\": {\"name\": {\"description\": \"The name of the server group.\", \"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"policies\": {\"description\": \"A list of exactly one policy name to associate with the server group. The\\ncurrent valid policy names are:\\n\\n* `anti-affinity` - servers in this group must be scheduled to\\n  different hosts.\\n* `affinity` - servers in this group must be scheduled to the same host.\\n* `soft-anti-affinity` - servers in this group should be scheduled to\\n  different hosts if possible, but if not possible then they should still\\n  be scheduled instead of resulting in a build failure. This policy was\\n  added in microversion 2.15.\\n* `soft-affinity` - servers in this group should be scheduled to the same\\n  host if possible, but if not possible then they should still be scheduled\\n  instead of resulting in a build failure. This policy was added in\\n  microversion 2.15.\\n\\n**Available until version 2.63**\", \"items\": {}, \"maxItems\": 1, \"minItems\": 1, \"prefixItems\": [{\"enum\": [\"affinity\", \"anti-affinity\"], \"type\": \"string\"}], \"type\": \"array\", \"uniqueItems\": true}}, \"required\": [\"name\", \"policies\"], \"type\": \"object\"}}, \"required\": [\"server_group\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.14\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

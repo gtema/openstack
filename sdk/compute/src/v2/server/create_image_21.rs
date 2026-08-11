@@ -149,6 +149,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"createImage\": {\"additionalProperties\": false, \"description\": \"The action to create a snapshot of the image or\\nthe volume(s) of the server.\", \"properties\": {\"metadata\": {\"additionalProperties\": false, \"description\": \"Metadata key and value pairs for the image.\\nThe maximum size for each metadata key and value pair is 255 bytes.\", \"patternProperties\": {\"^[a-zA-Z0-9-_:. ]{1,255}$\": {\"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}, \"name\": {\"description\": \"The display name of an Image.\", \"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"createImage\"], \"summary\": \"Create Image (createImage Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"createImage\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

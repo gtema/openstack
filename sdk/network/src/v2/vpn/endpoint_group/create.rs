@@ -167,6 +167,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the vpn/endpoint-groups:post operation\", \"properties\": {\"endpoint_group\": {\"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"endpoints\": {\"description\": \"List of endpoints of the same type, for the\\nendpoint group. The values will depend on type.\", \"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"tenant_id\": {\"description\": \"The ID of the project.\", \"maxLength\": 255, \"type\": \"string\"}, \"type\": {\"description\": \"The type of the endpoints in the group. A valid\\nvalue is `subnet`, `cidr`, `network`, `router`, or\\n`vlan`. Only `subnet` and `cidr` are supported\\nat this moment.\", \"enum\": [\"cidr\", \"network\", \"router\", \"subnet\", \"vlan\"], \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

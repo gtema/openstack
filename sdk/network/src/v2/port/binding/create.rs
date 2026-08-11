@@ -176,6 +176,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the ports/port_id/bindings:post operation\", \"properties\": {\"binding\": {\"properties\": {\"host\": {\"type\": \"string\"}, \"profile\": {\"type\": [\"null\", \"object\"]}, \"project_id\": {\"maxLength\": 255, \"type\": \"string\"}, \"vnic_type\": {\"enum\": [\"accelerator-direct\", \"accelerator-direct-physical\", \"baremetal\", \"direct\", \"direct-physical\", \"macvtap\", \"normal\", \"remote-managed\", \"smart-nic\", \"vdpa\", \"virtio-forwarder\"], \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

@@ -126,6 +126,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"unshelve\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"availability_zone\": {\"type\": [\"null\", \"string\"]}, \"host\": {\"type\": \"string\"}}, \"type\": [\"null\", \"object\"]}}, \"required\": [\"unshelve\"], \"summary\": \"Unshelve (Restore) Shelved Server (unshelve Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"unshelve\", \"min-ver\": \"2.91\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

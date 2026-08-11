@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Starts a stopped server and changes its status to `ACTIVE`.\\n\\nSpecify the `os-start` action in the request body.\\n\\n**Preconditions**\\n\\nThe server status must be `SHUTOFF`.\\n\\nIf the server is locked, you must have administrator privileges\\nto start the server.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully start a server, its status changes to `ACTIVE`.\\n\\n**Troubleshooting**\\n\\nIf the server status does not change to `ACTIVE`, the start operation failed.\\nEnsure that you meet the preconditions and run the request again.\\nIf the request fails again, investigate whether another operation is running\\nthat causes a race condition.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409)\", \"properties\": {\"os-start\": {}}, \"required\": [\"os-start\"], \"summary\": \"Start Server (os-start Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-start\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

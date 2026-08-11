@@ -139,6 +139,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"share\": {\"additionalProperties\": false, \"properties\": {\"share_id\": {\"description\": \"The UUID of the attached share.\", \"format\": \"uuid\", \"type\": \"string\"}, \"tag\": {\"description\": \"The device tag to be used by users to mount the share within the instance,\\nif not provided then the share UUID will be used automatically.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]*$\", \"type\": \"string\"}}, \"required\": [\"share_id\"], \"type\": \"object\"}}, \"required\": [\"share\"], \"title\": \"Server shares\", \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.97\"}}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

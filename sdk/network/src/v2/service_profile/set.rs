@@ -148,6 +148,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the service_profiles/id:put operation\", \"properties\": {\"service_profile\": {\"description\": \"A `service_profile` object.\", \"properties\": {\"description\": {\"description\": \"The human-readable description for the service profile.\", \"maxLength\": 1024, \"type\": [\"null\", \"string\"]}, \"driver\": {\"description\": \"Provider driver to use for this profile.\", \"maxLength\": 1024, \"type\": \"string\"}, \"enabled\": {\"description\": \"Indicates whether this service profile is enabled or not.\\nDefault is `true`.\", \"type\": [\"boolean\", \"null\", \"string\"]}, \"metainfo\": {\"description\": \"JSON-formatted meta information of the service profile.\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

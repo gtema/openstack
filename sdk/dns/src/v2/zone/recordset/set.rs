@@ -142,6 +142,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Zone Record object\", \"properties\": {\"description\": {\"description\": \"Description for this recordset\", \"type\": \"string\"}, \"records\": {\"description\": \"A list of data for this recordset. Each item will be a separate record in Designate\\nThese items should conform to the DNS spec for the record type - e.g. A records\\nmust be IPv4 addresses, CNAME records must be a hostname.\", \"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"ttl\": {\"description\": \"TTL (Time to Live) for the recordset.\", \"type\": \"integer\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

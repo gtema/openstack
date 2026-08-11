@@ -165,6 +165,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"allocations\": {\"items\": {\"additionalProperties\": false, \"properties\": {\"resource_provider\": {\"additionalProperties\": false, \"properties\": {\"uuid\": {\"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"uuid\"], \"type\": \"object\"}, \"resources\": {\"additionalProperties\": false, \"minProperties\": 1, \"patternProperties\": {\"^[A-Z0-9_]+$\": {\"minimum\": 1, \"type\": \"integer\"}}, \"type\": \"object\"}}, \"required\": [\"resource_provider\", \"resources\"], \"type\": \"object\"}, \"minItems\": 1, \"type\": \"array\"}}, \"required\": [\"allocations\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"1.7\", \"min-ver\": \"1.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

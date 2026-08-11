@@ -140,6 +140,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"binary\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"disabled_reason\": {\"description\": \"The reason for disabling a service. The minimum length is 1 and the\\nmaximum length is 255. This may only be requested with `status=disabled`.\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"host\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._]*$\", \"type\": \"string\"}}, \"required\": [\"binary\", \"host\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.10\", \"min-ver\": \"2.0\"}}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

@@ -122,6 +122,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"tags\": {\"description\": \"A list of tags. The maximum count of tags in this list is 50.\", \"items\": {\"maxLength\": 60, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"maxItems\": 50, \"type\": \"array\"}}, \"required\": [\"tags\"], \"title\": \"Server tags\", \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.26\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

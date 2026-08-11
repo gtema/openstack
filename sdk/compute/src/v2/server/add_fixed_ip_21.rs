@@ -128,6 +128,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Adds a fixed IP address to a server instance, which associates that\\naddress with the server. The fixed IP address is retrieved from the\\nnetwork that you specify in the request.\\n\\nSpecify the `addFixedIp` action and the network ID in the request body.\\n\\nPolicy defaults enable only users with the administrative role or\\nthe owner of the server to perform this operation. Cloud providers\\ncan change these permissions through the `policy.yaml` file.\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404)\", \"properties\": {\"addFixedIp\": {\"additionalProperties\": false, \"description\": \"The action to add a fixed ip address to a server.\", \"properties\": {\"networkId\": {\"description\": \"The network ID.\", \"maxLength\": 36, \"minLength\": 1, \"type\": [\"number\", \"string\"]}}, \"required\": [\"networkId\"], \"type\": \"object\"}}, \"required\": [\"addFixedIp\"], \"summary\": \"Add (Associate) Fixed Ip (addFixedIp Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"addFixedIp\", \"max-ver\": \"2.43\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

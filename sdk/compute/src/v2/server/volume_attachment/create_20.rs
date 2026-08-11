@@ -156,6 +156,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"volumeAttachment\": {\"additionalProperties\": false, \"description\": \"A dictionary representation of a volume attachment containing the fields\\n`device` and `volumeId`.\", \"properties\": {\"device\": {\"description\": \"Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for\\nauto-assignment, if supported. If you specify this parameter, the device must\\nnot exist in the guest operating system. Note that as of the 12.0.0 Liberty release,\\nthe Nova libvirt driver no longer honors a user-supplied device name. This is\\nthe same behavior as if the device name parameter is not supplied on the request.\", \"pattern\": \"(^/dev/x{0,1}[a-z]{0,1}d{0,1})([a-z]+)[0-9]*$\", \"type\": [\"null\", \"string\"]}, \"volumeId\": {\"description\": \"The UUID of the volume to attach.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"volumeId\"], \"type\": \"object\"}}, \"required\": [\"volumeAttachment\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.48\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

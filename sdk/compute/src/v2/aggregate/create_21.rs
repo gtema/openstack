@@ -136,6 +136,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"aggregate\": {\"additionalProperties\": false, \"description\": \"The host aggregate object.\", \"properties\": {\"availability_zone\": {\"description\": \"The availability zone of the host aggregate. You should use a custom\\navailability zone rather than the default returned by the\\nos-availability-zone API. The availability zone must not include ‘:’\\nin its name.\", \"oneOf\": [{\"type\": \"null\"}, {\"format\": \"az_name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}]}, \"name\": {\"description\": \"The name of the host aggregate.\", \"format\": \"name\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"aggregate\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -230,6 +230,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"API representation of a federation.\\n\\nThis class enforces type checking and value constraints, and converts\\nbetween the internal object model and the API representation of a\\nFederation.\", \"properties\": {\"created_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"hostcluster_id\": {\"type\": \"string\"}, \"links\": {\"items\": {\"description\": \"A link representation.\", \"properties\": {\"created_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"href\": {\"type\": \"string\"}, \"rel\": {\"type\": \"string\"}, \"type\": {\"type\": \"string\"}, \"updated_at\": {\"format\": \"date-time\", \"type\": \"string\"}}, \"type\": \"object\"}, \"type\": \"array\"}, \"member_ids\": {\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"name\": {\"maxLength\": 242, \"minLength\": 1, \"type\": \"string\"}, \"properties\": {\"additionalProperties\": {\"type\": \"string\"}, \"type\": \"object\"}, \"status\": {\"enum\": [\"CREATE_COMPLETE\", \"CREATE_FAILED\", \"CREATE_IN_PROGRESS\", \"DELETE_COMPLETE\", \"DELETE_FAILED\", \"DELETE_IN_PROGRESS\", \"UPDATE_COMPLETE\", \"UPDATE_FAILED\", \"UPDATE_IN_PROGRESS\"], \"type\": \"string\"}, \"status_reason\": {\"type\": \"string\"}, \"updated_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"uuid\": {\"format\": \"uuid\", \"type\": \"string\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

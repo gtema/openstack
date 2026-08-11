@@ -143,6 +143,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the address-scopes:post operation\", \"properties\": {\"address_scope\": {\"description\": \"An `address scope` object.\", \"properties\": {\"ip_version\": {\"description\": \"The IP protocol version. Valid value is `4` or `6`.\", \"enum\": [4, 6], \"type\": [\"integer\", \"string\"]}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"shared\": {\"description\": \"Indicates whether this resource is shared across all projects.\\nBy default, only administrative users can change this value.\", \"type\": [\"boolean\", \"string\"]}, \"tenant_id\": {\"description\": \"The ID of the project that owns the resource.\\nOnly administrative and users with advsvc role can specify\\na project ID other than their own.\\nYou cannot change this value through authorization policies.\", \"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

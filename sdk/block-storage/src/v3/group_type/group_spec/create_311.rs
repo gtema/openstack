@@ -132,6 +132,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"group_specs\": {\"additionalProperties\": false, \"description\": \"A set of key and value pairs that contains the\\nspecifications for a group type.\", \"patternProperties\": {\"^[a-zA-Z0-9-_:.]{1,255}$\": {\"maxLength\": 255, \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"group_specs\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"3.11\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

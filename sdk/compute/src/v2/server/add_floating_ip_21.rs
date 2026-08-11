@@ -140,6 +140,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Adds a floating IP address to a server, which associates\\nthat address with the server.\\n\\nA pool of floating IP addresses, configured by the cloud administrator,\\nis available in OpenStack Compute. The project quota defines the maximum\\nnumber of floating IP addresses that you can allocate to the project.\\nAfter you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate-floating-ip-address)\\nfor a project, you can associate that address with the server. Specify\\nthe `addFloatingIp` action in the request body.\\n\\nIf an instance is connected to multiple networks, you can associate a\\nfloating IP address with a specific fixed IP address by using the\\noptional `fixed_address` parameter.\\n\\n**Preconditions**\\n\\nThe server must exist.\\n\\nYou can only add a floating IP address to the server when its status is `ACTIVE` or `STOPPED`\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404)\", \"properties\": {\"addFloatingIp\": {\"additionalProperties\": false, \"description\": \"The action. Contains required floating IP `address` and optional\\n`fixed_address`.\", \"properties\": {\"address\": {\"description\": \"The fixed IP address with which you want to associate the floating IP address.\", \"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}, \"fixed_address\": {\"description\": \"The fixed IP address with which you want to associate the floating IP address.\", \"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}}, \"required\": [\"address\"], \"type\": \"object\"}}, \"required\": [\"addFloatingIp\"], \"summary\": \"Add (Associate) Floating Ip (addFloatingIp Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"addFloatingIp\", \"max-ver\": \"2.43\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

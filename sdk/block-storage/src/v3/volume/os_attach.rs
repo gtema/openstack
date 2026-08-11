@@ -140,6 +140,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-attach\": {\"additionalProperties\": false, \"anyOf\": [{\"required\": [\"host_name\"]}, {\"required\": [\"instance_uuid\"]}], \"properties\": {\"host_name\": {\"maxLength\": 255, \"type\": \"string\"}, \"instance_uuid\": {\"format\": \"uuid\", \"type\": \"string\"}, \"mode\": {\"enum\": [\"ro\", \"rw\"], \"type\": \"string\"}, \"mountpoint\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"mountpoint\"], \"type\": \"object\"}}, \"required\": [\"os-attach\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-attach\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -236,6 +236,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"rule\": {\"description\": \"Defines mandatory and optional attributes of a POST request.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`). Default is `true`.\", \"type\": \"boolean\"}, \"compare_type\": {\"description\": \"The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,\\n`EQUAL_TO`, `REGEX`, or `STARTS_WITH`.\", \"enum\": [\"CONTAINS\", \"ENDS_WITH\", \"EQUAL_TO\", \"REGEX\", \"STARTS_WITH\"], \"type\": \"string\"}, \"invert\": {\"description\": \"When `true` the logic of the rule is inverted. For example, with\\ninvert `true`, equal to would become not equal to.\\nDefault is `false`.\", \"type\": \"boolean\"}, \"key\": {\"description\": \"The key to use for the comparison. For example, the name of the cookie\\nto evaluate.\", \"maxLength\": 255, \"type\": \"string\"}, \"project_id\": {\"description\": \"The ID of the project owning this resource.\", \"maxLength\": 36, \"type\": \"string\"}, \"tags\": {\"description\": \"A list of simple strings assigned to the resource.\\n\\n**New in version 2.5**\", \"items\": {\"maxLength\": 255, \"type\": \"string\"}, \"type\": \"array\"}, \"tenant_id\": {\"maxLength\": 36, \"type\": \"string\"}, \"type\": {\"description\": \"The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`,\\n`HOST_NAME`, `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`,\\nor `SSL_DN_FIELD`.\", \"enum\": [\"COOKIE\", \"FILE_TYPE\", \"HEADER\", \"HOST_NAME\", \"PATH\", \"SSL_CONN_HAS_CERT\", \"SSL_DN_FIELD\", \"SSL_VERIFY_RESULT\"], \"type\": \"string\"}, \"value\": {\"description\": \"The value to use for the comparison. For example, the file type to compare.\", \"maxLength\": 255, \"type\": \"string\"}}, \"required\": [\"compare_type\", \"type\", \"value\"], \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

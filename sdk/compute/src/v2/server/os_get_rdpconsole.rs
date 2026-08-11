@@ -108,6 +108,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Gets an [RDP](https://technet.microsoft.com/en-us/windowsserver/ee236407) console for a server.\\n\\nThe only supported connect type is `rdp-html5`. The `type` parameter should\\nbe set as `rdp-html5`.\\n\\nSpecify the `os-getRDPConsole` action in the request body.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"os-getRDPConsole\": {\"description\": \"The action.\", \"type\": \"null\"}}, \"summary\": \"Get RDP Console (os-getRDPConsole Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-getRDPConsole\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

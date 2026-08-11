@@ -123,6 +123,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"failover_replication\": {\"additionalProperties\": false, \"properties\": {\"allow_attached_volume\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}, \"secondary_backend_id\": {\"maxLength\": 255, \"minLength\": 0, \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"failover_replication\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"failover_replication\", \"min-ver\": \"3.38\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

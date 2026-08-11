@@ -118,6 +118,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Force an in-progress live migration for a given server to complete.\\n\\nSpecify the `force_complete` action in the request body.\\n\\nPolicy defaults enable only users with the administrative role to perform\\nthis operation. Cloud providers can change these permissions through the\\n`policy.yaml` file.\\n\\n**Preconditions**\\n\\nThe server OS-EXT-STS:vm_state value must be `active` and the server\\nOS-EXT-STS:task_state value must be `migrating`.\\n\\nIf the server is locked, you must have administrator privileges to force the\\ncompletion of the server migration.\\n\\nThe migration status must be `running`.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you make this request, you typically must keep polling the server status\\nto determine whether the request succeeded.\\n\\n**Troubleshooting**\\n\\nIf the server status remains `MIGRATING` for an inordinate amount of time,\\nthe request may have failed. Ensure you meet the preconditions and run the\\nrequest again. If the request fails again, investigate the compute back end.\\nMore details can be found in the\\n[admin guide](https://docs.openstack.org/nova/latest/admin/live-migration-usage.html#what-to-do-when-the-migration-times-out).\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)\", \"properties\": {\"force_complete\": {\"description\": \"The action to force an in-progress live migration to complete.\", \"type\": \"null\"}}, \"required\": [\"force_complete\"], \"summary\": \"Force Migration Complete Action (force_complete Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"force_complete\", \"min-ver\": \"2.22\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Unrescues a server. Changes status to `ACTIVE`.\\n\\nSpecify the `unrescue` action in the request body.\\n\\n**Preconditions**\\n\\nThe server must exist.\\n\\nYou can only unrescue a server when its status is `RESCUE`.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully unrescue a server and make a\\n`GET /servers/\u{200B}{server_id}\u{200B}`\\nrequest, its status changes to `ACTIVE`.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"unrescue\": {}}, \"required\": [\"unrescue\"], \"summary\": \"Unrescue Server (unrescue Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"unrescue\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -159,6 +159,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-migrateLive\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"block_migration\": {\"description\": \"Set to `True` to enable over commit when the destination host is checked for\\navailable disk space. Set to `False` to disable over commit. This setting affects\\nonly the libvirt virt driver.\\n\\n**Available until version 2.25**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"disk_over_commit\": {\"description\": \"Set to `True` to enable over commit when the destination host is checked for\\navailable disk space. Set to `False` to disable over commit. This setting affects\\nonly the libvirt virt driver.\\n\\n**Available until version 2.25**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"host\": {\"description\": \"The host to which to migrate the server. If this parameter is `None`,\\nthe scheduler chooses a host.\\n\\nWarning\\n\\nPrior to microversion 2.30, specifying a host will bypass\\nvalidation by the scheduler, which could result in failures to actually\\nmigrate the instance to the specified host, or over-subscription of the\\nhost. It is recommended to either not specify a host so that the\\nscheduler will pick one, or specify a host with microversion >= 2.30 and\\nwithout `force=True` set.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._]*$\", \"type\": [\"null\", \"string\"]}}, \"required\": [\"block_migration\", \"disk_over_commit\", \"host\"], \"type\": \"object\"}}, \"required\": [\"os-migrateLive\"], \"summary\": \"Live-Migrate Server (os-migrateLive Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-migrateLive\", \"max-ver\": \"2.24\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -145,6 +145,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": true, \"description\": \"Removes a security group from a server.\\n\\nSpecify the `removeSecurityGroup` action in the request body.\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409)\", \"properties\": {\"removeSecurityGroup\": {\"additionalProperties\": false, \"description\": \"The action to remove a security group from the server.\", \"properties\": {\"name\": {\"description\": \"The security group name.\", \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"removeSecurityGroup\"], \"summary\": \"Remove Security Group From A Server (removeSecurityGroup Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"removeSecurityGroup\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

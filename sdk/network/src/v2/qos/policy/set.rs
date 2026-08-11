@@ -146,6 +146,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the qos/policies/id:put operation\", \"properties\": {\"policy\": {\"description\": \"A QoS `policy` object.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"is_default\": {\"description\": \"If `true`, the QoS `policy` is the default policy.\", \"type\": [\"boolean\", \"string\"]}, \"name\": {\"description\": \"Human-readable name of the resource.\", \"type\": \"string\"}, \"shared\": {\"description\": \"Set to `true` to share this policy with other\\nprojects. Default is `false`.\", \"type\": [\"boolean\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

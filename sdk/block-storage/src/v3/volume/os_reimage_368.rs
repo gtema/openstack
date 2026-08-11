@@ -124,6 +124,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-reimage\": {\"additionalProperties\": false, \"properties\": {\"image_id\": {\"format\": \"uuid\", \"type\": \"string\"}, \"reimage_reserved\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}}, \"required\": [\"image_id\"], \"type\": \"object\"}}, \"required\": [\"os-reimage\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-reimage\", \"min-ver\": \"3.68\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

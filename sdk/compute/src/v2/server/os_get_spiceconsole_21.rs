@@ -137,6 +137,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Gets a SPICE console for a server.\\n\\nSpecify the `os-getSPICEConsole` action in the request body.\\n\\nThe only supported connection type is `spice-html5`. The `type` parameter\\nshould be set to `spice-html5`.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"os-getSPICEConsole\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"type\": {\"description\": \"The type of SPICE console. The only valid value is `spice-html5`.\", \"enum\": [\"spice-html5\"], \"type\": \"string\"}}, \"required\": [\"type\"], \"type\": \"object\"}}, \"required\": [\"os-getSPICEConsole\"], \"summary\": \"Get SPICE Console (os-getSPICEConsole Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-getSPICEConsole\", \"max-ver\": \"2.5\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;
