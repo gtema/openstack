@@ -253,6 +253,30 @@ impl Tui {
     pub async fn next_event(&mut self) -> Option<Event> {
         self.event_rx.recv().await
     }
+
+    /// Clear the whole screen without ratatui's `Terminal::clear()` cursor round-trip.
+    ///
+    /// `Terminal::clear()` snapshots the cursor position via a synchronous DSR terminal
+    /// query (`ESC[6n`) and restores it afterward. That query races against `start()`'s
+    /// `EventStream`, which asynchronously owns stdin once the event loop is running --
+    /// the DSR reply lands in the event stream instead of the synchronous poll, so the
+    /// query reliably times out ("cursor position could not be read") any time this is
+    /// called after `enter()`/`start()` have run, e.g. on return from an external editor.
+    ///
+    /// `Terminal::resize()` (called here with the current, unchanged area) clears the
+    /// screen and resets the back buffer the same way -- forcing a full redraw on the
+    /// next `draw()` -- but only touches the cursor for `Viewport::Inline`, so for the
+    /// `Fullscreen` viewport this app uses it's cursor-query-free. A raw
+    /// `backend.clear_region()` alone clears the visible terminal but leaves ratatui's
+    /// back buffer believing nothing changed, so the next `draw()` only repaints the
+    /// diff against stale content -- the screen stays black until unrelated redraws
+    /// accumulate enough diffs to repaint it.
+    pub fn clear(&mut self) -> Result<()> {
+        let area = self.terminal.size()?;
+        self.terminal
+            .resize(ratatui::layout::Rect::new(0, 0, area.width, area.height))?;
+        Ok(())
+    }
 }
 
 impl Deref for Tui {

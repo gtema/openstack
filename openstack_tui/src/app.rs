@@ -25,9 +25,9 @@ use crate::{
     cloud_worker::{AuthAction, Cloud},
     components::{
         Component, auth_helper::AuthHelper, cloud_select_popup::CloudSelect,
-        confirm_popup::ConfirmPopup, describe::Describe, error_popup::ErrorPopup, header::Header,
-        home::Home, project_select_popup::ProjectSelect, region_select_popup::RegionSelect,
-        resource_select_popup::ApiRequestSelect,
+        confirm_popup::ConfirmPopup, describe::Describe, editor_validation,
+        error_popup::ErrorPopup, header::Header, home::Home, project_select_popup::ProjectSelect,
+        region_select_popup::RegionSelect, resource_select_popup::ApiRequestSelect,
     },
     config::Config,
     error::TuiError,
@@ -482,7 +482,7 @@ impl App {
                 }
                 Action::Suspend => self.should_suspend = true,
                 Action::Resume => self.should_suspend = false,
-                Action::ClearScreen => tui.terminal.clear()?,
+                Action::ClearScreen => tui.clear()?,
                 Action::Resize(w, h) => self.handle_resize(tui, w, h)?,
                 Action::Render => self.render(tui)?,
                 Action::Clouds(_)
@@ -551,17 +551,68 @@ impl App {
                 }
                 Action::Edit {
                     ref template,
+                    ref schema,
                     ref original_action,
                 } => {
                     tui.exit()?;
-                    let mut buffer = template.clone();
-                    // Retry until the buffer parses as valid YAML, or the user abandons the
-                    // edit by clearing the buffer (only comments/whitespace left).
+
+                    // When a schema is available, drop it next to the buffer as a temp
+                    // file and point editors that understand it (yaml-language-server) at
+                    // it via a modeline comment -- completion/live validation for free in
+                    // VS Code / neovim+yamlls, harmless elsewhere. Kept alive for the
+                    // whole retry loop so the modeline path stays valid across re-edits.
+                    let schema_temp_file = schema.as_ref().and_then(|s| {
+                        let mut f = tempfile::Builder::new().suffix(".json").tempfile().ok()?;
+                        std::io::Write::write_all(&mut f, s.as_bytes()).ok()?;
+                        Some(f)
+                    });
+                    let mut buffer = match &schema_temp_file {
+                        Some(f) => format!(
+                            "# yaml-language-server: $schema={}\n{template}",
+                            f.path().display()
+                        ),
+                        None => template.clone(),
+                    };
+
+                    // Marks the boundary between a (regenerated-every-retry) error banner
+                    // and the user's actual content. Without this, each retry appended a
+                    // fresh banner on top of `edited`, which already contained the banner
+                    // from the previous retry -- stale errors piled up instead of being
+                    // replaced. Splitting on this marker lets each retry discard whatever
+                    // banner is currently above it before prepending the new one.
+                    const CONTENT_MARKER: &str =
+                        "# ----- content below this line; messages above are regenerated on every retry, do not edit them -----";
+                    let strip_banner = |edited: &str| -> String {
+                        match edited.split_once(CONTENT_MARKER) {
+                            Some((_, rest)) => rest.trim_start_matches('\n').to_string(),
+                            None => edited.to_string(),
+                        }
+                    };
+
+                    // Retry until the buffer parses as valid YAML and (when a schema is
+                    // available) validates against it, or the user abandons the edit --
+                    // by clearing the buffer (only comments/whitespace left), quitting the
+                    // editor without changing anything (e.g. plain `:q`), or exiting the
+                    // editor in a way that produces no usable result (non-zero exit, e.g.
+                    // `:cq` or a killed editor process).
                     let parsed = loop {
-                        let edited = edit::edit(&buffer)?;
+                        let edited = match edit::edit(&buffer) {
+                            Ok(edited) => edited,
+                            Err(err) => {
+                                tracing::warn!(
+                                    "Editor did not return usable content, aborting edit: {err}"
+                                );
+                                break None;
+                            }
+                        };
                         tracing::debug!("after editing: '{}'", edited);
 
-                        let abandoned = edited.lines().all(|line| {
+                        if edited == buffer {
+                            break None;
+                        }
+
+                        let content = strip_banner(&edited);
+                        let abandoned = content.lines().all(|line| {
                             let trimmed = line.trim();
                             trimmed.is_empty() || trimmed.starts_with('#')
                         });
@@ -569,17 +620,46 @@ impl App {
                             break None;
                         }
 
-                        match serde_yaml::from_str::<serde_json::Value>(&edited) {
-                            Ok(value) => break Some(value),
+                        match serde_yaml::from_str::<serde_json::Value>(&content) {
+                            Ok(value) => {
+                                // Blank optional fields parse as explicit YAML `null`, but
+                                // BODY_SCHEMA property types are rarely declared nullable
+                                // (the OpenAPI convention for "optional" is to omit the
+                                // key) -- validating/sending them as-is would flag every
+                                // blank optional field as a type mismatch.
+                                let value = editor_validation::strip_null_fields(value);
+                                if let Some(schema_str) = schema {
+                                    let errors = editor_validation::validate_body(schema_str, &value);
+                                    if !errors.is_empty() {
+                                        let comments = errors
+                                            .iter()
+                                            .map(|e| format!("# {e}"))
+                                            .collect::<Vec<_>>()
+                                            .join("\n");
+                                        buffer = format!(
+                                            "# Schema validation failed:\n{comments}\n# Fix the errors below and save to retry, or clear everything below the marker to abort.\n{CONTENT_MARKER}\n{content}"
+                                        );
+                                        continue;
+                                    }
+                                }
+                                break Some(value);
+                            }
                             Err(err) => {
                                 buffer = format!(
-                                    "# Error parsing YAML: {err}\n# Fix the error below and save to retry, or clear the buffer entirely to abort.\n{edited}"
+                                    "# Error parsing YAML: {err}\n# Fix the error below and save to retry, or clear everything below the marker to abort.\n{CONTENT_MARKER}\n{content}"
                                 );
                             }
                         }
                     };
+                    drop(schema_temp_file);
                     tui.enter()?;
-                    tui.terminal.clear()?;
+                    // Deferred via Action::ClearScreen (as the suspend/resume path above
+                    // does) rather than calling tui.terminal.clear() here directly: that
+                    // call reads the cursor position via a DSR terminal query, which can
+                    // race with stray output the just-exited $EDITOR left behind and time
+                    // out ("cursor position could not be read"). Routing through the
+                    // action queue gives the terminal a tick to settle first.
+                    self.action_tx.send(Action::ClearScreen)?;
                     if let Some(result) = parsed {
                         self.action_tx.send(Action::EditResult {
                             result,

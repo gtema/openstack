@@ -137,6 +137,12 @@ pub enum Action {
     /// Edit. Open the default editor to get the user input for the operation.
     Edit {
         template: String,
+        /// JSON Schema of the request body, when the resource has one
+        /// (`ResourceBehaviour::editor_schema`). Used to validate the
+        /// edited buffer beyond what plain YAML parsing catches (required
+        /// fields, enums, ranges, ...) before it is sent back as
+        /// `Action::EditResult`.
+        schema: Option<String>,
         original_action: Box<Action>,
     },
     EditResult {
