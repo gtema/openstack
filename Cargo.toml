@@ -73,6 +73,7 @@ hyper = { version = "^1.11" }
 hyper-util = { version = "^0.1" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
+jsonschema = { version = "0.49", default-features = false }
 json-patch = { version = "^4.2" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.4" }
