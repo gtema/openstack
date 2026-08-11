@@ -78,7 +78,8 @@ openstack-cli-load-balancer.workspace = true
 openstack-cli-network.workspace = true
 openstack-cli-object-store.workspace = true
 openstack-cli-placement.workspace = true
-openstack_sdk = { workspace = true, features = ["async"] }
+openstack-cli-plugin.workspace = true
+openstack_sdk = { workspace = true, features = ["async", "wasm_plugins"] }
 strip-ansi-escapes = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true}

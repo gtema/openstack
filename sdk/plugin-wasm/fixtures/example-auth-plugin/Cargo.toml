@@ -1,0 +1,15 @@
+[workspace]
+
+[package]
+name = "example-wasm-auth-plugin"
+description = "Example Guest ABI v1 plugin used by openstack-sdk-plugin-wasm's tests"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+extism-pdk = "1.4"
+serde_json = "1"

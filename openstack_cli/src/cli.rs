@@ -131,6 +131,7 @@ pub enum TopLevelCommands {
     Network(openstack_cli_network::NetworkCommand),
     ObjectStore(openstack_cli_object_store::ObjectStoreCommand),
     Placement(openstack_cli_placement::PlacementCommand),
+    Plugin(openstack_cli_plugin::PluginCommand),
     Completion(CompletionCommand),
 }
 
@@ -160,6 +161,7 @@ impl Cli {
             TopLevelCommands::Network(args) => args.take_action(self, client).await,
             TopLevelCommands::ObjectStore(args) => args.take_action(self, client).await,
             TopLevelCommands::Placement(args) => args.take_action(self, client).await,
+            TopLevelCommands::Plugin(_) => unimplemented!(),
             TopLevelCommands::Completion(_) => unimplemented!(),
         }
     }
