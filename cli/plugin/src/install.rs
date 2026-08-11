@@ -28,13 +28,24 @@ use structable::{StructTable, StructTableOptions};
 ///
 /// The plugin is loaded and its ABI is validated before anything is copied,
 /// so a malformed `.wasm` file is rejected without touching the plugin
-/// directory. Installing a plugin under a name that's already installed
-/// fails; remove the existing file from the plugin directory first to
-/// replace it.
+/// directory. It is installed as `<name>@<version>` (name comes from the
+/// plugin's own ABI; version defaults to `0.0.0` when `--version` is not
+/// given) and becomes the active version for that name. Installing over an
+/// already-installed `name@version` fails unless `--force` is given.
 #[derive(Debug, Parser)]
 pub struct InstallCommand {
     /// Path to the `.wasm` auth plugin file to install.
     pub file: PathBuf,
+
+    /// Version to record this install under. Defaults to `0.0.0` when not
+    /// given; multiple versions of the same plugin name may be installed
+    /// side by side.
+    #[arg(long)]
+    pub version: Option<String>,
+
+    /// Replace an existing installation of the same `name@version`.
+    #[arg(long)]
+    pub force: bool,
 }
 
 /// Information about an installed plugin.
@@ -64,8 +75,12 @@ impl InstallCommand {
 
         let op = OutputProcessor::from_args(parsed_args, Some("plugin"), Some("install"));
 
-        let plugin =
-            openstack_sdk_plugin_wasm::registry::install(&self.file).map_err(eyre::Report::from)?;
+        let plugin = openstack_sdk_plugin_wasm::registry::install(
+            &self.file,
+            self.version.as_deref(),
+            self.force,
+        )
+        .map_err(eyre::Report::from)?;
         let (major, minor) = plugin.api_version();
 
         let info = InstalledPlugin {

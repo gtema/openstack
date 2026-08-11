@@ -12,15 +12,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Integration test for the runtime plugin registry: install a plugin into a
-//! scratch `OSC_PLUGIN_DIR`, then confirm it's discoverable via
-//! `ensure_loaded`/`list_loaded`/`lookup`.
+//! Integration test for the runtime plugin registry: install a plugin
+//! (across multiple versions) into a scratch plugin directory and lockfile,
+//! then confirm it's discoverable and manageable via
+//! `ensure_loaded`/`list_loaded`/`lookup`/`installed`/`remove`/`verify`.
 //!
 //! This is the only test in this binary so it can safely set the
-//! process-wide `OSC_PLUGIN_DIR` environment variable and rely on the
-//! registry's own process-lifetime, load-once semantics without racing
-//! another test thread.
+//! process-wide `OSC_PLUGIN_DIR`/`OSC_PLUGIN_LOCKFILE` environment variables
+//! and rely on the registry's own process-lifetime, load-once semantics
+//! without racing another test thread.
 
+use std::fs;
 use std::path::PathBuf;
 
 use openstack_sdk_plugin_wasm::registry;
@@ -31,18 +33,41 @@ fn fixture_path() -> PathBuf {
 
 #[test]
 fn install_then_list_then_lookup() -> Result<(), Box<dyn std::error::Error>> {
-    let dir = tempfile::tempdir()?;
+    let plugin_dir = tempfile::tempdir()?;
+    let lockfile_dir = tempfile::tempdir()?;
     // SAFETY: this is the only test in this binary, so nothing else races on
     // the process environment.
     unsafe {
-        std::env::set_var("OSC_PLUGIN_DIR", dir.path());
+        std::env::set_var("OSC_PLUGIN_DIR", plugin_dir.path());
+        std::env::set_var(
+            "OSC_PLUGIN_LOCKFILE",
+            lockfile_dir.path().join("plugins.lock"),
+        );
     }
 
-    let installed = registry::install(&fixture_path())?;
+    // Installing without an explicit version uses the default and becomes
+    // active.
+    let installed = registry::install(&fixture_path(), Some("1.0.0"), false)?;
     assert_eq!(installed.name(), "example_auth");
 
-    // Installing a plugin under a name that's already installed is rejected.
-    assert!(registry::install(&fixture_path()).is_err());
+    // Installing the same name@version again is rejected without --force.
+    assert!(registry::install(&fixture_path(), Some("1.0.0"), false).is_err());
+    // ...but succeeds with force.
+    registry::install(&fixture_path(), Some("1.0.0"), true)?;
+
+    // A second version installs alongside the first and becomes active.
+    registry::install(&fixture_path(), Some("2.0.0"), false)?;
+
+    let lockfile = registry::installed()?;
+    let versions: Vec<&str> = lockfile
+        .versions_of("example_auth")
+        .map(|e| e.version.as_str())
+        .collect();
+    assert_eq!(versions.len(), 2);
+    assert_eq!(
+        lockfile.active.get("example_auth").map(String::as_str),
+        Some("2.0.0")
+    );
 
     registry::ensure_loaded()?;
     let all = registry::list_loaded()?;
@@ -54,6 +79,41 @@ fn install_then_list_then_lookup() -> Result<(), Box<dyn std::error::Error>> {
 
     let missing = registry::lookup("does-not-exist")?;
     assert!(missing.is_none());
+
+    // Verifying an untampered install succeeds for every installed version.
+    let verified = registry::verify("example_auth", None)?;
+    assert_eq!(verified.len(), 2);
+
+    // Removing the active version (2.0.0) falls back to the remaining one
+    // (1.0.0), which is still untampered at this point so the fallback load
+    // succeeds.
+    registry::remove("example_auth", Some("2.0.0"))?;
+    let lockfile = registry::installed()?;
+    assert_eq!(
+        lockfile.active.get("example_auth").map(String::as_str),
+        Some("1.0.0")
+    );
+
+    // Tampering with the remaining installed file is caught on the next
+    // verify.
+    let entry = lockfile
+        .entry("example_auth", "1.0.0")
+        .ok_or("expected example_auth@1.0.0 to be installed")?;
+    let tampered_path = registry::plugin_root()?
+        .join(&entry.name)
+        .join(&entry.version)
+        .join(format!("{}.wasm", entry.name));
+    fs::write(&tampered_path, b"not a real wasm module")?;
+    assert!(registry::verify("example_auth", Some("1.0.0")).is_err());
+
+    // Removing every remaining version clears the plugin entirely, from
+    // both the lockfile and the in-process registry. This doesn't attempt
+    // to load the (tampered) file since no version remains active.
+    registry::remove("example_auth", None)?;
+    let lockfile = registry::installed()?;
+    assert!(lockfile.versions_of("example_auth").next().is_none());
+    assert!(!lockfile.active.contains_key("example_auth"));
+    assert!(registry::lookup("v3exampleauth")?.is_none());
 
     Ok(())
 }

@@ -20,8 +20,10 @@
 
 pub mod error;
 pub(crate) mod host;
+pub mod lockfile;
 pub mod plugin;
 pub mod registry;
 
 pub use error::WasmPluginError;
+pub use lockfile::{PluginEntry, PluginLockfile, TrustInfo};
 pub use plugin::WasmAuthPlugin;
