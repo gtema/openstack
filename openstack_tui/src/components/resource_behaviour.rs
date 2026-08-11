@@ -39,6 +39,25 @@ pub trait GeneratedResourceBehaviour {
         let _ = action;
         None
     }
+
+    /// Return a YAML editor template for a create action. Mirrors
+    /// `ResourceBehaviour::editor_template`; resources that need to prefill a field from the
+    /// filter should call this, then post-process the returned template string, rather than
+    /// duplicating the field list/comments here.
+    fn editor_template(_action: &Action, _filter: &Self::Filter) -> Option<(String, ApiRequest)> {
+        None
+    }
+
+    /// Deserialize the edited YAML back into an ApiRequest. Mirrors
+    /// `ResourceBehaviour::deserialize_edit_result`.
+    fn deserialize_edit_result(_data: &Value) -> Option<ApiRequest> {
+        None
+    }
+
+    /// JSON Schema backing `editor_template`'s template. Mirrors `ResourceBehaviour::editor_schema`.
+    fn editor_schema(_action: &Action) -> Option<&'static str> {
+        None
+    }
 }
 
 /// Behaviour specifics for a particular OpenStack resource.
