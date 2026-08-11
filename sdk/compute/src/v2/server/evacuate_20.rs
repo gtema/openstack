@@ -159,6 +159,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"evacuate\": {\"additionalProperties\": false, \"description\": \"The action to evacuate a server to another host.\", \"properties\": {\"adminPass\": {\"description\": \"An administrative password to access the evacuated server.\\nIf you omit this parameter, the operation generates a new password.\\nUp to API version 2.13, if `onSharedStorage` is set to `True` and\\nthis parameter is specified, an error is raised.\", \"type\": \"string\"}, \"host\": {\"description\": \"The name or ID of the host to which the server is evacuated.\\nIf you omit this parameter, the scheduler chooses a host.\\n\\nWarning\\n\\nPrior to microversion 2.29, specifying a host will bypass\\nvalidation by the scheduler, which could result in failures to actually\\nevacuate the instance to the specified host, or over-subscription of the\\nhost. It is recommended to either not specify a host so that the\\nscheduler will pick one, or specify a host with microversion >= 2.29 and\\nwithout `force=True` set.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._]*$\", \"type\": \"string\"}, \"onSharedStorage\": {\"description\": \"Server on shared storage.\\n\\nNote\\n\\nStarting since version 2.14, Nova automatically detects\\nwhether the server is on shared storage or not.\\nTherefore this parameter was removed.\\n\\n**Available until version 2.13**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}}, \"required\": [\"onSharedStorage\"], \"type\": \"object\"}}, \"required\": [\"evacuate\"], \"summary\": \"Evacuate Server (evacuate Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"evacuate\", \"max-ver\": \"2.13\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

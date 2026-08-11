@@ -128,6 +128,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"backup-record\": {\"additionalProperties\": false, \"description\": \"An object recording volume backup metadata, including `backup_service`\\nand `backup_url`.\", \"properties\": {\"backup_service\": {\"description\": \"The service used to perform the backup.\", \"maxLength\": 255, \"minLength\": 0, \"type\": \"string\"}, \"backup_url\": {\"description\": \"An identifier string to locate the backup.\", \"format\": \"base64\", \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"backup_service\", \"backup_url\"], \"type\": \"object\"}}, \"required\": [\"backup-record\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

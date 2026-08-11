@@ -159,6 +159,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"volume\": {\"additionalProperties\": false, \"anyOf\": [{\"required\": [\"description\"]}, {\"required\": [\"display_description\"]}, {\"required\": [\"display_name\"]}, {\"required\": [\"metadata\"]}, {\"required\": [\"name\"]}], \"properties\": {\"description\": {\"format\": \"description_non_mandatory_remove_white_spaces\", \"type\": [\"null\", \"string\"]}, \"display_description\": {\"format\": \"description_non_mandatory_remove_white_spaces\", \"type\": [\"null\", \"string\"]}, \"display_name\": {\"format\": \"name_non_mandatory_remove_white_spaces\", \"type\": [\"null\", \"string\"]}, \"metadata\": {\"additionalProperties\": false, \"patternProperties\": {\"^[a-zA-Z0-9-_:. /]{1,255}$\": {\"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}, \"name\": {\"format\": \"name_non_mandatory_remove_white_spaces\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"volume\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"3.52\", \"min-ver\": \"3.53\"}}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

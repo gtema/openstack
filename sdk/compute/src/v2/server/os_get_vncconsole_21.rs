@@ -139,6 +139,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Gets a VNC console for a server.\\n\\nSpecify the `os-getVNCConsole` action in the request body.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"os-getVNCConsole\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"type\": {\"description\": \"The type of VNC console. The only valid value is `novnc`.\", \"enum\": [\"novnc\", \"xvpvnc\"], \"type\": \"string\"}}, \"required\": [\"type\"], \"type\": \"object\"}}, \"required\": [\"os-getVNCConsole\"], \"summary\": \"Get VNC Console (os-getVNCConsole Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-getVNCConsole\", \"max-ver\": \"2.5\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -149,6 +149,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-migrateLive\": {\"additionalProperties\": false, \"description\": \"The action.\", \"properties\": {\"block_migration\": {\"description\": \"Migrates local disks by using block migration. Set to `auto` which means\\nnova will detect whether source and destination hosts on shared storage. if they are\\non shared storage, the live-migration won’t be block migration. Otherwise the block\\nmigration will be executed. Set to `True`, means the request will fail when the\\nsource or destination host uses shared storage. Set to `False` means the request\\nwill fail when the source and destination hosts are not on the shared storage.\\n\\n**New in version 2.25**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"auto\", \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"host\": {\"description\": \"The host to which to migrate the server. If this parameter is `None`,\\nthe scheduler chooses a host.\\n\\nWarning\\n\\nPrior to microversion 2.30, specifying a host will bypass\\nvalidation by the scheduler, which could result in failures to actually\\nmigrate the instance to the specified host, or over-subscription of the\\nhost. It is recommended to either not specify a host so that the\\nscheduler will pick one, or specify a host with microversion >= 2.30 and\\nwithout `force=True` set.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._]*$\", \"type\": [\"null\", \"string\"]}}, \"required\": [\"block_migration\", \"host\"], \"type\": \"object\"}}, \"required\": [\"os-migrateLive\"], \"summary\": \"Live-Migrate Server (os-migrateLive Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-migrateLive\", \"min-ver\": \"2.68\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

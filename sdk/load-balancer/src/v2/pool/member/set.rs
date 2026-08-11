@@ -190,6 +190,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"member\": {\"description\": \"Defines attributes that are acceptable of a PUT request.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`). Default is `true`.\", \"type\": \"boolean\"}, \"backup\": {\"description\": \"Is the member a backup? Backup members only receive traffic when all\\nnon-backup members are down.\\n\\n**New in version 2.1**\", \"type\": \"boolean\"}, \"monitor_address\": {\"description\": \"An alternate IP address used for health monitoring a backend member.\\nDefault is `null` which monitors the member `address`.\", \"format\": \"ipaddress\", \"type\": \"string\"}, \"monitor_port\": {\"description\": \"An alternate protocol port used for health monitoring a backend member.\\nDefault is `null` which monitors the member `protocol_port`.\", \"maximum\": 65535, \"minimum\": 1, \"type\": \"integer\"}, \"name\": {\"description\": \"Human-readable name of the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"tags\": {\"description\": \"A list of simple strings assigned to the resource.\\n\\n**New in version 2.5**\", \"items\": {\"maxLength\": 255, \"type\": \"string\"}, \"type\": \"array\"}, \"weight\": {\"description\": \"The weight of a member determines the portion of requests or connections it\\nservices compared to the other members of the pool. For example, a member\\nwith a weight of 10 receives five times as many requests as a member with a\\nweight of 2. A value of 0 means the member does not receive new connections\\nbut continues to service existing connections. A valid value is\\nfrom `0` to `256`. Default is `1`.\", \"maximum\": 256, \"type\": \"integer\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

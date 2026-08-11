@@ -153,6 +153,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"A service provider object\", \"properties\": {\"service_provider\": {\"additionalProperties\": false, \"properties\": {\"auth_url\": {\"description\": \"The URL to authenticate against\", \"maxLength\": 225, \"minLength\": 0, \"pattern\": \"^[a-zA-Z0-9+.-]+:.+\", \"type\": \"string\"}, \"description\": {\"description\": \"The description of the service provider\", \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"Whether the service provider is enabled or not\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"relay_state_prefix\": {\"description\": \"The prefix of the RelayState SAML attribute\", \"type\": [\"null\", \"string\"]}, \"sp_url\": {\"description\": \"The service provider's URL\", \"maxLength\": 225, \"minLength\": 0, \"pattern\": \"^[a-zA-Z0-9+.-]+:.+\", \"type\": \"string\"}}, \"required\": [\"auth_url\", \"sp_url\"], \"type\": \"object\"}}, \"required\": [\"service_provider\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

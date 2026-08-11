@@ -117,6 +117,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Unlocks a locked server.\\n\\nSpecify the `unlock` action in the request body.\\n\\nPolicy defaults enable only users with the administrative role or\\nthe owner of the server to perform this operation. Cloud providers\\ncan change these permissions through the `policy.yaml` file.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404)\", \"properties\": {\"unlock\": {}}, \"required\": [\"unlock\"], \"summary\": \"Unlock Server (unlock Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"unlock\", \"max-ver\": \"2.72\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

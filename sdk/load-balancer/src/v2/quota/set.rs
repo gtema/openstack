@@ -189,6 +189,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"quota\": {\"description\": \"Base type for complex types\", \"properties\": {\"health_monitor\": {\"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"healthmonitor\": {\"description\": \"The configured health monitor quota limit. A setting of `null` means it\\nis using the deployment default quota. A setting of `-1` means\\nunlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"l7policy\": {\"description\": \"The configured l7policy quota limit. A setting of `null` means it is\\nusing the deployment default quota. A setting of `-1` means unlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"l7rule\": {\"description\": \"The configured l7rule quota limit. A setting of `null` means it is\\nusing the deployment default quota. A setting of `-1` means unlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"listener\": {\"description\": \"The configured listener quota limit. A setting of `null` means it is\\nusing the deployment default quota. A setting of `-1` means unlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"load_balancer\": {\"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"loadbalancer\": {\"description\": \"The configured load balancer quota limit. A setting of `null` means it\\nis using the deployment default quota. A setting of `-1` means\\nunlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"member\": {\"description\": \"The configured member quota limit. A setting of `null` means it is using\\nthe deployment default quota. A setting of `-1` means unlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}, \"pool\": {\"description\": \"The configured pool quota limit. A setting of `null` means it is using\\nthe deployment default quota. A setting of `-1` means unlimited.\", \"maximum\": 2000000000, \"minimum\": -1, \"type\": \"integer\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

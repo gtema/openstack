@@ -199,6 +199,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the floatingips/floatingip_id/port_forwardings:post operation\", \"properties\": {\"port_forwarding\": {\"description\": \"A `floating IP port forwarding` object.\", \"properties\": {\"description\": {\"description\": \"A text describing the rule, which helps users to\\nmanage/find easily theirs rules.\", \"maxLength\": 1024, \"type\": \"string\"}, \"external_port\": {\"description\": \"The TCP/UDP/other protocol port number of the port forwarding’s floating IP\\naddress.\", \"maximum\": 65535, \"minimum\": 1, \"type\": [\"null\", \"number\"]}, \"external_port_range\": {\"description\": \"The TCP/UDP/other protocol port range of the port forwarding’s floating IP\\naddress.\", \"maximum\": 65535, \"minimum\": 1, \"type\": \"number\"}, \"internal_ip_address\": {\"description\": \"The fixed IPv4 address of the Neutron port associated to the floating IP\\nport forwarding.\", \"type\": \"string\"}, \"internal_port\": {\"description\": \"The TCP/UDP/other protocol port number of the Neutron port fixed IP\\naddress associated to the floating ip port forwarding.\", \"maximum\": 65535, \"minimum\": 1, \"type\": [\"null\", \"number\"]}, \"internal_port_id\": {\"description\": \"The ID of the Neutron port associated to the floating IP port forwarding.\", \"format\": \"uuid\", \"type\": \"string\"}, \"internal_port_range\": {\"description\": \"The TCP/UDP/other protocol port range of the Neutron port fixed IP\\naddress associated to the floating ip port forwarding.\", \"maximum\": 65535, \"minimum\": 1, \"type\": \"number\"}, \"project_id\": {\"maxLength\": 255, \"type\": \"string\"}, \"protocol\": {\"description\": \"The IP protocol used in the floating IP port forwarding.\", \"enum\": [\"dccp\", \"icmp\", \"ipv6-icmp\", \"sctp\", \"tcp\", \"udp\"], \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

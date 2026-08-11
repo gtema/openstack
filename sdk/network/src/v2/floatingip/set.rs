@@ -166,6 +166,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the floatingips/id:put operation\", \"properties\": {\"floatingip\": {\"description\": \"A `floatingip` object. When you associate a\\nfloating IP address with a VM, the instance has the same public IP\\naddress each time that it boots, basically to maintain a\\nconsistent IP address for maintaining DNS assignment.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"fixed_ip_address\": {\"description\": \"The fixed IP address that is associated with the floating IP.\\nIf an internal port has multiple associated IP addresses,\\nthe service chooses the first IP address unless you explicitly\\ndefine a fixed IP address in the `fixed_ip_address` parameter.\", \"type\": [\"null\", \"string\"]}, \"port_id\": {\"description\": \"The ID of a port associated with the floating IP.\\nTo associate the floating IP with a fixed IP,\\nyou must specify the ID of the internal port.\\nTo disassociate the floating IP, `null` should be specified.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"qos_policy_id\": {\"format\": \"uuid\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

@@ -136,6 +136,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-migrate_volume\": {\"additionalProperties\": false, \"properties\": {\"force_host_copy\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}, \"host\": {\"maxLength\": 255, \"type\": \"string\"}, \"lock_volume\": {\"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"f\", \"false\", \"n\", false, false, true, \"t\", \"true\", \"y\", true], \"type\": [\"boolean\", \"string\"]}}, \"required\": [\"host\"], \"type\": \"object\"}}, \"required\": [\"os-migrate_volume\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-migrate_volume\", \"max-ver\": \"3.15\", \"min-ver\": \"3.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

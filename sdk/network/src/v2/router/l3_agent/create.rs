@@ -130,6 +130,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the routers/router_id/l3-agents:post operation\", \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -126,6 +126,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Puts a server in rescue mode and changes its status to `RESCUE`.\\n\\nSpecify the `rescue` action in the request body.\\n\\nIf you specify the `rescue_image_ref` extended attribute,\\nthe image is used to rescue the instance. If you omit an image\\nreference, the base image reference is used by default.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully rescue a server and make a `GET\\n/servers/\u{200B}{server_id}\u{200B}` request, its status changes to `RESCUE`.\\n\\nNormal response codes: 200\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409), notImplemented(501)\", \"properties\": {\"rescue\": {\"additionalProperties\": false, \"description\": \"The action to rescue a server.\", \"properties\": {\"adminPass\": {\"type\": \"string\"}, \"rescue_image_ref\": {\"format\": \"uuid\", \"type\": \"string\"}}, \"type\": [\"null\", \"object\"]}}, \"required\": [\"rescue\"], \"summary\": \"Rescue Server (rescue Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"rescue\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

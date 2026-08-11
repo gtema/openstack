@@ -139,6 +139,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"created_at\": {\"description\": \"Date and time of resource type association\", \"format\": \"date-time\", \"readOnly\": true, \"type\": \"string\"}, \"name\": {\"description\": \"Resource type names should be aligned with Heat resource types whenever possible: https://docs.openstack.org/heat/latest/template_guide/openstack.html\", \"maxLength\": 80, \"type\": \"string\"}, \"prefix\": {\"description\": \"Specifies the prefix to use for the given resource type. Any properties in the namespace should be prefixed with this prefix when being applied to the specified resource type. Must include prefix separator (e.g. a colon :).\", \"maxLength\": 80, \"type\": \"string\"}, \"properties_target\": {\"description\": \"Some resource types allow more than one key / value pair per instance.  For example, Cinder allows user and image metadata on volumes. Only the image properties metadata is evaluated by Nova (scheduling or drivers). This property allows a namespace target to remove the ambiguity.\", \"maxLength\": 80, \"type\": \"string\"}, \"updated_at\": {\"description\": \"Date and time of the last resource type association modification\", \"format\": \"date-time\", \"readOnly\": true, \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

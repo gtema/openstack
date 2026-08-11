@@ -132,6 +132,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Removes, or disassociates, a floating IP address from a server.\\n\\nThe IP address is returned to the pool of IP addresses that is available\\nfor all projects. When you remove a floating IP address and that IP address\\nis still associated with a running instance, it is automatically\\ndisassociated from that instance.\\n\\nSpecify the `removeFloatingIp` action in the request body.\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409)\", \"properties\": {\"removeFloatingIp\": {\"additionalProperties\": false, \"description\": \"The action to remove or disassociate a floating IP address\\nfrom the server.\", \"properties\": {\"address\": {\"description\": \"The floating IP address.\", \"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}}, \"required\": [\"address\"], \"type\": \"object\"}}, \"required\": [\"removeFloatingIp\"], \"summary\": \"Remove (Disassociate) Floating Ip (removeFloatingIp Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"removeFloatingIp\", \"max-ver\": \"2.43\", \"min-ver\": \"2.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

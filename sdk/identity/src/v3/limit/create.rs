@@ -153,6 +153,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"limits\": {\"description\": \"A list of `limits` objects\", \"items\": {\"additionalProperties\": false, \"oneOf\": [{\"required\": [\"domain_id\", \"resource_limit\", \"resource_name\", \"service_id\"]}, {\"required\": [\"project_id\", \"resource_limit\", \"resource_name\", \"service_id\"]}], \"properties\": {\"description\": {\"description\": \"The limit description.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}, \"domain_id\": {\"description\": \"The ID of the domain. Either this or the project ID must be supplied.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]+$\", \"type\": [\"null\", \"string\"]}, \"project_id\": {\"description\": \"The ID of the project. Either this or the domain ID must be supplied.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]+$\", \"type\": [\"null\", \"string\"]}, \"region_id\": {\"description\": \"The ID of the region that contains the service endpoint.\", \"maxLength\": 255, \"minLength\": 1, \"type\": [\"null\", \"string\"]}, \"resource_limit\": {\"description\": \"The override limit.\", \"maximum\": 2147483647, \"minimum\": -1, \"type\": \"integer\"}, \"resource_name\": {\"description\": \"The resource name.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"service_id\": {\"description\": \"The UUID of the service to which the limit belongs.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"resource_limit\", \"resource_name\", \"service_id\"], \"type\": \"object\"}, \"minItems\": 1, \"type\": \"array\"}}, \"required\": [\"limits\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

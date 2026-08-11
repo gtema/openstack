@@ -141,6 +141,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"properties\": {\"action\": {\"description\": \"current action in progress on the resource\", \"enum\": [\"DELETE\", \"NONE\", \"UPDATE\"], \"readOnly\": true, \"type\": \"string\"}, \"address\": {\"description\": \"The floatingip address for this PTR record.\", \"type\": \"string\"}, \"description\": {\"description\": \"Description for this PTR record\", \"type\": \"string\"}, \"id\": {\"description\": \"ID for PTR record in the format of <region>:<floatingip_id>\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"links\": {\"description\": \"Links to the resource, and other related resources.\\nWhen a response has been broken into pages, we will include\\na `next` link that should be followed to retrieve all results\", \"properties\": {\"self\": {\"format\": \"uri\", \"type\": \"string\"}}, \"readOnly\": true, \"type\": \"object\"}, \"ptrdname\": {\"description\": \"Domain name for this PTR record\", \"type\": [\"null\", \"string\"]}, \"status\": {\"description\": \"The status of the resource.\", \"enum\": [\"ACTIVE\", \"DELETED\", \"ERROR\", \"PENDING\", \"SUCCESS\"], \"readOnly\": true, \"type\": \"string\"}, \"ttl\": {\"description\": \"Time to live for this PTR record\", \"type\": \"integer\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

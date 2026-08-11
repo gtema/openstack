@@ -131,6 +131,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"os-reset_status\": {\"additionalProperties\": false, \"format\": \"validate_volume_reset_body\", \"properties\": {\"attach_status\": {\"format\": \"volume_attach_status\", \"type\": [\"null\", \"string\"]}, \"migration_status\": {\"format\": \"volume_migration_status\", \"type\": [\"null\", \"string\"]}, \"status\": {\"format\": \"volume_status\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"os-reset_status\"], \"type\": \"object\", \"x-openstack\": {\"action-name\": \"os-reset_status\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

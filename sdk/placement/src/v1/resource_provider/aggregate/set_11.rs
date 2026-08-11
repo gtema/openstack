@@ -115,6 +115,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"items\": {\"format\": \"uuid\", \"type\": \"string\"}, \"type\": \"array\", \"uniqueItems\": true, \"x-openstack\": {\"max-ver\": \"1.18\", \"min-ver\": \"1.1\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

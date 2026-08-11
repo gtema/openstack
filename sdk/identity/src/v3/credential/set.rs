@@ -164,6 +164,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"A credential object.\", \"properties\": {\"credential\": {\"additionalProperties\": true, \"description\": \"A `credential` object.\", \"minProperties\": 1, \"properties\": {\"blob\": {\"description\": \"The credential itself, as a serialized blob.\", \"type\": \"string\"}, \"project_id\": {\"description\": \"The ID for the project.\", \"type\": [\"null\", \"string\"]}, \"type\": {\"description\": \"The credential type, such as `ec2` or `cert`.\\nThe implementation determines the list of supported types.\", \"type\": \"string\"}, \"user_id\": {\"description\": \"The ID of the user who owns the credential.\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"credential\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

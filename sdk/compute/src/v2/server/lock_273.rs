@@ -124,6 +124,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"lock\": {\"additionalProperties\": false, \"description\": \"The action to lock a server.\\nThis parameter can be `null`.\\nUp to microversion 2.73, this parameter should be `null`.\", \"properties\": {\"locked_reason\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"type\": [\"null\", \"object\"]}}, \"required\": [\"lock\"], \"summary\": \"Lock Server (lock Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"lock\", \"min-ver\": \"2.73\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

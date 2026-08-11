@@ -148,6 +148,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"API representation of a project Quota.\\n\\nThis class enforces type checking and value constraints, and converts\\nbetween the internal object model and the API representation of Quota.\", \"properties\": {\"created_at\": {\"format\": \"date-time\", \"type\": \"string\"}, \"hard_limit\": {\"type\": \"integer\"}, \"id\": {\"minimum\": 1, \"type\": \"integer\"}, \"project_id\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"resource\": {\"enum\": [\"Cluster\"], \"type\": \"string\"}, \"updated_at\": {\"format\": \"date-time\", \"type\": \"string\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

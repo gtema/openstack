@@ -143,6 +143,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the qos/policies/policy_id/dscp_marking_rules/id:put operation\", \"properties\": {\"dscp_marking_rule\": {\"description\": \"A `dscp_marking_rule` object.\", \"properties\": {\"dscp_mark\": {\"description\": \"The DSCP mark value.\", \"enum\": [0, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 44, 46, 48, 56, 8], \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

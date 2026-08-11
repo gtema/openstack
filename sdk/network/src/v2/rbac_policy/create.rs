@@ -155,6 +155,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the rbac-policies:post operation\", \"properties\": {\"rbac_policy\": {\"properties\": {\"action\": {\"description\": \"Action for the RBAC policy which is `access_as_external` or\\n`access_as_shared`.\", \"maxLength\": 255, \"type\": \"string\"}, \"object_id\": {\"description\": \"The ID of the `object_type` resource. An `object_type` of `network`\\nreturns a network ID, an `object_type` of `qos-policy` returns a QoS\\npolicy ID, an `object_type` of `security-group` returns a security\\ngroup ID, an `object_type` of `address-scope` returns a address scope\\nID, an `object_type` of `subnetpool` returns a subnetpool ID and\\nan `object_type` of `address-group` returns an address group ID.\", \"format\": \"uuid\", \"type\": \"string\"}, \"object_type\": {\"description\": \"The type of the object that the RBAC policy affects. Types include\\n`qos-policy`, `network`, `security-group`, `address-scope`,\\n`subnetpool` or `address-group`.\", \"type\": \"string\"}, \"target_tenant\": {\"description\": \"The ID of the tenant to which the RBAC policy will be enforced. Please note\\nthat Neutron does not perform any type of validation that the value provided is\\nactually the ID of the existing project. If, for example, the name of the project\\nis provided here, it will be accepted by the Neutron API, but the RBAC rule\\ncreated will not work as expected.\", \"type\": \"string\"}, \"tenant_id\": {\"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -257,6 +257,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"additionalItems\": {\"type\": \"boolean\"}, \"default\": {}, \"description\": {\"type\": \"string\"}, \"enum\": {\"type\": \"array\"}, \"items\": {\"properties\": {\"enum\": {\"type\": \"array\"}, \"type\": {\"enum\": [null, \"array\", \"boolean\", \"integer\", \"number\", \"object\", \"string\"], \"type\": \"string\"}}, \"type\": \"object\"}, \"maxItems\": {\"minimum\": 0, \"type\": \"integer\"}, \"maxLength\": {\"minimum\": 0, \"type\": \"integer\"}, \"maximum\": {\"type\": \"number\"}, \"minItems\": {\"allOf\": [{\"default\": 0}, {\"minimum\": 0, \"type\": \"integer\"}]}, \"minLength\": {\"allOf\": [{\"default\": 0}, {\"minimum\": 0, \"type\": \"integer\"}]}, \"minimum\": {\"type\": \"number\"}, \"name\": {\"maxLength\": 80, \"type\": \"string\"}, \"operators\": {\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"pattern\": {\"format\": \"regex\", \"type\": \"string\"}, \"readonly\": {\"type\": \"boolean\"}, \"required\": {\"items\": {\"type\": \"string\"}, \"minItems\": 1, \"type\": \"array\", \"uniqueItems\": true}, \"title\": {\"type\": \"string\"}, \"type\": {\"enum\": [null, \"array\", \"boolean\", \"integer\", \"number\", \"object\", \"string\"], \"type\": \"string\"}, \"uniqueItems\": {\"default\": false, \"type\": \"boolean\"}}, \"required\": [\"name\", \"title\", \"type\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

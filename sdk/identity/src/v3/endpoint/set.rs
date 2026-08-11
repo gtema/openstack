@@ -204,6 +204,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"An endpoint object\", \"properties\": {\"endpoint\": {\"additionalProperties\": true, \"description\": \"An `endpoint` object.\", \"minProperties\": 1, \"properties\": {\"description\": {\"description\": \"The endpoint description. It is returned only when set on the\\nresource.\", \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"Indicates whether the endpoint appears in the\\nservice catalog: - `false`. The endpoint does not appear in the\\nservice catalog. - `true`. The endpoint appears in the service\\ncatalog.\", \"type\": \"boolean\"}, \"interface\": {\"description\": \"The interface type, which describes the\\nvisibility of the endpoint. Value is: - `public`. Visible by\\nend users on a publicly available network interface. -\\n`internal`. Visible by end users on an unmetered internal\\nnetwork interface. - `admin`. Visible by administrative users\\non a secure network interface.\", \"enum\": [\"admin\", \"internal\", \"public\"], \"type\": \"string\"}, \"name\": {\"description\": \"(Deprecated) The endpoint name. The field will only be returned in responses\\nwhen set on the resource.\\n\\nThis field is deprecated as it provides no value. Endpoints are better\\ndescribed by the combination of service, region and interface they describe\\nor by their ID.\", \"type\": \"string\"}, \"region\": {\"description\": \"(Deprecated in v3.2) The geographic location of\\nthe service endpoint.\", \"type\": [\"null\", \"string\"], \"x-openstack\": {\"max-ver\": 3.2}}, \"region_id\": {\"description\": \"(Since v3.2) The ID of the region that contains the service endpoint.\", \"type\": [\"null\", \"string\"], \"x-openstack\": {\"min-ver\": 3.2}}, \"service_id\": {\"description\": \"The UUID of the service to which the endpoint\\nbelongs.\", \"type\": \"string\"}, \"url\": {\"description\": \"The endpoint URL.\", \"maxLength\": 225, \"minLength\": 0, \"pattern\": \"^[a-zA-Z0-9+.-]+:.+\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"endpoint\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

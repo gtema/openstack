@@ -127,6 +127,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the metering/metering-label-rules/id:put operation\", \"properties\": {\"metering_label_rule\": {\"properties\": {\"destination_ip_prefix\": {\"type\": \"string\"}, \"source_ip_prefix\": {\"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

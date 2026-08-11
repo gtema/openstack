@@ -186,6 +186,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"An endpoint group object\", \"properties\": {\"endpoint_group\": {\"additionalProperties\": false, \"minProperties\": 1, \"properties\": {\"description\": {\"description\": \"The endpoint group description.\", \"type\": [\"null\", \"string\"]}, \"filters\": {\"description\": \"Describes the filtering performed by the endpoint group. The filter used must be an endpoint property, such as interface, service_id, region, and enabled. Note that if using interface as a filter, the only available values are public, internal, and admin.\", \"properties\": {\"enabled\": {\"description\": \"Indicates whether the endpoint appears in the service catalog -false. The endpoint does not appear in the service catalog. -true. The endpoint appears in the service catalog.\", \"type\": \"boolean\"}, \"interface\": {\"description\": \"The interface type, which describes the visibility of the endpoint. Value is: -public. Visible by end users on a publicly available network interface. -internal. Visible by end users on an unmetered internal network interface. -admin. Visible by administrative users on a secure network interface.\", \"enum\": [\"admin\", \"internal\", \"public\"], \"type\": \"string\"}, \"region_id\": {\"description\": \"(Since v3.2) The ID of the region that contains the service endpoint.\", \"type\": [\"null\", \"string\"], \"x-openstack\": {\"min-ver\": 3.2}}, \"service_id\": {\"description\": \"The UUID of the service to which the endpoint belongs\", \"type\": \"string\"}}, \"type\": \"object\"}, \"name\": {\"description\": \"The name of the endpoint group.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"endpoint_group\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

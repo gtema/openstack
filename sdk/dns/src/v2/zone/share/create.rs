@@ -120,6 +120,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Shared DNS Zone\", \"properties\": {\"created_at\": {\"description\": \"Date / Time when resource was created.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": \"string\"}, \"id\": {\"description\": \"ID for the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"links\": {\"description\": \"Links to the resource, and other related resources.\\nWhen a response has been broken into pages, we will include\\na `next` link that should be followed to retrieve all results\", \"properties\": {\"self\": {\"format\": \"uri\", \"type\": \"string\"}, \"zone\": {\"format\": \"uri\", \"type\": \"string\"}}, \"readOnly\": true, \"type\": \"object\"}, \"project_id\": {\"description\": \"ID for the project that owns the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"target_project_id\": {\"description\": \"The project ID the zone will be shared with.\\n\\n**New in version 2.1**\", \"format\": \"uuid\", \"type\": \"string\"}, \"updated_at\": {\"description\": \"Date / Time when resource last updated.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

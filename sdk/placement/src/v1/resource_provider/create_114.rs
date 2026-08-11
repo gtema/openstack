@@ -142,6 +142,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"name\": {\"description\": \"The name of one resource provider.\", \"maxLength\": 200, \"type\": \"string\"}, \"parent_provider_uuid\": {\"anyOf\": [{\"type\": \"null\"}, {\"format\": \"uuid\", \"type\": \"string\"}], \"description\": \"The UUID of the immediate parent of the resource provider.\\n\\n* Before version `1.37`, once set, the parent of a resource provider\\n  cannot be changed.\\n* Since version `1.37`, it can be set to any existing provider UUID\\n  excepts to providers that would cause a loop. Also it can be set to null\\n  to transform the provider to a new root provider. This operation needs\\n  to be used carefully. Moving providers can mean that the original rules\\n  used to create the existing resource allocations may be invalidated\\n  by that move.\\n\\n**New in version 1.14**\"}, \"uuid\": {\"description\": \"The uuid of a resource provider.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"1.14\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

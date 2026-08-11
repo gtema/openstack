@@ -143,6 +143,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"items\": {\"description\": \"A complex type that represents a single json-patch operation.\", \"properties\": {\"op\": {\"enum\": [\"add\", \"remove\", \"replace\"], \"type\": \"string\"}, \"path\": {\"type\": \"string\"}, \"value\": {\"type\": [\"integer\", \"string\"]}}, \"required\": [\"op\", \"path\"], \"type\": \"object\"}, \"type\": \"array\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

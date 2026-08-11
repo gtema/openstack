@@ -144,6 +144,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the vpn/vpnservices/id:put operation\", \"properties\": {\"vpnservice\": {\"description\": \"A `vpnservice` object.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`).\", \"type\": [\"boolean\", \"string\"]}, \"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

@@ -146,6 +146,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the metering/metering-labels:post operation\", \"properties\": {\"metering_label\": {\"description\": \"A `metering_label` object.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 1024, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"shared\": {\"description\": \"Indicates whether this metering label is shared\\nacross all projects.\", \"type\": [\"boolean\", \"string\"]}, \"tenant_id\": {\"description\": \"The ID of the project that owns the resource.\\nOnly administrative and users with advsvc role can specify\\na project ID other than their own.\\nYou cannot change this value through authorization policies.\", \"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

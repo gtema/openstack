@@ -147,6 +147,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"An identity provider object\", \"properties\": {\"identity_provider\": {\"additionalProperties\": false, \"minProperties\": 1, \"properties\": {\"authorization_ttl\": {\"description\": \"The length of validity in minutes for group memberships carried over through mapping and persisted in the database. If left unset, the default value configured in keystone will be used, if enabled.\", \"minimum\": 0, \"type\": [\"integer\", \"null\"]}, \"description\": {\"description\": \"The identity provider description\", \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"Whether the identity provider is enabled or not\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"remote_ids\": {\"description\": \"List of the unique identity provider's remote IDs\", \"items\": {\"maxLength\": 64, \"type\": \"string\"}, \"type\": [\"array\", \"null\"], \"uniqueItems\": true}}, \"type\": \"object\"}}, \"required\": [\"identity_provider\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

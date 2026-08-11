@@ -174,6 +174,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"role\": {\"additionalProperties\": true, \"description\": \"A `role` object\", \"minProperties\": 1, \"properties\": {\"description\": {\"description\": \"The new role description.\", \"type\": [\"null\", \"string\"]}, \"domain_id\": {\"description\": \"The ID of the domain.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]+$\", \"type\": [\"null\", \"string\"]}, \"name\": {\"description\": \"The new role name.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"options\": {\"additionalProperties\": false, \"description\": \"The resource options for the role. Available resource options are\\n`immutable`.\", \"properties\": {\"immutable\": {\"enum\": [null, false, true], \"type\": [\"boolean\", \"null\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}}, \"required\": [\"role\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

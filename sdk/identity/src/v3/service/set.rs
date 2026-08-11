@@ -165,6 +165,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"A service object.\", \"properties\": {\"service\": {\"additionalProperties\": true, \"description\": \"A `service` object.\", \"minProperties\": 1, \"properties\": {\"enabled\": {\"description\": \"Defines whether the service and its endpoints\\nappear in the service catalog: - `false`. The service and its\\nendpoints do not appear in the service catalog. - `true`. The\\nservice and its endpoints appear in the service catalog.\\nDefault is `true`.\", \"type\": \"boolean\"}, \"name\": {\"description\": \"The service name.\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"type\": {\"description\": \"The service type, which describes the API\\nimplemented by the service. Value is `compute`, `ec2`,\\n`identity`, `image`, `network`, or `volume`.\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"service\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -135,6 +135,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the network-segment-ranges/id:put operation\", \"properties\": {\"network_segment_range\": {\"properties\": {\"description\": {\"maxLength\": 255, \"type\": \"string\"}, \"maximum\": {\"maximum\": 4294967295, \"minimum\": 1, \"type\": [\"integer\", \"string\"]}, \"minimum\": {\"maximum\": 4294967295, \"minimum\": 1, \"type\": [\"integer\", \"string\"]}, \"name\": {\"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

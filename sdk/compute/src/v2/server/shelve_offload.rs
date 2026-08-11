@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Shelf-offloads, or removes, a shelved server.\\n\\nSpecify the `shelveOffload` action in the request body.\\n\\nData and resource associations are deleted. If an instance is no longer needed, you can remove that instance from the hypervisor to minimize resource usage.\\n\\nPolicy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.yaml` file.\\n\\n**Preconditions**\\n\\nThe server status must be `SHELVED`.\\n\\nIf the server is locked, you must have administrator privileges to shelve-offload the server.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you successfully shelve-offload a server, its status changes to `SHELVED_OFFLOADED`. The server instance data appears on the compute node.\\n\\n**Troubleshooting**\\n\\nIf the server status does not change to `SHELVED_OFFLOADED`, the shelve-offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)\", \"properties\": {\"shelveOffload\": {}}, \"required\": [\"shelveOffload\"], \"summary\": \"Shelf-Offload (Remove) Server (shelveOffload Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"shelveOffload\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

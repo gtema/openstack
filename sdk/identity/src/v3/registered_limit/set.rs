@@ -157,6 +157,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"registered_limit\": {\"additionalProperties\": false, \"description\": \"A `registered_limit` objects\", \"properties\": {\"default_limit\": {\"description\": \"The default limit for the registered limit.\", \"maximum\": 2147483647, \"minimum\": -1, \"type\": \"integer\"}, \"description\": {\"description\": \"The registered limit description.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}, \"region_id\": {\"description\": \"The ID of the region that contains the service endpoint.\\nEither service_id, resource_name, or region_id must be\\ndifferent than existing value otherwise it will raise 409.\", \"maxLength\": 255, \"minLength\": 1, \"type\": [\"null\", \"string\"]}, \"resource_name\": {\"description\": \"The resource name. Either service_id, resource_name or\\nregion_id must be different than existing value otherwise\\nit will raise 409.\", \"maxLength\": 255, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"service_id\": {\"description\": \"The UUID of the service to update to which the registered\\nlimit belongs. Either service_id, resource_name, or region_id\\nmust be different than existing value otherwise it will\\nraise 409.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"registered_limit\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

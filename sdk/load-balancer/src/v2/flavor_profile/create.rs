@@ -128,6 +128,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"flavorprofile\": {\"description\": \"Defines mandatory and optional attributes of a POST request.\", \"properties\": {\"flavor_data\": {\"maxLength\": 4096, \"type\": \"string\"}, \"name\": {\"maxLength\": 255, \"type\": \"string\"}, \"provider_name\": {\"maxLength\": 255, \"type\": \"string\"}}, \"required\": [\"flavor_data\", \"name\", \"provider_name\"], \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

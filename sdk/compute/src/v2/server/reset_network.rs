@@ -108,6 +108,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Resets networking on a server.\\n\\nSpecify the `resetNetwork` action in the request body.\\n\\nPolicy defaults enable only users with the administrative role to\\nperform this operation. Cloud providers can change these permissions\\nthrough the `policy.yaml` file.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), gone(410)\", \"properties\": {\"resetNetwork\": {\"description\": \"The action.\", \"type\": \"null\"}}, \"summary\": \"Reset Networking On A Server (resetNetwork Action) (DEPRECATED)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"resetNetwork\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

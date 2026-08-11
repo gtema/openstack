@@ -178,6 +178,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"quota_set\": {\"additionalProperties\": false, \"description\": \"A `quota_set` object.\", \"properties\": {\"cores\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"force\": {\"description\": \"You can force the update even if the quota has already been used and the reserved\\nquota exceeds the new quota. To force the update, specify the `\\\"force\\\": \\\"True\\\"`.\\nDefault is `False`.\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"instances\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"key_pairs\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"metadata_items\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"ram\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"server_group_members\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}, \"server_groups\": {\"description\": \"The number of allowed members for each server group.\", \"maximum\": 2147483647, \"minimum\": -1, \"pattern\": \"^-?[0-9]+$\", \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"quota_set\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.57\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

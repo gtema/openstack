@@ -242,6 +242,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"properties\": {\"all_stores\": {\"description\": \"When set to True the data will be imported to the set of stores you may\\nconsume from this particular deployment of Glance (ie: the same set of\\nstores returned to a call to /v2/info/stores on the glance-api the request\\nhits).\\nThis can’t be used simultaneously with the `stores` parameter.\", \"type\": \"boolean\"}, \"all_stores_must_success\": {\"type\": \"boolean\"}, \"method\": {\"description\": \"A JSON object indicating what import method you wish to use to import\\nyour image. The content of this JSON object is another JSON object\\nwith a `name` field whose value is the identifier for the import\\nmethod.\", \"properties\": {\"glance_image_id\": {\"type\": \"string\"}, \"glance_region\": {\"type\": \"string\"}, \"glance_service_interface\": {\"type\": \"string\"}, \"name\": {\"type\": \"string\"}, \"uri\": {\"type\": \"string\"}}, \"type\": \"object\"}, \"stores\": {\"description\": \"If present contains the list of store id to import the image binary data\\nto.\", \"items\": {\"type\": \"string\"}, \"type\": \"array\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

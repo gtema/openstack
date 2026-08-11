@@ -156,6 +156,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request body\", \"oneOf\": [{\"required\": [\"port_id\"]}, {\"required\": [\"subnet_id\"]}], \"properties\": {\"port_id\": {\"description\": \"The ID of the port. One of subnet_id or port_id must be specified.\", \"format\": \"uuid\", \"type\": \"string\"}, \"subnet_id\": {\"description\": \"The ID of the subnet. One of subnet_id or port_id must be specified.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

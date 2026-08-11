@@ -128,6 +128,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"quota_class_set\": {\"additionalProperties\": false, \"format\": \"quota_class_set\", \"patternProperties\": {\"^[a-zA-Z0-9-_:. ]{1,300}$\": {\"maximum\": 2147483647, \"minLength\": 1, \"minimum\": -1, \"pattern\": \"^[0-9]*$\", \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"required\": [\"quota_class_set\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

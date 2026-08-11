@@ -187,6 +187,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"inventories\": {\"description\": \"A dictionary of inventories keyed by resource classes.\", \"patternProperties\": {\"^[A-Z0-9_]+$\": {\"additionalProperties\": false, \"properties\": {\"allocation_ratio\": {\"description\": \"It is used in determining whether consumption of the resource of\\nthe provider can exceed physical constraints.\\n\\nFor example, for a vCPU resource with:\\n\\n```\\nallocation_ratio = 16.0\\ntotal = 8\\n```\\n\\nOverall capacity is equal to 128 vCPUs.\", \"type\": \"number\"}, \"max_unit\": {\"description\": \"A maximum amount any single allocation against an inventory can have.\", \"minimum\": 1, \"type\": \"integer\"}, \"min_unit\": {\"description\": \"A minimum amount any single allocation against an inventory can have.\", \"minimum\": 1, \"type\": \"integer\"}, \"reserved\": {\"description\": \"The amount of the resource a provider has reserved for its own use.\", \"minimum\": 0, \"type\": \"integer\"}, \"step_size\": {\"description\": \"A representation of the divisible amount of the resource that may be requested. For example, step_size = 5 means that only values divisible by 5 (5, 10, 15, etc.) can be requested.\", \"minimum\": 1, \"type\": \"integer\"}, \"total\": {\"description\": \"The actual amount of the resource that the provider can accommodate.\", \"minimum\": 1, \"type\": \"integer\"}}, \"required\": [\"total\"], \"type\": \"object\"}}, \"type\": \"object\"}, \"resource_provider_generation\": {\"description\": \"A consistent view marker that assists with the management of concurrent resource provider updates.\", \"type\": \"integer\"}}, \"required\": [\"inventories\", \"resource_provider_generation\"], \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

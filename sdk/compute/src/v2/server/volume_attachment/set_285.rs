@@ -189,6 +189,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"volumeAttachment\": {\"additionalProperties\": false, \"description\": \"A dictionary representation of a volume attachment containing the field\\n`volumeId` which is the UUID of the replacement volume, and other fields\\nto update in the attachment.\", \"properties\": {\"delete_on_termination\": {\"description\": \"A flag indicating if the attached volume will be deleted when the server is\\ndeleted.\\n\\n**New in version 2.85**\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"device\": {\"description\": \"Name of the device in the attachment object, such as, `/dev/vdb`.\\n\\n**New in version 2.85**\", \"pattern\": \"(^/dev/x{0,1}[a-z]{0,1}d{0,1})([a-z]+)[0-9]*$\", \"type\": [\"null\", \"string\"]}, \"id\": {\"description\": \"The UUID of the attachment.\\n\\n**New in version 2.85**\", \"format\": \"uuid\", \"type\": \"string\"}, \"serverId\": {\"description\": \"The UUID of the server.\\n\\n**New in version 2.85**\", \"format\": \"uuid\", \"type\": \"string\"}, \"tag\": {\"description\": \"The device tag applied to the volume block device or `null`.\\n\\n**New in version 2.85**\", \"maxLength\": 60, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"volumeId\": {\"description\": \"The UUID of the attached volume.\", \"format\": \"uuid\", \"type\": \"string\"}}, \"required\": [\"volumeId\"], \"type\": \"object\"}}, \"required\": [\"volumeAttachment\"], \"type\": \"object\", \"x-openstack\": {\"min-ver\": \"2.85\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

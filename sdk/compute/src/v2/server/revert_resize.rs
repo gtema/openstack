@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Cancels and reverts a pending resize action for a server.\\n\\nSpecify the `revertResize` action in the request body.\\n\\n**Preconditions**\\n\\nYou can only revert the resized server where the status is\\n`VERIFY_RESIZE` and the OS-EXT-STS:vm_state is `resized`.\\n\\nIf the server is locked, you must have administrator privileges to revert\\nthe resizing.\\n\\n**Asynchronous Postconditions**\\n\\nAfter you make this request, you typically must keep polling the server status\\nto determine whether the request succeeded. A reverting resize operation shows\\na status of `REVERT_RESIZE` and a task_state of `resize_reverting`. If\\nsuccessful, the status will return to `ACTIVE` or `SHUTOFF`. You can also\\nsee the reverted server in the compute node that OpenStack Compute manages.\\n\\n**Troubleshooting**\\n\\nIf the server status remains `VERIFY_RESIZE`, the request failed. Ensure you\\nmeet the preconditions and run the request again. If the request fails again,\\ninvestigate the compute back end.\\n\\nThe server is not reverted in the compute node that OpenStack Compute manages.\\n\\nNormal response codes: 202\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409)\", \"properties\": {\"revertResize\": {}}, \"required\": [\"revertResize\"], \"summary\": \"Revert Resized Server (revertResize Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"revertResize\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

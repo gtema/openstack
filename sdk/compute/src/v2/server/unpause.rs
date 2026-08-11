@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Unpauses a paused server and changes its status to `ACTIVE`.\\n\\nSpecify the `unpause` action in the request body.\\n\\nPolicy defaults enable only users with the administrative role or\\nthe owner of the server to perform this operation. Cloud providers\\ncan change these permissions through the `policy.yaml` file.\\n\\nNormal response codes: 202\\n\\nError response codes: unauthorized(401), forbidden(403), itemNotFound(404),\\nconflict(409), notImplemented(501)\", \"properties\": {\"unpause\": {}}, \"required\": [\"unpause\"], \"summary\": \"Unpause Server (unpause Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"unpause\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

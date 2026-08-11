@@ -143,6 +143,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the qos/alias-bandwidth-limit-rules/id:put operation\", \"properties\": {\"alias_bandwidth_limit_rule\": {\"properties\": {\"direction\": {\"enum\": [\"egress\", \"ingress\"], \"type\": \"string\"}, \"max_burst_kbps\": {\"maximum\": 2147483647, \"minimum\": 0, \"type\": [\"integer\", \"string\"]}, \"max_kbps\": {\"maximum\": 2147483647, \"minimum\": 0, \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

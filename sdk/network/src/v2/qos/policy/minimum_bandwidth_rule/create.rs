@@ -153,6 +153,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the qos/policies/policy_id/minimum_bandwidth_rules:post operation\", \"properties\": {\"minimum_bandwidth_rule\": {\"description\": \"A `minimum_bandwidth_rule` object.\", \"properties\": {\"direction\": {\"description\": \"The direction of the traffic to which the QoS\\nrule is applied, as seen from the point of view\\nof the `port`.\\nValid values are `egress` and `ingress`.\\nDefault value is `egress`.\", \"enum\": [\"egress\", \"ingress\"], \"type\": \"string\"}, \"min_kbps\": {\"description\": \"The minimum KBPS (kilobits per second) value which should be available for\\nport.\", \"maximum\": 2147483647, \"minimum\": 0, \"type\": [\"integer\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

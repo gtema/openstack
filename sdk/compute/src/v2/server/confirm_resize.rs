@@ -112,6 +112,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Confirms a pending resize action for a server.\\n\\nSpecify the `confirmResize` action in the request body.\\n\\nAfter you make this request, you typically must keep polling the server\\nstatus to determine whether the request succeeded. A successfully\\nconfirming resize operation shows a status of `ACTIVE` or `SHUTOFF`\\nand a migration status of `confirmed`. You can also see the resized\\nserver in the compute node that OpenStack Compute manages.\\n\\n**Preconditions**\\n\\nYou can only confirm the resized server where the status is\\n`VERIFY_RESIZE`.\\n\\nIf the server is locked, you must have administrator privileges\\nto confirm the server.\\n\\n**Troubleshooting**\\n\\nIf the server status remains `VERIFY_RESIZE`, the request failed. Ensure you\\nmeet the preconditions and run the request again. If the request fails\\nagain, the server status should be `ERROR` and a migration status of\\n`error`. Investigate the compute back end or ask your cloud provider.\\nThere are some options for trying to correct the server status:\\n\\nNote that the cloud provider may still need to cleanup any orphaned resources\\non the source hypervisor.\\n\\nNormal response codes: 204\\n\\nError response codes: badRequest(400), unauthorized(401), forbidden(403),\\nitemNotFound(404), conflict(409)\", \"properties\": {\"confirmResize\": {}}, \"required\": [\"confirmResize\"], \"summary\": \"Confirm Resized Server (confirmResize Action)\", \"type\": \"object\", \"x-openstack\": {\"action-name\": \"confirmResize\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

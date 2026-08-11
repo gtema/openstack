@@ -156,6 +156,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"binary\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"disabled_reason\": {\"description\": \"The reason for disabling a service. The minimum length is 1 and the\\nmaximum length is 255. This may only be requested with `status=disabled`.\", \"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"forced_down\": {\"description\": \"`forced_down` is a manual override to tell nova that the service in\\nquestion has been fenced manually by the operations team (either hard\\npowered off, or network unplugged). That signals that it is safe to proceed\\nwith `evacuate` or other operations that nova has safety checks to\\nprevent for hosts that are up.\\n\\nWarning\\n\\nSetting a service forced down without completely fencing it will likely\\nresult in the corruption of VMs on that host.\", \"enum\": [\"0\", \"1\", \"FALSE\", false, \"False\", false, false, false, true, false, true, \"TRUE\", true, \"True\", true, true, \"false\", false, false, true, \"true\", true], \"type\": [\"boolean\", \"string\"]}, \"host\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-._]*$\", \"type\": \"string\"}}, \"required\": [\"binary\", \"host\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.52\", \"min-ver\": \"2.11\"}}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,

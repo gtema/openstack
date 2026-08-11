@@ -221,6 +221,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"minProperties\": 1, \"patternProperties\": {\"^[0-9a-fA-F-]{36}$\": {\"additionalProperties\": false, \"properties\": {\"allocations\": {\"additionalProperties\": false, \"minProperties\": 0, \"patternProperties\": {\"^[0-9a-fA-F-]{36}$\": {\"additionalProperties\": false, \"properties\": {\"generation\": {\"type\": \"integer\"}, \"resources\": {\"additionalProperties\": false, \"minProperties\": 1, \"patternProperties\": {\"^[A-Z0-9_]+$\": {\"minimum\": 1, \"type\": \"integer\"}}, \"type\": \"object\"}}, \"required\": [\"resources\"], \"type\": \"object\"}}, \"type\": \"object\"}, \"consumer_generation\": {\"additionalProperties\": false, \"type\": [\"integer\", \"null\"]}, \"mappings\": {\"minProperties\": 1, \"patternProperties\": {\"[a-zA-Z0-9_-]{1,64}\": {\"items\": {\"format\": \"uuid\", \"type\": \"string\"}, \"minItems\": 1, \"type\": \"array\"}}, \"type\": \"object\"}, \"project_id\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}, \"user_id\": {\"maxLength\": 255, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"allocations\", \"consumer_generation\", \"project_id\", \"user_id\"], \"type\": \"object\"}}, \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"1.37\", \"min-ver\": \"1.34\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

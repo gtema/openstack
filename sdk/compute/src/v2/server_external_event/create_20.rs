@@ -194,6 +194,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"events\": {\"description\": \"List of external events to process.\", \"items\": {\"additionalProperties\": false, \"properties\": {\"name\": {\"description\": \"The event name. A valid value is:\\n\\n* `network-changed`\\n* `network-vif-plugged`\\n* `network-vif-unplugged`\\n* `network-vif-deleted`\\n* `volume-extended` (since microversion `2.51`)\\n* `power-update` (since microversion `2.76`)\\n* `accelerator-request-bound` (since microversion `2.82`)\\n* `volume-reimaged` (since microversion `2.93`)\", \"enum\": [\"network-changed\", \"network-vif-deleted\", \"network-vif-plugged\", \"network-vif-unplugged\"], \"type\": \"string\"}, \"server_uuid\": {\"description\": \"The UUID of the server instance to which the API dispatches the event. You must\\nassign this instance to a host. Otherwise, this call does not dispatch the event\\nto the instance.\", \"format\": \"uuid\", \"type\": \"string\"}, \"status\": {\"description\": \"The event status. A valid value is `failed`, `completed`, or `in-progress`.\\nDefault is `completed`.\", \"enum\": [\"completed\", \"failed\", \"in-progress\"], \"type\": \"string\"}, \"tag\": {\"description\": \"A string value that identifies the event. Certain types of events require\\nspecific tags:\\n\\n* For the `accelerator-request-bound` event, the tag must be\\n  the accelerator request UUID.\\n* For the `power-update` event the tag must be either be `POWER_ON`\\n  or `POWER_OFF`.\\n* For the `volume-extended` event the tag must be the volume id.\", \"maxLength\": 255, \"type\": \"string\"}}, \"required\": [\"name\", \"server_uuid\"], \"type\": \"object\"}, \"minItems\": 1, \"type\": \"array\"}}, \"required\": [\"events\"], \"type\": \"object\", \"x-openstack\": {\"max-ver\": \"2.50\", \"min-ver\": \"2.0\"}}";
+
 #[cfg(test)]
 mod tests {
     use super::*;

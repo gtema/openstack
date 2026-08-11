@@ -190,6 +190,12 @@ impl RestEndpoint for Request<'_> {
     }
 }
 
+/// JSON Schema of the request body (verbatim from the OpenAPI spec, before
+/// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
+/// constraints, `enum`, ranges and descriptions that the generated struct's
+/// `Option<T>` fields alone do not express).
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request body\", \"properties\": {\"router\": {\"properties\": {\"external_gateways\": {\"description\": \"The list of external gateways of the router.\", \"items\": {\"properties\": {\"enable_snat\": {\"type\": \"boolean\"}, \"external_fixed_ips\": {\"items\": {\"properties\": {\"ip_address\": {\"oneOf\": [{\"format\": \"ipv4\"}, {\"format\": \"ipv6\"}], \"type\": \"string\"}, \"subnet_id\": {\"format\": \"uuid\", \"type\": \"string\"}}, \"type\": \"object\"}, \"type\": \"array\"}, \"network_id\": {\"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}}, \"type\": \"object\"}, \"type\": \"array\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,
