@@ -258,8 +258,10 @@ pub enum WasmPluginError {
         source: dialoguer::Error,
     },
 
-    /// `sso_build_request` returned a URL that failed host-side validation
-    /// (unparsable, or not `https://`).
+    /// `sso_build_request` returned a URL that failed host-side validation:
+    /// unparsable, not `https://`, or resolving to an SSRF-denylisted
+    /// address (loopback, link-local, private, multicast/reserved,
+    /// unspecified).
     #[error("plugin {name} `sso_build_request` returned an invalid redirect: {reason}")]
     InvalidRedirect {
         /// Plugin name.

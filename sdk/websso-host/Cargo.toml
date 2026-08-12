@@ -12,6 +12,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
+base64.workspace = true
 bytes.workspace = true
 form_urlencoded.workspace = true
 http.workspace = true

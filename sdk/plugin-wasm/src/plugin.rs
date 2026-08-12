@@ -38,22 +38,34 @@
 //!   `{"ok": {"token": "...", "auth_info": <AuthResponse|null>}}` or
 //!   `{"error": "human readable message"}`.
 //!
-//!   Only `auth` may perform outbound HTTP, and only via the host-provided
+//!   `auth` may perform outbound HTTP only via the host-provided
 //!   `identity_http_request` import — never directly.
 //!
 //! ### `sso` flavor
 //!
-//! For interactive, browser-based (WebSSO-style) plugins. Neither export may
-//! perform any I/O: the host owns the callback listener, the anti-CSRF
-//! `state` check, and the browser-opening step (via
-//! `openstack_sdk_websso_host`); the guest only ever sees already-validated
-//! strings in and returns strings out.
+//! For interactive, browser-based (WebSSO-style) plugins. The host owns the
+//! callback listener, the anti-CSRF `state` check, and the browser-opening
+//! step (via `openstack_sdk_websso_host`) — the guest never gets a socket,
+//! DNS resolver, or browser-opening capability of its own. Both exports may,
+//! like `auth`, perform outbound HTTP via the host-provided
+//! `identity_http_request` import, restricted to the same identity origin
+//! the host resolved for this call.
 //!
 //! - `sso_build_request(request: string) -> string` — `request` is
-//!   `{"identity_url", "callback_url", "values", "scope", "hints"}`, where
+//!   `{"identity_url", "callback_url", "values", "scope", "hints",
+//!   "code_challenge", "code_challenge_method", "nonce"}`, where
 //!   `callback_url` is the host-bound local callback URL (with the
 //!   anti-CSRF `state` token already embedded) the guest must have the
-//!   identity provider redirect back to. Returns
+//!   identity provider redirect back to, `code_challenge`/
+//!   `code_challenge_method` (always `"S256"`) are a host-generated RFC 7636
+//!   PKCE pair the guest should embed in the authorize URL's query string,
+//!   and `nonce` is a host-generated OIDC `nonce` the guest should likewise
+//!   embed in the authorize URL's query string, to later compare against
+//!   the `nonce` claim of any `id_token` it receives (guest-side replay
+//!   protection; the guest carries the value forward itself via Extism's
+//!   `var_get`/`var_set` if it wants to validate it, since it isn't secret)
+//!   — the host generates both because the wasm guest sandbox has no secure
+//!   RNG. Returns
 //!   `{"url": "https://...", "redirect_host": "host:port"}`: `url` is the
 //!   page to open in the user's browser, and `redirect_host` is the
 //!   `host:port` authority the guest configured as the identity provider's
@@ -61,11 +73,24 @@
 //!   `url`'s scheme is `https` and that `redirect_host` exactly matches the
 //!   host-bound callback listener's own authority — a plugin that returns a
 //!   URL on a different (undeclared) redirect host is rejected outright,
-//!   with no override.
+//!   with no override. The host additionally resolves `url`'s host and
+//!   rejects it if the resolved address falls in an SSRF-denylisted range
+//!   (loopback, link-local, private, multicast/reserved, unspecified).
 //! - `sso_parse_callback(callback: string) -> string` — `callback` is
-//!   `{"params": {...}}`, the form fields from the already
-//!   state-validated callback POST; returns the same
-//!   `{"ok": ...} | {"error": ...}` shape as `auth`.
+//!   `{"params": {...}, "code_verifier": "..."}`: `params` are the form
+//!   fields from the already state-validated callback POST, and
+//!   `code_verifier` is the same value whose SHA256 the guest committed to
+//!   as `code_challenge` in `sso_build_request` — the guest sends it back to
+//!   the identity provider's token endpoint to complete the PKCE exchange.
+//!   Returns the same
+//!   `{"ok": ...} | {"error": ...}` shape as `auth`. In addition to
+//!   `identity_http_request`, this call alone may also use a second import,
+//!   `idp_http_request` — same request/response JSON shape, but scoped to
+//!   the origin `sso_build_request`'s own response declared in `url` (after
+//!   the SSRF check above passes). Not available during `sso_build_request`
+//!   itself, since that trusted origin doesn't exist yet at that point. The
+//!   confirmation prompt shown before the browser opens discloses this
+//!   background-request capability for the shown origin.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -132,6 +157,9 @@ struct SsoBuildRequestMsg {
     values: BTreeMap<String, String>,
     scope: Option<serde_json::Value>,
     hints: Option<serde_json::Value>,
+    code_challenge: String,
+    code_challenge_method: String,
+    nonce: String,
 }
 
 #[derive(Deserialize)]
@@ -143,6 +171,18 @@ struct SsoBuildResponseMsg {
 #[derive(Serialize)]
 struct SsoCallbackMsg {
     params: BTreeMap<String, String>,
+    code_verifier: String,
+}
+
+/// Strip an identity URL down to scheme+host+port — the origin
+/// `identity_http_request` restricts guest requests to. Shared by every
+/// call site that populates `HostContextState::identity_origin`.
+fn identity_origin(identity_url: &url::Url) -> url::Url {
+    let mut origin = identity_url.clone();
+    origin.set_path("");
+    origin.set_query(None);
+    origin.set_fragment(None);
+    origin
 }
 
 /// A single loaded WASM auth plugin, wrapping an [`extism::Plugin`] instance.
@@ -201,13 +241,22 @@ impl WasmAuthPlugin {
             .with_timeout(DEFAULT_TIMEOUT);
 
         let host_ctx: UserData<HostContextState> = UserData::new(HostContextState::default());
-        let functions = vec![Function::new(
-            "identity_http_request",
-            [ValType::I64],
-            [ValType::I64],
-            host_ctx.clone(),
-            host::identity_http_request,
-        )];
+        let functions = vec![
+            Function::new(
+                "identity_http_request",
+                [ValType::I64],
+                [ValType::I64],
+                host_ctx.clone(),
+                host::identity_http_request,
+            ),
+            Function::new(
+                "idp_http_request",
+                [ValType::I64],
+                [ValType::I64],
+                host_ctx.clone(),
+                host::idp_http_request,
+            ),
+        ];
 
         let mut plugin =
             Plugin::new(manifest, functions, false).map_err(|source| WasmPluginError::Load {
@@ -396,10 +445,7 @@ impl WasmAuthPlugin {
         };
         let request_json = serde_json::to_string(&request)?;
 
-        let mut origin = identity_url.clone();
-        origin.set_path("");
-        origin.set_query(None);
-        origin.set_fragment(None);
+        let origin = identity_origin(identity_url);
 
         let name = self.name.clone();
         let inner = self.inner.clone();
@@ -411,6 +457,7 @@ impl WasmAuthPlugin {
             // its own mini Tokio runtime internally, which panics if built
             // from within an already-running async context.
             let client = reqwest::blocking::Client::builder()
+                .redirect(reqwest::redirect::Policy::none())
                 .build()
                 .map_err(|source| WasmPluginError::HttpClient { source })?;
             {
@@ -425,6 +472,7 @@ impl WasmAuthPlugin {
                     reason: "host context lock poisoned".into(),
                 })?;
                 state.identity_origin = Some(origin);
+                state.idp_origin = None;
                 state.client = Some(client);
             }
             let mut plugin = inner.lock().map_err(|_| WasmPluginError::HostContext {
@@ -505,11 +553,14 @@ impl WasmAuthPlugin {
                 .collect(),
             scope: scope.map(serde_json::to_value).transpose()?,
             hints: hints.cloned(),
+            code_challenge: server.code_challenge().to_string(),
+            code_challenge_method: "S256".to_string(),
+            nonce: server.nonce().to_string(),
         };
         let request_json = serde_json::to_string(&request)?;
 
         let build_output = self
-            .call_guest("sso_build_request", request_json)
+            .call_guest("sso_build_request", request_json, identity_url, None)
             .await
             .map_err(AuthError::plugin)?;
 
@@ -522,10 +573,46 @@ impl WasmAuthPlugin {
             validate_sso_build_response(&self.name, &build_output, &server.redirect_host())
                 .map_err(AuthError::plugin)?;
 
+        // The origin `idp_http_request` will be scoped to during
+        // `sso_parse_callback`: same origin the host is about to open the
+        // user's real browser at. Resolved host-side (not guest-side) and
+        // checked against the SSRF denylist before anything else happens,
+        // so a plugin can't point this capability at loopback/link-local/
+        // private/metadata addresses reachable from wherever `osc` runs.
+        let idp_origin = identity_origin(&sso_url);
+        let idp_host = idp_origin
+            .host_str()
+            .ok_or_else(|| {
+                AuthError::plugin(WasmPluginError::InvalidRedirect {
+                    name: self.name.clone(),
+                    reason: "`sso_build_request` returned a url with no host".into(),
+                })
+            })?
+            .to_string();
+        let idp_port = idp_origin.port_or_known_default().unwrap_or(443);
+        let ssrf_check = tokio::task::spawn_blocking(move || {
+            crate::ssrf::resolve_and_check(&idp_host, idp_port)
+        })
+        .await
+        .map_err(|source| {
+            AuthError::plugin(WasmPluginError::Join {
+                name: self.name.clone(),
+                function: "sso_build_request",
+                source,
+            })
+        })?;
+        ssrf_check.map_err(|reason| {
+            AuthError::plugin(WasmPluginError::InvalidRedirect {
+                name: self.name.clone(),
+                reason,
+            })
+        })?;
+
         let confirmation = Confirm::new()
             .with_prompt(format!(
-                "A default browser is going to be opened at `{}`. Do you want to continue?",
-                sso_url.as_str()
+                "A default browser is going to be opened at `{}`.\nThis plugin may also make background network requests to `{}`.\nDo you want to continue?",
+                sso_url.as_str(),
+                idp_origin.as_str()
             ))
             .interact()
             .map_err(WasmPluginError::from)
@@ -550,6 +637,7 @@ impl WasmAuthPlugin {
             })
         })?;
 
+        let code_verifier = server.code_verifier().to_string();
         let params = server
             .wait_for_callback(Duration::from_secs(120))
             .await
@@ -562,11 +650,17 @@ impl WasmAuthPlugin {
 
         let callback = SsoCallbackMsg {
             params: params.into_iter().collect(),
+            code_verifier,
         };
         let callback_json = serde_json::to_string(&callback)?;
 
         let output = self
-            .call_guest("sso_parse_callback", callback_json)
+            .call_guest(
+                "sso_parse_callback",
+                callback_json,
+                identity_url,
+                Some(idp_origin),
+            )
             .await
             .map_err(AuthError::plugin)?;
 
@@ -588,17 +682,51 @@ impl WasmAuthPlugin {
         }
     }
 
-    /// Call a pure (no host-function-using) guest export off the async
-    /// runtime, since a WASM call can run for up to the plugin's configured
-    /// timeout and must not stall the executor.
+    /// Call a guest export off the async runtime (a WASM call can run for
+    /// up to the plugin's configured timeout and must not stall the
+    /// executor), with `identity_http_request` wired exactly as
+    /// `auth_via_auth` wires it for the `auth` flavor: a fresh blocking
+    /// client is built and `host_ctx.identity_origin`/`host_ctx.client` are
+    /// populated immediately before the call, while the plugin's own mutex
+    /// is held. `idp_origin` is set on every call (including explicitly to
+    /// `None`) so no stale origin from a prior auth attempt or prior plugin
+    /// instance can leak forward into a call that shouldn't have one.
     async fn call_guest(
         &self,
         function: &'static str,
         input: String,
+        identity_url: &url::Url,
+        idp_origin: Option<url::Url>,
     ) -> Result<String, WasmPluginError> {
         let name = self.name.clone();
         let inner = self.inner.clone();
+        let host_ctx = self.host_ctx.clone();
+        let origin = identity_origin(identity_url);
+
         tokio::task::spawn_blocking(move || -> Result<String, WasmPluginError> {
+            // A dedicated blocking client, scoped to this single call. Built
+            // inside the blocking task: `reqwest::blocking::Client` spins up
+            // its own mini Tokio runtime internally, which panics if built
+            // from within an already-running async context.
+            let client = reqwest::blocking::Client::builder()
+                .redirect(reqwest::redirect::Policy::none())
+                .build()
+                .map_err(|source| WasmPluginError::HttpClient { source })?;
+            {
+                let state = host_ctx.get().map_err(|e| WasmPluginError::HostContext {
+                    name: name.clone(),
+                    function,
+                    reason: e.to_string(),
+                })?;
+                let mut state = state.lock().map_err(|_| WasmPluginError::HostContext {
+                    name: name.clone(),
+                    function,
+                    reason: "host context lock poisoned".into(),
+                })?;
+                state.identity_origin = Some(origin);
+                state.idp_origin = idp_origin;
+                state.client = Some(client);
+            }
             let mut plugin = inner.lock().map_err(|_| WasmPluginError::HostContext {
                 name: name.clone(),
                 function,
@@ -618,6 +746,28 @@ impl WasmAuthPlugin {
             function,
             source,
         })?
+    }
+
+    /// Test-only entry point exercising [`Self::call_guest`]'s host-context
+    /// wiring directly, without the browser-open/confirmation-prompt/
+    /// callback-listener machinery [`Self::auth_via_sso`] layers around it —
+    /// that machinery needs a real terminal (`dialoguer::Confirm`) and
+    /// browser this crate's test environment doesn't have.
+    ///
+    /// Only compiled with the `fuzzing` feature; not part of the stable
+    /// public API, and not present in ordinary release builds — this bypasses
+    /// [`Self::auth_via_sso`]'s validation sequence entirely.
+    #[doc(hidden)]
+    #[cfg(feature = "fuzzing")]
+    pub async fn call_guest_for_test(
+        &self,
+        function: &'static str,
+        input: String,
+        identity_url: &url::Url,
+        idp_origin: Option<url::Url>,
+    ) -> Result<String, WasmPluginError> {
+        self.call_guest(function, input, identity_url, idp_origin)
+            .await
     }
 }
 
@@ -685,4 +835,37 @@ pub fn fuzz_validate_sso_build_response(build_output: &str, expected_redirect_ho
 #[cfg(feature = "fuzzing")]
 pub fn fuzz_parse_auth_result(output: &str) {
     let _ = serde_json::from_str::<AuthResultMsg>(output);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sso_build_request_msg_serializes_pkce_fields() {
+        let msg = SsoBuildRequestMsg {
+            identity_url: "https://example.test".to_string(),
+            callback_url: "http://127.0.0.1:1/callback".to_string(),
+            values: Default::default(),
+            scope: None,
+            hints: None,
+            code_challenge: "abc123".to_string(),
+            code_challenge_method: "S256".to_string(),
+            nonce: "nonce123".to_string(),
+        };
+        let json = serde_json::to_string(&msg).unwrap();
+        assert!(json.contains(r#""code_challenge":"abc123""#));
+        assert!(json.contains(r#""code_challenge_method":"S256""#));
+        assert!(json.contains(r#""nonce":"nonce123""#));
+    }
+
+    #[test]
+    fn sso_callback_msg_serializes_code_verifier() {
+        let msg = SsoCallbackMsg {
+            params: Default::default(),
+            code_verifier: "verifier-xyz".to_string(),
+        };
+        let json = serde_json::to_string(&msg).unwrap();
+        assert!(json.contains(r#""code_verifier":"verifier-xyz""#));
+    }
 }
