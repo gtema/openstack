@@ -3697,7 +3697,7 @@ dependencies = [
  "openstack_sdk",
  "openstack_sdk_core",
  "openstack_types",
- "pem",
+ "pem 4.0.0",
  "rsa",
  "serde_json",
  "ssh-key",
@@ -3872,6 +3872,7 @@ name = "openstack-cli-plugin"
 version = "0.13.7"
 dependencies = [
  "clap",
+ "dialoguer",
  "eyre",
  "openstack-cli-core",
  "openstack-sdk-plugin-wasm",
@@ -4143,31 +4144,15 @@ name = "openstack-sdk-auth-websso"
 version = "0.22.6"
 dependencies = [
  "async-trait",
- "bytes",
  "dialoguer",
- "form_urlencoded",
- "futures",
- "futures-util",
- "http",
- "http-body-util",
- "httpmock",
- "hyper",
- "hyper-util",
  "inventory",
- "open",
  "openstack-sdk-auth-core",
+ "openstack-sdk-websso-host",
  "reqwest",
- "reserve-port",
  "secrecy",
  "serde",
  "serde_json",
- "serde_urlencoded",
- "tempfile",
  "thiserror 2.0.19",
- "tokio",
- "tokio-util",
- "tracing",
- "tracing-test",
  "url",
 ]
 
@@ -4340,17 +4325,43 @@ name = "openstack-sdk-plugin-wasm"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "base64 0.23.0",
  "chrono",
+ "dialoguer",
  "dirs",
  "extism",
  "httpmock",
  "openstack-sdk-auth-core",
+ "openstack-sdk-websso-host",
+ "rcgen",
  "reqwest",
+ "ring",
  "secrecy",
+ "semver",
  "serde",
  "serde_json",
  "sha2 0.11.0",
  "tempfile",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "url",
+ "x509-parser",
+]
+
+[[package]]
+name = "openstack-sdk-websso-host"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "form_urlencoded",
+ "http",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "open",
+ "reqwest",
+ "ring",
  "thiserror 2.0.19",
  "tokio",
  "tracing",
@@ -4575,6 +4586,7 @@ dependencies = [
  "http",
  "libfuzzer-sys",
  "openstack-sdk-auth-core",
+ "openstack-sdk-plugin-wasm",
  "openstack_sdk",
  "openstack_sdk_core",
  "serde_json",
@@ -4837,6 +4849,16 @@ checksum = "f8ed6a7761f76e3b9f92dfb0a60a6a6477c61024b775147ff0973a02653abaf2"
 dependencies = [
  "digest 0.10.7",
  "hmac",
+]
+
+[[package]]
+name = "pem"
+version = "3.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be"
+dependencies = [
+ "base64 0.22.1",
+ "serde_core",
 ]
 
 [[package]]
@@ -5508,6 +5530,19 @@ checksum = "22e18b0f0062d30d4230b2e85ff77fdfe4326feb054b9783a3460d8435c8ab91"
 dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "rcgen"
+version = "0.13.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "75e669e5202259b5314d1ea5397316ad400819437857b90861765f24c4cf80a2"
+dependencies = [
+ "pem 3.0.6",
+ "ring",
+ "rustls-pki-types",
+ "time",
+ "yasna",
 ]
 
 [[package]]
@@ -8407,6 +8442,7 @@ dependencies = [
  "lazy_static",
  "nom",
  "oid-registry",
+ "ring",
  "rusticata-macros",
  "thiserror 1.0.69",
  "time",
@@ -8444,6 +8480,15 @@ name = "yansi"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"
+
+[[package]]
+name = "yasna"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e17bb3549cc1321ae1296b9cdc2698e2b6cb1992adfa19a8c72e5b7a738f44cd"
+dependencies = [
+ "time",
+]
 
 [[package]]
 name = "yoke"

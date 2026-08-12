@@ -1,0 +1,33 @@
+[package]
+name = "openstack-sdk-websso-host"
+description = "Shared browser-based SSO callback host service for OpenStack SDK auth plugins"
+version = "0.1.0"
+keywords = ["api", "openstack"]
+categories = ["api-bindings"]
+authors = ["Artem Goncharov (gtema)"]
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+bytes.workspace = true
+form_urlencoded.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+hyper = { workspace = true, features = ["server", "http1"] }
+hyper-util = { workspace = true, features = ["tokio"] }
+open.workspace = true
+ring.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["net", "rt", "sync", "time", "signal"] }
+tracing.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+reqwest = { workspace = true, features = ["form"] }
+
+[lints]
+workspace = true

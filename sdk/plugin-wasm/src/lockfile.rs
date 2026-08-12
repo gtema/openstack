@@ -47,6 +47,32 @@ pub struct TrustInfo {
     pub allow_unsigned: bool,
 }
 
+/// The result of verifying a plugin's GitHub artifact attestation, recorded
+/// on successful install/update via `crate::provenance::verify_attestation`.
+///
+/// Presence of this field does not by itself mean the plugin is trusted:
+/// what mattered is whether verification *succeeded* at install/update time,
+/// which is what gated whether the install was allowed to proceed without
+/// `--allow-unsigned` in the first place.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ProvenanceRecord {
+    /// The `owner/repo` the attestation's signing identity was verified
+    /// against.
+    pub source_repo: String,
+    /// The GitHub Actions workflow ref (from the signing certificate's SAN),
+    /// if present.
+    pub workflow_ref: Option<String>,
+    /// The OIDC issuer the signing certificate was issued for (expected
+    /// `https://token.actions.githubusercontent.com`).
+    pub oidc_issuer: Option<String>,
+    /// A Rekor transparency-log entry index found in the attestation
+    /// bundle, if any. **Not** itself verified for inclusion (no Merkle
+    /// audit-path check is performed) — informational only.
+    pub rekor_log_index: Option<String>,
+    /// When this verification was performed.
+    pub verified_at: DateTime<Utc>,
+}
+
 /// A single installed `name@version` plugin record.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PluginEntry {
@@ -64,6 +90,16 @@ pub struct PluginEntry {
     pub installed_at: DateTime<Utc>,
     /// Trust metadata for this entry.
     pub trust: TrustInfo,
+    /// Whether this entry was installed with an explicit `@version` (`true`)
+    /// or resolved to "latest" (`false`). `osc plugin update --all` skips
+    /// pinned entries.
+    #[serde(default)]
+    pub pinned: bool,
+    /// The provenance verification result recorded at install/update time,
+    /// if any was performed (registry installs only; local `--file` installs
+    /// have no provenance source to check).
+    #[serde(default)]
+    pub provenance: Option<ProvenanceRecord>,
 }
 
 /// The full set of installed plugins and which version of each is active.
@@ -221,6 +257,8 @@ mod tests {
                     confirmed_by_user: true,
                     allow_unsigned: true,
                 },
+                pinned: false,
+                provenance: None,
             },
         );
         lf.active.insert("demo".into(), "1.0.0".into());

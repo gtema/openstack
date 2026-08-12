@@ -18,7 +18,7 @@
 //!
 //! ## Guest ABI (version 1)
 //!
-//! A conforming module exports:
+//! Every conforming module exports:
 //!
 //! - `plugin_abi_version(_: string) -> string` — must return the literal `"1"`.
 //! - `auth_supported_methods(_: string) -> string` — JSON array of auth method
@@ -27,14 +27,45 @@
 //! - `auth_requirements(hints: string) -> string` — `hints` is a JSON value or
 //!   the literal `null`; returns a JSON Schema object describing required
 //!   fields, in the same shape [`OpenStackAuthType::requirements`] expects.
+//!
+//! and then exactly one of the two ABI flavors below, detected at load time
+//! via `extism::Plugin::function_exists`:
+//!
+//! ### `auth` flavor
+//!
 //! - `auth(request: string) -> string` — `request` is a JSON object
 //!   `{"identity_url", "values", "scope", "hints"}`; returns either
 //!   `{"ok": {"token": "...", "auth_info": <AuthResponse|null>}}` or
 //!   `{"error": "human readable message"}`.
 //!
-//! Only `auth` may perform outbound HTTP, and only via the host-provided
-//! `identity_http_request` import — never directly. Every other export must be
-//! a pure computation over its input.
+//!   Only `auth` may perform outbound HTTP, and only via the host-provided
+//!   `identity_http_request` import — never directly.
+//!
+//! ### `sso` flavor
+//!
+//! For interactive, browser-based (WebSSO-style) plugins. Neither export may
+//! perform any I/O: the host owns the callback listener, the anti-CSRF
+//! `state` check, and the browser-opening step (via
+//! `openstack_sdk_websso_host`); the guest only ever sees already-validated
+//! strings in and returns strings out.
+//!
+//! - `sso_build_request(request: string) -> string` — `request` is
+//!   `{"identity_url", "callback_url", "values", "scope", "hints"}`, where
+//!   `callback_url` is the host-bound local callback URL (with the
+//!   anti-CSRF `state` token already embedded) the guest must have the
+//!   identity provider redirect back to. Returns
+//!   `{"url": "https://...", "redirect_host": "host:port"}`: `url` is the
+//!   page to open in the user's browser, and `redirect_host` is the
+//!   `host:port` authority the guest configured as the identity provider's
+//!   redirect target. The host verifies, before opening any browser, that
+//!   `url`'s scheme is `https` and that `redirect_host` exactly matches the
+//!   host-bound callback listener's own authority — a plugin that returns a
+//!   URL on a different (undeclared) redirect host is rejected outright,
+//!   with no override.
+//! - `sso_parse_callback(callback: string) -> string` — `callback` is
+//!   `{"params": {...}}`, the form fields from the already
+//!   state-validated callback POST; returns the same
+//!   `{"ok": ...} | {"error": ...}` shape as `auth`.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -42,6 +73,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use async_trait::async_trait;
+use dialoguer::Confirm;
 use extism::{Function, Manifest, Plugin, UserData, ValType, Wasm};
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
@@ -49,9 +81,21 @@ use serde::{Deserialize, Serialize};
 use openstack_sdk_auth_core::{
     Auth, AuthError, AuthResponse, AuthToken, AuthTokenScope, OpenStackAuthType,
 };
+use openstack_sdk_websso_host::{BrowserOpenPolicy, CallbackServer};
 
 use crate::error::WasmPluginError;
 use crate::host::{self, HostContextState};
+
+/// A guest module implements exactly one of these two ABI flavors,
+/// detected at load time. See the module docs for the exports each one
+/// requires.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum AbiFlavor {
+    /// Non-interactive: a single `auth` export handles the whole flow.
+    Auth,
+    /// Interactive/browser-based: `sso_build_request` + `sso_parse_callback`.
+    Sso,
+}
 
 /// WASM modules are given at most this much linear memory.
 const DEFAULT_MAX_MEMORY_PAGES: u32 = 256; // 256 * 64KiB = 16MiB
@@ -81,6 +125,26 @@ enum AuthResultMsg {
     },
 }
 
+#[derive(Serialize)]
+struct SsoBuildRequestMsg {
+    identity_url: String,
+    callback_url: String,
+    values: BTreeMap<String, String>,
+    scope: Option<serde_json::Value>,
+    hints: Option<serde_json::Value>,
+}
+
+#[derive(Deserialize)]
+struct SsoBuildResponseMsg {
+    url: String,
+    redirect_host: String,
+}
+
+#[derive(Serialize)]
+struct SsoCallbackMsg {
+    params: BTreeMap<String, String>,
+}
+
 /// A single loaded WASM auth plugin, wrapping an [`extism::Plugin`] instance.
 ///
 /// Cheaply cloneable: the underlying plugin and its per-call host state are
@@ -96,6 +160,7 @@ pub struct WasmAuthPlugin {
     host_ctx: UserData<HostContextState>,
     supported_methods: Vec<&'static str>,
     api_version: (u8, u8),
+    flavor: AbiFlavor,
 }
 
 impl std::fmt::Debug for WasmAuthPlugin {
@@ -105,6 +170,7 @@ impl std::fmt::Debug for WasmAuthPlugin {
             .field("source", &self.source)
             .field("supported_methods", &self.supported_methods)
             .field("api_version", &self.api_version)
+            .field("flavor", &self.flavor)
             .finish_non_exhaustive()
     }
 }
@@ -208,6 +274,26 @@ impl WasmAuthPlugin {
                 reason: format!("auth_api_version did not return a JSON [major, minor] pair: {e}"),
             })?;
 
+        let has_auth = plugin.function_exists("auth");
+        let has_sso = plugin.function_exists("sso_build_request")
+            && plugin.function_exists("sso_parse_callback");
+        let flavor = match (has_auth, has_sso) {
+            (true, false) => AbiFlavor::Auth,
+            (false, true) => AbiFlavor::Sso,
+            (true, true) => {
+                return Err(WasmPluginError::InvalidAbi {
+                    name,
+                    reason: "plugin exports both `auth` and the SSO entry points (`sso_build_request`/`sso_parse_callback`); a module must implement exactly one ABI flavor".into(),
+                });
+            }
+            (false, false) => {
+                return Err(WasmPluginError::InvalidAbi {
+                    name,
+                    reason: "plugin exports neither `auth` nor the SSO entry points (`sso_build_request`+`sso_parse_callback`)".into(),
+                });
+            }
+        };
+
         Ok(Self {
             name,
             source: path.to_path_buf(),
@@ -215,6 +301,7 @@ impl WasmAuthPlugin {
             host_ctx,
             supported_methods,
             api_version: (major, minor),
+            flavor,
         })
     }
 
@@ -278,6 +365,21 @@ impl OpenStackAuthType for WasmAuthPlugin {
     async fn auth(
         &self,
         _http_client: &reqwest::Client,
+        identity_url: &url::Url,
+        values: &std::collections::HashMap<String, SecretString>,
+        scope: Option<&AuthTokenScope>,
+        hints: Option<&serde_json::Value>,
+    ) -> Result<Auth, AuthError> {
+        match self.flavor {
+            AbiFlavor::Auth => self.auth_via_auth(identity_url, values, scope, hints).await,
+            AbiFlavor::Sso => self.auth_via_sso(identity_url, values, scope, hints).await,
+        }
+    }
+}
+
+impl WasmAuthPlugin {
+    async fn auth_via_auth(
+        &self,
         identity_url: &url::Url,
         values: &std::collections::HashMap<String, SecretString>,
         scope: Option<&AuthTokenScope>,
@@ -364,4 +466,223 @@ impl OpenStackAuthType for WasmAuthPlugin {
             }),
         }
     }
+
+    /// Run the `sso` ABI flavor: bind a host-owned callback listener, ask
+    /// the guest (a pure computation) to build the identity-provider URL to
+    /// open, validate that URL before ever opening a browser, wait for the
+    /// already state-validated callback, then hand the callback's fields
+    /// back to the guest (again pure) to turn into a token.
+    ///
+    /// The guest never sees a socket, a browser-opening capability, or the
+    /// raw (unvalidated) callback request — every step it participates in
+    /// is a JSON-in, JSON-out call over data the host has already checked.
+    async fn auth_via_sso(
+        &self,
+        identity_url: &url::Url,
+        values: &std::collections::HashMap<String, SecretString>,
+        scope: Option<&AuthTokenScope>,
+        hints: Option<&serde_json::Value>,
+    ) -> Result<Auth, AuthError> {
+        let callback_port = values
+            .get("callback_port")
+            .and_then(|v| v.expose_secret().parse::<u16>().ok());
+
+        let server = CallbackServer::bind(callback_port)
+            .await
+            .map_err(|source| {
+                AuthError::plugin(WasmPluginError::Host {
+                    name: self.name.clone(),
+                    source,
+                })
+            })?;
+
+        let request = SsoBuildRequestMsg {
+            identity_url: identity_url.to_string(),
+            callback_url: server.callback_url().to_string(),
+            values: values
+                .iter()
+                .map(|(k, v)| (k.clone(), v.expose_secret().to_string()))
+                .collect(),
+            scope: scope.map(serde_json::to_value).transpose()?,
+            hints: hints.cloned(),
+        };
+        let request_json = serde_json::to_string(&request)?;
+
+        let build_output = self
+            .call_guest("sso_build_request", request_json)
+            .await
+            .map_err(AuthError::plugin)?;
+
+        // The plugin's declared redirect target must be exactly the
+        // callback listener the host itself just bound. A mismatch means
+        // the plugin is trying to point the identity provider's redirect
+        // somewhere the host never bound a listener on — always rejected,
+        // no override.
+        let sso_url =
+            validate_sso_build_response(&self.name, &build_output, &server.redirect_host())
+                .map_err(AuthError::plugin)?;
+
+        let confirmation = Confirm::new()
+            .with_prompt(format!(
+                "A default browser is going to be opened at `{}`. Do you want to continue?",
+                sso_url.as_str()
+            ))
+            .interact()
+            .map_err(WasmPluginError::from)
+            .map_err(AuthError::plugin)?;
+        if !confirmation {
+            return Err(AuthError::plugin(WasmPluginError::InvalidRedirect {
+                name: self.name.clone(),
+                reason: "user declined to open the browser".into(),
+            }));
+        }
+
+        openstack_sdk_websso_host::open_browser(
+            &sso_url,
+            BrowserOpenPolicy {
+                require_https: true,
+            },
+        )
+        .map_err(|source| {
+            AuthError::plugin(WasmPluginError::Host {
+                name: self.name.clone(),
+                source,
+            })
+        })?;
+
+        let params = server
+            .wait_for_callback(Duration::from_secs(120))
+            .await
+            .map_err(|source| {
+                AuthError::plugin(WasmPluginError::Host {
+                    name: self.name.clone(),
+                    source,
+                })
+            })?;
+
+        let callback = SsoCallbackMsg {
+            params: params.into_iter().collect(),
+        };
+        let callback_json = serde_json::to_string(&callback)?;
+
+        let output = self
+            .call_guest("sso_parse_callback", callback_json)
+            .await
+            .map_err(AuthError::plugin)?;
+
+        let parsed: AuthResultMsg = serde_json::from_str(&output).map_err(|source| {
+            AuthError::plugin(WasmPluginError::MalformedAuthResponse {
+                name: self.name.clone(),
+                source,
+            })
+        })?;
+
+        match parsed {
+            AuthResultMsg::Ok { token, auth_info } => {
+                Ok(Auth::AuthToken(Box::new(AuthToken::new(token, *auth_info))))
+            }
+            AuthResultMsg::Error { error } => Err(AuthError::UnknownAuth {
+                code: 0,
+                message: Some(error),
+            }),
+        }
+    }
+
+    /// Call a pure (no host-function-using) guest export off the async
+    /// runtime, since a WASM call can run for up to the plugin's configured
+    /// timeout and must not stall the executor.
+    async fn call_guest(
+        &self,
+        function: &'static str,
+        input: String,
+    ) -> Result<String, WasmPluginError> {
+        let name = self.name.clone();
+        let inner = self.inner.clone();
+        tokio::task::spawn_blocking(move || -> Result<String, WasmPluginError> {
+            let mut plugin = inner.lock().map_err(|_| WasmPluginError::HostContext {
+                name: name.clone(),
+                function,
+                reason: "plugin lock poisoned".into(),
+            })?;
+            plugin
+                .call(function, input.as_str())
+                .map_err(|source| WasmPluginError::Call {
+                    name,
+                    function,
+                    source,
+                })
+        })
+        .await
+        .map_err(|source| WasmPluginError::Join {
+            name: self.name.clone(),
+            function,
+            source,
+        })?
+    }
+}
+
+/// Parse and validate a guest's `sso_build_request` response: the returned
+/// `url` must be well-formed and `https`, and the declared `redirect_host`
+/// must exactly match `expected_redirect_host` (the host-bound callback
+/// listener's own authority). This is the one guest-response deserialization
+/// path in this module with security-relevant validation logic beyond a
+/// plain type check, so it's kept as a standalone, panic-free function that
+/// both [`WasmAuthPlugin::auth_via_sso`] and the `fuzzing`-feature entry
+/// point below can exercise directly.
+fn validate_sso_build_response(
+    name: &str,
+    build_output: &str,
+    expected_redirect_host: &str,
+) -> Result<url::Url, WasmPluginError> {
+    let build: SsoBuildResponseMsg = serde_json::from_str(build_output).map_err(|source| {
+        WasmPluginError::MalformedAuthResponse {
+            name: name.to_string(),
+            source,
+        }
+    })?;
+
+    let sso_url =
+        url::Url::parse(&build.url).map_err(|source| WasmPluginError::InvalidRedirect {
+            name: name.to_string(),
+            reason: format!("`sso_build_request` returned an unparsable url: {source}"),
+        })?;
+    if sso_url.scheme() != "https" {
+        return Err(WasmPluginError::InvalidRedirect {
+            name: name.to_string(),
+            reason: format!(
+                "`sso_build_request` returned a non-https url (scheme was `{}`)",
+                sso_url.scheme()
+            ),
+        });
+    }
+    if build.redirect_host != expected_redirect_host {
+        return Err(WasmPluginError::RedirectHostMismatch {
+            name: name.to_string(),
+            declared: build.redirect_host,
+            expected: expected_redirect_host.to_string(),
+        });
+    }
+    Ok(sso_url)
+}
+
+/// Fuzz target entry point for the otherwise-private
+/// [`validate_sso_build_response`]. `expected_redirect_host` is itself fuzzed
+/// input rather than a fixed value, so the mismatch path is exercised too.
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public
+/// API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_validate_sso_build_response(build_output: &str, expected_redirect_host: &str) {
+    let _ = validate_sso_build_response("fuzz", build_output, expected_redirect_host);
+}
+
+/// Fuzz target entry point for parsing the otherwise-private `AuthResultMsg`
+/// every guest response (`auth`, `sso_parse_callback`) is deserialized
+/// through.
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public
+/// API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_parse_auth_result(output: &str) {
+    let _ = serde_json::from_str::<AuthResultMsg>(output);
 }

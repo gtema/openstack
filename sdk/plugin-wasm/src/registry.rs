@@ -42,8 +42,10 @@ use std::sync::{Arc, OnceLock, RwLock};
 use chrono::Utc;
 
 use crate::error::WasmPluginError;
-use crate::lockfile::{self, PluginEntry, PluginLockfile, TrustInfo};
+use crate::index::{self, IndexEntry, IndexVersion};
+use crate::lockfile::{self, PluginEntry, PluginLockfile, ProvenanceRecord, TrustInfo};
 use crate::plugin::WasmAuthPlugin;
+use crate::provenance;
 
 /// Version recorded for a plugin installed without an explicit version.
 pub const DEFAULT_VERSION: &str = "0.0.0";
@@ -235,6 +237,8 @@ pub fn install(
                 confirmed_by_user: true,
                 allow_unsigned: true,
             },
+            pinned: false,
+            provenance: None,
         },
     );
     lf.active.insert(name.clone(), version.clone());
@@ -349,4 +353,345 @@ pub fn verify(name: &str, version: Option<&str>) -> Result<Vec<PluginEntry>, Was
         verify_entry(entry)?;
     }
     Ok(entries)
+}
+
+/// The result of verifying a planned remote install's provenance.
+#[derive(Debug)]
+pub enum ProvenanceOutcome {
+    /// A GitHub artifact attestation was fetched and successfully verified
+    /// against the plugin's claimed `source_repo`.
+    Verified(ProvenanceRecord),
+    /// No attestation could be verified; `reason` explains why. Proceeding
+    /// with the install requires an explicit `--allow-unsigned`.
+    Unverified {
+        /// Human readable reason verification did not succeed.
+        reason: String,
+    },
+}
+
+/// A remote install/update that has been resolved against a registry index,
+/// downloaded, checksum-verified, and had provenance verification attempted
+/// — but not yet written to disk. Built by [`plan_remote_install`] (or,
+/// during [`update`], the equivalent internal step); the CLI shows this to
+/// the user for confirmation before calling [`finalize_install`], keeping
+/// this SDK crate itself free of interactive/UI concerns.
+pub struct PendingInstall {
+    /// Plugin name.
+    pub name: String,
+    /// Resolved version.
+    pub version: String,
+    /// The `owner/repo` this version claims to be published from.
+    pub source_repo: String,
+    /// Lowercase hex-encoded sha256 of the downloaded bytes (already
+    /// verified against the registry index's declared value).
+    pub sha256: String,
+    /// The downloaded `.wasm` bytes, not yet written to disk.
+    bytes: Vec<u8>,
+    /// Provenance verification result.
+    pub provenance: ProvenanceOutcome,
+}
+
+async fn plan_from_resolved(
+    entry: &IndexEntry,
+    iv: &IndexVersion,
+    client: &reqwest::Client,
+) -> Result<PendingInstall, WasmPluginError> {
+    let bytes = index::download(&entry.name, iv, client).await?;
+    let sha256 = iv.sha256.to_lowercase();
+    let provenance = match provenance::verify_for_source(&iv.source_repo, &sha256, client).await {
+        Ok(record) => ProvenanceOutcome::Verified(record),
+        Err(e) => ProvenanceOutcome::Unverified {
+            reason: e.to_string(),
+        },
+    };
+    Ok(PendingInstall {
+        name: entry.name.clone(),
+        version: iv.version.clone(),
+        source_repo: iv.source_repo.clone(),
+        sha256,
+        bytes,
+        provenance,
+    })
+}
+
+/// Fetch the registry index at `registry_url`, resolve `name`[`@version`],
+/// download and checksum-verify the artifact, and attempt provenance
+/// verification against its claimed `source_repo` — all before anything is
+/// written to disk.
+pub async fn plan_remote_install(
+    name: &str,
+    version: Option<&str>,
+    registry_url: &str,
+    client: &reqwest::Client,
+) -> Result<PendingInstall, WasmPluginError> {
+    let idx = index::fetch_index(registry_url, client).await?;
+    let entry =
+        idx.plugins
+            .iter()
+            .find(|e| e.name == name)
+            .ok_or_else(|| WasmPluginError::NotInIndex {
+                name: name.to_string(),
+                version: version.map(|v| v.to_string()),
+            })?;
+    let iv = index::resolve_version(entry, version)?;
+    plan_from_resolved(entry, iv, client).await
+}
+
+/// Write a [`PendingInstall`] to disk and record it in the lockfile, making
+/// it the active version for its name.
+///
+/// Refuses with [`WasmPluginError::Untrusted`] if provenance verification
+/// did not succeed and `allow_unsigned` is `false` — nothing is written to
+/// disk in that case. Refuses with [`WasmPluginError::AlreadyInstalled`] if
+/// this exact `name@version` is already installed and `force` is `false`
+/// (mirroring [`install`]'s same guard for local files). `pinned` should be
+/// `true` when the user requested an explicit `@version` (so `update --all`
+/// skips it later), `false` when they asked for "latest".
+pub fn finalize_install(
+    pending: PendingInstall,
+    allow_unsigned: bool,
+    pinned: bool,
+    force: bool,
+) -> Result<Arc<WasmAuthPlugin>, WasmPluginError> {
+    let key = lockfile::entry_key(&pending.name, &pending.version);
+    if !force && PluginLockfile::load()?.plugins.contains_key(&key) {
+        return Err(WasmPluginError::AlreadyInstalled(format!(
+            "{}@{}",
+            pending.name, pending.version
+        )));
+    }
+
+    let provenance_record = match &pending.provenance {
+        ProvenanceOutcome::Verified(record) => Some(record.clone()),
+        ProvenanceOutcome::Unverified { reason } => {
+            if !allow_unsigned {
+                return Err(WasmPluginError::Untrusted {
+                    name: pending.name.clone(),
+                    version: pending.version.clone(),
+                    reason: reason.clone(),
+                });
+            }
+            None
+        }
+    };
+
+    let dest_dir = version_dir(&pending.name, &pending.version)?;
+    fs::create_dir_all(&dest_dir).map_err(|source| WasmPluginError::Io {
+        path: dest_dir.clone(),
+        source,
+    })?;
+    let dest = dest_dir.join(format!("{}.wasm", pending.name));
+    // Staged in a `.tmp` subdirectory, not as a `.wasm.tmp` sibling file:
+    // `WasmAuthPlugin::name()` is the loaded file's `file_stem()`, which only
+    // strips the *last* extension, so a `<name>.wasm.tmp` file would probe as
+    // named `<name>.wasm` and always fail the check below. Keeping the tmp
+    // file's own name exactly `<name>.wasm` (just in a scratch subdirectory)
+    // keeps that check meaningful while still renaming atomically into place
+    // afterwards (same filesystem, since it's a subdirectory of `dest_dir`).
+    let tmp_dir = dest_dir.join(".tmp");
+    fs::create_dir_all(&tmp_dir).map_err(|source| WasmPluginError::Io {
+        path: tmp_dir.clone(),
+        source,
+    })?;
+    let tmp = tmp_dir.join(format!("{}.wasm", pending.name));
+    fs::write(&tmp, &pending.bytes).map_err(|source| WasmPluginError::Io {
+        path: tmp.clone(),
+        source,
+    })?;
+
+    // Validate before finalizing the file into place, mirroring `install`'s
+    // "never leave an unloadable module recorded as installed" guarantee.
+    let probe = WasmAuthPlugin::load(&tmp).inspect_err(|_| {
+        let _ = fs::remove_file(&tmp);
+        let _ = fs::remove_dir(&tmp_dir);
+    })?;
+    if probe.name() != pending.name {
+        let _ = fs::remove_file(&tmp);
+        let _ = fs::remove_dir(&tmp_dir);
+        return Err(WasmPluginError::InvalidAbi {
+            name: pending.name.clone(),
+            reason: format!(
+                "registry entry name `{}` does not match the plugin's own name `{}`",
+                pending.name,
+                probe.name()
+            ),
+        });
+    }
+    fs::rename(&tmp, &dest).map_err(|source| WasmPluginError::Io {
+        path: dest.clone(),
+        source,
+    })?;
+    let _ = fs::remove_dir(&tmp_dir);
+    let sha256 = lockfile::sha256_hex(&dest)?;
+
+    let mut lf = PluginLockfile::load()?;
+    lf.plugins.insert(
+        lockfile::entry_key(&pending.name, &pending.version),
+        PluginEntry {
+            name: pending.name.clone(),
+            version: pending.version.clone(),
+            sha256,
+            source: PathBuf::from(format!("registry:{}", pending.source_repo)),
+            installed_at: Utc::now(),
+            trust: TrustInfo {
+                confirmed_by_user: true,
+                allow_unsigned,
+            },
+            pinned,
+            provenance: provenance_record,
+        },
+    );
+    lf.active
+        .insert(pending.name.clone(), pending.version.clone());
+    lf.save()?;
+
+    let mut reg = lock_write()?;
+    load_active(&mut reg, &lf, &pending.name)?;
+    reg.by_name
+        .get(&pending.name)
+        .cloned()
+        .ok_or_else(|| WasmPluginError::NotInstalled {
+            name: pending.name.clone(),
+            version: Some(pending.version.clone()),
+        })
+}
+
+/// The outcome of one plugin's update attempt.
+#[derive(Debug)]
+pub enum UpdateOutcome {
+    /// Already at the latest version available in the registry index.
+    UpToDate {
+        /// Plugin name.
+        name: String,
+        /// The version already installed and active.
+        version: String,
+    },
+    /// Updated to a new version.
+    Updated {
+        /// Plugin name.
+        name: String,
+        /// The version that was previously active.
+        from: String,
+        /// The newly active version.
+        to: String,
+    },
+    /// The user declined the confirmation for this update; left untouched.
+    Declined {
+        /// Plugin name.
+        name: String,
+        /// The version that remains active.
+        version: String,
+    },
+    /// Skipped because the active version is pinned (explicit `@version`
+    /// install): `update --all` never changes a pinned plugin.
+    SkippedPinned {
+        /// Plugin name.
+        name: String,
+        /// The pinned, still-active version.
+        version: String,
+    },
+    /// The plugin is installed locally but no longer listed in the registry
+    /// index.
+    NotInIndex {
+        /// Plugin name.
+        name: String,
+    },
+}
+
+/// Update installed, non-pinned plugin(s) to the latest version available in
+/// the registry index at `registry_url`.
+///
+/// If `name` is `Some`, only that plugin is considered; if it's pinned this
+/// returns an error (pinned means the user explicitly asked to stay on that
+/// version — use `install <name>@<version>` to change it deliberately). If
+/// `name` is `None`, `all` must be `true`, and every installed plugin is
+/// considered, with pinned ones reported as [`UpdateOutcome::SkippedPinned`]
+/// rather than erroring.
+///
+/// For each candidate whose latest index version differs from what's
+/// active, `confirm` is called with the planned install so the caller can
+/// prompt the user; declining leaves that plugin untouched. Provenance is
+/// re-verified fresh for every candidate on every call — no previously
+/// recorded [`crate::lockfile::ProvenanceRecord`] is ever reused.
+pub async fn update(
+    name: Option<&str>,
+    all: bool,
+    registry_url: &str,
+    client: &reqwest::Client,
+    allow_unsigned: bool,
+    mut confirm: impl FnMut(&PendingInstall) -> bool,
+) -> Result<Vec<UpdateOutcome>, WasmPluginError> {
+    let lf = PluginLockfile::load()?;
+
+    let candidates: Vec<PluginEntry> = match (name, all) {
+        (Some(n), _) => {
+            let entry = lf
+                .active_entry(n)
+                .ok_or_else(|| WasmPluginError::NotInstalled {
+                    name: n.to_string(),
+                    version: None,
+                })?;
+            if entry.pinned {
+                return Err(WasmPluginError::Registry(format!(
+                    "{n}@{} is pinned to an explicit version; run `osc plugin install {n}@<version>` to change it",
+                    entry.version
+                )));
+            }
+            vec![entry.clone()]
+        }
+        (None, true) => lf
+            .active
+            .keys()
+            .filter_map(|n| lf.active_entry(n).cloned())
+            .collect(),
+        (None, false) => {
+            return Err(WasmPluginError::Registry(
+                "update requires either a plugin name or --all".into(),
+            ));
+        }
+    };
+
+    let idx = index::fetch_index(registry_url, client).await?;
+
+    let mut outcomes = Vec::new();
+    for entry in candidates {
+        if entry.pinned {
+            outcomes.push(UpdateOutcome::SkippedPinned {
+                name: entry.name,
+                version: entry.version,
+            });
+            continue;
+        }
+        let Some(idx_entry) = idx.plugins.iter().find(|e| e.name == entry.name) else {
+            outcomes.push(UpdateOutcome::NotInIndex { name: entry.name });
+            continue;
+        };
+        let latest = index::resolve_version(idx_entry, None)?;
+        if latest.version == entry.version {
+            outcomes.push(UpdateOutcome::UpToDate {
+                name: entry.name,
+                version: entry.version,
+            });
+            continue;
+        }
+
+        let pending = plan_from_resolved(idx_entry, latest, client).await?;
+        if !confirm(&pending) {
+            outcomes.push(UpdateOutcome::Declined {
+                name: entry.name,
+                version: entry.version,
+            });
+            continue;
+        }
+        let from = entry.version;
+        let to = pending.version.clone();
+        let updated_name = pending.name.clone();
+        finalize_install(pending, allow_unsigned, false, true)?;
+        outcomes.push(UpdateOutcome::Updated {
+            name: updated_name,
+            from,
+            to,
+        });
+    }
+    Ok(outcomes)
 }

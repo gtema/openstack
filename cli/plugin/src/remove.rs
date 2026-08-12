@@ -66,6 +66,7 @@ impl RemoveCommand {
                     source: entry.source.display().to_string(),
                     sha256: entry.sha256.clone(),
                     installed_at: entry.installed_at.to_string(),
+                    allow_unsigned: entry.trust.allow_unsigned,
                 })
             })
             .collect::<Result<_, _>>()?;

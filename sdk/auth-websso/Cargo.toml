@@ -11,35 +11,16 @@ repository.workspace = true
 
 [dependencies]
 async-trait.workspace = true
-bytes.workspace = true
 dialoguer.workspace = true
-form_urlencoded.workspace = true
-futures.workspace = true
-futures-util.workspace = true
-http.workspace = true
-http-body-util.workspace = true
-hyper = { workspace = true, features = ["full"] }
-hyper-util = { workspace = true, features = ["full"] }
 inventory.workspace = true
-open.workspace = true
 openstack-sdk-auth-core.workspace = true
+openstack-sdk-websso-host.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-serde_urlencoded.workspace = true
 reqwest = { workspace = true, features = ["form"] }
 thiserror.workspace = true
-tokio = { workspace = true, features = ["signal"] }
-tokio-util.workspace = true
-tracing.workspace = true
 url.workspace = true
-
-[dev-dependencies]
-httpmock.workspace = true
-reserve-port.workspace = true
-tempfile.workspace = true
-tracing-test.workspace = true
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [lints]
 workspace = true
