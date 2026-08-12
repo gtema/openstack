@@ -19,6 +19,7 @@ use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
+use serde_json::Value;
 
 pub(crate) struct Generated;
 
@@ -52,5 +53,52 @@ impl GeneratedResourceBehaviour for Generated {
         } else {
             None
         }
+    }
+    fn editor_template(
+        action: &Action,
+        filter: &Self::Filter,
+        selected: Option<&Value>,
+    ) -> Option<(String, ApiRequest)> {
+        let _ = selected;
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Create,
+        } = action
+            && *key == Self::view_key()
+        {
+            let mut body = cloud_types::NetworkSecurityGroupRuleCreate::EDITOR_TEMPLATE.to_string();
+            if let Some(val) = &filter.security_group_id {
+                body = body.replacen(
+                    "# security_group_id:",
+                    &format!("security_group_id: {}", val),
+                    1,
+                );
+            }
+            let template = format!("# Create a security group rules.\n{}", body);
+            let request = ApiRequest::from(
+                cloud_types::NetworkSecurityGroupRuleApiRequest::Create(Box::default()),
+            );
+            return Some((template, request));
+        }
+        None
+    }
+    fn deserialize_edit_result(data: &Value, original_action: &Action) -> Option<ApiRequest> {
+        let _ = original_action;
+        let create: cloud_types::NetworkSecurityGroupRuleCreate =
+            serde_json::from_value(data.clone()).ok()?;
+        Some(ApiRequest::from(
+            cloud_types::NetworkSecurityGroupRuleApiRequest::Create(Box::new(create)),
+        ))
+    }
+    fn editor_schema(action: &Action) -> Option<&'static str> {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Create,
+        } = action
+            && *key == Self::view_key()
+        {
+            return Some(cloud_types::NetworkSecurityGroupRuleCreate::BODY_SCHEMA);
+        }
+        None
     }
 }

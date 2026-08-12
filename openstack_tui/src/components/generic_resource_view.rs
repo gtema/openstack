@@ -21,6 +21,7 @@ use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::debug;
 
 use super::resource_behaviour::ResourceBehaviour;
 
@@ -201,11 +202,19 @@ where
 
         // --- ApiResponseData (singular): delegate mutation response handling ---
         if let Action::ApiResponseData { request, data } = &action {
-            if let Some(mutations) = B::handle_mutation_response(request, data) {
+            let mutations = B::handle_mutation_response(request, data);
+            debug!(
+                mode = ?B::mode(),
+                ?request,
+                mutations = ?mutations,
+                "ApiResponseData received"
+            );
+            if let Some(mutations) = mutations {
                 for mutation in mutations {
                     match mutation {
                         super::resource_behaviour::Mutation::DeleteRow(id) => {
-                            self.base.delete_item_row_by_res_id_mut(&id).ok();
+                            let found = self.base.delete_item_row_by_res_id_mut(&id).ok();
+                            debug!(mode = ?B::mode(), %id, ?found, "DeleteRow mutation applied");
                         }
                         super::resource_behaviour::Mutation::UpdateRow(_id, row_data) => {
                             self.base.update_row_data(row_data)?;
@@ -247,8 +256,9 @@ where
             return Ok(Some(Action::PerformApiRequest(api_request)));
         }
 
-        // --- Editor create: open editor with YAML template ---
-        if let Some((template, api_request)) = B::editor_template(&action, self.base.get_filters())
+        // --- Editor create/update: open editor with YAML template ---
+        if let Some((template, api_request)) =
+            B::editor_template(&action, self.base.get_filters(), self.base.get_selected())
         {
             return Ok(Some(Action::Edit {
                 template,
@@ -260,10 +270,10 @@ where
         // --- Editor result: process YAML back into confirm request ---
         if let Action::EditResult {
             result,
-            original_action: _,
+            original_action,
         } = &action
         {
-            if let Some(api_request) = B::deserialize_edit_result(result) {
+            if let Some(api_request) = B::deserialize_edit_result(result, original_action) {
                 self.base.set_loading(true);
                 return Ok(Some(Action::Confirm(api_request)));
             }
@@ -272,6 +282,7 @@ where
 
         // --- Action-to-confirm: actions wrapped in Confirm for confirmation dialog ---
         if let Some(api_request) = B::confirm_request(&action, self.base.get_selected()) {
+            self.base.set_loading(true);
             return Ok(Some(Action::Confirm(api_request)));
         }
 

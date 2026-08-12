@@ -264,6 +264,24 @@ mode_keybindings:
       action:
         ShowResource: "network.security_group_rule"
       description: Rules
+    "ctrl-n":
+      action:
+        ResourceOp:
+          key: "network.security_group"
+          op: Create
+      description: Create
+    "ctrl-e":
+      action:
+        ResourceOp:
+          key: "network.security_group"
+          op: Update
+      description: Edit
+    "ctrl-d":
+      action:
+        ResourceOp:
+          key: "network.security_group"
+          op: Delete
+      description: Delete
   "Resource(network.security_group_rule)":
     "y":
       action: DescribeApiResponse

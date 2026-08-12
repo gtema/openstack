@@ -40,17 +40,24 @@ pub trait GeneratedResourceBehaviour {
         None
     }
 
-    /// Return a YAML editor template for a create action. Mirrors
+    /// Return a YAML editor template for a create/update action. Mirrors
     /// `ResourceBehaviour::editor_template`; resources that need to prefill a field from the
-    /// filter should call this, then post-process the returned template string, rather than
-    /// duplicating the field list/comments here.
-    fn editor_template(_action: &Action, _filter: &Self::Filter) -> Option<(String, ApiRequest)> {
+    /// filter (create) or the selected row (update) should call this, then post-process the
+    /// returned template string, rather than duplicating the field list/comments here.
+    fn editor_template(
+        _action: &Action,
+        _filter: &Self::Filter,
+        _selected: Option<&Value>,
+    ) -> Option<(String, ApiRequest)> {
         None
     }
 
     /// Deserialize the edited YAML back into an ApiRequest. Mirrors
-    /// `ResourceBehaviour::deserialize_edit_result`.
-    fn deserialize_edit_result(_data: &Value) -> Option<ApiRequest> {
+    /// `ResourceBehaviour::deserialize_edit_result`. `original_action` is the
+    /// `Action::PerformApiRequest` `editor_template` returned alongside the template --
+    /// resources with both a create and an update flow need it to tell which one this
+    /// edit session was actually for (see `prefill_from_selected`'s doc comment).
+    fn deserialize_edit_result(_data: &Value, _original_action: &Action) -> Option<ApiRequest> {
         None
     }
 
@@ -160,13 +167,20 @@ pub trait ResourceBehaviour {
         Vec::new()
     }
 
-    /// Return a YAML editor template for a create action. Returns (template_string, api_request_to_send_on_confirm).
-    fn editor_template(_action: &Action, _filter: &Self::Filter) -> Option<(String, ApiRequest)> {
+    /// Return a YAML editor template for a create/update action. Returns (template_string,
+    /// api_request_to_send_on_confirm). `selected` is the currently selected row, used to
+    /// prefill an update's template with its live values; `None` for create.
+    fn editor_template(
+        _action: &Action,
+        _filter: &Self::Filter,
+        _selected: Option<&Value>,
+    ) -> Option<(String, ApiRequest)> {
         None
     }
 
-    /// Deserialize the edited YAML back into an ApiRequest.
-    fn deserialize_edit_result(_data: &Value) -> Option<ApiRequest> {
+    /// Deserialize the edited YAML back into an ApiRequest. `original_action` is the
+    /// `Action::PerformApiRequest` `editor_template` returned alongside the template.
+    fn deserialize_edit_result(_data: &Value, _original_action: &Action) -> Option<ApiRequest> {
         None
     }
 
@@ -224,7 +238,37 @@ pub trait ResourceBehaviour {
     }
 }
 
+/// Given an `EDITOR_TEMPLATE` string with commented placeholder lines like `  # field_name:`
+/// (as emitted by codegen for a `set`/update operation's body), fill in any field present in
+/// `selected` by uncommenting and inserting its value; fields absent from `selected`, or not
+/// declared in the template at all (e.g. `id`, which is a path param excluded from the
+/// editable body), are left untouched. Used by generated `editor_template` Update branches to
+/// prefill an edit-in-place session from the row currently selected in the table -- the
+/// update struct's own field list (not `selected`'s, a strict superset that also carries
+/// non-settable fields) drives what can appear.
+pub(crate) fn prefill_from_selected(template: &str, selected: &Value) -> String {
+    let mut body = template.to_string();
+    for line in template.lines() {
+        let trimmed = line.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("# ")
+            && let Some(field) = rest.strip_suffix(':')
+            && !field.is_empty()
+            && field.chars().all(|c| c.is_alphanumeric() || c == '_')
+            && let Some(val) = selected.get(field)
+            && !val.is_null()
+        {
+            let value_str = match val {
+                Value::String(s) => s.clone(),
+                other => other.to_string(),
+            };
+            body = body.replacen(&format!("# {field}:"), &format!("{field}: {value_str}"), 1);
+        }
+    }
+    body
+}
+
 /// Result of handling a mutation API response.
+#[derive(Debug)]
 pub enum Mutation {
     /// Find and delete the row matching this identifier.
     DeleteRow(String),
@@ -310,5 +354,37 @@ mod tests {
     #[test]
     fn is_filter_ready_default_is_always_ready() {
         assert!(DefaultBehaviour::is_filter_ready(&Filter));
+    }
+
+    #[test]
+    fn prefill_from_selected_fills_present_fields() {
+        let template = "security_group:\n  # description:\n  # name:\n  # stateful:\n";
+        let selected = serde_json::json!({
+            "id": "sg-1",
+            "name": "web",
+            "description": "web servers",
+        });
+        let filled = prefill_from_selected(template, &selected);
+        assert!(filled.contains("name: web"));
+        assert!(filled.contains("description: web servers"));
+        // stateful absent from `selected` -- stays commented.
+        assert!(filled.contains("# stateful:"));
+        // `id` is not a template field at all -- must never be injected.
+        assert!(!filled.contains("id: sg-1"));
+    }
+
+    #[test]
+    fn prefill_from_selected_leaves_null_fields_commented() {
+        let template = "  # description:\n";
+        let selected = serde_json::json!({"description": null});
+        let filled = prefill_from_selected(template, &selected);
+        assert!(filled.contains("# description:"));
+    }
+
+    #[test]
+    fn prefill_from_selected_noop_without_matches() {
+        let template = "  # name:\n";
+        let selected = serde_json::json!({"other": "x"});
+        assert_eq!(prefill_from_selected(template, &selected), template);
     }
 }

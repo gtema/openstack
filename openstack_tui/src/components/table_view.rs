@@ -647,7 +647,9 @@ where
         });
         if let Some(idx) = item_idx {
             self.raw_items.remove(idx);
+            self.sync_table_data()?;
         }
+        self.set_loading(false);
         Ok(item_idx)
     }
 
@@ -687,5 +689,30 @@ where
         self.sync_table_data()?;
         self.set_loading(false);
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn delete_item_row_by_res_id_mut_syncs_table_rows() {
+        let mut base: TableViewComponentBase<'_, String> = TableViewComponentBase::new("test_view");
+        base.set_data(vec![
+            json!({"id": "a", "name": "foo"}),
+            json!({"id": "b", "name": "bar"}),
+        ])
+        .unwrap();
+        assert_eq!(base.table_rows.len(), 2);
+
+        base.delete_item_row_by_res_id_mut(&"a".to_string())
+            .unwrap();
+
+        assert_eq!(base.raw_items.len(), 1);
+        // Regression: table_rows is the cache render_table actually draws from --
+        // deleting must resync it, not just raw_items, or the row stays visible.
+        assert_eq!(base.table_rows.len(), 1);
     }
 }
