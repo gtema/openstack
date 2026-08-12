@@ -24,6 +24,7 @@ default-members = [
   "sdk/auth-receipt",
   "sdk/auth-totp",
   "sdk/auth-websso",
+  "sdk/websso-host",
   "sdk/core",
   "sdk/block-storage",
   "sdk/container-infrastructure-management",
@@ -94,18 +95,22 @@ openstack-cli-placement = { path="cli/placement/", version = "^0.13" }
 openstack-cli-plugin = { path="cli/plugin/", version = "0.13.7" }
 openstack-sdk-auth-core = { version = "0.22.6", path = "sdk/auth-core" }
 openstack-sdk-plugin-wasm = { version = "0.1.0", path = "sdk/plugin-wasm" }
+openstack-sdk-websso-host = { version = "0.1.0", path = "sdk/websso-host" }
 openstack_sdk_core = { version = "0.22.7", path = "sdk/core" }
 openstack_sdk = { version = "0.22.7", path = "openstack_sdk" }
 openstack_types = { version = "0.22.7", path = "openstack_types" }
 openstack-types-core = { version = "0.22", path = "types/core" }
 pem = { version = "^4.0" }
 regex = { version = "^1.13" }
+rcgen = { version = "^0.13" }
+ring = { version = "^0.17" }
 rsa = { version = "^0.9", features = ["getrandom", "pkcs5"] }
 ssh-key = { version = "^0.6", features = ["rsa", "encryption"] }
 reqwest = { version = "^0.13", default-features = false }
 reserve-port = "^2.5"
 schemars = { version = "^1.2" }
 secrecy = { version = "^0.10", features = ["serde"] }
+semver = { version = "^1.0" }
 serde = { version="^1.0", features=["derive"] }
 serde_json = "^1.0"
 serde_bytes = "^0.11"
@@ -125,6 +130,7 @@ url = { version = "^2.5", features = ["serde"] }
 webauthn-authenticator-rs = { version = "^0.5", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "^0.5" }
 uuid = { version = "^1.24" }
+x509-parser = { version = "^0.16" }
 zeroize = { version = "^1.9" }
 
 [profile.dev]

@@ -13,12 +13,17 @@ repository.workspace = true
 
 [dependencies]
 async-trait.workspace = true
+base64.workspace = true
 chrono.workspace = true
+dialoguer.workspace = true
 dirs.workspace = true
 extism.workspace = true
 openstack-sdk-auth-core.workspace = true
-reqwest = { workspace = true, features = ["rustls", "blocking"] }
+openstack-sdk-websso-host.workspace = true
+reqwest = { workspace = true, features = ["rustls", "blocking", "json"] }
+ring.workspace = true
 secrecy.workspace = true
+semver.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
@@ -26,11 +31,17 @@ thiserror.workspace = true
 tokio = { workspace = true, features = ["rt", "sync"] }
 tracing.workspace = true
 url.workspace = true
+x509-parser = { workspace = true, features = ["verify"] }
 
 [dev-dependencies]
 httpmock.workspace = true
+rcgen.workspace = true
+reqwest = { workspace = true, features = ["form"] }
 tempfile.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[features]
+fuzzing = []
 
 [lints]
 workspace = true

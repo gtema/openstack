@@ -20,10 +20,19 @@
 
 pub mod error;
 pub(crate) mod host;
+pub mod index;
 pub mod lockfile;
 pub mod plugin;
+pub mod provenance;
 pub mod registry;
 
 pub use error::WasmPluginError;
 pub use lockfile::{PluginEntry, PluginLockfile, TrustInfo};
 pub use plugin::WasmAuthPlugin;
+
+/// Fuzz target entry point for the otherwise-private [`host`] module.
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public
+/// API.
+#[cfg(feature = "fuzzing")]
+pub use host::fuzz_identity_http_request_parsing;

@@ -11,6 +11,7 @@ repository.workspace = true
 
 [dependencies]
 clap.workspace = true
+dialoguer.workspace = true
 eyre.workspace = true
 openstack-cli-core.workspace = true
 openstack-sdk-plugin-wasm.workspace = true

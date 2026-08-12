@@ -18,7 +18,7 @@ use clap::Parser;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use openstack_cli_core::output::OutputProcessor;
+use openstack_cli_core::output::{OutputFor, OutputProcessor};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 use structable::{StructTable, StructTableOptions};
 
@@ -50,6 +50,11 @@ pub struct PluginListEntry {
     /// When this version was installed.
     #[structable()]
     pub installed_at: String,
+
+    /// Whether this entry was trusted without provenance verification
+    /// (`--allow-unsigned` at install/update time).
+    #[structable()]
+    pub allow_unsigned: bool,
 }
 
 /// List installed wasm auth plugins.
@@ -66,6 +71,7 @@ impl ListCommand {
         let lockfile =
             openstack_sdk_plugin_wasm::registry::installed().map_err(eyre::Report::from)?;
 
+        let mut unsigned: Vec<String> = Vec::new();
         let data: Vec<serde_json::Value> = lockfile
             .plugins
             .values()
@@ -75,6 +81,9 @@ impl ListCommand {
                     .get(&entry.name)
                     .map(|v| v == &entry.version)
                     .unwrap_or(false);
+                if entry.trust.allow_unsigned {
+                    unsigned.push(format!("{}@{}", entry.name, entry.version));
+                }
                 serde_json::to_value(PluginListEntry {
                     name: entry.name.clone(),
                     version: entry.version.clone(),
@@ -82,10 +91,21 @@ impl ListCommand {
                     source: entry.source.display().to_string(),
                     sha256: entry.sha256.clone(),
                     installed_at: entry.installed_at.to_string(),
+                    allow_unsigned: entry.trust.allow_unsigned,
                 })
             })
             .collect::<Result<_, _>>()?;
 
-        op.output_list::<PluginListEntry>(data)
+        op.output_list::<PluginListEntry>(data)?;
+
+        if matches!(op.target, OutputFor::Human) && !unsigned.is_empty() {
+            println!(
+                "\n⚠ {} installed plugin{} running without provenance verification (allow_unsigned): {}",
+                unsigned.len(),
+                if unsigned.len() == 1 { " is" } else { "s are" },
+                unsigned.join(", ")
+            );
+        }
+        Ok(())
     }
 }

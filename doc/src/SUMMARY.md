@@ -11,6 +11,9 @@
 # Components
 
 - [Rust SDK](./sdk.md)
+- [WASM Auth Plugins](./plugins.md)
+  - [Plugin author guide](./plugins/author-guide.md)
+  - [Registry governance](./plugins/registry-governance.md)
 
 ---
 

@@ -104,7 +104,7 @@ jobs:
 
       - name: Run tests
         run: |
-          for target in fuzz_openstack_sdk_config fuzz_openstack_sdk_config_yaml fuzz_link_header fuzz_next_page_from_body fuzz_expand_link fuzz_discovery_endpoints fuzz_api_version fuzz_api_error_from_openstack fuzz_auth_error_response fuzz_build_request_url fuzz_state_cache; do
+          for target in fuzz_openstack_sdk_config fuzz_openstack_sdk_config_yaml fuzz_link_header fuzz_next_page_from_body fuzz_expand_link fuzz_discovery_endpoints fuzz_api_version fuzz_api_error_from_openstack fuzz_auth_error_response fuzz_build_request_url fuzz_state_cache fuzz_wasm_plugin_identity_http_request fuzz_wasm_plugin_sso_build_response fuzz_wasm_plugin_auth_result; do
             cargo +nightly fuzz run "$target" --features=fuzzing -- -max_total_time=60
           done
 

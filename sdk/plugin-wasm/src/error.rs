@@ -157,4 +157,131 @@ pub enum WasmPluginError {
         /// versions of `name`".
         version: Option<String>,
     },
+
+    /// The registry index could not be fetched.
+    #[error("failed to fetch plugin registry index from {url}: {source}")]
+    RegistryFetch {
+        /// Registry index URL.
+        url: String,
+        /// The underlying HTTP error.
+        #[source]
+        source: reqwest::Error,
+    },
+
+    /// The registry index was fetched but could not be parsed, or declared
+    /// an unsupported `schema_version`.
+    #[error("malformed plugin registry index at {url}: {reason}")]
+    RegistryFormat {
+        /// Registry index URL.
+        url: String,
+        /// Human readable reason.
+        reason: String,
+    },
+
+    /// A downloaded plugin's content does not match the sha256 declared for
+    /// it in the registry index.
+    #[error(
+        "downloaded plugin {name}@{version} failed checksum verification: expected sha256 {expected}, got {actual}"
+    )]
+    ChecksumMismatch {
+        /// Plugin name.
+        name: String,
+        /// Plugin version.
+        version: String,
+        /// The sha256 declared in the registry index.
+        expected: String,
+        /// The sha256 computed from the downloaded bytes.
+        actual: String,
+    },
+
+    /// The requested `name`/`version` is not present in the registry index.
+    #[error("no plugin matches {name}{} in the registry index", version.as_ref().map(|v| format!("@{v}")).unwrap_or_default())]
+    NotInIndex {
+        /// Plugin name.
+        name: String,
+        /// Specific version requested, if any.
+        version: Option<String>,
+    },
+
+    /// Install/update was refused because the plugin's provenance could not
+    /// be verified and `--allow-unsigned` was not given.
+    #[error(
+        "refusing to install {name}@{version} without provenance verification: {reason} (pass --allow-unsigned to override)"
+    )]
+    Untrusted {
+        /// Plugin name.
+        name: String,
+        /// Plugin version.
+        version: String,
+        /// Human readable reason verification did not succeed.
+        reason: String,
+    },
+
+    /// The GitHub attestations API could not be reached or returned an
+    /// unexpected response.
+    #[error("failed to fetch attestations for {owner}/{repo}: {source}")]
+    AttestationFetch {
+        /// Repository owner.
+        owner: String,
+        /// Repository name.
+        repo: String,
+        /// The underlying HTTP error.
+        #[source]
+        source: reqwest::Error,
+    },
+
+    /// A fetched attestation bundle failed cryptographic or identity
+    /// verification.
+    #[error("attestation verification failed: {reason}")]
+    AttestationVerification {
+        /// Human readable reason.
+        reason: String,
+    },
+
+    /// The shared WebSSO host service (callback listener, CSRF check, or
+    /// browser-opening step) reported an error while running the SSO ABI
+    /// flow.
+    #[error("plugin {name} SSO flow failed: {source}")]
+    Host {
+        /// Plugin name.
+        name: String,
+        /// The underlying host-service error.
+        #[source]
+        source: openstack_sdk_websso_host::WebssoHostError,
+    },
+
+    /// Error using the interactive confirmation prompt during the SSO flow.
+    #[error("error using the dialoguer: {}", source)]
+    Dialoguer {
+        /// The error source.
+        #[from]
+        source: dialoguer::Error,
+    },
+
+    /// `sso_build_request` returned a URL that failed host-side validation
+    /// (unparsable, or not `https://`).
+    #[error("plugin {name} `sso_build_request` returned an invalid redirect: {reason}")]
+    InvalidRedirect {
+        /// Plugin name.
+        name: String,
+        /// Human readable reason.
+        reason: String,
+    },
+
+    /// `sso_build_request`'s declared `redirect_host` didn't match the
+    /// host-bound callback listener's own authority — the plugin tried to
+    /// point the identity provider's redirect somewhere the host never
+    /// bound a listener on. Always rejected; there is no override.
+    #[error(
+        "plugin {name} declared SSO redirect host `{declared}` but the host-bound callback listener is `{expected}`; refusing to open the browser"
+    )]
+    RedirectHostMismatch {
+        /// Plugin name.
+        name: String,
+        /// The `redirect_host` the plugin's `sso_build_request` response
+        /// declared.
+        declared: String,
+        /// The actual authority of the host-bound callback listener.
+        expected: String,
+    },
 }

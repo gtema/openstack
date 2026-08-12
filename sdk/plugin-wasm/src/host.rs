@@ -56,15 +56,46 @@ struct HttpResponseMsg {
     body: String,
 }
 
-extism::host_fn!(pub(crate) identity_http_request(ctx: HostContextState; request: String) -> String {
-    let req: HttpRequestMsg = serde_json::from_str(&request)
-        .map_err(|e| extism::Error::msg(format!("invalid identity_http_request payload: {e}")))?;
-
+/// Validate a guest-supplied request against `origin` and turn it into a
+/// concrete URL + method, without performing any I/O. This is the entire
+/// part of `identity_http_request`'s handling of untrusted guest bytes that
+/// doesn't require a live [`HostContextState`], split out so it can be
+/// exercised directly (including by the `fuzzing`-feature entry point below)
+/// without a real WASM call or network access.
+fn resolve_request(
+    origin: &url::Url,
+    req: &HttpRequestMsg,
+) -> Result<(url::Url, reqwest::Method), extism::Error> {
     if !req.path.starts_with('/') {
         return Err(extism::Error::msg(
             "identity_http_request: `path` must be relative to the identity endpoint (start with '/')",
         ));
     }
+    let url = origin
+        .join(&req.path)
+        .map_err(|e| extism::Error::msg(format!("identity_http_request: invalid path: {e}")))?;
+    let method = reqwest::Method::from_bytes(req.method.as_bytes())
+        .map_err(|e| extism::Error::msg(format!("identity_http_request: invalid method: {e}")))?;
+    Ok((url, method))
+}
+
+/// Fuzz target entry point for the otherwise-private [`resolve_request`],
+/// the part of `identity_http_request` that parses and validates raw bytes
+/// a guest module controls (Extism's guest-to-host call boundary), without
+/// making any network call.
+///
+/// Only compiled with the `fuzzing` feature; not part of the stable public
+/// API.
+#[cfg(feature = "fuzzing")]
+pub fn fuzz_identity_http_request_parsing(origin: &url::Url, request: &str) {
+    if let Ok(req) = serde_json::from_str::<HttpRequestMsg>(request) {
+        let _ = resolve_request(origin, &req);
+    }
+}
+
+extism::host_fn!(pub(crate) identity_http_request(ctx: HostContextState; request: String) -> String {
+    let req: HttpRequestMsg = serde_json::from_str(&request)
+        .map_err(|e| extism::Error::msg(format!("invalid identity_http_request payload: {e}")))?;
 
     let state = ctx.get()?;
     let state = state
@@ -79,11 +110,7 @@ extism::host_fn!(pub(crate) identity_http_request(ctx: HostContextState; request
         .as_ref()
         .ok_or_else(|| extism::Error::msg("identity_http_request: no http client bound to this call"))?;
 
-    let url = origin
-        .join(&req.path)
-        .map_err(|e| extism::Error::msg(format!("identity_http_request: invalid path: {e}")))?;
-    let method = reqwest::Method::from_bytes(req.method.as_bytes())
-        .map_err(|e| extism::Error::msg(format!("identity_http_request: invalid method: {e}")))?;
+    let (url, method) = resolve_request(origin, &req)?;
 
     let mut builder = client.request(method, url);
     for (k, v) in &req.headers {

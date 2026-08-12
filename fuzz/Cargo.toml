@@ -19,9 +19,11 @@ fuzzing = [
   "dep:tempfile",
   "dep:openstack_sdk_core",
   "dep:openstack-sdk-auth-core",
+  "dep:openstack-sdk-plugin-wasm",
   "openstack_sdk/fuzzing",
   "openstack_sdk_core/fuzzing",
   "openstack-sdk-auth-core/fuzzing",
+  "openstack-sdk-plugin-wasm/fuzzing",
 ]
 
 [package.metadata.dist]
@@ -33,6 +35,7 @@ bytes.workspace = true
 http.workspace = true
 libfuzzer-sys = { version = "0.4", optional = true }
 openstack-sdk-auth-core = { workspace = true, optional = true }
+openstack-sdk-plugin-wasm = { workspace = true, optional = true }
 openstack_sdk_core = { workspace = true, optional = true }
 serde_json.workspace = true
 tempfile = { workspace = true, optional = true }
@@ -124,6 +127,30 @@ bench = false
 [[bin]]
 name = "fuzz_state_cache"
 path = "fuzz_targets/fuzz_state_cache.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_wasm_plugin_identity_http_request"
+path = "fuzz_targets/fuzz_wasm_plugin_identity_http_request.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_wasm_plugin_sso_build_response"
+path = "fuzz_targets/fuzz_wasm_plugin_sso_build_response.rs"
+required-features = ["fuzzing"]
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_wasm_plugin_auth_result"
+path = "fuzz_targets/fuzz_wasm_plugin_auth_result.rs"
 required-features = ["fuzzing"]
 test = false
 doc = false

@@ -23,10 +23,14 @@ use clap::{Parser, Subcommand};
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
+mod confirm;
+
 pub mod info;
 pub mod install;
 pub mod list;
 pub mod remove;
+pub mod search;
+pub mod update;
 pub mod verify;
 
 /// WASM auth plugin management
@@ -49,6 +53,8 @@ pub enum PluginCommands {
     Info(info::InfoCommand),
     Remove(remove::RemoveCommand),
     Verify(verify::VerifyCommand),
+    Search(search::SearchCommand),
+    Update(update::UpdateCommand),
 }
 
 impl PluginCommand {
@@ -60,6 +66,8 @@ impl PluginCommand {
             PluginCommands::Info(cmd) => cmd.take_action(parsed_args).await,
             PluginCommands::Remove(cmd) => cmd.take_action(parsed_args).await,
             PluginCommands::Verify(cmd) => cmd.take_action(parsed_args).await,
+            PluginCommands::Search(cmd) => cmd.take_action(parsed_args).await,
+            PluginCommands::Update(cmd) => cmd.take_action(parsed_args).await,
         }
     }
 }
