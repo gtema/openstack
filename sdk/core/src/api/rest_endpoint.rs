@@ -217,32 +217,35 @@ where
     Ok(Some(req_ver))
 }
 
-/// Validate the endpoint's microversion against the cloud's discovered
-/// range and set the `OpenStack-API-Version` header.
+/// Compute the microversion to actually request for this endpoint,
+/// honoring [`RestClient::microversion_strategy`].
 ///
-/// The requested version is picked according to
-/// [`RestClient::microversion_strategy`]. When the strategy is
-/// [`MicroVersionStrategy::Floor`] the lowest compatible microversion is
-/// sent (floor semantics — backwards compatible with pre-existing behaviour).
+/// This is the single source of truth for "which microversion are we
+/// using" — both [`set_request_microversion_header`] (which puts it on
+/// the wire) and callers picking a response schema to deserialize against
+/// (generated CLI dispatch code) must go through this function so the
+/// header sent and the schema selected never disagree.
+///
+/// When the strategy is [`MicroVersionStrategy::Floor`] the lowest
+/// compatible microversion is returned (floor semantics — backwards
+/// compatible with pre-existing behaviour, see [`negotiate_microversion`]).
 /// When the strategy is [`MicroVersionStrategy::Ceiling`] the highest
-/// compatible microversion is sent.
+/// compatible microversion is returned instead.
 ///
-/// See [`negotiate_microversion`] for how bounds checking works.
-/// Returns `Ok(())` when the header was set (or skipped for unversioned
-/// endpoints, or an unrecognized service type). Returns `Err` when no
-/// version can satisfy both the endpoint's and the cloud's constraints.
-pub fn set_request_microversion_header<C, E>(
-    request: &mut Builder,
+/// Returns `Ok(None)` for unversioned endpoints (nothing to negotiate).
+/// Returns `Err` when no version can satisfy both the endpoint's and the
+/// cloud's constraints.
+pub fn resolve_microversion<C, E>(
     service_endpoint: &ServiceEndpoint,
     endpoint: &E,
     client: &C,
-) -> Result<(), ApiError<C::Error>>
+) -> Result<Option<ApiVersion>, ApiError<C::Error>>
 where
     C: RestClient,
     E: RestEndpoint,
 {
     let Some(mut req_ver) = negotiate_microversion::<C, E>(service_endpoint, endpoint)? else {
-        return Ok(());
+        return Ok(None);
     };
 
     // Ceiling strategy: pick the highest compatible microversion instead
@@ -268,6 +271,32 @@ where
             req_ver = ceil;
         }
     }
+
+    Ok(Some(req_ver))
+}
+
+/// Validate the endpoint's microversion against the cloud's discovered
+/// range and set the `OpenStack-API-Version` header.
+///
+/// The requested version is picked by [`resolve_microversion`] — see there
+/// for how [`RestClient::microversion_strategy`] affects the outcome.
+///
+/// Returns `Ok(())` when the header was set (or skipped for unversioned
+/// endpoints, or an unrecognized service type). Returns `Err` when no
+/// version can satisfy both the endpoint's and the cloud's constraints.
+pub fn set_request_microversion_header<C, E>(
+    request: &mut Builder,
+    service_endpoint: &ServiceEndpoint,
+    endpoint: &E,
+    client: &C,
+) -> Result<(), ApiError<C::Error>>
+where
+    C: RestClient,
+    E: RestEndpoint,
+{
+    let Some(req_ver) = resolve_microversion::<C, E>(service_endpoint, endpoint, client)? else {
+        return Ok(());
+    };
 
     let Some(st) = (match endpoint.service_type() {
         ServiceType::BlockStorage => Some("volume"),
@@ -832,7 +861,9 @@ mod tests {
     mod microversion {
         use super::*;
         use crate::RestError;
-        use crate::api::rest_endpoint::{negotiate_microversion, set_request_microversion_header};
+        use crate::api::rest_endpoint::{
+            negotiate_microversion, resolve_microversion, set_request_microversion_header,
+        };
         use crate::api::{MicroVersionStrategy, RestClient};
         use crate::catalog::ServiceEndpoint;
         use crate::test::client::FakeOpenStackClient;
@@ -1498,6 +1529,50 @@ mod tests {
             )
             .unwrap();
             assert_eq!(header(&req), Some("compute 2.60".into()));
+        }
+
+        /// The version returned by `resolve_microversion` — what generated
+        /// dispatch code uses to pick a response schema — must always match
+        /// what `set_request_microversion_header` actually put on the wire,
+        /// for both strategies. A prior bug had dispatch always call the
+        /// floor-only `negotiate_microversion` directly, so under the
+        /// `Ceiling` strategy the header and the schema selection disagreed.
+        #[test]
+        fn resolve_matches_header_under_floor_and_ceiling() {
+            let ep = make_ep(Some(ApiVersion::new(2, 50)), ServiceType::Compute);
+            let sep = make_service_endpoint(Some("2.1"), Some("2.60"));
+
+            let mut floor_req = http::Request::builder();
+            set_request_microversion_header::<FakeOpenStackClient, _>(
+                &mut floor_req,
+                &sep,
+                &ep,
+                &floor_client(),
+            )
+            .unwrap();
+            let floor_resolved =
+                resolve_microversion::<FakeOpenStackClient, _>(&sep, &ep, &floor_client())
+                    .unwrap();
+            assert_eq!(
+                header(&floor_req),
+                Some(format!("compute {}", floor_resolved.unwrap()))
+            );
+
+            let mut ceiling_req = http::Request::builder();
+            set_request_microversion_header::<StrategyClient, _>(
+                &mut ceiling_req,
+                &sep,
+                &ep,
+                &ceiling_client(),
+            )
+            .unwrap();
+            let ceiling_resolved =
+                resolve_microversion::<StrategyClient, _>(&sep, &ep, &ceiling_client()).unwrap();
+            assert_eq!(
+                header(&ceiling_req),
+                Some(format!("compute {}", ceiling_resolved.unwrap()))
+            );
+            assert_ne!(floor_resolved, ceiling_resolved);
         }
 
         #[test]
