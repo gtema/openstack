@@ -25,6 +25,7 @@ pub mod lockfile;
 pub mod plugin;
 pub mod provenance;
 pub mod registry;
+pub(crate) mod ssrf;
 
 pub use error::WasmPluginError;
 pub use lockfile::{PluginEntry, PluginLockfile, TrustInfo};

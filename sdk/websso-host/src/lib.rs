@@ -52,6 +52,13 @@ const STATE_PARAM: &str = "state";
 const CALLBACK_PAGE: &str = include_str!("../static/callback.html");
 /// Number of random bytes used for the anti-CSRF `state` token (256 bits).
 const STATE_BYTES: usize = 32;
+/// Number of random bytes used for the PKCE `code_verifier` (256 bits,
+/// base64url-no-pad-encodes to 43 characters — within RFC 7636's
+/// 43-128 character range).
+const CODE_VERIFIER_BYTES: usize = 32;
+/// Number of random bytes used for the OIDC `nonce` (128 bits, hex-encodes
+/// to a 32-character string).
+const NONCE_BYTES: usize = 16;
 
 /// Errors from the shared WebSSO/SSO host service.
 #[derive(Debug, Error)]
@@ -98,7 +105,7 @@ pub enum WebssoHostError {
     Cancelled,
 
     /// The secure random generator failed.
-    #[error("failed to generate a secure random `state` token")]
+    #[error("failed to generate a secure random value")]
     Random,
 
     /// Internal lock was poisoned.
@@ -146,22 +153,30 @@ pub fn open_browser(url: &Url, policy: BrowserOpenPolicy) -> Result<(), WebssoHo
     Ok(())
 }
 
-/// A bound local callback listener with a fresh anti-CSRF `state` token
-/// already embedded in its URL.
+/// A bound local callback listener with a fresh anti-CSRF `state` token,
+/// a fresh PKCE (RFC 7636) pair, and a fresh OIDC `nonce` already generated.
 pub struct CallbackServer {
     listener: TcpListener,
     state: String,
     callback_url: Url,
+    code_verifier: String,
+    code_challenge: String,
+    nonce: String,
 }
 
 impl CallbackServer {
     /// Bind a local callback listener on `port` (or an OS-assigned ephemeral
-    /// port if `None`), generating a fresh `state` token and embedding it in
-    /// the returned callback URL's query string.
+    /// port if `None`), generating a fresh `state` token (embedded in the
+    /// returned callback URL's query string), a fresh PKCE pair (returned
+    /// via [`Self::code_challenge`]/[`Self::code_verifier`], not embedded in
+    /// the URL — callers thread these into the SSO ABI's request JSON
+    /// instead), and a fresh OIDC `nonce` (returned via [`Self::nonce`]).
     pub async fn bind(port: Option<u16>) -> Result<Self, WebssoHostError> {
         let listener = TcpListener::bind(("127.0.0.1", port.unwrap_or(0))).await?;
         let addr = listener.local_addr()?;
         let state = generate_state()?;
+        let (code_verifier, code_challenge) = generate_pkce_pair()?;
+        let nonce = generate_nonce()?;
         let mut callback_url = Url::parse(&format!("http://{addr}{CALLBACK_PATH}"))?;
         callback_url
             .query_pairs_mut()
@@ -170,6 +185,9 @@ impl CallbackServer {
             listener,
             state,
             callback_url,
+            code_verifier,
+            code_challenge,
+            nonce,
         })
     }
 
@@ -187,6 +205,28 @@ impl CallbackServer {
             Some(port) => format!("{}:{port}", self.callback_url.host_str().unwrap_or("")),
             None => self.callback_url.host_str().unwrap_or("").to_string(),
         }
+    }
+
+    /// The PKCE `code_challenge` for this callback's authorization request
+    /// (`base64url-no-pad(SHA256(code_verifier))`). Safe to read multiple
+    /// times — unlike [`Self::wait_for_callback`], which consumes `self`.
+    pub fn code_challenge(&self) -> &str {
+        &self.code_challenge
+    }
+
+    /// The PKCE `code_verifier` for this callback's token exchange. Safe to
+    /// read multiple times; callers needing it after [`Self::wait_for_callback`]
+    /// consumes `self` must capture an owned copy first.
+    pub fn code_verifier(&self) -> &str {
+        &self.code_verifier
+    }
+
+    /// The OIDC `nonce` for this callback's authorization request. Not
+    /// secret — a guest embeds it directly in the browser-visible authorize
+    /// URL — so, like [`Self::code_challenge`], safe to read multiple
+    /// times.
+    pub fn nonce(&self) -> &str {
+        &self.nonce
     }
 
     /// Wait (up to `timeout`, cancellable with Ctrl-C) for a single POST to
@@ -318,6 +358,35 @@ fn generate_state() -> Result<String, WebssoHostError> {
     Ok(bytes.iter().map(|b| format!("{b:02x}")).collect())
 }
 
+/// Generate a fresh OIDC `nonce`: 16 random bytes, hex-encoded to a
+/// 32-character string. Mirrors [`generate_state`] exactly — same RNG, same
+/// hex-encoding approach — just a different byte count and purpose.
+fn generate_nonce() -> Result<String, WebssoHostError> {
+    let rng = SystemRandom::new();
+    let mut bytes = [0u8; NONCE_BYTES];
+    rng.fill(&mut bytes).map_err(|_| WebssoHostError::Random)?;
+    Ok(bytes.iter().map(|b| format!("{b:02x}")).collect())
+}
+
+/// Generate a fresh RFC 7636 PKCE pair: a `code_verifier` (43 random
+/// base64url-no-pad characters, drawn from `[A-Za-z0-9-._~]` as required by
+/// the RFC) and its `code_challenge` (`base64url-no-pad(SHA256(verifier))`).
+/// Always uses the `S256` challenge method — the weaker `plain` method
+/// isn't offered.
+fn generate_pkce_pair() -> Result<(String, String), WebssoHostError> {
+    use base64::Engine as _;
+
+    let rng = SystemRandom::new();
+    let mut bytes = [0u8; CODE_VERIFIER_BYTES];
+    rng.fill(&mut bytes).map_err(|_| WebssoHostError::Random)?;
+    let code_verifier = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(bytes);
+
+    let digest = ring::digest::digest(&ring::digest::SHA256, code_verifier.as_bytes());
+    let code_challenge = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(digest.as_ref());
+
+    Ok((code_verifier, code_challenge))
+}
+
 /// Constant-time byte comparison, used for the `state` check so a mismatch
 /// can't be timed to leak how many leading bytes matched.
 fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
@@ -425,5 +494,60 @@ mod tests {
         assert!(constant_time_eq(b"abc", b"abc"));
         assert!(!constant_time_eq(b"abc", b"abd"));
         assert!(!constant_time_eq(b"abc", b"ab"));
+    }
+
+    #[test]
+    fn pkce_pair_has_correct_shape() {
+        let (verifier, challenge) = generate_pkce_pair().expect("generate pkce pair");
+        assert_eq!(verifier.len(), 43);
+        assert!(
+            verifier
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '.' | '_' | '~')),
+            "verifier contained a character outside RFC 7636's unreserved set: {verifier:?}"
+        );
+
+        let expected_challenge = {
+            use base64::Engine as _;
+            let digest = ring::digest::digest(&ring::digest::SHA256, verifier.as_bytes());
+            base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(digest.as_ref())
+        };
+        assert_eq!(challenge, expected_challenge);
+    }
+
+    #[test]
+    fn pkce_pair_verifiers_are_unique_across_calls() {
+        let (verifier_a, _) = generate_pkce_pair().expect("generate pkce pair");
+        let (verifier_b, _) = generate_pkce_pair().expect("generate pkce pair");
+        assert_ne!(verifier_a, verifier_b);
+    }
+
+    #[tokio::test]
+    async fn bind_exposes_code_challenge_and_verifier() {
+        let server = CallbackServer::bind(None).await.expect("bind");
+        assert_eq!(server.code_verifier().len(), 43);
+        assert!(!server.code_challenge().is_empty());
+        assert_ne!(server.code_verifier(), server.code_challenge());
+    }
+
+    #[tokio::test]
+    async fn bind_exposes_nonce() {
+        let server = CallbackServer::bind(None).await.expect("bind");
+        assert_eq!(server.nonce().len(), 32);
+        assert!(server.nonce().chars().all(|c| c.is_ascii_hexdigit()));
+    }
+
+    #[test]
+    fn nonce_is_32_hex_characters() {
+        let nonce = generate_nonce().expect("generate nonce");
+        assert_eq!(nonce.len(), 32);
+        assert!(nonce.chars().all(|c| c.is_ascii_hexdigit()));
+    }
+
+    #[test]
+    fn nonce_is_unique_across_calls() {
+        let a = generate_nonce().expect("generate nonce");
+        let b = generate_nonce().expect("generate nonce");
+        assert_ne!(a, b);
     }
 }

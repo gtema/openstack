@@ -43,5 +43,9 @@ tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 [features]
 fuzzing = []
 
+[[test]]
+name = "wasm_sso_plugin"
+required-features = ["fuzzing"]
+
 [lints]
 workspace = true
