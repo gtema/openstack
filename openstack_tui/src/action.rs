@@ -33,6 +33,7 @@ where
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ResourceOp {
     Create,
+    Update,
     Delete,
 }
 

@@ -14,9 +14,8 @@
 
 use crate::action::Action;
 use crate::cloud_worker::network::v2::{
-    NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleCreate,
-    NetworkSecurityGroupRuleDelete, NetworkSecurityGroupRuleDeleteBuilder,
-    NetworkSecurityGroupRuleList,
+    NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleDelete,
+    NetworkSecurityGroupRuleDeleteBuilder, NetworkSecurityGroupRuleList,
 };
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::generic_resource_view::GenericResourceView;
@@ -87,56 +86,21 @@ impl ResourceBehaviour for NetworkSecurityGroupRulesBehaviour {
             None
         }
     }
-    fn editor_template(action: &Action, filter: &Self::Filter) -> Option<(String, ApiRequest)> {
-        if let Action::ResourceOp {
-            key,
-            op: crate::action::ResourceOp::Create,
-        } = action
-            && *key == Self::view_key()
-        {
-            let security_group_id = filter.security_group_id.clone().unwrap_or_default();
-            let template = format!(
-                r#"# Create a security group rule.
-# direction: ingress | egress
-# ethertype: IPv4 | IPv6
-# protocol: e.g. tcp, udp, icmp, or leave empty to match any protocol
-# Specify either remote_group_id or remote_ip_prefix, not both.
-security_group_rule:
-  security_group_id: {security_group_id}
-  direction: ingress
-  ethertype: IPv4
-  protocol:
-  port_range_min:
-  port_range_max:
-  remote_ip_prefix:
-  remote_group_id:
-  remote_address_group_id:
-  description:
-  tenant_id:
-"#
-            );
-            let request =
-                ApiRequest::from(NetworkSecurityGroupRuleApiRequest::Create(Box::default()));
-            return Some((template, request));
-        }
-        None
+    fn editor_template(
+        action: &Action,
+        filter: &Self::Filter,
+        selected: Option<&Value>,
+    ) -> Option<(String, ApiRequest)> {
+        super::generated::security_group_rule::Generated::editor_template(action, filter, selected)
     }
-    fn deserialize_edit_result(data: &Value) -> Option<ApiRequest> {
-        let create: NetworkSecurityGroupRuleCreate = serde_json::from_value(data.clone()).ok()?;
-        Some(ApiRequest::from(
-            NetworkSecurityGroupRuleApiRequest::Create(Box::new(create)),
-        ))
+    fn deserialize_edit_result(data: &Value, original_action: &Action) -> Option<ApiRequest> {
+        super::generated::security_group_rule::Generated::deserialize_edit_result(
+            data,
+            original_action,
+        )
     }
     fn editor_schema(action: &Action) -> Option<&'static str> {
-        if let Action::ResourceOp {
-            key,
-            op: crate::action::ResourceOp::Create,
-        } = action
-            && *key == Self::view_key()
-        {
-            return Some(NetworkSecurityGroupRuleCreate::BODY_SCHEMA);
-        }
-        None
+        super::generated::security_group_rule::Generated::editor_schema(action)
     }
     fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
         if let ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(req)) = request {
@@ -160,6 +124,7 @@ pub type NetworkSecurityGroupRules =
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cloud_worker::network::v2::NetworkSecurityGroupRuleCreate;
     use crate::components::resource_behaviour::ResourceBehaviour;
 
     fn make_rule(id: &str) -> serde_json::Value {
@@ -358,7 +323,8 @@ mod tests {
     #[test]
     fn editor_template_ignores_other_actions() {
         let filter = NetworkSecurityGroupRuleList::default();
-        let result = NetworkSecurityGroupRulesBehaviour::editor_template(&Action::Tick, &filter);
+        let result =
+            NetworkSecurityGroupRulesBehaviour::editor_template(&Action::Tick, &filter, None);
         assert!(result.is_none());
     }
 
@@ -371,6 +337,7 @@ mod tests {
                 op: crate::action::ResourceOp::Create,
             },
             &filter,
+            None,
         );
         assert!(result.is_none());
     }
@@ -387,6 +354,7 @@ mod tests {
                 op: crate::action::ResourceOp::Create,
             },
             &filter,
+            None,
         );
         let (template, request) = result.expect("editor_template should return a template");
         assert!(template.contains("security_group_id: sg-1"));
@@ -412,8 +380,9 @@ security_group_rule:
 "#,
         )
         .unwrap();
-        let request = NetworkSecurityGroupRulesBehaviour::deserialize_edit_result(&edited)
-            .expect("valid YAML should deserialize");
+        let request =
+            NetworkSecurityGroupRulesBehaviour::deserialize_edit_result(&edited, &Action::Tick)
+                .expect("valid YAML should deserialize");
         assert!(matches!(
             request,
             ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(boxreq))
@@ -424,7 +393,8 @@ security_group_rule:
     #[test]
     fn deserialize_edit_result_rejects_unknown_fields() {
         let edited = serde_json::json!({ "not_a_security_group_rule": {} });
-        let request = NetworkSecurityGroupRulesBehaviour::deserialize_edit_result(&edited);
+        let request =
+            NetworkSecurityGroupRulesBehaviour::deserialize_edit_result(&edited, &Action::Tick);
         assert!(request.is_none());
     }
 }

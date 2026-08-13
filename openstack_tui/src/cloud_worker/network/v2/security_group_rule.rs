@@ -26,7 +26,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::action::Action;
 use crate::cloud_worker::NetworkApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod create;
 pub mod delete;
@@ -49,6 +49,15 @@ pub enum NetworkSecurityGroupRuleApiRequest {
 impl From<NetworkSecurityGroupRuleApiRequest> for ApiRequest {
     fn from(item: NetworkSecurityGroupRuleApiRequest) -> Self {
         ApiRequest::Network(NetworkApiRequest::from(item))
+    }
+}
+
+impl ConfirmableRequest for NetworkSecurityGroupRuleApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            NetworkSecurityGroupRuleApiRequest::Delete(req) => req.get_confirm_message(),
+            _ => None,
+        }
     }
 }
 

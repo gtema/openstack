@@ -77,6 +77,7 @@ impl ConfirmableRequest for ApiRequest {
             ApiRequest::Compute(x) => x.get_confirm_message(),
             ApiRequest::Dns(x) => x.get_confirm_message(),
             ApiRequest::Image(x) => x.get_confirm_message(),
+            ApiRequest::Network(x) => x.get_confirm_message(),
             _ => None,
         }
     }

@@ -19,6 +19,7 @@ use crate::cloud_worker::types as cloud_types;
 use crate::cloud_worker::types::ApiRequest;
 use crate::components::resource_behaviour::GeneratedResourceBehaviour;
 use crate::mode::Mode;
+use serde_json::Value;
 
 pub(crate) struct Generated;
 
@@ -52,5 +53,96 @@ impl GeneratedResourceBehaviour for Generated {
         } else {
             None
         }
+    }
+    fn editor_template(
+        action: &Action,
+        filter: &Self::Filter,
+        selected: Option<&Value>,
+    ) -> Option<(String, ApiRequest)> {
+        let _ = filter;
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Create,
+        } = action
+            && *key == Self::view_key()
+        {
+            let template = format!(
+                "# Create a security groups.\n{}",
+                cloud_types::NetworkSecurityGroupCreate::EDITOR_TEMPLATE
+            );
+            let request = ApiRequest::from(cloud_types::NetworkSecurityGroupApiRequest::Create(
+                Box::default(),
+            ));
+            return Some((template, request));
+        }
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Update,
+        } = action
+            && *key == Self::view_key()
+            && let Some(sel) = selected
+        {
+            let body = crate::components::resource_behaviour::prefill_from_selected(
+                cloud_types::NetworkSecurityGroupSet::EDITOR_TEMPLATE,
+                sel,
+            );
+            let template = format!("# Update a security groups.\n{}", body);
+            // `id` is a path param, not part of the editable body -- it never appears in
+            // EDITOR_TEMPLATE/the buffer the user edits. Carry it via the placeholder
+            // request instead; deserialize_edit_result reads it back out of
+            // `original_action` once the user's edit returns.
+            let mut placeholder = cloud_types::NetworkSecurityGroupSet::default();
+            if let Some(id) = sel.get("id").and_then(|v| v.as_str()) {
+                placeholder.id = id.to_string();
+            }
+            let request = ApiRequest::from(cloud_types::NetworkSecurityGroupApiRequest::Set(
+                Box::new(placeholder),
+            ));
+            return Some((template, request));
+        }
+        None
+    }
+    fn deserialize_edit_result(data: &Value, original_action: &Action) -> Option<ApiRequest> {
+        // The edited buffer never carries `id` (a path param, excluded from the editable
+        // body) -- pull it back out of the placeholder `editor_template` stashed in
+        // `original_action`, which also tells create/update apart: Set's body fields are
+        // a strict subset of Create's, so a Create YAML would also parse as a valid Set.
+        if let Action::PerformApiRequest(ApiRequest::Network(
+            cloud_types::NetworkApiRequest::SecurityGroup(boxreq),
+        )) = original_action
+            && let cloud_types::NetworkSecurityGroupApiRequest::Set(placeholder) = &**boxreq
+        {
+            let mut with_id = data.clone();
+            with_id["id"] = Value::String(placeholder.id.clone());
+            let update: cloud_types::NetworkSecurityGroupSet =
+                serde_json::from_value(with_id).ok()?;
+            return Some(ApiRequest::from(
+                cloud_types::NetworkSecurityGroupApiRequest::Set(Box::new(update)),
+            ));
+        }
+        let create: cloud_types::NetworkSecurityGroupCreate =
+            serde_json::from_value(data.clone()).ok()?;
+        Some(ApiRequest::from(
+            cloud_types::NetworkSecurityGroupApiRequest::Create(Box::new(create)),
+        ))
+    }
+    fn editor_schema(action: &Action) -> Option<&'static str> {
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Create,
+        } = action
+            && *key == Self::view_key()
+        {
+            return Some(cloud_types::NetworkSecurityGroupCreate::BODY_SCHEMA);
+        }
+        if let Action::ResourceOp {
+            key,
+            op: crate::action::ResourceOp::Update,
+        } = action
+            && *key == Self::view_key()
+        {
+            return Some(cloud_types::NetworkSecurityGroupSet::BODY_SCHEMA);
+        }
+        None
     }
 }

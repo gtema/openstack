@@ -25,7 +25,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod network;
 pub mod quota;
@@ -96,6 +96,19 @@ impl From<NetworkSecurityGroupRuleApiRequest> for NetworkApiRequest {
 impl From<NetworkSubnetApiRequest> for NetworkApiRequest {
     fn from(item: NetworkSubnetApiRequest) -> Self {
         NetworkApiRequest::Subnet(Box::new(item))
+    }
+}
+
+impl ConfirmableRequest for NetworkApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            NetworkApiRequest::Network(req) => req.get_confirm_message(),
+            NetworkApiRequest::Router(req) => req.get_confirm_message(),
+            NetworkApiRequest::SecurityGroup(req) => req.get_confirm_message(),
+            NetworkApiRequest::SecurityGroupRule(req) => req.get_confirm_message(),
+            NetworkApiRequest::Subnet(req) => req.get_confirm_message(),
+            _ => None,
+        }
     }
 }
 
