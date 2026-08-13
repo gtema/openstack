@@ -32,18 +32,25 @@ use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::{Layer, prelude::*};
 
-use openstack_cli_core::cli::ConnectionRequirementsProvider;
+use openstack_cli_core::cli::{ConnectionRequirementsProvider, MicroVersionStrategyArg};
 use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::{
     build_http_requests_timing_table,
     tracing_stats::{HttpRequestStats, RequestTracingCollector},
 };
 use openstack_sdk::{
-    AsyncOpenStack,
+    AsyncOpenStack, MicroVersionStrategy,
     auth::auth_helper::{Dialoguer, ExternalCmd, Noop},
     auth::authtoken::AuthTokenScope,
     types::identity::v3::Project,
 };
+
+fn microversion_strategy_from_arg(value: MicroVersionStrategyArg) -> MicroVersionStrategy {
+    match value {
+        MicroVersionStrategyArg::Floor => MicroVersionStrategy::Floor,
+        MicroVersionStrategyArg::Ceiling => MicroVersionStrategy::Ceiling,
+    }
+}
 
 pub mod cli;
 pub mod error;
@@ -151,31 +158,34 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     // don't need a live/valid session (e.g. `auth status`) use a cache-only,
     // network-free path so they keep working even with an expired token or an
     // unreachable cloud.
+    let microversion_strategy =
+        microversion_strategy_from_arg(cli.global_opts.connection.os_microversion_strategy);
+
     let mut session = if !connection_requirements.needs_auth {
         AsyncOpenStack::new_cache_only(&cloud_config)
             .map_err(|err| OpenStackCliError::Auth { source: err })?
     } else {
         if let Some(external_auth_helper) = &cli.global_opts.connection.auth_helper_cmd {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                ExternalCmd::new(external_auth_helper.clone()),
-                renew_auth,
-            )
-            .await
+            AsyncOpenStack::builder(&cloud_config)
+                .auth_helper(ExternalCmd::new(external_auth_helper.clone()))
+                .renew_auth(renew_auth)
+                .microversion_strategy(microversion_strategy)
+                .connect()
+                .await
         } else if std::io::stdin().is_terminal() {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                Dialoguer::default(),
-                renew_auth,
-            )
-            .await
+            AsyncOpenStack::builder(&cloud_config)
+                .auth_helper(Dialoguer::default())
+                .renew_auth(renew_auth)
+                .microversion_strategy(microversion_strategy)
+                .connect()
+                .await
         } else {
-            AsyncOpenStack::new_with_authentication_helper(
-                &cloud_config,
-                Noop::default(),
-                renew_auth,
-            )
-            .await
+            AsyncOpenStack::builder(&cloud_config)
+                .auth_helper(Noop::default())
+                .renew_auth(renew_auth)
+                .microversion_strategy(microversion_strategy)
+                .connect()
+                .await
         }
         .map_err(|err| OpenStackCliError::Auth { source: err })?
     };

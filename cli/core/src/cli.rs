@@ -110,6 +110,34 @@ pub struct ConnectionOpts {
     /// `--os-cloud-name`).
     #[arg(long, global = true, value_hint = ValueHint::ExecutablePath, display_order = 810)]
     pub auth_helper_cmd: Option<String>,
+
+    /// Microversion negotiation strategy used for every service.
+    ///
+    /// `floor` (default) requests the lowest microversion compatible with both the command and
+    /// the cloud, matching this tool's historical behavior. `ceiling` requests the highest
+    /// compatible microversion instead, which typically yields more complete data in responses
+    /// (e.g. commands that only started returning a field in a later microversion).
+    #[arg(
+        long,
+        env = "OS_MICROVERSION_STRATEGY",
+        global = true,
+        value_enum,
+        default_value_t = MicroVersionStrategyArg::Floor,
+        display_order = 806
+    )]
+    pub os_microversion_strategy: MicroVersionStrategyArg,
+}
+
+/// Microversion negotiation strategy (CLI-facing mirror of
+/// `openstack_sdk::MicroVersionStrategy`, kept separate so `cli/core` does not need a hard
+/// dependency on the full SDK crate for a single enum).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, ValueEnum)]
+pub enum MicroVersionStrategyArg {
+    /// Request the lowest microversion compatible with both the command and the cloud.
+    #[default]
+    Floor,
+    /// Request the highest microversion compatible with both the command and the cloud.
+    Ceiling,
 }
 
 /// Output configuration.
